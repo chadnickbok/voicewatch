@@ -1,0 +1,54 @@
+{
+  "schema_version": 1,
+  "app_id": "calculator",
+  "screen": {
+    "id": "calculator",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "calculator.heading",
+          "type": "text",
+          "props": {
+            "text": "Calculator",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "calculator.result",
+          "type": "text",
+          "props": {
+            "text": "42",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "end"
+          },
+          "semantics": {
+            "label": "Result",
+            "value": "42"
+          }
+        },
+        {
+          "id": "calculator.keys",
+          "type": "keypad",
+          "props": {
+            "columns": 4,
+            "keys": [
+              "7", "8", "9", "/", "4", "5", "6", "*",
+              "1", "2", "3", "-", "0", ".", "=", "+"
+            ]
+          },
+          "events": {
+            "tap": "key_pressed"
+          },
+          "semantics": {
+            "label": "Calculator keypad"
+          }
+        }
+      ]
+    }
+  }
+}

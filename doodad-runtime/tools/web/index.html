@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Doodad Dev</title>
+    <link rel="stylesheet" href="/style.css">
+  </head>
+  <body>
+    <main>
+      <section class="preview-column">
+        <div class="eyebrow">DOODAD DEV</div>
+        <div class="watch">
+          <img id="screen" width="240" height="240" alt="240 by 240 Doodad preview">
+          <div id="overlay" class="overlay hidden"></div>
+        </div>
+        <div class="surface-note">240 × 240 app surface</div>
+      </section>
+      <section class="inspector">
+        <div class="status-line">
+          <span id="status" class="status">STARTING</span>
+          <span id="revision" class="revision">revision 0</span>
+        </div>
+        <h1 id="app-name">Building package…</h1>
+        <p id="message">The WAMR host is starting.</p>
+        <dl>
+          <div>
+            <dt>Runtime</dt>
+            <dd id="engine">WAMR</dd>
+          </div>
+          <div>
+            <dt>Renderer</dt>
+            <dd id="renderer">LVGL</dd>
+          </div>
+          <div>
+            <dt>Surface</dt>
+            <dd>Square, 240 × 240</dd>
+          </div>
+          <div>
+            <dt>Reload</dt>
+            <dd>Fresh resident instance</dd>
+          </div>
+        </dl>
+        <pre id="package"></pre>
+      </section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>

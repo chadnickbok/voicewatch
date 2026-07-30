@@ -1,0 +1,15 @@
+{
+  "artifact": "androidx.wear.compose:compose-material3:1.6.2",
+  "commit": "f65727cc5cc63d05724c0edb55900bc8790b14e8",
+  "token_path": "wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens",
+  "core_files": [
+    "PaletteTokens.kt",
+    "ColorTokens.kt",
+    "ColorSchemeKeyTokens.kt",
+    "TypeScaleTokens.kt",
+    "TypographyKeyTokens.kt",
+    "ShapeTokens.kt",
+    "ShapeKeyTokens.kt",
+    "MotionTokens.kt"
+  ]
+}

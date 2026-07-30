@@ -4,12 +4,16 @@ idf_component_register(
         "src/app_sources.cpp"
         "src/display.cpp"
         "src/main.cpp"
+        "../../ui/doodad_lvgl_ui.c"
     INCLUDE_DIRS
         "include"
+        "../../ui"
     REQUIRES
         driver
         esp_driver_sdspi
         fatfs
+        lvgl
+        m3e_lvgl
         m5unified
         wasm-micro-runtime
     EMBED_FILES

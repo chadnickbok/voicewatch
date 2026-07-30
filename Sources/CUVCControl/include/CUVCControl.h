@@ -23,6 +23,7 @@ int cleancam_uvc_set_gain(CleanCamUVCHandle *handle, uint16_t value);
 int cleancam_uvc_get_auto_exposure(CleanCamUVCHandle *handle, bool *out_enabled);
 int cleancam_uvc_set_auto_exposure(CleanCamUVCHandle *handle, bool enabled);
 int cleancam_uvc_disable_backlight_compensation(CleanCamUVCHandle *handle);
+int cleancam_uvc_reset_device(uint16_t vendor_id, uint16_t product_id);
 
 const char *cleancam_uvc_error_string(int code);
 

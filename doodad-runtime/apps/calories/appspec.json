@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "app_id": "calories",
+  "screen": {
+    "id": "today",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "today.heading",
+          "type": "text",
+          "props": {
+            "text": "Today / Calories",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "today.total",
+          "type": "text",
+          "props": {
+            "text": "1,420 kcal",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "today.progress",
+          "type": "progress",
+          "props": {
+            "label": "Daily calories",
+            "value": 1420,
+            "maximum": 2000,
+            "style": "linear",
+            "tone": "primary"
+          },
+          "semantics": {
+            "label": "Daily calorie target",
+            "value": "1,420 of 2,000 kilocalories"
+          }
+        },
+        {
+          "id": "today.lunch",
+          "type": "card",
+          "props": {
+            "title": "Lunch",
+            "body": "Chicken bowl | 560 kcal",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "today.quick_add",
+          "type": "button",
+          "props": {
+            "label": "Quick add",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default",
+            "icon": "add"
+          },
+          "events": {
+            "tap": "open_quick_add"
+          },
+          "semantics": {
+            "label": "Quick add calories"
+          }
+        }
+      ]
+    }
+  }
+}

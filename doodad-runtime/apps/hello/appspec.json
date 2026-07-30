@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "app_id": "hello",
+  "screen": {
+    "id": "hello.screen",
+    "type": "screen",
+    "props": {
+      "gap": "md",
+      "align": "center",
+      "children": [
+        {
+          "id": "hello.title",
+          "type": "text",
+          "props": {
+            "text": "Ready?",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Greeting prompt"
+          }
+        },
+        {
+          "id": "hello.action",
+          "type": "button",
+          "props": {
+            "label": "Say hello",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "say_hello"
+          },
+          "semantics": {
+            "label": "Say hello"
+          }
+        }
+      ]
+    }
+  }
+}

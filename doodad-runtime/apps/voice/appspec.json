@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "app_id": "system.voice",
+  "screen": {
+    "id": "voice_overlay",
+    "type": "screen",
+    "props": {
+      "gap": "lg",
+      "align": "center",
+      "children": [
+        {
+          "id": "voice.title",
+          "type": "text",
+          "props": {
+            "text": "What can I do?",
+            "style": "title",
+            "max_lines": 2,
+            "align": "center"
+          }
+        },
+        {
+          "id": "voice.orb",
+          "type": "voice_orb",
+          "props": {
+            "state": "listening",
+            "transcript": ""
+          },
+          "events": {
+            "cancel": "cancel_voice"
+          },
+          "semantics": {
+            "label": "Listening for a voice request",
+            "hint": "Tap to cancel"
+          }
+        },
+        {
+          "id": "voice.transcript",
+          "type": "text",
+          "props": {
+            "text": "Listening...",
+            "style": "body",
+            "max_lines": 3,
+            "align": "center"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": 0,
+  "root": {
+    "type": "stack",
+    "direction": "column",
+    "align": "center",
+    "gap": 10,
+    "children": [
+      {
+        "type": "text",
+        "style": "caption",
+        "text": "FIRST PACKAGE"
+      },
+      {
+        "type": "text",
+        "style": "display",
+        "text": "Hello, Doodad"
+      },
+      {
+        "type": "progress",
+        "label": "Simulator slice",
+        "value": 1,
+        "maximum": 1
+      },
+      {
+        "type": "button",
+        "id": "hello.continue",
+        "label": "Ready"
+      }
+    ]
+  }
+}

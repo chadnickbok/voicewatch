@@ -1,0 +1,80 @@
+; Doodad AppSpec v1 canonical on-device representation.
+; JSON authoring names are lowered to these stable numeric keys and enums.
+
+appspec = {
+  0: 1,                           ; schema version
+  1: identifier,                  ; app id
+  2: [1*250 node],
+}
+
+node = {
+  0: identifier,                  ; stable node id
+  1: component-kind,
+  2: uint / null,                 ; earlier parent index; root is null
+  3: {* uint => any},             ; type-checked semantic properties
+  ? 4: bool,                      ; visible
+  ? 5: bool,                      ; enabled
+  ? 6: tstr .size (1..128),       ; semantic label
+  ? 7: [* event],
+}
+
+event = {
+  0: 0..10,                       ; semantic EventKind
+  1: identifier,                  ; ActionId
+}
+
+; screen, column, row, scroll, text, button, card, progress, stepper,
+; toggle, keypad, voice_orb, live_card
+component-kind = 0..12
+
+; Property tags are stable across component kinds. Validators reject tags
+; that have no meaning for the selected component.
+; 0 primary text, 1 secondary text, 2 value, 3 maximum, 4 variant/style,
+; 5 tone, 6 size, 7 checked, 8 gap, 9 alignment, 10 keypad keys,
+; 11 keypad columns.
+
+identifier = tstr .regexp "[a-z][a-z0-9_.-]{0,63}"
+
+ui-event = {
+  0: 1,                           ; event schema
+  1: identifier,                  ; app id
+  2: identifier,                  ; screen id
+  3: identifier,                  ; node id
+  4: identifier,                  ; action id
+  5: 0..10,                       ; semantic EventKind
+  6: uint,                        ; monotonic milliseconds
+}
+
+; A returned batch is intentionally UI-only or state-only. Hosts reject
+; mixed-domain batches so each accepted batch is atomic within one subsystem.
+command-batch = {
+  0: 1,                           ; command schema
+  1: [1*64 command],
+}
+
+command =
+    set-property
+  / set-visibility
+  / set-enabled
+  / state-put
+  / state-remove
+
+set-property = {
+  0: 0,
+  1: identifier,                 ; mounted node id
+  2: 0..3,                       ; primary, secondary, value, maximum
+  3: tstr .size (0..128) / int,
+}
+
+set-visibility = { 0: 1, 1: identifier, 3: bool }
+set-enabled = { 0: 2, 1: identifier, 3: bool }
+
+state-put = {
+  0: 3,
+  1: state-path,
+  2: 0..3,                       ; bool, integer, q16.16, string
+  3: bool / int / tstr .size (0..64),
+}
+
+state-remove = { 0: 4, 1: state-path }
+state-path = tstr .size (1..96)

@@ -1,0 +1,27 @@
+#ifndef LV_CONF_H
+#define LV_CONF_H
+
+#define LV_COLOR_DEPTH 16
+#define LV_MEM_SIZE (256 * 1024U)
+#define LV_DEF_REFR_PERIOD 16
+#define LV_DPI_DEF 130
+#define LV_USE_OS LV_OS_NONE
+#define LV_USE_LOG 0
+
+#define LV_FONT_MONTSERRAT_10 1
+#define LV_FONT_MONTSERRAT_12 1
+#define LV_FONT_MONTSERRAT_14 1
+#define LV_FONT_MONTSERRAT_16 1
+#define LV_FONT_MONTSERRAT_18 1
+
+#define LV_USE_FLEX 1
+#define LV_USE_GRID 1
+#define LV_USE_LABEL 1
+#define LV_USE_BUTTON 1
+#define LV_USE_BAR 1
+
+#define LV_USE_THORVG_INTERNAL 0
+#define LV_BUILD_EXAMPLES 0
+#define LV_BUILD_DEMOS 0
+
+#endif

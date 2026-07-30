@@ -1,4 +1,18 @@
 dependencies:
+  espressif/esp_lvgl_port:
+    component_hash: fb6c1fdfe70d4ca39a035d63ca394a35f17ec84ce16ff98ecb13a54155d75da4
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.2'
+    - name: lvgl/lvgl
+      registry_url: https://components.espressif.com
+      require: public
+      version: '>=8,<10'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 2.8.0~1
   espressif/wasm-micro-runtime:
     component_hash: 04f25aad2896b5e906397a061d35cce560609bebd3913a4be7e365ecbf2dd9d6
     dependencies:
@@ -20,6 +34,13 @@ dependencies:
     source:
       type: idf
     version: 5.5.5
+  lvgl/lvgl:
+    component_hash: 184e532558c1c45fefed631f3e235423d22582aafb4630f3e8885c35281a49ae
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 9.5.0
   m5stack/m5gfx:
     component_hash: c61634865a4e4a04fc122c658d1b484892d5b25871e95fcfb39960a9d6652a15
     dependencies: []
@@ -39,9 +60,11 @@ dependencies:
       type: service
     version: 0.2.19
 direct_dependencies:
+- espressif/esp_lvgl_port
 - espressif/wasm-micro-runtime
 - idf
+- lvgl/lvgl
 - m5stack/m5unified
-manifest_hash: fb8aa3ae47bd1f65da07663d5693ace0e57fb5c049660b008d3b2dc77044e2c3
+manifest_hash: 75b22397f66e3f94a3181bb08ccd90c3cf97de2b532e317b7c6ee98460333212
 target: esp32s3
 version: 2.0.0

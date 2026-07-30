@@ -402,6 +402,49 @@ int cleancam_uvc_disable_backlight_compensation(CleanCamUVCHandle *handle) {
     );
 }
 
+int cleancam_uvc_reset_device(uint16_t vendor_id, uint16_t product_id) {
+    CFMutableDictionaryRef matching = IOServiceMatching(kIOUSBDeviceClassName);
+    if (matching == NULL) return CC_UVC_NOT_FOUND;
+
+    CFNumberRef vendor = CFNumberCreate(
+        kCFAllocatorDefault, kCFNumberSInt16Type, &vendor_id);
+    CFNumberRef product = CFNumberCreate(
+        kCFAllocatorDefault, kCFNumberSInt16Type, &product_id);
+    CFDictionarySetValue(matching, CFSTR(kUSBVendorID), vendor);
+    CFDictionarySetValue(matching, CFSTR(kUSBProductID), product);
+    CFRelease(vendor);
+    CFRelease(product);
+
+    io_service_t service = IOServiceGetMatchingService(
+        kIOMainPortDefault, matching);
+    if (service == IO_OBJECT_NULL) return CC_UVC_NOT_FOUND;
+
+    IOCFPlugInInterface **plugin = NULL;
+    int status = query_plugin(
+        service, kIOUSBDeviceUserClientTypeID, &plugin);
+    IOObjectRelease(service);
+    if (status != CC_UVC_OK) return status;
+
+    LPVOID raw_device = NULL;
+    HRESULT query_result = (*plugin)->QueryInterface(
+        plugin,
+        CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID),
+        &raw_device);
+    (*plugin)->Release(plugin);
+    if (query_result != S_OK || raw_device == NULL) {
+        return CC_UVC_INTERFACE_FAILED;
+    }
+
+    IOUSBDeviceInterface **device = (IOUSBDeviceInterface **)raw_device;
+    IOReturn result = (*device)->USBDeviceOpen(device);
+    if (result == kIOReturnSuccess) {
+        result = (*device)->USBDeviceReEnumerate(device, 0);
+        (*device)->USBDeviceClose(device);
+    }
+    (*device)->Release(device);
+    return result == kIOReturnSuccess ? CC_UVC_OK : (int)result;
+}
+
 const char *cleancam_uvc_error_string(int code) {
     switch (code) {
         case CC_UVC_OK: return "success";

@@ -112,6 +112,7 @@ final class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDele
     var onStatus: ((String) -> Void)?
     var onStats: ((FrameStats) -> Void)?
     var onDeviceChanged: ((AVCaptureDevice) -> Void)?
+    var onCaptureSaved: ((URL) -> Void)?
 
     private let sessionQueue = DispatchQueue(label: "CleanCam.session")
     private let videoQueue = DispatchQueue(label: "CleanCam.frames")
@@ -120,6 +121,7 @@ final class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDele
     private var input: AVCaptureDeviceInput?
     private var frameNumber = 0
     private var captureRequested = false
+    private var requestedCaptureURL: URL?
     private var normalizedROI = CGRect(x: 0.2, y: 0.15, width: 0.6, height: 0.7)
     private(set) var uvcControl: UVCCameraControl?
 
@@ -241,8 +243,9 @@ final class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDele
         }
     }
 
-    func requestCapture() {
+    func requestCapture(to url: URL? = nil) {
         videoQueue.async { [weak self] in
+            self?.requestedCaptureURL = url
             self?.captureRequested = true
         }
         report("Capturing the next full-resolution frame…")
@@ -419,12 +422,19 @@ final class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDele
             return
         }
 
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyyMMdd-HHmmss-SSS"
-        let folder = FileManager.default.homeDirectoryForCurrentUser
-            .appendingPathComponent("Pictures", isDirectory: true)
-            .appendingPathComponent("CleanCam", isDirectory: true)
-        let url = folder.appendingPathComponent("cores3-\(formatter.string(from: Date())).png")
+        let url: URL
+        if let requestedCaptureURL {
+            url = requestedCaptureURL
+            self.requestedCaptureURL = nil
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyyMMdd-HHmmss-SSS"
+            let folder = FileManager.default.homeDirectoryForCurrentUser
+                .appendingPathComponent("Pictures", isDirectory: true)
+                .appendingPathComponent("CleanCam", isDirectory: true)
+            url = folder.appendingPathComponent("cores3-\(formatter.string(from: Date())).png")
+        }
+        let folder = url.deletingLastPathComponent()
 
         do {
             try FileManager.default.createDirectory(at: folder, withIntermediateDirectories: true)
@@ -443,6 +453,7 @@ final class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDele
                 return
             }
             report("Saved \(url.path)")
+            DispatchQueue.main.async { [weak self] in self?.onCaptureSaved?(url) }
         } catch {
             report("Capture failed: \(error.localizedDescription)")
         }
@@ -845,8 +856,61 @@ func printCameraProbe() {
     }
 }
 
+final class HeadlessCaptureDelegate: NSObject, NSApplicationDelegate {
+    private let controller = CameraController()
+    private let outputURL: URL
+    private var captureScheduled = false
+
+    init(outputURL: URL) {
+        self.outputURL = outputURL
+    }
+
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        controller.onStatus = { [weak self] status in
+            print(status)
+            guard let self,
+                  status.hasPrefix("Live:"),
+                  !self.captureScheduled else { return }
+            self.captureScheduled = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.controller.requestCapture(to: self.outputURL)
+            }
+        }
+        controller.onCaptureSaved = { _ in NSApp.terminate(nil) }
+        controller.start()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 12.0) {
+            fputs("Timed out waiting for a camera frame.\n", stderr)
+            NSApp.terminate(nil)
+        }
+    }
+}
+
 if CommandLine.arguments.contains("--probe") {
     printCameraProbe()
+} else if CommandLine.arguments.contains("--reset-camera") {
+    let result = cleancam_uvc_reset_device(1133, 2195)
+    if result == 0 {
+        print("Logitech StreamCam USB reset requested.")
+    } else {
+        fputs(
+            "Camera reset failed: \(String(cString: cleancam_uvc_error_string(result))) (\(result))\n",
+            stderr
+        )
+        exit(1)
+    }
+} else if let captureIndex = CommandLine.arguments.firstIndex(of: "--capture"),
+          CommandLine.arguments.indices.contains(captureIndex + 1) {
+    let app = NSApplication.shared
+    let outputURL = URL(
+        fileURLWithPath: CommandLine.arguments[captureIndex + 1],
+        relativeTo: URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
+    ).standardizedFileURL
+    let delegate = HeadlessCaptureDelegate(outputURL: outputURL)
+    app.delegate = delegate
+    app.setActivationPolicy(.regular)
+    withExtendedLifetime(delegate) {
+        app.run()
+    }
 } else {
     let app = NSApplication.shared
     let delegate = AppDelegate()

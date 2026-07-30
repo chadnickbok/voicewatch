@@ -1,0 +1,1337 @@
+{
+  "androidx_commit": "f65727cc5cc63d05724c0edb55900bc8790b14e8",
+  "artifact": "androidx.wear.compose:compose-material3:1.6.2",
+  "color_roles": [
+    {
+      "name": "background",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 22
+      },
+      "palette_token": "Neutral0",
+      "rgb888": [
+        0,
+        0,
+        0
+      ],
+      "upstream_name": "Background"
+    },
+    {
+      "name": "error",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 23
+      },
+      "palette_token": "Error80",
+      "rgb888": [
+        242,
+        184,
+        181
+      ],
+      "upstream_name": "Error"
+    },
+    {
+      "name": "error_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 24
+      },
+      "palette_token": "Error30",
+      "rgb888": [
+        140,
+        29,
+        24
+      ],
+      "upstream_name": "ErrorContainer"
+    },
+    {
+      "name": "error_dim",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 25
+      },
+      "palette_token": "Error70",
+      "rgb888": [
+        236,
+        146,
+        142
+      ],
+      "upstream_name": "ErrorDim"
+    },
+    {
+      "name": "on_background",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 26
+      },
+      "palette_token": "Neutral100",
+      "rgb888": [
+        255,
+        255,
+        255
+      ],
+      "upstream_name": "OnBackground"
+    },
+    {
+      "name": "on_error",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 27
+      },
+      "palette_token": "Error10",
+      "rgb888": [
+        65,
+        14,
+        11
+      ],
+      "upstream_name": "OnError"
+    },
+    {
+      "name": "on_error_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 28
+      },
+      "palette_token": "Error95",
+      "rgb888": [
+        252,
+        238,
+        238
+      ],
+      "upstream_name": "OnErrorContainer"
+    },
+    {
+      "name": "on_primary",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 29
+      },
+      "palette_token": "Primary10",
+      "rgb888": [
+        33,
+        15,
+        72
+      ],
+      "upstream_name": "OnPrimary"
+    },
+    {
+      "name": "on_primary_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 30
+      },
+      "palette_token": "Primary95",
+      "rgb888": [
+        246,
+        237,
+        255
+      ],
+      "upstream_name": "OnPrimaryContainer"
+    },
+    {
+      "name": "on_secondary",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 31
+      },
+      "palette_token": "Secondary10",
+      "rgb888": [
+        12,
+        22,
+        73
+      ],
+      "upstream_name": "OnSecondary"
+    },
+    {
+      "name": "on_secondary_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 32
+      },
+      "palette_token": "Secondary95",
+      "rgb888": [
+        240,
+        239,
+        255
+      ],
+      "upstream_name": "OnSecondaryContainer"
+    },
+    {
+      "name": "on_surface",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 33
+      },
+      "palette_token": "Neutral95",
+      "rgb888": [
+        246,
+        237,
+        255
+      ],
+      "upstream_name": "OnSurface"
+    },
+    {
+      "name": "on_surface_variant",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 34
+      },
+      "palette_token": "NeutralVariant80",
+      "rgb888": [
+        202,
+        196,
+        208
+      ],
+      "upstream_name": "OnSurfaceVariant"
+    },
+    {
+      "name": "on_tertiary",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 35
+      },
+      "palette_token": "Tertiary10",
+      "rgb888": [
+        46,
+        21,
+        0
+      ],
+      "upstream_name": "OnTertiary"
+    },
+    {
+      "name": "on_tertiary_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 36
+      },
+      "palette_token": "Tertiary95",
+      "rgb888": [
+        255,
+        238,
+        226
+      ],
+      "upstream_name": "OnTertiaryContainer"
+    },
+    {
+      "name": "outline",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 37
+      },
+      "palette_token": "NeutralVariant60",
+      "rgb888": [
+        148,
+        143,
+        154
+      ],
+      "upstream_name": "Outline"
+    },
+    {
+      "name": "outline_variant",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 38
+      },
+      "palette_token": "NeutralVariant40",
+      "rgb888": [
+        97,
+        93,
+        103
+      ],
+      "upstream_name": "OutlineVariant"
+    },
+    {
+      "name": "primary",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 39
+      },
+      "palette_token": "Primary90",
+      "rgb888": [
+        233,
+        221,
+        255
+      ],
+      "upstream_name": "Primary"
+    },
+    {
+      "name": "primary_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 40
+      },
+      "palette_token": "Primary30",
+      "rgb888": [
+        77,
+        61,
+        118
+      ],
+      "upstream_name": "PrimaryContainer"
+    },
+    {
+      "name": "primary_dim",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 41
+      },
+      "palette_token": "Primary80",
+      "rgb888": [
+        208,
+        188,
+        255
+      ],
+      "upstream_name": "PrimaryDim"
+    },
+    {
+      "name": "secondary",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 42
+      },
+      "palette_token": "Secondary90",
+      "rgb888": [
+        222,
+        224,
+        255
+      ],
+      "upstream_name": "Secondary"
+    },
+    {
+      "name": "secondary_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 43
+      },
+      "palette_token": "Secondary30",
+      "rgb888": [
+        58,
+        67,
+        118
+      ],
+      "upstream_name": "SecondaryContainer"
+    },
+    {
+      "name": "secondary_dim",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 44
+      },
+      "palette_token": "Secondary80",
+      "rgb888": [
+        186,
+        195,
+        255
+      ],
+      "upstream_name": "SecondaryDim"
+    },
+    {
+      "name": "surface_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 45
+      },
+      "palette_token": "Neutral20",
+      "rgb888": [
+        51,
+        46,
+        60
+      ],
+      "upstream_name": "SurfaceContainer"
+    },
+    {
+      "name": "surface_container_high",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 46
+      },
+      "palette_token": "Neutral30",
+      "rgb888": [
+        73,
+        68,
+        83
+      ],
+      "upstream_name": "SurfaceContainerHigh"
+    },
+    {
+      "name": "surface_container_low",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 47
+      },
+      "palette_token": "Neutral15",
+      "rgb888": [
+        39,
+        36,
+        48
+      ],
+      "upstream_name": "SurfaceContainerLow"
+    },
+    {
+      "name": "tertiary",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 48
+      },
+      "palette_token": "Tertiary90",
+      "rgb888": [
+        255,
+        220,
+        194
+      ],
+      "upstream_name": "Tertiary"
+    },
+    {
+      "name": "tertiary_container",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 49
+      },
+      "palette_token": "Tertiary30",
+      "rgb888": [
+        108,
+        58,
+        3
+      ],
+      "upstream_name": "TertiaryContainer"
+    },
+    {
+      "name": "tertiary_dim",
+      "origin": {
+        "file": "ColorTokens.kt",
+        "line": 50
+      },
+      "palette_token": "Tertiary80",
+      "rgb888": [
+        255,
+        183,
+        122
+      ],
+      "upstream_name": "TertiaryDim"
+    }
+  ],
+  "motion": {
+    "durations": [
+      {
+        "milliseconds": 700,
+        "name": "extra_long1",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 30
+        },
+        "upstream_name": "DurationExtraLong1"
+      },
+      {
+        "milliseconds": 800,
+        "name": "extra_long2",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 31
+        },
+        "upstream_name": "DurationExtraLong2"
+      },
+      {
+        "milliseconds": 900,
+        "name": "extra_long3",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 32
+        },
+        "upstream_name": "DurationExtraLong3"
+      },
+      {
+        "milliseconds": 1000,
+        "name": "extra_long4",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 33
+        },
+        "upstream_name": "DurationExtraLong4"
+      },
+      {
+        "milliseconds": 450,
+        "name": "long1",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 34
+        },
+        "upstream_name": "DurationLong1"
+      },
+      {
+        "milliseconds": 500,
+        "name": "long2",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 35
+        },
+        "upstream_name": "DurationLong2"
+      },
+      {
+        "milliseconds": 550,
+        "name": "long3",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 36
+        },
+        "upstream_name": "DurationLong3"
+      },
+      {
+        "milliseconds": 600,
+        "name": "long4",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 37
+        },
+        "upstream_name": "DurationLong4"
+      },
+      {
+        "milliseconds": 250,
+        "name": "medium1",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 38
+        },
+        "upstream_name": "DurationMedium1"
+      },
+      {
+        "milliseconds": 300,
+        "name": "medium2",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 39
+        },
+        "upstream_name": "DurationMedium2"
+      },
+      {
+        "milliseconds": 350,
+        "name": "medium3",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 40
+        },
+        "upstream_name": "DurationMedium3"
+      },
+      {
+        "milliseconds": 400,
+        "name": "medium4",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 41
+        },
+        "upstream_name": "DurationMedium4"
+      },
+      {
+        "milliseconds": 50,
+        "name": "short1",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 42
+        },
+        "upstream_name": "DurationShort1"
+      },
+      {
+        "milliseconds": 100,
+        "name": "short2",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 43
+        },
+        "upstream_name": "DurationShort2"
+      },
+      {
+        "milliseconds": 150,
+        "name": "short3",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 44
+        },
+        "upstream_name": "DurationShort3"
+      },
+      {
+        "milliseconds": 200,
+        "name": "short4",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 45
+        },
+        "upstream_name": "DurationShort4"
+      }
+    ],
+    "easings": [
+      {
+        "control_points": [
+          0.3,
+          0.0,
+          0.8,
+          0.15
+        ],
+        "kind": "cubic_bezier",
+        "name": "emphasized_accelerate",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 46
+        },
+        "upstream_name": "EasingEmphasizedAccelerate"
+      },
+      {
+        "control_points": [
+          0.05,
+          0.7,
+          0.1,
+          1.0
+        ],
+        "kind": "cubic_bezier",
+        "name": "emphasized_decelerate",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 47
+        },
+        "upstream_name": "EasingEmphasizedDecelerate"
+      },
+      {
+        "kind": "path",
+        "name": "emphasized_standard",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 48
+        },
+        "path": "M 0,0 C 0.05, 0, 0.133333, 0.06, 0.166666, 0.4 C 0.208333, 0.82, 0.25, 1, 1, 1",
+        "upstream_name": "EasingEmphasizedStandard"
+      },
+      {
+        "control_points": [
+          0.4,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "kind": "cubic_bezier",
+        "name": "legacy_accelerate",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 56
+        },
+        "upstream_name": "EasingLegacyAccelerate"
+      },
+      {
+        "control_points": [
+          0.0,
+          0.0,
+          0.2,
+          1.0
+        ],
+        "kind": "cubic_bezier",
+        "name": "legacy_decelerate",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 57
+        },
+        "upstream_name": "EasingLegacyDecelerate"
+      },
+      {
+        "control_points": [
+          0.4,
+          0.0,
+          0.2,
+          1.0
+        ],
+        "kind": "cubic_bezier",
+        "name": "legacy_standard",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 58
+        },
+        "upstream_name": "EasingLegacyStandard"
+      },
+      {
+        "control_points": [
+          0.2,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "cubic_bezier",
+        "name": "standard",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 59
+        },
+        "upstream_name": "EasingStandard"
+      },
+      {
+        "control_points": [
+          0.3,
+          0.0,
+          1.0,
+          1.0
+        ],
+        "kind": "cubic_bezier",
+        "name": "standard_accelerate",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 60
+        },
+        "upstream_name": "EasingStandardAccelerate"
+      },
+      {
+        "control_points": [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ],
+        "kind": "cubic_bezier",
+        "name": "standard_decelerate",
+        "origin": {
+          "file": "MotionTokens.kt",
+          "line": 61
+        },
+        "upstream_name": "EasingStandardDecelerate"
+      }
+    ]
+  },
+  "schema_version": 1,
+  "shape_roles": [
+    {
+      "kind": "rounded",
+      "name": "extra_large",
+      "origin": {
+        "file": "ShapeTokens.kt",
+        "line": 28
+      },
+      "radius_dp": 36.0,
+      "upstream_name": "CornerExtraLarge"
+    },
+    {
+      "kind": "rounded",
+      "name": "extra_small",
+      "origin": {
+        "file": "ShapeTokens.kt",
+        "line": 29
+      },
+      "radius_dp": 4.0,
+      "upstream_name": "CornerExtraSmall"
+    },
+    {
+      "kind": "full",
+      "name": "full",
+      "origin": {
+        "file": "ShapeTokens.kt",
+        "line": 30
+      },
+      "radius_dp": null,
+      "upstream_name": "CornerFull"
+    },
+    {
+      "kind": "rounded",
+      "name": "large",
+      "origin": {
+        "file": "ShapeTokens.kt",
+        "line": 31
+      },
+      "radius_dp": 26.0,
+      "upstream_name": "CornerLarge"
+    },
+    {
+      "kind": "rounded",
+      "name": "medium",
+      "origin": {
+        "file": "ShapeTokens.kt",
+        "line": 32
+      },
+      "radius_dp": 18.0,
+      "upstream_name": "CornerMedium"
+    },
+    {
+      "kind": "none",
+      "name": "none",
+      "origin": {
+        "file": "ShapeTokens.kt",
+        "line": 33
+      },
+      "radius_dp": 0.0,
+      "upstream_name": "CornerNone"
+    },
+    {
+      "kind": "rounded",
+      "name": "small",
+      "origin": {
+        "file": "ShapeTokens.kt",
+        "line": 34
+      },
+      "radius_dp": 8.0,
+      "upstream_name": "CornerSmall"
+    }
+  ],
+  "sources": [
+    {
+      "file": "CardTokens.kt",
+      "git_blob": "9e6fb7ead7192c57cc45d20e6f881d9ad4c3d593",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/CardTokens.kt"
+    },
+    {
+      "file": "CheckboxButtonTokens.kt",
+      "git_blob": "72422779ec21d9572126eab4873d708f8eea8ed7",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/CheckboxButtonTokens.kt"
+    },
+    {
+      "file": "ChildButtonTokens.kt",
+      "git_blob": "89f207678827bacc40bb8e875d6e8b3865457d40",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ChildButtonTokens.kt"
+    },
+    {
+      "file": "ColorSchemeKeyTokens.kt",
+      "git_blob": "8d2d7b771ef5cb2919accad07ebfafc819491b39",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ColorSchemeKeyTokens.kt"
+    },
+    {
+      "file": "ColorTokens.kt",
+      "git_blob": "b71a19be3175b176bb73f32819f38a8c69308ec4",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ColorTokens.kt"
+    },
+    {
+      "file": "CompactButtonTokens.kt",
+      "git_blob": "0eeef8332c3f163d7e2464ff456b436c77c60925",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/CompactButtonTokens.kt"
+    },
+    {
+      "file": "DatePickerTokens.kt",
+      "git_blob": "708a966b133c9ef3af6124785e5566740ffff1f3",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/DatePickerTokens.kt"
+    },
+    {
+      "file": "FilledButtonTokens.kt",
+      "git_blob": "f7e31cce0dee0ecadccaa160603542ef4e92fa98",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/FilledButtonTokens.kt"
+    },
+    {
+      "file": "FilledIconButtonTokens.kt",
+      "git_blob": "a786e2925030f36e4c26ea5026037a28c6cbb60c",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/FilledIconButtonTokens.kt"
+    },
+    {
+      "file": "FilledTextButtonTokens.kt",
+      "git_blob": "2279987ebcf233d93e65cf769127fc984c699286",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/FilledTextButtonTokens.kt"
+    },
+    {
+      "file": "FilledTonalButtonTokens.kt",
+      "git_blob": "ca9db6322fcf07b478b3f246ace18e182e5d5066",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/FilledTonalButtonTokens.kt"
+    },
+    {
+      "file": "FilledTonalIconButtonTokens.kt",
+      "git_blob": "b63144372c560ae576c3d5ece30d03128ce9fc56",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/FilledTonalIconButtonTokens.kt"
+    },
+    {
+      "file": "FilledTonalTextButtonTokens.kt",
+      "git_blob": "fe44c99a3e57dee9aaca2ab8ff135810c6b6e6d4",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/FilledTonalTextButtonTokens.kt"
+    },
+    {
+      "file": "IconButtonTokens.kt",
+      "git_blob": "97f2a8ddf8ff78a06d84d964448b0732471ea69f",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/IconButtonTokens.kt"
+    },
+    {
+      "file": "IconToggleButtonTokens.kt",
+      "git_blob": "71040561272a5e6cd972ec1337f315de393f8e83",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/IconToggleButtonTokens.kt"
+    },
+    {
+      "file": "ImageButtonTokens.kt",
+      "git_blob": "5bfdf2e41e6c8db26048e146edb43f63e3473cee",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ImageButtonTokens.kt"
+    },
+    {
+      "file": "ImageCardTokens.kt",
+      "git_blob": "31cc500639862ff9e50bf8bbde6b58d9c478d7f4",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ImageCardTokens.kt"
+    },
+    {
+      "file": "ListHeaderTokens.kt",
+      "git_blob": "df3bd7c98dec7a5f1ab8bd8091afbfae33319f95",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ListHeaderTokens.kt"
+    },
+    {
+      "file": "ListSubHeaderTokens.kt",
+      "git_blob": "f2c2ba6f6e994ff8459243c3d6e9dc73b79e1568",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ListSubHeaderTokens.kt"
+    },
+    {
+      "file": "MotionTokens.kt",
+      "git_blob": "a2e37ff6a74222afb976ab29b30152ac446623dc",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/MotionTokens.kt"
+    },
+    {
+      "file": "OutlinedButtonTokens.kt",
+      "git_blob": "150ed569da9577c71bb5a01f9808611efb436bf5",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/OutlinedButtonTokens.kt"
+    },
+    {
+      "file": "OutlinedCardTokens.kt",
+      "git_blob": "7129bd23465cb1faeff5b54fe613392793976d8f",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/OutlinedCardTokens.kt"
+    },
+    {
+      "file": "OutlinedIconButtonTokens.kt",
+      "git_blob": "b72d68c247335d1e6f03aff3de6fb3df8c2d220f",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/OutlinedIconButtonTokens.kt"
+    },
+    {
+      "file": "OutlinedTextButtonTokens.kt",
+      "git_blob": "e63aa6ce9e2a5551a05c7095d79283b9cfd1dff3",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/OutlinedTextButtonTokens.kt"
+    },
+    {
+      "file": "PaletteTokens.kt",
+      "git_blob": "00e2ee42b16e9eb30287f963306630f1fd1ea48f",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/PaletteTokens.kt"
+    },
+    {
+      "file": "RadioButtonTokens.kt",
+      "git_blob": "5d021cb3e0a53a226663d29ecc8120d1af46ba0c",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/RadioButtonTokens.kt"
+    },
+    {
+      "file": "ShapeKeyTokens.kt",
+      "git_blob": "f4736c7c7e1ffbd11e7107bfec8b02818efb7f95",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ShapeKeyTokens.kt"
+    },
+    {
+      "file": "ShapeTokens.kt",
+      "git_blob": "56de250b0ddec52ff7649cb98293c4aaec06a980",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/ShapeTokens.kt"
+    },
+    {
+      "file": "SliderTokens.kt",
+      "git_blob": "454ef3dccb692368b6e98ad2e563b5a7c5fdaadb",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/SliderTokens.kt"
+    },
+    {
+      "file": "SplitCheckboxButtonTokens.kt",
+      "git_blob": "5266b867237af1eb3255e9d6fb2d5f2af1e17b9c",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/SplitCheckboxButtonTokens.kt"
+    },
+    {
+      "file": "SplitRadioButtonTokens.kt",
+      "git_blob": "15f0fb83ae1ca523b749c1835ca8f920046dcb01",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/SplitRadioButtonTokens.kt"
+    },
+    {
+      "file": "SplitSwitchButtonTokens.kt",
+      "git_blob": "8d2f206b89ae2cf5d8808a047521f32c111cdc23",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/SplitSwitchButtonTokens.kt"
+    },
+    {
+      "file": "SwipeToRevealTokens.kt",
+      "git_blob": "f5419d2ae2c019ef64a3c788f429185408169878",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/SwipeToRevealTokens.kt"
+    },
+    {
+      "file": "SwitchButtonTokens.kt",
+      "git_blob": "03744dea15a4efb456257061cee3601dfde2a02d",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/SwitchButtonTokens.kt"
+    },
+    {
+      "file": "TextButtonTokens.kt",
+      "git_blob": "2fe783f95115081894c9388c1707e80633ef81cc",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TextButtonTokens.kt"
+    },
+    {
+      "file": "TextToggleButtonTokens.kt",
+      "git_blob": "e322ac72aef19b77f502fccd16e01486b671b3fe",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TextToggleButtonTokens.kt"
+    },
+    {
+      "file": "TimePickerTokens.kt",
+      "git_blob": "352dc79f1c09985d0bc6314f34bf08651eda0b43",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TimePickerTokens.kt"
+    },
+    {
+      "file": "TypeScaleTokens.kt",
+      "git_blob": "4d5df61690bd251e418b2f561b97be2f54a5940d",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TypeScaleTokens.kt"
+    },
+    {
+      "file": "TypefaceTokens.kt",
+      "git_blob": "7178603ec1a1b9df96f5769a337bf8829e322a7a",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TypefaceTokens.kt"
+    },
+    {
+      "file": "TypographyKeyTokens.kt",
+      "git_blob": "a96abda1c40f4770883bde5fb566bf1e920523d1",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TypographyKeyTokens.kt"
+    },
+    {
+      "file": "TypographyTokens.kt",
+      "git_blob": "628d5dc218e55e89f93b54e249572a3c4ea774a8",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TypographyTokens.kt"
+    },
+    {
+      "file": "TypographyVariableFontsTokens.kt",
+      "git_blob": "ade6ac2794c8aa85d4428ab9bd5733617dd09937",
+      "url": "https://android.googlesource.com/platform/frameworks/support/+/f65727cc5cc63d05724c0edb55900bc8790b14e8/wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens/TypographyVariableFontsTokens.kt"
+    }
+  ],
+  "token_path": "wear/compose/compose-material3/src/main/java/androidx/wear/compose/material3/tokens",
+  "typography_roles": [
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 12.0,
+      "name": "body_extra_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 47
+      },
+      "prominent_weight": 700.0,
+      "size_sp": 10.0,
+      "tracking_bottom_sp": 0.2,
+      "tracking_top_sp": 0.2,
+      "upstream_name": "BodyExtraSmall",
+      "weight": 500.0,
+      "width": 104.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 18.0,
+      "name": "body_large",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 54
+      },
+      "prominent_weight": 650.0,
+      "size_sp": 16.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "BodyLarge",
+      "weight": 450.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 16.0,
+      "name": "body_medium",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 61
+      },
+      "prominent_weight": 650.0,
+      "size_sp": 14.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "BodyMedium",
+      "weight": 450.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 14.0,
+      "name": "body_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 68
+      },
+      "prominent_weight": 700.0,
+      "size_sp": 12.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "BodySmall",
+      "weight": 500.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 44.0,
+      "name": "display_large",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 75
+      },
+      "prominent_weight": null,
+      "size_sp": 40.0,
+      "tracking_bottom_sp": 0.2,
+      "tracking_top_sp": 0.2,
+      "upstream_name": "DisplayLarge",
+      "weight": 500.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 34.0,
+      "name": "display_medium",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 81
+      },
+      "prominent_weight": null,
+      "size_sp": 30.0,
+      "tracking_bottom_sp": 0.2,
+      "tracking_top_sp": 0.2,
+      "upstream_name": "DisplayMedium",
+      "weight": 520.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 26.0,
+      "name": "display_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 87
+      },
+      "prominent_weight": null,
+      "size_sp": 24.0,
+      "tracking_bottom_sp": 0.2,
+      "tracking_top_sp": 0.2,
+      "upstream_name": "DisplaySmall",
+      "weight": 550.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 22.0,
+      "name": "label_large",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 93
+      },
+      "prominent_weight": null,
+      "size_sp": 20.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "LabelLarge",
+      "weight": 500.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 18.0,
+      "name": "label_medium",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 99
+      },
+      "prominent_weight": null,
+      "size_sp": 15.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "LabelMedium",
+      "weight": 500.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 16.0,
+      "name": "label_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 105
+      },
+      "prominent_weight": null,
+      "size_sp": 13.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "LabelSmall",
+      "weight": 500.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 60.0,
+      "name": "numeral_extra_large",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 111
+      },
+      "prominent_weight": 760.0,
+      "size_sp": 60.0,
+      "tracking_bottom_sp": 0.0,
+      "tracking_top_sp": 0.0,
+      "upstream_name": "NumeralExtraLarge",
+      "weight": 560.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 24.0,
+      "name": "numeral_extra_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 118
+      },
+      "prominent_weight": 750.0,
+      "size_sp": 24.0,
+      "tracking_bottom_sp": 0.0,
+      "tracking_top_sp": 0.0,
+      "upstream_name": "NumeralExtraSmall",
+      "weight": 550.0,
+      "width": 100.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 50.0,
+      "name": "numeral_large",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 125
+      },
+      "prominent_weight": 780.0,
+      "size_sp": 50.0,
+      "tracking_bottom_sp": 0.0,
+      "tracking_top_sp": 0.0,
+      "upstream_name": "NumeralLarge",
+      "weight": 580.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 40.0,
+      "name": "numeral_medium",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 132
+      },
+      "prominent_weight": 780.0,
+      "size_sp": 40.0,
+      "tracking_bottom_sp": 0.0,
+      "tracking_top_sp": 0.0,
+      "upstream_name": "NumeralMedium",
+      "weight": 580.0,
+      "width": 100.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 30.0,
+      "name": "numeral_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 139
+      },
+      "prominent_weight": 750.0,
+      "size_sp": 30.0,
+      "tracking_bottom_sp": 0.0,
+      "tracking_top_sp": 0.0,
+      "upstream_name": "NumeralSmall",
+      "weight": 550.0,
+      "width": 100.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 20.0,
+      "name": "title_large",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 146
+      },
+      "prominent_weight": null,
+      "size_sp": 18.0,
+      "tracking_bottom_sp": 0.2,
+      "tracking_top_sp": 0.2,
+      "upstream_name": "TitleLarge",
+      "weight": 500.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 18.0,
+      "name": "title_medium",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 152
+      },
+      "prominent_weight": null,
+      "size_sp": 16.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "TitleMedium",
+      "weight": 550.0,
+      "width": 110.0
+    },
+    {
+      "arc": false,
+      "font": "Brand",
+      "line_height_sp": 16.0,
+      "name": "title_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 158
+      },
+      "prominent_weight": null,
+      "size_sp": 14.0,
+      "tracking_bottom_sp": 0.4,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "TitleSmall",
+      "weight": 550.0,
+      "width": 110.0
+    },
+    {
+      "arc": true,
+      "font": "Brand",
+      "line_height_sp": 22.0,
+      "name": "arc_large",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 26
+      },
+      "prominent_weight": null,
+      "size_sp": 18.0,
+      "tracking_bottom_sp": 1.6,
+      "tracking_top_sp": 0.4,
+      "upstream_name": "ArcLarge",
+      "weight": 599.0,
+      "width": 100.0
+    },
+    {
+      "arc": true,
+      "font": "Brand",
+      "line_height_sp": 18.0,
+      "name": "arc_medium",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 33
+      },
+      "prominent_weight": null,
+      "size_sp": 15.0,
+      "tracking_bottom_sp": 1.4,
+      "tracking_top_sp": 0.6,
+      "upstream_name": "ArcMedium",
+      "weight": 599.0,
+      "width": 100.0
+    },
+    {
+      "arc": true,
+      "font": "Brand",
+      "line_height_sp": 16.0,
+      "name": "arc_small",
+      "origin": {
+        "file": "TypeScaleTokens.kt",
+        "line": 40
+      },
+      "prominent_weight": null,
+      "size_sp": 14.0,
+      "tracking_bottom_sp": 1.4,
+      "tracking_top_sp": 0.6,
+      "upstream_name": "ArcSmall",
+      "weight": 560.0,
+      "width": 100.0
+    }
+  ]
+}

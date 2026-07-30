@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "host_abi": 1,
+  "entrypoint": {
+    "export": "app_start",
+    "params": [],
+    "results": []
+  },
+  "event_handler": {
+    "export": "handle_event",
+    "params": [
+      "i32",
+      "i32"
+    ],
+    "results": [
+      "i64"
+    ],
+    "encoding": "canonical-cbor",
+    "schema": "command-batch-v1",
+    "maximum_event_bytes": 512,
+    "maximum_result_bytes": 4096,
+    "result_ownership": "borrowed-guest-slice-packed-pointer-high-length-low"
+  },
+  "wasm_profile": {
+    "wasi": false,
+    "maximum_module_bytes": 262144,
+    "initial_memory_pages": 1,
+    "maximum_memory_pages": 2
+  },
+  "capabilities": {
+    "ui.mount": {
+      "import_module": "doodad",
+      "import_name": "ui_mount",
+      "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ],
+      "encoding": "canonical-cbor",
+      "schema": "appspec-v1",
+      "minimum_bytes": 1,
+      "maximum_bytes": 4096
+    }
+  }
+}

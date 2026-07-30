@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "active_set",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "active_set.heading",
+          "type": "text",
+          "props": {
+            "text": "Squat / Set 3 of 5",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "active_set.weight",
+          "type": "stepper",
+          "props": {
+            "label": "Weight",
+            "value": 135,
+            "unit": "lb",
+            "minimum": 45,
+            "maximum": 500,
+            "step": 5
+          },
+          "events": {
+            "valueCommitted": "set_weight"
+          },
+          "semantics": {
+            "label": "Current set weight",
+            "value": "135 pounds"
+          }
+        },
+        {
+          "id": "active_set.summary",
+          "type": "live_card",
+          "props": {
+            "title": "8 reps",
+            "body": "Rest timer 0:38",
+            "progress": 0.63,
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "active_set.complete",
+          "type": "button",
+          "props": {
+            "label": "Complete set",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "complete_set"
+          },
+          "semantics": {
+            "label": "Complete current set"
+          }
+        }
+      ]
+    }
+  }
+}

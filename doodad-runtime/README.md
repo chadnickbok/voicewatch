@@ -1,22 +1,47 @@
 # Doodad Runtime
 
-This project implements the first two vertical slices of the Doodad watch
+This project implements the first three vertical slices of the Doodad watch
 runtime on an M5Stack CoreS3 SE:
 
 1. A trusted ESP-IDF shell embeds and runs a Rust WebAssembly guest.
 2. The same guest can be loaded from microSD, with the embedded image retained
    as the recovery fallback.
+3. A package-first desktop simulator builds the guest, validates its manifest
+   and ABI, runs it in WAMR, and renders declarative UI through LVGL.
+
+It now also contains a substantial Material 3 Expressive framework slice:
+
+- a reproducible Wear Material 3 1.6.2 token extraction pipeline;
+- RGB888 and quantized RGB565 themes with a shared live style registry;
+- fixed-point 192dp display profiles;
+- native LVGL action, card, list, selection, progress, picker, pager,
+  navigation, dialog, voice, and system-status component families;
+- an eight-object virtualized transforming list with keyed anchor preservation;
+- semantic state, motion, haptic, and accessibility foundations;
+- a bounded native keyed reconciler with atomic patch validation;
+- semantic AppSpec v1 plus calories, calculator, workout, and voice fixtures;
+- deterministic 240×240 RGB565 catalog goldens;
+- an instrumented CoreS3 asynchronous-DMA display path.
 
 The guest exports `app_start` and imports one capability:
-`doodad.display_text(i32 pointer, i32 length)`. The host bounds-checks the
-length, validates the guest address and UTF-8, copies the bytes into native
-memory, and only then renders them.
+`doodad.ui_mount(i32 pointer, i32 length) -> i32`. Its payload is canonical
+CBOR AppSpec v1—not text or an LVGL tree. The host bounds-checks guest memory,
+decodes into fixed-capacity native storage, validates canonical encoding,
+UTF-8, IDs, semantics, tree shape, and resource quotas, and only then queues
+the document to the UI task.
+
+Interactive guests also export
+`handle_event(i32 pointer, i32 length) -> i64`. The result is a borrowed,
+packed pointer/length for a canonical CommandBatch. The host copies at most
+4096 bytes, rejects mixed UI/state batches, validates the entire batch before
+commit, and patches mounted LVGL components in place.
 
 ## Pinned versions
 
 - ESP-IDF 5.5.5
 - M5Unified 0.2.19
 - M5GFX 0.2.26 (resolved by M5Unified)
+- LVGL 9.5.0
 - Espressif wasm-micro-runtime 2.4.0 revision 1
 - Rust 1.95.0
 - Rust target `wasm32-unknown-unknown`
@@ -26,6 +51,62 @@ memory page, and a two-page maximum. The build inspector enforces those limits.
 
 ESP-IDF managed-component checksums are recorded in
 `firmware/dependencies.lock` after the first successful configure.
+
+## Develop an app
+
+From `doodad-runtime`, check the local toolchain and start the simulator:
+
+```bash
+./doodad doctor
+./doodad dev apps/hello
+```
+
+`doodad dev` opens a browser preview, watches the app, SDK, and contracts, and
+rebuilds on change. Each successful reload creates a fresh resident WAMR
+instance and renders the package with LVGL. A failed reload reports the
+contract, build, or runtime error while preserving the last good frame.
+
+The simulated app surface is always exactly 240×240. The CoreS3's physical
+320×240 screen displays that same square surface centered between two
+host-owned 40-pixel background gutters. Apps never receive a widescreen layout.
+
+Other package commands are:
+
+```bash
+./doodad build apps/hello
+./doodad check apps/hello
+./doodad test apps/hello
+./doodad inspect target/doodad/dev.doodad.hello/app.wasm
+```
+
+Material catalog and semantic AppSpec commands are:
+
+```bash
+./doodad catalog --story components --output target/catalog/components.bmp
+./doodad catalog --story calories --output target/catalog/calories.bmp
+./doodad catalog --story calculator --output target/catalog/calculator.bmp
+./doodad catalog --story workout --output target/catalog/workout.bmp
+./doodad catalog --story navigation --output target/catalog/navigation.bmp
+./doodad catalog --story system --output target/catalog/system.bmp
+./doodad catalog --story transforming-list --output target/catalog/transforming-list.bmp
+./doodad catalog --story expressive-depth --output target/catalog/expressive-depth.bmp
+./doodad catalog --story mockup-hydration --output target/mockups/hydration.bmp
+./doodad catalog --story mockup-focus --output target/mockups/focus.bmp
+./doodad catalog --story mockup-travel --output target/mockups/travel.bmp
+./doodad catalog --story mockup-music --output target/mockups/music.bmp
+./doodad appspec apps/calories/appspec.json --validate-only
+./doodad appspec apps/calories/appspec.json --output target/appspec/calories.bmp
+python3 tools/token_sync/sync.py --check
+```
+
+AppSpec intentionally exposes semantic components, tones, sizes, spacing, and
+events. It has no raw colors, radii, coordinates, LVGL names, animation
+curves, or generic style object. See [docs/appspec-v1.md](docs/appspec-v1.md).
+
+The staged package is written to `target/doodad/<app-id>/`. `check` executes
+`app_start` in the native WAMR host; `test` additionally verifies that LVGL
+produced a non-empty 240×240 frame. See
+[docs/simulator.md](docs/simulator.md) for the package and UI contracts.
 
 ## Apple Silicon setup
 
@@ -57,8 +138,9 @@ Build and inspect the guest:
 ```
 
 This creates the release Wasm module, verifies that its only import is
-`doodad.display_text`, verifies its `app_start` and `memory` exports, and copies
-the resulting bytes to `firmware/main/embedded/hello.wasm`.
+`doodad.ui_mount`, verifies the `app_start() -> ()` and
+`handle_event(i32, i32) -> i64` signatures plus the bounded `memory` export,
+and copies the resulting bytes to `firmware/main/embedded/hello.wasm`.
 
 Build the complete ESP32-S3 firmware:
 
@@ -68,6 +150,16 @@ Build the complete ESP32-S3 firmware:
 
 The firmware build always rebuilds the guest first, so the embedded module
 cannot silently drift from the Rust source.
+
+Run the complete local verification lane:
+
+```bash
+./scripts/test-all.sh
+```
+
+It checks deterministic token generation, native C++ tests, semantic contract
+tests, all RGB565 catalog goldens, reference AppSpecs, WAMR execution, and the
+ESP-IDF firmware build.
 
 ## Flash and monitor
 
@@ -106,19 +198,17 @@ The normal successful lifecycle includes:
 [host] module loaded
 [host] module instantiated
 [host] invoking app_start
-[guest] display_text: 15 bytes
-[host] app completed successfully
+[guest] ui_mount: 151 bytes, 3 nodes
+[host] app started; instance remains resident
+[host] delivered action=say_hello node=hello.action commands=2
 [host] steady state; free heap: ... bytes
 ```
 
-With no prepared card, the screen source label is `EMBEDDED`. It should show:
+With no prepared card, the embedded semantic app should show:
 
 ```text
-DOODAD                         WASM RUNNING
-
-              Hello from Wasm
-
-HOST ABI v1                         EMBEDDED
+       40px gutter | 240×240 app surface | 40px gutter
+                            Hello world
 ```
 
 ## Run the microSD milestone
@@ -182,13 +272,20 @@ also the runtime recovery path when a microSD application fails.
 
 ```text
 doodad-runtime/
-├── apps/hello/                  Rust guest
+├── apps/                        Wasm hello app and semantic reference specs
+├── components/m3e_lvgl/        Material tokens, runtime, and LVGL components
+├── contracts/                   Versioned package, UI, and ABI contracts
 ├── sdk/rust/doodad-sdk/         Guest-side ABI wrapper
 ├── firmware/                    ESP-IDF shell
 │   └── main/
 │       ├── embedded/hello.wasm  Generated embedded guest
 │       ├── include/
 │       └── src/
+├── tools/native-host/           Desktop WAMR + headless LVGL host
+├── tools/doodad_cli/            Package and simulator CLI
+├── tools/token_sync/            Pinned upstream token extraction/generation
+├── ui/                          LVGL shell shared by desktop and firmware
+├── doodad                       Development command
 ├── scripts/                     Build, flash, inspect, and SD install tools
 └── docs/architecture.md
 ```

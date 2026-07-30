@@ -30,3 +30,10 @@ UI:
 ```sh
 swift run CleanCam --probe
 ```
+
+For an unattended capture, or to recover a wedged external UVC stream:
+
+```sh
+.build/CleanCam.app/Contents/MacOS/CleanCam --capture /tmp/cores3.png
+.build/CleanCam.app/Contents/MacOS/CleanCam --reset-camera
+```

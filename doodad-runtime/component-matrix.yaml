@@ -1,0 +1,67 @@
+schema_version: 1
+reference:
+  artifact: "androidx.wear.compose:compose-material3:1.6.2"
+  commit: "f65727cc5cc63d05724c0edb55900bc8790b14e8"
+components:
+  - {id: material_theme, tier: P0, target: exact, status: foundation_implemented}
+  - {id: text, tier: P0, target: exact, status: semantic_role_prototype}
+  - {id: animated_text, tier: P0, target: equivalent, status: paired_label_prototype}
+  - {id: icon, tier: P0, target: exact, status: bounded_symbol_subset_prototype}
+  - {id: app_scaffold, tier: P0, target: equivalent, status: square_prototype}
+  - {id: screen_scaffold, tier: P0, target: equivalent, status: square_prototype}
+  - {id: time_text, tier: P0, target: equivalent, status: prototype}
+  - {id: button, tier: P0, target: exact, status: prototype}
+  - {id: compact_button, tier: P0, target: exact, status: prototype}
+  - {id: icon_button, tier: P0, target: exact, status: prototype}
+  - {id: icon_toggle_button, tier: P0, target: exact, status: prototype}
+  - {id: text_button, tier: P0, target: exact, status: prototype}
+  - {id: text_toggle_button, tier: P0, target: exact, status: prototype}
+  - {id: button_group, tier: P0, target: exact, status: retargetable_width_motion_prototype}
+  - {id: card, tier: P0, target: exact, status: prototype}
+  - {id: list_header, tier: P0, target: exact, status: prototype}
+  - {id: list_sub_header, tier: P0, target: exact, status: prototype}
+  - {id: circular_progress_indicator, tier: P0, target: exact, status: prototype}
+  - {id: segmented_circular_progress_indicator, tier: P0, target: exact, status: multi_arc_prototype}
+  - {id: linear_progress_indicator, tier: P0, target: exact, status: prototype}
+  - {id: slider, tier: P0, target: exact, status: stepped_prototype}
+  - {id: stepper, tier: P0, target: exact, status: prototype}
+  - {id: checkbox_button, tier: P0, target: exact, status: prototype}
+  - {id: radio_button, tier: P0, target: exact, status: prototype}
+  - {id: switch_button, tier: P0, target: exact, status: prototype}
+  - {id: alert_dialog, tier: P0, target: equivalent, status: modal_prototype}
+  - {id: confirmation_dialog, tier: P0, target: exact, status: modal_prototype}
+  - {id: picker, tier: P0, target: equivalent, status: snapped_scroll_prototype}
+  - {id: picker_group, tier: P0, target: equivalent, status: composition_prototype}
+  - {id: date_picker, tier: P0, target: equivalent, status: bounded_composition_prototype}
+  - {id: time_picker, tier: P0, target: equivalent, status: 12_24_hour_composition_prototype}
+  - {id: horizontal_pager, tier: P0, target: equivalent, status: tileview_prototype}
+  - {id: horizontal_pager_scaffold, tier: P0, target: equivalent, status: composition_prototype}
+  - {id: horizontal_page_indicator, tier: P0, target: equivalent, status: prototype}
+  - {id: swipe_to_dismiss_box, tier: P0, target: equivalent, status: square_threshold_prototype}
+  - {id: scroll_indicator, tier: P0, target: equivalent, status: linear_square_prototype}
+  - {id: transforming_lazy_column, tier: P1, target: equivalent, status: bounded_virtualized_prototype}
+  - {id: surface_transformation, tier: P1, target: equivalent, status: native_object_transform_prototype}
+  - {id: transformed_height, tier: P1, target: exact, status: formula_implemented}
+  - {id: list_snapping, tier: P1, target: equivalent, status: keyed_anchor_preservation_prototype}
+  - {id: animated_page, tier: P1, target: equivalent, status: two_slot_transition_prototype}
+  - {id: fading_expanding_label, tier: P1, target: equivalent, status: bounded_expansion_prototype}
+  - {id: swipe_to_reveal, tier: P1, target: equivalent, status: semantic_threshold_prototype}
+  - {id: split_selection_buttons, tier: P1, target: equivalent, status: independent_affordance_prototype}
+  - {id: level_indicator, tier: P1, target: equivalent, status: linear_square_prototype}
+  - {id: vertical_pager, tier: P1, target: equivalent, status: demand_gated}
+  - {id: loading_placeholder, tier: P1, target: inspired, status: static_prototype}
+  - {id: shape_morph_states, tier: P1, target: equivalent, status: compatible_radius_prototype}
+  - {id: expressive_spring_motion, tier: P1, target: equivalent, status: foundation_implemented}
+  - {id: edge_button, tier: P2, target: deferred, status: square_fallback}
+  - {id: curved_text, tier: P2, target: deferred, status: round_milestone}
+  - {id: open_on_phone_dialog, tier: P2, target: deferred, status: no_handoff}
+  - {id: arbitrary_vector_morph, tier: P2, target: deferred, status: prohibited_v1}
+product_components:
+  - {id: voice_orb, target: inspired, status: contract_prototype, owner: system}
+  - {id: voice_overlay, target: inspired, status: composition_prototype, owner: system}
+  - {id: transcript, target: inspired, status: bounded_prototype, owner: system}
+  - {id: clarification_choice_group, target: inspired, status: bounded_three_choice_prototype, owner: system}
+  - {id: change_review, target: inspired, status: structured_prototype, owner: system}
+  - {id: build_progress, target: inspired, status: staged_prototype, owner: system}
+  - {id: permission_review, target: inspired, status: structured_prototype, owner: system}
+  - {id: live_card, target: inspired, status: native_contract_and_catalog_prototype, owner: system}

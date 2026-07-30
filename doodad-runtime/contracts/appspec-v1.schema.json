@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doodad.dev/schemas/appspec-v1.schema.json",
+  "title": "Doodad semantic AppSpec v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "app_id", "screen"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "app_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+    },
+    "screen": {"$ref": "#/$defs/node"}
+  },
+  "$defs": {
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "type", "props"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+        },
+        "type": {
+          "enum": [
+            "screen", "column", "row", "scroll", "text", "button",
+            "card", "progress", "stepper", "toggle", "keypad",
+            "voice_orb", "live_card"
+          ]
+        },
+        "visible": {
+          "oneOf": [{"type": "boolean"}, {"$ref": "#/$defs/binding"}]
+        },
+        "enabled": {
+          "oneOf": [{"type": "boolean"}, {"$ref": "#/$defs/binding"}]
+        },
+        "props": {"type": "object"},
+        "events": {
+          "type": "object",
+          "propertyNames": {
+            "enum": [
+              "tap", "longPress", "repeat", "valueChanging",
+              "valueCommitted", "checkedChanged", "pageChanged",
+              "dismissed", "submit", "retry", "cancel"
+            ]
+          },
+          "additionalProperties": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_.-]{0,63}$"
+          }
+        },
+        "semantics": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "label": {"type": "string", "minLength": 1, "maxLength": 128},
+            "value": {"type": "string", "maxLength": 128},
+            "hint": {"type": "string", "maxLength": 128}
+          }
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["bind"],
+      "properties": {
+        "bind": {
+          "type": "string",
+          "pattern": "^(screen|app|shared|system|session)\\.[a-zA-Z0-9_.-]+$"
+        },
+        "predicate": {"$ref": "#/$defs/predicate"},
+        "format": {"$ref": "#/$defs/format"}
+      }
+    },
+    "predicate": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op"],
+          "properties": {"op": {"const": "exists"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "value"],
+          "properties": {
+            "op": {
+              "enum": [
+                "equals", "not_equals", "less_than", "greater_than"
+              ]
+            },
+            "value": {
+              "type": ["boolean", "integer", "string"]
+            }
+          }
+        }
+      ]
+    },
+    "format": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {"kind": {"enum": ["raw", "duration"]}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["kind"],
+          "properties": {
+            "kind": {"const": "number"},
+            "unit": {"type": "string", "maxLength": 16}
+          }
+        }
+      ]
+    }
+  }
+}

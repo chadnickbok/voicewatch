@@ -1,0 +1,13 @@
+#!/usr/bin/env python3
+
+from __future__ import annotations
+
+import sys
+from pathlib import Path
+
+PROJECT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(PROJECT_DIR / "tools"))
+
+from doodad_cli.cli import main
+
+raise SystemExit(main())

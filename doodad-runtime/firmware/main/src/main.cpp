@@ -7,6 +7,7 @@
 #include "display.hpp"
 #include "esp_heap_caps.h"
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
@@ -14,7 +15,9 @@ namespace {
 
 constexpr char kTag[] = "doodad";
 constexpr std::size_t kRuntimeThreadStackBytes = 32 * 1024;
-constexpr TickType_t kHeartbeatInterval = pdMS_TO_TICKS(60 * 1000);
+constexpr std::uint32_t kHeartbeatIntervalMilliseconds = 60 * 1000;
+constexpr std::uint32_t kRuntimePollMilliseconds = 50;
+constexpr TickType_t kUiUpdateInterval = pdMS_TO_TICKS(2);
 
 void* runtime_thread(void*) {
     if (!app_runtime_init()) {
@@ -24,6 +27,7 @@ void* runtime_thread(void*) {
     std::vector<std::uint8_t> sd_storage;
     AppImage selected{};
     bool running = false;
+    bool running_embedded = false;
 
     if (load_microsd_app(sd_storage, selected)) {
         running = run_app(selected);
@@ -36,6 +40,7 @@ void* runtime_thread(void*) {
 
     if (!running) {
         running = run_app(embedded_app_image());
+        running_embedded = running;
     }
 
     if (!running) {
@@ -43,12 +48,45 @@ void* runtime_thread(void*) {
         return nullptr;
     }
 
+    // The embedded development fixture exercises the complete actor path on
+    // every flashed build. Desktop `doodad test hello` supplies the event via
+    // LVGL; hardware boot injects the same semantic envelope so unattended
+    // serial validation also proves host→WAMR→in-place CommandBatch behavior.
+    if (running_embedded) {
+        const m3e::appspec::UiEvent reference_event{
+            1,
+            "hello",
+            "hello.screen",
+            "hello.action",
+            "say_hello",
+            m3e::appspec::EventKind::tap,
+            static_cast<std::uint64_t>(esp_timer_get_time() / 1000),
+        };
+        if (app_post_ui_event(reference_event)) {
+            app_runtime_update(0);
+        } else {
+            ESP_LOGE(
+                kTag,
+                "[host] reference semantic event injection failed");
+        }
+    }
+
     ESP_LOGI(kTag, "[host] steady state; free heap: %u bytes",
              static_cast<unsigned>(heap_caps_get_free_size(MALLOC_CAP_8BIT)));
+    std::uint32_t milliseconds_until_heartbeat =
+        kHeartbeatIntervalMilliseconds;
     while (true) {
-        vTaskDelay(kHeartbeatInterval);
-        ESP_LOGI(kTag, "[host] uptime heartbeat; free heap: %u bytes",
-                 static_cast<unsigned>(heap_caps_get_free_size(MALLOC_CAP_8BIT)));
+        app_runtime_update(kRuntimePollMilliseconds);
+        if (milliseconds_until_heartbeat > kRuntimePollMilliseconds) {
+            milliseconds_until_heartbeat -= kRuntimePollMilliseconds;
+        } else {
+            ESP_LOGI(
+                kTag,
+                "[host] uptime heartbeat; free heap: %u bytes",
+                static_cast<unsigned>(
+                    heap_caps_get_free_size(MALLOC_CAP_8BIT)));
+            milliseconds_until_heartbeat = kHeartbeatIntervalMilliseconds;
+        }
     }
 }
 
@@ -85,6 +123,8 @@ extern "C" void app_main() {
     }
 
     ESP_LOGI(kTag, "[host] runtime pthread started");
-    pthread_join(thread, nullptr);
-    ESP_LOGE(kTag, "[host] runtime pthread exited unexpectedly");
+    while (true) {
+        display_update();
+        vTaskDelay(kUiUpdateInterval);
+    }
 }

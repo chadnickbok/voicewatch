@@ -13,30 +13,87 @@ untrusted app logic directly into the firmware. A failed module can be
 deinstantiated while the native shell remains in control.
 
 Apps never receive display, SPI, microSD, network, audio, or filesystem handles.
-They can only call registered, versioned capabilities. In these milestones the
-only capability is `display_text`.
+They can only call registered, versioned capabilities. The first semantic
+capability is `ui.mount`.
 
 ## Host ABI v1
 
 The imported module name is `doodad`, the imported function name is
-`display_text`, and its WebAssembly signature is `(i32, i32) -> ()`.
+`ui_mount`, and its WebAssembly signature is `(i32, i32) -> i32`.
 
 The first parameter is a byte offset in the calling guest's linear memory. The
 second is an explicit byte length. The guest retains ownership for the duration
-of the synchronous call. The host accepts 1 through 128 bytes, validates the
-complete range with WAMR, rejects malformed UTF-8, and copies the bytes to a
-129-byte native buffer before rendering. No null terminator crosses the ABI.
+of the synchronous call. The host accepts 1 through 4096 bytes, validates the
+complete range with WAMR, and decodes canonical CBOR into host-owned bounded
+AppSpec storage. Numeric key ordering, minimal integer encoding, definite
+lengths, UTF-8, identifiers, component properties, semantics, parents, depth,
+children, events, and quotas are checked before anything reaches LVGL.
 
 The guest exports `app_start() -> ()`. It has no WASI imports. Native title,
 status, footer, source label, and error screens remain outside guest control.
+Interactive guests also export
+`handle_event(i32 pointer, i32 length) -> i64`. LVGL callbacks copy semantic
+events into a 16-entry UI-to-runtime queue. The runtime actor serializes each
+event as canonical CBOR, allocates a bounded guest range, invokes the export
+off the UI task, and frees the event range immediately. The 64-bit result
+packs a borrowed guest pointer in its high 32 bits and a byte length in its
+low 32 bits. The host validates the range, copies and decodes at most 4096
+bytes as a canonical `CommandBatch`, and never retains guest memory.
+
+A batch is UI-only or state-only; mixed batches are rejected. Every target,
+property, value, quota, and required string capacity is checked before the
+first LVGL mutation. State batches use the Store's staged transaction path.
+UI batches mutate existing native components in place, preserving object
+identity and event bindings. Guest code is never called reentrantly from an
+LVGL callback.
 
 ## Native UI
 
-The native shell renders the stable chrome and a central guest-content region.
-This is the smallest demonstration of the future declarative-UI model: app
-logic requests a bounded operation while trusted native code owns layout and
-hardware. Future versions can replace the string operation with a validated
-declarative document without granting framebuffer access.
+The native shell renders stable chrome and a central guest-content region with
+LVGL 9.5.0. The portable display contract is square and fixed at 240×240. On
+the CoreS3's 320×240 panel the host centers the app surface at x=40; the two
+40-pixel gutters are native background and never enter app layout.
+
+The desktop simulator and firmware compile the same `ui/doodad_lvgl_ui.c`
+shell. The simulator owns a headless RGB565 framebuffer; firmware flushes the
+same logical coordinates through M5GFX at the physical x offset.
+
+AppSpec v1 is the public contract for generated applications. It names semantic Material components,
+stable node IDs, bindings, events, and semantics while prohibiting raw colors,
+coordinates, radii, LVGL parts, callbacks, and arbitrary effects.
+
+JSON is the authoring form. Both desktop preview and firmware consume the same
+canonical CBOR compiler output, fixed-capacity decoder, native typed document,
+Material component factory, and LVGL renderer. The `ui.json` v0 code remains
+only for old package fixtures; it is not the generated-app or Wasm display
+boundary. Apps receive no framebuffer or LVGL pointers.
+
+## One Wasm engine
+
+Both hosts compile the exact WAMR 2.4.0 revision 1 source resolved by the
+ESP-IDF component manager. Desktop development does not use a browser Wasm
+engine or a second compatibility implementation. It uses the fast interpreter,
+the same disabled WASI/libc profile, and the same explicit native imports as
+the device.
+
+The app module, module instance, and execution environment remain resident
+after `app_start` succeeds. On simulator reload, static build and contract
+validation happen before the old instance is stopped. The host then starts one
+fresh instance; if runtime startup fails, the browser retains the last good
+frame with a stale-preview error. The resident lifetime supports serialized
+semantic events and returned in-place command batches.
+
+## Package contract v1
+
+`manifest.json` names the app and version, pins host ABI v1, lists requested
+capabilities, and points to `app.wasm` plus optional `ui.json`. `doodad build`
+rejects unknown manifest fields, undeclared or unknown imports, missing exports,
+incorrect memory bounds, oversized modules, and invalid declarative UI. It
+stages only normalized filenames beneath `target/doodad/<app-id>`.
+
+The current contract files are source-controlled in `contracts/`. JSON Schema
+files make the document shapes portable; the CLI also performs semantic checks
+such as matching Wasm imports to declared capabilities.
 
 ## Loader seam
 
@@ -88,7 +145,7 @@ WAMR instances will continue to receive explicit stack and heap limits. These
 milestones use 16 KiB for each plus an 8 KiB execution-environment stack and a
 256 KiB maximum microSD module file.
 
-## What milestones 1 and 2 validate
+## What milestones 1 through 3 validate
 
 - A freestanding Rust guest can compile without WASI.
 - ESP-IDF can embed the produced Wasm bytes reproducibly.
@@ -98,10 +155,17 @@ milestones use 16 KiB for each plus an 8 KiB execution-environment stack and a
 - Native chrome and guest content remain visibly distinct.
 - Embedded and microSD loaders can feed the same runner.
 - The embedded image can recover from an unavailable or broken microSD app.
+- The same pinned WAMR source and LVGL renderer build for macOS and ESP32-S3.
+- App layout stays within a device-independent 240×240 square surface.
+- A manifest, Wasm module, and declarative UI can be validated and staged as a
+  package.
+- A headless native host can execute and render a package for automated tests.
+- The browser development loop can hot reload a fresh resident app instance.
 
-## What they do not validate
+## Remaining validation
 
-These slices do not implement or validate voice, touch events, declarative JSON
-UI, Wi-Fi, HTTPS downloads, signatures, atomic installation, multiple apps,
-shared data, OTA base-firmware updates, application manifests, AOT compilation,
-or WASI filesystem access.
+These slices do not yet complete voice/audio transport, touch-to-guest event
+delivery, Wi-Fi/HTTPS package delivery, signatures, atomic on-device package
+installation, shared data, migrations, OTA base-firmware updates, or AOT.
+The device still loads a bare Wasm module from microSD; package installation is
+defined and exercised on desktop but is not yet the device loader.

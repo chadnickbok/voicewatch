@@ -11,9 +11,13 @@ doodad-runtime/target/
 
 # ESP-IDF
 doodad-runtime/firmware/build/
+doodad-runtime/build-*/
 doodad-runtime/firmware/managed_components/
 doodad-runtime/firmware/sdkconfig
 doodad-runtime/firmware/sdkconfig.old
+
+# Native simulator
+doodad-runtime/tools/native-host/build/
 
 # Generated embedded guest (created by scripts/build-guest.sh)
 doodad-runtime/firmware/main/embedded/hello.wasm
