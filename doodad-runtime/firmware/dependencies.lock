@@ -1,0 +1,47 @@
+dependencies:
+  espressif/wasm-micro-runtime:
+    component_hash: 04f25aad2896b5e906397a061d35cce560609bebd3913a4be7e365ecbf2dd9d6
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.1'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    targets:
+    - esp32
+    - esp32s3
+    - esp32c3
+    - esp32c6
+    - esp32p4
+    - esp32c5
+    version: 2.4.0~1
+  idf:
+    source:
+      type: idf
+    version: 5.5.5
+  m5stack/m5gfx:
+    component_hash: c61634865a4e4a04fc122c658d1b484892d5b25871e95fcfb39960a9d6652a15
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 0.2.26
+  m5stack/m5unified:
+    component_hash: 85ab29e360fde0623ce30c8b8323d9f2c00acfffade19b104d6b7741b592e9ef
+    dependencies:
+    - name: m5stack/m5gfx
+      registry_url: https://components.espressif.com
+      require: private
+      version: '>=0.2.26'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 0.2.19
+direct_dependencies:
+- espressif/wasm-micro-runtime
+- idf
+- m5stack/m5unified
+manifest_hash: fb8aa3ae47bd1f65da07663d5693ace0e57fb5c049660b008d3b2dc77044e2c3
+target: esp32s3
+version: 2.0.0

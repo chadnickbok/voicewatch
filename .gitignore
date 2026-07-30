@@ -1,5 +1,19 @@
-.build/
 .DS_Store
+__pycache__/
+*.py[cod]
 
-# Local webcam snapshots used during calibration.
-cores3-webcam-capture*.png
+# Swift / CleanCam
+.build/
+/cores3-webcam-capture*.png
+
+# Rust guests
+doodad-runtime/target/
+
+# ESP-IDF
+doodad-runtime/firmware/build/
+doodad-runtime/firmware/managed_components/
+doodad-runtime/firmware/sdkconfig
+doodad-runtime/firmware/sdkconfig.old
+
+# Generated embedded guest (created by scripts/build-guest.sh)
+doodad-runtime/firmware/main/embedded/hello.wasm

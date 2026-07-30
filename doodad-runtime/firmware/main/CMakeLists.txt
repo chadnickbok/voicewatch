@@ -1,0 +1,17 @@
+idf_component_register(
+    SRCS
+        "src/app_runner.cpp"
+        "src/app_sources.cpp"
+        "src/display.cpp"
+        "src/main.cpp"
+    INCLUDE_DIRS
+        "include"
+    REQUIRES
+        driver
+        esp_driver_sdspi
+        fatfs
+        m5unified
+        wasm-micro-runtime
+    EMBED_FILES
+        "embedded/hello.wasm"
+)
