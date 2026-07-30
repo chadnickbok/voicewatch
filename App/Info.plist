@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleDisplayName</key>
+    <string>CleanCam</string>
+    <key>CFBundleExecutable</key>
+    <string>CleanCam</string>
+    <key>CFBundleIdentifier</key>
+    <string>local.voicewatch.cleancam</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>CleanCam</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.1.0</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>14.0</string>
+    <key>NSCameraUsageDescription</key>
+    <string>CleanCam uses the selected webcam to meter and capture the CoreS3 display.</string>
+    <key>NSHighResolutionCapable</key>
+    <true/>
+</dict>
+</plist>

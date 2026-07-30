@@ -1,0 +1,5 @@
+.build/
+.DS_Store
+
+# Local webcam snapshots used during calibration.
+cores3-webcam-capture*.png
