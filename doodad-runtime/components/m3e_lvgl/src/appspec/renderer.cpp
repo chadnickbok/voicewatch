@@ -1793,7 +1793,18 @@ bool Renderer::mount(
                     lv_obj_set_size(object, px(184), height);
                     lv_obj_set_pos(object, 0, y);
                     lv_obj_set_style_min_height(object, 0, 0);
-                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_ver(object, 0, 0);
+                    lv_obj_set_style_pad_hor(
+                        object, px(12), 0);
+                    lv_obj_set_style_pad_row(
+                        object, px(2), 0);
+                    lv_obj_set_flex_flow(
+                        object, LV_FLEX_FLOW_COLUMN);
+                    lv_obj_set_flex_align(
+                        object,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_START,
+                        LV_FLEX_ALIGN_START);
                     lv_obj_set_style_radius(object, px(24), 0);
                     lv_obj_set_style_bg_color(
                         object,
@@ -1803,11 +1814,9 @@ bool Renderer::mount(
                         object, LV_OPA_COVER, 0);
                     if (lv_obj_get_child_count(object) == 2) {
                         auto* title = lv_obj_get_child(object, 0);
-                        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
-                        lv_obj_set_size(
-                            title, px(160), px(18));
-                        lv_obj_set_pos(
-                            title, px(12), px(6));
+                        lv_obj_set_width(title, LV_PCT(100));
+                        lv_obj_set_height(
+                            title, LV_SIZE_CONTENT);
                         lv_obj_set_style_text_font(
                             title, &lv_font_montserrat_16, 0);
                         lv_obj_set_style_text_color(
@@ -1820,13 +1829,9 @@ bool Renderer::mount(
                             title, LV_LABEL_LONG_DOT);
 
                         auto* body = lv_obj_get_child(object, 1);
-                        lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
-                        lv_obj_set_size(
-                            body,
-                            px(160),
-                            std::max(px(20), height - px(24)));
-                        lv_obj_set_pos(
-                            body, px(12), px(24));
+                        lv_obj_set_width(body, LV_PCT(100));
+                        lv_obj_set_height(
+                            body, LV_SIZE_CONTENT);
                         lv_obj_set_style_text_font(
                             body, &lv_font_montserrat_14, 0);
                         lv_obj_set_style_text_color(
