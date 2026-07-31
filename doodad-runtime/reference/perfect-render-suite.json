@@ -256,7 +256,7 @@
       "app_slug": "sleep",
       "trace": "traces/sleep/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "a8a799ce9368f9178b0fe8409dc51518c20e882a10a5c06d1d82de5f2f8d806b",
+      "snapshot_sha256": "c840b1ba2bbaaf640a81d3da8bb82848233c62bd2c7962bbfcecaefb78ab4361",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -269,7 +269,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. The title-free sleep flow follows first-party score, stage, quiet-tracking, and history hierarchy without reproducing round-watch geometry. See reference/reviews/sleep.md."
       }
     },
     {

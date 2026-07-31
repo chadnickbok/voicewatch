@@ -5,71 +5,83 @@
     "id": "sleep.history",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "sleep.history.heading",
+          "id": "sleep.history.context",
           "type": "text",
           "props": {
-            "text": "7 DAY HISTORY",
+            "text": "7 NIGHTS / GOOD",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sleep.history.summary",
           "type": "text",
           "props": {
-            "text": "7h 28m avg",
+            "text": "7:28",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "7 DAY HISTORY",
-            "value": "7h 28m avg"
+            "label": "Seven-night average sleep duration",
+            "value": "7 hours 28 minutes"
           }
         },
         {
           "id": "sleep.history.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Budget 3.2% · no retained UI",
-            "tone": "neutral"
+            "title": "AVERAGE / TARGET",
+            "body": "Best 7:52 / variation 3.2%",
+            "progress": 0.93,
+            "tone": "primary"
           }
         },
         {
-          "id": "sleep.history.primary",
-          "type": "button",
+          "id": "sleep.history.actions",
+          "type": "row",
           "props": {
-            "label": "Last night",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.last"
-          },
-          "semantics": {
-            "label": "Last night"
-          }
-        },
-        {
-          "id": "sleep.history.secondary",
-          "type": "button",
-          "props": {
-            "label": "Home",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.home"
-          },
-          "semantics": {
-            "label": "Home"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sleep.history.primary",
+                "type": "button",
+                "props": {
+                  "label": "Night",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.last"
+                },
+                "semantics": {
+                  "label": "View last night's summary"
+                }
+              },
+              {
+                "id": "sleep.history.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Home",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.home"
+                },
+                "semantics": {
+                  "label": "Return to the latest sleep result"
+                }
+              }
+            ]
           }
         }
       ]

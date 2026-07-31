@@ -5,46 +5,83 @@
     "id": "sleep.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
+        {
+          "id": "sleep.home.context",
+          "type": "text",
+          "props": {
+            "text": "NIGHT / HIGH",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
         {
           "id": "sleep.summary",
           "type": "text",
           "props": {
-            "text": "7h 42m",
+            "text": "7:42",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Sleep + Smart Alarm status",
-            "value": "7h 42m"
+            "label": "Last night's sleep duration",
+            "value": "7 hours 42 minutes"
           }
         },
         {
-          "id": "sleep.mock",
-          "type": "card",
+          "id": "sleep.home.detail",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "title": "SLEEP SCORE / 82",
+            "body": "Deep 1:36 / Awake 0:24",
+            "progress": 0.82,
+            "tone": "primary"
           }
         },
         {
-          "id": "sleep.primary",
-          "type": "button",
+          "id": "sleep.home.actions",
+          "type": "row",
           "props": {
-            "label": "Start sleep",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.primary"
-          },
-          "semantics": {
-            "label": "Start sleep"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sleep.primary",
+                "type": "button",
+                "props": {
+                  "label": "Start",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.primary"
+                },
+                "semantics": {
+                  "label": "Start sleep tracking"
+                }
+              },
+              {
+                "id": "sleep.home.stages",
+                "type": "button",
+                "props": {
+                  "label": "Stages",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.stages"
+                },
+                "semantics": {
+                  "label": "View last night's sleep stages"
+                }
+              }
+            ]
           }
         }
       ]

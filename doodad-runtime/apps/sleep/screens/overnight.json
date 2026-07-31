@@ -5,71 +5,83 @@
     "id": "sleep.overnight",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "sleep.overnight.heading",
+          "id": "sleep.overnight.context",
           "type": "text",
           "props": {
-            "text": "SLEEPING",
+            "text": "ASLEEP / AMBIENT",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sleep.overnight.summary",
           "type": "text",
           "props": {
-            "text": "6h 18m",
+            "text": "6:18",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "SLEEPING",
-            "value": "6h 18m"
+            "label": "Current sleep duration",
+            "value": "6 hours 18 minutes"
           }
         },
         {
           "id": "sleep.overnight.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Low-power motion service · UI inactive",
-            "tone": "neutral"
+            "title": "SMART ALARM / 7:20",
+            "body": "Motion low / on watch",
+            "progress": 0.79,
+            "tone": "primary"
           }
         },
         {
-          "id": "sleep.overnight.primary",
-          "type": "button",
+          "id": "sleep.overnight.actions",
+          "type": "row",
           "props": {
-            "label": "Simulate morning",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.morning"
-          },
-          "semantics": {
-            "label": "Simulate morning"
-          }
-        },
-        {
-          "id": "sleep.overnight.secondary",
-          "type": "button",
-          "props": {
-            "label": "Wake now",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.wake"
-          },
-          "semantics": {
-            "label": "Wake now"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sleep.overnight.primary",
+                "type": "button",
+                "props": {
+                  "label": "Morning",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.morning"
+                },
+                "semantics": {
+                  "label": "Simulate the morning summary"
+                }
+              },
+              {
+                "id": "sleep.overnight.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Wake",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.wake"
+                },
+                "semantics": {
+                  "label": "Stop sleep tracking now"
+                }
+              }
+            ]
           }
         }
       ]

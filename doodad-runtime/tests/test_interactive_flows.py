@@ -44,10 +44,10 @@ FLOWS = {
         ("Export", "sensor-recorder.exported.summary", "CSV"),
     ],
     "sleep": [
-        ("Start sleep", "sleep.overnight.summary", "6h 18m"),
-        ("Simulate morning", "sleep.summary.summary", "7h 42m"),
-        ("View stages", "sleep.stages.summary", "▂▅▃▇▆▂▅"),
-        ("History", "sleep.history.summary", "7h 28m avg"),
+        ("Start", "sleep.overnight.summary", "6:18"),
+        ("Morning", "sleep.summary.summary", "7:42"),
+        ("Stages", "sleep.stages.summary", "1:36"),
+        ("History", "sleep.history.summary", "7:28"),
     ],
     "media": [
         ("Play", "media.playing.summary", "Midnight City"),

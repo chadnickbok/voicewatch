@@ -4,8 +4,8 @@
 These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
 machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
-Calories, Workout, Voice Notes, Medication, Sensor Recorder, Media, and
-Snake) live outside this generator.
+Calories, Workout, Voice Notes, Medication, Sensor Recorder, Sleep, Media,
+and Snake) live outside this generator.
 """
 
 from __future__ import annotations
@@ -39,39 +39,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "sleep": {
-        "initial": ("sleep.primary", "overnight"),
-        "screens": {
-            "overnight": screen(
-                "SLEEPING",
-                "6h 18m",
-                "Low-power motion service · UI inactive",
-                ("Simulate morning", "sleep.morning", "summary"),
-                ("Wake now", "sleep.wake", "summary"),
-            ),
-            "summary": screen(
-                "GOOD MORNING",
-                "7h 42m",
-                "Deep 1h 36 · Restful 82%",
-                ("View stages", "sleep.stages", "stages"),
-                ("Start again", "sleep.again", "overnight"),
-            ),
-            "stages": screen(
-                "SLEEP STAGES",
-                "▂▅▃▇▆▂▅",
-                "Smart alarm fired once at 7:18",
-                ("History", "sleep.history", "history"),
-                ("Summary", "sleep.summary", "summary"),
-            ),
-            "history": screen(
-                "7 DAY HISTORY",
-                "7h 28m avg",
-                "Budget 3.2% · no retained UI",
-                ("Last night", "sleep.last", "summary"),
-                ("Home", "sleep.home", "home"),
-            ),
-        },
-    },
     "navigation": {
         "initial": ("navigation.primary", "maneuver"),
         "screens": {
@@ -281,7 +248,6 @@ BOUND_PROVIDERS: dict[str, tuple[str, str, str]] = {
         "medication",
     ),
     "sensor-recorder": ("request_sensor", "sensor.record", "sensor"),
-    "sleep": ("request_sleep", "sleep.track", "sleep"),
     "media": ("request_media", "media.remote", "media"),
     "navigation": (
         "request_navigation",

@@ -80,7 +80,7 @@ review.
 | P6 | Deterministic batch report and comparison gates | Initial batch tooling complete |
 | P7 | Live parallel-rendering simulator | Not started |
 | P8 | Full decisive flows, variants, and motion | Trace corpus complete; dual renders pending |
-| P9 | Reviewed API 37 runtime authority | Calculator captured on square API 37 AVD; suite pending |
+| P9 | Reviewed API 37 runtime authority | Thirteen apps captured on square API 37 AVD; suite pending |
 | P10 | CI, baseline approval, and hardware closure | Local lane partial |
 
 ## Current baseline
@@ -135,11 +135,10 @@ review.
 - [ ] LVGL still has root flex-axis, touch-target, typography, max-lines,
   token-evidence, and missing-glyph defects outside the completed calculator
   path.
-- [ ] 39 of 105 checkpoints have reviewed dual-renderer captures.
+- [ ] 68 of 105 checkpoints have reviewed dual-renderer captures.
 - [ ] The fast Compose lane still uses Robolectric SDK 33; API 37 runtime
-  baselines are reviewed for Timer, Weather, Notifications, Tasks, and
-  Calendar, with
-  the remaining suite still pending.
+  baselines are reviewed for Timer through Sleep plus Media, with the
+  remaining seven apps still pending.
 
 Measured results and the remediation order are in
 [`project-parallax-comparison-report.md`](project-parallax-comparison-report.md).
@@ -590,7 +589,7 @@ terminal LVGL frame to a different Compose fixture.
 | 9 | Voice Notes | [x] | [x] | [x] | [x] | [x] |
 | 10 | Medication | [x] | [x] | [x] | [x] | [x] |
 | 11 | Sensor Recorder | [x] | [x] | [x] | [x] | [x] |
-| 12 | Sleep | [x] | [x] | [x] | [x] | [ ] |
+| 12 | Sleep | [x] | [x] | [x] | [x] | [x] |
 | 13 | Media | [x] | [x] | [x] | [x] | [x] |
 | 14 | Navigation | [x] | [x] | [x] | [x] | [ ] |
 | 15 | Transit | [x] | [x] | [x] | [x] | [ ] |
@@ -1271,6 +1270,15 @@ produce the twenty-row report.
   fixture keeps its own deterministic XYZ data. The approved **Equivalent**
   disposition is recorded in
   [`reference/reviews/sensor-recorder.md`](../reference/reviews/sensor-recorder.md).
+- [x] Completed the Sleep oracle redesign and decisive-flow review across
+  last-night, overnight, morning, stage, and seven-night states. All five
+  title-free documents select the shared live-action pattern by structure
+  alone. Compose and LVGL share exact normalized structure/bounds, two 48dp
+  controls, and no quality findings at every checkpoint. First-party Pixel
+  Watch/Fitbit and Apple references supply the score, stage, quiet-tracking,
+  and history hierarchy; the Doodad fixture remains explicitly non-medical.
+  The approved **Equivalent** disposition is recorded in
+  [`reference/reviews/sleep.md`](../reference/reviews/sleep.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.
