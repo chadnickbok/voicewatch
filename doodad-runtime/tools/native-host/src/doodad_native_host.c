@@ -917,7 +917,7 @@ int doodad_host_deliver_provider(void) {
     uint8_t freshness = 1;
     if (g_weather_cycle == 2) {
         condition = "Offline";
-        detail = "Forecast unavailable - cached data";
+        detail = "No live forecast - cached data";
         age_minutes = 18;
         freshness = 2;
     } else if (g_weather_cycle == 0) {

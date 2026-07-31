@@ -29,7 +29,7 @@
       "app_slug": "weather",
       "trace": "traces/weather/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "8d0a4193e1d8293dc2f4aac0a1c48099eb89d0826332bcfb76228b06164656aa",
+      "snapshot_sha256": "a4e29030836fabac2d380bfafa3301dcf6916c2c16b25d3d943c9d2363c64793",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -42,7 +42,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across seven nodes; both renderers pass 48dp target and quality checks. Remaining 14.9392% raster delta is text and refresh-glyph rasterization. See reference/reviews/weather.md."
       }
     },
     {

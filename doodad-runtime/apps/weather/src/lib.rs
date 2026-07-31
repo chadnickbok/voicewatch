@@ -26,10 +26,14 @@ impl Runtime {
     }
 
     fn loading(&mut self) -> u64 {
-        if self.commands.begin(3).is_err()
+        if self.commands.begin(4).is_err()
             || self
                 .commands
-                .set_primary_text("weather.status", "Updating…")
+                .set_primary_text("weather.status", "Updating...")
+                .is_err()
+            || self
+                .commands
+                .set_primary_text("weather.symbol", "Updating weather")
                 .is_err()
             || self
                 .commands
@@ -62,7 +66,7 @@ impl Runtime {
             age_minutes,
             &mut self.status,
         );
-        if self.commands.begin(6).is_err()
+        if self.commands.begin(7).is_err()
             || self
                 .commands
                 .set_primary_text("weather.summary", temperature)
@@ -74,6 +78,10 @@ impl Runtime {
             || self
                 .commands
                 .set_secondary_text("weather.forecast", detail)
+                .is_err()
+            || self
+                .commands
+                .set_primary_text("weather.symbol", condition)
                 .is_err()
             || self
                 .commands
@@ -192,15 +200,17 @@ fn format_status(
     age: u64,
     output: &mut [u8; 64],
 ) -> &str {
-    let (prefix, number, suffix) = match freshness {
-        Freshness::Current => ("Updated now · revision ", revision, ""),
-        Freshness::Stale => ("Cached · ", age, " min old"),
-        Freshness::Offline => ("Offline · cache ", age, " min"),
-        Freshness::Error => ("Weather error · revision ", revision, ""),
+    let (prefix, number, suffix, include_number) = match freshness {
+        Freshness::Current => ("Updated now", revision, "", false),
+        Freshness::Stale => ("Cached - ", age, "m", true),
+        Freshness::Offline => ("", age, "m cached", true),
+        Freshness::Error => ("Weather unavailable", revision, "", false),
     };
     let mut cursor = copy(prefix.as_bytes(), output, 0);
-    cursor = write_unsigned(number, output, cursor);
-    cursor = copy(suffix.as_bytes(), output, cursor);
+    if include_number {
+        cursor = write_unsigned(number, output, cursor);
+        cursor = copy(suffix.as_bytes(), output, cursor);
+    }
     unsafe { core::str::from_utf8_unchecked(&output[..cursor]) }
 }
 

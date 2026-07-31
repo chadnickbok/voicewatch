@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 EXPECTED = {
     "timer": "1b729d24bda3e8a3992d09d3f73c68bf5e5cce25c197f8fdf01fcc4af0920140",
-    "weather": "11b15dc809450685a457aee796feedd1c9266d2ac964786359fb6a6f8d2d8bef",
+    "weather": "626eef2211634fdc1930925a8b75ebf97fec4600a771321d1ad950ff6ec9595c",
     "notifications": "661c5f0388eb18dc78b8c997efb5060e533a72945f159d63cc0eccfa1a0a1729",
     "tasks": "fd42af47fce65bf002c0a6c3e3911f22b19d2be496569c726bf0e1ebb79fe7b1",
     "calculator": "900b2b845c8451e333a0c6ef6f0c005006e8f3f888cdcebbf12c37919d3b73de",

@@ -27,7 +27,7 @@ class ParallaxInventoryTests(unittest.TestCase):
                 "progress": 2,
                 "screen": 83,
                 "stepper": 4,
-                "text": 140,
+                "text": 141,
             },
         )
         self.assertEqual(
@@ -39,7 +39,8 @@ class ParallaxInventoryTests(unittest.TestCase):
                 "keypad": 2,
                 "metric_control": 4,
                 "progress_dashboard": 1,
-                "status_detail": 68,
+                "status_detail": 67,
+                "weather_hero": 1,
             },
         )
         self.assertEqual(

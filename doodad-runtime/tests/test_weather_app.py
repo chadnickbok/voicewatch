@@ -25,7 +25,7 @@ class WeatherAppTests(unittest.TestCase):
         self.native.click_button("Refresh")
         self.assertEqual(
             self.native.node_text("weather.status"),
-            "Updating…",
+            "Updating...",
         )
         self.assertEqual(
             self.native.node_text("weather.primary"),
@@ -37,14 +37,14 @@ class WeatherAppTests(unittest.TestCase):
         self.assertEqual(self.native.node_text("weather.summary"), "72°")
         self.assertEqual(
             self.native.node_text("weather.status"),
-            "Updated now · revision 1",
+            "Updated now",
         )
 
         self.refresh_and_deliver()
         self.assertEqual(self.native.node_text("weather.summary"), "72°")
         self.assertEqual(
             self.native.node_text("weather.status"),
-            "Cached · 12 min old",
+            "Cached - 12m",
         )
         self.assertEqual(
             self.native.node_text("weather.forecast"),
@@ -54,7 +54,7 @@ class WeatherAppTests(unittest.TestCase):
         self.refresh_and_deliver()
         self.assertEqual(
             self.native.node_text("weather.status"),
-            "Offline · cache 18 min",
+            "18m cached",
         )
         self.assertEqual(
             self.native.node_text("weather.forecast"),
@@ -65,7 +65,7 @@ class WeatherAppTests(unittest.TestCase):
         self.assertEqual(self.native.node_text("weather.summary"), "71°")
         self.assertEqual(
             self.native.node_text("weather.status"),
-            "Updated now · revision 2",
+            "Updated now",
         )
         self.assertEqual(
             self.native.node_text("weather.primary"),

@@ -50,7 +50,8 @@ class AppSpecPatternTest {
                 "keypad" to 2,
                 "metric_control" to 4,
                 "progress_dashboard" to 1,
-                "status_detail" to 68,
+                "status_detail" to 67,
+                "weather_hero" to 1,
             ),
             inventory
                 .getValue("authored")
@@ -72,6 +73,12 @@ class AppSpecPatternTest {
                         mapOf("progress" to 1, "stepper" to 1),
                         2,
                         2,
+                    ),
+                AppSpecPattern.WeatherHero to
+                    AppSpecStructuralFacts(
+                        mapOf("card" to 1, "button" to 1, "text" to 4),
+                        1,
+                        1,
                     ),
                 AppSpecPattern.ProgressDashboard to
                     AppSpecStructuralFacts(mapOf("progress" to 1), 0, 0),

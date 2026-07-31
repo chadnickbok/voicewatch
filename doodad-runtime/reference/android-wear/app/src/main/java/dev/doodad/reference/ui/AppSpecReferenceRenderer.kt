@@ -2,6 +2,7 @@ package dev.doodad.reference.ui
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +23,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,6 +47,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
 import androidx.wear.compose.material3.AppScaffold
@@ -321,6 +324,10 @@ private fun SquarePatternSurface(
         SquareCountdownSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.WeatherHero) {
+        SquareWeatherHeroSurface(children, context)
+        return
+    }
     val state = rememberScrollState()
     ScreenScaffold(
         scrollState = state,
@@ -356,6 +363,190 @@ private fun SquarePatternSurface(
             }
         }
     }
+}
+
+@Composable
+private fun SquareWeatherHeroSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val heading =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "label"
+        } ?: error("Square weather hero requires one location label")
+    val card =
+        children.singleOrNull { it.kind == "card" }
+            ?: error("Square weather hero requires one forecast card")
+    val symbol =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "title"
+        } ?: error("Square weather hero requires one condition symbol")
+    val summary =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "numeral"
+        } ?: error("Square weather hero requires one temperature")
+    val status =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "caption"
+        } ?: error("Square weather hero requires one freshness label")
+    val action =
+        children.singleOrNull { it.kind == "button" }
+            ?: error("Square weather hero requires one refresh action")
+    check(
+        children.all {
+            it == heading ||
+                it == card ||
+                it == symbol ||
+                it == summary ||
+                it == status ||
+                it == action
+        },
+    ) {
+        "Square weather hero only supports its six semantic children"
+    }
+
+    val cardColor = MaterialTheme.colorScheme.primaryContainer
+    val contentColor = MaterialTheme.colorScheme.onPrimaryContainer
+    val accentColor = MaterialTheme.colorScheme.tertiary
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .offset(y = 28.dp)
+                    .fillMaxWidth()
+                    .height(156.dp)
+                    .background(cardColor, RoundedCornerShape(32.dp))
+                    .appSpecNode(card, context.evidenceCollector),
+        )
+        Text(
+            text = requireNotNull(heading.props.primaryText),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(24.dp)
+                    .appSpecNode(heading, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        Canvas(
+            modifier =
+                Modifier
+                    .offset(x = 12.dp, y = 52.dp)
+                    .size(44.dp)
+                    .appSpecNode(symbol, context.evidenceCollector),
+        ) {
+            val radius = size.minDimension * 0.32f
+            drawCircle(
+                color = accentColor.copy(alpha = 0.32f),
+                radius = size.minDimension * 0.45f,
+            )
+            drawCircle(color = accentColor, radius = radius)
+        }
+        Text(
+            text = requireNotNull(summary.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 56.dp, y = 44.dp)
+                    .width(112.dp)
+                    .height(64.dp)
+                    .appSpecNode(summary, context.evidenceCollector),
+            color = contentColor,
+            style = MaterialTheme.typography.numeralLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = requireNotNull(card.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 16.dp, y = 106.dp)
+                    .width(152.dp)
+                    .height(24.dp),
+            color = contentColor,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = requireNotNull(card.props.secondaryText),
+            modifier =
+                Modifier
+                    .offset(x = 16.dp, y = 130.dp)
+                    .width(108.dp)
+                    .height(38.dp),
+            color = contentColor.copy(alpha = 0.78f),
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = requireNotNull(status.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 16.dp, y = 164.dp)
+                    .width(108.dp)
+                    .height(16.dp)
+                    .appSpecNode(status, context.evidenceCollector),
+            color = contentColor.copy(alpha = 0.72f),
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        WeatherRefreshButton(action, context)
+    }
+}
+
+@Composable
+private fun WeatherRefreshButton(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    val tap = node.action("tap")
+    val glyphColor = MaterialTheme.colorScheme.onPrimary
+    Button(
+        onClick = {
+            tap?.let {
+                context.dispatch(node, it)
+            }
+        },
+        modifier =
+            Modifier
+                .offset(x = 132.dp, y = 132.dp)
+                .size(48.dp)
+                .appSpecNode(node, context.evidenceCollector),
+        enabled = node.enabled && tap != null,
+        colors = ButtonDefaults.buttonColors(),
+        contentPadding = PaddingValues(0.dp),
+        label = {
+            Canvas(Modifier.size(24.dp)) {
+                drawArc(
+                    color = glyphColor,
+                    startAngle = -55f,
+                    sweepAngle = 275f,
+                    useCenter = false,
+                    style = Stroke(width = size.minDimension * 0.13f),
+                )
+                drawCircle(
+                    color = glyphColor,
+                    radius = size.minDimension * 0.10f,
+                    center =
+                        androidx.compose.ui.geometry.Offset(
+                            x = size.width * 0.81f,
+                            y = size.height * 0.30f,
+                        ),
+                )
+            }
+        },
+    )
 }
 
 @Composable

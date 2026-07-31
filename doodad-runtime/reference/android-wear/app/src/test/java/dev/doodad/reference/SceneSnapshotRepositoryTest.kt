@@ -24,8 +24,8 @@ class SceneSnapshotRepositoryTest {
     fun loadsEveryHashedRuntimeSnapshotAcrossTheTwentyApps() {
         val loaded = repository.loadAll()
 
-        assertEquals(97, loaded.size)
-        assertEquals(97, loaded.map { it.sha256 }.distinct().size)
+        assertEquals(96, loaded.size)
+        assertEquals(96, loaded.map { it.sha256 }.distinct().size)
         assertEquals(20, loaded.map { it.snapshot.appId }.distinct().size)
         assertTrue(
             loaded.all {
@@ -34,14 +34,14 @@ class SceneSnapshotRepositoryTest {
         )
         assertEquals(
             mapOf(
-                "button" to 154,
-                "card" to 76,
+                "button" to 153,
+                "card" to 75,
                 "keypad" to 7,
                 "live_card" to 4,
                 "progress" to 6,
-                "screen" to 97,
+                "screen" to 96,
                 "stepper" to 10,
-                "text" to 168,
+                "text" to 171,
             ),
             loaded
                 .flatMap { it.snapshot.nodes }

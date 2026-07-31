@@ -18,6 +18,29 @@
           }
         },
         {
+          "id": "weather.forecast",
+          "type": "card",
+          "props": {
+            "title": "Clear",
+            "body": "High 76 - Low 59 - Rain 10%",
+            "tone": "primary"
+          }
+        },
+        {
+          "id": "weather.symbol",
+          "type": "text",
+          "props": {
+            "text": "Clear skies",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Clear skies",
+            "value": "Clear"
+          }
+        },
+        {
           "id": "weather.summary",
           "type": "text",
           "props": {
@@ -32,22 +55,13 @@
           }
         },
         {
-          "id": "weather.forecast",
-          "type": "card",
-          "props": {
-            "title": "Clear",
-            "body": "High 76 · Low 59 · Rain 10%",
-            "tone": "neutral"
-          }
-        },
-        {
           "id": "weather.status",
           "type": "text",
           "props": {
-            "text": "Updated now · revision 1",
+            "text": "Updated now",
             "style": "caption",
             "max_lines": 1,
-            "align": "center"
+            "align": "start"
           }
         },
         {
@@ -55,6 +69,7 @@
           "type": "button",
           "props": {
             "label": "Refresh",
+            "icon": "refresh",
             "tone": "primary",
             "variant": "filled",
             "size": "default"

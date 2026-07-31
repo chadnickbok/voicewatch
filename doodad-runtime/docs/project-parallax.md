@@ -577,7 +577,7 @@ terminal LVGL frame to a different Compose fixture.
 | # | App | Initial trace | Compose square | LVGL replay | Report | Decisive flow |
 |---:|---|:---:|:---:|:---:|:---:|:---:|
 | 1 | Timer | [x] | [x] | [x] | [x] | [x] |
-| 2 | Weather | [x] | [x] | [x] | [x] | [ ] |
+| 2 | Weather | [x] | [x] | [x] | [x] | [x] |
 | 3 | Notifications | [x] | [x] | [x] | [x] | [ ] |
 | 4 | Tasks | [x] | [x] | [x] | [x] | [ ] |
 | 5 | Calculator | [x] | [x] | [x] | [x] | [ ] |
@@ -1193,6 +1193,12 @@ produce the twenty-row report.
   product renderer now share exact normalized structure and bounds, pass all
   current quality checks, and carry an approved **Equivalent** disposition in
   [`reference/reviews/timer.md`](../reference/reviews/timer.md).
+- [x] Completed the Weather oracle redesign and decisive-flow review across
+  current, loading, stale, offline, and recovered states. The large tonal
+  conditions surface is fully visible on the API 37 square runtime and LVGL,
+  with exact normalized structure/bounds and an approved **Equivalent**
+  disposition in
+  [`reference/reviews/weather.md`](../reference/reviews/weather.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

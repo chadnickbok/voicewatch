@@ -64,7 +64,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                 self.assertEqual(entry["profile_id"], "watch_square_240")
                 self.assertEqual(entry["compose"]["mode"], "host")
                 self.assertEqual(entry["lvgl"]["mode"], "simulator")
-                if entry["app_slug"] == "timer":
+                if entry["app_slug"] in {"timer", "weather"}:
                     self.assertEqual(entry["review"]["status"], "approved")
                     self.assertEqual(
                         entry["review"]["reviewed_at"],

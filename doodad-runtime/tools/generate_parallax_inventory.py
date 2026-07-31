@@ -37,6 +37,12 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         return "keypad"
     if kinds["progress"] and kinds["stepper"]:
         return "countdown"
+    if (
+        kinds["card"] == 1
+        and kinds["button"] == 1
+        and kinds["text"] == 4
+    ):
+        return "weather_hero"
     if kinds["progress"]:
         return "progress_dashboard"
     if kinds["stepper"] or kinds["live_card"]:

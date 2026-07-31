@@ -10,6 +10,7 @@ enum class AppSpecPattern(
     MetricControl("metric_control"),
     Keypad("keypad"),
     Countdown("countdown"),
+    WeatherHero("weather_hero"),
     ProgressDashboard("progress_dashboard"),
     Empty("empty"),
 }
@@ -23,11 +24,12 @@ data class AppSpecStructuralFacts(
 object AppSpecPatternSelector {
     val authoredCorpusExpectation: Map<AppSpecPattern, Int> =
         linkedMapOf(
-            AppSpecPattern.StatusDetail to 68,
+            AppSpecPattern.StatusDetail to 67,
             AppSpecPattern.ActionList to 6,
             AppSpecPattern.MetricControl to 4,
             AppSpecPattern.Keypad to 2,
             AppSpecPattern.Countdown to 1,
+            AppSpecPattern.WeatherHero to 1,
             AppSpecPattern.ProgressDashboard to 1,
             AppSpecPattern.Empty to 1,
         )
@@ -49,6 +51,10 @@ object AppSpecPatternSelector {
             facts.count("keypad") > 0 -> AppSpecPattern.Keypad
             facts.count("progress") > 0 && facts.count("stepper") > 0 ->
                 AppSpecPattern.Countdown
+            facts.count("card") == 1 &&
+                facts.count("button") == 1 &&
+                facts.count("text") == 4 ->
+                AppSpecPattern.WeatherHero
             facts.count("progress") > 0 -> AppSpecPattern.ProgressDashboard
             facts.count("stepper") > 0 || facts.count("live_card") > 0 ->
                 AppSpecPattern.MetricControl

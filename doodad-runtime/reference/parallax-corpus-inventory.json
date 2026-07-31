@@ -138,10 +138,10 @@
       "progress": 2,
       "screen": 83,
       "stepper": 4,
-      "text": 140
+      "text": 141
     },
     "property_counts": {
-      "button.icon": 1,
+      "button.icon": 2,
       "button.label": 148,
       "button.size": 148,
       "button.tone": 148,
@@ -168,18 +168,18 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 75,
-      "text.max_lines": 140,
-      "text.style": 140,
-      "text.text": 140
+      "text.align": 76,
+      "text.max_lines": 141,
+      "text.style": 141,
+      "text.text": 141
     },
     "event_counts": {
       "tap": 150,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 223,
-      "value": 71
+      "label": 224,
+      "value": 72
     },
     "token_values": {
       "variant": {
@@ -195,11 +195,11 @@
         "label": 63,
         "linear": 1,
         "numeral": 68,
-        "title": 5
+        "title": 6
       },
       "tone": {
-        "neutral": 135,
-        "primary": 81,
+        "neutral": 134,
+        "primary": 82,
         "tertiary": 7
       },
       "size": {
@@ -216,6 +216,7 @@
       "align": {
         "center": 75,
         "end": 1,
+        "start": 1,
         "stretch": 82
       }
     },
@@ -226,7 +227,8 @@
       "keypad": 2,
       "metric_control": 4,
       "progress_dashboard": 1,
-      "status_detail": 68
+      "status_detail": 67,
+      "weather_hero": 1
     }
   },
   "runtime": {
@@ -246,7 +248,7 @@
         "mounts": 1,
         "command_batches": 6,
         "checkpoints": 7,
-        "unique_snapshots": 7,
+        "unique_snapshots": 6,
         "screen_ids": [
           "weather.home"
         ]
@@ -489,7 +491,7 @@
     },
     "accepted_operations": 114,
     "checkpoints": 105,
-    "unique_snapshot_hashes": 96
+    "unique_snapshot_hashes": 95
   },
   "sources": [
     {
@@ -498,7 +500,7 @@
     },
     {
       "path": "apps/weather/appspec.json",
-      "sha256": "3ad3c25660f61291a2efa64268feae68f2e93e915887b5f9b24e1d17a9bd8dc0"
+      "sha256": "8f0c250a4d61dd705d406840cf310fef2b7764b6c3a7fc42ae88a00a75869023"
     },
     {
       "path": "apps/notifications/appspec.json",
@@ -825,5 +827,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "3c002175056aa737f68cca8a9db659e1a0c26d9a2ddee955452083af348efc8a"
+  "sources_sha256": "95ec4ba40950800e437de63df597805707b6fc3ce328c5141f9624e9117a069e"
 }
