@@ -18,6 +18,19 @@ lv_color_t color(ColorRole role) {
     return lv_color_make(value.red, value.green, value.blue);
 }
 
+constexpr std::uint8_t expand5(std::uint8_t value) {
+    return static_cast<std::uint8_t>((value << 3) | (value >> 2));
+}
+
+constexpr std::uint8_t expand6(std::uint8_t value) {
+    return static_cast<std::uint8_t>((value << 2) | (value >> 4));
+}
+
+lv_color_t exact_rgb565(
+    std::uint8_t red5, std::uint8_t green6, std::uint8_t blue5) {
+    return lv_color_make(expand5(red5), expand6(green6), expand5(blue5));
+}
+
 std::int32_t dp(std::int32_t value) {
     return m3e::dp_edge_to_px(
         value, m3e::watch_square_192.density_q8_8);
@@ -1261,6 +1274,77 @@ void music_mockup_story(lv_obj_t* screen) {
     lv_obj_align(output, LV_ALIGN_BOTTOM_MID, 0, -4);
 }
 
+void color_bars_story(lv_obj_t* screen) {
+    // A label-free calibration target with a white registration frame. The
+    // frame lets the camera lane find the app viewport independently of the
+    // CoreS3's physical side gutters. The inner 224×220 area divides exactly
+    // into 8 columns × 5 rows. Values are authored as native RGB565 channel
+    // codes, then expanded exactly for LVGL.
+    struct Patch {
+        std::uint8_t red5;
+        std::uint8_t green6;
+        std::uint8_t blue5;
+    };
+    constexpr Patch bars[] = {
+        {31, 63, 31},  // white
+        {31, 63, 0},   // yellow
+        {0, 63, 31},   // cyan
+        {0, 63, 0},    // green
+        {31, 0, 31},   // magenta
+        {31, 0, 0},    // red
+        {0, 0, 31},    // blue
+        {0, 0, 0},     // black
+    };
+    constexpr std::uint8_t ramp5[] = {0, 4, 9, 13, 18, 22, 27, 31};
+    constexpr std::uint8_t ramp6[] = {0, 9, 18, 27, 36, 45, 54, 63};
+
+    lv_obj_clean(screen);
+    reset(screen);
+    lv_obj_set_size(screen, 240, 240);
+    lv_obj_set_style_bg_color(screen, exact_rgb565(31, 63, 31), 0);
+    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
+
+    for (std::size_t row = 0; row < 5; ++row) {
+        for (std::size_t column = 0; column < 8; ++column) {
+            Patch patch{};
+            switch (row) {
+                case 0:
+                    patch = bars[column];
+                    break;
+                case 1:
+                    patch = {
+                        ramp5[column],
+                        ramp6[column],
+                        ramp5[column],
+                    };
+                    break;
+                case 2:
+                    patch = {ramp5[column], 0, 0};
+                    break;
+                case 3:
+                    patch = {0, ramp6[column], 0};
+                    break;
+                case 4:
+                    patch = {0, 0, ramp5[column]};
+                    break;
+            }
+            auto* swatch = lv_obj_create(screen);
+            reset(swatch);
+            lv_obj_set_pos(
+                swatch,
+                8 + static_cast<std::int32_t>(column) * 28,
+                10 + static_cast<std::int32_t>(row) * 44);
+            lv_obj_set_size(swatch, 28, 44);
+            lv_obj_set_style_radius(swatch, 0, 0);
+            lv_obj_set_style_bg_color(
+                swatch,
+                exact_rgb565(patch.red5, patch.green6, patch.blue5),
+                0);
+            lv_obj_set_style_bg_opa(swatch, LV_OPA_COVER, 0);
+        }
+    }
+}
+
 }  // namespace
 
 extern "C" void m3e_catalog_show(lv_obj_t* screen, int story) {
@@ -1357,6 +1441,9 @@ extern "C" void m3e_catalog_show(lv_obj_t* screen, int story) {
             break;
         case M3E_CATALOG_STORY_OS_VOICE_RESULT:
             os_voice_result_story(screen);
+            break;
+        case M3E_CATALOG_STORY_COLOR_BARS:
+            color_bars_story(screen);
             break;
         case M3E_CATALOG_STORY_DISPLAY_STRESS:
             display_stress_story(screen);

@@ -178,6 +178,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("wasm", type=Path)
     parser.add_argument("--verify-hello", action="store_true")
+    parser.add_argument("--verify-guest", action="store_true")
     arguments = parser.parse_args()
 
     imports, exports, memories, signatures = inspect(arguments.wasm)
@@ -194,15 +195,50 @@ def main() -> int:
     for minimum, maximum in memories:
         print(f"memory minimum={minimum} page(s), maximum={maximum} page(s)")
 
-    if arguments.verify_hello:
-        expected_imports = [("doodad", "ui_mount", "function")]
+    if arguments.verify_hello or arguments.verify_guest:
+        allowed_imports = {
+            "ui_mount",
+            "timer_schedule_after",
+            "timer_cancel",
+            "timer_acknowledge",
+            "provider_request",
+            "calendar_request",
+            "audio_request",
+            "medication_request",
+            "sensor_request",
+            "sleep_request",
+            "media_request",
+            "navigation_request",
+            "transit_request",
+            "home_request",
+            "sports_request",
+            "wallet_request",
+            "remote_request",
+            "workout_request",
+            "game_request",
+        }
+        unexpected_imports = [
+            imported
+            for imported in imports
+            if imported[0] != "doodad"
+            or imported[1] not in allowed_imports
+            or imported[2] != "function"
+        ]
+        if unexpected_imports:
+            raise SystemExit(
+                f"unexpected guest imports: {unexpected_imports!r}"
+            )
+        if ("doodad", "ui_mount", "function") not in imports:
+            raise SystemExit("guest does not import doodad.ui_mount")
+        if arguments.verify_hello and imports != [
+            ("doodad", "ui_mount", "function")
+        ]:
+            raise SystemExit(f"unexpected hello imports: {imports!r}")
         required_exports = {
             ("app_start", "function"),
             ("handle_event", "function"),
             ("memory", "memory"),
         }
-        if imports != expected_imports:
-            raise SystemExit(f"unexpected guest imports: {imports!r}")
         if not required_exports.issubset(set(exports)):
             raise SystemExit(f"missing guest exports: {required_exports - set(exports)!r}")
         if memories != [(1, 2)]:
@@ -217,6 +253,13 @@ def main() -> int:
                     f"unexpected {name} signature: "
                     f"{signatures.get(name)!r}"
                 )
+        if "handle_provider_event" in signatures and signatures[
+            "handle_provider_event"
+        ] != (("i32", "i32"), ("i64",)):
+            raise SystemExit(
+                "unexpected handle_provider_event signature: "
+                f"{signatures['handle_provider_event']!r}"
+            )
         print("guest ABI verified")
     return 0
 

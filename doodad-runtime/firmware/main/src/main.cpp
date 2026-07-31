@@ -82,8 +82,13 @@ void* runtime_thread(void*) {
 
     // The guest remains loaded, but the trusted host shell owns the root
     // surface. Packages are entered from the launcher rather than replacing
-    // the watch face at boot.
+    // the watch face at boot. Hardware conformance builds keep the selected
+    // embedded app visible so the same package can be photographed directly.
+#if DOODAD_BOOT_CATALOG_STORY >= 0
+    display_show_catalog(DOODAD_BOOT_CATALOG_STORY);
+#elif !defined(DOODAD_SHOW_APP_AT_BOOT)
     display_show_system_home();
+#endif
 
     ESP_LOGI(kTag, "[host] steady state; free heap: %u bytes",
              static_cast<unsigned>(heap_caps_get_free_size(MALLOC_CAP_8BIT)));

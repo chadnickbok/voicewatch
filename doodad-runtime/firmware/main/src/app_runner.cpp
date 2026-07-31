@@ -900,8 +900,10 @@ bool app_runtime_init() {
     arguments.mem_alloc_type = Alloc_With_Allocator;
     arguments.mem_alloc_option.allocator.malloc_func =
         reinterpret_cast<void*>(os_malloc);
-    arguments.mem_alloc_option.allocator.realloc_func =
-        reinterpret_cast<void*>(os_realloc);
+    // ESP-IDF's aligned os_realloc corrupts WAMR's loader control stack when
+    // it grows. A null realloc makes WAMR use its safe allocate/copy/free
+    // fallback while retaining the aligned platform allocator.
+    arguments.mem_alloc_option.allocator.realloc_func = nullptr;
     arguments.mem_alloc_option.allocator.free_func =
         reinterpret_cast<void*>(os_free);
 

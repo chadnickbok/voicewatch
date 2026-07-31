@@ -8,7 +8,8 @@ let package = Package(
         .macOS(.v14)
     ],
     products: [
-        .executable(name: "CleanCam", targets: ["CleanCam"])
+        .executable(name: "CleanCam", targets: ["CleanCam"]),
+        .executable(name: "moire-filter", targets: ["MoireFilter"])
     ],
     targets: [
         .target(
@@ -25,6 +26,13 @@ let package = Package(
             linkerSettings: [
                 .linkedFramework("AppKit"),
                 .linkedFramework("AVFoundation"),
+                .linkedFramework("CoreImage"),
+                .linkedFramework("ImageIO")
+            ]
+        ),
+        .executableTarget(
+            name: "MoireFilter",
+            linkerSettings: [
                 .linkedFramework("CoreImage"),
                 .linkedFramework("ImageIO")
             ]

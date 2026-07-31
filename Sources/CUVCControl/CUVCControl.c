@@ -345,6 +345,164 @@ int cleancam_uvc_set_gain(CleanCamUVCHandle *handle, uint16_t value) {
     );
 }
 
+int cleancam_uvc_get_white_balance_temperature(
+    CleanCamUVCHandle *handle,
+    CleanCamUVCRange *out_range
+) {
+    if (handle == NULL || out_range == NULL) return CC_UVC_CONTROL_FAILED;
+    uint16_t minimum = 0, maximum = 0, current = 0, default_value = 0;
+    int result = get_uint16(
+        handle,
+        UVC_GET_MIN,
+        0x0a,
+        handle->processing_unit_id,
+        &minimum
+    );
+    if (result != CC_UVC_OK) return result;
+    result = get_uint16(
+        handle,
+        UVC_GET_MAX,
+        0x0a,
+        handle->processing_unit_id,
+        &maximum
+    );
+    if (result != CC_UVC_OK) return result;
+    result = get_uint16(
+        handle,
+        UVC_GET_CUR,
+        0x0a,
+        handle->processing_unit_id,
+        &current
+    );
+    if (result != CC_UVC_OK) return result;
+    result = get_uint16(
+        handle,
+        UVC_GET_DEF,
+        0x0a,
+        handle->processing_unit_id,
+        &default_value
+    );
+    if (result != CC_UVC_OK) return result;
+    out_range->minimum = (int)minimum;
+    out_range->maximum = (int)maximum;
+    out_range->current = (int)current;
+    out_range->default_value = (int)default_value;
+    return minimum < maximum ? CC_UVC_OK : CC_UVC_CONTROL_FAILED;
+}
+
+int cleancam_uvc_set_white_balance_temperature(
+    CleanCamUVCHandle *handle,
+    uint16_t value
+) {
+    if (handle == NULL) return CC_UVC_CONTROL_FAILED;
+    uint8_t automatic = 0;
+    int result = control_request(
+        handle,
+        false,
+        UVC_SET_CUR,
+        0x0b,
+        handle->processing_unit_id,
+        &automatic,
+        sizeof(automatic)
+    );
+    if (result != CC_UVC_OK) return result;
+    return control_request(
+        handle,
+        false,
+        UVC_SET_CUR,
+        0x0a,
+        handle->processing_unit_id,
+        &value,
+        sizeof(value)
+    );
+}
+
+int cleancam_uvc_get_focus(
+    CleanCamUVCHandle *handle,
+    CleanCamUVCRange *out_range
+) {
+    if (handle == NULL || out_range == NULL) return CC_UVC_CONTROL_FAILED;
+    uint16_t minimum = 0, maximum = 0, current = 0, default_value = 0;
+    int result = get_uint16(
+        handle,
+        UVC_GET_MIN,
+        0x06,
+        handle->camera_terminal_id,
+        &minimum
+    );
+    if (result != CC_UVC_OK) return result;
+    result = get_uint16(
+        handle,
+        UVC_GET_MAX,
+        0x06,
+        handle->camera_terminal_id,
+        &maximum
+    );
+    if (result != CC_UVC_OK) return result;
+    result = get_uint16(
+        handle,
+        UVC_GET_CUR,
+        0x06,
+        handle->camera_terminal_id,
+        &current
+    );
+    if (result != CC_UVC_OK) return result;
+    result = get_uint16(
+        handle,
+        UVC_GET_DEF,
+        0x06,
+        handle->camera_terminal_id,
+        &default_value
+    );
+    if (result != CC_UVC_OK) return result;
+    out_range->minimum = (int)minimum;
+    out_range->maximum = (int)maximum;
+    out_range->current = (int)current;
+    out_range->default_value = (int)default_value;
+    return minimum < maximum ? CC_UVC_OK : CC_UVC_CONTROL_FAILED;
+}
+
+int cleancam_uvc_set_focus(CleanCamUVCHandle *handle, uint16_t value) {
+    if (handle == NULL) return CC_UVC_CONTROL_FAILED;
+    uint8_t automatic = 0;
+    int result = control_request(
+        handle,
+        false,
+        UVC_SET_CUR,
+        0x08,
+        handle->camera_terminal_id,
+        &automatic,
+        sizeof(automatic)
+    );
+    if (result != CC_UVC_OK) return result;
+    return control_request(
+        handle,
+        false,
+        UVC_SET_CUR,
+        0x06,
+        handle->camera_terminal_id,
+        &value,
+        sizeof(value)
+    );
+}
+
+int cleancam_uvc_set_auto_focus(
+    CleanCamUVCHandle *handle,
+    bool enabled
+) {
+    if (handle == NULL) return CC_UVC_CONTROL_FAILED;
+    uint8_t automatic = enabled ? 1 : 0;
+    return control_request(
+        handle,
+        false,
+        UVC_SET_CUR,
+        0x08,
+        handle->camera_terminal_id,
+        &automatic,
+        sizeof(automatic)
+    );
+}
+
 int cleancam_uvc_get_auto_exposure(CleanCamUVCHandle *handle, bool *out_enabled) {
     if (handle == NULL || out_enabled == NULL) return CC_UVC_CONTROL_FAILED;
     uint8_t mode = 0;

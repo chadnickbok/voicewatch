@@ -43,6 +43,7 @@ EXPECTED = {
     "os-voice-review": "b3acc3e18fae01ab0cc79e1c512135ccc8a70d7aa3d50438305b20d67778c47e",
     "os-voice-build": "6a3b93f18353bc4a9e7ffc06b5f21338df9cc1271d9b741a4c8ed9c4851a4a90",
     "os-voice-result": "b71c340c5d8d2294d78d0fbd4163fa532f1097118fc7a5f63737ebe41cb38a7a",
+    "color-bars": "8a2bff2346fb9e431b7b3fa5e8cff19f703a1385d69f9b6f02ade958da637943",
 }
 
 

@@ -21,7 +21,7 @@ It now also contains a substantial Material 3 Expressive framework slice:
 - a bounded native keyed reconciler with atomic patch validation;
 - semantic AppSpec v1 plus calories, calculator, workout, and voice fixtures;
 - deterministic 240×240 RGB565 catalog goldens;
-- an instrumented CoreS3 asynchronous-DMA display path.
+- a visually verified CoreS3 40MHz synchronous strip-display path.
 
 The active UI/runtime milestone is specified in the
 [20-app and OS conformance-suite plan](docs/20-app-conformance-suite.md).
@@ -296,6 +296,56 @@ Edit the string in `apps/hello/src/lib.rs`, then rebuild and flash:
 ./scripts/build-firmware.sh
 ./scripts/flash.sh
 ```
+
+To stage another package in the embedded recovery slot and keep it visible for
+real-hardware conformance capture:
+
+```bash
+./scripts/build-firmware.sh --app timer --show-app
+./scripts/flash.sh --port /dev/cu.usbmodem21101 --no-monitor
+```
+
+With the fixed camera fixture in place, capture the full 20-app hardware lane:
+
+```bash
+./scripts/capture-hardware-suite.sh --port /dev/cu.usbmodem21101
+```
+
+The command saves desktop references, raw camera frames, normalized 240×240
+hardware crops, color-corrected hardware images, and side-by-side comparisons
+under `target/hardware-gallery/apps`. Use `--app timer` for one package or
+`--start-at calendar` to resume an interrupted sweep. Comparisons always use
+the corrected output. The standard path uses exposure 16, gain 58, fixed
+white balance and focus, and no blur.
+
+To flash the label-free RGB565 calibration target, capture it with the approved
+camera settings, and fit a capture-correction matrix:
+
+```bash
+./scripts/capture-color-bars.sh --port /dev/cu.usbmodem21101
+```
+
+The 240×240 target has a white viewport-registration frame around standard
+full-range bars followed by grayscale, red, green, and blue ramps. Results are
+written under
+`target/hardware-gallery/color-bars`: the deterministic reference, raw camera
+frame, normalized crop, corrected preview, three-way comparison, per-patch CSV,
+and a JSON affine sRGB correction matrix with clipping/crushing diagnostics.
+Once the bars are already on screen, use `--capture-only` with different
+`--exposure` and `--gain` values to iterate without reflashing.
+
+The color target and app gallery use the same checked-in sharp profile:
+exposure 16, gain 58, white balance 4000 K, and an explicit autofocus settle.
+This is necessary because a correction fitted at different acquisition
+settings is not transferable. The attached-hardware result is recorded in
+[`evidence/hardware/cores3-color-calibration.md`](evidence/hardware/cores3-color-calibration.md).
+
+Both capture commands default to `--moire-sigma 0`: no Gaussian blur, denoise,
+or unsharp pass is applied. Raw and uncorrected normalized captures are always
+retained. See
+[`docs/hardware/capture-standard.md`](docs/hardware/capture-standard.md) for
+the mandatory sharp-then-color-correct evidence contract and profile
+regeneration rules.
 
 For microSD, rerun `install-sd-app.sh` after rebuilding.
 

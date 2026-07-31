@@ -40,6 +40,7 @@ enum {
     M3E_CATALOG_STORY_OS_VOICE_REVIEW = 30,
     M3E_CATALOG_STORY_OS_VOICE_BUILD = 31,
     M3E_CATALOG_STORY_OS_VOICE_RESULT = 32,
+    M3E_CATALOG_STORY_COLOR_BARS = 33,
 };
 
 void m3e_catalog_show(lv_obj_t* screen, int story);

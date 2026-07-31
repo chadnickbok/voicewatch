@@ -94,6 +94,7 @@ def parser() -> argparse.ArgumentParser:
             "os-voice-review",
             "os-voice-build",
             "os-voice-result",
+            "color-bars",
         ),
         default="foundation",
     )
@@ -163,6 +164,7 @@ def main(arguments: list[str] | None = None) -> int:
                         "os-voice-review": 30,
                         "os-voice-build": 31,
                         "os-voice-result": 32,
+                        "color-bars": 33,
                     }[options.story]
                 )
                 host.write_bmp(output)

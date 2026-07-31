@@ -5,6 +5,17 @@ single-app sizing and internal-only heap figures are intentionally preserved as
 the before-state. The current PSRAM/onboard-package boot trace is recorded in
 [`evidence/hardware/cores3-se-boot.md`](../../evidence/hardware/cores3-se-boot.md).
 
+> **Correction after camera validation:** the 80MHz asynchronous-DMA candidate
+> below passed timing telemetry but did not pass a visual gate. On the physical
+> panel it reordered/corrupted strips and could erase glyph pixels. The current
+> verified path uses a 40MHz panel clock, RGB565 byte swapping, two 240×40
+> partial buffers, and blocking `pushImage`; LVGL receives `flush_ready` only
+> after M5GFX has consumed the strip. The 20-app real-hardware gallery is
+> recorded in
+> [`evidence/hardware/cores3-app-gallery.md`](../../evidence/hardware/cores3-app-gallery.md).
+> The measurements below remain useful historical performance data, but
+> candidate E is not a valid production configuration.
+
 Date: 2026-07-30  
 Board: M5Stack CoreS3 SE, ESP32-S3 revision 0.2  
 Transport: USB Serial/JTAG at `/dev/cu.usbmodem21101`  
@@ -12,7 +23,7 @@ Panel: 320×240 physical, centered 240×240 watch viewport with 40px side gutter
 Color: RGB565  
 Workload: continuously invalidated 240×240 Material catalog stress scene
 
-## Selected development configuration
+## Historical benchmark configuration
 
 - CPU: 240MHz
 - display SPI write clock: 80MHz requested and reported
@@ -23,9 +34,9 @@ Workload: continuously invalidated 240×240 Material catalog stress scene
 - asynchronous `pushImageDMA`; `lv_display_flush_ready()` is issued only after
   `dmaBusy()` clears
 
-The selected configuration sustains 27.8 FPS under the deliberately pessimistic
-full-screen workload. A normal watch screen should invalidate substantially less
-area.
+This configuration sustained 27.8 FPS under the deliberately pessimistic
+full-screen workload, but the later visual gate invalidated it. A normal watch
+screen should invalidate substantially less area.
 
 ## Measurement matrix
 

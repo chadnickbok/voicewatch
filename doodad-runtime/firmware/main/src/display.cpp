@@ -26,7 +26,7 @@ namespace {
 constexpr char kTag[] = "doodad";
 constexpr std::int32_t kDrawRows = 40;
 constexpr std::uint16_t kPhysicalBackground = 0x0841;
-constexpr std::uint32_t kDisplaySpiFrequencyHz = 80 * 1000 * 1000;
+constexpr std::uint32_t kDisplaySpiFrequencyHz = 40 * 1000 * 1000;
 constexpr std::int64_t kTelemetryIntervalMicroseconds = 2 * 1000 * 1000;
 constexpr std::size_t kUiQueueDepth = 16;
 
@@ -63,8 +63,6 @@ std::uint16_t g_draw_buffer_a[DOODAD_SURFACE_WIDTH * kDrawRows]
     __attribute__((aligned(4)));
 std::uint16_t g_draw_buffer_b[DOODAD_SURFACE_WIDTH * kDrawRows]
     __attribute__((aligned(4)));
-lv_display_t* g_pending_flush = nullptr;
-std::int64_t g_pending_flush_started_us = 0;
 std::uint32_t g_window_frames = 0;
 std::uint32_t g_window_renders = 0;
 std::uint32_t g_window_flushes = 0;
@@ -86,45 +84,34 @@ std::uint32_t tick_milliseconds() {
     return static_cast<std::uint32_t>(esp_timer_get_time() / 1000);
 }
 
-void complete_pending_flush() {
-    if (g_pending_flush == nullptr || M5.Display.dmaBusy()) {
-        return;
-    }
-    const auto duration = static_cast<std::uint32_t>(
-        esp_timer_get_time() - g_pending_flush_started_us);
-    ++g_window_flushes;
-    g_window_flush_us += duration;
-    g_window_max_flush_us =
-        std::max(g_window_max_flush_us, duration);
-    auto* completed = g_pending_flush;
-    g_pending_flush = nullptr;
-    lv_display_flush_ready(completed);
-}
-
 void flush_display(
     lv_display_t* display, const lv_area_t* area, std::uint8_t* pixel_map) {
-    if (g_pending_flush != nullptr) {
-        ESP_LOGE(kTag, "[display] overlapping DMA flush");
-        M5.Display.waitDMA();
-        complete_pending_flush();
-    }
     const auto width = area->x2 - area->x1 + 1;
     const auto height = area->y2 - area->y1 + 1;
     const auto x_offset =
         (M5.Display.width() - DOODAD_SURFACE_WIDTH) / 2;
-
-    g_pending_flush = display;
-    g_pending_flush_started_us = esp_timer_get_time();
+    const auto started_us = esp_timer_get_time();
     g_window_pixels +=
         static_cast<std::uint64_t>(width)
         * static_cast<std::uint64_t>(height);
-    M5.Display.pushImageDMA(
+    // LVGL owns pixel_map and may reuse it as soon as flush_ready is called.
+    // Keep the transfer synchronous so M5GFX has consumed the complete strip
+    // before returning the buffer to LVGL. The previous pushImageDMA path
+    // could observe dmaBusy() as idle immediately after submission, release
+    // the strip early, and let subsequent rendering overwrite glyph pixels.
+    M5.Display.pushImage(
         x_offset + area->x1,
         area->y1,
         width,
         height,
         reinterpret_cast<const std::uint16_t*>(pixel_map));
-    complete_pending_flush();
+    const auto duration =
+        static_cast<std::uint32_t>(esp_timer_get_time() - started_us);
+    ++g_window_flushes;
+    g_window_flush_us += duration;
+    g_window_max_flush_us =
+        std::max(g_window_max_flush_us, duration);
+    lv_display_flush_ready(display);
 }
 
 void display_event(lv_event_t* event) {
@@ -193,7 +180,6 @@ bool enqueue(const UiCommand& command) {
 
 void shell_now(const char* status, const char* source) {
     doodad_lvgl_ui_show_shell(&g_ui, status, source);
-    render_now();
 }
 
 void error_now(const char* stage);
@@ -226,7 +212,6 @@ bool appspec_now(m3e::appspec::WireDocument* document) {
     }
     delete g_active_document;
     g_active_document = document;
-    render_now();
     return true;
 }
 
@@ -248,18 +233,20 @@ bool command_batch_now(m3e::appspec::CommandBatch* batch) {
             static_cast<unsigned>(applied.command_index));
         return false;
     }
-    render_now();
+    // Text and value patches can invalidate a transparent child without
+    // invalidating the surface behind it. Repaint the composed app surface so
+    // a label update cannot flush an otherwise-clear draw buffer over its
+    // parent button/card.
+    lv_obj_invalidate(lv_screen_active());
     return true;
 }
 
 void error_now(const char* stage) {
     doodad_lvgl_ui_show_error(&g_ui, stage);
-    render_now();
 }
 
 void catalog_now(int story) {
     m3e_catalog_show(lv_screen_active(), story);
-    render_now();
 }
 
 int shell_story() {
@@ -437,6 +424,9 @@ bool display_init() {
     M5.begin(config);
     M5.Display.setRotation(1);
     M5.Display.setBrightness(96);
+    // LVGL's RGB565 draw buffers contain host-endian uint16_t pixels.
+    // M5GFX otherwise treats uint16_t image data as already bus-swapped.
+    M5.Display.setSwapBytes(true);
     auto* display_bus = M5.Display.getPanel()->getBus();
     if (display_bus == nullptr) {
         ESP_LOGE(kTag, "[display] panel bus unavailable");
@@ -676,9 +666,7 @@ void display_update() {
     drain_ui_commands();
     M5.update();
     handle_system_inputs();
-    complete_pending_flush();
     lv_timer_handler();
-    complete_pending_flush();
 
     const auto now = esp_timer_get_time();
     const auto elapsed = now - g_window_started_us;
@@ -701,7 +689,7 @@ void display_update() {
             kTag,
             "[display] fps=%.1f frames=%u flushes=%u "
             "pixels=%llu avg_render_us=%u max_render_us=%u "
-            "avg_flush_us=%u max_flush_us=%u touch_presses=%u dma=%s",
+            "avg_flush_us=%u max_flush_us=%u touch_presses=%u transfer=%s",
             fps,
             static_cast<unsigned>(g_window_frames),
             static_cast<unsigned>(g_window_flushes),
@@ -711,7 +699,7 @@ void display_update() {
             static_cast<unsigned>(average_flush_us),
             static_cast<unsigned>(g_window_max_flush_us),
             static_cast<unsigned>(g_window_touch_presses),
-            M5.Display.dmaBusy() ? "busy" : "idle");
+            "synchronous");
         g_window_frames = 0;
         g_window_renders = 0;
         g_window_flushes = 0;

@@ -20,6 +20,20 @@ int cleancam_uvc_get_exposure(CleanCamUVCHandle *handle, CleanCamUVCRange *out_r
 int cleancam_uvc_set_exposure(CleanCamUVCHandle *handle, uint32_t value);
 int cleancam_uvc_get_gain(CleanCamUVCHandle *handle, CleanCamUVCRange *out_range);
 int cleancam_uvc_set_gain(CleanCamUVCHandle *handle, uint16_t value);
+int cleancam_uvc_get_white_balance_temperature(
+    CleanCamUVCHandle *handle,
+    CleanCamUVCRange *out_range
+);
+int cleancam_uvc_set_white_balance_temperature(
+    CleanCamUVCHandle *handle,
+    uint16_t value
+);
+int cleancam_uvc_get_focus(
+    CleanCamUVCHandle *handle,
+    CleanCamUVCRange *out_range
+);
+int cleancam_uvc_set_focus(CleanCamUVCHandle *handle, uint16_t value);
+int cleancam_uvc_set_auto_focus(CleanCamUVCHandle *handle, bool enabled);
 int cleancam_uvc_get_auto_exposure(CleanCamUVCHandle *handle, bool *out_enabled);
 int cleancam_uvc_set_auto_exposure(CleanCamUVCHandle *handle, bool enabled);
 int cleancam_uvc_disable_backlight_compensation(CleanCamUVCHandle *handle);

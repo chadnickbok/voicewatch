@@ -1,0 +1,75 @@
+{
+  "schema": "doodad.color-calibration.v1",
+  "source": "normalized color-bars capture",
+  "target": {
+    "format": "RGB565",
+    "width": 240,
+    "height": 240,
+    "columns": 8,
+    "rows": 5,
+    "patches": 40,
+    "registration_border": {
+      "horizontal_pixels": 8,
+      "vertical_pixels": 10
+    }
+  },
+  "capture": {
+    "camera": "Logitech StreamCam",
+    "exposure": 16,
+    "gain": 58,
+    "white_balance_temperature": 4000,
+    "focus": null,
+    "focus_mode": "auto",
+    "viewport_geometry": "345x345+765+296"
+  },
+  "quality": {
+    "observed_white": [
+      97,
+      179,
+      231
+    ],
+    "observed_black": [
+      0,
+      0,
+      0
+    ],
+    "shadow_crushed_patches": [
+      "gray_1",
+      "red_1",
+      "green_1",
+      "blue_1",
+      "red_2",
+      "green_2"
+    ],
+    "highlight_clipped_patches": [],
+    "warnings": [
+      "6 non-black patches are crushed at or below code 2"
+    ]
+  },
+  "correction": {
+    "model": "expected_srgb = matrix * [observed_r, observed_g, observed_b, 1]",
+    "domain": "normalized 0..1 sRGB",
+    "matrix": [
+      [
+        1.97557348,
+        0.06020243,
+        0.04544505,
+        0.05840726
+      ],
+      [
+        -0.16256758,
+        2.07645211,
+        -0.68660427,
+        0.07445462
+      ],
+      [
+        0.03238429,
+        -0.21867255,
+        1.13195041,
+        0.01136332
+      ]
+    ],
+    "rmse_before": 0.22779189,
+    "rmse_after": 0.10810042
+  }
+}

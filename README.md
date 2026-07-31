@@ -34,6 +34,33 @@ swift run CleanCam --probe
 For an unattended capture, or to recover a wedged external UVC stream:
 
 ```sh
-.build/CleanCam.app/Contents/MacOS/CleanCam --capture /tmp/cores3.png
+.build/CleanCam.app/Contents/MacOS/CleanCam \
+  --capture /tmp/cores3.png \
+  --exposure 16 \
+  --gain 58 \
+  --white-balance-temperature 4000 \
+  --auto-focus
 .build/CleanCam.app/Contents/MacOS/CleanCam --reset-camera
 ```
+
+`--exposure` uses the camera's reported 100 µs units. Supplying either manual
+setting locks automatic exposure before the frame is captured. The headless
+path can also lock the StreamCam's standard UVC white-balance-temperature and
+focus controls; `--auto-focus` is available for fixture setup.
+
+## Moiré filtering
+
+The package also builds a small native Core Image CLI for LCD/camera-grid
+moiré reduction:
+
+```sh
+.build/release/moire-filter input.png output.png \
+  --blur-radius 2.0 \
+  --unsharp-radius 2.5 \
+  --unsharp-intensity 0.45
+```
+
+It applies a Gaussian low-pass followed by an unsharp mask and preserves the
+input dimensions. This is an opt-in diagnostic tool. The standard Doodad
+evidence path does not blur captures: it uses the sharp camera profile and
+then applies its matching color correction.

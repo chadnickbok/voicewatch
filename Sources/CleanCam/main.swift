@@ -57,6 +57,31 @@ final class UVCCameraControl {
         )
     }
 
+    func whiteBalanceTemperatureRange() -> UVCIntegerRange? {
+        guard let handle else { return nil }
+        var range = CleanCamUVCRange()
+        guard cleancam_uvc_get_white_balance_temperature(handle, &range) == 0
+        else { return nil }
+        return UVCIntegerRange(
+            minimum: Int(range.minimum),
+            maximum: Int(range.maximum),
+            current: Int(range.current),
+            defaultValue: Int(range.default_value)
+        )
+    }
+
+    func focusRange() -> UVCIntegerRange? {
+        guard let handle else { return nil }
+        var range = CleanCamUVCRange()
+        guard cleancam_uvc_get_focus(handle, &range) == 0 else { return nil }
+        return UVCIntegerRange(
+            minimum: Int(range.minimum),
+            maximum: Int(range.maximum),
+            current: Int(range.current),
+            defaultValue: Int(range.default_value)
+        )
+    }
+
     func automaticExposureEnabled() -> Bool? {
         guard let handle else { return nil }
         var enabled = false
@@ -86,6 +111,38 @@ final class UVCCameraControl {
         }
         let clamped = UInt16(min(max(value, range.minimum), range.maximum))
         try Self.check(cleancam_uvc_set_gain(handle, clamped), operation: "set gain")
+    }
+
+    func setWhiteBalanceTemperature(_ value: Int) throws {
+        guard let handle, let range = whiteBalanceTemperatureRange() else {
+            throw ControlError("Hardware white balance is unavailable.")
+        }
+        let clamped = UInt16(min(max(value, range.minimum), range.maximum))
+        try Self.check(
+            cleancam_uvc_set_white_balance_temperature(handle, clamped),
+            operation: "set white-balance temperature"
+        )
+    }
+
+    func setFocus(_ value: Int) throws {
+        guard let handle, let range = focusRange() else {
+            throw ControlError("Hardware focus is unavailable.")
+        }
+        let clamped = UInt16(min(max(value, range.minimum), range.maximum))
+        try Self.check(
+            cleancam_uvc_set_focus(handle, clamped),
+            operation: "set focus"
+        )
+    }
+
+    func setAutomaticFocus(_ enabled: Bool) throws {
+        guard let handle else {
+            throw ControlError("Hardware focus is unavailable.")
+        }
+        try Self.check(
+            cleancam_uvc_set_auto_focus(handle, enabled),
+            operation: enabled ? "enable autofocus" : "disable autofocus"
+        )
     }
 
     func disableBacklightCompensation() {
@@ -309,6 +366,42 @@ final class CameraController: NSObject, AVCaptureVideoDataOutputSampleBufferDele
                 if let device = self.input?.device {
                     DispatchQueue.main.async { self.onDeviceChanged?(device) }
                 }
+            } catch {
+                self.report(error.localizedDescription)
+            }
+        }
+    }
+
+    func setWhiteBalanceTemperature(_ value: Int) {
+        sessionQueue.async { [weak self] in
+            guard let self, let control = self.uvcControl else { return }
+            do {
+                try control.setWhiteBalanceTemperature(value)
+                self.report("UVC white balance locked at \(value) K.")
+            } catch {
+                self.report(error.localizedDescription)
+            }
+        }
+    }
+
+    func setFocus(_ value: Int) {
+        sessionQueue.async { [weak self] in
+            guard let self, let control = self.uvcControl else { return }
+            do {
+                try control.setFocus(value)
+                self.report("UVC focus locked at \(value).")
+            } catch {
+                self.report(error.localizedDescription)
+            }
+        }
+    }
+
+    func setAutomaticFocus(_ enabled: Bool) {
+        sessionQueue.async { [weak self] in
+            guard let self, let control = self.uvcControl else { return }
+            do {
+                try control.setAutomaticFocus(enabled)
+                self.report(enabled ? "UVC autofocus enabled." : "UVC autofocus disabled.")
             } catch {
                 self.report(error.localizedDescription)
             }
@@ -849,6 +942,16 @@ func printCameraProbe() {
             } else {
                 print("  gain: unavailable")
             }
+            if let whiteBalance = control.whiteBalanceTemperatureRange() {
+                print("  white balance: \(whiteBalance.minimum)...\(whiteBalance.maximum) K, current \(whiteBalance.current), default \(whiteBalance.defaultValue)")
+            } else {
+                print("  white balance: unavailable")
+            }
+            if let focus = control.focusRange() {
+                print("  focus: \(focus.minimum)...\(focus.maximum), current \(focus.current), default \(focus.defaultValue)")
+            } else {
+                print("  focus: unavailable")
+            }
             print("  automatic exposure: \(control.automaticExposureEnabled().map(String.init) ?? "unknown")")
         } catch {
             print("  UVC controls: \(error.localizedDescription)")
@@ -859,10 +962,27 @@ func printCameraProbe() {
 final class HeadlessCaptureDelegate: NSObject, NSApplicationDelegate {
     private let controller = CameraController()
     private let outputURL: URL
+    private let exposure: Int?
+    private let gain: Int?
+    private let whiteBalanceTemperature: Int?
+    private let focus: Int?
+    private let automaticFocus: Bool
     private var captureScheduled = false
 
-    init(outputURL: URL) {
+    init(
+        outputURL: URL,
+        exposure: Int?,
+        gain: Int?,
+        whiteBalanceTemperature: Int?,
+        focus: Int?,
+        automaticFocus: Bool
+    ) {
         self.outputURL = outputURL
+        self.exposure = exposure
+        self.gain = gain
+        self.whiteBalanceTemperature = whiteBalanceTemperature
+        self.focus = focus
+        self.automaticFocus = automaticFocus
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -872,7 +992,26 @@ final class HeadlessCaptureDelegate: NSObject, NSApplicationDelegate {
                   status.hasPrefix("Live:"),
                   !self.captureScheduled else { return }
             self.captureScheduled = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if self.exposure != nil || self.gain != nil {
+                self.controller.lockExposure()
+            }
+            if let exposure = self.exposure {
+                self.controller.setExposure(exposure)
+            }
+            if let gain = self.gain {
+                self.controller.setGain(gain)
+            }
+            if let temperature = self.whiteBalanceTemperature {
+                self.controller.setWhiteBalanceTemperature(temperature)
+            }
+            if let focus = self.focus {
+                self.controller.setFocus(focus)
+            } else if self.automaticFocus {
+                self.controller.setAutomaticFocus(true)
+            }
+            let settleTime =
+                self.automaticFocus ? 5.0 : (self.focus == nil ? 1.5 : 3.0)
+            DispatchQueue.main.asyncAfter(deadline: .now() + settleTime) {
                 self.controller.requestCapture(to: self.outputURL)
             }
         }
@@ -883,6 +1022,14 @@ final class HeadlessCaptureDelegate: NSObject, NSApplicationDelegate {
             NSApp.terminate(nil)
         }
     }
+}
+
+func integerArgument(_ name: String) -> Int? {
+    guard let index = CommandLine.arguments.firstIndex(of: name),
+          CommandLine.arguments.indices.contains(index + 1) else {
+        return nil
+    }
+    return Int(CommandLine.arguments[index + 1])
 }
 
 if CommandLine.arguments.contains("--probe") {
@@ -905,7 +1052,16 @@ if CommandLine.arguments.contains("--probe") {
         fileURLWithPath: CommandLine.arguments[captureIndex + 1],
         relativeTo: URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
     ).standardizedFileURL
-    let delegate = HeadlessCaptureDelegate(outputURL: outputURL)
+    let delegate = HeadlessCaptureDelegate(
+        outputURL: outputURL,
+        exposure: integerArgument("--exposure"),
+        gain: integerArgument("--gain"),
+        whiteBalanceTemperature: integerArgument(
+            "--white-balance-temperature"
+        ),
+        focus: integerArgument("--focus"),
+        automaticFocus: CommandLine.arguments.contains("--auto-focus")
+    )
     app.delegate = delegate
     app.setActivationPolicy(.regular)
     withExtendedLifetime(delegate) {
