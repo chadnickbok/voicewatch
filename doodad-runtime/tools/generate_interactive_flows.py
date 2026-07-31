@@ -4,8 +4,8 @@
 These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
 machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
-Calories, Workout, Voice Notes, Medication, Media, and Snake) live outside
-this generator.
+Calories, Workout, Voice Notes, Medication, Sensor Recorder, Media, and
+Snake) live outside this generator.
 """
 
 from __future__ import annotations
@@ -39,39 +39,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "sensor-recorder": {
-        "initial": ("sensor-recorder.primary", "recording"),
-        "screens": {
-            "recording": screen(
-                "RECORDING",
-                "50 Hz · 1,024",
-                "X +0.04  Y −0.12  Z +0.98",
-                ("Pause", "sensor.pause", "paused"),
-                ("Finish", "sensor.finish", "export"),
-            ),
-            "paused": screen(
-                "PAUSED",
-                "20.5 seconds",
-                "Samples committed · UI idle",
-                ("Resume", "sensor.resume", "recording"),
-                ("Export", "sensor.export", "export"),
-            ),
-            "export": screen(
-                "SESSION",
-                "1,024 samples",
-                "No gaps · 48 KiB · checksum OK",
-                ("Export CSV", "sensor.export.csv", "exported"),
-                ("Record again", "sensor.again", "recording"),
-            ),
-            "exported": screen(
-                "EXPORT READY",
-                "session-001.csv",
-                "Mock transfer complete · revision 8",
-                ("Session", "sensor.session", "export"),
-                ("Home", "sensor.home", "home"),
-            ),
-        },
-    },
     "sleep": {
         "initial": ("sleep.primary", "overnight"),
         "screens": {

@@ -38,10 +38,10 @@ FLOWS = {
         ("10 min", "medication.snoozed.summary", "10 MIN"),
     ],
     "sensor-recorder": [
-        ("Start recording", "sensor-recorder.recording.summary", "50 Hz · 1,024"),
-        ("Pause", "sensor-recorder.paused.summary", "20.5 seconds"),
-        ("Export", "sensor-recorder.export.summary", "1,024 samples"),
-        ("Export CSV", "sensor-recorder.exported.summary", "session-001.csv"),
+        ("Record", "sensor-recorder.recording.summary", "00:20"),
+        ("Pause", "sensor-recorder.paused.summary", "00:20"),
+        ("Export", "sensor-recorder.export.summary", "1024"),
+        ("Export", "sensor-recorder.exported.summary", "CSV"),
     ],
     "sleep": [
         ("Start sleep", "sleep.overnight.summary", "6h 18m"),

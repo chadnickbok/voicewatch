@@ -589,7 +589,7 @@ terminal LVGL frame to a different Compose fixture.
 | 8 | Calories / nutrition | [x] | [x] | [x] | [x] | [x] |
 | 9 | Voice Notes | [x] | [x] | [x] | [x] | [x] |
 | 10 | Medication | [x] | [x] | [x] | [x] | [x] |
-| 11 | Sensor Recorder | [x] | [x] | [x] | [x] | [ ] |
+| 11 | Sensor Recorder | [x] | [x] | [x] | [x] | [x] |
 | 12 | Sleep | [x] | [x] | [x] | [x] | [ ] |
 | 13 | Media | [x] | [x] | [x] | [x] | [x] |
 | 14 | Navigation | [x] | [x] | [x] | [x] | [ ] |
@@ -1261,6 +1261,16 @@ produce the twenty-row report.
   all four checkpoints. The API 37 capture, comparison images, and approved
   **Equivalent** disposition are recorded in
   [`reference/reviews/media.md`](../reference/reviews/media.md).
+- [x] Completed the Sensor Recorder oracle redesign and decisive-flow review
+  across ready, recording, paused, completed-session, and export-ready states.
+  All five title-free documents select the shared live-action pattern by
+  structure alone. Compose and LVGL share exact normalized structure/bounds,
+  two 48dp controls, and no quality findings at every checkpoint. Google's
+  current Health Services exercise sample supplies the live-metric,
+  pause/finish, session-summary, and ongoing-activity hierarchy; the Doodad
+  fixture keeps its own deterministic XYZ data. The approved **Equivalent**
+  disposition is recorded in
+  [`reference/reviews/sensor-recorder.md`](../reference/reviews/sensor-recorder.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

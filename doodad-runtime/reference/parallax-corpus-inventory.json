@@ -131,47 +131,47 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 134,
-      "card": 61,
+      "button": 135,
+      "card": 56,
       "column": 5,
       "image": 5,
       "keypad": 2,
-      "live_card": 12,
+      "live_card": 17,
       "progress": 7,
-      "row": 17,
+      "row": 22,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
-      "text": 141,
+      "text": 142,
       "toggle": 9,
       "voice_orb": 1
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 134,
-      "button.size": 134,
-      "button.tone": 134,
-      "button.variant": 134,
-      "card.body": 61,
-      "card.title": 61,
-      "card.tone": 61,
+      "button.label": 135,
+      "button.size": 135,
+      "button.tone": 135,
+      "button.variant": 135,
+      "card.body": 56,
+      "card.title": 56,
+      "card.tone": 56,
       "column.align": 5,
       "column.gap": 5,
       "image.asset": 5,
       "image.fit": 5,
       "keypad.columns": 2,
       "keypad.keys": 2,
-      "live_card.body": 12,
-      "live_card.progress": 10,
-      "live_card.title": 12,
-      "live_card.tone": 12,
+      "live_card.body": 17,
+      "live_card.progress": 14,
+      "live_card.title": 17,
+      "live_card.tone": 17,
       "progress.label": 7,
       "progress.maximum": 7,
       "progress.style": 7,
       "progress.tone": 7,
       "progress.value": 7,
-      "row.align": 17,
-      "row.gap": 17,
+      "row.align": 22,
+      "row.gap": 22,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -182,10 +182,10 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 107,
-      "text.max_lines": 141,
-      "text.style": 141,
-      "text.text": 141,
+      "text.align": 112,
+      "text.max_lines": 142,
+      "text.style": 142,
+      "text.text": 142,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9,
@@ -194,50 +194,50 @@
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 142,
+      "tap": 143,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 248,
+      "label": 249,
       "value": 81
     },
     "token_values": {
       "variant": {
         "filled": 71,
-        "outlined": 32,
+        "outlined": 28,
         "text": 4,
-        "tonal": 27
+        "tonal": 32
       },
       "style": {
         "body": 3,
         "caption": 6,
         "circular": 1,
-        "label": 66,
+        "label": 67,
         "linear": 6,
         "numeral": 56,
         "title": 10
       },
       "tone": {
         "error": 1,
-        "neutral": 119,
-        "primary": 101,
+        "neutral": 116,
+        "primary": 105,
         "tertiary": 2
       },
       "size": {
-        "default": 124,
+        "default": 125,
         "large": 10
       },
       "gap": {
         "lg": 1,
-        "none": 42,
-        "sm": 55,
-        "xs": 22
+        "none": 47,
+        "sm": 50,
+        "xs": 27
       },
       "align": {
-        "center": 96,
+        "center": 101,
         "end": 1,
         "start": 11,
-        "stretch": 119
+        "stretch": 124
       },
       "state": {
         "idle": 1
@@ -248,13 +248,13 @@
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
-      "live_action_detail": 9,
+      "live_action_detail": 14,
       "media_player": 5,
       "notification_stack": 6,
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 41,
+      "status_detail": 36,
       "task_list": 4,
       "voice_ready": 1,
       "weather_hero": 1,
@@ -671,23 +671,23 @@
     },
     {
       "path": "apps/sensor-recorder/appspec.json",
-      "sha256": "85cd8386001824a5d9d768da5c517b443e9c918e6b17a83bb152d8fb9d8f9845"
+      "sha256": "a4d8dcd8b92e355704cbe33cbea5b11be1808c595d4949d5d256fb713ba6e88f"
     },
     {
       "path": "apps/sensor-recorder/screens/export.json",
-      "sha256": "35beb8d69603ad566b34bb6ee86c09e31058088b6ee0cead35aafe8b1b150141"
+      "sha256": "614868fe47de72cd7950caedbde14611184e63b0b87f7c6fcab89375029c7dae"
     },
     {
       "path": "apps/sensor-recorder/screens/exported.json",
-      "sha256": "404327049b6f9eeb38af8c0165cf148e1ae393764ae1c2d30ffaa168fc23a065"
+      "sha256": "af6e68d76cbe66dfaedc34ffc2a32f0d65b038beb0af0c775bc97c39254ad767"
     },
     {
       "path": "apps/sensor-recorder/screens/paused.json",
-      "sha256": "9ecafced41c732c3e9c10a8299840963439b4c7a0c77c75353895344aac15d1a"
+      "sha256": "3cdf1a3e1793132635a891b10980549f81e65398909b4a8b14acb6740c86ecd3"
     },
     {
       "path": "apps/sensor-recorder/screens/recording.json",
-      "sha256": "f68a3faf2eef77955d7c84048a376cb9126ab465a3b022fc74a15691762f2839"
+      "sha256": "e125bbc74b8426cf852b6e419d99e43696ec28df9455e86645e423eec90c8ad1"
     },
     {
       "path": "apps/sleep/appspec.json",
@@ -858,5 +858,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "61b1c097b35034348603340f562ba4e372ed9d23d6be56ca1c463f43bbfa3abd"
+  "sources_sha256": "dda42d4a0c360ac5b1820a25351a3091e50047e211004aa0be9122cc842b3184"
 }

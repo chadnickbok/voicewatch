@@ -5,71 +5,83 @@
     "id": "sensor-recorder.recording",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "sensor-recorder.recording.heading",
           "type": "text",
           "props": {
-            "text": "RECORDING",
+            "text": "RECORDING / LIVE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sensor-recorder.recording.summary",
           "type": "text",
           "props": {
-            "text": "50 Hz · 1,024",
+            "text": "00:20",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "RECORDING",
-            "value": "50 Hz · 1,024"
+            "label": "Sensor recording elapsed time",
+            "value": "20 seconds"
           }
         },
         {
           "id": "sensor-recorder.recording.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "X +0.04  Y −0.12  Z +0.98",
-            "tone": "neutral"
+            "title": "1024 SAMPLES",
+            "body": "X +0.04 / Y -0.12 / Z +0.98",
+            "progress": 0.64,
+            "tone": "primary"
           }
         },
         {
-          "id": "sensor-recorder.recording.primary",
-          "type": "button",
+          "id": "sensor-recorder.recording.actions",
+          "type": "row",
           "props": {
-            "label": "Pause",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sensor.pause"
-          },
-          "semantics": {
-            "label": "Pause"
-          }
-        },
-        {
-          "id": "sensor-recorder.recording.secondary",
-          "type": "button",
-          "props": {
-            "label": "Finish",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sensor.finish"
-          },
-          "semantics": {
-            "label": "Finish"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sensor-recorder.recording.primary",
+                "type": "button",
+                "props": {
+                  "label": "Pause",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor.pause"
+                },
+                "semantics": {
+                  "label": "Pause sensor recording"
+                }
+              },
+              {
+                "id": "sensor-recorder.recording.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Finish",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor.finish"
+                },
+                "semantics": {
+                  "label": "Finish sensor recording"
+                }
+              }
+            ]
           }
         }
       ]

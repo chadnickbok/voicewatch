@@ -233,7 +233,7 @@
       "app_slug": "sensor-recorder",
       "trace": "traces/sensor-recorder/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "bfdcbd002ff56a62aee611bc0a764437d06a9f34f879e08ab84fe4e71df2f492",
+      "snapshot_sha256": "6a9f7a3a97f609dc6b29016b83e839201a4b71f309c0a96824a89f28b1bff709",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -246,7 +246,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. The title-free session follows Google's live-metric, decisive-control, and completed-summary hierarchy. See reference/reviews/sensor-recorder.md."
       }
     },
     {

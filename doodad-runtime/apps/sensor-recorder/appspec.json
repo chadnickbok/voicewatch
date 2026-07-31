@@ -5,46 +5,82 @@
     "id": "sensor-recorder.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
+        {
+          "id": "sensor-recorder.home.state",
+          "type": "text",
+          "props": {
+            "text": "READY / XYZ",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
         {
           "id": "sensor-recorder.summary",
           "type": "text",
           "props": {
-            "text": "1,024 samples",
+            "text": "50 HZ",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Sensor Recorder status",
-            "value": "1,024 samples"
+            "label": "Sensor Recorder sampling rate",
+            "value": "50 hertz"
           }
         },
         {
-          "id": "sensor-recorder.mock",
-          "type": "card",
+          "id": "sensor-recorder.home.detail",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "title": "XYZ / ACCELEROMETER",
+            "body": "1024-sample buffer / on watch",
+            "tone": "primary"
           }
         },
         {
-          "id": "sensor-recorder.primary",
-          "type": "button",
+          "id": "sensor-recorder.home.actions",
+          "type": "row",
           "props": {
-            "label": "Start recording",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sensor-recorder.primary"
-          },
-          "semantics": {
-            "label": "Start recording"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sensor-recorder.primary",
+                "type": "button",
+                "props": {
+                  "label": "Record",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor-recorder.primary"
+                },
+                "semantics": {
+                  "label": "Start sensor recording"
+                }
+              },
+              {
+                "id": "sensor-recorder.home.session",
+                "type": "button",
+                "props": {
+                  "label": "Session",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor.session"
+                },
+                "semantics": {
+                  "label": "Open the last sensor session"
+                }
+              }
+            ]
           }
         }
       ]

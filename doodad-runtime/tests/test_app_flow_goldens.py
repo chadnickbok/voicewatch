@@ -24,7 +24,7 @@ EXPECTED = {
     "calories": "30a1f14478bb443f23ec058f6dba90ad36c9607678d4bc86ebfe8bf9c4de0985",
     "voice-notes": "199a140cc7035a6ab959ce2cabc3408e75101b7a89b2e7ffe626006c3db6f0a5",
     "medication": "d0f30705bc9bafdfb9e931ba4a36001972dab4d6c96628b24ec39775ff32a255",
-    "sensor-recorder": "fb0d7aa170aaa0ad24f34d3fa061b235bcc20bade742c9df99afb65858310cff",
+    "sensor-recorder": "6f22e0db28a9fbb69a5cebbcc2bc81d9cbb9df9bc4c6fa837e3fa0732a657178",
     "sleep": "6b2e7abc07517d684418317226f0e33e955ef7dfab67f57c45758a43a6c9f994",
     "media": "c7a7689ee072a9c9e8d7c8cf94677423b2801dc5e7400571ea342f164e6e844f",
     "navigation": "0032fcfef8c20083769e2a9dad3b314f82f82aa68b6332026154734ba4fba316",
