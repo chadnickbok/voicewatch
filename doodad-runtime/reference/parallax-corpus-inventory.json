@@ -131,24 +131,25 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 148,
-      "card": 71,
+      "button": 145,
+      "card": 75,
       "keypad": 2,
       "live_card": 2,
       "progress": 2,
       "screen": 83,
+      "scroll": 6,
       "stepper": 4,
-      "text": 141
+      "text": 140
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 148,
-      "button.size": 148,
-      "button.tone": 148,
-      "button.variant": 148,
-      "card.body": 71,
-      "card.title": 71,
-      "card.tone": 71,
+      "button.label": 145,
+      "button.size": 145,
+      "button.tone": 145,
+      "button.variant": 145,
+      "card.body": 75,
+      "card.title": 75,
+      "card.tone": 75,
       "keypad.columns": 2,
       "keypad.keys": 2,
       "live_card.body": 2,
@@ -162,16 +163,18 @@
       "progress.value": 2,
       "screen.align": 83,
       "screen.gap": 83,
+      "scroll.align": 6,
+      "scroll.gap": 6,
       "stepper.label": 4,
       "stepper.maximum": 4,
       "stepper.minimum": 4,
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 76,
-      "text.max_lines": 141,
-      "text.style": 141,
-      "text.text": 141
+      "text.align": 82,
+      "text.max_lines": 140,
+      "text.style": 140,
+      "text.text": 140
     },
     "event_counts": {
       "tap": 150,
@@ -186,48 +189,49 @@
         "filled": 75,
         "outlined": 51,
         "text": 9,
-        "tonal": 13
+        "tonal": 10
       },
       "style": {
         "body": 3,
         "caption": 1,
         "circular": 1,
-        "label": 63,
+        "label": 64,
         "linear": 1,
         "numeral": 68,
-        "title": 6
+        "title": 4
       },
       "tone": {
         "neutral": 134,
-        "primary": 82,
+        "primary": 83,
         "tertiary": 7
       },
       "size": {
-        "compact": 20,
-        "default": 128
+        "compact": 12,
+        "default": 133
       },
       "gap": {
         "lg": 1,
-        "md": 5,
+        "md": 1,
         "none": 1,
-        "sm": 75,
+        "sm": 85,
         "xs": 1
       },
       "align": {
-        "center": 75,
+        "center": 81,
         "end": 1,
         "start": 1,
-        "stretch": 82
+        "stretch": 88
       }
     },
     "patterns": {
-      "action_list": 6,
+      "action_list": 3,
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
       "metric_control": 4,
+      "notification_stack": 6,
       "progress_dashboard": 1,
-      "status_detail": 67,
+      "status_detail": 64,
       "weather_hero": 1
     }
   },
@@ -504,11 +508,11 @@
     },
     {
       "path": "apps/notifications/appspec.json",
-      "sha256": "ab099afe9329980d830122e43b8de390a45591f2fa5a2f41efe8dae369c1c340"
+      "sha256": "dab253ed086fe3bbd1a394b674470f048eba84b9c9dfddc5195414fed451fdb8"
     },
     {
       "path": "apps/notifications/screens/detail.json",
-      "sha256": "bb3a575f61c4995ec4582296c0db75a014290fc69aef4380bf9c3b4685996a87"
+      "sha256": "7ef3821c2297a5794a438db07d3df15163137074666b4bf371bcf784d6254e12"
     },
     {
       "path": "apps/notifications/screens/inbox-empty.json",
@@ -516,19 +520,19 @@
     },
     {
       "path": "apps/notifications/screens/inbox-one.json",
-      "sha256": "91bf770776821393ee051ef02d1a4c6ba733f957b6e89683dce98edefa730619"
+      "sha256": "5fea651bd22173ba668641ac00987e86869ac384b3d064f44e7d643e70706bad"
     },
     {
       "path": "apps/notifications/screens/replied-sounds.json",
-      "sha256": "3060830c643513085c79953184cec5e128ee1bf33f71a228062f44a58a3ec09b"
+      "sha256": "b731997b2f3d63743e6d901cfa4ee244378c2c11db9ff4c8ac10f17a89ca170c"
     },
     {
       "path": "apps/notifications/screens/replied.json",
-      "sha256": "fbb5465bb80e669943877cc47f65671e42b93b6fc5493a81fc2ef2d1507b9719"
+      "sha256": "1e0e9d7ac69dd4b35f35d65ef4ba0fc1141291bcdfd64614ac54600e68aafcfb"
     },
     {
       "path": "apps/notifications/screens/reply.json",
-      "sha256": "2721b1b1b62da063166ecb9d60534d5f46f5cd1e064921a6d4d048f78439d5c6"
+      "sha256": "9e1e5a4183fd9a7d83ebdef2f02e7625b733c690250681c94e56342afe26a4a6"
     },
     {
       "path": "apps/tasks/appspec.json",
@@ -827,5 +831,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "95ec4ba40950800e437de63df597805707b6fc3ce328c5141f9624e9117a069e"
+  "sources_sha256": "4834bc63b563d01b5bd9362a1f9fe06622379cae79458334d5f6737173004b96"
 }

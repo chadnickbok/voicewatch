@@ -515,8 +515,8 @@ visible text, LVGL object identity, Compose test tag, or screen coordinate.
 
 ### Component mapping
 
-The 83 current app documents use the first eight rows. The remaining public
-AppSpec kinds are included so the renderer does not immediately become
+The 83 current app documents use the mapped kinds shown below. The remaining
+public AppSpec kinds are included so the renderer does not immediately become
 incomplete.
 
 | AppSpec kind | Reference implementation | Current app usage | Status |
@@ -531,7 +531,7 @@ incomplete.
 | `progress` | linear, circular, or segmented by semantic style | 1 document | [x] |
 | `column` | semantic vertical container | currently unused | [x] |
 | `row` | semantic horizontal container or action group | currently unused | [x] |
-| `scroll` | `TransformingLazyColumn`/bounded scrolling pattern | currently unused | [x] |
+| `scroll` | `TransformingLazyColumn`/bounded scrolling pattern | 6 documents | [x] |
 | `toggle` | whole-row Wear Material toggle control | currently unused | [x] |
 | `voice_orb` | Doodad-inspired system component using Material tokens | currently unused by suite | [x] |
 | `image` | deterministic decoded bitmap with semantic content description | planned for Media | [ ] |
@@ -540,9 +540,10 @@ incomplete.
 ### Pattern interpretation
 
 - [x] Define a small generic structural pattern vocabulary: status detail,
-  action list, metric control, keypad, progress dashboard, and empty. Expand it
-  with reviewed selection, confirmation, media, navigation, and microgame
-  intent as the corpus requires.
+  action list, metric control, keypad, countdown, weather hero, notification
+  stack, progress dashboard, and empty. Expand it with reviewed selection,
+  confirmation, media, navigation, and microgame intent as the corpus
+  requires.
 - [x] Infer a pattern only when the AppSpec contains unambiguous semantic
   structure.
 - [ ] Store underdetermined design intent in a reviewed, renderer-neutral
@@ -578,7 +579,7 @@ terminal LVGL frame to a different Compose fixture.
 |---:|---|:---:|:---:|:---:|:---:|:---:|
 | 1 | Timer | [x] | [x] | [x] | [x] | [x] |
 | 2 | Weather | [x] | [x] | [x] | [x] | [x] |
-| 3 | Notifications | [x] | [x] | [x] | [x] | [ ] |
+| 3 | Notifications | [x] | [x] | [x] | [x] | [x] |
 | 4 | Tasks | [x] | [x] | [x] | [x] | [ ] |
 | 5 | Calculator | [x] | [x] | [x] | [x] | [ ] |
 | 6 | Calendar | [x] | [x] | [x] | [x] | [ ] |
@@ -1172,7 +1173,7 @@ produce the twenty-row report.
   live-Wasm snapshots, semantics, framebuffer hashes, and zero replay Wasm
   calls.
 - [x] Migrated decisive scenarios to stable semantic node/action IDs.
-- [x] Added the generic all-kind Wear Compose AppSpec renderer, six frozen
+- [x] Added the generic all-kind Wear Compose AppSpec renderer, nine reviewed
   structural patterns, square/round profiles, and normalized bounds evidence.
 - [x] Installed Wear OS 7 API 37 and Wear OS 6.1 API 36.1 ARM64 images and
   created the three named reference AVDs.
@@ -1199,6 +1200,12 @@ produce the twenty-row report.
   with exact normalized structure/bounds and an approved **Equivalent**
   disposition in
   [`reference/reviews/weather.md`](../reference/reviews/weather.md).
+- [x] Completed the Notifications oracle redesign and decisive-flow review
+  across two-unread, detail, quick-reply, sent, one-unread, and empty states.
+  The square API 37 runtime and LVGL product renderer share exact normalized
+  structure/bounds, all three baseline actions meet the 48dp target, and the
+  approved **Equivalent** disposition is recorded in
+  [`reference/reviews/notifications.md`](../reference/reviews/notifications.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

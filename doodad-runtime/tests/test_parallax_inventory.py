@@ -20,26 +20,28 @@ class ParallaxInventoryTests(unittest.TestCase):
         self.assertEqual(
             document["authored"]["component_counts"],
             {
-                "button": 148,
-                "card": 71,
+                "button": 145,
+                "card": 75,
                 "keypad": 2,
                 "live_card": 2,
                 "progress": 2,
                 "screen": 83,
+                "scroll": 6,
                 "stepper": 4,
-                "text": 141,
+                "text": 140,
             },
         )
         self.assertEqual(
             document["authored"]["patterns"],
             {
-                "action_list": 6,
+                "action_list": 3,
                 "countdown": 1,
                 "empty": 1,
                 "keypad": 2,
                 "metric_control": 4,
+                "notification_stack": 6,
                 "progress_dashboard": 1,
-                "status_detail": 67,
+                "status_detail": 64,
                 "weather_hero": 1,
             },
         )

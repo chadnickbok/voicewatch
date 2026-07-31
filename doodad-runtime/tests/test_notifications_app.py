@@ -30,29 +30,49 @@ class NotificationAppTests(unittest.TestCase):
             self.native.node_text("notifications.summary"),
             "2 unread",
         )
-        self.native.click_button("Maya · Dinner at 7?")
+        self.native.dispatch_semantic_action(
+            "notifications.maya",
+            "notification.open.maya",
+            "tap",
+        )
         self.assertEqual(
             self.native.node_text("notification.detail.message"),
             "Dinner at 7?",
         )
 
-        self.native.click_button("Quick reply")
+        self.native.dispatch_semantic_action(
+            "notification.detail.reply",
+            "notification.reply",
+            "tap",
+        )
         self.assertEqual(
             self.native.node_text("notification.reply.heading"),
-            "QUICK REPLY",
+            "Reply to Maya",
         )
-        self.native.click_button("On my way")
+        self.native.dispatch_semantic_action(
+            "notification.reply.one",
+            "notification.reply.on_my_way",
+            "tap",
+        )
         self.assertEqual(
             self.native.node_text("notification.replied.message"),
-            "On my way",
+            "Coming",
         )
 
-        self.native.click_button("Done")
+        self.native.dispatch_semantic_action(
+            "notification.replied.done",
+            "notification.reply.done",
+            "tap",
+        )
         self.assertEqual(
             self.native.node_text("notifications.summary"),
             "1 unread",
         )
-        self.native.click_button("Clear all")
+        self.native.dispatch_semantic_action(
+            "notifications.clear",
+            "notification.clear",
+            "tap",
+        )
         self.assertEqual(
             self.native.node_text("notifications.empty.heading"),
             "ALL CAUGHT UP",

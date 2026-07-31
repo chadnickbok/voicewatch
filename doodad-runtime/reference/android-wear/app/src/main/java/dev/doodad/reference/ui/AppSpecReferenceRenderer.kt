@@ -328,6 +328,10 @@ private fun SquarePatternSurface(
         SquareWeatherHeroSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.NotificationStack) {
+        SquareNotificationStackSurface(children, context)
+        return
+    }
     val state = rememberScrollState()
     ScreenScaffold(
         scrollState = state,
@@ -362,6 +366,191 @@ private fun SquarePatternSurface(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun SquareNotificationStackSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val stack =
+        children.singleOrNull { it.kind == "scroll" }
+            ?: error("Square notification stack requires one scroll node")
+    val content =
+        context.snapshot.childrenOf(stack).filter { it.visible }
+    val heading =
+        content.singleOrNull { it.kind == "text" }
+            ?: error("Square notification stack requires one context label")
+    val cards = content.filter { it.kind == "card" }
+    val actions = content.filter { it.kind == "button" }
+    check(
+        cards.size in 1..2 &&
+            actions.size in setOf(1, 3) &&
+            content.all {
+                it == heading || it in cards || it in actions
+            },
+    ) {
+        "Square notification stack supports one label, one or two cards, and one or three actions"
+    }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp)
+                .appSpecNode(stack, context.evidenceCollector),
+    ) {
+        Text(
+            text = requireNotNull(heading.props.primaryText),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .appSpecNode(heading, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+
+        cards.forEachIndexed { index, card ->
+            val cardY =
+                if (cards.size == 2) {
+                    24 + index * 58
+                } else {
+                    24
+                }
+            val cardHeight =
+                when {
+                    cards.size == 2 -> 54
+                    actions.size == 3 -> 60
+                    else -> 108
+                }
+            NotificationCard(
+                node = card,
+                context = context,
+                modifier =
+                    Modifier
+                        .offset(y = cardY.dp)
+                        .fillMaxWidth()
+                        .height(cardHeight.dp),
+            )
+        }
+
+        actions.forEachIndexed { index, action ->
+            val paired = actions.size == 3 && index < 2
+            val x =
+                when {
+                    paired && index == 0 -> 0
+                    paired -> 94
+                    else -> 32
+                }
+            val y = if (paired) 88 else 136
+            val width = if (paired) 90 else 120
+            NotificationActionButton(
+                node = action,
+                context = context,
+                modifier =
+                    Modifier
+                        .offset(x = x.dp, y = y.dp)
+                        .width(width.dp)
+                        .height(48.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun NotificationCard(
+    node: SceneNode,
+    context: RenderContext,
+    modifier: Modifier,
+) {
+    val tap = node.action("tap")
+    val title: @Composable () -> Unit = {
+        Text(
+            text = requireNotNull(node.props.primaryText),
+            style = MaterialTheme.typography.titleSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+    val body: @Composable () -> Unit = {
+        Text(
+            text = requireNotNull(node.props.secondaryText),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+    val evidenceModifier =
+        modifier.appSpecNode(node, context.evidenceCollector)
+    if (tap == null) {
+        TitleCard(
+            title = { title() },
+            modifier = evidenceModifier,
+            content = body,
+        )
+    } else {
+        TitleCard(
+            onClick = { context.dispatch(node, tap) },
+            enabled = node.enabled,
+            title = { title() },
+            modifier = evidenceModifier,
+            content = body,
+        )
+    }
+}
+
+@Composable
+private fun NotificationActionButton(
+    node: SceneNode,
+    context: RenderContext,
+    modifier: Modifier,
+) {
+    val tap =
+        node.action("tap")
+            ?: error("Notification action requires a tap event")
+    val content: @Composable () -> Unit = {
+        Text(
+            text = requireNotNull(node.props.primaryText),
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+    }
+    val evidenceModifier =
+        modifier.appSpecNode(node, context.evidenceCollector)
+    when (node.props.variant) {
+        "filled" ->
+            Button(
+                onClick = { context.dispatch(node, tap) },
+                enabled = node.enabled,
+                modifier = evidenceModifier,
+                label = { content() },
+            )
+        "tonal" ->
+            FilledTonalButton(
+                onClick = { context.dispatch(node, tap) },
+                enabled = node.enabled,
+                modifier = evidenceModifier,
+                label = { content() },
+            )
+        "text" ->
+            ChildButton(
+                onClick = { context.dispatch(node, tap) },
+                enabled = node.enabled,
+                modifier = evidenceModifier,
+                label = { content() },
+            )
+        else ->
+            error(
+                "Notification stack does not support ${node.props.variant} actions",
+            )
     }
 }
 

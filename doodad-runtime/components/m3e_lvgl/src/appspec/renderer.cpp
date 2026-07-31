@@ -122,6 +122,59 @@ bool is_weather_hero_document(const WireDocument& document) {
     return texts == 4 && cards == 1 && buttons == 1;
 }
 
+bool is_notification_stack_document(const WireDocument& document) {
+    if (document.node_count < 5 ||
+        document.nodes[0].child_count != 1 ||
+        document.nodes[1].kind != ComponentKind::scroll ||
+        document.nodes[1].parent_index != 0) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t cards = 0;
+    std::size_t buttons = 0;
+    for (std::size_t index = 2; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 1) return false;
+        if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::card) {
+            ++cards;
+        } else if (node.kind == ComponentKind::button) {
+            ++buttons;
+        } else {
+            return false;
+        }
+    }
+    return document.nodes[1].child_count ==
+            texts + cards + buttons &&
+        texts == 1 &&
+        cards >= 1 && cards <= 2 &&
+        (buttons == 1 || buttons == 3);
+}
+
+std::size_t count_kind(
+    const WireDocument& document,
+    ComponentKind kind) {
+    return static_cast<std::size_t>(std::count_if(
+        document.nodes.begin() + 1,
+        document.nodes.begin() + document.node_count,
+        [kind](const WireNode& node) {
+            return node.kind == kind;
+        }));
+}
+
+std::size_t kind_ordinal(
+    const WireDocument& document,
+    std::size_t node_index,
+    ComponentKind kind) {
+    return static_cast<std::size_t>(std::count_if(
+        document.nodes.begin() + 1,
+        document.nodes.begin() + node_index,
+        [kind](const WireNode& node) {
+            return node.kind == kind;
+        }));
+}
+
 const char* calculator_glyph(const char* key) {
     if (std::strcmp(key, "+/-") == 0) return "±";
     if (std::strcmp(key, "/") == 0) return "÷";
@@ -331,13 +384,24 @@ bool Renderer::mount(
     const auto countdown_document = is_countdown_document(document);
     const auto weather_hero_document =
         is_weather_hero_document(document);
+    const auto notification_stack_document =
+        is_notification_stack_document(document);
+    const auto notification_card_count =
+        notification_stack_document
+            ? count_kind(document, ComponentKind::card)
+            : 0U;
+    const auto notification_button_count =
+        notification_stack_document
+            ? count_kind(document, ComponentKind::button)
+            : 0U;
     objects[0] = factory.screen(root);
     document.nodes[0].mounted_object = root;
     lv_obj_set_style_pad_all(
         root,
         keypad_document
             ? 5
-            : countdown_document || weather_hero_document
+            : countdown_document || weather_hero_document ||
+                    notification_stack_document
                 ? 0
                 : px(12),
         0);
@@ -375,6 +439,14 @@ bool Renderer::mount(
                 break;
             case ComponentKind::scroll:
                 object = layout(factory, parent, node, true);
+                if (notification_stack_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+                    lv_obj_set_size(object, px(184), px(184));
+                    lv_obj_set_pos(object, px(4), px(4));
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                }
                 break;
             case ComponentKind::text:
                 object = factory.text(
@@ -482,6 +554,21 @@ bool Renderer::mount(
                         lv_obj_set_style_text_align(
                             object, LV_TEXT_ALIGN_LEFT, 0);
                     }
+                } else if (notification_stack_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(20));
+                    lv_obj_set_pos(object, 0, 0);
+                    lv_obj_set_style_text_font(
+                        object, &lv_font_montserrat_18, 0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(object, px(2), 0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
                 }
                 break;
             case ComponentKind::button:
@@ -579,12 +666,45 @@ bool Renderer::mount(
                         0);
                     lv_obj_set_style_bg_opa(
                         arrow, LV_OPA_COVER, 0);
+                } else if (notification_stack_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::button);
+                    const auto paired =
+                        notification_button_count == 3 &&
+                        ordinal < 2;
+                    const auto x =
+                        paired
+                            ? ordinal == 0 ? 0 : px(94)
+                            : px(32);
+                    const auto y = paired ? px(88) : px(136);
+                    const auto width =
+                        paired ? px(90) : px(120);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, width, px(48));
+                    lv_obj_set_pos(object, x, y);
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_align(
+                            label, LV_TEXT_ALIGN_CENTER, 0);
+                        lv_label_set_long_mode(
+                            label, LV_LABEL_LONG_WRAP);
+                    }
                 }
                 break;
             case ComponentKind::card:
                 object = factory.card(
                     parent,
-                    {primary, secondary, tone(node.tone), false});
+                    {
+                        primary,
+                        secondary,
+                        tone(node.tone),
+                        node.event_count > 0,
+                    });
                 if (weather_hero_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(156));
@@ -620,6 +740,72 @@ bool Renderer::mount(
                             lv_color_make(0xF0, 0xDB, 0xFF),
                             0);
                         lv_obj_set_style_text_opa(body, 200, 0);
+                        lv_label_set_long_mode(
+                            body, LV_LABEL_LONG_WRAP);
+                    }
+                } else if (notification_stack_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::card);
+                    const auto y =
+                        notification_card_count == 2
+                            ? px(24 + static_cast<std::int32_t>(
+                                    ordinal) * 58)
+                            : px(24);
+                    const auto height =
+                        notification_card_count == 2
+                            ? px(54)
+                            : notification_button_count == 3
+                                ? px(60)
+                                : px(108);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), height);
+                    lv_obj_set_pos(object, 0, y);
+                    lv_obj_set_style_min_height(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_radius(object, px(24), 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        object, LV_OPA_COVER, 0);
+                    if (lv_obj_get_child_count(object) == 2) {
+                        auto* title = lv_obj_get_child(object, 0);
+                        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(
+                            title, px(160), px(18));
+                        lv_obj_set_pos(
+                            title, px(12), px(6));
+                        lv_obj_set_style_text_font(
+                            title, &lv_font_montserrat_16, 0);
+                        lv_obj_set_style_text_color(
+                            title,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_set_style_text_align(
+                            title, LV_TEXT_ALIGN_LEFT, 0);
+                        lv_label_set_long_mode(
+                            title, LV_LABEL_LONG_DOT);
+
+                        auto* body = lv_obj_get_child(object, 1);
+                        lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(
+                            body,
+                            px(160),
+                            std::max(px(20), height - px(24)));
+                        lv_obj_set_pos(
+                            body, px(12), px(24));
+                        lv_obj_set_style_text_font(
+                            body, &lv_font_montserrat_14, 0);
+                        lv_obj_set_style_text_color(
+                            body,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
+                        lv_obj_set_style_text_opa(
+                            body, LV_OPA_COVER, 0);
+                        lv_obj_set_style_text_align(
+                            body, LV_TEXT_ALIGN_LEFT, 0);
                         lv_label_set_long_mode(
                             body, LV_LABEL_LONG_WRAP);
                     }

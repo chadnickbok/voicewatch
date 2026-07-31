@@ -43,6 +43,8 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         and kinds["text"] == 4
     ):
         return "weather_hero"
+    if kinds["scroll"] == 1 and kinds["card"]:
+        return "notification_stack"
     if kinds["progress"]:
         return "progress_dashboard"
     if kinds["stepper"] or kinds["live_card"]:

@@ -52,7 +52,7 @@
       "app_slug": "notifications",
       "trace": "traces/notifications/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "c6b44e6f8baa1ed378d18b8fde11650fb58fc9593faac1302c18344a6770f172",
+      "snapshot_sha256": "bb62eb1fffa23a6c0fde09a955534f98a3e9b0083e755f43bcd8b2ee12503324",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -65,7 +65,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across six nodes; both renderers pass 48dp target and quality checks. Remaining 14.7743% raster delta is text, card padding, and edge antialiasing. See reference/reviews/notifications.md."
       }
     },
     {

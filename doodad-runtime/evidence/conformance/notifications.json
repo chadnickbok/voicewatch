@@ -21,18 +21,18 @@
     "maximum_decisive_actions": 12
   },
   "summary": {
-    "module_bytes": 6110,
-    "package_bytes": 6305,
+    "module_bytes": 6334,
+    "package_bytes": 6529,
     "authored_json_documents": 14,
     "canonical_cbor_documents": 8,
-    "maximum_appspec_bytes": 480,
+    "maximum_appspec_bytes": 517,
     "decisive_actions": 5,
     "distinct_screens": 5,
     "distinct_semantic_states": 6,
-    "maximum_semantic_nodes": 6,
-    "maximum_lvgl_objects": 11,
-    "maximum_lvgl_depth": 2,
-    "total_changed_pixels": 138413,
+    "maximum_semantic_nodes": 7,
+    "maximum_lvgl_objects": 12,
+    "maximum_lvgl_depth": 3,
+    "total_changed_pixels": 90395,
     "semantic_events": 5,
     "provider_requests": 0
   },
@@ -43,13 +43,13 @@
         "kind": "start"
       },
       "screen_id": "notifications.inbox",
-      "semantic_sha256": "a12f19d2fecb433569d8411298400d14bbc4d6d8f9c4579ec4ec8bc4165910d1",
-      "framebuffer_rgb565_sha256": "f7a8b990946a2c28dc408ba6e4ca35d9be2fab4986c2666f710c46521e7c6e37",
+      "semantic_sha256": "6d51f2dfc975cfcbf6aa5dea3c0b309248c43851491f2792b349b5423d9e75e0",
+      "framebuffer_rgb565_sha256": "4198af9beff51c1bd63782925777e689f166e3f31395bd1f6c12f2c60af503ce",
       "changed_pixels": 57600,
-      "mounted_nodes": 5,
+      "mounted_nodes": 6,
       "mounted_events": 3,
-      "lvgl_objects": 8,
-      "lvgl_depth": 2,
+      "lvgl_objects": 11,
+      "lvgl_depth": 3,
       "semantic_events": 0,
       "provider_requests": 0,
       "semantic_tree": {
@@ -66,11 +66,24 @@
             "visible": true,
             "enabled": true,
             "parent": null,
+            "children": 1
+          },
+          {
+            "id": "notifications.stack",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
             "children": 4
           },
           {
             "id": "notifications.summary",
-            "role": "heading",
+            "role": "text",
             "label": "2 unread",
             "value": "",
             "text": "2 unread",
@@ -78,33 +91,33 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
             "id": "notifications.maya",
-            "role": "button",
+            "role": "list_item",
             "label": "Open notification from Maya",
             "value": "",
-            "text": "Maya · Dinner at 7?",
-            "secondary": "",
+            "text": "Maya  NOW",
+            "secondary": "Dinner at 7? Hotel ramen.",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
             "id": "notifications.build",
-            "role": "button",
+            "role": "list_item",
             "label": "Open build notification",
             "value": "",
-            "text": "CI · Build finished",
-            "secondary": "",
+            "text": "Buildbot  4 MIN",
+            "secondary": "Release build passed.",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -117,7 +130,7 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           }
         ]
@@ -132,13 +145,13 @@
         "event_kind": "tap"
       },
       "screen_id": "notifications.detail",
-      "semantic_sha256": "661ec417d521f3b25255f34ff856deb02ac3dbd97b38b7138c6b660dd295b29a",
-      "framebuffer_rgb565_sha256": "e21322f0adf8d4b09df1254d8b895556b7ec92ae64a1a5fadee35104132d9480",
-      "changed_pixels": 32215,
-      "mounted_nodes": 6,
+      "semantic_sha256": "d9cc8ef6290f31d5d7b1b19ec97735160d114458af95b8ebef88f9586e9426dc",
+      "framebuffer_rgb565_sha256": "d5c90b2e07da0611d89894434b5ad4f2ba95f2c482610fa9e38b236aa5af4642",
+      "changed_pixels": 19282,
+      "mounted_nodes": 7,
       "mounted_events": 3,
-      "lvgl_objects": 11,
-      "lvgl_depth": 2,
+      "lvgl_objects": 12,
+      "lvgl_depth": 3,
       "semantic_events": 1,
       "provider_requests": 0,
       "semantic_tree": {
@@ -155,19 +168,32 @@
             "visible": true,
             "enabled": true,
             "parent": null,
-            "children": 5
+            "children": 1
           },
           {
-            "id": "notification.detail.heading",
-            "role": "text",
-            "label": "MAYA · NOW",
+            "id": "notification.detail.stack",
+            "role": "list",
+            "label": "",
             "value": "",
-            "text": "MAYA · NOW",
+            "text": "",
             "secondary": "",
             "state": 0,
             "visible": true,
             "enabled": true,
             "parent": 0,
+            "children": 5
+          },
+          {
+            "id": "notification.detail.heading",
+            "role": "text",
+            "label": "Maya  NOW",
+            "value": "",
+            "text": "Maya  NOW",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 1,
             "children": 0
           },
           {
@@ -176,11 +202,11 @@
             "label": "Dinner at 7?",
             "value": "",
             "text": "Dinner at 7?",
-            "secondary": "I found a place near the hotel 🍜",
+            "secondary": "Ramen near the hotel.",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -188,12 +214,12 @@
             "role": "button",
             "label": "Reply to Maya",
             "value": "",
-            "text": "Quick reply",
+            "text": "Reply",
             "secondary": "",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -206,7 +232,7 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -219,7 +245,7 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           }
         ]
@@ -234,13 +260,13 @@
         "event_kind": "tap"
       },
       "screen_id": "notifications.reply",
-      "semantic_sha256": "e5c0d2cc7f358db7d42de6ba87977f0c342ec218436fbffc0130bfefc6280b56",
-      "framebuffer_rgb565_sha256": "835241ce43d09c2d51a90f975b51ba19528c404d6dd579d04f18d46ae53ffe2d",
-      "changed_pixels": 30490,
-      "mounted_nodes": 5,
+      "semantic_sha256": "bf1c58de965ed28194cdf07e36fc4b171ff11362db23781b582790f019584c5f",
+      "framebuffer_rgb565_sha256": "5d50674fa59d23f9a43d3dc1c2e6b14d98ee6a0e1b77b3225dd5f0902c3da23b",
+      "changed_pixels": 2993,
+      "mounted_nodes": 7,
       "mounted_events": 3,
-      "lvgl_objects": 8,
-      "lvgl_depth": 2,
+      "lvgl_objects": 12,
+      "lvgl_depth": 3,
       "semantic_events": 2,
       "provider_requests": 0,
       "semantic_tree": {
@@ -257,19 +283,45 @@
             "visible": true,
             "enabled": true,
             "parent": null,
-            "children": 4
+            "children": 1
           },
           {
-            "id": "notification.reply.heading",
-            "role": "text",
-            "label": "QUICK REPLY",
+            "id": "notification.reply.stack",
+            "role": "list",
+            "label": "",
             "value": "",
-            "text": "QUICK REPLY",
+            "text": "",
             "secondary": "",
             "state": 0,
             "visible": true,
             "enabled": true,
             "parent": 0,
+            "children": 5
+          },
+          {
+            "id": "notification.reply.heading",
+            "role": "text",
+            "label": "Reply to Maya",
+            "value": "",
+            "text": "Reply to Maya",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 1,
+            "children": 0
+          },
+          {
+            "id": "notification.reply.message",
+            "role": "list_item",
+            "label": "Dinner at 7?",
+            "value": "",
+            "text": "Dinner at 7?",
+            "secondary": "Ramen near the hotel.",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 1,
             "children": 0
           },
           {
@@ -277,12 +329,12 @@
             "role": "button",
             "label": "Reply On my way",
             "value": "",
-            "text": "On my way",
+            "text": "Coming",
             "secondary": "",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -290,12 +342,12 @@
             "role": "button",
             "label": "Reply Sounds good",
             "value": "",
-            "text": "Sounds good",
+            "text": "Great",
             "secondary": "",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -308,7 +360,7 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           }
         ]
@@ -323,13 +375,13 @@
         "event_kind": "tap"
       },
       "screen_id": "notifications.replied",
-      "semantic_sha256": "365e39a0dd5ec46319e1aead0f89f8be900a0947862029824bfef0005de42632",
-      "framebuffer_rgb565_sha256": "17a85f5e09c91e53cbe01ecccfa15ff61b75ac180ce9f22c2c9f104d77cc2720",
-      "changed_pixels": 35048,
-      "mounted_nodes": 4,
+      "semantic_sha256": "5d3d47af265c525999bbd5e5949ff4b6e19496c0d6f39112f921b87202493b8c",
+      "framebuffer_rgb565_sha256": "5934c4f45b88d12da141921b81db3f8545f9d12037e447430bb7ee9d276a5bff",
+      "changed_pixels": 25958,
+      "mounted_nodes": 5,
       "mounted_events": 1,
-      "lvgl_objects": 7,
-      "lvgl_depth": 2,
+      "lvgl_objects": 8,
+      "lvgl_depth": 3,
       "semantic_events": 3,
       "provider_requests": 0,
       "semantic_tree": {
@@ -346,32 +398,45 @@
             "visible": true,
             "enabled": true,
             "parent": null,
-            "children": 3
+            "children": 1
           },
           {
-            "id": "notification.replied.heading",
-            "role": "text",
-            "label": "REPLY SENT",
+            "id": "notification.replied.stack",
+            "role": "list",
+            "label": "",
             "value": "",
-            "text": "REPLY SENT",
+            "text": "",
             "secondary": "",
             "state": 0,
             "visible": true,
             "enabled": true,
             "parent": 0,
+            "children": 3
+          },
+          {
+            "id": "notification.replied.heading",
+            "role": "text",
+            "label": "Sent to Maya",
+            "value": "",
+            "text": "Sent to Maya",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 1,
             "children": 0
           },
           {
             "id": "notification.replied.message",
             "role": "list_item",
-            "label": "On my way",
+            "label": "Coming",
             "value": "",
-            "text": "On my way",
-            "secondary": "Delivered to Maya · exactly once",
+            "text": "Coming",
+            "secondary": "Delivered just now.",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -384,7 +449,7 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           }
         ]
@@ -399,13 +464,13 @@
         "event_kind": "tap"
       },
       "screen_id": "notifications.inbox",
-      "semantic_sha256": "e11e8a9681cbeb8ea0c431316ca7500082e9b3881c6c14bb9e3a2327e2ec4bd6",
-      "framebuffer_rgb565_sha256": "4c305007aef18f2bf17bce00b5800672dd0e016600ff52b049da9ef62493f2fc",
-      "changed_pixels": 28632,
+      "semantic_sha256": "6921ea6d4a10eeb4514e9ab7999afe657212a71fe4960d2cdb0558444750aa3e",
+      "framebuffer_rgb565_sha256": "f7dae7662590c03b7723b09907cf61558ccea87cb213da874bfd2f57dc6208ff",
+      "changed_pixels": 10988,
       "mounted_nodes": 5,
       "mounted_events": 2,
-      "lvgl_objects": 7,
-      "lvgl_depth": 2,
+      "lvgl_objects": 8,
+      "lvgl_depth": 3,
       "semantic_events": 4,
       "provider_requests": 0,
       "semantic_tree": {
@@ -422,24 +487,24 @@
             "visible": true,
             "enabled": true,
             "parent": null,
-            "children": 4
+            "children": 1
           },
           {
-            "id": "notifications.heading",
-            "role": "text",
-            "label": "INBOX",
+            "id": "notifications.stack",
+            "role": "list",
+            "label": "",
             "value": "",
-            "text": "INBOX",
+            "text": "",
             "secondary": "",
             "state": 0,
             "visible": true,
             "enabled": true,
             "parent": 0,
-            "children": 0
+            "children": 3
           },
           {
             "id": "notifications.summary",
-            "role": "heading",
+            "role": "text",
             "label": "1 unread",
             "value": "",
             "text": "1 unread",
@@ -447,20 +512,20 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
             "id": "notifications.build",
-            "role": "button",
+            "role": "list_item",
             "label": "Open build notification",
             "value": "",
-            "text": "CI · Build finished",
-            "secondary": "",
+            "text": "Buildbot  4 MIN",
+            "secondary": "Release build passed.",
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           },
           {
@@ -473,7 +538,7 @@
             "state": 0,
             "visible": true,
             "enabled": true,
-            "parent": 0,
+            "parent": 1,
             "children": 0
           }
         ]
@@ -490,7 +555,7 @@
       "screen_id": "notifications.empty",
       "semantic_sha256": "44b5d20dbf90452f7be60d4ffc228927c19b25d2d19731ca596218a12a0cc60f",
       "framebuffer_rgb565_sha256": "83560bd603b3b0516c58d2518fc769cb4b5a38832f82901e50cdec83a91d8187",
-      "changed_pixels": 12028,
+      "changed_pixels": 31174,
       "mounted_nodes": 3,
       "mounted_events": 0,
       "lvgl_objects": 3,
