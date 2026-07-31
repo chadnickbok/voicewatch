@@ -4,8 +4,8 @@
 These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
 machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
-Calories, Workout, Voice Notes, Medication, and Snake) live outside this
-generator.
+Calories, Workout, Voice Notes, Medication, Media, and Snake) live outside
+this generator.
 """
 
 from __future__ import annotations
@@ -102,39 +102,6 @@ FLOWS: dict[str, dict[str, Any]] = {
                 "Budget 3.2% · no retained UI",
                 ("Last night", "sleep.last", "summary"),
                 ("Home", "sleep.home", "home"),
-            ),
-        },
-    },
-    "media": {
-        "initial": ("media.primary", "playing"),
-        "screens": {
-            "playing": screen(
-                "NOW PLAYING",
-                "Midnight City",
-                "M83 · 1:42 / 4:03 · Living Room",
-                ("Pause", "media.pause", "paused"),
-                ("Disconnect", "media.disconnect", "offline"),
-            ),
-            "paused": screen(
-                "PAUSED",
-                "1:42",
-                "Optimistic command acknowledged #41",
-                ("Play", "media.play", "playing"),
-                ("Disconnect", "media.disconnect", "offline"),
-            ),
-            "offline": screen(
-                "CONNECTION LOST",
-                "Last at 1:42",
-                "Play request queued once",
-                ("Reconnect", "media.reconnect", "reconciled"),
-                ("Keep cached", "media.cached", "offline"),
-            ),
-            "reconciled": screen(
-                "RECONCILED",
-                "Playing · 1:45",
-                "Phone state wins · no double action",
-                ("Controls", "media.controls", "playing"),
-                ("Home", "media.home", "home"),
             ),
         },
     },

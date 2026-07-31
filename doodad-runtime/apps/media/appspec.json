@@ -5,46 +5,102 @@
     "id": "media.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
+        {
+          "id": "media.artwork",
+          "type": "image",
+          "props": {
+            "asset": "2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028",
+            "fit": "cover"
+          },
+          "semantics": {
+            "label": "Synthwave city album artwork"
+          }
+        },
         {
           "id": "media.summary",
           "type": "text",
           "props": {
-            "text": "Now playing",
-            "style": "numeral",
+            "text": "Midnight City",
+            "style": "title",
             "max_lines": 2,
-            "align": "center"
+            "align": "start"
           },
           "semantics": {
-            "label": "Media Remote status",
-            "value": "Now playing"
+            "label": "Track",
+            "value": "Midnight City"
           }
         },
         {
-          "id": "media.mock",
-          "type": "card",
+          "id": "media.detail",
+          "type": "text",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "text": "M83 / Living Room",
+            "style": "caption",
+            "max_lines": 2,
+            "align": "start"
           }
         },
         {
-          "id": "media.primary",
-          "type": "button",
+          "id": "media.progress",
+          "type": "progress",
           "props": {
-            "label": "Play",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "media.primary"
+            "label": "Track progress",
+            "value": 0,
+            "maximum": 243,
+            "style": "linear",
+            "tone": "primary"
           },
           "semantics": {
-            "label": "Play"
+            "label": "Track progress",
+            "value": "0 of 4 minutes 3 seconds"
+          }
+        },
+        {
+          "id": "media.actions",
+          "type": "row",
+          "props": {
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "media.primary",
+                "type": "button",
+                "props": {
+                  "label": "Play",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.primary"
+                },
+                "semantics": {
+                  "label": "Play Midnight City"
+                }
+              },
+              {
+                "id": "media.queue",
+                "type": "button",
+                "props": {
+                  "label": "Queue",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.queue"
+                },
+                "semantics": {
+                  "label": "Open queue"
+                }
+              }
+            ]
+          },
+          "semantics": {
+            "label": "Playback actions"
           }
         }
       ]

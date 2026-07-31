@@ -19,6 +19,7 @@ fn target_for(action_id: &str) -> Option<&'static [u8]> {
         "media.cached" => Some(OFFLINE),
         "media.controls" => Some(PLAYING),
         "media.home" => Some(HOME),
+        "media.queue" => Some(HOME),
         _ => None,
     }
 }

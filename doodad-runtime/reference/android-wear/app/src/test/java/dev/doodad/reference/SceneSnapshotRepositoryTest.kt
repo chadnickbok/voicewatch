@@ -34,17 +34,18 @@ class SceneSnapshotRepositoryTest {
         )
         assertEquals(
             mapOf(
-                "button" to 137,
-                "card" to 68,
+                "button" to 138,
+                "card" to 64,
                 "column" to 4,
+                "image" to 4,
                 "keypad" to 7,
                 "live_card" to 15,
-                "progress" to 6,
-                "row" to 13,
+                "progress" to 10,
+                "row" to 17,
                 "screen" to 96,
                 "scroll" to 13,
                 "stepper" to 10,
-                "text" to 173,
+                "text" to 174,
                 "toggle" to 11,
                 "voice_orb" to 1,
             ),
@@ -73,6 +74,7 @@ class SceneSnapshotRepositoryTest {
                 "keypad",
                 "voice_orb",
                 "live_card",
+                "image",
             ),
             AppSpecComponentRegistry.supportedKinds,
         )

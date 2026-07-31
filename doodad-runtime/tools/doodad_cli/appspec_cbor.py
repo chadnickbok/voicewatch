@@ -22,6 +22,7 @@ COMPONENT = {
     "keypad": 10,
     "voice_orb": 11,
     "live_card": 12,
+    "image": 13,
 }
 EVENT = {
     "tap": 0,
@@ -56,6 +57,7 @@ TEXT_STYLE = {
 }
 BUTTON_VARIANT = {"filled": 0, "tonal": 1, "outlined": 2, "text": 3}
 PROGRESS_STYLE = {"linear": 0, "circular": 1, "segmented": 2}
+IMAGE_FIT = {"cover": 0, "contain": 1}
 
 
 def _literal(value: Any, field: str) -> Any:
@@ -158,6 +160,11 @@ def _properties(node: dict[str, Any]) -> dict[int, Any]:
             result[2] = int(math.floor(progress * 100 + 0.5))
             result[3] = 100
         return result
+    if kind == "image":
+        return {
+            0: props["asset"],
+            4: IMAGE_FIT[props.get("fit", "cover")],
+        }
     raise DoodadError(f"cannot lower AppSpec component {kind!r}")
 
 

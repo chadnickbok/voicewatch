@@ -85,6 +85,7 @@ SemanticRole semantic_role(const WireNode& node) {
         case ComponentKind::progress: return SemanticRole::progress;
         case ComponentKind::stepper: return SemanticRole::slider;
         case ComponentKind::toggle: return SemanticRole::toggle;
+        case ComponentKind::image: return SemanticRole::image;
     }
     return SemanticRole::text;
 }
@@ -430,6 +431,10 @@ bool parse_properties(
                 (1U << 3U) | (1U << 5U);
             if (!has_primary) return false;
             break;
+        case ComponentKind::image:
+            allowed = (1U << 0U) | (1U << 4U);
+            if (!has_primary || node.variant > 1) return false;
+            break;
         case ComponentKind::progress:
             allowed =
                 (1U << 0U) | (1U << 2U) | (1U << 3U) |
@@ -547,7 +552,7 @@ bool parse_node(
                 std::uint64_t kind = 0;
                 if (!reader.unsigned_integer(kind) ||
                     kind > static_cast<std::uint8_t>(
-                        ComponentKind::live_card)) {
+                        ComponentKind::image)) {
                     return false;
                 }
                 node.kind = static_cast<ComponentKind>(kind);
@@ -757,6 +762,13 @@ WireResult decode_canonical_cbor(
             node.kind == ComponentKind::toggle ||
             node.kind == ComponentKind::keypad ||
             node.kind == ComponentKind::voice_orb;
+        if (node.kind == ComponentKind::image &&
+            output.string_at(node.semantic_label_offset)[0] == '\0') {
+            return {
+                WireError::missing_semantics,
+                static_cast<std::uint16_t>(index),
+                static_cast<std::uint16_t>(size)};
+        }
         if (interactive &&
             output.string_at(node.semantic_label_offset)[0] == '\0') {
             return {

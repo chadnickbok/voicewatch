@@ -186,6 +186,11 @@ private fun SceneNode.tokenRoles(): Map<String, String> =
             )
         "voice_orb" ->
             mapOf("container" to requireNotNull(props.tone))
+        "image" ->
+            mapOf(
+                "asset" to "package_image",
+                "fit" to "content_scale",
+            )
         else -> error("No normalized token-role mapping for $kind")
     }
 

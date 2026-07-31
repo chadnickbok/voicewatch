@@ -27,6 +27,7 @@ COMPONENT_KINDS = {
     "keypad",
     "voice_orb",
     "live_card",
+    "image",
 }
 CONTAINER_KINDS = {"screen", "column", "row", "scroll"}
 INTERACTIVE_KINDS = {"button", "stepper", "toggle", "keypad", "voice_orb"}
@@ -56,6 +57,7 @@ SEMANTIC_ROLES = {
     "dialog",
     "slider",
     "group",
+    "image",
 }
 
 NODE_KEYS = {
@@ -145,6 +147,10 @@ KIND_PROPS: dict[str, tuple[set[str], set[str]]] = {
     "live_card": (
         {"primary_text", "secondary_text", "value", "maximum", "tone"},
         {"primary_text", "secondary_text", "tone"},
+    ),
+    "image": (
+        {"primary_text", "variant"},
+        {"primary_text", "variant"},
     ),
 }
 
@@ -355,6 +361,10 @@ def _validate_props(kind: str, value: Any, path: str) -> None:
         raise DoodadError(
             f"{path}.value and maximum must appear together"
         )
+    if kind == "image":
+        _sha256(props["primary_text"], f"{path}.primary_text")
+        if props["variant"] not in {"cover", "contain"}:
+            raise DoodadError(f"{path}.variant is unsupported")
 
 
 def validate_scene_snapshot(document: dict[str, Any]) -> None:
@@ -464,6 +474,8 @@ def validate_scene_snapshot(document: dict[str, Any]) -> None:
             raise DoodadError(
                 f"{path} is interactive but lacks semantics or actions"
             )
+        if kind == "image" and not node["semantics"]["label"]:
+            raise DoodadError(f"{path} image lacks a semantic label")
         ids[node_id] = (index, depth, kind)
         child_counts.setdefault(node_id, 0)
 

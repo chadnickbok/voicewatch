@@ -74,6 +74,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                     "calories",
                     "voice-notes",
                     "medication",
+                    "media",
                 }:
                     self.assertEqual(entry["review"]["status"], "approved")
                     self.assertEqual(

@@ -217,6 +217,7 @@ object SceneSnapshotValidator {
             "dialog",
             "slider",
             "group",
+            "image",
         )
     private val actionKinds =
         setOf(
@@ -296,6 +297,11 @@ object SceneSnapshotValidator {
                     ),
                     setOf("primary_text", "secondary_text", "tone"),
                 ),
+            "image" to
+                PropertyRule(
+                    setOf("primary_text", "variant"),
+                    setOf("primary_text", "variant"),
+                ),
         )
 
     fun validate(snapshot: SceneSnapshot) {
@@ -369,6 +375,17 @@ object SceneSnapshotValidator {
         }
         check(node.semantics.label.length <= 128) {
             "${node.id} semantic label is too long"
+        }
+        if (node.kind == "image") {
+            check(node.semantics.label.isNotEmpty()) {
+                "${node.id} image requires a semantic label"
+            }
+            check(
+                requireNotNull(node.props.primaryText)
+                    .matches(Regex("^[0-9a-f]{64}$")),
+            ) {
+                "${node.id}.primary_text must be a lowercase SHA-256 digest"
+            }
         }
         listOfNotNull(
             node.semantics.value,
@@ -490,6 +507,7 @@ object SceneSnapshotValidator {
                         )
                     "button" -> setOf("filled", "tonal", "outlined", "text")
                     "progress" -> setOf("linear", "circular", "segmented")
+                    "image" -> setOf("cover", "contain")
                     else -> emptySet()
                 }
             check(it in allowed) {

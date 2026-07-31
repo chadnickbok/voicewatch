@@ -18,6 +18,7 @@ LEAF_TYPES = {
     "keypad",
     "voice_orb",
     "live_card",
+    "image",
 }
 NODE_TYPES = LAYOUT_TYPES | LEAF_TYPES
 INTERACTIVE_TYPES = {"button", "stepper", "toggle", "keypad", "voice_orb"}
@@ -252,6 +253,8 @@ def _validate_node(
         _text(semantics.get("label"), f"{identifier} semantics.label", 128)
         if not events:
             raise DoodadError(f"{identifier} is interactive but has no event")
+    if node_type == "image":
+        _text(semantics.get("label"), f"{identifier} semantics.label", 128)
 
     if node_type in LAYOUT_TYPES:
         allowed = {"children", "gap", "align"}
@@ -280,6 +283,7 @@ def _validate_node(
         "keypad": _validate_keypad,
         "voice_orb": _validate_voice_orb,
         "live_card": _validate_live_card,
+        "image": _validate_image,
     }
     validators[node_type](identifier, props)
 
@@ -421,6 +425,20 @@ def _validate_live_card(identifier: str, props: dict[str, Any]) -> None:
                 f"{identifier}.progress must be 0..1 or a binding"
             )
     _tone_size(identifier, props)
+
+
+def _validate_image(identifier: str, props: dict[str, Any]) -> None:
+    _exact_props(identifier, props, {"asset", "fit"})
+    asset = props.get("asset")
+    if (
+        not isinstance(asset, str)
+        or re.fullmatch(r"[0-9a-f]{64}", asset) is None
+    ):
+        raise DoodadError(
+            f"{identifier}.asset must be a lowercase SHA-256 digest"
+        )
+    if props.get("fit", "cover") not in {"cover", "contain"}:
+        raise DoodadError(f"{identifier}.fit is unsupported")
 
 
 def compile_to_ui_v0(document: dict[str, Any]) -> dict[str, Any]:
@@ -583,5 +601,11 @@ def _compile_node(node: dict[str, Any]) -> dict[str, Any]:
                 "speaking": "Speaking...",
                 "error": "Try again",
             }[props["state"]],
+        }
+    if kind == "image":
+        return {
+            "type": "text",
+            "text": node.get("semantics", {}).get("label", "Image"),
+            "style": "muted",
         }
     raise DoodadError(f"cannot compile AppSpec component {kind!r}")

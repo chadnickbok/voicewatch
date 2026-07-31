@@ -536,7 +536,7 @@ incomplete.
 | `scroll` | `TransformingLazyColumn`/bounded scrolling pattern | 15 documents | [x] |
 | `toggle` | whole-row Wear Material toggle control | 4 documents | [x] |
 | `voice_orb` | Doodad-inspired system component using Material tokens | currently unused by suite | [x] |
-| `image` | deterministic decoded bitmap with semantic content description | planned for Media | [ ] |
+| `image` | deterministic decoded bitmap with semantic content description | 5 Media documents | [x] |
 | `canvas` | renderer-neutral draw-command surface; Compose `Canvas` / LVGL `lv_canvas` | planned for Snake | [ ] |
 
 ### Pattern interpretation
@@ -591,7 +591,7 @@ terminal LVGL frame to a different Compose fixture.
 | 10 | Medication | [x] | [x] | [x] | [x] | [x] |
 | 11 | Sensor Recorder | [x] | [x] | [x] | [x] | [ ] |
 | 12 | Sleep | [x] | [x] | [x] | [x] | [ ] |
-| 13 | Media | [x] | [x] | [x] | [x] | [ ] |
+| 13 | Media | [x] | [x] | [x] | [x] | [x] |
 | 14 | Navigation | [x] | [x] | [x] | [x] | [ ] |
 | 15 | Transit | [x] | [x] | [x] | [x] | [ ] |
 | 16 | Smart Home | [x] | [x] | [x] | [x] | [ ] |
@@ -605,7 +605,7 @@ terminal LVGL frame to a different Compose fixture.
 Two apps deliberately exercise rendering paths outside ordinary Material
 components:
 
-- [ ] **Media asset path:** Media must load checked-in album artwork through a
+- [x] **Media asset path:** Media loads checked-in album artwork through a
   content-addressed package asset. The Wasm scene identifies the asset and its
   presentation semantics; both renderers independently decode the same source.
   Acceptance requires matching crop mode, bounds, color handling, fallback,
@@ -1252,6 +1252,15 @@ produce the twenty-row report.
   exact normalized structure/bounds with no quality findings, and the approved
   **Equivalent** disposition is recorded in
   [`reference/reviews/medication.md`](../reference/reviews/medication.md).
+- [x] Completed the Media oracle redesign and decisive-flow review across
+  ready, playing, offline, and reconciled states. AppSpec 1.2 and the package
+  manifest now carry content-addressed image assets; Compose and LVGL
+  independently validate and decode the same 96×64 DIMG/RGB565 artwork and
+  share a deterministic missing-image fallback. The title-free 240×240
+  surface has exact normalized structure/bounds with no quality findings on
+  all four checkpoints. The API 37 capture, comparison images, and approved
+  **Equivalent** disposition are recorded in
+  [`reference/reviews/media.md`](../reference/reviews/media.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

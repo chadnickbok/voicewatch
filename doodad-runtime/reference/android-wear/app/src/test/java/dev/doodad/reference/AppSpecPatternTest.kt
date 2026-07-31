@@ -54,11 +54,12 @@ class AppSpecPatternTest {
                 "nutrition_review" to 1,
                 "task_list" to 4,
                 "live_action_detail" to 9,
+                "media_player" to 5,
                 "voice_ready" to 1,
                 "workout_rest" to 1,
                 "workout_set" to 2,
                 "workout_summary" to 1,
-                "status_detail" to 46,
+                "status_detail" to 41,
                 "weather_hero" to 1,
             ),
             inventory
@@ -186,6 +187,18 @@ class AppSpecPatternTest {
                         ),
                         1,
                         1,
+                    ),
+                AppSpecPattern.MediaPlayer to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "image" to 1,
+                            "progress" to 1,
+                            "row" to 1,
+                            "button" to 2,
+                            "text" to 2,
+                        ),
+                        2,
+                        2,
                     ),
                 AppSpecPattern.LiveActionDetail to
                     AppSpecStructuralFacts(

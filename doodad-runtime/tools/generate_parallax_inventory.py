@@ -104,6 +104,14 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         and kinds["text"] == 1
     ):
         return "voice_ready"
+    if (
+        kinds["image"] == 1
+        and kinds["progress"] == 1
+        and kinds["row"] == 1
+        and kinds["button"] == 2
+        and kinds["text"] == 2
+    ):
+        return "media_player"
     if kinds["progress"]:
         return "progress_dashboard"
     if kinds["stepper"] or kinds["live_card"]:

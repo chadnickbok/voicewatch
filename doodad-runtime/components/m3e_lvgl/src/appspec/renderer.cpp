@@ -6,6 +6,7 @@
 #include <cstring>
 
 #include "m3e/components/components.hpp"
+#include "m3e/assets/image_assets.hpp"
 #include "m3e/foundation/display_profile.hpp"
 #include "m3e/foundation/semantic_tokens.hpp"
 
@@ -482,6 +483,49 @@ bool is_live_action_detail_document(const WireDocument& document) {
         rows == 1 && buttons == 2;
 }
 
+bool is_media_player_document(const WireDocument& document) {
+    if (document.node_count != 8 ||
+        document.nodes[0].child_count != 5) {
+        return false;
+    }
+    std::size_t images = 0;
+    std::size_t texts = 0;
+    std::size_t progress = 0;
+    std::size_t rows = 0;
+    std::size_t buttons = 0;
+    std::size_t row_index = Reconciler::kCapacity;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == 0) {
+            if (node.kind == ComponentKind::image) {
+                ++images;
+            } else if (node.kind == ComponentKind::text) {
+                ++texts;
+            } else if (node.kind == ComponentKind::progress) {
+                ++progress;
+            } else if (node.kind == ComponentKind::row) {
+                ++rows;
+                row_index = index;
+                if (node.child_count != 2) return false;
+            } else {
+                return false;
+            }
+        }
+    }
+    if (row_index == Reconciler::kCapacity) return false;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == row_index &&
+            node.kind == ComponentKind::button) {
+            ++buttons;
+        } else if (node.parent_index != 0) {
+            return false;
+        }
+    }
+    return images == 1 && texts == 2 && progress == 1 &&
+        rows == 1 && buttons == 2;
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -736,6 +780,8 @@ bool Renderer::mount(
         is_voice_ready_document(document);
     const auto live_action_detail_document =
         is_live_action_detail_document(document);
+    const auto media_player_document =
+        is_media_player_document(document);
     const auto task_toggle_count =
         task_list_document
             ? count_kind(document, ComponentKind::toggle)
@@ -758,7 +804,8 @@ bool Renderer::mount(
             : 0U;
     objects[0] = factory.screen(root);
     document.nodes[0].mounted_object = root;
-    if (voice_ready_document || live_action_detail_document) {
+    if (voice_ready_document || live_action_detail_document ||
+        media_player_document) {
         lv_obj_remove_flag(root, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_scrollbar_mode(root, LV_SCROLLBAR_MODE_OFF);
     }
@@ -776,6 +823,7 @@ bool Renderer::mount(
                     nutrition_review_document ||
                     voice_ready_document ||
                     live_action_detail_document
+                    || media_player_document
                 ? 0
                 : px(12),
         0);
@@ -827,11 +875,18 @@ bool Renderer::mount(
                 } else if (
                     (nutrition_quick_add_document ||
                      nutrition_review_document ||
-                     live_action_detail_document) &&
+                    live_action_detail_document) &&
                     node.kind == ComponentKind::row) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(48));
                     lv_obj_set_pos(object, px(4), px(136));
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                } else if (media_player_document &&
+                           node.kind == ComponentKind::row) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(80));
+                    lv_obj_set_pos(object, px(4), px(104));
                     lv_obj_set_style_pad_all(object, 0, 0);
                     lv_obj_set_style_pad_gap(object, 0, 0);
                 }
@@ -1182,6 +1237,32 @@ bool Renderer::mount(
                         0);
                     lv_label_set_long_mode(
                         object, LV_LABEL_LONG_DOT);
+                } else if (media_player_document) {
+                    const auto is_title = node.variant == 1;
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object, px(104), is_title ? px(44) : px(32));
+                    lv_obj_set_pos(
+                        object, px(84), is_title ? px(4) : px(48));
+                    lv_obj_set_style_text_font(
+                        object,
+                        is_title
+                            ? &lv_font_montserrat_18
+                            : &lv_font_montserrat_14,
+                        0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        is_title
+                            ? lv_color_make(0xF6, 0xED, 0xFF)
+                            : lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_LEFT, 0);
+                    lv_obj_set_style_pad_top(
+                        object, is_title ? px(4) : px(2), 0);
+                    lv_label_set_long_mode(
+                        object,
+                        is_title ? LV_LABEL_LONG_WRAP : LV_LABEL_LONG_DOT);
                 }
                 break;
             case ComponentKind::button:
@@ -1473,6 +1554,48 @@ bool Renderer::mount(
                             label, LV_TEXT_ALIGN_CENTER, 0);
                         lv_label_set_long_mode(
                             label, LV_LABEL_LONG_DOT);
+                    }
+                } else if (media_player_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::button);
+                    const auto filled =
+                        node.variant ==
+                        static_cast<std::uint8_t>(
+                            ButtonVariant::filled);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object,
+                        ordinal == 0 ? 113 : 112,
+                        px(80));
+                    lv_obj_set_pos(
+                        object,
+                        ordinal == 0 ? 0 : 118,
+                        0);
+                    lv_obj_set_style_radius(
+                        object, px(28), 0);
+                    lv_obj_set_style_pad_hor(
+                        object, px(8), 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        filled
+                            ? lv_color_make(0xD8, 0xB9, 0xFF)
+                            : lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_16, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            filled
+                                ? lv_color_make(0x35, 0x11, 0x51)
+                                : lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_set_style_text_align(
+                            label, LV_TEXT_ALIGN_CENTER, 0);
+                        lv_label_set_long_mode(
+                            label, LV_LABEL_LONG_WRAP);
                     }
                 }
                 break;
@@ -1935,6 +2058,24 @@ bool Renderer::mount(
                     lv_obj_set_style_bg_color(
                         object,
                         lv_color_make(0xD8, 0xB9, 0xFF),
+                        LV_PART_INDICATOR);
+                } else if (media_player_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(16));
+                    lv_obj_set_pos(object, px(4), px(84));
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, LV_PART_INDICATOR);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x49, 0x44, 0x53),
+                        LV_PART_MAIN);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        node.tone == static_cast<std::uint8_t>(Tone::error)
+                            ? lv_color_make(0xFF, 0xB4, 0xAB)
+                            : lv_color_make(0xD8, 0xB9, 0xFF),
                         LV_PART_INDICATOR);
                 }
                 break;
@@ -2421,6 +2562,79 @@ bool Renderer::mount(
                             }
                         }
                     }
+                }
+                break;
+            }
+            case ComponentKind::image: {
+                object = lv_obj_create(parent);
+                ComponentFactory::reset(object);
+                lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+                lv_obj_set_size(object, px(76), px(76));
+                lv_obj_set_pos(object, px(4), px(4));
+                lv_obj_set_style_radius(object, px(24), 0);
+                lv_obj_set_style_clip_corner(object, true, 0);
+                lv_obj_set_style_bg_color(
+                    object,
+                    lv_color_make(0x33, 0x2E, 0x3C),
+                    0);
+                lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
+
+                ImageAssetView asset{};
+                if (resolve_image_asset(primary, asset)) {
+                    auto* canvas = lv_canvas_create(object);
+                    lv_canvas_set_buffer(
+                        canvas,
+                        const_cast<std::uint8_t*>(asset.pixels),
+                        asset.width,
+                        asset.height,
+                        LV_COLOR_FORMAT_RGB565);
+                    const auto width_scale =
+                        (px(76) * 256 + asset.width - 1) /
+                        asset.width;
+                    const auto height_scale =
+                        (px(76) * 256 + asset.height - 1) /
+                        asset.height;
+                    lv_image_set_scale(
+                        canvas,
+                        node.variant == 1
+                            ? std::min(width_scale, height_scale)
+                            : std::max(width_scale, height_scale));
+                    lv_obj_center(canvas);
+                } else {
+                    auto* circle = lv_obj_create(object);
+                    ComponentFactory::reset(circle);
+                    lv_obj_set_size(circle, px(36), px(36));
+                    lv_obj_center(circle);
+                    lv_obj_set_style_radius(
+                        circle, LV_RADIUS_CIRCLE, 0);
+                    lv_obj_set_style_bg_color(
+                        circle,
+                        lv_color_make(0x7D, 0x52, 0x9C),
+                        0);
+                    lv_obj_set_style_bg_opa(circle, LV_OPA_COVER, 0);
+                    auto* horizontal = lv_obj_create(object);
+                    ComponentFactory::reset(horizontal);
+                    lv_obj_set_size(
+                        horizontal, px(22), px(3));
+                    lv_obj_center(horizontal);
+                    lv_obj_set_style_bg_color(
+                        horizontal,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        horizontal, LV_OPA_COVER, 0);
+                    auto* vertical = lv_obj_create(object);
+                    ComponentFactory::reset(vertical);
+                    lv_obj_set_size(
+                        vertical, px(3), px(22));
+                    lv_obj_center(vertical);
+                    lv_obj_set_style_bg_color(
+                        vertical,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        vertical, LV_OPA_COVER, 0);
                 }
                 break;
             }

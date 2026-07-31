@@ -3,6 +3,7 @@ package dev.doodad.reference.ui
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -36,8 +38,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.contentDescription
@@ -114,6 +118,7 @@ enum class AppSpecComponentMapping(
     Keypad("keypad"),
     VoiceOrb("voice_orb"),
     LiveCard("live_card"),
+    Image("image"),
 }
 
 object AppSpecComponentRegistry {
@@ -157,6 +162,7 @@ object AppSpecComponentRegistry {
             AppSpecComponentMapping.Keypad -> AppSpecKeypad(node, context)
             AppSpecComponentMapping.VoiceOrb -> AppSpecVoiceOrb(node, context)
             AppSpecComponentMapping.LiveCard -> AppSpecLiveCard(node, context)
+            AppSpecComponentMapping.Image -> AppSpecImage(node, context)
         }
     }
 }
@@ -363,6 +369,10 @@ private fun SquarePatternSurface(
     }
     if (pattern == AppSpecPattern.LiveActionDetail) {
         SquareLiveActionDetailSurface(children, context)
+        return
+    }
+    if (pattern == AppSpecPattern.MediaPlayer) {
+        SquareMediaPlayerSurface(children, context)
         return
     }
     if (pattern == AppSpecPattern.NotificationStack) {
@@ -1307,6 +1317,147 @@ private fun SquareTaskListSurface(
 }
 
 @Composable
+private fun SquareMediaPlayerSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val artwork =
+        children.singleOrNull { it.kind == "image" }
+            ?: error("Square media player requires one package image")
+    val text = children.filter { it.kind == "text" }
+    val title =
+        text.singleOrNull { it.props.variant == "title" }
+            ?: error("Square media player requires one title")
+    val detail =
+        text.singleOrNull { it.props.variant == "caption" }
+            ?: error("Square media player requires one caption")
+    val progress =
+        children.singleOrNull { it.kind == "progress" }
+            ?: error("Square media player requires one progress indicator")
+    val controls =
+        children.singleOrNull { it.kind == "row" }
+            ?: error("Square media player requires one control row")
+    val buttons =
+        context.snapshot.childrenOf(controls).filter { it.visible }
+    check(buttons.size == 2 && buttons.all { it.kind == "button" }) {
+        "Square media player requires exactly two actions"
+    }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        PackageImage(
+            node = artwork,
+            context = context,
+            modifier =
+                Modifier
+                    .size(76.dp),
+        )
+        Text(
+            text = requireNotNull(title.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 80.dp)
+                    .width(104.dp)
+                    .height(44.dp)
+                    .appSpecNode(title, context.evidenceCollector)
+                    .padding(top = 4.dp),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.titleMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
+        )
+        Text(
+            text = requireNotNull(detail.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 80.dp, y = 44.dp)
+                    .width(104.dp)
+                    .height(32.dp)
+                    .appSpecNode(detail, context.evidenceCollector)
+                    .padding(top = 2.dp),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Start,
+        )
+        val maximum = requireNotNull(progress.props.maximum)
+        val value = requireNotNull(progress.props.value)
+        LinearProgressIndicator(
+            progress = { value.toFloat() / maximum.toFloat() },
+            modifier =
+                Modifier
+                    .offset(y = 80.dp)
+                    .fillMaxWidth()
+                    .height(16.dp)
+                    .appSpecNode(progress, context.evidenceCollector),
+        )
+        Row(
+            modifier =
+                Modifier
+                    .offset(y = 100.dp)
+                    .fillMaxWidth()
+                    .height(80.dp)
+                    .appSpecNode(controls, context.evidenceCollector),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            buttons.forEach { button ->
+                MediaActionButton(
+                    node = button,
+                    context = context,
+                    modifier =
+                        Modifier
+                            .width(90.dp)
+                            .fillMaxHeight(),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun MediaActionButton(
+    node: SceneNode,
+    context: RenderContext,
+    modifier: Modifier,
+) {
+    val tap =
+        node.action("tap")
+            ?: error("Media action requires a tap event")
+    val evidenceModifier =
+        modifier.appSpecNode(node, context.evidenceCollector)
+    val label: @Composable RowScope.() -> Unit = {
+        Text(
+            text = requireNotNull(node.props.primaryText),
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+    }
+    if (node.props.variant == "filled") {
+        Button(
+            onClick = { context.dispatch(node, tap) },
+            enabled = node.enabled,
+            modifier = evidenceModifier,
+            label = label,
+        )
+    } else {
+        FilledTonalButton(
+            onClick = { context.dispatch(node, tap) },
+            enabled = node.enabled,
+            modifier = evidenceModifier,
+            label = label,
+        )
+    }
+}
+
+@Composable
 private fun SquareNotificationStackSurface(
     children: List<SceneNode>,
     context: RenderContext,
@@ -2075,6 +2226,80 @@ private fun AppSpecText(
         overflow = TextOverflow.Ellipsis,
         textAlign = node.props.alignment.textAlign(),
     )
+}
+
+@Composable
+private fun AppSpecImage(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    PackageImage(
+        node = node,
+        context = context,
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(76.dp),
+    )
+}
+
+@Composable
+private fun PackageImage(
+    node: SceneNode,
+    context: RenderContext,
+    modifier: Modifier,
+) {
+    val assetHash = requireNotNull(node.props.primaryText)
+    val assetManager = LocalContext.current.assets
+    val bitmap =
+        remember(assetManager, assetHash) {
+            DimgPackageAssets.decode(assetManager, assetHash)
+        }
+    val imageModifier =
+        modifier
+            .clip(RoundedCornerShape(24.dp))
+            .appSpecNode(node, context.evidenceCollector)
+    if (bitmap != null) {
+        Image(
+            bitmap = bitmap,
+            contentDescription = node.semantics.label,
+            modifier = imageModifier,
+            contentScale =
+                if (node.props.variant == "contain") {
+                    ContentScale.Fit
+                } else {
+                    ContentScale.Crop
+                },
+        )
+        return
+    }
+
+    val surface = MaterialTheme.colorScheme.surfaceContainerHigh
+    val primary = MaterialTheme.colorScheme.primary
+    val dim = MaterialTheme.colorScheme.onSurfaceVariant
+    Canvas(
+        modifier =
+            imageModifier
+                .background(surface),
+    ) {
+        drawCircle(
+            color = primary.copy(alpha = 0.35f),
+            radius = size.minDimension * 0.23f,
+            center = center,
+        )
+        drawLine(
+            color = dim,
+            start = center.copy(x = size.width * 0.28f),
+            end = center.copy(x = size.width * 0.72f),
+            strokeWidth = size.minDimension * 0.055f,
+        )
+        drawLine(
+            color = dim,
+            start = center.copy(y = size.height * 0.28f),
+            end = center.copy(y = size.height * 0.72f),
+            strokeWidth = size.minDimension * 0.055f,
+        )
+    }
 }
 
 @Composable

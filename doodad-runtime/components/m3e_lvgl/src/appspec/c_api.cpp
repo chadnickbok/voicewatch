@@ -108,6 +108,7 @@ const char* semantic_role_name(m3e::SemanticRole role) {
         case m3e::SemanticRole::list_item: return "list_item";
         case m3e::SemanticRole::dialog: return "dialog";
         case m3e::SemanticRole::timer: return "timer";
+        case m3e::SemanticRole::image: return "image";
     }
     return "unknown";
 }

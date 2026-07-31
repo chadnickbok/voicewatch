@@ -131,44 +131,47 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 133,
-      "card": 66,
+      "button": 134,
+      "card": 61,
       "column": 5,
+      "image": 5,
       "keypad": 2,
       "live_card": 12,
-      "progress": 2,
-      "row": 12,
+      "progress": 7,
+      "row": 17,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
-      "text": 140,
+      "text": 141,
       "toggle": 9,
       "voice_orb": 1
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 133,
-      "button.size": 133,
-      "button.tone": 133,
-      "button.variant": 133,
-      "card.body": 66,
-      "card.title": 66,
-      "card.tone": 66,
+      "button.label": 134,
+      "button.size": 134,
+      "button.tone": 134,
+      "button.variant": 134,
+      "card.body": 61,
+      "card.title": 61,
+      "card.tone": 61,
       "column.align": 5,
       "column.gap": 5,
+      "image.asset": 5,
+      "image.fit": 5,
       "keypad.columns": 2,
       "keypad.keys": 2,
       "live_card.body": 12,
       "live_card.progress": 10,
       "live_card.title": 12,
       "live_card.tone": 12,
-      "progress.label": 2,
-      "progress.maximum": 2,
-      "progress.style": 2,
-      "progress.tone": 2,
-      "progress.value": 2,
-      "row.align": 12,
-      "row.gap": 12,
+      "progress.label": 7,
+      "progress.maximum": 7,
+      "progress.style": 7,
+      "progress.tone": 7,
+      "progress.value": 7,
+      "row.align": 17,
+      "row.gap": 17,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -179,10 +182,10 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 102,
-      "text.max_lines": 140,
-      "text.style": 140,
-      "text.text": 140,
+      "text.align": 107,
+      "text.max_lines": 141,
+      "text.style": 141,
+      "text.text": 141,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9,
@@ -191,48 +194,50 @@
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 141,
+      "tap": 142,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 232,
-      "value": 76
+      "label": 248,
+      "value": 81
     },
     "token_values": {
       "variant": {
         "filled": 71,
-        "outlined": 36,
+        "outlined": 32,
         "text": 4,
-        "tonal": 22
+        "tonal": 27
       },
       "style": {
         "body": 3,
-        "caption": 1,
+        "caption": 6,
         "circular": 1,
-        "label": 70,
-        "linear": 1,
-        "numeral": 61,
-        "title": 5
+        "label": 66,
+        "linear": 6,
+        "numeral": 56,
+        "title": 10
       },
       "tone": {
-        "neutral": 123,
-        "primary": 97,
+        "error": 1,
+        "neutral": 119,
+        "primary": 101,
         "tertiary": 2
       },
       "size": {
-        "default": 133
+        "default": 124,
+        "large": 10
       },
       "gap": {
         "lg": 1,
-        "none": 37,
-        "sm": 60,
-        "xs": 17
+        "none": 42,
+        "sm": 55,
+        "xs": 22
       },
       "align": {
-        "center": 101,
+        "center": 96,
         "end": 1,
-        "start": 1,
-        "stretch": 114
+        "start": 11,
+        "stretch": 119
       },
       "state": {
         "idle": 1
@@ -244,11 +249,12 @@
       "empty": 1,
       "keypad": 2,
       "live_action_detail": 9,
+      "media_player": 5,
       "notification_stack": 6,
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 46,
+      "status_detail": 41,
       "task_list": 4,
       "voice_ready": 1,
       "weather_hero": 1,
@@ -705,23 +711,23 @@
     },
     {
       "path": "apps/media/appspec.json",
-      "sha256": "d7c27a1daebc505ce37e1e5beeb8cdfc4726fdde6ecf5698b6f436976dcd6611"
+      "sha256": "dce11a4e8507463b9bed63ed22a83e05776463f1e5ab5e71e0e314dc97bf6fe8"
     },
     {
       "path": "apps/media/screens/offline.json",
-      "sha256": "5453f7b5fc0c8692fae9361054b18a41c1ffc913598d3fffe2274c8568c44cc8"
+      "sha256": "129c498a0883d406fda8bad4100fa3e2e736a836d1041fc811cd0791d7bd9768"
     },
     {
       "path": "apps/media/screens/paused.json",
-      "sha256": "04343c120511dffd10deb7c0afbacea72c29d7b23cda758d801a337727780c29"
+      "sha256": "1d34ca02391e081a8891cceca1c1c28e6045a0acf25101cb5e843c791614ea05"
     },
     {
       "path": "apps/media/screens/playing.json",
-      "sha256": "5ce319cd31907e9ef98fd93b930827b442d318daa8854bb98b1ea128c79e5f95"
+      "sha256": "646816e647b385bdf2e2aedb28dc4d7e895db8373a5df39a494b2092afa2920d"
     },
     {
       "path": "apps/media/screens/reconciled.json",
-      "sha256": "3cead6e837b63cd7cc365e398e006b03351fcd830b7ae8535ccd5eb9f416f0e5"
+      "sha256": "9c3ef80c1ec4fc29eef1e564f7cf831c9ece2fb63f4709824ed44383bc6e2835"
     },
     {
       "path": "apps/navigation/appspec.json",
@@ -852,5 +858,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "f3a7e7a0218e51ed3f55e37bbc941d0d4ab149d1f9a9ab10b6d2b66839512222"
+  "sources_sha256": "61b1c097b35034348603340f562ba4e372ed9d23d6be56ca1c463f43bbfa3abd"
 }

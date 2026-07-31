@@ -24,14 +24,16 @@ event = {
 }
 
 ; screen, column, row, scroll, text, button, card, progress, stepper,
-; toggle, keypad, voice_orb, live_card
-component-kind = 0..12
+; toggle, keypad, voice_orb, live_card, image
+component-kind = 0..13
 
 ; Property tags are stable across component kinds. Validators reject tags
 ; that have no meaning for the selected component.
 ; 0 primary text, 1 secondary text, 2 value, 3 maximum, 4 variant/style,
 ; 5 tone, 6 size, 7 checked, 8 gap, 9 alignment, 10 keypad keys,
-; 11 keypad columns, 12 minimum, 13 step.
+; 11 keypad columns, 12 minimum, 13 step, 14 icon, 15 max lines,
+; 16 voice state. Image reuses primary text for its content hash and
+; variant/style for cover (0) or contain (1).
 
 identifier = tstr .regexp "[a-z][a-z0-9_.-]{0,63}"
 

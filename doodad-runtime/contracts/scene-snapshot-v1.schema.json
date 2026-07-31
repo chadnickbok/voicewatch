@@ -64,7 +64,8 @@
         "toggle",
         "keypad",
         "voice_orb",
-        "live_card"
+        "live_card",
+        "image"
       ]
     },
     "role": {
@@ -79,7 +80,8 @@
         "list_item",
         "dialog",
         "slider",
-        "group"
+        "group",
+        "image"
       ]
     },
     "event_kind": {

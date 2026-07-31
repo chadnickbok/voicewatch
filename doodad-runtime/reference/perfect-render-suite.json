@@ -273,7 +273,7 @@
       "app_slug": "media",
       "trace": "traces/media/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "df11c0fc6fe5722d20f3dd3bef1f35a62adcc9dc305b021d7149a3f86ff01cad",
+      "snapshot_sha256": "08f48335e3be249a50a43edb376e38a264080adcb619b3f3df6b3dd526a61ec3",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -286,7 +286,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all four accepted states; both renderers pass 48dp target and quality checks. Media also proves independently decoded content-addressed package artwork and a deterministic missing-image fallback. See reference/reviews/media.md."
       }
     },
     {

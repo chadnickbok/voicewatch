@@ -51,8 +51,8 @@ FLOWS = {
     ],
     "media": [
         ("Play", "media.playing.summary", "Midnight City"),
-        ("Disconnect", "media.offline.summary", "Last at 1:42"),
-        ("Reconnect", "media.reconciled.summary", "Playing · 1:45"),
+        ("Offline", "media.offline.summary", "Last at 1:42"),
+        ("Retry", "media.reconciled.summary", "Playing / 1:45"),
         ("Controls", "media.playing.summary", "Midnight City"),
     ],
     "navigation": [

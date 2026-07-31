@@ -60,6 +60,9 @@ android {
             assets.directories.add(
                 rootProject.file("../traces").absolutePath,
             )
+            assets.directories.add(
+                rootProject.file("../../apps/media/assets").absolutePath,
+            )
         }
     }
 

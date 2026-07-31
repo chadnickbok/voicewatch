@@ -1,8 +1,8 @@
 {
   "runtimeApi": "1.0",
-  "appspec": "1.1",
+  "appspec": "1.2",
   "hostAbi": 1,
-  "componentSetHash": "sha256:6139cb58a10759752cb3864ee3601821a1d616ec3864c9d9246937dd5b7a7b10",
+  "componentSetHash": "sha256:d030c312a9e3bcbee94b9da723424874ee938217bae8b68e463cd5ae406903c2",
   "displayProfile": "watch_square_192",
   "colorFormat": "rgb565",
   "limits": {
@@ -17,6 +17,7 @@
     "button",
     "card",
     "column",
+    "image",
     "keypad",
     "live_card",
     "progress",

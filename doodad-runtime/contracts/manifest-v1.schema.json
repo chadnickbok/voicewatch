@@ -48,6 +48,57 @@
     },
     "ui": {
       "const": "ui.json"
+    },
+    "assets": {
+      "type": "array",
+      "maxItems": 16,
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "sha256",
+          "path",
+          "media_type",
+          "width",
+          "height",
+          "encoded_bytes",
+          "decoded_bytes"
+        ],
+        "properties": {
+          "sha256": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "path": {
+            "type": "string",
+            "pattern": "^assets/[0-9a-f]{64}\\.dimg$"
+          },
+          "media_type": {
+            "const": "image/vnd.doodad.rgb565le"
+          },
+          "width": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          },
+          "height": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 512
+          },
+          "encoded_bytes": {
+            "type": "integer",
+            "minimum": 14,
+            "maximum": 524288
+          },
+          "decoded_bytes": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 524288
+          }
+        }
+      }
     }
   }
 }

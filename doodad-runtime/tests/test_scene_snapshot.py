@@ -157,6 +157,17 @@ def component_fixture() -> dict:
                             "tone": "neutral",
                         },
                     },
+                    {
+                        "id": "fixture.image",
+                        "type": "image",
+                        "props": {
+                            "asset": "0" * 64,
+                            "fit": "contain",
+                        },
+                        "semantics": {
+                            "label": "Fixture image",
+                        },
+                    },
                 ],
             },
         },
@@ -202,6 +213,7 @@ class SceneSnapshotTests(unittest.TestCase):
                 "keypad",
                 "voice_orb",
                 "live_card",
+                "image",
             },
         )
         self.assertEqual(by_id["fixture.text"]["props"]["max_lines"], 3)
@@ -227,6 +239,14 @@ class SceneSnapshotTests(unittest.TestCase):
         )
         self.assertEqual(by_id["fixture.live"]["props"]["value"], 42)
         self.assertEqual(by_id["fixture.live"]["props"]["maximum"], 100)
+        self.assertEqual(
+            by_id["fixture.image"]["props"],
+            {"primary_text": "0" * 64, "variant": "contain"},
+        )
+        self.assertEqual(
+            by_id["fixture.image"]["semantics"]["role"],
+            "image",
+        )
 
     def test_replay_command_and_rejection_have_atomic_revisions(self) -> None:
         payload = compile_canonical_cbor(component_fixture())

@@ -102,6 +102,7 @@ const char* component_name(ComponentKind kind) {
         case ComponentKind::keypad: return "keypad";
         case ComponentKind::voice_orb: return "voice_orb";
         case ComponentKind::live_card: return "live_card";
+        case ComponentKind::image: return "image";
     }
     return "text";
 }
@@ -122,6 +123,7 @@ const char* semantic_role_name(const WireNode& node) {
         case ComponentKind::progress: return "progress";
         case ComponentKind::stepper: return "slider";
         case ComponentKind::toggle: return "toggle";
+        case ComponentKind::image: return "image";
     }
     return "text";
 }
@@ -339,6 +341,14 @@ void write_props(
             }
             property_string(writer, first, "tone", tone_name(node.tone));
             break;
+        case ComponentKind::image:
+            property_string(writer, first, "primary_text", primary);
+            property_string(
+                writer,
+                first,
+                "variant",
+                node.variant == 1 ? "contain" : "cover");
+            break;
     }
     writer.text("}");
 }
@@ -470,6 +480,11 @@ void write_token_roles(JsonWriter& writer, const WireNode& node) {
         case ComponentKind::voice_orb:
             writer.text("\"container\":");
             writer.string(tone_name(node.tone));
+            break;
+        case ComponentKind::image:
+            writer.text(
+                "\"asset\":\"package_image\","
+                "\"fit\":\"content_scale\"");
             break;
     }
     writer.text("}");

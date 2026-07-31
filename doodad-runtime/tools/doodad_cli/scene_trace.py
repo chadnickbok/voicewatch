@@ -167,7 +167,7 @@ def trace_environment(root: Path) -> dict[str, Any]:
             "wamr": "2.4.0",
             "lvgl": "9.5.0",
             "host_abi": "1",
-            "appspec": "1.1",
+            "appspec": "1.2",
             "component_set": "1",
             "simulator": "parallax-v1",
         },

@@ -363,7 +363,7 @@ int main() {
         const auto manifest = capabilities();
         assert(manifest.nodes_per_screen == 250);
         assert(manifest.tree_depth == 12);
-        assert(manifest.component_set_hash == 0x6139cb58U);
+        assert(manifest.component_set_hash == 0xd030c312U);
         constexpr UiEvent event{
             1, "calories", "today", "quick_add", "open_quick_add",
             EventKind::tap, 100};
