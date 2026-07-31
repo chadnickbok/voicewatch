@@ -329,6 +329,10 @@ private fun SquarePatternSurface(
         SquareWeatherHeroSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.CalendarAgenda) {
+        SquareCalendarAgendaSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.NotificationStack) {
         SquareNotificationStackSurface(children, context)
         return
@@ -371,6 +375,143 @@ private fun SquarePatternSurface(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun SquareCalendarAgendaSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val stack =
+        children.singleOrNull { it.kind == "scroll" }
+            ?: error("Square calendar agenda requires one scroll node")
+    val column =
+        context.snapshot.childrenOf(stack)
+            .singleOrNull { it.visible && it.kind == "column" }
+            ?: error("Square calendar agenda requires one content column")
+    val content =
+        context.snapshot.childrenOf(column).filter { it.visible }
+    val heading =
+        content.singleOrNull { it.kind == "text" }
+            ?: error("Square calendar agenda requires one context label")
+    val cards = content.filter { it.kind == "card" }
+    val actions = content.filter { it.kind == "button" }
+    check(
+        ((cards.size == 2 && actions.size == 1) ||
+            (cards.size == 1 && actions.size == 2)) &&
+            content.all {
+                it == heading || it in cards || it in actions
+            },
+    ) {
+        "Square calendar agenda supports two events plus one action or one event plus two actions"
+    }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp)
+                .appSpecNode(stack, context.evidenceCollector),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .appSpecNode(column, context.evidenceCollector),
+        ) {
+            Text(
+                text = requireNotNull(heading.props.primaryText),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(20.dp)
+                        .appSpecNode(heading, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+            )
+
+            cards.forEachIndexed { index, card ->
+                val y = if (cards.size == 2) 24 + index * 54 else 24
+                val height = if (cards.size == 2) 50 else 104
+                CalendarEventCard(
+                    node = card,
+                    context = context,
+                    modifier =
+                        Modifier
+                            .offset(y = y.dp)
+                            .fillMaxWidth()
+                            .height(height.dp),
+                )
+            }
+
+            actions.forEachIndexed { index, action ->
+                val paired = actions.size == 2
+                NotificationActionButton(
+                    node = action,
+                    context = context,
+                    modifier =
+                        Modifier
+                            .offset(
+                                x =
+                                    if (paired) {
+                                        (index * 94).dp
+                                    } else {
+                                        32.dp
+                                    },
+                                y = 136.dp,
+                            )
+                            .width(if (paired) 90.dp else 120.dp)
+                            .height(48.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun CalendarEventCard(
+    node: SceneNode,
+    context: RenderContext,
+    modifier: Modifier,
+) {
+    val tap = node.action("tap")
+    val evidenceModifier =
+        modifier.appSpecNode(node, context.evidenceCollector)
+    val content: @Composable ColumnScope.() -> Unit = {
+        Text(
+            text = requireNotNull(node.props.primaryText),
+            style = MaterialTheme.typography.titleSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = requireNotNull(node.props.secondaryText),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 2,
+            overflow = TextOverflow.Ellipsis,
+        )
+    }
+    val padding =
+        PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+    if (tap == null) {
+        Card(
+            modifier = evidenceModifier,
+            contentPadding = padding,
+            content = content,
+        )
+    } else {
+        Card(
+            onClick = { context.dispatch(node, tap) },
+            enabled = node.enabled,
+            modifier = evidenceModifier,
+            contentPadding = padding,
+            content = content,
+        )
     }
 }
 

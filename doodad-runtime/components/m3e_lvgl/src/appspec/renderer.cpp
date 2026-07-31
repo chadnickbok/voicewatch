@@ -152,6 +152,38 @@ bool is_notification_stack_document(const WireDocument& document) {
         (buttons == 1 || buttons == 3);
 }
 
+bool is_calendar_agenda_document(const WireDocument& document) {
+    if (document.node_count != 7 ||
+        document.nodes[0].child_count != 1 ||
+        document.nodes[1].kind != ComponentKind::scroll ||
+        document.nodes[1].parent_index != 0 ||
+        document.nodes[1].child_count != 1 ||
+        document.nodes[2].kind != ComponentKind::column ||
+        document.nodes[2].parent_index != 1 ||
+        document.nodes[2].child_count != 4) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t cards = 0;
+    std::size_t buttons = 0;
+    for (std::size_t index = 3; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 2) return false;
+        if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::card) {
+            ++cards;
+        } else if (node.kind == ComponentKind::button) {
+            ++buttons;
+        } else {
+            return false;
+        }
+    }
+    return texts == 1 &&
+        ((cards == 2 && buttons == 1) ||
+         (cards == 1 && buttons == 2));
+}
+
 bool is_task_list_document(const WireDocument& document) {
     if (document.node_count < 5 ||
         document.nodes[0].child_count != 1 ||
@@ -416,6 +448,8 @@ bool Renderer::mount(
         is_weather_hero_document(document);
     const auto notification_stack_document =
         is_notification_stack_document(document);
+    const auto calendar_agenda_document =
+        is_calendar_agenda_document(document);
     const auto task_list_document =
         is_task_list_document(document);
     const auto task_toggle_count =
@@ -430,6 +464,14 @@ bool Renderer::mount(
         notification_stack_document
             ? count_kind(document, ComponentKind::button)
             : 0U;
+    const auto calendar_card_count =
+        calendar_agenda_document
+            ? count_kind(document, ComponentKind::card)
+            : 0U;
+    const auto calendar_button_count =
+        calendar_agenda_document
+            ? count_kind(document, ComponentKind::button)
+            : 0U;
     objects[0] = factory.screen(root);
     document.nodes[0].mounted_object = root;
     lv_obj_set_style_pad_all(
@@ -437,7 +479,8 @@ bool Renderer::mount(
         keypad_document
             ? 5
             : countdown_document || weather_hero_document ||
-                    notification_stack_document || task_list_document
+                    notification_stack_document ||
+                    calendar_agenda_document || task_list_document
                 ? 0
                 : px(12),
         0);
@@ -472,10 +515,25 @@ bool Renderer::mount(
             case ComponentKind::column:
             case ComponentKind::row:
                 object = layout(factory, parent, node, false);
+                if (calendar_agenda_document &&
+                    node.kind == ComponentKind::column) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(184));
+                    lv_obj_set_pos(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                }
                 break;
             case ComponentKind::scroll:
                 object = layout(factory, parent, node, true);
                 if (notification_stack_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+                    lv_obj_set_size(object, px(184), px(184));
+                    lv_obj_set_pos(object, px(4), px(4));
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                } else if (calendar_agenda_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
                     lv_obj_set_size(object, px(184), px(184));
@@ -598,6 +656,21 @@ bool Renderer::mount(
                             object, LV_TEXT_ALIGN_LEFT, 0);
                     }
                 } else if (notification_stack_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(20));
+                    lv_obj_set_pos(object, 0, 0);
+                    lv_obj_set_style_text_font(
+                        object, &lv_font_montserrat_18, 0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(object, px(2), 0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
+                } else if (calendar_agenda_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(20));
                     lv_obj_set_pos(object, 0, 0);
@@ -752,6 +825,48 @@ bool Renderer::mount(
                         lv_label_set_long_mode(
                             label, LV_LABEL_LONG_WRAP);
                     }
+                } else if (calendar_agenda_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::button);
+                    const auto paired = calendar_button_count == 2;
+                    const auto x =
+                        paired
+                            ? px(static_cast<std::int32_t>(
+                                ordinal) * 94)
+                            : px(32);
+                    const auto width =
+                        paired ? px(90) : px(120);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, width, px(48));
+                    lv_obj_set_pos(object, x, px(136));
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
+                    const auto filled =
+                        node.variant ==
+                        static_cast<std::uint8_t>(
+                            ButtonVariant::filled);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        filled
+                            ? lv_color_make(0xD8, 0xB9, 0xFF)
+                            : lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            filled
+                                ? lv_color_make(0x35, 0x11, 0x51)
+                                : lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_set_style_text_align(
+                            label, LV_TEXT_ALIGN_CENTER, 0);
+                        lv_label_set_long_mode(
+                            label, LV_LABEL_LONG_WRAP);
+                    }
                 } else if (task_list_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(48));
@@ -877,6 +992,68 @@ bool Renderer::mount(
                             0);
                         lv_obj_set_style_text_opa(
                             body, LV_OPA_COVER, 0);
+                        lv_obj_set_style_text_align(
+                            body, LV_TEXT_ALIGN_LEFT, 0);
+                        lv_label_set_long_mode(
+                            body, LV_LABEL_LONG_WRAP);
+                    }
+                } else if (calendar_agenda_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::card);
+                    const auto y =
+                        calendar_card_count == 2
+                            ? px(24 + static_cast<std::int32_t>(
+                                    ordinal) * 54)
+                            : px(24);
+                    const auto height =
+                        calendar_card_count == 2
+                            ? px(50)
+                            : px(104);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), height);
+                    lv_obj_set_pos(object, 0, y);
+                    lv_obj_set_style_min_height(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_radius(object, px(24), 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        object, LV_OPA_COVER, 0);
+                    if (lv_obj_get_child_count(object) == 2) {
+                        auto* title = lv_obj_get_child(object, 0);
+                        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(
+                            title, px(160), px(20));
+                        lv_obj_set_pos(
+                            title, px(12), px(6));
+                        lv_obj_set_style_text_font(
+                            title, &lv_font_montserrat_16, 0);
+                        lv_obj_set_style_text_color(
+                            title,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_set_style_text_align(
+                            title, LV_TEXT_ALIGN_LEFT, 0);
+                        lv_label_set_long_mode(
+                            title, LV_LABEL_LONG_DOT);
+
+                        auto* body = lv_obj_get_child(object, 1);
+                        lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(
+                            body,
+                            px(160),
+                            std::max(px(18), height - px(26)));
+                        lv_obj_set_pos(
+                            body, px(12), px(26));
+                        lv_obj_set_style_text_font(
+                            body, &lv_font_montserrat_14, 0);
+                        lv_obj_set_style_text_color(
+                            body,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
                         lv_obj_set_style_text_align(
                             body, LV_TEXT_ALIGN_LEFT, 0);
                         lv_label_set_long_mode(

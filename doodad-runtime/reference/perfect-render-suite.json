@@ -118,7 +118,7 @@
       "app_slug": "calendar",
       "trace": "traces/calendar/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "d4439573a2ad4a6bcf97022d64b64ca1786ebe4c9e5f0bd79f527cb3d10dd30b",
+      "snapshot_sha256": "72186e74fd41362d5698f668881f03e9358a7c8221354ccdcb87f8b8318e5e8e",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -131,7 +131,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across seven nodes; both renderers pass 48dp target and quality checks. Detail, RSVP, and travel states also align exactly. Remaining raster delta is font rendering, RGB565 quantization, and edge antialiasing. See reference/reviews/calendar.md."
       }
     },
     {

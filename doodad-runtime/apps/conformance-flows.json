@@ -134,19 +134,25 @@
     "calendar": [
       {
         "kind": "semantic",
-        "node_id": "calendar.primary",
-        "action_id": "calendar.primary",
+        "node_id": "calendar.agenda.review",
+        "action_id": "calendar.open.detail",
         "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "calendar.agenda.secondary",
+        "node_id": "calendar.detail.rsvp",
+        "action_id": "calendar.rsvp.yes",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calendar.confirmed.travel",
         "action_id": "calendar.travel",
         "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "calendar.travel.primary",
+        "node_id": "calendar.travel.reconnect",
         "action_id": "calendar.reconnect",
         "event_kind": "tap"
       }

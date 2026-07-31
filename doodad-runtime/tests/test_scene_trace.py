@@ -42,8 +42,8 @@ class SceneTraceTests(unittest.TestCase):
                 len(self.flows[app["slug"]]) + 1,
             )
         self.assertEqual(len(self.suite), 20)
-        self.assertEqual(entries, 111)
-        self.assertEqual(checkpoints, 104)
+        self.assertEqual(entries, 112)
+        self.assertEqual(checkpoints, 105)
 
     def test_decisive_actions_use_stable_semantic_identity(self) -> None:
         for slug, actions in self.flows.items():

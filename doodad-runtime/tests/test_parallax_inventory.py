@@ -20,21 +20,23 @@ class ParallaxInventoryTests(unittest.TestCase):
         self.assertEqual(
             document["authored"]["component_counts"],
             {
-                "button": 134,
-                "card": 74,
+                "button": 133,
+                "card": 76,
+                "column": 5,
                 "keypad": 2,
                 "live_card": 2,
                 "progress": 2,
                 "screen": 83,
-                "scroll": 10,
+                "scroll": 15,
                 "stepper": 4,
-                "text": 141,
+                "text": 137,
                 "toggle": 9,
             },
         )
         self.assertEqual(
             document["authored"]["patterns"],
             {
+                "calendar_agenda": 5,
                 "countdown": 1,
                 "empty": 1,
                 "keypad": 2,
@@ -42,15 +44,15 @@ class ParallaxInventoryTests(unittest.TestCase):
                 "notification_stack": 6,
                 "task_list": 4,
                 "progress_dashboard": 1,
-                "status_detail": 63,
+                "status_detail": 58,
                 "weather_hero": 1,
             },
         )
         self.assertEqual(
             document["runtime"]["accepted_operations"],
-            111,
+            112,
         )
-        self.assertEqual(document["runtime"]["checkpoints"], 104)
+        self.assertEqual(document["runtime"]["checkpoints"], 105)
 
     def test_inventory_generator_reports_current(self) -> None:
         result = subprocess.run(

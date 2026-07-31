@@ -45,13 +45,14 @@ class AppSpecPatternTest {
         assertEquals(
             mapOf(
                 "countdown" to 1,
+                "calendar_agenda" to 5,
                 "empty" to 1,
                 "keypad" to 2,
                 "metric_control" to 4,
                 "notification_stack" to 6,
                 "task_list" to 4,
                 "progress_dashboard" to 1,
-                "status_detail" to 63,
+                "status_detail" to 58,
                 "weather_hero" to 1,
             ),
             inventory
@@ -79,6 +80,17 @@ class AppSpecPatternTest {
                     AppSpecStructuralFacts(
                         mapOf("card" to 1, "button" to 1, "text" to 4),
                         1,
+                        1,
+                    ),
+                AppSpecPattern.CalendarAgenda to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "scroll" to 1,
+                            "column" to 1,
+                            "card" to 2,
+                            "button" to 1,
+                        ),
+                        2,
                         1,
                     ),
                 AppSpecPattern.NotificationStack to

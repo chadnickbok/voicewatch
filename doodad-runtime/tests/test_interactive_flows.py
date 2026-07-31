@@ -12,9 +12,14 @@ ROOT = Path(__file__).resolve().parents[1]
 
 FLOWS = {
     "calendar": [
-        ("Open event", "calendar.agenda.summary", "2 events"),
-        ("Travel mode", "calendar.travel.summary", "11:00 PDT"),
-        ("Reconnect", "calendar.confirmed.summary", "Going ✓"),
+        (
+            ("calendar.agenda.review", "calendar.open.detail"),
+            "calendar.detail.event",
+            "2:00 - 2:45",
+        ),
+        ("I'm going", "calendar.confirmed.event", "You're going"),
+        ("Travel view", "calendar.travel.event", "11:00 PDT"),
+        ("Reconnect", "calendar.confirmed.event", "You're going"),
     ],
     "voice-notes": [
         ("Record note", "voice-notes.recording.summary", "00:18"),
@@ -97,8 +102,15 @@ class InteractiveMockFlowTests(unittest.TestCase):
                 native = NativeHost(ROOT)
                 try:
                     native.start_wasm(package.wasm)
-                    for button, node_id, expected in steps:
-                        native.click_button(button)
+                    for action, node_id, expected in steps:
+                        if isinstance(action, tuple):
+                            native.dispatch_semantic_action(
+                                action[0],
+                                action[1],
+                                "tap",
+                            )
+                        else:
+                            native.click_button(action)
                         self.assertEqual(native.node_text(node_id), expected)
                 finally:
                     native.close()

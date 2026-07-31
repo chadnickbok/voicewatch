@@ -11,7 +11,6 @@ const TRAVEL: &[u8] = include_bytes!("../screens/travel.cbor");
 
 fn target_for(action_id: &str) -> Option<&'static [u8]> {
     match action_id {
-        "calendar.primary" => Some(AGENDA),
         "calendar.open.detail" => Some(DETAIL),
         "calendar.travel" => Some(TRAVEL),
         "calendar.rsvp.yes" => Some(CONFIRMED),

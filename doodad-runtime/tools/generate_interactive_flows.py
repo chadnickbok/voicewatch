@@ -3,8 +3,8 @@
 
 These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
-machines (Timer, Weather, Notifications, Tasks, Calculator, Calories, Workout,
-and Snake) live outside this generator.
+machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar, Calories,
+Workout, and Snake) live outside this generator.
 """
 
 from __future__ import annotations
@@ -38,39 +38,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "calendar": {
-        "initial": ("calendar.primary", "agenda"),
-        "screens": {
-            "agenda": screen(
-                "TODAY",
-                "2 events",
-                "11:00 Stand-up\n2:00 Design review",
-                ("Open event", "calendar.open.detail", "detail"),
-                ("Travel mode", "calendar.travel", "travel"),
-            ),
-            "detail": screen(
-                "DESIGN REVIEW",
-                "2:00–2:45",
-                "Studio · 4 guests · cached",
-                ("RSVP yes", "calendar.rsvp.yes", "confirmed"),
-                ("Back to agenda", "calendar.back", "agenda"),
-            ),
-            "confirmed": screen(
-                "RSVP RECORDED",
-                "Going ✓",
-                "Queued offline · revision 4",
-                ("Simulate travel", "calendar.travel", "travel"),
-                ("Agenda", "calendar.back", "agenda"),
-            ),
-            "travel": screen(
-                "TIME ZONE",
-                "11:00 PDT",
-                "Same event · DST-safe · offline",
-                ("Reconnect", "calendar.reconnect", "confirmed"),
-                ("Agenda", "calendar.back", "agenda"),
-            ),
-        },
-    },
     "voice-notes": {
         "initial": ("voice-notes.primary", "recording"),
         "screens": {

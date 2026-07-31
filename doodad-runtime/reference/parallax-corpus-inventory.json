@@ -131,26 +131,29 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 134,
-      "card": 74,
+      "button": 133,
+      "card": 76,
+      "column": 5,
       "keypad": 2,
       "live_card": 2,
       "progress": 2,
       "screen": 83,
-      "scroll": 10,
+      "scroll": 15,
       "stepper": 4,
-      "text": 141,
+      "text": 137,
       "toggle": 9
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 134,
-      "button.size": 134,
-      "button.tone": 134,
-      "button.variant": 134,
-      "card.body": 74,
-      "card.title": 74,
-      "card.tone": 74,
+      "button.label": 133,
+      "button.size": 133,
+      "button.tone": 133,
+      "button.variant": 133,
+      "card.body": 76,
+      "card.title": 76,
+      "card.tone": 76,
+      "column.align": 5,
+      "column.gap": 5,
       "keypad.columns": 2,
       "keypad.keys": 2,
       "live_card.body": 2,
@@ -164,8 +167,8 @@
       "progress.value": 2,
       "screen.align": 83,
       "screen.gap": 83,
-      "scroll.align": 10,
-      "scroll.gap": 10,
+      "scroll.align": 15,
+      "scroll.gap": 15,
       "stepper.label": 4,
       "stepper.maximum": 4,
       "stepper.minimum": 4,
@@ -173,67 +176,68 @@
       "stepper.unit": 4,
       "stepper.value": 4,
       "text.align": 86,
-      "text.max_lines": 141,
-      "text.style": 141,
-      "text.text": 141,
+      "text.max_lines": 137,
+      "text.style": 137,
+      "text.text": 137,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 139,
+      "tap": 140,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 222,
-      "value": 72
+      "label": 225,
+      "value": 70
     },
     "token_values": {
       "variant": {
-        "filled": 74,
-        "outlined": 51,
+        "filled": 72,
+        "outlined": 47,
         "text": 4,
-        "tonal": 5
+        "tonal": 10
       },
       "style": {
         "body": 3,
         "caption": 1,
         "circular": 1,
-        "label": 65,
+        "label": 66,
         "linear": 1,
-        "numeral": 68,
+        "numeral": 63,
         "title": 4
       },
       "tone": {
-        "neutral": 131,
-        "primary": 88,
+        "neutral": 130,
+        "primary": 90,
         "tertiary": 2
       },
       "size": {
-        "default": 134
+        "default": 133
       },
       "gap": {
         "lg": 1,
-        "none": 5,
-        "sm": 82,
+        "none": 20,
+        "sm": 77,
         "xs": 5
       },
       "align": {
         "center": 85,
         "end": 1,
         "start": 1,
-        "stretch": 92
+        "stretch": 102
       }
     },
     "patterns": {
+      "calendar_agenda": 5,
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
       "metric_control": 4,
       "notification_stack": 6,
       "progress_dashboard": 1,
-      "status_detail": 63,
+      "status_detail": 58,
       "task_list": 4,
       "weather_hero": 1
     }
@@ -295,15 +299,15 @@
         ]
       },
       "calendar": {
-        "accepted_operations": 4,
-        "mounts": 4,
+        "accepted_operations": 5,
+        "mounts": 5,
         "command_batches": 0,
-        "checkpoints": 4,
+        "checkpoints": 5,
         "unique_snapshots": 4,
         "screen_ids": [
           "calendar.agenda",
           "calendar.confirmed",
-          "calendar.home",
+          "calendar.detail",
           "calendar.travel"
         ]
       },
@@ -495,8 +499,8 @@
         ]
       }
     },
-    "accepted_operations": 111,
-    "checkpoints": 104,
+    "accepted_operations": 112,
+    "checkpoints": 105,
     "unique_snapshot_hashes": 95
   },
   "sources": [
@@ -558,23 +562,23 @@
     },
     {
       "path": "apps/calendar/appspec.json",
-      "sha256": "fa69142b895dc994fe4e8c36343e0a2fb3c4ffbfd2e2f8321aea195dae6f3fdd"
+      "sha256": "59a25cbafc57f04031ef6728113dfa7be344e7ee3da1acbcfcdef1a82d6d9cbc"
     },
     {
       "path": "apps/calendar/screens/agenda.json",
-      "sha256": "0cc9f9b0d4cdedfe43f250775bd504dfc767eec52295f8338938b227a92a2920"
+      "sha256": "59a25cbafc57f04031ef6728113dfa7be344e7ee3da1acbcfcdef1a82d6d9cbc"
     },
     {
       "path": "apps/calendar/screens/confirmed.json",
-      "sha256": "dfa199027a6f3c6baa65e2706293d6e0b14eab938d11b6ca1a1427b1e5171034"
+      "sha256": "5a96db875d1befc503b0b763c89cbb828d37183e997f362b2aaf6fc4bccdf28f"
     },
     {
       "path": "apps/calendar/screens/detail.json",
-      "sha256": "e1812ea862481955c3f3ad07e6da5816e371a33d7751c4df31f20f4f1fd77e0c"
+      "sha256": "a256589e87e9aba82e2345c8432d58b14e388265763bd580b7ee0a2a10e7e0de"
     },
     {
       "path": "apps/calendar/screens/travel.json",
-      "sha256": "be540fc992abe0ab9d119ddc046b991c17f13d33dc4776042167d5fca90d0d98"
+      "sha256": "405cef9d3f74c1fcf5164d76c028cf329f5336a18e26731bc925f411121d9a2a"
     },
     {
       "path": "apps/workout/appspec.json",
@@ -833,5 +837,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "0886f64a44cc950a4dfe8af0a5aff1c5144d561f6e401b55f5cc54b5e70d605e"
+  "sources_sha256": "27f3f61de0c3aeb9e3a0061890bfb3918878cfeaa998a4944f9d776dec3095fa"
 }
