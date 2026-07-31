@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "tasks.heading",
-          "type": "text",
-          "props": {
-            "text": "TASKS",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "tasks.summary",
           "type": "card",
           "props": {

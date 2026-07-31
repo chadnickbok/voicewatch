@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "transit.heading",
-          "type": "text",
-          "props": {
-            "text": "TRANSIT DEPARTURES",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "transit.summary",
           "type": "text",
           "props": {

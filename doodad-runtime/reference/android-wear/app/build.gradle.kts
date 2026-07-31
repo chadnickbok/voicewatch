@@ -57,6 +57,9 @@ android {
             assets.directories.add(
                 rootProject.file("../scenarios").absolutePath,
             )
+            assets.directories.add(
+                rootProject.file("../traces").absolutePath,
+            )
         }
     }
 
@@ -102,4 +105,17 @@ dependencies {
     debugImplementation(composeBom)
     debugImplementation(libs.androidx.compose.ui.tooling)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
+}
+
+tasks.withType<Test>().configureEach {
+    listOf(
+        "parallax.snapshot",
+        "parallax.output",
+        "parallax.manifest",
+        "parallax.rendererBuildSha256",
+    ).forEach { name ->
+        providers.gradleProperty(name).orNull?.let { value ->
+            systemProperty(name, value)
+        }
+    }
 }

@@ -235,6 +235,15 @@ def _validate_node(
         raise DoodadError(f"{identifier} props and events must be objects")
     if not isinstance(semantics, dict):
         raise DoodadError(f"{identifier}.semantics must be an object")
+    if set(semantics) - {"label", "value", "hint"}:
+        raise DoodadError(f"{identifier}.semantics has unsupported fields")
+    for field in ("label", "value", "hint"):
+        if field in semantics:
+            _text(
+                semantics[field],
+                f"{identifier} semantics.{field}",
+                128,
+            )
     if set(events) - EVENTS:
         raise DoodadError(f"{identifier} uses an unsupported semantic event")
     for action in events.values():

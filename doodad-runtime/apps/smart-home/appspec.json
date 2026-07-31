@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "smart-home.heading",
-          "type": "text",
-          "props": {
-            "text": "SMART HOME",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "smart-home.summary",
           "type": "text",
           "props": {

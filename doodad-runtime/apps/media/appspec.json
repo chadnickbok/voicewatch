@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "media.heading",
-          "type": "text",
-          "props": {
-            "text": "MEDIA REMOTE",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "media.summary",
           "type": "text",
           "props": {

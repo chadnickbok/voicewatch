@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "sensor-recorder.heading",
-          "type": "text",
-          "props": {
-            "text": "SENSOR RECORDER",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "sensor-recorder.summary",
           "type": "text",
           "props": {

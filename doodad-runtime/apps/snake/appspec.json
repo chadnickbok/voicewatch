@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "snake.heading",
-          "type": "text",
-          "props": {
-            "text": "SNAKE",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "snake.summary",
           "type": "text",
           "props": {

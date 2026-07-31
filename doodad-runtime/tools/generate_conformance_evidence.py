@@ -12,6 +12,7 @@ from typing import Any
 
 from doodad_cli.contract import build_and_stage, read_json
 from doodad_cli.native import NativeHost
+from doodad_cli.scene_trace import run_flow_action
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -51,18 +52,6 @@ def changed_pixels(before: bytes | None, after: bytes) -> int:
         before[offset : offset + 2] != after[offset : offset + 2]
         for offset in range(0, len(after), 2)
     )
-
-
-def run_action(host: NativeHost, action: dict[str, Any]) -> None:
-    kind = action["kind"]
-    if kind == "click":
-        host.click_button(str(action["value"]))
-    elif kind == "advance":
-        host.advance_time(int(action["value"]))
-    elif kind == "deliver":
-        host.deliver_provider()
-    else:
-        raise RuntimeError(f"unknown conformance action {kind!r}")
 
 
 def stage_evidence(
@@ -122,7 +111,7 @@ def app_evidence(
         stage, prior_frame = stage_evidence(host, 0, None, prior_frame)
         stages.append(stage)
         for index, action in enumerate(actions, start=1):
-            run_action(host, action)
+            run_flow_action(host, action)
             stage, prior_frame = stage_evidence(
                 host, index, action, prior_frame
             )

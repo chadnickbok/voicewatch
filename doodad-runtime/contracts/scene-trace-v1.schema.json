@@ -1,0 +1,356 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doodad.dev/schemas/scene-trace-v1.schema.json",
+  "title": "Doodad committed scene trace v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "app",
+    "environment",
+    "scenario_id",
+    "entries"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "app": {
+      "$ref": "#/$defs/app"
+    },
+    "environment": {
+      "$ref": "#/$defs/environment"
+    },
+    "scenario_id": {
+      "$ref": "#/$defs/id"
+    },
+    "entries": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4096,
+      "items": {
+        "$ref": "#/$defs/entry"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,95}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "safe_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "origin": {
+      "enum": [
+        "guest_appspec",
+        "trusted_surface",
+        "hybrid_projection"
+      ]
+    },
+    "app": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "slug",
+        "id",
+        "package_sha256",
+        "wasm_sha256",
+        "manifest_sha256"
+      ],
+      "properties": {
+        "slug": {
+          "$ref": "#/$defs/id"
+        },
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "package_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "wasm_sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "manifest_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "versions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "wamr",
+        "lvgl",
+        "host_abi",
+        "appspec",
+        "component_set",
+        "simulator"
+      ],
+      "properties": {
+        "wamr": {
+          "$ref": "#/$defs/version_text"
+        },
+        "lvgl": {
+          "$ref": "#/$defs/version_text"
+        },
+        "host_abi": {
+          "$ref": "#/$defs/version_text"
+        },
+        "appspec": {
+          "$ref": "#/$defs/version_text"
+        },
+        "component_set": {
+          "$ref": "#/$defs/version_text"
+        },
+        "simulator": {
+          "$ref": "#/$defs/version_text"
+        }
+      }
+    },
+    "version_text": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "interpretation_policy",
+        "theme",
+        "font",
+        "icons",
+        "simulator_build"
+      ],
+      "properties": {
+        "interpretation_policy": {
+          "$ref": "#/$defs/sha256"
+        },
+        "theme": {
+          "$ref": "#/$defs/sha256"
+        },
+        "font": {
+          "$ref": "#/$defs/sha256"
+        },
+        "icons": {
+          "$ref": "#/$defs/sha256"
+        },
+        "simulator_build": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profile_id",
+        "locale",
+        "timezone",
+        "font_scale_milli",
+        "reduced_motion",
+        "origin",
+        "versions",
+        "hashes"
+      ],
+      "properties": {
+        "profile_id": {
+          "$ref": "#/$defs/id"
+        },
+        "locale": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 32
+        },
+        "timezone": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "font_scale_milli": {
+          "type": "integer",
+          "minimum": 500,
+          "maximum": 2000
+        },
+        "reduced_motion": {
+          "type": "boolean"
+        },
+        "origin": {
+          "$ref": "#/$defs/origin"
+        },
+        "versions": {
+          "$ref": "#/$defs/versions"
+        },
+        "hashes": {
+          "$ref": "#/$defs/hashes"
+        }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256",
+        "bytes"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/safe_path"
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16777216
+        }
+      }
+    },
+    "cause": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "start",
+            "semantic_action",
+            "provider_event",
+            "timer",
+            "lifecycle",
+            "restore"
+          ]
+        },
+        "node_id": {
+          "$ref": "#/$defs/id"
+        },
+        "action_id": {
+          "$ref": "#/$defs/id"
+        },
+        "event_kind": {
+          "enum": [
+            "tap",
+            "long_press",
+            "repeat",
+            "value_changing",
+            "value_committed",
+            "checked_changed",
+            "page_changed",
+            "dismissed",
+            "submit",
+            "retry",
+            "cancel"
+          ]
+        },
+        "provider": {
+          "$ref": "#/$defs/id"
+        },
+        "event": {
+          "$ref": "#/$defs/id"
+        },
+        "typed_value": {}
+      }
+    },
+    "entry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "sequence",
+        "scenario_time_ms",
+        "cause",
+        "outcome",
+        "scene_revision",
+        "route_generation",
+        "screen_id",
+        "before_snapshot_sha256",
+        "after_snapshot_sha256"
+      ],
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "scenario_time_ms": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "cause": {
+          "$ref": "#/$defs/cause"
+        },
+        "outcome": {
+          "enum": [
+            "committed",
+            "no_change",
+            "rejected"
+          ]
+        },
+        "scene_revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "route_generation": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "screen_id": {
+          "$ref": "#/$defs/id"
+        },
+        "before_snapshot_sha256": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "after_snapshot_sha256": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/sha256"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "mount": {
+          "$ref": "#/$defs/artifact"
+        },
+        "cause_payload": {
+          "$ref": "#/$defs/artifact"
+        },
+        "command_batch": {
+          "$ref": "#/$defs/artifact"
+        },
+        "snapshot": {
+          "$ref": "#/$defs/artifact"
+        },
+        "failure": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        }
+      }
+    }
+  }
+}

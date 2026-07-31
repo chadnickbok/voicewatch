@@ -1,0 +1,139 @@
+package dev.doodad.reference
+
+import dev.doodad.reference.ui.AppSpecPattern
+import dev.doodad.reference.ui.AppSpecPatternSelector
+import dev.doodad.reference.ui.AppSpecStructuralFacts
+import java.io.File
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import org.junit.Assert.assertEquals
+import org.junit.Test
+
+class AppSpecPatternTest {
+    @Test
+    fun selectorReproducesTheFrozenEightyThreeDocumentCorpus() {
+        val root = findDoodadRuntimeRoot()
+        val inventory =
+            Json.parseToJsonElement(
+                File(root, "reference/parallax-corpus-inventory.json")
+                    .readText(),
+            ).jsonObject
+        val sources = inventory.getValue("sources").jsonArray
+        val selected =
+            sources.map { source ->
+                val path =
+                    source.jsonObject
+                        .getValue("path")
+                        .jsonPrimitive
+                        .content
+                val document =
+                    Json.parseToJsonElement(File(root, path).readText())
+                        .jsonObject
+                AppSpecPatternSelector.select(
+                    structuralFacts(document.getValue("screen").jsonObject),
+                )
+            }
+
+        assertEquals(83, selected.size)
+        assertEquals(
+            AppSpecPatternSelector.authoredCorpusExpectation,
+            selected.groupingBy { it }.eachCount(),
+        )
+        assertEquals(
+            mapOf(
+                "action_list" to 6,
+                "empty" to 1,
+                "keypad" to 2,
+                "metric_control" to 5,
+                "progress_dashboard" to 1,
+                "status_detail" to 68,
+            ),
+            inventory
+                .getValue("authored")
+                .jsonObject
+                .getValue("patterns")
+                .jsonObject
+                .mapValues { it.value.jsonPrimitive.content.toInt() },
+        )
+    }
+
+    @Test
+    fun everyPatternIsSelectedByStructureAlone() {
+        val examples =
+            mapOf(
+                AppSpecPattern.Keypad to
+                    AppSpecStructuralFacts(mapOf("keypad" to 1), 1, 1),
+                AppSpecPattern.ProgressDashboard to
+                    AppSpecStructuralFacts(mapOf("progress" to 1), 0, 0),
+                AppSpecPattern.MetricControl to
+                    AppSpecStructuralFacts(mapOf("stepper" to 1), 1, 1),
+                AppSpecPattern.Empty to
+                    AppSpecStructuralFacts(mapOf("text" to 2), 0, 0),
+                AppSpecPattern.ActionList to
+                    AppSpecStructuralFacts(mapOf("button" to 2), 2, 2),
+                AppSpecPattern.StatusDetail to
+                    AppSpecStructuralFacts(
+                        mapOf("card" to 1, "button" to 1),
+                        1,
+                        1,
+                    ),
+            )
+
+        examples.forEach { (expected, facts) ->
+            assertEquals(expected, AppSpecPatternSelector.select(facts))
+        }
+    }
+
+    private fun structuralFacts(root: JsonObject): AppSpecStructuralFacts {
+        val nodes = walk(root).toList()
+        return AppSpecStructuralFacts(
+            kindCounts =
+                nodes.groupingBy {
+                    it.getValue("type").jsonPrimitive.content
+                }.eachCount(),
+            actionCount =
+                nodes.sumOf {
+                    it["events"]?.jsonObject?.size ?: 0
+                },
+            interactiveCount =
+                nodes.count {
+                    it.getValue("type").jsonPrimitive.content in
+                        setOf(
+                            "button",
+                            "stepper",
+                            "toggle",
+                            "keypad",
+                            "voice_orb",
+                        )
+                },
+        )
+    }
+
+    private fun walk(node: JsonObject): Sequence<JsonObject> =
+        sequence {
+            yield(node)
+            node.getValue("props")
+                .jsonObject["children"]
+                ?.jsonArray
+                ?.forEach { child ->
+                    yieldAll(walk(child.jsonObject))
+                }
+        }
+
+    private fun findDoodadRuntimeRoot(): File =
+        generateSequence(
+            File(requireNotNull(System.getProperty("user.dir"))).absoluteFile,
+        ) { it.parentFile }
+            .take(8)
+            .firstOrNull {
+                File(it, "apps/conformance-suite.json").isFile &&
+                    File(
+                        it,
+                        "reference/parallax-corpus-inventory.json",
+                    ).isFile
+            }
+            ?: error("Could not locate the doodad-runtime repository root")
+}

@@ -1,0 +1,406 @@
+{
+  "schema_version": 1,
+  "id": "perfect-render-20",
+  "entries": [
+    {
+      "app_slug": "timer",
+      "trace": "traces/timer/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "cc5cfc1fb9c03e46c28a7a57bcc74aa060acd6849d86ced9479ea85c775a8e64",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "8d0a4193e1d8293dc2f4aac0a1c48099eb89d0826332bcfb76228b06164656aa",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "notifications",
+      "trace": "traces/notifications/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "c6b44e6f8baa1ed378d18b8fde11650fb58fc9593faac1302c18344a6770f172",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "tasks",
+      "trace": "traces/tasks/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "75ab48e3775a5dcf65593ddb0ed690083d4dda2abee7e2ba8459bfdeff305609",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "calculator",
+      "trace": "traces/calculator/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "b8dd2ad3c03eb177fffbe4974ca9d3d79e14d3eb4873539e7e82f38c49dbdb65",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "calendar",
+      "trace": "traces/calendar/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "d4439573a2ad4a6bcf97022d64b64ca1786ebe4c9e5f0bd79f527cb3d10dd30b",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "c2e66ab9554a9f8209c5e1b9988f4c7ac69c94486b0d75d6791f3a830569d8b7",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "calories",
+      "trace": "traces/calories/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "fa9dd4de3763fdbc150fac94d3e625a0a8d410b95464fb1f2204f6f1ffab00c3",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "voice-notes",
+      "trace": "traces/voice-notes/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "77b8a60206be2a76ed2ad9dd1643d979115f29fd189bcea1325f1d02e02906fb",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "medication",
+      "trace": "traces/medication/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "3cfb574187755509a56bba3dab706c3c44818a5e98856c720d228ead034c2cbe",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "sensor-recorder",
+      "trace": "traces/sensor-recorder/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "bfdcbd002ff56a62aee611bc0a764437d06a9f34f879e08ab84fe4e71df2f492",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "sleep",
+      "trace": "traces/sleep/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "a8a799ce9368f9178b0fe8409dc51518c20e882a10a5c06d1d82de5f2f8d806b",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "media",
+      "trace": "traces/media/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "df11c0fc6fe5722d20f3dd3bef1f35a62adcc9dc305b021d7149a3f86ff01cad",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "navigation",
+      "trace": "traces/navigation/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "abaddf49fff5d64d58ecab274e5c5fe1714f68d7721aab08672669b700976129",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "transit",
+      "trace": "traces/transit/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "cf386401e3ad449c44348fde5ec5e76a6b20578cf47645a0cfbe3f0efceb8ae4",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "smart-home",
+      "trace": "traces/smart-home/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "63882171555f5107b44aab47c234ca69bf5bad6966d58949ce6a1c781c1b20db",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "sports",
+      "trace": "traces/sports/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "ad3e29d8e8241768074e253c8e323586b2be7a7f27a2f064efc92ed0c8bcd9d4",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "wallet",
+      "trace": "traces/wallet/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "198a9fa8680275699b81d37aa3c535d274df9fe6d08cf35cf6a13a55b88ed1db",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "remote-control",
+      "trace": "traces/remote-control/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "a30176c4bdad29b498dc83e565feb5875675f59cd6016fcfd745efd77bda0d8b",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "snake",
+      "trace": "traces/snake/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "27562bd4d7588607957d20108f66369f350e3fabb3d45902e0a178e9cc94f660",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    }
+  ]
+}

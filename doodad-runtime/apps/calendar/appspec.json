@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "calendar.heading",
-          "type": "text",
-          "props": {
-            "text": "CALENDAR + AGENDA",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "calendar.summary",
           "type": "text",
           "props": {

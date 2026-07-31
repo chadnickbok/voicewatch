@@ -1,0 +1,79 @@
+{
+  "schema_version": 1,
+  "id": "material-expressive-wear-1.6.2",
+  "source_artifact": "androidx.wear.compose:compose-material3:1.6.2",
+  "pattern_precedence": [
+    {
+      "pattern": "keypad",
+      "when_kind_present": "keypad"
+    },
+    {
+      "pattern": "progress_dashboard",
+      "when_kind_present": "progress"
+    },
+    {
+      "pattern": "metric_control",
+      "when_any_kind_present": [
+        "stepper",
+        "live_card"
+      ]
+    },
+    {
+      "pattern": "empty",
+      "when_interactive_count": 0
+    },
+    {
+      "pattern": "action_list",
+      "when_card_count": 0,
+      "when_minimum_action_count": 2
+    },
+    {
+      "pattern": "status_detail",
+      "otherwise": true
+    }
+  ],
+  "components": {
+    "screen": "AppScaffold+ScreenScaffold",
+    "text": "Text",
+    "button.filled": "Button",
+    "button.tonal": "FilledTonalButton",
+    "button.outlined": "OutlinedButton",
+    "button.text": "ChildButton",
+    "button.compact": "CompactButton",
+    "card": "TitleCard",
+    "live_card": "TitleCard+ProgressIndicator",
+    "progress.linear": "LinearProgressIndicator",
+    "progress.circular": "CircularProgressIndicator",
+    "progress.segmented": "SegmentedCircularProgressIndicator",
+    "stepper.full_screen": "Stepper",
+    "stepper.inline": "ButtonGroup",
+    "toggle": "SwitchButton",
+    "keypad": "ButtonGroup+CompactButton",
+    "voice_orb": "DoodadVoiceOrb"
+  },
+  "typography": {
+    "display": "displayMedium",
+    "title": "titleMedium",
+    "label": "labelMedium",
+    "body": "bodyMedium",
+    "numeral": "numeralLarge",
+    "caption": "bodyExtraSmall"
+  },
+  "profiles": {
+    "wear_round_small": {
+      "container": "TransformingLazyColumn",
+      "edge_adaptation": true
+    },
+    "wear_round_large": {
+      "container": "TransformingLazyColumn",
+      "edge_adaptation": true
+    },
+    "watch_square_240": {
+      "container": "Column",
+      "edge_adaptation": false
+    }
+  },
+  "unknown_component_policy": "fail",
+  "unknown_property_policy": "fail",
+  "app_id_branches_allowed": false
+}

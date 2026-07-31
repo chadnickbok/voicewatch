@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "medication.heading",
-          "type": "text",
-          "props": {
-            "text": "MEDICATION + HABITS",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "medication.summary",
           "type": "text",
           "props": {

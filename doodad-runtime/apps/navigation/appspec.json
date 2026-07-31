@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "navigation.heading",
-          "type": "text",
-          "props": {
-            "text": "NAVIGATION",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "navigation.summary",
           "type": "text",
           "props": {

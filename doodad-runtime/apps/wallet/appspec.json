@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "wallet.heading",
-          "type": "text",
-          "props": {
-            "text": "PASS + QR WALLET",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "wallet.summary",
           "type": "text",
           "props": {

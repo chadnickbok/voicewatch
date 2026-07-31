@@ -33,11 +33,30 @@ class AppSpecTests(unittest.TestCase):
             self.assertLessEqual(len(payload), 4096)
             self.assertEqual(payload[0], 0xA3)
 
+    def test_launch_scenes_do_not_repeat_the_app_name_as_a_heading(self) -> None:
+        suite = json.loads(
+            (ROOT / "apps" / "conformance-suite.json").read_text()
+        )
+        contextual_headings = {
+            "weather.heading",
+            "active_set.heading",
+        }
+        for app in suite["apps"]:
+            document = self.load(app["slug"])
+            first = document["screen"]["props"]["children"][0]
+            heading_id = first["id"] if first["type"] == "text" else ""
+            if heading_id.endswith(".heading"):
+                self.assertIn(
+                    heading_id,
+                    contextual_headings,
+                    f"{app['slug']} repeats launch identity instead of content",
+                )
+
     def test_hello_cbor_wire_fixture_is_stable(self) -> None:
         payload = compile_canonical_cbor(self.load("hello"))
         self.assertEqual(
             hashlib.sha256(payload).hexdigest(),
-            "c1954e5406deeaf400e3b8371e8b9e491a318f3dd9e6b989005360a842fd8276",
+            "2c660b904a29e349517202d0022ca0c28add794fddfc97610eb9b1683d3ca79e",
         )
 
     def test_capability_component_hash_is_reproducible(self) -> None:

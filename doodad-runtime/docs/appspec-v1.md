@@ -47,6 +47,23 @@ without a value retain the original seven-field canonical envelope. This
 keeps existing guests compatible while allowing generated apps to respond to
 real input rather than guessing from a node ID.
 
+## Launch-surface policy
+
+A launched app owns the complete 240×240 app surface. Its initial AppSpec must
+not spend a row repeating the manifest name, app name, or current launcher
+label. The launcher already established app identity before navigation.
+
+The first visible node should therefore be useful app content: a hero value,
+current state, actionable control, or a genuinely contextual label. Context
+such as a city name or the current exercise/set may remain when removing it
+would make the screen ambiguous. A decorative `Calculator`, `Tasks`, or
+`Media Remote` heading may not.
+
+The trusted shell may show status chrome while loading, recovering, or
+reporting a host error. A successful AppSpec mount destroys that transient
+chrome and renders full-screen. Renderers must not synthesize an app title bar
+around the mounted document.
+
 ## Resource and safety limits
 
 - 250 nodes hard maximum;

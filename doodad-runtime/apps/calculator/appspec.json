@@ -5,18 +5,9 @@
     "id": "calculator",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
-        {
-          "id": "calculator.heading",
-          "type": "text",
-          "props": {
-            "text": "Calculator",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
         {
           "id": "calculator.result",
           "type": "text",

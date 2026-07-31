@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "remote-control.heading",
-          "type": "text",
-          "props": {
-            "text": "REMOTE CONTROL LAB",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "remote-control.summary",
           "type": "text",
           "props": {

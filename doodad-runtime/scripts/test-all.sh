@@ -15,6 +15,8 @@ cargo test --locked --package doodad-sdk
 
 ./scripts/test-conformance-suite.sh
 python3 tools/generate_conformance_evidence.py --check
+PYTHONPATH=tools python3 tools/generate_parallax_traces.py --check
+PYTHONPATH=tools python3 tools/generate_parallax_inventory.py --check
 ./doodad appspec "apps/voice/appspec.json" --validate-only
 
 ./doodad test hello

@@ -2,13 +2,22 @@
 
 #include <algorithm>
 #include <array>
+#include <cstring>
 
 #include "m3e/components/components.hpp"
 #include "m3e/foundation/display_profile.hpp"
 #include "m3e/foundation/semantic_tokens.hpp"
 
+LV_FONT_DECLARE(m3e_calculator_font_20);
+LV_FONT_DECLARE(m3e_calculator_result_font_40);
+
 namespace m3e::appspec {
 namespace {
+
+struct CalculatorKeyColors {
+    lv_color_t container;
+    lv_color_t content;
+};
 
 std::int32_t px(std::int32_t dp) {
     return dp_edge_to_px(dp, watch_square_192.density_q8_8);
@@ -42,6 +51,46 @@ generated::TypographyRole typography(std::uint8_t value) {
         case 5: return TypographyRole::body_extra_small;
         default: return TypographyRole::body_medium;
     }
+}
+
+bool is_keypad_document(const WireDocument& document) {
+    return std::any_of(
+        document.nodes.begin() + 1,
+        document.nodes.begin() + document.node_count,
+        [](const WireNode& node) {
+            return node.kind == ComponentKind::keypad;
+        });
+}
+
+const char* calculator_glyph(const char* key) {
+    if (std::strcmp(key, "+/-") == 0) return "±";
+    if (std::strcmp(key, "/") == 0) return "÷";
+    if (std::strcmp(key, "*") == 0) return "×";
+    if (std::strcmp(key, "<-") == 0) return "⌫";
+    return key;
+}
+
+CalculatorKeyColors calculator_key_colors(
+    bool is_operator,
+    bool is_utility) {
+    // Keep the production renderer on the exact violet-dark roles used by
+    // ReferenceTheme. LVGL quantizes these colors to RGB565 on hardware.
+    if (is_operator) {
+        return {
+            lv_color_make(0xD8, 0xB9, 0xFF),
+            lv_color_make(0x35, 0x11, 0x51),
+        };
+    }
+    if (is_utility) {
+        return {
+            lv_color_make(0xCF, 0xC0, 0xDA),
+            lv_color_make(0x34, 0x2B, 0x3D),
+        };
+    }
+    return {
+        lv_color_make(0x49, 0x44, 0x53),
+        lv_color_make(0xF6, 0xED, 0xFF),
+    };
 }
 
 Tone tone(std::uint8_t value) {
@@ -196,20 +245,46 @@ bool Renderer::mount(
         !styles_.initialized()) {
         return false;
     }
+    std::size_t required_bindings = 0;
+    if (event_sink != nullptr) {
+        for (std::size_t index = 1;
+             index < document.node_count;
+             ++index) {
+            const auto& node = document.nodes[index];
+            const auto multiplier =
+                node.kind == ComponentKind::keypad
+                    ? static_cast<std::size_t>(node.key_count)
+                    : node.kind == ComponentKind::stepper ? 2U : 1U;
+            required_bindings +=
+                static_cast<std::size_t>(node.event_count) *
+                multiplier;
+            if (required_bindings >
+                document.mounted_event_bindings.size()) {
+                return false;
+            }
+        }
+    }
     document.mounted_event_binding_count = 0;
     ComponentFactory factory(styles_);
     std::array<lv_obj_t*, Reconciler::kCapacity> objects{};
+    const auto keypad_document = is_keypad_document(document);
     objects[0] = factory.screen(root);
     document.nodes[0].mounted_object = root;
-    lv_obj_set_style_pad_all(root, px(12), 0);
+    lv_obj_set_style_pad_all(root, keypad_document ? 5 : px(12), 0);
     lv_obj_set_style_pad_gap(
-        root, gap_px(document.nodes[0].gap), 0);
+        root, keypad_document ? 4 : gap_px(document.nodes[0].gap), 0);
     lv_obj_set_flex_flow(root, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(
         root,
-        align(document.nodes[0].alignment),
-        align(document.nodes[0].alignment),
-        align(document.nodes[0].alignment));
+        keypad_document
+            ? LV_FLEX_ALIGN_START
+            : align(document.nodes[0].alignment),
+        keypad_document
+            ? LV_FLEX_ALIGN_CENTER
+            : align(document.nodes[0].alignment),
+        keypad_document
+            ? LV_FLEX_ALIGN_CENTER
+            : align(document.nodes[0].alignment));
 
     for (std::size_t index = 1; index < document.node_count; ++index) {
         auto& node = document.nodes[index];
@@ -235,7 +310,11 @@ bool Renderer::mount(
                 object = factory.text(
                     parent, primary, typography(node.variant));
                 lv_obj_set_width(object, LV_PCT(100));
-                lv_label_set_long_mode(object, LV_LABEL_LONG_WRAP);
+                lv_label_set_long_mode(
+                    object,
+                    keypad_document && node.variant == 4
+                        ? LV_LABEL_LONG_DOT
+                        : LV_LABEL_LONG_WRAP);
                 lv_obj_set_style_text_align(
                     object,
                     node.alignment == 0
@@ -244,6 +323,14 @@ bool Renderer::mount(
                             ? LV_TEXT_ALIGN_RIGHT
                             : LV_TEXT_ALIGN_CENTER,
                     0);
+                if (keypad_document && node.variant == 4) {
+                    lv_obj_set_height(object, 50);
+                    lv_obj_set_style_text_font(
+                        object, &m3e_calculator_result_font_40, 0);
+                    lv_obj_set_style_pad_top(object, 11, 0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_RIGHT, 0);
+                }
                 break;
             case ComponentKind::button:
                 object = factory.button(
@@ -309,15 +396,23 @@ bool Renderer::mount(
                 break;
             case ComponentKind::keypad: {
                 object = layout(factory, parent, node, false);
-                lv_obj_set_style_pad_row(object, px(4), 0);
+                lv_obj_set_height(object, 176);
+                lv_obj_set_style_pad_row(object, 4, 0);
                 for (std::uint8_t key_index = 0;
                      key_index < node.key_count;) {
                     WireNode row_node{};
                     row_node.kind = ComponentKind::row;
                     row_node.gap = 1;
-                    row_node.alignment = 3;
+                    row_node.alignment = 0;
                     auto* row =
                         layout(factory, object, row_node, false);
+                    lv_obj_set_height(row, 32);
+                    lv_obj_set_style_pad_column(row, 4, 0);
+                    lv_obj_set_flex_align(
+                        row,
+                        LV_FLEX_ALIGN_START,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_CENTER);
                     for (std::uint8_t column = 0;
                          column < node.key_columns &&
                          key_index < node.key_count;
@@ -325,18 +420,59 @@ bool Renderer::mount(
                         const auto offset =
                             document.key_offsets[
                                 node.key_start + key_index];
+                        const auto* key_text =
+                            document.string_at(offset);
+                        const auto is_operator =
+                            column == node.key_columns - 1;
+                        const auto is_utility =
+                            key_index < node.key_columns ||
+                            std::strcmp(key_text, "<-") == 0;
+                        const auto colors = calculator_key_colors(
+                            is_operator, is_utility);
                         auto* key = factory.button(
                             row,
                             {
                                 "key",
-                                document.string_at(offset),
-                                Tone::neutral,
+                                calculator_glyph(key_text),
+                                is_operator
+                                    ? Tone::primary
+                                    : is_utility
+                                        ? Tone::secondary
+                                        : Tone::neutral,
                                 ButtonVariant::tonal,
                                 ComponentSize::compact,
                                 node.enabled,
                                 false,
                             });
+                        lv_obj_set_height(key, 32);
+                        lv_obj_set_style_pad_all(key, 0, 0);
+                        lv_obj_set_style_radius(key, 15, 0);
+                        lv_obj_set_style_bg_color(
+                            key, colors.container, 0);
+                        lv_obj_set_style_transform_scale(
+                            key,
+                            241,
+                            static_cast<lv_style_selector_t>(
+                                LV_PART_MAIN) |
+                                static_cast<lv_style_selector_t>(
+                                    LV_STATE_PRESSED));
+                        lv_obj_set_style_opa(
+                            key,
+                            LV_OPA_COVER,
+                            static_cast<lv_style_selector_t>(
+                                LV_PART_MAIN) |
+                                static_cast<lv_style_selector_t>(
+                                    LV_STATE_PRESSED));
                         lv_obj_set_flex_grow(key, 1);
+                        if (lv_obj_get_child_count(key) == 1) {
+                            auto* label = lv_obj_get_child(key, 0);
+                            lv_obj_set_style_text_font(
+                                label,
+                                &m3e_calculator_font_20,
+                                0);
+                            lv_obj_set_style_text_color(
+                                label, colors.content, 0);
+                        }
                         if (event_sink != nullptr) {
                             for (std::size_t event_index = 0;
                                  event_index < document.event_count;

@@ -65,9 +65,47 @@ create_avd \
     "${WEAR_7_IMAGE}" \
     "wearos_large_round"
 create_avd \
+    "Wear_OS_Square" \
+    "${WEAR_7_IMAGE}" \
+    "wearos_square"
+create_avd \
     "doodad_wear61_small_round" \
     "${WEAR_61_IMAGE}" \
     "wearos_small_round"
 
+SQUARE_AVD_ROOT="${ANDROID_AVD_HOME:-${HOME}/.android/avd}"
+SQUARE_CONFIG="${SQUARE_AVD_ROOT}/Wear_OS_Square.avd/config.ini"
+python3 - "${SQUARE_CONFIG}" <<'PY'
+from pathlib import Path
+import sys
+
+path = Path(sys.argv[1])
+if not path.is_file():
+    raise SystemExit(f"Square Wear AVD config not found: {path}")
+
+updates = {
+    "fastboot.forceColdBoot": "yes",
+    "fastboot.forceFastBoot": "no",
+    "hw.arc": "false",
+    "hw.lcd.density": "200",
+    "hw.lcd.height": "240",
+    "hw.lcd.width": "240",
+}
+lines = path.read_text().splitlines()
+seen = set()
+output = []
+for line in lines:
+    key, separator, _ = line.partition("=")
+    if separator and key in updates:
+        output.append(f"{key}={updates[key]}")
+        seen.add(key)
+    else:
+        output.append(line)
+for key in sorted(set(updates) - seen):
+    output.append(f"{key}={updates[key]}")
+path.write_text("\n".join(output) + "\n")
+PY
+
 echo "Reference AVDs are ready:"
 "${EMULATOR}" -list-avds | grep '^doodad_' || true
+echo "Wear_OS_Square (API 37, 240x240, 200 dpi)"

@@ -33,6 +33,9 @@ struct WireNode {
     std::uint16_t primary_text_offset;
     std::uint16_t secondary_text_offset;
     std::uint16_t semantic_label_offset;
+    std::uint16_t semantic_value_offset;
+    std::uint16_t semantic_hint_offset;
+    std::uint16_t icon_offset;
     std::uint16_t key_start;
     std::uint16_t parent_index;
     std::uint8_t depth;
@@ -46,6 +49,9 @@ struct WireNode {
     std::uint8_t key_count;
     std::uint8_t key_columns;
     std::uint8_t event_count;
+    std::uint8_t max_lines;
+    std::uint8_t voice_state;
+    std::uint32_t property_mask;
     std::int32_t value;
     std::int32_t minimum;
     std::int32_t maximum;

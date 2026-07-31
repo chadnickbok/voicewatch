@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "sleep.heading",
-          "type": "text",
-          "props": {
-            "text": "SLEEP + SMART ALARM",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "sleep.summary",
           "type": "text",
           "props": {

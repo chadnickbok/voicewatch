@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "sports.heading",
-          "type": "text",
-          "props": {
-            "text": "LIVE SPORTS",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "sports.summary",
           "type": "text",
           "props": {

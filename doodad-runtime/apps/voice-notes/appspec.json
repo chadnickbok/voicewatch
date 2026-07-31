@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "voice-notes.heading",
-          "type": "text",
-          "props": {
-            "text": "VOICE NOTES",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "voice-notes.summary",
           "type": "text",
           "props": {

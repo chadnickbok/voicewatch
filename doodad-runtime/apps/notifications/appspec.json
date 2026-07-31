@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "notifications.heading",
-          "type": "text",
-          "props": {
-            "text": "INBOX",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "notifications.summary",
           "type": "text",
           "props": {

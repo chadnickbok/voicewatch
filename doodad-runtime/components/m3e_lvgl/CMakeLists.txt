@@ -1,8 +1,11 @@
 set(M3E_LVGL_SOURCES
+    src/assets/calculator_font_20.c
+    src/assets/calculator_result_font_40.c
     src/appspec/c_api.cpp
     src/appspec/command_batch.cpp
     src/appspec/renderer.cpp
     src/appspec/runtime.cpp
+    src/appspec/scene_snapshot.cpp
     src/appspec/wire.cpp
     src/catalog/catalog.cpp
     src/components/components.cpp
@@ -32,8 +35,8 @@ if(COMMAND idf_component_register)
         REQUIRES lvgl
     )
     target_compile_options(${COMPONENT_LIB} PRIVATE
-        -fno-exceptions
-        -fno-rtti
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
     )
 else()
     add_library(m3e_lvgl STATIC ${M3E_LVGL_SOURCES})
@@ -41,8 +44,8 @@ else()
     target_include_directories(m3e_lvgl PUBLIC include)
     target_compile_features(m3e_lvgl PUBLIC cxx_std_17)
     target_compile_options(m3e_lvgl PRIVATE
-        -fno-exceptions
-        -fno-rtti
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
+        $<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
     )
     target_link_libraries(m3e_lvgl PUBLIC lvgl::lvgl)
 endif()

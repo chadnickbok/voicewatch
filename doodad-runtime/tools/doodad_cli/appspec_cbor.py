@@ -75,18 +75,24 @@ def _properties(node: dict[str, Any]) -> dict[int, Any]:
             9: ALIGN[props.get("align", "center")],
         }
     if kind == "text":
-        return {
+        result = {
             0: _literal(props["text"], f"{node['id']}.text"),
             4: TEXT_STYLE[props.get("style", "body")],
             9: ALIGN[props.get("align", "center")],
         }
+        if "max_lines" in props:
+            result[15] = props["max_lines"]
+        return result
     if kind == "button":
-        return {
+        result = {
             0: props["label"],
             4: BUTTON_VARIANT[props.get("variant", "filled")],
             5: TONE[props.get("tone", "primary")],
             6: SIZE[props.get("size", "default")],
         }
+        if "icon" in props:
+            result[14] = props["icon"]
+        return result
     if kind == "card":
         return {
             0: _literal(props["title"], f"{node['id']}.title"),
@@ -127,7 +133,18 @@ def _properties(node: dict[str, Any]) -> dict[int, Any]:
             "speaking": "Speaking",
             "error": "Try again",
         }[state]
-        return {0: label}
+        return {
+            0: label,
+            1: props.get("transcript", ""),
+            5: TONE["primary"],
+            16: {
+                "idle": 0,
+                "listening": 1,
+                "thinking": 2,
+                "speaking": 3,
+                "error": 4,
+            }[state],
+        }
     if kind == "live_card":
         result: dict[int, Any] = {
             0: _literal(props["title"], f"{node['id']}.title"),
@@ -177,6 +194,10 @@ def _flatten(
                 events.items(), key=lambda item: EVENT[item[0]]
             )
         ]
+    if semantics.get("value"):
+        wire[8] = semantics["value"]
+    if semantics.get("hint"):
+        wire[9] = semantics["hint"]
     output.append(wire)
     for child in node.get("props", {}).get("children", []):
         _flatten(child, index, output)

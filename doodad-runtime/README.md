@@ -53,7 +53,26 @@ with:
 
 See
 [`docs/dual-renderer-conformance.md`](docs/dual-renderer-conformance.md)
-for the evidence and geometry policy.
+for the evidence and geometry policy. The execute-once, render-twice roadmap
+and tracked implementation checklist live in
+[`Project Parallax`](docs/project-parallax.md).
+
+Generate the aligned initial-state comparison for all twenty applications
+with:
+
+```bash
+./doodad perfect-render \
+  --suite all-20 \
+  --profile watch_square_240 \
+  --output target/parallax/perfect-render-20
+```
+
+This executes the real package corpus once, replays accepted scenes through
+the production LVGL renderer, renders the same `SceneSnapshot` through Wear
+Compose Material 3, and writes raw captures, normalized evidence, overlays,
+metrics, a contact sheet, and static HTML. The first measured result and
+remediation order are in the
+[Project Parallax comparison report](docs/project-parallax-comparison-report.md).
 
 All 20 decisive flows are executable and emit checked-in semantic/resource
 evidence. Cross-app replacement stress, display-sleep service behavior,

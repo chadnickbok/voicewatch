@@ -4,7 +4,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 #include "bh_platform.h"
 #include "doodad_lvgl_ui.h"
@@ -27,6 +26,7 @@ enum {
     kExecEnvStackBytes = 8 * 1024,
     kMaximumProviderEventBytes = 1024,
     kMaximumTimerDurationMs = 7 * 24 * 60 * 60 * 1000,
+    kMaximumSceneSnapshotBytes = 128 * 1024,
 };
 
 static uint16_t g_framebuffer[kSurfaceWidth * kSurfaceHeight];
@@ -55,15 +55,77 @@ static uint64_t g_provider_request_count;
 static bool g_display_awake;
 static bool g_weather_request_pending;
 static uint8_t g_weather_cycle;
+static uint64_t g_scene_revision;
+static uint64_t g_route_generation;
+static uint64_t g_wasm_call_count;
+static doodad_host_scene_operation_callback_t g_scene_operation_callback;
+static void* g_scene_operation_callback_context;
+static int g_current_cause_kind = DOODAD_SCENE_CAUSE_START;
+static uint8_t g_current_cause[kMaximumProviderEventBytes];
+static size_t g_current_cause_size;
+static char g_scene_snapshot[kMaximumSceneSnapshotBytes];
 
 static void set_error(const char* message) {
     snprintf(g_last_error, sizeof(g_last_error), "%s", message);
 }
 
 static uint32_t tick_milliseconds(void) {
-    struct timespec value;
-    clock_gettime(CLOCK_MONOTONIC, &value);
-    return (uint32_t)(value.tv_sec * 1000ULL + value.tv_nsec / 1000000ULL);
+    return (uint32_t)g_scenario_ms;
+}
+
+static void set_current_cause(
+    int kind, const uint8_t* bytes, size_t size) {
+    g_current_cause_kind = kind;
+    g_current_cause_size = 0;
+    if (bytes != NULL && size != 0 && size <= sizeof(g_current_cause)) {
+        memcpy(g_current_cause, bytes, size);
+        g_current_cause_size = size;
+    }
+}
+
+static void observe_scene_operation(
+    int operation_kind,
+    int outcome,
+    const uint8_t* operation,
+    size_t operation_size) {
+    if (g_scene_operation_callback == NULL) return;
+    const size_t required =
+        m3e_appspec_scene_snapshot_json(NULL, 0);
+    size_t snapshot_size = 0;
+    if (required != 0 && required + 1 <= sizeof(g_scene_snapshot)) {
+        snapshot_size = m3e_appspec_scene_snapshot_json(
+            g_scene_snapshot, sizeof(g_scene_snapshot));
+        if (snapshot_size != required) snapshot_size = 0;
+    }
+    g_scene_operation_callback(
+        g_scene_operation_callback_context,
+        g_scene_revision,
+        g_route_generation,
+        g_scenario_ms,
+        g_current_cause_kind,
+        g_current_cause_size == 0 ? NULL : g_current_cause,
+        g_current_cause_size,
+        operation_kind,
+        outcome,
+        operation,
+        operation_size,
+        snapshot_size == 0 ? NULL : g_scene_snapshot,
+        snapshot_size);
+}
+
+static void commit_scene_operation(
+    int operation_kind,
+    const uint8_t* operation,
+    size_t operation_size) {
+    ++g_scene_revision;
+    if (operation_kind == DOODAD_SCENE_OPERATION_APPSPEC_MOUNT) {
+        ++g_route_generation;
+    }
+    observe_scene_operation(
+        operation_kind,
+        DOODAD_SCENE_OUTCOME_COMMITTED,
+        operation,
+        operation_size);
 }
 
 static void flush_framebuffer(
@@ -93,7 +155,8 @@ static int dispatch_guest_handler(
     wasm_function_inst_t handler,
     const char* handler_name,
     const uint8_t* bytes,
-    size_t length) {
+    size_t length,
+    int cause_kind) {
     if (g_instance == NULL || g_execution_environment == NULL
         || handler == NULL || length == 0
         || length > kMaximumProviderEventBytes) {
@@ -113,6 +176,8 @@ static int dispatch_guest_handler(
         (uint32_t)guest_pointer,
         (uint32_t)length,
     };
+    set_current_cause(cause_kind, bytes, length);
+    ++g_wasm_call_count;
     const bool called = wasm_runtime_call_wasm(
         g_execution_environment, handler, 2, arguments);
     wasm_runtime_module_free(g_instance, guest_pointer);
@@ -154,9 +219,18 @@ static int dispatch_guest_handler(
     memset(error, 0, sizeof(error));
     if (!m3e_appspec_apply_command_batch(
             copied_result, result_length, error, sizeof(error))) {
+        observe_scene_operation(
+            DOODAD_SCENE_OPERATION_COMMAND_BATCH,
+            DOODAD_SCENE_OUTCOME_REJECTED,
+            copied_result,
+            result_length);
         set_error(error);
         return 0;
     }
+    commit_scene_operation(
+        DOODAD_SCENE_OPERATION_COMMAND_BATCH,
+        copied_result,
+        result_length);
     doodad_host_render_now();
     return 1;
 }
@@ -167,7 +241,11 @@ static int dispatch_guest_event(const uint8_t* bytes, size_t length) {
         return 0;
     }
     return dispatch_guest_handler(
-        g_handle_event, "handle_event trapped", bytes, length);
+        g_handle_event,
+        "handle_event trapped",
+        bytes,
+        length,
+        DOODAD_SCENE_CAUSE_SEMANTIC_EVENT);
 }
 
 static void host_semantic_event(
@@ -210,9 +288,18 @@ static int32_t host_ui_mount(
             NULL,
             error,
             sizeof(error))) {
+        observe_scene_operation(
+            DOODAD_SCENE_OPERATION_APPSPEC_MOUNT,
+            DOODAD_SCENE_OUTCOME_REJECTED,
+            bytes,
+            length);
         return reject_guest_appspec(instance, error);
     }
     g_semantic_mount_called = true;
+    commit_scene_operation(
+        DOODAD_SCENE_OPERATION_APPSPEC_MOUNT,
+        bytes,
+        length);
     return 1;
 }
 
@@ -548,6 +635,7 @@ static int initialize_wamr(void) {
 
 static void reset_native_shell(void) {
     if (g_display == NULL) return;
+    m3e_appspec_reset_mounted_document();
     lv_obj_t* screen = lv_screen_active();
     lv_obj_clean(screen);
     doodad_lvgl_ui_init(&g_ui, screen);
@@ -565,6 +653,10 @@ int doodad_host_create(void) {
     g_display_awake = true;
     g_weather_request_pending = false;
     g_weather_cycle = 0;
+    g_scene_revision = 0;
+    g_route_generation = 0;
+    g_wasm_call_count = 0;
+    set_current_cause(DOODAD_SCENE_CAUSE_START, NULL, 0);
     g_scheduler = m3e_exact_scheduler_create();
     if (g_scheduler == NULL) {
         set_error("exact scheduler allocation failed");
@@ -601,6 +693,7 @@ int doodad_host_create(void) {
 }
 
 void doodad_host_destroy(void) {
+    m3e_appspec_reset_mounted_document();
     release_wasm();
     if (g_runtime_ready) {
         wasm_runtime_destroy();
@@ -718,6 +811,10 @@ int doodad_host_start_wasm(const char* path) {
     doodad_lvgl_ui_show_shell(&g_ui, "WASM RUNNING", "DEV");
     g_semantic_mount_called = false;
     g_pending_event_size = 0;
+    g_scene_revision = 0;
+    g_route_generation = 0;
+    set_current_cause(DOODAD_SCENE_CAUSE_START, NULL, 0);
+    ++g_wasm_call_count;
     if (!wasm_runtime_call_wasm(
             g_execution_environment, app_start, 0, NULL)) {
         const char* exception = wasm_runtime_get_exception(g_instance);
@@ -787,7 +884,8 @@ int doodad_host_advance_time(uint64_t milliseconds) {
                 g_handle_provider_event,
                 "handle_provider_event trapped",
                 envelope,
-                envelope_length)) {
+                envelope_length,
+                DOODAD_SCENE_CAUSE_TIMER_EVENT)) {
             return 0;
         }
     }
@@ -850,7 +948,8 @@ int doodad_host_deliver_provider(void) {
             g_handle_provider_event,
             "handle_provider_event trapped",
             envelope,
-            envelope_length)) {
+            envelope_length,
+            DOODAD_SCENE_CAUSE_PROVIDER_EVENT)) {
         return 0;
     }
     return 1;
@@ -964,6 +1063,17 @@ int doodad_host_click_button(const char* label) {
     lv_obj_t* button =
         find_button_with_label(lv_screen_active(), label);
     if (button == NULL) {
+        const char* visual_label = NULL;
+        if (strcmp(label, "+/-") == 0) visual_label = "±";
+        else if (strcmp(label, "/") == 0) visual_label = "÷";
+        else if (strcmp(label, "*") == 0) visual_label = "×";
+        else if (strcmp(label, "<-") == 0) visual_label = "⌫";
+        if (visual_label != NULL) {
+            button = find_button_with_label(
+                lv_screen_active(), visual_label);
+        }
+    }
+    if (button == NULL) {
         set_error("button label not found");
         return 0;
     }
@@ -975,6 +1085,42 @@ int doodad_host_click_button(const char* label) {
     }
     return finish_semantic_click(
         result == LV_RESULT_OK && g_pending_event_size != 0 ? 1 : -1);
+}
+
+int doodad_host_dispatch_semantic_action(
+    const char* node_id,
+    const char* action_id,
+    int event_kind,
+    int value_kind,
+    int32_t integer_value,
+    int boolean_value,
+    const char* text_value) {
+    g_pending_event_size = 0;
+    char error[192] = {0};
+    if (!m3e_appspec_emit_semantic_event(
+            node_id,
+            action_id,
+            event_kind,
+            g_scenario_ms,
+            value_kind,
+            integer_value,
+            boolean_value,
+            text_value,
+            error,
+            sizeof(error))) {
+        set_error(error);
+        return 0;
+    }
+    if (g_pending_event_size == 0) {
+        set_error("semantic action produced no guest event");
+        return 0;
+    }
+    const int dispatched = dispatch_guest_event(
+        g_pending_event,
+        g_pending_event_size);
+    g_pending_event_size = 0;
+    doodad_host_render_now();
+    return dispatched;
 }
 
 static lv_obj_t* find_node(lv_obj_t* parent, const char* node_id) {
@@ -1018,6 +1164,100 @@ const char* doodad_host_node_text(const char* node_id) {
 size_t doodad_host_semantic_snapshot(
     char* output, size_t output_size) {
     return m3e_appspec_semantic_snapshot(output, output_size);
+}
+
+size_t doodad_host_scene_snapshot(
+    char* output, size_t output_size) {
+    return m3e_appspec_scene_snapshot_json(output, output_size);
+}
+
+size_t doodad_host_node_layout_evidence(
+    char* output, size_t output_size) {
+    return m3e_appspec_node_layout_evidence_json(
+        output, output_size);
+}
+
+void doodad_host_set_scene_operation_callback(
+    doodad_host_scene_operation_callback_t callback,
+    void* context) {
+    g_scene_operation_callback = callback;
+    g_scene_operation_callback_context = context;
+}
+
+uint64_t doodad_host_scene_revision(void) {
+    return g_scene_revision;
+}
+
+uint64_t doodad_host_route_generation(void) {
+    return g_route_generation;
+}
+
+int doodad_host_replay_mount(
+    const uint8_t* bytes,
+    size_t size,
+    uint64_t scenario_ms) {
+    if (bytes == NULL || size == 0 || size > kMaximumAppSpecBytes) {
+        set_error("replay AppSpec length outside 1..4096 bytes");
+        return 0;
+    }
+    g_scenario_ms = scenario_ms;
+    set_current_cause(DOODAD_SCENE_CAUSE_REPLAY, NULL, 0);
+    char error[192] = {0};
+    if (!m3e_appspec_render_canonical_cbor_with_events(
+            lv_screen_active(),
+            bytes,
+            size,
+            NULL,
+            NULL,
+            error,
+            sizeof(error))) {
+        observe_scene_operation(
+            DOODAD_SCENE_OPERATION_APPSPEC_MOUNT,
+            DOODAD_SCENE_OUTCOME_REJECTED,
+            bytes,
+            size);
+        set_error(error);
+        return 0;
+    }
+    commit_scene_operation(
+        DOODAD_SCENE_OPERATION_APPSPEC_MOUNT,
+        bytes,
+        size);
+    doodad_host_render_now();
+    return 1;
+}
+
+int doodad_host_replay_command_batch(
+    const uint8_t* bytes,
+    size_t size,
+    uint64_t scenario_ms) {
+    if (bytes == NULL || size == 0 || size > kMaximumCommandBatchBytes) {
+        set_error("replay CommandBatch length outside 1..4096 bytes");
+        return 0;
+    }
+    g_scenario_ms = scenario_ms;
+    set_current_cause(DOODAD_SCENE_CAUSE_REPLAY, NULL, 0);
+    char error[192] = {0};
+    if (!m3e_appspec_apply_command_batch(
+            bytes, size, error, sizeof(error))) {
+        observe_scene_operation(
+            DOODAD_SCENE_OPERATION_COMMAND_BATCH,
+            DOODAD_SCENE_OUTCOME_REJECTED,
+            bytes,
+            size);
+        set_error(error);
+        return 0;
+    }
+    commit_scene_operation(
+        DOODAD_SCENE_OPERATION_COMMAND_BATCH,
+        bytes,
+        size);
+    doodad_host_render_now();
+    return 1;
+}
+
+uint64_t doodad_host_wasm_call_count(void) {
+    return g_wasm_call_count;
 }
 
 size_t doodad_host_mounted_node_count(void) {

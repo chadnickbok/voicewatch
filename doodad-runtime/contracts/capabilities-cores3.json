@@ -1,8 +1,8 @@
 {
   "runtimeApi": "1.0",
-  "appspec": "1.0",
+  "appspec": "1.1",
   "hostAbi": 1,
-  "componentSetHash": "sha256:3bcd4ab32a1efd34d2bbeb5c4ca54c1441b6571a492514320a48d9d79bee582e",
+  "componentSetHash": "sha256:6139cb58a10759752cb3864ee3601821a1d616ec3864c9d9246937dd5b7a7b10",
   "displayProfile": "watch_square_192",
   "colorFormat": "rgb565",
   "limits": {
@@ -32,6 +32,7 @@
     "m3e.rgb565.v1",
     "m3e.atomic_patch.v1",
     "m3e.semantic_tree.v1",
+    "m3e.resolved_scene.v1",
     "m3e.voice_orb.v1",
     "system.voice_capture.v1"
   ]

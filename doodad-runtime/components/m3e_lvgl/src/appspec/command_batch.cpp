@@ -525,6 +525,23 @@ CommandResult apply_ui_command_batch(
                         std::numeric_limits<std::int32_t>::max()) {
                     return result(CommandError::unsupported_property, index);
                 }
+                if (node->kind == ComponentKind::stepper) {
+                    auto* object =
+                        static_cast<lv_obj_t*>(node->mounted_object);
+                    if (lv_obj_get_child_count(object) <= 1) {
+                        return result(
+                            CommandError::unsupported_property,
+                            index);
+                    }
+                    auto* value_label = lv_obj_get_child(object, 1);
+                    if (value_label == nullptr ||
+                        !lv_obj_check_type(
+                            value_label, &lv_label_class)) {
+                        return result(
+                            CommandError::unsupported_property,
+                            index);
+                    }
+                }
                 const auto value = static_cast<std::int32_t>(
                     command.integer_value);
                 if ((node->kind == ComponentKind::progress &&
@@ -595,6 +612,11 @@ CommandResult apply_ui_command_batch(
                     : document.string_at(node.secondary_text_offset));
             add_required(
                 document.string_at(node.semantic_label_offset));
+            add_required(
+                document.string_at(node.semantic_value_offset));
+            add_required(
+                document.string_at(node.semantic_hint_offset));
+            add_required(document.string_at(node.icon_offset));
         }
         for (std::size_t index = 0;
              index < document.key_count;
@@ -651,6 +673,9 @@ CommandResult apply_ui_command_batch(
             const auto old_primary = node.primary_text_offset;
             const auto old_secondary = node.secondary_text_offset;
             const auto old_semantic = node.semantic_label_offset;
+            const auto old_semantic_value = node.semantic_value_offset;
+            const auto old_semantic_hint = node.semantic_hint_offset;
+            const auto old_icon = node.icon_offset;
             node.id_offset = compact_copy(old_string_at(old_id));
             node.primary_text_offset = compact_copy(
                 primary_replacements[index] != kNoReplacement
@@ -662,6 +687,11 @@ CommandResult apply_ui_command_batch(
                     : old_string_at(old_secondary));
             node.semantic_label_offset = compact_copy(
                 old_string_at(old_semantic));
+            node.semantic_value_offset = compact_copy(
+                old_string_at(old_semantic_value));
+            node.semantic_hint_offset = compact_copy(
+                old_string_at(old_semantic_hint));
+            node.icon_offset = compact_copy(old_string_at(old_icon));
         }
         for (std::size_t index = 0;
              index < document.key_count;
@@ -747,10 +777,6 @@ CommandResult apply_ui_command_batch(
                 static_cast<long>(node.value),
                 document.string_at(node.secondary_text_offset));
             auto* label = lv_obj_get_child(object, 1);
-            if (label == nullptr ||
-                !lv_obj_check_type(label, &lv_label_class)) {
-                return result(CommandError::unsupported_property, index);
-            }
             lv_label_set_text(label, value);
         } else if (node.variant == 1) {
             lv_arc_set_range(object, 0, node.maximum);

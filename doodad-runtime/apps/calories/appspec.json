@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "today.heading",
-          "type": "text",
-          "props": {
-            "text": "Today / Calories",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "today.total",
           "type": "text",
           "props": {

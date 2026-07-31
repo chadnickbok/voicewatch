@@ -9,15 +9,6 @@
       "align": "stretch",
       "children": [
         {
-          "id": "timer.heading",
-          "type": "text",
-          "props": {
-            "text": "TIMER SUITE",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
           "id": "timer.summary",
           "type": "text",
           "props": {
