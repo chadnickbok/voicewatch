@@ -325,7 +325,7 @@
       "app_slug": "transit",
       "trace": "traces/transit/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "cf386401e3ad449c44348fde5ec5e76a6b20578cf47645a0cfbe3f0efceb8ae4",
+      "snapshot_sha256": "d119f671845d75a33d4c9fa3bd9a2254cd72e041ef5996a82e6218ced187bdee",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -338,7 +338,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. Stale-state labels were shortened after direct comparison to eliminate truncation. See reference/reviews/transit.md."
       }
     },
     {

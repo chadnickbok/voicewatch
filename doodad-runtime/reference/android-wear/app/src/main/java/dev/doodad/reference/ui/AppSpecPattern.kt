@@ -36,7 +36,7 @@ data class AppSpecStructuralFacts(
 object AppSpecPatternSelector {
     val authoredCorpusExpectation: Map<AppSpecPattern, Int> =
         linkedMapOf(
-            AppSpecPattern.StatusDetail to 26,
+            AppSpecPattern.StatusDetail to 21,
             AppSpecPattern.Keypad to 2,
             AppSpecPattern.Countdown to 1,
             AppSpecPattern.WeatherHero to 1,
@@ -50,7 +50,7 @@ object AppSpecPatternSelector {
             AppSpecPattern.NutritionQuickAdd to 1,
             AppSpecPattern.NutritionReview to 1,
             AppSpecPattern.VoiceReady to 1,
-            AppSpecPattern.LiveActionDetail to 24,
+            AppSpecPattern.LiveActionDetail to 29,
             AppSpecPattern.MediaPlayer to 5,
             AppSpecPattern.Empty to 1,
         )

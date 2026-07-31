@@ -80,7 +80,7 @@ review.
 | P6 | Deterministic batch report and comparison gates | Initial batch tooling complete |
 | P7 | Live parallel-rendering simulator | Not started |
 | P8 | Full decisive flows, variants, and motion | Trace corpus complete; dual renders pending |
-| P9 | Reviewed API 37 runtime authority | Fourteen apps captured on square API 37 AVD; suite pending |
+| P9 | Reviewed API 37 runtime authority | Fifteen apps captured on square API 37 AVD; suite pending |
 | P10 | CI, baseline approval, and hardware closure | Local lane partial |
 
 ## Current baseline
@@ -135,10 +135,10 @@ review.
 - [ ] LVGL still has root flex-axis, touch-target, typography, max-lines,
   token-evidence, and missing-glyph defects outside the completed calculator
   path.
-- [ ] 72 of 105 checkpoints have reviewed dual-renderer captures.
+- [ ] 77 of 105 checkpoints have reviewed dual-renderer captures.
 - [ ] The fast Compose lane still uses Robolectric SDK 33; API 37 runtime
-  baselines are reviewed for Timer through Sleep plus Media and Navigation,
-  with the remaining six apps still pending.
+  baselines are reviewed for Timer through Sleep plus Media, Navigation, and
+  Transit, with the remaining five apps still pending.
 
 Measured results and the remediation order are in
 [`project-parallax-comparison-report.md`](project-parallax-comparison-report.md).
@@ -592,7 +592,7 @@ terminal LVGL frame to a different Compose fixture.
 | 12 | Sleep | [x] | [x] | [x] | [x] | [x] |
 | 13 | Media | [x] | [x] | [x] | [x] | [x] |
 | 14 | Navigation | [x] | [x] | [x] | [x] | [x] |
-| 15 | Transit | [x] | [x] | [x] | [x] | [ ] |
+| 15 | Transit | [x] | [x] | [x] | [x] | [x] |
 | 16 | Smart Home | [x] | [x] | [x] | [x] | [ ] |
 | 17 | Sports | [x] | [x] | [x] | [x] | [ ] |
 | 18 | Wallet | [x] | [x] | [x] | [x] | [ ] |
@@ -1289,6 +1289,16 @@ produce the twenty-row report.
   first-party Wear Maps imagery supplies the maneuver, arrival, and offline
   hierarchy. The approved **Equivalent** disposition is recorded in
   [`reference/reviews/navigation.md`](../reference/reviews/navigation.md).
+- [x] Completed the Transit oracle redesign and decisive-flow review across
+  nearby, full-departure, cached, recovered, and service-delay states. All
+  five title-free documents select the shared live-action pattern by structure
+  alone. Compose and LVGL share exact normalized structure/bounds, two 48dp
+  controls, and no quality findings at every checkpoint. The first comparison
+  caught and removed stale-state context/action truncation. First-party
+  Citymapper and Apple watch imagery plus current Google Wear guidance supply
+  the next-arrival, platform, later-departure, and disruption hierarchy. The
+  approved **Equivalent** disposition is recorded in
+  [`reference/reviews/transit.md`](../reference/reviews/transit.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

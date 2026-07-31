@@ -131,47 +131,47 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 137,
-      "card": 46,
+      "button": 138,
+      "card": 41,
       "column": 5,
       "image": 5,
       "keypad": 2,
-      "live_card": 27,
+      "live_card": 32,
       "progress": 7,
-      "row": 32,
+      "row": 37,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
-      "text": 144,
+      "text": 145,
       "toggle": 9,
       "voice_orb": 1
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 137,
-      "button.size": 137,
-      "button.tone": 137,
-      "button.variant": 137,
-      "card.body": 46,
-      "card.title": 46,
-      "card.tone": 46,
+      "button.label": 138,
+      "button.size": 138,
+      "button.tone": 138,
+      "button.variant": 138,
+      "card.body": 41,
+      "card.title": 41,
+      "card.tone": 41,
       "column.align": 5,
       "column.gap": 5,
       "image.asset": 5,
       "image.fit": 5,
       "keypad.columns": 2,
       "keypad.keys": 2,
-      "live_card.body": 27,
-      "live_card.progress": 24,
-      "live_card.title": 27,
-      "live_card.tone": 27,
+      "live_card.body": 32,
+      "live_card.progress": 29,
+      "live_card.title": 32,
+      "live_card.tone": 32,
       "progress.label": 7,
       "progress.maximum": 7,
       "progress.style": 7,
       "progress.tone": 7,
       "progress.value": 7,
-      "row.align": 32,
-      "row.gap": 32,
+      "row.align": 37,
+      "row.gap": 37,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -182,10 +182,10 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 122,
-      "text.max_lines": 144,
-      "text.style": 144,
-      "text.text": 144,
+      "text.align": 127,
+      "text.max_lines": 145,
+      "text.style": 145,
+      "text.text": 145,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9,
@@ -194,50 +194,50 @@
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 145,
+      "tap": 146,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 251,
+      "label": 252,
       "value": 81
     },
     "token_values": {
       "variant": {
         "filled": 71,
-        "outlined": 20,
+        "outlined": 16,
         "text": 4,
-        "tonal": 42
+        "tonal": 47
       },
       "style": {
         "body": 3,
         "caption": 6,
         "circular": 1,
-        "label": 69,
+        "label": 70,
         "linear": 6,
         "numeral": 56,
         "title": 10
       },
       "tone": {
         "error": 1,
-        "neutral": 108,
-        "primary": 115,
+        "neutral": 104,
+        "primary": 120,
         "tertiary": 2
       },
       "size": {
-        "default": 127,
+        "default": 128,
         "large": 10
       },
       "gap": {
         "lg": 1,
-        "none": 57,
-        "sm": 40,
-        "xs": 37
+        "none": 62,
+        "sm": 35,
+        "xs": 42
       },
       "align": {
-        "center": 111,
+        "center": 116,
         "end": 1,
         "start": 11,
-        "stretch": 134
+        "stretch": 139
       },
       "state": {
         "idle": 1
@@ -248,13 +248,13 @@
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
-      "live_action_detail": 24,
+      "live_action_detail": 29,
       "media_player": 5,
       "notification_stack": 6,
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 26,
+      "status_detail": 21,
       "task_list": 4,
       "voice_ready": 1,
       "weather_hero": 1,
@@ -751,23 +751,23 @@
     },
     {
       "path": "apps/transit/appspec.json",
-      "sha256": "bb14e04425b5bd0f3e4cb0a3b21bcf5e916817ad9c7ddb15a69e49109b6c6988"
+      "sha256": "4621198fb9113423a4fe262c49cc240f66a5f4506f3bd7616bd750dde0d853f9"
     },
     {
       "path": "apps/transit/screens/alert.json",
-      "sha256": "01a332a8dd619d04c205e482e6557a27b747ed9e0103d13fa9460c18baeb19ad"
+      "sha256": "05c65088426b8f08e7240696556f90d917f9203ee84ed1e310d82544f340d9e1"
     },
     {
       "path": "apps/transit/screens/departures.json",
-      "sha256": "ac57ecc6f9f51c1c1fce5216144c4f270825578a8079b8c7751fcba7ec889edd"
+      "sha256": "4f4438e82e5419d94622ddd88e3c852f7d42d708f0648572aaf3b9724e8b91ca"
     },
     {
       "path": "apps/transit/screens/recovered.json",
-      "sha256": "66a3f62ffeb55f42ff09b2b60cce962e3255bfb33a4c0da2ce517b9d752d93d4"
+      "sha256": "1d55c39730ff87269c909091e16842b9813da4e94f463050aaa7b198b54a8979"
     },
     {
       "path": "apps/transit/screens/stale.json",
-      "sha256": "ab64320b70516896cb028a4b9680a39e7e6ac1f22bd545ca0b005861a78579ab"
+      "sha256": "f2d335a968dd88bd0400b9159c79725a2c45fa2bfd59420d2733916e19b33aa4"
     },
     {
       "path": "apps/smart-home/appspec.json",
@@ -858,5 +858,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "3b2898db5807add1913c2460d77cbbea07340b724a5aab7d8570d69a7297b095"
+  "sources_sha256": "d83574329876b7dea5a08b2e2b65e0727c231ea29b2e7e88dcefbf473de61459"
 }

@@ -62,10 +62,10 @@ FLOWS = {
         ("Next", "navigation.maneuver.summary", "200 FT"),
     ],
     "transit": [
-        ("Refresh", "transit.departures.summary", "N · 3 min"),
-        ("Go offline", "transit.stale.summary", "N · 2 min"),
-        ("Reconnect", "transit.recovered.summary", "N · 4 min"),
-        ("Alert", "transit.alert.summary", "N delayed 6 min"),
+        ("Times", "transit.departures.summary", "3 MIN"),
+        ("Offline", "transit.stale.summary", "2 MIN"),
+        ("Retry", "transit.recovered.summary", "4 MIN"),
+        ("Alert", "transit.alert.summary", "6 MIN"),
     ],
     "smart-home": [
         ("Toggle light", "smart-home.light.summary", "Light on · 72%"),
