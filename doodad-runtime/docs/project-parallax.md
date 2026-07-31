@@ -585,7 +585,7 @@ terminal LVGL frame to a different Compose fixture.
 | 4 | Tasks | [x] | [x] | [x] | [x] | [x] |
 | 5 | Calculator | [x] | [x] | [x] | [x] | [ ] |
 | 6 | Calendar | [x] | [x] | [x] | [x] | [x] |
-| 7 | Workout | [x] | [x] | [x] | [x] | [ ] |
+| 7 | Workout | [x] | [x] | [x] | [x] | [x] |
 | 8 | Calories / nutrition | [x] | [x] | [x] | [x] | [ ] |
 | 9 | Voice Notes | [x] | [x] | [x] | [x] | [ ] |
 | 10 | Medication | [x] | [x] | [x] | [x] | [ ] |
@@ -1222,6 +1222,13 @@ produce the twenty-row report.
   share exact normalized structure/bounds with no quality findings, and the
   approved **Equivalent** disposition is recorded in
   [`reference/reviews/calendar.md`](../reference/reviews/calendar.md).
+- [x] Completed the Workout oracle redesign and decisive-flow review across
+  active set, rest, committed next set, and saved summary. The app launches
+  directly into the full-screen set workflow; its documents select three
+  workout patterns by structure alone. Compose and LVGL share exact normalized
+  structure/bounds with no quality findings, and the approved
+  **Equivalent** disposition is recorded in
+  [`reference/reviews/workout.md`](../reference/reviews/workout.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

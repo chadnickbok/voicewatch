@@ -5,16 +5,17 @@
     "id": "workout.next-set",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "workout.next.heading",
           "type": "text",
           "props": {
-            "text": "SQUAT / SET 4 OF 5",
+        "text": "SQUAT  /  SET 4/5",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
@@ -37,19 +38,24 @@
           }
         },
         {
-          "id": "workout.next.detail",
-          "type": "card",
+          "id": "workout.next.target",
+          "type": "live_card",
           "props": {
-            "title": "Target · 8 reps",
-            "body": "Session journal revision 7",
+            "title": "TARGET  /  8 REPS",
+            "body": "Previous set  /  145 lb",
+            "progress": 0.8,
             "tone": "neutral"
+          },
+          "semantics": {
+            "label": "Next set target",
+            "value": "8 reps"
           }
         },
         {
           "id": "workout.next.complete",
           "type": "button",
           "props": {
-            "label": "Complete next set",
+            "label": "Log set",
             "tone": "primary",
             "variant": "filled",
             "size": "default"
@@ -58,7 +64,7 @@
             "tap": "workout.next.complete"
           },
           "semantics": {
-            "label": "Complete next set"
+            "label": "Log next set"
           }
         }
       ]

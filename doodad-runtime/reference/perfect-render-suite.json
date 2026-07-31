@@ -141,7 +141,7 @@
       "app_slug": "workout",
       "trace": "traces/workout/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "c2e66ab9554a9f8209c5e1b9988f4c7ac69c94486b0d75d6791f3a830569d8b7",
+      "snapshot_sha256": "7939ab71e4e9d70cbbd6c78e6233391d01fedaa0b03b0c423a4f724f5a6d275e",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -154,7 +154,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across active-set, rest, committed next-set, and summary states; both renderers pass 48dp target and quality checks. Remaining raster delta is font rendering, RGB565 quantization, and edge antialiasing. See reference/reviews/workout.md."
       }
     },
     {

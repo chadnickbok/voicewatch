@@ -214,6 +214,94 @@ bool is_task_list_document(const WireDocument& document) {
          (toggles == 3 && buttons == 0));
 }
 
+bool is_workout_set_document(const WireDocument& document) {
+    if (document.node_count != 5 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t steppers = 0;
+    std::size_t live_cards = 0;
+    std::size_t buttons = 0;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 0) return false;
+        if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::stepper) {
+            ++steppers;
+        } else if (node.kind == ComponentKind::live_card) {
+            ++live_cards;
+        } else if (node.kind == ComponentKind::button) {
+            ++buttons;
+        } else {
+            return false;
+        }
+    }
+    return texts == 1 && steppers == 1 &&
+        live_cards == 1 && buttons == 1;
+}
+
+bool is_workout_rest_document(const WireDocument& document) {
+    if (document.node_count != 6 ||
+        document.nodes[0].child_count != 5) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t live_cards = 0;
+    std::size_t buttons = 0;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 0) return false;
+        if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::live_card) {
+            ++live_cards;
+        } else if (node.kind == ComponentKind::button) {
+            ++buttons;
+        } else {
+            return false;
+        }
+    }
+    return texts == 2 && live_cards == 1 && buttons == 2;
+}
+
+bool is_workout_summary_document(const WireDocument& document) {
+    if (document.node_count != 7 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    std::size_t root_texts = 0;
+    std::size_t rows = 0;
+    std::size_t cards = 0;
+    std::size_t buttons = 0;
+    std::size_t row_texts = 0;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == 0) {
+            if (node.kind == ComponentKind::text) {
+                ++root_texts;
+            } else if (node.kind == ComponentKind::row) {
+                ++rows;
+                if (node.child_count != 2) return false;
+            } else if (node.kind == ComponentKind::card) {
+                ++cards;
+            } else if (node.kind == ComponentKind::button) {
+                ++buttons;
+            } else {
+                return false;
+            }
+        } else if (node.parent_index == 2 &&
+                   node.kind == ComponentKind::text) {
+            ++row_texts;
+        } else {
+            return false;
+        }
+    }
+    return root_texts == 1 && rows == 1 && row_texts == 2 &&
+        cards == 1 && buttons == 1;
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -452,6 +540,12 @@ bool Renderer::mount(
         is_calendar_agenda_document(document);
     const auto task_list_document =
         is_task_list_document(document);
+    const auto workout_set_document =
+        is_workout_set_document(document);
+    const auto workout_rest_document =
+        is_workout_rest_document(document);
+    const auto workout_summary_document =
+        is_workout_summary_document(document);
     const auto task_toggle_count =
         task_list_document
             ? count_kind(document, ComponentKind::toggle)
@@ -480,7 +574,9 @@ bool Renderer::mount(
             ? 5
             : countdown_document || weather_hero_document ||
                     notification_stack_document ||
-                    calendar_agenda_document || task_list_document
+                    calendar_agenda_document || task_list_document ||
+                    workout_set_document || workout_rest_document ||
+                    workout_summary_document
                 ? 0
                 : px(12),
         0);
@@ -520,6 +616,13 @@ bool Renderer::mount(
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(184));
                     lv_obj_set_pos(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                } else if (workout_summary_document &&
+                           node.kind == ComponentKind::row) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(44));
+                    lv_obj_set_pos(object, px(4), px(28));
                     lv_obj_set_style_pad_all(object, 0, 0);
                     lv_obj_set_style_pad_gap(object, 0, 0);
                 }
@@ -698,6 +801,95 @@ bool Renderer::mount(
                     lv_obj_set_style_text_align(
                         object, LV_TEXT_ALIGN_CENTER, 0);
                     lv_obj_set_style_pad_top(object, px(2), 0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
+                } else if (workout_set_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(20));
+                    lv_obj_set_pos(object, px(4), px(4));
+                    lv_obj_set_style_text_font(
+                        object, &lv_font_montserrat_18, 0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(object, px(2), 0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
+                } else if (workout_rest_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object,
+                        px(184),
+                        node.variant == 4 ? px(48) : px(20));
+                    lv_obj_set_pos(
+                        object,
+                        px(4),
+                        node.variant == 4 ? px(24) : px(4));
+                    lv_obj_set_style_text_font(
+                        object,
+                        node.variant == 4
+                            ? &m3e_timer_value_font_28
+                            : &lv_font_montserrat_18,
+                        0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        node.variant == 4
+                            ? lv_color_make(0xF6, 0xED, 0xFF)
+                            : lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(
+                        object,
+                        node.variant == 4 ? px(5) : px(2),
+                        0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
+                } else if (workout_summary_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    if (node.parent_index == 0) {
+                        lv_obj_set_size(object, px(184), px(20));
+                        lv_obj_set_pos(object, px(4), px(4));
+                        lv_obj_set_style_text_color(
+                            object,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
+                    } else {
+                        const auto ordinal =
+                            kind_ordinal(
+                                document, index, ComponentKind::text) -
+                            1;
+                        lv_obj_set_size(
+                            object,
+                            ordinal == 0 ? 112 : 113,
+                            px(44));
+                        lv_obj_set_pos(
+                            object,
+                            ordinal == 0 ? 0 : 117,
+                            0);
+                        lv_obj_set_style_radius(object, px(16), 0);
+                        lv_obj_set_style_bg_color(
+                            object,
+                            lv_color_make(0x33, 0x2E, 0x3C),
+                            0);
+                        lv_obj_set_style_bg_opa(
+                            object, LV_OPA_COVER, 0);
+                        lv_obj_set_style_text_color(
+                            object,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                    }
+                    lv_obj_set_style_text_font(
+                        object, &lv_font_montserrat_18, 0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(
+                        object,
+                        node.parent_index == 0 ? px(2) : px(12),
+                        0);
                     lv_label_set_long_mode(
                         object, LV_LABEL_LONG_DOT);
                 }
@@ -882,6 +1074,50 @@ bool Renderer::mount(
                         lv_label_set_long_mode(
                             label, LV_LABEL_LONG_DOT);
                     }
+                } else if (workout_set_document ||
+                           workout_rest_document ||
+                           workout_summary_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::button);
+                    const auto paired = workout_rest_document;
+                    const auto x =
+                        paired
+                            ? px(4 + static_cast<std::int32_t>(
+                                ordinal) * 94)
+                            : px(36);
+                    const auto width =
+                        paired ? px(90) : px(120);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, width, px(48));
+                    lv_obj_set_pos(object, x, px(140));
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
+                    const auto filled =
+                        node.variant ==
+                        static_cast<std::uint8_t>(
+                            ButtonVariant::filled);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        filled
+                            ? lv_color_make(0xD8, 0xB9, 0xFF)
+                            : lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            filled
+                                ? lv_color_make(0x35, 0x11, 0x51)
+                                : lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_set_style_text_align(
+                            label, LV_TEXT_ALIGN_CENTER, 0);
+                        lv_label_set_long_mode(
+                            label, LV_LABEL_LONG_DOT);
+                    }
                 }
                 break;
             case ComponentKind::card:
@@ -1059,6 +1295,43 @@ bool Renderer::mount(
                         lv_label_set_long_mode(
                             body, LV_LABEL_LONG_WRAP);
                     }
+                } else if (workout_summary_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(60));
+                    lv_obj_set_pos(object, px(4), px(76));
+                    lv_obj_set_style_min_height(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_radius(object, px(24), 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    if (lv_obj_get_child_count(object) == 2) {
+                        auto* title = lv_obj_get_child(object, 0);
+                        auto* body = lv_obj_get_child(object, 1);
+                        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(title, px(160), px(20));
+                        lv_obj_set_pos(title, px(12), px(6));
+                        lv_obj_set_style_text_font(
+                            title, &lv_font_montserrat_16, 0);
+                        lv_obj_set_style_text_color(
+                            title,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_label_set_long_mode(
+                            title, LV_LABEL_LONG_DOT);
+                        lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(body, px(160), px(24));
+                        lv_obj_set_pos(body, px(12), px(28));
+                        lv_obj_set_style_text_font(
+                            body, &lv_font_montserrat_14, 0);
+                        lv_obj_set_style_text_color(
+                            body,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
+                        lv_label_set_long_mode(
+                            body, LV_LABEL_LONG_DOT);
+                    }
                 }
                 break;
             case ComponentKind::live_card:
@@ -1073,6 +1346,87 @@ bool Renderer::mount(
                         node.maximum,
                         tone(node.tone),
                     });
+                if (workout_set_document ||
+                    workout_rest_document) {
+                    const auto is_rest = workout_rest_document;
+                    const auto height = is_rest ? px(60) : px(56);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), height);
+                    lv_obj_set_pos(
+                        object,
+                        px(4),
+                        is_rest ? px(76) : px(80));
+                    lv_obj_set_style_min_height(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                    lv_obj_set_style_radius(object, px(24), 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    if (lv_obj_get_child_count(object) >= 3) {
+                        auto* app = lv_obj_get_child(object, 0);
+                        lv_obj_add_flag(app, LV_OBJ_FLAG_HIDDEN);
+                        auto* title = lv_obj_get_child(object, 1);
+                        auto* body = lv_obj_get_child(object, 2);
+                        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(title, px(160), px(18));
+                        lv_obj_set_pos(title, px(12), px(5));
+                        lv_obj_set_style_text_font(
+                            title, &lv_font_montserrat_16, 0);
+                        lv_obj_set_style_text_color(
+                            title,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_label_set_long_mode(
+                            title, LV_LABEL_LONG_DOT);
+                        lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(body, px(160), px(16));
+                        lv_obj_set_pos(body, px(12), px(23));
+                        lv_obj_set_style_text_font(
+                            body, &lv_font_montserrat_14, 0);
+                        lv_obj_set_style_text_color(
+                            body,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
+                        lv_label_set_long_mode(
+                            body, LV_LABEL_LONG_DOT);
+                        if (lv_obj_get_child_count(object) >= 4) {
+                            auto* progress =
+                                lv_obj_get_child(object, 3);
+                            lv_obj_add_flag(
+                                progress, LV_OBJ_FLAG_FLOATING);
+                            lv_obj_set_size(
+                                progress, px(160), px(12));
+                            lv_obj_set_pos(
+                                progress, px(12), px(34));
+                            lv_obj_set_style_bg_color(
+                                progress,
+                                lv_color_make(0x33, 0x2E, 0x3C),
+                                LV_PART_MAIN);
+                            lv_obj_set_style_bg_color(
+                                progress,
+                                lv_color_make(0xD8, 0xB9, 0xFF),
+                                LV_PART_INDICATOR);
+
+                            auto* stop = lv_obj_create(object);
+                            ComponentFactory::reset(stop);
+                            lv_obj_add_flag(
+                                stop, LV_OBJ_FLAG_FLOATING);
+                            lv_obj_set_size(stop, px(4), px(4));
+                            lv_obj_set_pos(
+                                stop, px(162), px(37));
+                            lv_obj_set_style_radius(
+                                stop, LV_RADIUS_CIRCLE, 0);
+                            lv_obj_set_style_bg_color(
+                                stop,
+                                lv_color_make(0xD8, 0xB9, 0xFF),
+                                0);
+                            lv_obj_set_style_bg_opa(
+                                stop, LV_OPA_COVER, 0);
+                        }
+                    }
+                }
                 break;
             case ComponentKind::progress:
                 object = node.variant == 1
@@ -1116,6 +1470,93 @@ bool Renderer::mount(
                             node.value <= node.minimum,
                             node.value >= node.maximum,
                         });
+                    if (workout_set_document) {
+                        lv_obj_add_flag(
+                            object, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(
+                            object, px(184), px(48));
+                        lv_obj_set_pos(
+                            object, px(4), px(28));
+                        lv_obj_set_style_pad_all(
+                            object, 0, 0);
+                        lv_obj_set_style_pad_column(
+                            object, px(4), 0);
+                        lv_obj_set_style_bg_opa(
+                            object, LV_OPA_TRANSP, 0);
+                        if (lv_obj_get_child_count(object) == 3) {
+                            auto* decrement =
+                                lv_obj_get_child(object, 0);
+                            auto* value =
+                                lv_obj_get_child(object, 1);
+                            auto* increment =
+                                lv_obj_get_child(object, 2);
+                            lv_obj_set_size(
+                                decrement, px(48), px(48));
+                            lv_obj_set_size(
+                                increment, px(48), px(48));
+                            lv_obj_set_style_bg_color(
+                                decrement,
+                                lv_color_make(0x33, 0x2E, 0x3C),
+                                0);
+                            lv_obj_set_style_bg_color(
+                                increment,
+                                lv_color_make(0xD8, 0xB9, 0xFF),
+                                0);
+                            auto* value_box = value;
+                            lv_obj_set_height(value_box, px(48));
+                            lv_obj_set_flex_grow(value_box, 1);
+                            lv_obj_set_style_radius(
+                                value_box, px(20), 0);
+                            lv_obj_set_style_bg_color(
+                                value_box,
+                                lv_color_make(0x49, 0x44, 0x53),
+                                0);
+                            lv_obj_set_style_bg_opa(
+                                value_box, LV_OPA_COVER, 0);
+                            lv_obj_set_style_text_color(
+                                value_box,
+                                lv_color_make(0x49, 0x44, 0x53),
+                                0);
+
+                            char weight[16];
+                            std::snprintf(
+                                weight,
+                                sizeof(weight),
+                                "%ld",
+                                static_cast<long>(node.value));
+                            auto* weight_label = factory.text(
+                                value_box,
+                                weight,
+                                generated::TypographyRole::numeral_small);
+                            lv_obj_add_flag(
+                                weight_label, LV_OBJ_FLAG_FLOATING);
+                            lv_obj_set_size(
+                                weight_label, px(80), px(30));
+                            lv_obj_set_pos(weight_label, 0, px(1));
+                            lv_obj_set_style_text_font(
+                                weight_label,
+                                &m3e_timer_value_font_28,
+                                0);
+                            lv_obj_set_style_text_align(
+                                weight_label, LV_TEXT_ALIGN_CENTER, 0);
+
+                            auto* unit_label = factory.text(
+                                value_box,
+                                secondary,
+                                generated::TypographyRole::body_extra_small);
+                            lv_obj_add_flag(
+                                unit_label, LV_OBJ_FLAG_FLOATING);
+                            lv_obj_set_size(
+                                unit_label, px(80), px(14));
+                            lv_obj_set_pos(unit_label, 0, px(29));
+                            lv_obj_set_style_text_color(
+                                unit_label,
+                                lv_color_make(0xCA, 0xC4, 0xD0),
+                                0);
+                            lv_obj_set_style_text_align(
+                                unit_label, LV_TEXT_ALIGN_CENTER, 0);
+                        }
+                    }
                 } else {
                     object = lv_obj_create(parent);
                     ComponentFactory::reset(object);

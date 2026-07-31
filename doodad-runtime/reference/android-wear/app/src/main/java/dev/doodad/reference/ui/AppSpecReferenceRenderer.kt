@@ -333,6 +333,18 @@ private fun SquarePatternSurface(
         SquareCalendarAgendaSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.WorkoutSet) {
+        SquareWorkoutSetSurface(children, context)
+        return
+    }
+    if (pattern == AppSpecPattern.WorkoutRest) {
+        SquareWorkoutRestSurface(children, context)
+        return
+    }
+    if (pattern == AppSpecPattern.WorkoutSummary) {
+        SquareWorkoutSummarySurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.NotificationStack) {
         SquareNotificationStackSurface(children, context)
         return
@@ -374,6 +386,292 @@ private fun SquarePatternSurface(
                     context.onAction,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun SquareWorkoutSetSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val heading =
+        children.singleOrNull { it.kind == "text" }
+            ?: error("Square workout set requires one context label")
+    val stepper =
+        children.singleOrNull { it.kind == "stepper" }
+            ?: error("Square workout set requires one weight stepper")
+    val metric =
+        children.singleOrNull { it.kind == "live_card" }
+            ?: error("Square workout set requires one target card")
+    val action =
+        children.singleOrNull { it.kind == "button" }
+            ?: error("Square workout set requires one action")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        Text(
+            text = requireNotNull(heading.props.primaryText),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .appSpecNode(heading, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        InlineAppSpecStepper(
+            node = stepper,
+            context = context,
+            action =
+                stepper.action("value_committed")
+                    ?: error("Workout weight requires valueCommitted"),
+            current = requireNotNull(stepper.props.value),
+            minimum = requireNotNull(stepper.props.minimum),
+            maximum = requireNotNull(stepper.props.maximum),
+            step = requireNotNull(stepper.props.step),
+            modifier =
+                Modifier
+                    .offset(y = 24.dp)
+                    .fillMaxWidth()
+                    .height(48.dp),
+        )
+        WorkoutLiveMetricCard(
+            node = metric,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 76.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
+        )
+        NotificationActionButton(
+            node = action,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(x = 32.dp, y = 136.dp)
+                    .width(120.dp)
+                    .height(48.dp),
+        )
+    }
+}
+
+@Composable
+private fun SquareWorkoutRestSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val heading =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "label"
+        } ?: error("Square workout rest requires one context label")
+    val time =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "numeral"
+        } ?: error("Square workout rest requires one timer")
+    val metric =
+        children.singleOrNull { it.kind == "live_card" }
+            ?: error("Square workout rest requires one recorded-set card")
+    val actions = children.filter { it.kind == "button" }
+    check(actions.size == 2) {
+        "Square workout rest requires two actions"
+    }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        Text(
+            text = requireNotNull(heading.props.primaryText),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .appSpecNode(heading, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = requireNotNull(time.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(y = 20.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .appSpecNode(time, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.displaySmall,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+        )
+        WorkoutLiveMetricCard(
+            node = metric,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 72.dp)
+                    .fillMaxWidth()
+                    .height(60.dp),
+        )
+        actions.forEachIndexed { index, action ->
+            NotificationActionButton(
+                node = action,
+                context = context,
+                modifier =
+                    Modifier
+                        .offset(x = (index * 94).dp, y = 136.dp)
+                        .width(90.dp)
+                        .height(48.dp),
+            )
+        }
+    }
+}
+
+@Composable
+private fun SquareWorkoutSummarySurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val heading =
+        children.singleOrNull { it.kind == "text" }
+            ?: error("Square workout summary requires one context label")
+    val metrics =
+        children.singleOrNull { it.kind == "row" }
+            ?: error("Square workout summary requires one metric row")
+    val metricNodes =
+        context.snapshot.childrenOf(metrics).filter { it.visible }
+    check(metricNodes.size == 2 && metricNodes.all { it.kind == "text" }) {
+        "Square workout summary metric row requires two text metrics"
+    }
+    val card =
+        children.singleOrNull { it.kind == "card" }
+            ?: error("Square workout summary requires one detail card")
+    val action =
+        children.singleOrNull { it.kind == "button" }
+            ?: error("Square workout summary requires one action")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        Text(
+            text = requireNotNull(heading.props.primaryText),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .appSpecNode(heading, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+        )
+        Row(
+            modifier =
+                Modifier
+                    .offset(y = 24.dp)
+                    .fillMaxWidth()
+                    .height(44.dp)
+                    .appSpecNode(metrics, context.evidenceCollector),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            metricNodes.forEach { metric ->
+                Box(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(
+                                MaterialTheme.colorScheme.surfaceContainerHigh,
+                            )
+                            .appSpecNode(
+                                metric,
+                                context.evidenceCollector,
+                            ),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = requireNotNull(metric.props.primaryText),
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+        CalendarEventCard(
+            node = card,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 72.dp)
+                    .fillMaxWidth()
+                    .height(60.dp),
+        )
+        NotificationActionButton(
+            node = action,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(x = 32.dp, y = 136.dp)
+                    .width(120.dp)
+                    .height(48.dp),
+        )
+    }
+}
+
+@Composable
+private fun WorkoutLiveMetricCard(
+    node: SceneNode,
+    context: RenderContext,
+    modifier: Modifier,
+) {
+    Card(
+        modifier =
+            modifier.appSpecNode(
+                node,
+                context.evidenceCollector,
+            ),
+        contentPadding =
+            PaddingValues(horizontal = 12.dp, vertical = 5.dp),
+    ) {
+        Text(
+            text = requireNotNull(node.props.primaryText),
+            style = MaterialTheme.typography.titleSmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Text(
+            text = requireNotNull(node.props.secondaryText),
+            style = MaterialTheme.typography.bodyExtraSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
+        if (node.props.value != null) {
+            LinearProgressIndicator(
+                progress = {
+                    requireNotNull(node.props.value).toFloat() /
+                        requireNotNull(node.props.maximum).toFloat()
+                },
+                modifier = Modifier.fillMaxWidth(),
+                enabled = node.enabled,
+            )
         }
     }
 }
@@ -1688,11 +1986,11 @@ private fun InlineAppSpecStepper(
     minimum: Int,
     maximum: Int,
     step: Int,
+    modifier: Modifier = Modifier.fillMaxWidth(),
 ) {
     ButtonGroup(
         modifier =
-            Modifier
-                .fillMaxWidth()
+            modifier
                 .appSpecNode(node, context.evidenceCollector),
         spacing = 4.dp,
         expansionWidth = 8.dp,

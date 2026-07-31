@@ -35,15 +35,16 @@ class SceneSnapshotRepositoryTest {
         assertEquals(
             mapOf(
                 "button" to 137,
-                "card" to 79,
+                "card" to 77,
                 "column" to 4,
                 "keypad" to 7,
-                "live_card" to 4,
+                "live_card" to 6,
                 "progress" to 6,
+                "row" to 1,
                 "screen" to 96,
                 "scroll" to 13,
                 "stepper" to 10,
-                "text" to 168,
+                "text" to 169,
                 "toggle" to 11,
             ),
             loaded

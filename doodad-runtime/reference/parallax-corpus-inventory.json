@@ -132,15 +132,16 @@
     },
     "component_counts": {
       "button": 133,
-      "card": 76,
+      "card": 75,
       "column": 5,
       "keypad": 2,
-      "live_card": 2,
+      "live_card": 3,
       "progress": 2,
+      "row": 1,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
-      "text": 137,
+      "text": 138,
       "toggle": 9
     },
     "property_counts": {
@@ -149,22 +150,24 @@
       "button.size": 133,
       "button.tone": 133,
       "button.variant": 133,
-      "card.body": 76,
-      "card.title": 76,
-      "card.tone": 76,
+      "card.body": 75,
+      "card.title": 75,
+      "card.tone": 75,
       "column.align": 5,
       "column.gap": 5,
       "keypad.columns": 2,
       "keypad.keys": 2,
-      "live_card.body": 2,
-      "live_card.progress": 2,
-      "live_card.title": 2,
-      "live_card.tone": 2,
+      "live_card.body": 3,
+      "live_card.progress": 3,
+      "live_card.title": 3,
+      "live_card.tone": 3,
       "progress.label": 2,
       "progress.maximum": 2,
       "progress.style": 2,
       "progress.tone": 2,
       "progress.value": 2,
+      "row.align": 1,
+      "row.gap": 1,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -175,10 +178,10 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 86,
-      "text.max_lines": 137,
-      "text.style": 137,
-      "text.text": 137,
+      "text.align": 90,
+      "text.max_lines": 138,
+      "text.style": 138,
+      "text.text": 138,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9
@@ -189,24 +192,24 @@
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 225,
-      "value": 70
+      "label": 231,
+      "value": 76
     },
     "token_values": {
       "variant": {
         "filled": 72,
-        "outlined": 47,
+        "outlined": 46,
         "text": 4,
-        "tonal": 10
+        "tonal": 11
       },
       "style": {
         "body": 3,
         "caption": 1,
         "circular": 1,
-        "label": 66,
+        "label": 67,
         "linear": 1,
-        "numeral": 63,
-        "title": 4
+        "numeral": 62,
+        "title": 5
       },
       "tone": {
         "neutral": 130,
@@ -218,15 +221,15 @@
       },
       "gap": {
         "lg": 1,
-        "none": 20,
-        "sm": 77,
-        "xs": 5
+        "none": 24,
+        "sm": 73,
+        "xs": 6
       },
       "align": {
-        "center": 85,
+        "center": 89,
         "end": 1,
         "start": 1,
-        "stretch": 102
+        "stretch": 103
       }
     },
     "patterns": {
@@ -234,12 +237,15 @@
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
-      "metric_control": 4,
+      "metric_control": 1,
       "notification_stack": 6,
       "progress_dashboard": 1,
-      "status_detail": 58,
+      "status_detail": 57,
       "task_list": 4,
-      "weather_hero": 1
+      "weather_hero": 1,
+      "workout_rest": 1,
+      "workout_set": 2,
+      "workout_summary": 1
     }
   },
   "runtime": {
@@ -582,19 +588,19 @@
     },
     {
       "path": "apps/workout/appspec.json",
-      "sha256": "b6acb16b14826d5e55989cfba0532ab82cf5ee15e9b40cb20f5a7d5faa3a1d2d"
+      "sha256": "17306faf3a76c259f34f74101b8529fe4b3661411be27617fb2256cb54a31f37"
     },
     {
       "path": "apps/workout/screens/next-set.json",
-      "sha256": "6cdc63af8bc9b4862b49876ae18d98dc19117898a118be48fa443c9a0034d246"
+      "sha256": "f4b60f28d06b7c065fc4e23884c61b19ceab918e5345d256b811c363c00dc350"
     },
     {
       "path": "apps/workout/screens/rest.json",
-      "sha256": "e46f71ea1b3135fec100725f297bb45c31f0dc2411a00d2f12cc33414d7d7d26"
+      "sha256": "26747f078bc746bf81421aa0b2d95c02e6eec9acc74c22c7e5861ba423f2a6d0"
     },
     {
       "path": "apps/workout/screens/summary.json",
-      "sha256": "10a3552a7c01d3bcde2f02f825b9670725a716ccfccb36cb23eebdff792e8198"
+      "sha256": "c88f74dbc9145145c6eb973c0f529e467bb0f13cf8cde82d65501db8bc550152"
     },
     {
       "path": "apps/calories/appspec.json",
@@ -837,5 +843,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "27f3f61de0c3aeb9e3a0061890bfb3918878cfeaa998a4944f9d776dec3095fa"
+  "sources_sha256": "68c0b47df17984b359d70144a513e98701a94fdc89a5611886af3ddb52fbceca"
 }

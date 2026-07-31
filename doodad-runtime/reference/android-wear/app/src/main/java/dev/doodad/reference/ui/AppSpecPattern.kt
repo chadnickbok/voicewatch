@@ -14,6 +14,9 @@ enum class AppSpecPattern(
     CalendarAgenda("calendar_agenda"),
     NotificationStack("notification_stack"),
     TaskList("task_list"),
+    WorkoutSet("workout_set"),
+    WorkoutRest("workout_rest"),
+    WorkoutSummary("workout_summary"),
     ProgressDashboard("progress_dashboard"),
     Empty("empty"),
 }
@@ -27,14 +30,17 @@ data class AppSpecStructuralFacts(
 object AppSpecPatternSelector {
     val authoredCorpusExpectation: Map<AppSpecPattern, Int> =
         linkedMapOf(
-            AppSpecPattern.StatusDetail to 58,
-            AppSpecPattern.MetricControl to 4,
+            AppSpecPattern.StatusDetail to 57,
+            AppSpecPattern.MetricControl to 1,
             AppSpecPattern.Keypad to 2,
             AppSpecPattern.Countdown to 1,
             AppSpecPattern.WeatherHero to 1,
             AppSpecPattern.CalendarAgenda to 5,
             AppSpecPattern.NotificationStack to 6,
             AppSpecPattern.TaskList to 4,
+            AppSpecPattern.WorkoutSet to 2,
+            AppSpecPattern.WorkoutRest to 1,
+            AppSpecPattern.WorkoutSummary to 1,
             AppSpecPattern.ProgressDashboard to 1,
             AppSpecPattern.Empty to 1,
         )
@@ -68,6 +74,20 @@ object AppSpecPatternSelector {
                 AppSpecPattern.NotificationStack
             facts.count("scroll") == 1 && facts.count("toggle") > 0 ->
                 AppSpecPattern.TaskList
+            facts.count("stepper") == 1 &&
+                facts.count("live_card") == 1 &&
+                facts.count("button") == 1 &&
+                facts.count("text") == 1 ->
+                AppSpecPattern.WorkoutSet
+            facts.count("live_card") == 1 &&
+                facts.count("button") == 2 &&
+                facts.count("text") == 2 ->
+                AppSpecPattern.WorkoutRest
+            facts.count("row") == 1 &&
+                facts.count("card") == 1 &&
+                facts.count("button") == 1 &&
+                facts.count("text") == 3 ->
+                AppSpecPattern.WorkoutSummary
             facts.count("progress") > 0 -> AppSpecPattern.ProgressDashboard
             facts.count("stepper") > 0 || facts.count("live_card") > 0 ->
                 AppSpecPattern.MetricControl

@@ -49,6 +49,26 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         return "notification_stack"
     if kinds["scroll"] == 1 and kinds["toggle"]:
         return "task_list"
+    if (
+        kinds["stepper"] == 1
+        and kinds["live_card"] == 1
+        and kinds["button"] == 1
+        and kinds["text"] == 1
+    ):
+        return "workout_set"
+    if (
+        kinds["live_card"] == 1
+        and kinds["button"] == 2
+        and kinds["text"] == 2
+    ):
+        return "workout_rest"
+    if (
+        kinds["row"] == 1
+        and kinds["card"] == 1
+        and kinds["button"] == 1
+        and kinds["text"] == 3
+    ):
+        return "workout_summary"
     if kinds["progress"]:
         return "progress_dashboard"
     if kinds["stepper"] or kinds["live_card"]:

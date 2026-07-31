@@ -1,10 +1,10 @@
 /*******************************************************************************
- * Timer stepper numeral subset generated from Roboto Regular.
+ * Timer and workout numeral subset generated from Roboto Regular.
  * The source font is licensed under the SIL Open Font License 1.1.
  *
  * Size: 28 px
  * Bpp: 4
- * Opts: --font /Applications/Android Studio.app/Contents/plugins/design-tools/resources/layoutlib/data/fonts/Roboto-Regular.ttf --size 28 --bpp 4 --format lvgl --symbols 0123456789 --no-compress --lv-include lvgl.h --lv-font-name m3e_timer_value_font_28 --output components/m3e_lvgl/src/assets/timer_value_font_28.c
+ * Opts: --font /Applications/Android Studio.app/Contents/plugins/design-tools/resources/layoutlib/data/fonts/Roboto-Regular.ttf --size 28 --bpp 4 --format lvgl --symbols 0123456789: --no-compress --lv-include lvgl.h --lv-font-name m3e_timer_value_font_28 --output components/m3e_lvgl/src/assets/timer_value_font_28.c
  ******************************************************************************/
 
 #ifdef LV_LVGL_H_INCLUDE_SIMPLE
@@ -214,7 +214,13 @@ static LV_ATTRIBUTE_LARGE_CONST const uint8_t glyph_bitmap[] = {
     0x0, 0x0, 0x0, 0x1, 0xbf, 0xf2, 0x0, 0x0,
     0x23, 0x59, 0xff, 0xf5, 0x0, 0x0, 0xd, 0xff,
     0xff, 0xd4, 0x0, 0x0, 0x0, 0xde, 0xda, 0x50,
-    0x0, 0x0
+    0x0, 0x0,
+
+    /* U+003A ":" */
+    0xb, 0xf8, 0x2f, 0xff, 0xb, 0xf8, 0x0, 0x0,
+    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+    0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0,
+    0xb, 0xf8, 0x2f, 0xfe, 0xb, 0xf8
 };
 
 
@@ -233,7 +239,8 @@ static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] = {
     {.bitmap_index = 780, .adv_w = 252, .box_w = 14, .box_h = 20, .ofs_x = 1, .ofs_y = 0},
     {.bitmap_index = 920, .adv_w = 252, .box_w = 14, .box_h = 20, .ofs_x = 1, .ofs_y = 0},
     {.bitmap_index = 1060, .adv_w = 252, .box_w = 14, .box_h = 20, .ofs_x = 1, .ofs_y = 0},
-    {.bitmap_index = 1200, .adv_w = 252, .box_w = 13, .box_h = 20, .ofs_x = 1, .ofs_y = 0}
+    {.bitmap_index = 1200, .adv_w = 252, .box_w = 13, .box_h = 20, .ofs_x = 1, .ofs_y = 0},
+    {.bitmap_index = 1330, .adv_w = 109, .box_w = 4, .box_h = 15, .ofs_x = 1, .ofs_y = 0}
 };
 
 /*---------------------
@@ -246,7 +253,7 @@ static const lv_font_fmt_txt_glyph_dsc_t glyph_dsc[] = {
 static const lv_font_fmt_txt_cmap_t cmaps[] =
 {
     {
-        .range_start = 48, .range_length = 10, .glyph_id_start = 1,
+        .range_start = 48, .range_length = 11, .glyph_id_start = 1,
         .unicode_list = NULL, .glyph_id_ofs_list = NULL, .list_length = 0, .type = LV_FONT_FMT_TXT_CMAP_FORMAT0_TINY
     }
 };

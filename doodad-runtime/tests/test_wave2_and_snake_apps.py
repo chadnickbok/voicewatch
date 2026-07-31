@@ -49,17 +49,17 @@ class WaveTwoAndSnakeTests(unittest.TestCase):
             native.click_button("+")
             native.click_button("+")
             self.assertEqual(native.node_text("active_set.weight"), "145 lb")
-            native.click_button("Complete set")
+            native.click_button("Log set")
             self.assertEqual(native.node_text("workout.rest.time"), "1:00")
-            native.click_button("Finish rest")
+            native.click_button("Next set")
             self.assertEqual(
                 native.node_text("workout.next.weight"), "145 lb"
             )
-            native.click_button("Complete next set")
+            native.click_button("Log set")
             self.assertEqual(
-                native.node_text("workout.summary.total"), "4 sets"
+                native.node_text("workout.summary.sets"), "4 sets"
             )
-            native.click_button("Start another")
+            native.click_button("Again")
             self.assertEqual(native.node_text("active_set.weight"), "145 lb")
 
         self.run_app("workout", flow)

@@ -48,11 +48,14 @@ class AppSpecPatternTest {
                 "calendar_agenda" to 5,
                 "empty" to 1,
                 "keypad" to 2,
-                "metric_control" to 4,
+                "metric_control" to 1,
                 "notification_stack" to 6,
                 "task_list" to 4,
+                "workout_rest" to 1,
+                "workout_set" to 2,
+                "workout_summary" to 1,
                 "progress_dashboard" to 1,
-                "status_detail" to 58,
+                "status_detail" to 57,
                 "weather_hero" to 1,
             ),
             inventory
@@ -104,6 +107,38 @@ class AppSpecPatternTest {
                         mapOf("scroll" to 1, "toggle" to 2, "button" to 1),
                         3,
                         3,
+                    ),
+                AppSpecPattern.WorkoutSet to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "stepper" to 1,
+                            "live_card" to 1,
+                            "button" to 1,
+                            "text" to 1,
+                        ),
+                        2,
+                        3,
+                    ),
+                AppSpecPattern.WorkoutRest to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "live_card" to 1,
+                            "button" to 2,
+                            "text" to 2,
+                        ),
+                        2,
+                        2,
+                    ),
+                AppSpecPattern.WorkoutSummary to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "row" to 1,
+                            "card" to 1,
+                            "button" to 1,
+                            "text" to 3,
+                        ),
+                        1,
+                        1,
                     ),
                 AppSpecPattern.ProgressDashboard to
                     AppSpecStructuralFacts(mapOf("progress" to 1), 0, 0),
