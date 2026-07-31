@@ -139,7 +139,9 @@ A guest may navigate by synchronously mounting another bounded AppSpec from
 its event handler and returning zero to indicate that no follow-up
 CommandBatch is required. Nonzero results remain packed borrowed CommandBatch
 slices. Screen changes remount; ordinary state changes patch the current
-screen in place.
+screen in place. Supported patches cover primary/secondary text, numeric
+value/maximum, visibility, enabled state, and the boolean checked state of a
+toggle.
 
 ## Reference fixtures
 

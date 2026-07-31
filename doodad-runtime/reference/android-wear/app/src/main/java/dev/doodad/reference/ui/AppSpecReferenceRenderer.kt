@@ -55,6 +55,7 @@ import androidx.wear.compose.material3.Button
 import androidx.wear.compose.material3.ButtonDefaults
 import androidx.wear.compose.material3.ButtonGroup
 import androidx.wear.compose.material3.Card
+import androidx.wear.compose.material3.CheckboxButton
 import androidx.wear.compose.material3.ChildButton
 import androidx.wear.compose.material3.CircularProgressIndicator
 import androidx.wear.compose.material3.CompactButton
@@ -332,6 +333,10 @@ private fun SquarePatternSurface(
         SquareNotificationStackSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.TaskList) {
+        SquareTaskListSurface(children, context)
+        return
+    }
     val state = rememberScrollState()
     ScreenScaffold(
         scrollState = state,
@@ -365,6 +370,111 @@ private fun SquarePatternSurface(
                     context.onAction,
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun SquareTaskListSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val list =
+        children.singleOrNull { it.kind == "scroll" }
+            ?: error("Square task list requires one scroll node")
+    val content =
+        context.snapshot.childrenOf(list).filter { it.visible }
+    val heading =
+        content.singleOrNull { it.kind == "text" }
+            ?: error("Square task list requires one context label")
+    val tasks = content.filter { it.kind == "toggle" }
+    val add = content.singleOrNull { it.kind == "button" }
+    check(
+        tasks.size in 2..3 &&
+            ((tasks.size == 2 && add != null) ||
+                (tasks.size == 3 && add == null)) &&
+            content.all {
+                it == heading || it in tasks || it == add
+            },
+    ) {
+        "Square task list supports two tasks plus add or three task rows"
+    }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp)
+                .appSpecNode(list, context.evidenceCollector),
+    ) {
+        Text(
+            text = requireNotNull(heading.props.primaryText),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .appSpecNode(heading, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+
+        val taskHeight = if (tasks.size == 3) 48 else 52
+        val taskStep = if (tasks.size == 3) 52 else 56
+        tasks.forEachIndexed { index, task ->
+            val action =
+                task.action("checked_changed")
+                    ?: error("Task row requires checkedChanged")
+            val checked = requireNotNull(task.props.checked)
+            CheckboxButton(
+                checked = checked,
+                onCheckedChange = { value ->
+                    context.dispatch(
+                        task,
+                        action,
+                        ReferenceActionPayload.Checked(value),
+                    )
+                },
+                modifier =
+                    Modifier
+                        .offset(y = (24 + index * taskStep).dp)
+                        .fillMaxWidth()
+                        .height(taskHeight.dp)
+                        .appSpecNode(task, context.evidenceCollector),
+                enabled = task.enabled,
+                label = {
+                    Text(
+                        text = requireNotNull(task.props.primaryText),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+            )
+        }
+
+        if (add != null) {
+            val action =
+                add.action("tap")
+                    ?: error("Task add button requires tap")
+            FilledTonalButton(
+                onClick = { context.dispatch(add, action) },
+                modifier =
+                    Modifier
+                        .offset(y = 136.dp)
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .appSpecNode(add, context.evidenceCollector),
+                enabled = add.enabled,
+                label = {
+                    Text(
+                        text = requireNotNull(add.props.primaryText),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                },
+            )
         }
     }
 }

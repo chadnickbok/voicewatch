@@ -883,9 +883,15 @@ lv_obj_t* ComponentFactory::toggle_row(
     lv_obj_set_size(indicator, 34, 22);
     lv_obj_set_style_radius(indicator, LV_RADIUS_CIRCLE, 0);
     lv_obj_add_style(
+        indicator, styles_.get(StyleRole::surface_high), 0);
+    lv_obj_add_style(
         indicator,
-        styles_.get(checked ? StyleRole::primary : StyleRole::surface_high),
-        0);
+        styles_.get(StyleRole::primary),
+        static_cast<lv_style_selector_t>(LV_PART_MAIN) |
+            static_cast<lv_style_selector_t>(LV_STATE_CHECKED));
+    if (checked) {
+        lv_obj_add_state(indicator, LV_STATE_CHECKED);
+    }
     auto* knob = lv_obj_create(indicator);
     reset(knob);
     lv_obj_set_size(knob, 16, 16);

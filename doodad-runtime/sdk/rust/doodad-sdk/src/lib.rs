@@ -869,6 +869,25 @@ impl<const N: usize> UiCommandBuffer<N> {
         self.set_integer_property(target, 3, value)
     }
 
+    pub fn set_checked(
+        &mut self,
+        target: &str,
+        checked: bool,
+    ) -> Result<(), CommandEncodeError> {
+        self.command_slot()?;
+        self.byte(0xa4)?;
+        self.byte(0x00)?;
+        self.byte(0x00)?;
+        self.byte(0x01)?;
+        self.text(target)?;
+        self.byte(0x02)?;
+        self.byte(0x04)?;
+        self.byte(0x03)?;
+        self.byte(if checked { 0xf5 } else { 0xf4 })?;
+        self.written += 1;
+        Ok(())
+    }
+
     pub fn set_visible(
         &mut self,
         target: &str,
@@ -1132,13 +1151,17 @@ mod tests {
         assert_ne!(pack_result(bytes), 0);
 
         let mut numeric = UiCommandBuffer::<128>::new();
-        numeric.begin(2).unwrap();
+        numeric.begin(3).unwrap();
         numeric.set_value("timer.duration", 2).unwrap();
         numeric.set_maximum("timer.duration", 60).unwrap();
+        numeric.set_checked("tasks.milk", true).unwrap();
         let bytes = numeric.finish().unwrap();
         assert!(bytes.windows(4).any(|part| part == [0x02, 0x02, 0x03, 0x02]));
         assert!(bytes.windows(5).any(
             |part| part == [0x02, 0x03, 0x03, 0x18, 0x3c],
+        ));
+        assert!(bytes.windows(4).any(
+            |part| part == [0x02, 0x04, 0x03, 0xf5],
         ));
 
         let mut too_small = UiCommandBuffer::<8>::new();

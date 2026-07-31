@@ -26,6 +26,7 @@ enum class PropertyKind : std::uint8_t {
     secondary_text,
     value,
     maximum,
+    checked,
 };
 
 enum class CommandDomain : std::uint8_t {

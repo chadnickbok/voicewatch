@@ -261,7 +261,7 @@ bool parse_command(Reader& reader, CommandBatch& batch, Command& command) {
                 break;
             case 2: {
                 std::uint64_t value = 0;
-                if (!reader.unsigned_integer(value) || value > 3) {
+                if (!reader.unsigned_integer(value) || value > 4) {
                     return reader.fail(CommandError::invalid_command);
                 }
                 if (has_kind && command.kind == CommandKind::state_put) {
@@ -280,6 +280,8 @@ bool parse_command(Reader& reader, CommandBatch& batch, Command& command) {
                 }
                 if (command.kind == CommandKind::set_visibility ||
                     command.kind == CommandKind::set_enabled ||
+                    (command.kind == CommandKind::set_property &&
+                     command.property == PropertyKind::checked) ||
                     (command.kind == CommandKind::state_put &&
                      command.value_type == state::ValueType::boolean)) {
                     if (!reader.boolean(command.boolean_value)) return false;
@@ -492,9 +494,12 @@ CommandResult apply_ui_command_batch(
     std::array<std::int32_t, Reconciler::kCapacity> staged_values{};
     std::array<std::int32_t, Reconciler::kCapacity> staged_maxima{};
     std::array<bool, Reconciler::kCapacity> numeric_touched{};
+    std::array<bool, Reconciler::kCapacity> staged_checked{};
+    std::array<bool, Reconciler::kCapacity> checked_touched{};
     for (std::size_t index = 0; index < document.node_count; ++index) {
         staged_values[index] = document.nodes[index].value;
         staged_maxima[index] = document.nodes[index].maximum;
+        staged_checked[index] = document.nodes[index].value != 0;
     }
     for (std::size_t index = 0; index < batch.command_count; ++index) {
         const auto& command = batch.commands[index];
@@ -576,6 +581,15 @@ CommandResult apply_ui_command_batch(
                 } else {
                     staged_values[node_index] = value;
                 }
+            } else if (command.property == PropertyKind::checked) {
+                if (node->kind != ComponentKind::toggle) {
+                    return result(CommandError::unsupported_property, index);
+                }
+                const auto node_index =
+                    static_cast<std::size_t>(
+                        node - document.nodes.data());
+                checked_touched[node_index] = true;
+                staged_checked[node_index] = command.boolean_value;
             } else {
                 return result(CommandError::unsupported_property, index);
             }
@@ -807,6 +821,39 @@ CommandResult apply_ui_command_batch(
         } else {
             lv_bar_set_range(object, 0, node.maximum);
             lv_bar_set_value(object, node.value, LV_ANIM_OFF);
+        }
+    }
+    for (std::size_t index = 0; index < document.node_count; ++index) {
+        if (!checked_touched[index]) continue;
+        auto& node = document.nodes[index];
+        auto* object = static_cast<lv_obj_t*>(node.mounted_object);
+        node.value = staged_checked[index] ? 1 : 0;
+        if (staged_checked[index]) {
+            lv_obj_add_state(object, LV_STATE_CHECKED);
+        } else {
+            lv_obj_remove_state(object, LV_STATE_CHECKED);
+        }
+        if (lv_obj_get_child_count(object) < 2) continue;
+        auto* indicator = lv_obj_get_child(object, 1);
+        if (indicator == nullptr) continue;
+        if (staged_checked[index]) {
+            lv_obj_add_state(indicator, LV_STATE_CHECKED);
+        } else {
+            lv_obj_remove_state(indicator, LV_STATE_CHECKED);
+        }
+        if (lv_obj_get_child_count(indicator) == 0) continue;
+        auto* mark = lv_obj_get_child(indicator, 0);
+        if (lv_obj_check_type(mark, &lv_label_class)) {
+            lv_label_set_text(
+                mark, staged_checked[index] ? LV_SYMBOL_OK : "");
+        } else {
+            lv_obj_align(
+                mark,
+                staged_checked[index]
+                    ? LV_ALIGN_RIGHT_MID
+                    : LV_ALIGN_LEFT_MID,
+                staged_checked[index] ? -3 : 3,
+                0);
         }
     }
     return result(CommandError::none);

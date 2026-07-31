@@ -63,7 +63,7 @@ class ConformanceEvidenceTests(unittest.TestCase):
                     )
                     self.assertTrue(
                         any(
-                            node["role"] == "button"
+                            node["role"] in {"button", "toggle"}
                             for node in tree["nodes"]
                         )
                         or stage is report["stages"][-1]

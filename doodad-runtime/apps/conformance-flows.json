@@ -84,12 +84,6 @@
     "tasks": [
       {
         "kind": "semantic",
-        "node_id": "tasks.open",
-        "action_id": "tasks.open",
-        "event_kind": "tap"
-      },
-      {
-        "kind": "semantic",
         "node_id": "tasks.add",
         "action_id": "tasks.add.bananas",
         "event_kind": "tap"
@@ -98,13 +92,13 @@
         "kind": "semantic",
         "node_id": "tasks.bananas",
         "action_id": "tasks.toggle.bananas",
-        "event_kind": "tap"
+        "event_kind": "checked_changed"
       },
       {
         "kind": "semantic",
-        "node_id": "tasks.back",
-        "action_id": "tasks.back",
-        "event_kind": "tap"
+        "node_id": "tasks.milk",
+        "action_id": "tasks.toggle.milk",
+        "event_kind": "checked_changed"
       }
     ],
     "calculator": [

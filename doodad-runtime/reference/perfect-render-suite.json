@@ -75,7 +75,7 @@
       "app_slug": "tasks",
       "trace": "traces/tasks/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "75ab48e3775a5dcf65593ddb0ed690083d4dda2abee7e2ba8459bfdeff305609",
+      "snapshot_sha256": "7b9caf9e61d25246a3988d5e95f0f3dd9c76855d4f3e62e68779641897dbe3c7",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -88,7 +88,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across six nodes; all task rows pass 48dp target and quality checks. Added and checked states also align exactly. Remaining raster delta is color quantization, text rasterization, and edge antialiasing. See reference/reviews/tasks.md."
       }
     },
     {

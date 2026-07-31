@@ -2,83 +2,75 @@
   "schema_version": 1,
   "app_id": "tasks",
   "screen": {
-    "id": "tasks.groceries",
+    "id": "tasks.today",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "tasks.list.heading",
-          "type": "text",
+          "id": "tasks.list",
+          "type": "scroll",
           "props": {
-            "text": "GROCERIES · 3 LEFT",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "tasks.milk",
-          "type": "button",
-          "props": {
-            "label": "○  Milk",
-            "tone": "primary",
-            "variant": "tonal",
-            "size": "compact"
-          },
-          "events": {
-            "tap": "tasks.toggle.milk"
-          },
-          "semantics": {
-            "label": "Complete milk"
-          }
-        },
-        {
-          "id": "tasks.coffee",
-          "type": "button",
-          "props": {
-            "label": "○  Coffee",
-            "tone": "neutral",
-            "variant": "tonal",
-            "size": "compact"
-          },
-          "events": {
-            "tap": "tasks.toggle.coffee"
-          },
-          "semantics": {
-            "label": "Complete coffee"
-          }
-        },
-        {
-          "id": "tasks.bananas",
-          "type": "button",
-          "props": {
-            "label": "○  Bananas",
-            "tone": "tertiary",
-            "variant": "tonal",
-            "size": "compact"
-          },
-          "events": {
-            "tap": "tasks.toggle.bananas"
-          },
-          "semantics": {
-            "label": "Complete bananas"
-          }
-        },
-        {
-          "id": "tasks.back",
-          "type": "button",
-          "props": {
-            "label": "Back",
-            "tone": "neutral",
-            "variant": "text",
-            "size": "compact"
-          },
-          "events": {
-            "tap": "tasks.back"
-          },
-          "semantics": {
-            "label": "Back to task lists"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "tasks.list.heading",
+                "type": "text",
+                "props": {
+                  "text": "TODAY  /  3 LEFT",
+                  "style": "label",
+                  "max_lines": 1,
+                  "align": "center"
+                }
+              },
+              {
+                "id": "tasks.milk",
+                "type": "toggle",
+                "props": {
+                  "label": "Milk",
+                  "checked": false,
+                  "tone": "primary"
+                },
+                "events": {
+                  "checkedChanged": "tasks.toggle.milk"
+                },
+                "semantics": {
+                  "label": "Milk, incomplete"
+                }
+              },
+              {
+                "id": "tasks.coffee",
+                "type": "toggle",
+                "props": {
+                  "label": "Coffee",
+                  "checked": false,
+                  "tone": "primary"
+                },
+                "events": {
+                  "checkedChanged": "tasks.toggle.coffee"
+                },
+                "semantics": {
+                  "label": "Coffee, incomplete"
+                }
+              },
+              {
+                "id": "tasks.bananas",
+                "type": "toggle",
+                "props": {
+                  "label": "Bananas",
+                  "checked": false,
+                  "tone": "primary"
+                },
+                "events": {
+                  "checkedChanged": "tasks.toggle.bananas"
+                },
+                "semantics": {
+                  "label": "Bananas, incomplete"
+                }
+              }
+            ]
           }
         }
       ]

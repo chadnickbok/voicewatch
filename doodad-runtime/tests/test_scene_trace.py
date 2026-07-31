@@ -27,7 +27,7 @@ class SceneTraceTests(unittest.TestCase):
             (ROOT / "apps" / "conformance-flows.json").read_text()
         )["flows"]
 
-    def test_checked_in_traces_cover_all_105_decisive_stages(self) -> None:
+    def test_checked_in_traces_cover_all_104_decisive_stages(self) -> None:
         entries = 0
         checkpoints = 0
         for app in self.suite:
@@ -42,8 +42,8 @@ class SceneTraceTests(unittest.TestCase):
                 len(self.flows[app["slug"]]) + 1,
             )
         self.assertEqual(len(self.suite), 20)
-        self.assertEqual(entries, 114)
-        self.assertEqual(checkpoints, 105)
+        self.assertEqual(entries, 111)
+        self.assertEqual(checkpoints, 104)
 
     def test_decisive_actions_use_stable_semantic_identity(self) -> None:
         for slug, actions in self.flows.items():

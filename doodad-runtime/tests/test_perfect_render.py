@@ -68,6 +68,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                     "timer",
                     "weather",
                     "notifications",
+                    "tasks",
                 }:
                     self.assertEqual(entry["review"]["status"], "approved")
                     self.assertEqual(

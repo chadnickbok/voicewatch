@@ -131,25 +131,26 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 145,
-      "card": 75,
+      "button": 134,
+      "card": 74,
       "keypad": 2,
       "live_card": 2,
       "progress": 2,
       "screen": 83,
-      "scroll": 6,
+      "scroll": 10,
       "stepper": 4,
-      "text": 140
+      "text": 141,
+      "toggle": 9
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 145,
-      "button.size": 145,
-      "button.tone": 145,
-      "button.variant": 145,
-      "card.body": 75,
-      "card.title": 75,
-      "card.tone": 75,
+      "button.label": 134,
+      "button.size": 134,
+      "button.tone": 134,
+      "button.variant": 134,
+      "card.body": 74,
+      "card.title": 74,
+      "card.tone": 74,
       "keypad.columns": 2,
       "keypad.keys": 2,
       "live_card.body": 2,
@@ -163,75 +164,77 @@
       "progress.value": 2,
       "screen.align": 83,
       "screen.gap": 83,
-      "scroll.align": 6,
-      "scroll.gap": 6,
+      "scroll.align": 10,
+      "scroll.gap": 10,
       "stepper.label": 4,
       "stepper.maximum": 4,
       "stepper.minimum": 4,
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 82,
-      "text.max_lines": 140,
-      "text.style": 140,
-      "text.text": 140
+      "text.align": 86,
+      "text.max_lines": 141,
+      "text.style": 141,
+      "text.text": 141,
+      "toggle.checked": 9,
+      "toggle.label": 9,
+      "toggle.tone": 9
     },
     "event_counts": {
-      "tap": 150,
+      "checkedChanged": 9,
+      "tap": 139,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 224,
+      "label": 222,
       "value": 72
     },
     "token_values": {
       "variant": {
-        "filled": 75,
+        "filled": 74,
         "outlined": 51,
-        "text": 9,
-        "tonal": 10
+        "text": 4,
+        "tonal": 5
       },
       "style": {
         "body": 3,
         "caption": 1,
         "circular": 1,
-        "label": 64,
+        "label": 65,
         "linear": 1,
         "numeral": 68,
         "title": 4
       },
       "tone": {
-        "neutral": 134,
-        "primary": 83,
-        "tertiary": 7
+        "neutral": 131,
+        "primary": 88,
+        "tertiary": 2
       },
       "size": {
-        "compact": 12,
-        "default": 133
+        "default": 134
       },
       "gap": {
         "lg": 1,
-        "md": 1,
-        "none": 1,
-        "sm": 85,
-        "xs": 1
+        "none": 5,
+        "sm": 82,
+        "xs": 5
       },
       "align": {
-        "center": 81,
+        "center": 85,
         "end": 1,
         "start": 1,
-        "stretch": 88
+        "stretch": 92
       }
     },
     "patterns": {
-      "action_list": 3,
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
       "metric_control": 4,
       "notification_stack": 6,
       "progress_dashboard": 1,
-      "status_detail": 64,
+      "status_detail": 63,
+      "task_list": 4,
       "weather_hero": 1
     }
   },
@@ -272,14 +275,13 @@
         ]
       },
       "tasks": {
-        "accepted_operations": 8,
-        "mounts": 4,
-        "command_batches": 4,
-        "checkpoints": 5,
+        "accepted_operations": 5,
+        "mounts": 2,
+        "command_batches": 3,
+        "checkpoints": 4,
         "unique_snapshots": 4,
         "screen_ids": [
-          "tasks.groceries",
-          "tasks.home"
+          "tasks.today"
         ]
       },
       "calculator": {
@@ -493,8 +495,8 @@
         ]
       }
     },
-    "accepted_operations": 114,
-    "checkpoints": 105,
+    "accepted_operations": 111,
+    "checkpoints": 104,
     "unique_snapshot_hashes": 95
   },
   "sources": [
@@ -536,19 +538,19 @@
     },
     {
       "path": "apps/tasks/appspec.json",
-      "sha256": "4cd28edaa2121f021ea57ff72f548c82f66f1b728de5f41672607e0d9b946dec"
+      "sha256": "1369c405d2dc421028753a265ad2f639561678c3fd1173ab205a63cd3367e758"
     },
     {
       "path": "apps/tasks/screens/list-milk-done.json",
-      "sha256": "f98a1c107ee545286639f8db8335315628fe647683e8106d08a51fde0b230880"
+      "sha256": "5a0fb0d61c415cd6cc59d7d8d8cee13df6115dd67938b5cdcbb459a2692ffdc2"
     },
     {
       "path": "apps/tasks/screens/list-three.json",
-      "sha256": "6f3849074a7c646ff228eb20a41d6256991b8bc3207906718f5d9d095697cbbf"
+      "sha256": "060785045c0915b7def0a2a2d6088c465389da1adddf20a34695f809ef78be53"
     },
     {
       "path": "apps/tasks/screens/list.json",
-      "sha256": "3c14adbb8c2881ca83f3f5d370fa1ee5bbdd966bafb700067a2be7ba4ad84cdd"
+      "sha256": "1369c405d2dc421028753a265ad2f639561678c3fd1173ab205a63cd3367e758"
     },
     {
       "path": "apps/calculator/appspec.json",
@@ -831,5 +833,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "4834bc63b563d01b5bd9362a1f9fe06622379cae79458334d5f6737173004b96"
+  "sources_sha256": "0886f64a44cc950a4dfe8af0a5aff1c5144d561f6e401b55f5cc54b5e70d605e"
 }

@@ -34,15 +34,16 @@ class SceneSnapshotRepositoryTest {
         )
         assertEquals(
             mapOf(
-                "button" to 150,
-                "card" to 79,
+                "button" to 137,
+                "card" to 78,
                 "keypad" to 7,
                 "live_card" to 4,
                 "progress" to 6,
                 "screen" to 96,
-                "scroll" to 5,
+                "scroll" to 9,
                 "stepper" to 10,
-                "text" to 170,
+                "text" to 171,
+                "toggle" to 11,
             ),
             loaded
                 .flatMap { it.snapshot.nodes }

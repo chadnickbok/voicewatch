@@ -64,8 +64,8 @@ command =
 set-property = {
   0: 0,
   1: identifier,                 ; mounted node id
-  2: 0..3,                       ; primary, secondary, value, maximum
-  3: tstr .size (0..128) / int,
+  2: 0..4,                       ; primary, secondary, value, maximum, checked
+  3: tstr .size (0..128) / int / bool,
 }
 
 set-visibility = { 0: 1, 1: identifier, 3: bool }

@@ -152,6 +152,36 @@ bool is_notification_stack_document(const WireDocument& document) {
         (buttons == 1 || buttons == 3);
 }
 
+bool is_task_list_document(const WireDocument& document) {
+    if (document.node_count < 5 ||
+        document.nodes[0].child_count != 1 ||
+        document.nodes[1].kind != ComponentKind::scroll ||
+        document.nodes[1].parent_index != 0) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t toggles = 0;
+    std::size_t buttons = 0;
+    for (std::size_t index = 2; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 1) return false;
+        if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::toggle) {
+            ++toggles;
+        } else if (node.kind == ComponentKind::button) {
+            ++buttons;
+        } else {
+            return false;
+        }
+    }
+    return document.nodes[1].child_count ==
+            texts + toggles + buttons &&
+        texts == 1 &&
+        ((toggles == 2 && buttons == 1) ||
+         (toggles == 3 && buttons == 0));
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -386,6 +416,12 @@ bool Renderer::mount(
         is_weather_hero_document(document);
     const auto notification_stack_document =
         is_notification_stack_document(document);
+    const auto task_list_document =
+        is_task_list_document(document);
+    const auto task_toggle_count =
+        task_list_document
+            ? count_kind(document, ComponentKind::toggle)
+            : 0U;
     const auto notification_card_count =
         notification_stack_document
             ? count_kind(document, ComponentKind::card)
@@ -401,7 +437,7 @@ bool Renderer::mount(
         keypad_document
             ? 5
             : countdown_document || weather_hero_document ||
-                    notification_stack_document
+                    notification_stack_document || task_list_document
                 ? 0
                 : px(12),
         0);
@@ -440,6 +476,13 @@ bool Renderer::mount(
             case ComponentKind::scroll:
                 object = layout(factory, parent, node, true);
                 if (notification_stack_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+                    lv_obj_set_size(object, px(184), px(184));
+                    lv_obj_set_pos(object, px(4), px(4));
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                } else if (task_list_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
                     lv_obj_set_size(object, px(184), px(184));
@@ -555,6 +598,21 @@ bool Renderer::mount(
                             object, LV_TEXT_ALIGN_LEFT, 0);
                     }
                 } else if (notification_stack_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(20));
+                    lv_obj_set_pos(object, 0, 0);
+                    lv_obj_set_style_text_font(
+                        object, &lv_font_montserrat_18, 0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(object, px(2), 0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
+                } else if (task_list_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(20));
                     lv_obj_set_pos(object, 0, 0);
@@ -693,6 +751,21 @@ bool Renderer::mount(
                             label, LV_TEXT_ALIGN_CENTER, 0);
                         lv_label_set_long_mode(
                             label, LV_LABEL_LONG_WRAP);
+                    }
+                } else if (task_list_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(48));
+                    lv_obj_set_pos(object, 0, px(136));
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_align(
+                            label, LV_TEXT_ALIGN_CENTER, 0);
+                        lv_label_set_long_mode(
+                            label, LV_LABEL_LONG_DOT);
                     }
                 }
                 break;
@@ -980,6 +1053,99 @@ bool Renderer::mount(
                 lv_obj_add_flag(object, LV_OBJ_FLAG_CHECKABLE);
                 if (node.value != 0) {
                     lv_obj_add_state(object, LV_STATE_CHECKED);
+                }
+                if (task_list_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::toggle);
+                    const auto height =
+                        task_toggle_count == 3 ? 48 : 52;
+                    const auto step =
+                        task_toggle_count == 3 ? 52 : 56;
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object, px(184), px(height));
+                    lv_obj_set_pos(
+                        object,
+                        0,
+                        px(24 + static_cast<std::int32_t>(
+                                ordinal) * step));
+                    lv_obj_set_style_pad_hor(object, px(12), 0);
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        object, LV_OPA_COVER, 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x4E, 0x28, 0x6E),
+                        static_cast<lv_style_selector_t>(
+                            LV_PART_MAIN) |
+                            static_cast<lv_style_selector_t>(
+                                LV_STATE_CHECKED));
+                    if (lv_obj_get_child_count(object) == 2) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+
+                        auto* indicator =
+                            lv_obj_get_child(object, 1);
+                        lv_obj_clean(indicator);
+                        ComponentFactory::reset(indicator);
+                        lv_obj_set_size(
+                            indicator, px(24), px(24));
+                        lv_obj_set_style_radius(
+                            indicator, px(6), 0);
+                        lv_obj_set_style_border_width(
+                            indicator, px(2), 0);
+                        lv_obj_set_style_border_color(
+                            indicator,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
+                        lv_obj_set_style_bg_opa(
+                            indicator, LV_OPA_TRANSP, 0);
+                        lv_obj_set_style_bg_color(
+                            indicator,
+                            lv_color_make(0xD8, 0xB9, 0xFF),
+                            static_cast<lv_style_selector_t>(
+                                LV_PART_MAIN) |
+                                static_cast<lv_style_selector_t>(
+                                    LV_STATE_CHECKED));
+                        lv_obj_set_style_bg_opa(
+                            indicator,
+                            LV_OPA_COVER,
+                            static_cast<lv_style_selector_t>(
+                                LV_PART_MAIN) |
+                                static_cast<lv_style_selector_t>(
+                                    LV_STATE_CHECKED));
+                        lv_obj_set_style_border_color(
+                            indicator,
+                            lv_color_make(0xD8, 0xB9, 0xFF),
+                            static_cast<lv_style_selector_t>(
+                                LV_PART_MAIN) |
+                                static_cast<lv_style_selector_t>(
+                                    LV_STATE_CHECKED));
+                        if (node.value != 0) {
+                            lv_obj_add_state(
+                                indicator, LV_STATE_CHECKED);
+                        }
+                        auto* mark = factory.text(
+                            indicator,
+                            node.value != 0 ? LV_SYMBOL_OK : "",
+                            generated::TypographyRole::label_large);
+                        lv_obj_set_style_text_color(
+                            mark,
+                            lv_color_make(0x35, 0x11, 0x51),
+                            0);
+                        lv_obj_center(mark);
+                    }
                 }
                 break;
             case ComponentKind::voice_orb:
