@@ -80,7 +80,7 @@ review.
 | P6 | Deterministic batch report and comparison gates | Initial batch tooling complete |
 | P7 | Live parallel-rendering simulator | Not started |
 | P8 | Full decisive flows, variants, and motion | Trace corpus complete; dual renders pending |
-| P9 | Reviewed API 37 runtime authority | Sixteen apps captured on square API 37 AVD; suite pending |
+| P9 | Reviewed API 37 runtime authority | Seventeen apps captured on square API 37 AVD; suite pending |
 | P10 | CI, baseline approval, and hardware closure | Local lane partial |
 
 ## Current baseline
@@ -135,10 +135,10 @@ review.
 - [ ] LVGL still has root flex-axis, touch-target, typography, max-lines,
   token-evidence, and missing-glyph defects outside the completed calculator
   path.
-- [ ] 83 of 105 checkpoints have reviewed dual-renderer captures.
+- [ ] 88 of 105 checkpoints have reviewed dual-renderer captures.
 - [ ] The fast Compose lane still uses Robolectric SDK 33; API 37 runtime
   baselines are reviewed for Timer through Sleep plus Media, Navigation, and
-  Transit plus Smart Home, with the remaining four apps still pending.
+  Transit, Smart Home, and Sports, with the remaining three apps still pending.
 
 Measured results and the remediation order are in
 [`project-parallax-comparison-report.md`](project-parallax-comparison-report.md).
@@ -594,7 +594,7 @@ terminal LVGL frame to a different Compose fixture.
 | 14 | Navigation | [x] | [x] | [x] | [x] | [x] |
 | 15 | Transit | [x] | [x] | [x] | [x] | [x] |
 | 16 | Smart Home | [x] | [x] | [x] | [x] | [x] |
-| 17 | Sports | [x] | [x] | [x] | [x] | [ ] |
+| 17 | Sports | [x] | [x] | [x] | [x] | [x] |
 | 18 | Wallet | [x] | [x] | [x] | [x] | [ ] |
 | 19 | Remote Control | [x] | [x] | [x] | [x] | [ ] |
 | 20 | Snake / persistent microgame | [x] | [x] | [x] | [x] | [ ] |
@@ -1310,6 +1310,16 @@ produce the twenty-row report.
   favorite-device, brightness, and secure-action hierarchy. The approved
   **Equivalent** disposition is recorded in
   [`reference/reviews/smart-home.md`](../reference/reviews/smart-home.md).
+- [x] Completed the Sports oracle redesign and decisive-flow review across
+  live, following, coalesced score-update, final, and scoring-play states. All
+  five title-free documents select the shared live-action pattern by structure
+  alone. Compose and LVGL share exact normalized structure/bounds, two 48dp
+  controls, and no quality findings at every checkpoint. The first comparison
+  caught a missing separator glyph and four long-label truncations.
+  First-party Google and Apple live-update imagery plus a real Wear baseball
+  app supply the score, inning, outs/runners, and latest-play hierarchy. The
+  approved **Equivalent** disposition is recorded in
+  [`reference/reviews/sports.md`](../reference/reviews/sports.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

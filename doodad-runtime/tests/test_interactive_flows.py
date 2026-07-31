@@ -75,10 +75,10 @@ FLOWS = {
         ("Unlock", "smart-home.unlocked.summary", "UNLOCKED"),
     ],
     "sports": [
-        ("Follow game", "sports.live.summary", "SF 3 · LA 2"),
-        ("Replay burst", "sports.burst.summary", "SF 5 · LA 2"),
-        ("End game", "sports.final.summary", "SF 5 · LA 3"),
-        ("Scoring plays", "sports.timeline.summary", "5 runs · 4 plays"),
+        ("Follow", "sports.live.summary", "3:2"),
+        ("Update", "sports.burst.summary", "5:2"),
+        ("End", "sports.final.summary", "5:3"),
+        ("Plays", "sports.timeline.summary", "5 RUNS"),
     ],
     "wallet": [
         ("Show pass", "wallet.pass.summary", "BOARDING 8:10"),

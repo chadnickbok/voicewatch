@@ -5,7 +5,7 @@ These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
 machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
 Calories, Workout, Voice Notes, Medication, Sensor Recorder, Sleep, Media,
-Navigation, Transit, Smart Home, and Snake) live outside this generator.
+Navigation, Transit, Smart Home, Sports, and Snake) live outside this generator.
 """
 
 from __future__ import annotations
@@ -39,39 +39,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "sports": {
-        "initial": ("sports.primary", "live"),
-        "screens": {
-            "live": screen(
-                "TOP 8TH",
-                "SF 3 · LA 2",
-                "1 out · runners on 1st and 2nd",
-                ("Replay burst", "sports.burst", "burst"),
-                ("Unfollow", "sports.unfollow", "final"),
-            ),
-            "burst": screen(
-                "SCORE UPDATE",
-                "SF 5 · LA 2",
-                "3 events coalesced · latest revision 44",
-                ("End game", "sports.end", "final"),
-                ("Live view", "sports.live", "live"),
-            ),
-            "final": screen(
-                "FINAL",
-                "SF 5 · LA 3",
-                "Ongoing card ended · one haptic",
-                ("Scoring plays", "sports.plays", "timeline"),
-                ("Follow rematch", "sports.follow", "live"),
-            ),
-            "timeline": screen(
-                "SCORING PLAYS",
-                "5 runs · 4 plays",
-                "8th: Lee doubled · two scored",
-                ("Final score", "sports.final", "final"),
-                ("Home", "sports.home", "home"),
-            ),
-        },
-    },
     "wallet": {
         "initial": ("wallet.primary", "pass"),
         "screens": {
@@ -150,7 +117,6 @@ BOUND_PROVIDERS: dict[str, tuple[str, str, str]] = {
     ),
     "sensor-recorder": ("request_sensor", "sensor.record", "sensor"),
     "media": ("request_media", "media.remote", "media"),
-    "sports": ("request_sports", "sports.read", "sports"),
     "wallet": ("request_wallet", "wallet.read", "wallet"),
     "remote-control": (
         "request_remote",

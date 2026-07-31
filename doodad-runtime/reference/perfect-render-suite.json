@@ -371,7 +371,7 @@
       "app_slug": "sports",
       "trace": "traces/sports/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "ad3e29d8e8241768074e253c8e323586b2be7a7f27a2f064efc92ed0c8bcd9d4",
+      "snapshot_sha256": "0bf81869a12e7f7d1780e4f63f46c463f3fa9d1eab35a103ca3d9ed2de84df6d",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -384,7 +384,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. Direct comparison removed a missing separator glyph and long-label truncation. See reference/reviews/sports.md."
       }
     },
     {

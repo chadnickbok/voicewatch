@@ -1,0 +1,18 @@
+Sports resting comparison
+
+SceneSnapshot SHA-256:
+0bf81869a12e7f7d1780e4f63f46c463f3fa9d1eab35a103ca3d9ed2de84df6d
+
+LVGL RGB565 SHA-256:
+a5ebd4eb27bfe8402611046997fc5e22ac1fc1dfa8697eae9449a567590a2a06
+
+Reference nodes: 7
+Product nodes: 7
+Compared nodes: 7
+Structured mismatches: 0
+Quality findings: 0
+Minimum touch target: 48dp
+
+Changed pixels: 6868 / 57600 (11.9236%)
+MAE: 13.3023
+RMSE: 45.6422

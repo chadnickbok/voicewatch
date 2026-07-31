@@ -5,46 +5,83 @@
     "id": "sports.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
+        {
+          "id": "sports.home.context",
+          "type": "text",
+          "props": {
+            "text": "SF / LA / TOP 8",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
         {
           "id": "sports.summary",
           "type": "text",
           "props": {
-            "text": "SF 3 · LA 2",
+            "text": "3:2",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Live Sports status",
-            "value": "SF 3 · LA 2"
+            "label": "Giants lead Dodgers",
+            "value": "San Francisco 3, Los Angeles 2, top of the eighth"
           }
         },
         {
-          "id": "sports.mock",
-          "type": "card",
+          "id": "sports.home.detail",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "title": "SF LEADS / 1 OUT",
+            "body": "Runners 1st + 2nd",
+            "progress": 0.78,
+            "tone": "primary"
           }
         },
         {
-          "id": "sports.primary",
-          "type": "button",
+          "id": "sports.home.actions",
+          "type": "row",
           "props": {
-            "label": "Follow game",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sports.primary"
-          },
-          "semantics": {
-            "label": "Follow game"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sports.primary",
+                "type": "button",
+                "props": {
+                  "label": "Follow",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sports.primary"
+                },
+                "semantics": {
+                  "label": "Follow live game"
+                }
+              },
+              {
+                "id": "sports.home.plays",
+                "type": "button",
+                "props": {
+                  "label": "Update",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sports.burst"
+                },
+                "semantics": {
+                  "label": "Show latest score update"
+                }
+              }
+            ]
           }
         }
       ]

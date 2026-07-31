@@ -5,71 +5,83 @@
     "id": "sports.timeline",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "sports.timeline.heading",
+          "id": "sports.timeline.context",
           "type": "text",
           "props": {
-            "text": "SCORING PLAYS",
+            "text": "SCORING / 8TH",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sports.timeline.summary",
           "type": "text",
           "props": {
-            "text": "5 runs · 4 plays",
+            "text": "5 RUNS",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "SCORING PLAYS",
-            "value": "5 runs · 4 plays"
+            "label": "Scoring plays",
+            "value": "5 runs across 4 scoring plays"
           }
         },
         {
           "id": "sports.timeline.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "8th: Lee doubled · two scored",
-            "tone": "neutral"
+            "title": "LEE DOUBLE / +2",
+            "body": "Four scoring plays total",
+            "progress": 1.0,
+            "tone": "primary"
           }
         },
         {
-          "id": "sports.timeline.primary",
-          "type": "button",
+          "id": "sports.timeline.actions",
+          "type": "row",
           "props": {
-            "label": "Final score",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sports.final"
-          },
-          "semantics": {
-            "label": "Final score"
-          }
-        },
-        {
-          "id": "sports.timeline.secondary",
-          "type": "button",
-          "props": {
-            "label": "Home",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sports.home"
-          },
-          "semantics": {
-            "label": "Home"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sports.timeline.primary",
+                "type": "button",
+                "props": {
+                  "label": "Final",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sports.final"
+                },
+                "semantics": {
+                  "label": "Return to final score"
+                }
+              },
+              {
+                "id": "sports.timeline.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Home",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sports.home"
+                },
+                "semantics": {
+                  "label": "Return to game list"
+                }
+              }
+            ]
           }
         }
       ]
