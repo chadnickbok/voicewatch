@@ -417,7 +417,7 @@
       "app_slug": "remote-control",
       "trace": "traces/remote-control/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "a30176c4bdad29b498dc83e565feb5875675f59cd6016fcfd745efd77bda0d8b",
+      "snapshot_sha256": "24fbfc8e6e9f7aa996bf90cc373c78c5c83f86b184ae495f1f53b01e06a99667",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -430,7 +430,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all seven accepted states; both renderers pass 48dp target and quality checks. The same 230x150 package photo is rendered one-to-one in both lanes. See reference/reviews/remote-control.md."
       }
     },
     {

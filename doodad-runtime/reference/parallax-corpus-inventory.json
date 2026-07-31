@@ -131,34 +131,34 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 141,
-      "card": 26,
+      "button": 142,
+      "card": 21,
       "column": 5,
-      "image": 6,
+      "image": 11,
       "keypad": 2,
       "live_card": 46,
       "progress": 7,
-      "row": 52,
+      "row": 57,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
-      "text": 147,
+      "text": 148,
       "toggle": 9,
       "voice_orb": 1
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 141,
-      "button.size": 141,
-      "button.tone": 141,
-      "button.variant": 141,
-      "card.body": 26,
-      "card.title": 26,
-      "card.tone": 26,
+      "button.label": 142,
+      "button.size": 142,
+      "button.tone": 142,
+      "button.variant": 142,
+      "card.body": 21,
+      "card.title": 21,
+      "card.tone": 21,
       "column.align": 5,
       "column.gap": 5,
-      "image.asset": 6,
-      "image.fit": 6,
+      "image.asset": 11,
+      "image.fit": 11,
       "keypad.columns": 2,
       "keypad.keys": 2,
       "live_card.body": 46,
@@ -170,8 +170,8 @@
       "progress.style": 7,
       "progress.tone": 7,
       "progress.value": 7,
-      "row.align": 52,
-      "row.gap": 52,
+      "row.align": 57,
+      "row.gap": 57,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -182,10 +182,10 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 141,
-      "text.max_lines": 147,
-      "text.style": 147,
-      "text.text": 147,
+      "text.align": 146,
+      "text.max_lines": 148,
+      "text.style": 148,
+      "text.text": 148,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9,
@@ -194,50 +194,49 @@
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 149,
+      "tap": 150,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 255,
+      "label": 261,
       "value": 80
     },
     "token_values": {
       "variant": {
         "filled": 71,
-        "outlined": 4,
         "text": 4,
-        "tonal": 62
+        "tonal": 67
       },
       "style": {
         "body": 3,
         "caption": 6,
         "circular": 1,
-        "label": 73,
+        "label": 74,
         "linear": 6,
         "numeral": 55,
         "title": 10
       },
       "tone": {
         "error": 3,
-        "neutral": 92,
+        "neutral": 88,
         "primary": 132,
         "tertiary": 2
       },
       "size": {
-        "default": 131,
+        "default": 132,
         "large": 10
       },
       "gap": {
         "lg": 1,
-        "none": 77,
-        "sm": 20,
-        "xs": 57
+        "none": 82,
+        "sm": 15,
+        "xs": 62
       },
       "align": {
-        "center": 130,
+        "center": 135,
         "end": 1,
         "start": 11,
-        "stretch": 154
+        "stretch": 159
       },
       "state": {
         "idle": 1
@@ -245,6 +244,7 @@
     },
     "patterns": {
       "calendar_agenda": 5,
+      "camera_remote": 5,
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
@@ -254,7 +254,7 @@
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 6,
+      "status_detail": 1,
       "task_list": 4,
       "voice_ready": 1,
       "wallet_qr": 1,
@@ -833,23 +833,23 @@
     },
     {
       "path": "apps/remote-control/appspec.json",
-      "sha256": "bb94d7471230acc7ae9b1cc60861aee8a112900f6ea65382534cb2f20a695517"
+      "sha256": "575110ac8c8e43cc5f52043732090ef5a9d56fa44840b6b9d04e6fa6c59fc8d2"
     },
     {
       "path": "apps/remote-control/screens/done.json",
-      "sha256": "ae89f5b8580a84a313baa51226cf8b76c4bad577e8a5f889a0ba59014f13baf0"
+      "sha256": "26e2b3e77c2db9591fc7de8297eccd5037ae6145b3fd09383c86fe3c457c9e8d"
     },
     {
       "path": "apps/remote-control/screens/offline.json",
-      "sha256": "ef8a52f4c9bc79bede6f46a489de1e77a2aa535bb2150bdc90d9344184c696dd"
+      "sha256": "99590ce5e52b47fb5e6d8f8db7b3b12bebcaa90e98d4cb3f1bc03aa9c9eff1c1"
     },
     {
       "path": "apps/remote-control/screens/pending.json",
-      "sha256": "1eea205fb80869c8425271b3fc3c0e027c208e173a73d9480de147e248658c11"
+      "sha256": "513d1f3c5ed4184dba29f7e85c1b763975e9e249b81d87a0789c1de8412a7086"
     },
     {
       "path": "apps/remote-control/screens/targets.json",
-      "sha256": "f2c85529730486fce1bbef52b814d02c844835870aeabb387c7222f905a799ad"
+      "sha256": "ea46f7f79b82203f00032088bc17302549999f0690f0ab7e3217fc3e37234bcf"
     },
     {
       "path": "apps/snake/appspec.json",
@@ -860,5 +860,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "97b635246c78c5ef1fc6286e8b57ad613cf326584d6507bc5c4d925014cf4702"
+  "sources_sha256": "e2bd5d1d8eebe918e4ecc11686ea0d199154a744c9528e30474a3231171aaaa5"
 }

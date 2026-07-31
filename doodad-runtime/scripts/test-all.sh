@@ -10,6 +10,7 @@ cd "${PROJECT_DIR}"
 python3 tools/token_sync/sync.py --check
 PYTHONPATH=tools python3 tools/generate_media_asset.py --check
 PYTHONPATH=tools python3 tools/generate_wallet_asset.py --check
+PYTHONPATH=tools python3 tools/generate_remote_asset.py --check
 ./scripts/build-native-host.sh
 ctest --test-dir tools/native-host/build --output-on-failure
 python3 -m unittest discover -s tests

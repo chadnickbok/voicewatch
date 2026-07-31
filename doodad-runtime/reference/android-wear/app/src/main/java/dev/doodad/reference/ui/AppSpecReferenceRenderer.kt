@@ -375,6 +375,10 @@ private fun SquarePatternSurface(
         SquareMediaPlayerSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.CameraRemote) {
+        SquareCameraRemoteSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.WalletQr) {
         SquareWalletQrSurface(children, context)
         return
@@ -1457,6 +1461,92 @@ private fun SquareWalletQrSurface(
                     .offset(x = 38.dp, y = 22.dp)
                     .size(108.dp),
             cornerRadiusDp = 12,
+        )
+        NutritionActionRow(
+            node = actions,
+            context = context,
+        )
+    }
+}
+
+@Composable
+private fun SquareCameraRemoteSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val viewfinder =
+        children.singleOrNull { it.kind == "image" }
+            ?: error("Square camera remote requires one package image")
+    val texts = children.filter { it.kind == "text" }
+    val contextLabel =
+        texts.singleOrNull { it.props.variant == "label" }
+            ?: error("Square camera remote requires one context label")
+    val value =
+        texts.singleOrNull { it.props.variant == "numeral" }
+            ?: error("Square camera remote requires one primary value")
+    val actions =
+        children.singleOrNull { it.kind == "row" }
+            ?: error("Square camera remote requires one action row")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        PackageImage(
+            node = viewfinder,
+            context = context,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(120.dp),
+            cornerRadiusDp = 24,
+        )
+        Text(
+            text = requireNotNull(contextLabel.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 12.dp, y = 4.dp)
+                    .width(160.dp)
+                    .height(20.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .background(
+                        MaterialTheme.colorScheme.background.copy(
+                            alpha = 0.78f,
+                        ),
+                    )
+                    .appSpecNode(
+                        contextLabel,
+                        context.evidenceCollector,
+                    )
+                    .padding(top = 2.dp),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = requireNotNull(value.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 20.dp, y = 40.dp)
+                    .width(144.dp)
+                    .height(48.dp)
+                    .clip(RoundedCornerShape(24.dp))
+                    .background(
+                        MaterialTheme.colorScheme.background.copy(
+                            alpha = 0.66f,
+                        ),
+                    )
+                    .appSpecNode(value, context.evidenceCollector)
+                    .padding(top = 5.dp),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.displaySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
         )
         NutritionActionRow(
             node = actions,

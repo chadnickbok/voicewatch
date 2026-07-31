@@ -3,10 +3,10 @@
 
 These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
-machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
-Calories, Workout, Voice Notes, Medication, Sensor Recorder, Sleep, Media,
-Navigation, Transit, Smart Home, Sports, Wallet, and Snake) live outside this
-generator.
+ machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
+ Calories, Workout, Voice Notes, Medication, Sensor Recorder, Sleep, Media,
+ Navigation, Transit, Smart Home, Sports, Wallet, Remote Control, and Snake)
+ live outside this generator.
 """
 
 from __future__ import annotations
@@ -39,41 +39,7 @@ def screen(
     }
 
 
-FLOWS: dict[str, dict[str, Any]] = {
-    "remote-control": {
-        "initial": ("remote-control.primary", "targets"),
-        "screens": {
-            "targets": screen(
-                "PHONE CONNECTED",
-                "3 controls",
-                "Find phone · Camera · Slides",
-                ("Camera shutter", "remote.camera", "pending"),
-                ("Disconnect", "remote.disconnect", "offline"),
-            ),
-            "pending": screen(
-                "CAMERA",
-                "Sending #73",
-                "Tap locked until acknowledgement",
-                ("Deliver ack", "remote.ack", "done"),
-                ("Lose link", "remote.disconnect", "offline"),
-            ),
-            "done": screen(
-                "CAMERA",
-                "Captured ✓",
-                "Command #73 applied exactly once",
-                ("Capture again", "remote.camera", "pending"),
-                ("Targets", "remote.targets", "targets"),
-            ),
-            "offline": screen(
-                "DISCONNECTED",
-                "No action sent",
-                "Retry ledger preserved · discovery active",
-                ("Reconnect", "remote.reconnect", "targets"),
-                ("Home", "remote.home", "home"),
-            ),
-        },
-    },
-}
+FLOWS: dict[str, dict[str, Any]] = {}
 
 BOUND_PROVIDERS: dict[str, tuple[str, str, str]] = {
     "calendar": ("request_calendar", "calendar.sync", "calendar"),

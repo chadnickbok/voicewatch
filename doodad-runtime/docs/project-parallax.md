@@ -80,7 +80,7 @@ review.
 | P6 | Deterministic batch report and comparison gates | Initial batch tooling complete |
 | P7 | Live parallel-rendering simulator | Not started |
 | P8 | Full decisive flows, variants, and motion | Trace corpus complete; dual renders pending |
-| P9 | Reviewed API 37 runtime authority | Eighteen apps captured on square API 37 AVD; suite pending |
+| P9 | Reviewed API 37 runtime authority | Nineteen apps captured on square API 37 AVD; suite pending |
 | P10 | CI, baseline approval, and hardware closure | Local lane partial |
 
 ## Current baseline
@@ -135,10 +135,10 @@ review.
 - [ ] LVGL still has root flex-axis, touch-target, typography, max-lines,
   token-evidence, and missing-glyph defects outside the completed calculator
   path.
-- [ ] 94 of 105 checkpoints have reviewed dual-renderer captures.
+- [ ] 101 of 105 checkpoints have reviewed dual-renderer captures.
 - [ ] The fast Compose lane still uses Robolectric SDK 33; API 37 runtime
-  baselines are reviewed for Timer through Sleep plus Media, Navigation, and
-  Transit, Smart Home, Sports, and Wallet, with Remote Control and Snake still
+  baselines are reviewed for Timer through Sleep plus Media, Navigation,
+  Transit, Smart Home, Sports, Wallet, and Remote Control, with Snake still
   pending.
 
 Measured results and the remediation order are in
@@ -532,11 +532,11 @@ incomplete.
 | `live_card` | live/status card plus Material progress | 2 documents | [x] |
 | `progress` | linear, circular, or segmented by semantic style | 2 documents | [x] |
 | `column` | semantic vertical container | 5 documents | [x] |
-| `row` | semantic horizontal container or action group | currently unused | [x] |
+| `row` | semantic horizontal container or action group | 57 documents | [x] |
 | `scroll` | `TransformingLazyColumn`/bounded scrolling pattern | 15 documents | [x] |
 | `toggle` | whole-row Wear Material toggle control | 4 documents | [x] |
 | `voice_orb` | Doodad-inspired system component using Material tokens | currently unused by suite | [x] |
-| `image` | deterministic decoded bitmap with semantic content description | 5 Media documents | [x] |
+| `image` | deterministic decoded bitmap with semantic content description | 11 Media, Wallet, and Remote Control documents | [x] |
 | `canvas` | renderer-neutral draw-command surface; Compose `Canvas` / LVGL `lv_canvas` | planned for Snake | [ ] |
 
 ### Pattern interpretation
@@ -597,7 +597,7 @@ terminal LVGL frame to a different Compose fixture.
 | 16 | Smart Home | [x] | [x] | [x] | [x] | [x] |
 | 17 | Sports | [x] | [x] | [x] | [x] | [x] |
 | 18 | Wallet | [x] | [x] | [x] | [x] | [x] |
-| 19 | Remote Control | [x] | [x] | [x] | [x] | [ ] |
+| 19 | Remote Control | [x] | [x] | [x] | [x] | [x] |
 | 20 | Snake / persistent microgame | [x] | [x] | [x] | [x] | [ ] |
 
 ### Required non-form workloads
@@ -605,10 +605,11 @@ terminal LVGL frame to a different Compose fixture.
 Two workloads deliberately exercise rendering paths outside ordinary Material
 components:
 
-- [x] **Package image asset path:** Media loads checked-in album artwork and
-  Wallet loads a real demo boarding code through content-addressed package
-  assets. Wasm scenes identify assets and presentation semantics; both
-  renderers independently validate and decode the same source bytes.
+- [x] **Package image asset path:** Media loads checked-in album artwork,
+  Wallet loads a real demo boarding code, and Remote Control loads an original
+  photo viewfinder through content-addressed package assets. Wasm scenes
+  identify assets and presentation semantics; both renderers independently
+  validate and decode the same source bytes.
   Acceptance requires matching crop/contain mode, bounds, color handling,
   fallback, missing-asset behavior, memory accounting, and RGB565 evidence.
 - [ ] **Direct canvas path:** Snake must render its board through a bounded
@@ -1334,6 +1335,18 @@ produce the twenty-row report.
   API 37 runtime evidence includes the real scan surface. The approved
   **Equivalent** disposition is recorded in
   [`reference/reviews/wallet.md`](../reference/reviews/wallet.md).
+- [x] Completed the Remote Control oracle redesign and decisive-flow review
+  across connected, camera-ready, countdown, disconnected/recovered, and
+  captured states. All five title-free documents select the structural
+  `camera_remote` pattern. Compose and LVGL independently validate and decode
+  the same content-addressed 230×150 RGB565LE DIMG photo, map it one-to-one to
+  the physical viewfinder, share exact normalized structure/bounds, two 48dp
+  controls, and no quality findings at all seven checkpoints. The first
+  comparison caught a missing lowercase display-font glyph and a truncated
+  reconnect label. Google, Apple, and real Pixel Watch camera references
+  supply the full-viewfinder and dominant-shutter hierarchy. The approved
+  **Equivalent** disposition is recorded in
+  [`reference/reviews/remote-control.md`](../reference/reviews/remote-control.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

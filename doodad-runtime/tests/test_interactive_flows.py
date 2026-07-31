@@ -88,12 +88,12 @@ FLOWS = {
         ("Review", "wallet.review.summary", "MISMATCH"),
     ],
     "remote-control": [
-        ("Trigger", "remote-control.targets.summary", "3 controls"),
-        ("Camera shutter", "remote-control.pending.summary", "Sending #73"),
-        ("Lose link", "remote-control.offline.summary", "No action sent"),
-        ("Reconnect", "remote-control.targets.summary", "3 controls"),
-        ("Camera shutter", "remote-control.pending.summary", "Sending #73"),
-        ("Deliver ack", "remote-control.done.summary", "Captured ✓"),
+        ("Camera", "remote-control.targets.summary", "1.0X"),
+        ("Shutter", "remote-control.pending.summary", "3"),
+        ("Offline", "remote-control.offline.summary", "OFFLINE"),
+        ("Retry", "remote-control.targets.summary", "1.0X"),
+        ("Shutter", "remote-control.pending.summary", "3"),
+        ("Now", "remote-control.done.summary", "CAPTURED"),
     ],
 }
 

@@ -6,6 +6,7 @@ set(M3E_LVGL_SOURCES
     src/assets/timer_value_font_28.c
     src/assets/live_action_font_32.c
     src/assets/media_art_asset.c
+    src/assets/remote_viewfinder_asset.c
     src/assets/wallet_qr_asset.c
     src/assets/image_assets.cpp
     src/assets/weather_font_55.c

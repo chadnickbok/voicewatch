@@ -66,6 +66,11 @@ android {
             assets.directories.add(
                 rootProject.file("../../apps/wallet/assets").absolutePath,
             )
+            assets.directories.add(
+                rootProject.file(
+                    "../../apps/remote-control/assets",
+                ).absolutePath,
+            )
         }
     }
 

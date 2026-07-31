@@ -526,6 +526,46 @@ bool is_media_player_document(const WireDocument& document) {
         rows == 1 && buttons == 2;
 }
 
+bool is_camera_remote_document(const WireDocument& document) {
+    if (document.node_count != 7 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    std::size_t images = 0;
+    std::size_t texts = 0;
+    std::size_t rows = 0;
+    std::size_t buttons = 0;
+    std::size_t row_index = Reconciler::kCapacity;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == 0) {
+            if (node.kind == ComponentKind::image) {
+                ++images;
+            } else if (node.kind == ComponentKind::text) {
+                ++texts;
+            } else if (node.kind == ComponentKind::row) {
+                ++rows;
+                row_index = index;
+                if (node.child_count != 2) return false;
+            } else {
+                return false;
+            }
+        }
+    }
+    if (row_index == Reconciler::kCapacity) return false;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == row_index &&
+            node.kind == ComponentKind::button) {
+            ++buttons;
+        } else if (node.parent_index != 0) {
+            return false;
+        }
+    }
+    return images == 1 && texts == 2 &&
+        rows == 1 && buttons == 2;
+}
+
 bool is_wallet_qr_document(const WireDocument& document) {
     if (document.node_count != 6 ||
         document.nodes[0].child_count != 3) {
@@ -822,6 +862,8 @@ bool Renderer::mount(
         is_live_action_detail_document(document);
     const auto media_player_document =
         is_media_player_document(document);
+    const auto camera_remote_document =
+        is_camera_remote_document(document);
     const auto wallet_qr_document =
         is_wallet_qr_document(document);
     const auto task_toggle_count =
@@ -847,7 +889,8 @@ bool Renderer::mount(
     objects[0] = factory.screen(root);
     document.nodes[0].mounted_object = root;
     if (voice_ready_document || live_action_detail_document ||
-        media_player_document || wallet_qr_document) {
+        media_player_document || camera_remote_document ||
+        wallet_qr_document) {
         lv_obj_remove_flag(root, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_scrollbar_mode(root, LV_SCROLLBAR_MODE_OFF);
     }
@@ -865,7 +908,8 @@ bool Renderer::mount(
                     nutrition_review_document ||
                     voice_ready_document ||
                     live_action_detail_document
-                    || media_player_document || wallet_qr_document
+                    || media_player_document || camera_remote_document ||
+                    wallet_qr_document
                 ? 0
                 : px(12),
         0);
@@ -918,6 +962,7 @@ bool Renderer::mount(
                     (nutrition_quick_add_document ||
                      nutrition_review_document ||
                      live_action_detail_document ||
+                     camera_remote_document ||
                      wallet_qr_document) &&
                     node.kind == ComponentKind::row) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
@@ -1307,6 +1352,43 @@ bool Renderer::mount(
                     lv_label_set_long_mode(
                         object,
                         is_title ? LV_LABEL_LONG_WRAP : LV_LABEL_LONG_DOT);
+                } else if (camera_remote_document) {
+                    const auto is_value = node.variant == 4;
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object,
+                        is_value ? px(144) : px(160),
+                        is_value ? px(48) : px(20));
+                    lv_obj_set_pos(
+                        object,
+                        is_value ? px(24) : px(16),
+                        is_value ? px(44) : px(8));
+                    lv_obj_set_style_radius(
+                        object,
+                        is_value ? px(24) : px(10),
+                        0);
+                    lv_obj_set_style_bg_color(
+                        object, lv_color_make(0x00, 0x00, 0x00), 0);
+                    lv_obj_set_style_bg_opa(
+                        object, is_value ? 168 : 199, 0);
+                    lv_obj_set_style_text_font(
+                        object,
+                        is_value
+                            ? &m3e_live_action_font_32
+                            : &lv_font_montserrat_18,
+                        0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        lv_color_make(0xF6, 0xED, 0xFF),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(
+                        object,
+                        is_value ? px(5) : px(2),
+                        0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
                 }
                 break;
             case ComponentKind::button:
@@ -1560,6 +1642,7 @@ bool Renderer::mount(
                     nutrition_quick_add_document ||
                     nutrition_review_document ||
                     live_action_detail_document ||
+                    camera_remote_document ||
                     wallet_qr_document) {
                     const auto ordinal =
                         kind_ordinal(
@@ -2615,9 +2698,13 @@ bool Renderer::mount(
                 ComponentFactory::reset(object);
                 lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                 lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
-                const auto image_size =
-                    wallet_qr_document ? px(108) : px(76);
-                lv_obj_set_size(object, image_size, image_size);
+                const auto image_width =
+                    camera_remote_document
+                        ? px(184)
+                        : wallet_qr_document ? px(108) : px(76);
+                const auto image_height =
+                    camera_remote_document ? px(120) : image_width;
+                lv_obj_set_size(object, image_width, image_height);
                 lv_obj_set_pos(
                     object,
                     wallet_qr_document ? px(42) : px(4),
@@ -2643,10 +2730,10 @@ bool Renderer::mount(
                         asset.height,
                         LV_COLOR_FORMAT_RGB565);
                     const auto width_scale =
-                        (image_size * 256 + asset.width - 1) /
+                        (image_width * 256 + asset.width - 1) /
                         asset.width;
                     const auto height_scale =
-                        (image_size * 256 + asset.height - 1) /
+                        (image_height * 256 + asset.height - 1) /
                         asset.height;
                     lv_image_set_scale(
                         canvas,

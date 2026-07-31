@@ -46,6 +46,7 @@ class AppSpecPatternTest {
             mapOf(
                 "countdown" to 1,
                 "calendar_agenda" to 5,
+                "camera_remote" to 5,
                 "empty" to 1,
                 "keypad" to 2,
                 "notification_stack" to 6,
@@ -60,7 +61,7 @@ class AppSpecPatternTest {
                 "workout_rest" to 1,
                 "workout_set" to 2,
                 "workout_summary" to 1,
-                "status_detail" to 6,
+                "status_detail" to 1,
                 "weather_hero" to 1,
             ),
             inventory
@@ -194,6 +195,17 @@ class AppSpecPatternTest {
                         mapOf(
                             "image" to 1,
                             "progress" to 1,
+                            "row" to 1,
+                            "button" to 2,
+                            "text" to 2,
+                        ),
+                        2,
+                        2,
+                    ),
+                AppSpecPattern.CameraRemote to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "image" to 1,
                             "row" to 1,
                             "button" to 2,
                             "text" to 2,

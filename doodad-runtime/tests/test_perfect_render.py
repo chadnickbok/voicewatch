@@ -82,6 +82,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                     "smart-home",
                     "sports",
                     "wallet",
+                    "remote-control",
                 }:
                     self.assertEqual(entry["review"]["status"], "approved")
                     self.assertEqual(

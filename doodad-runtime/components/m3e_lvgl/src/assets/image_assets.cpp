@@ -6,6 +6,9 @@ extern "C" {
 extern const char doodad_media_art_sha256[];
 extern const std::uint8_t doodad_media_art_dimg[];
 extern const std::size_t doodad_media_art_dimg_size;
+extern const char doodad_remote_viewfinder_sha256[];
+extern const std::uint8_t doodad_remote_viewfinder_dimg[];
+extern const std::size_t doodad_remote_viewfinder_dimg_size;
 extern const char doodad_wallet_qr_sha256[];
 extern const std::uint8_t doodad_wallet_qr_dimg[];
 extern const std::size_t doodad_wallet_qr_dimg_size;
@@ -28,6 +31,11 @@ const EmbeddedAsset kAssets[] = {
         doodad_media_art_sha256,
         doodad_media_art_dimg,
         doodad_media_art_dimg_size,
+    },
+    {
+        doodad_remote_viewfinder_sha256,
+        doodad_remote_viewfinder_dimg,
+        doodad_remote_viewfinder_dimg_size,
     },
     {
         doodad_wallet_qr_sha256,

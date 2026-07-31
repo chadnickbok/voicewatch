@@ -42,6 +42,16 @@ int main() {
         assert(wallet_qr.height == 135);
         assert(wallet_qr.decoded_bytes == 135U * 135U * 2U);
 
+        ImageAssetView remote_viewfinder{};
+        assert(resolve_image_asset(
+            "777d468ea847318acd22e2eb79f108e75e2674448e8b53fa8fba0bc08fd7b522",
+            remote_viewfinder));
+        assert(remote_viewfinder.width == 230);
+        assert(remote_viewfinder.height == 150);
+        assert(
+            remote_viewfinder.decoded_bytes ==
+            230U * 150U * 2U);
+
         ImageAssetView missing{};
         assert(!resolve_image_asset(
             "0000000000000000000000000000000000000000000000000000000000000000",

@@ -116,6 +116,13 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         kinds["image"] == 1
         and kinds["row"] == 1
         and kinds["button"] == 2
+        and kinds["text"] == 2
+    ):
+        return "camera_remote"
+    if (
+        kinds["image"] == 1
+        and kinds["row"] == 1
+        and kinds["button"] == 2
         and kinds["text"] == 1
     ):
         return "wallet_qr"
