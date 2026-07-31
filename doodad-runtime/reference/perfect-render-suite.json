@@ -348,7 +348,7 @@
       "app_slug": "smart-home",
       "trace": "traces/smart-home/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "63882171555f5107b44aab47c234ca69bf5bad6966d58949ce6a1c781c1b20db",
+      "snapshot_sha256": "db6958f2834d872b998aea93a51ad33078d058a4ccbfa4b0b160bc0f18259270",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -361,7 +361,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all six accepted states; both renderers pass 48dp target and quality checks. Direct comparison repaired long-label truncation and added a regression-tested LVGL percent glyph. See reference/reviews/smart-home.md."
       }
     },
     {

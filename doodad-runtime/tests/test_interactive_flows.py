@@ -68,11 +68,11 @@ FLOWS = {
         ("Alert", "transit.alert.summary", "6 MIN"),
     ],
     "smart-home": [
-        ("Toggle light", "smart-home.light.summary", "Light on · 72%"),
-        ("Fail next command", "smart-home.rollback.summary", "Light restored"),
-        ("Retry", "smart-home.light.summary", "Light on · 72%"),
-        ("Front door", "smart-home.confirm.summary", "Unlock front door?"),
-        ("Confirm unlock", "smart-home.unlocked.summary", "Unlocked ✓"),
+        ("Light", "smart-home.light.summary", "72%"),
+        ("Turn off", "smart-home.rollback.summary", "72%"),
+        ("Retry", "smart-home.light.summary", "72%"),
+        ("Door", "smart-home.confirm.summary", "UNLOCK"),
+        ("Unlock", "smart-home.unlocked.summary", "UNLOCKED"),
     ],
     "sports": [
         ("Follow game", "sports.live.summary", "SF 3 · LA 2"),

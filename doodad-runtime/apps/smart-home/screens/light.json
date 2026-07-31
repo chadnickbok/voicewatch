@@ -5,71 +5,83 @@
     "id": "smart-home.light",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "smart-home.light.heading",
+          "id": "smart-home.light.context",
           "type": "text",
           "props": {
-            "text": "LIVING ROOM",
+            "text": "LIVING / LIGHT",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "smart-home.light.summary",
           "type": "text",
           "props": {
-            "text": "Light on · 72%",
+            "text": "72%",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "LIVING ROOM",
-            "value": "Light on · 72%"
+            "label": "Living room light brightness",
+            "value": "72 percent and on"
           }
         },
         {
           "id": "smart-home.light.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Optimistic update · ack #18",
-            "tone": "neutral"
+            "title": "LIGHT ON / WARM",
+            "body": "Updated / command 18",
+            "progress": 0.72,
+            "tone": "primary"
           }
         },
         {
-          "id": "smart-home.light.primary",
-          "type": "button",
+          "id": "smart-home.light.actions",
+          "type": "row",
           "props": {
-            "label": "Fail next command",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.fail"
-          },
-          "semantics": {
-            "label": "Fail next command"
-          }
-        },
-        {
-          "id": "smart-home.light.secondary",
-          "type": "button",
-          "props": {
-            "label": "Front door",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.lock"
-          },
-          "semantics": {
-            "label": "Front door"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "smart-home.light.primary",
+                "type": "button",
+                "props": {
+                  "label": "Turn off",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.fail"
+                },
+                "semantics": {
+                  "label": "Turn off living room light"
+                }
+              },
+              {
+                "id": "smart-home.light.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Door",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.lock"
+                },
+                "semantics": {
+                  "label": "Review front door lock"
+                }
+              }
+            ]
           }
         }
       ]

@@ -5,7 +5,7 @@ These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
 machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
 Calories, Workout, Voice Notes, Medication, Sensor Recorder, Sleep, Media,
-Navigation, Transit, and Snake) live outside this generator.
+Navigation, Transit, Smart Home, and Snake) live outside this generator.
 """
 
 from __future__ import annotations
@@ -39,39 +39,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "smart-home": {
-        "initial": ("smart-home.primary", "light"),
-        "screens": {
-            "light": screen(
-                "LIVING ROOM",
-                "Light on · 72%",
-                "Optimistic update · ack #18",
-                ("Fail next command", "home.fail", "rollback"),
-                ("Front door", "home.lock", "confirm"),
-            ),
-            "rollback": screen(
-                "COMMAND FAILED",
-                "Light restored",
-                "Provider rejected · rolled back to 72%",
-                ("Retry", "home.retry", "light"),
-                ("Front door", "home.lock", "confirm"),
-            ),
-            "confirm": screen(
-                "TRUSTED REVIEW",
-                "Unlock front door?",
-                "Hazardous action · identity required",
-                ("Confirm unlock", "home.confirm", "unlocked"),
-                ("Cancel", "home.cancel", "light"),
-            ),
-            "unlocked": screen(
-                "FRONT DOOR",
-                "Unlocked ✓",
-                "Acknowledged once · audit #204",
-                ("Lock again", "home.relock", "light"),
-                ("Home", "home.home", "home"),
-            ),
-        },
-    },
     "sports": {
         "initial": ("sports.primary", "live"),
         "screens": {
@@ -183,7 +150,6 @@ BOUND_PROVIDERS: dict[str, tuple[str, str, str]] = {
     ),
     "sensor-recorder": ("request_sensor", "sensor.record", "sensor"),
     "media": ("request_media", "media.remote", "media"),
-    "smart-home": ("request_home", "home.control", "home"),
     "sports": ("request_sports", "sports.read", "sports"),
     "wallet": ("request_wallet", "wallet.read", "wallet"),
     "remote-control": (

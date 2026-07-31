@@ -255,6 +255,13 @@ int main() {
         '.',
         '3'));
     assert(decimal_glyph.adv_w > 0);
+    lv_font_glyph_dsc_t percent_glyph{};
+    assert(lv_font_get_glyph_dsc(
+        &m3e_live_action_font_32,
+        &percent_glyph,
+        '%',
+        '2'));
+    assert(percent_glyph.adv_w > 0);
 
     const auto expressive = motion_spec(MotionToken::spatial_default);
     assert(expressive.duration_ms == 350);

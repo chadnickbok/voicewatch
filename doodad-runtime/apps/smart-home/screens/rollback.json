@@ -5,71 +5,83 @@
     "id": "smart-home.rollback",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "smart-home.rollback.heading",
+          "id": "smart-home.rollback.context",
           "type": "text",
           "props": {
-            "text": "COMMAND FAILED",
+            "text": "LIGHT / FAILED",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "smart-home.rollback.summary",
           "type": "text",
           "props": {
-            "text": "Light restored",
+            "text": "72%",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "COMMAND FAILED",
-            "value": "Light restored"
+            "label": "Restored living room light brightness",
+            "value": "72 percent and still on"
           }
         },
         {
           "id": "smart-home.rollback.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Provider rejected · rolled back to 72%",
-            "tone": "neutral"
+            "title": "FAILED / RESTORED",
+            "body": "Provider rejected / still on",
+            "progress": 0.72,
+            "tone": "primary"
           }
         },
         {
-          "id": "smart-home.rollback.primary",
-          "type": "button",
+          "id": "smart-home.rollback.actions",
+          "type": "row",
           "props": {
-            "label": "Retry",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.retry"
-          },
-          "semantics": {
-            "label": "Retry"
-          }
-        },
-        {
-          "id": "smart-home.rollback.secondary",
-          "type": "button",
-          "props": {
-            "label": "Front door",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.lock"
-          },
-          "semantics": {
-            "label": "Front door"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "smart-home.rollback.primary",
+                "type": "button",
+                "props": {
+                  "label": "Retry",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.retry"
+                },
+                "semantics": {
+                  "label": "Retry light command"
+                }
+              },
+              {
+                "id": "smart-home.rollback.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Door",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.lock"
+                },
+                "semantics": {
+                  "label": "Review front door lock"
+                }
+              }
+            ]
           }
         }
       ]
