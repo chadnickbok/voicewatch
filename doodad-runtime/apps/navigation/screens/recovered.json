@@ -5,71 +5,83 @@
     "id": "navigation.recovered",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "navigation.recovered.heading",
+          "id": "navigation.recovered.context",
           "type": "text",
           "props": {
-            "text": "ROUTE RECOVERED",
+            "text": "GPS BACK / ROUTE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "navigation.recovered.summary",
           "type": "text",
           "props": {
-            "text": "Right · 120 ft",
+            "text": "120 FT",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "ROUTE RECOVERED",
-            "value": "Right · 120 ft"
+            "label": "Recovered distance to the next turn",
+            "value": "120 feet"
           }
         },
         {
           "id": "navigation.recovered.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Progress monotonic · no backward jump",
-            "tone": "neutral"
+            "title": "TURN RIGHT / MARKET",
+            "body": "Progress kept / no jump",
+            "progress": 0.42,
+            "tone": "primary"
           }
         },
         {
-          "id": "navigation.recovered.primary",
-          "type": "button",
+          "id": "navigation.recovered.actions",
+          "type": "row",
           "props": {
-            "label": "Next turn",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.next"
-          },
-          "semantics": {
-            "label": "Next turn"
-          }
-        },
-        {
-          "id": "navigation.recovered.secondary",
-          "type": "button",
-          "props": {
-            "label": "Home",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.home"
-          },
-          "semantics": {
-            "label": "Home"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "navigation.recovered.primary",
+                "type": "button",
+                "props": {
+                  "label": "Next",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.next"
+                },
+                "semantics": {
+                  "label": "Advance to the next turn fixture"
+                }
+              },
+              {
+                "id": "navigation.recovered.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Home",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.home"
+                },
+                "semantics": {
+                  "label": "Return to the route preview"
+                }
+              }
+            ]
           }
         }
       ]

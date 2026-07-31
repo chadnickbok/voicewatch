@@ -5,71 +5,83 @@
     "id": "navigation.cached",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "navigation.cached.heading",
+          "id": "navigation.cached.context",
           "type": "text",
           "props": {
-            "text": "GPS UNAVAILABLE",
+            "text": "GPS LOST / CACHE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "navigation.cached.summary",
           "type": "text",
           "props": {
-            "text": "Continue 0.3 mi",
+            "text": "0.3 MI",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "GPS UNAVAILABLE",
-            "value": "Continue 0.3 mi"
+            "label": "Distance to continue on the cached route",
+            "value": "0.3 miles"
           }
         },
         {
           "id": "navigation.cached.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Using cached route + compass",
-            "tone": "neutral"
+            "title": "CONTINUE / MARKET",
+            "body": "Compass / route cached",
+            "progress": 0.48,
+            "tone": "primary"
           }
         },
         {
-          "id": "navigation.cached.primary",
-          "type": "button",
+          "id": "navigation.cached.actions",
+          "type": "row",
           "props": {
-            "label": "Recover GPS",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.recover"
-          },
-          "semantics": {
-            "label": "Recover GPS"
-          }
-        },
-        {
-          "id": "navigation.cached.secondary",
-          "type": "button",
-          "props": {
-            "label": "Overview",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.overview"
-          },
-          "semantics": {
-            "label": "Overview"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "navigation.cached.primary",
+                "type": "button",
+                "props": {
+                  "label": "Recover",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.recover"
+                },
+                "semantics": {
+                  "label": "Recover GPS guidance"
+                }
+              },
+              {
+                "id": "navigation.cached.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Route",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.overview"
+                },
+                "semantics": {
+                  "label": "View cached route overview"
+                }
+              }
+            ]
           }
         }
       ]

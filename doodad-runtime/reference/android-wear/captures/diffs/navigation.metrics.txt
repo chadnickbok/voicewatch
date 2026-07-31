@@ -1,0 +1,18 @@
+Navigation resting comparison
+
+SceneSnapshot SHA-256:
+0c092e2f64b5f6ec2fe2f44d93664118c1194f59ce72d117cc5750a37ba4bff0
+
+LVGL RGB565 SHA-256:
+8288c900898f884d41fd1aad175af2ea8d56cfb4fdcea183b08f1b126557b515
+
+Reference nodes: 7
+Product nodes: 7
+Compared nodes: 7
+Structured mismatches: 0
+Quality findings: 0
+Minimum touch target: 48dp
+
+Changed pixels: 8073 / 57600 (14.0156%)
+MAE: 15.4970
+RMSE: 49.2916

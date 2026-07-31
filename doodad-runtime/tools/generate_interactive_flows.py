@@ -5,7 +5,7 @@ These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
 machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
 Calories, Workout, Voice Notes, Medication, Sensor Recorder, Sleep, Media,
-and Snake) live outside this generator.
+Navigation, and Snake) live outside this generator.
 """
 
 from __future__ import annotations
@@ -39,39 +39,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "navigation": {
-        "initial": ("navigation.primary", "maneuver"),
-        "screens": {
-            "maneuver": screen(
-                "NEXT TURN",
-                "Right · 200 ft",
-                "Market St · haptic in 8 sec",
-                ("Lose location", "navigation.lose", "cached"),
-                ("Route overview", "navigation.overview", "overview"),
-            ),
-            "overview": screen(
-                "ROUTE",
-                "1.4 mi · 8 min",
-                "3 maneuvers cached · north-up",
-                ("Continue", "navigation.continue", "maneuver"),
-                ("Lose location", "navigation.lose", "cached"),
-            ),
-            "cached": screen(
-                "GPS UNAVAILABLE",
-                "Continue 0.3 mi",
-                "Using cached route + compass",
-                ("Recover GPS", "navigation.recover", "recovered"),
-                ("Overview", "navigation.overview", "overview"),
-            ),
-            "recovered": screen(
-                "ROUTE RECOVERED",
-                "Right · 120 ft",
-                "Progress monotonic · no backward jump",
-                ("Next turn", "navigation.next", "maneuver"),
-                ("Home", "navigation.home", "home"),
-            ),
-        },
-    },
     "transit": {
         "initial": ("transit.primary", "departures"),
         "screens": {
@@ -249,11 +216,6 @@ BOUND_PROVIDERS: dict[str, tuple[str, str, str]] = {
     ),
     "sensor-recorder": ("request_sensor", "sensor.record", "sensor"),
     "media": ("request_media", "media.remote", "media"),
-    "navigation": (
-        "request_navigation",
-        "navigation.route",
-        "navigation",
-    ),
     "transit": ("request_transit", "transit.read", "transit"),
     "smart-home": ("request_home", "home.control", "home"),
     "sports": ("request_sports", "sports.read", "sports"),

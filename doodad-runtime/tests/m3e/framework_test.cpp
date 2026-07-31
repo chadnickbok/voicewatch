@@ -19,6 +19,8 @@
 #include "m3e/theme/resolved_theme.hpp"
 #include "m3e/theme/style_registry.hpp"
 
+LV_FONT_DECLARE(m3e_live_action_font_32);
+
 int main() {
     using namespace m3e;
 
@@ -246,6 +248,13 @@ int main() {
     assert(spacing_dp(SpacingRole::lg) == 16);
     assert(state_opacity(StateKind::pressed) == 31);
     assert(state_opacity(StateKind::disabled) == 97);
+    lv_font_glyph_dsc_t decimal_glyph{};
+    assert(lv_font_get_glyph_dsc(
+        &m3e_live_action_font_32,
+        &decimal_glyph,
+        '.',
+        '3'));
+    assert(decimal_glyph.adv_w > 0);
 
     const auto expressive = motion_spec(MotionToken::spatial_default);
     assert(expressive.duration_ms == 350);

@@ -5,71 +5,83 @@
     "id": "navigation.overview",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "navigation.overview.heading",
+          "id": "navigation.overview.context",
           "type": "text",
           "props": {
-            "text": "ROUTE",
+            "text": "ROUTE / NORTH-UP",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "navigation.overview.summary",
           "type": "text",
           "props": {
-            "text": "1.4 mi · 8 min",
+            "text": "1.4 MI",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "ROUTE",
-            "value": "1.4 mi · 8 min"
+            "label": "Remaining route distance",
+            "value": "1.4 miles"
           }
         },
         {
           "id": "navigation.overview.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "3 maneuvers cached · north-up",
-            "tone": "neutral"
+            "title": "ARRIVE 10:18 / 8 MIN",
+            "body": "3 turns / route saved offline",
+            "progress": 0.15,
+            "tone": "primary"
           }
         },
         {
-          "id": "navigation.overview.primary",
-          "type": "button",
+          "id": "navigation.overview.actions",
+          "type": "row",
           "props": {
-            "label": "Continue",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.continue"
-          },
-          "semantics": {
-            "label": "Continue"
-          }
-        },
-        {
-          "id": "navigation.overview.secondary",
-          "type": "button",
-          "props": {
-            "label": "Lose location",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.lose"
-          },
-          "semantics": {
-            "label": "Lose location"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "navigation.overview.primary",
+                "type": "button",
+                "props": {
+                  "label": "Guide",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.continue"
+                },
+                "semantics": {
+                  "label": "Continue turn-by-turn guidance"
+                }
+              },
+              {
+                "id": "navigation.overview.secondary",
+                "type": "button",
+                "props": {
+                  "label": "GPS off",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.lose"
+                },
+                "semantics": {
+                  "label": "Simulate losing GPS"
+                }
+              }
+            ]
           }
         }
       ]

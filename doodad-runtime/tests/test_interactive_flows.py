@@ -56,10 +56,10 @@ FLOWS = {
         ("Controls", "media.playing.summary", "Midnight City"),
     ],
     "navigation": [
-        ("Start route", "navigation.maneuver.summary", "Right · 200 ft"),
-        ("Lose location", "navigation.cached.summary", "Continue 0.3 mi"),
-        ("Recover GPS", "navigation.recovered.summary", "Right · 120 ft"),
-        ("Next turn", "navigation.maneuver.summary", "Right · 200 ft"),
+        ("Start", "navigation.maneuver.summary", "200 FT"),
+        ("GPS off", "navigation.cached.summary", "0.3 MI"),
+        ("Recover", "navigation.recovered.summary", "120 FT"),
+        ("Next", "navigation.maneuver.summary", "200 FT"),
     ],
     "transit": [
         ("Refresh", "transit.departures.summary", "N · 3 min"),

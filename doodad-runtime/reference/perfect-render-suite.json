@@ -302,7 +302,7 @@
       "app_slug": "navigation",
       "trace": "traces/navigation/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "abaddf49fff5d64d58ecab274e5c5fe1714f68d7721aab08672669b700976129",
+      "snapshot_sha256": "0c092e2f64b5f6ec2fe2f44d93664118c1194f59ce72d117cc5750a37ba4bff0",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -315,7 +315,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all four accepted states; both renderers pass 48dp target and quality checks. The comparison also repaired and regression-tested the shared LVGL live-action decimal glyph. See reference/reviews/navigation.md."
       }
     },
     {
