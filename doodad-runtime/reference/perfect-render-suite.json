@@ -394,7 +394,7 @@
       "app_slug": "wallet",
       "trace": "traces/wallet/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "198a9fa8680275699b81d37aa3c535d274df9fe6d08cf35cf6a13a55b88ed1db",
+      "snapshot_sha256": "2a5225da6cd8c20cad745349d728c35c9827ec6ef98ed6d9dcc94a6842d127a7",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -407,7 +407,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all six accepted states; both renderers pass 48dp target and quality checks. The real package QR has a 5.4045% raster delta. See reference/reviews/wallet.md."
       }
     },
     {

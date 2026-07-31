@@ -375,6 +375,10 @@ private fun SquarePatternSurface(
         SquareMediaPlayerSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.WalletQr) {
+        SquareWalletQrSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.NotificationStack) {
         SquareNotificationStackSurface(children, context)
         return
@@ -1421,6 +1425,47 @@ private fun SquareMediaPlayerSurface(
 }
 
 @Composable
+private fun SquareWalletQrSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val heading =
+        children.singleOrNull { it.kind == "text" }
+            ?: error("Square wallet QR requires one context label")
+    val code =
+        children.singleOrNull { it.kind == "image" }
+            ?: error("Square wallet QR requires one package image")
+    val actions =
+        children.singleOrNull { it.kind == "row" }
+            ?: error("Square wallet QR requires one action row")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        NutritionContextLabel(
+            node = heading,
+            context = context,
+        )
+        PackageImage(
+            node = code,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(x = 38.dp, y = 22.dp)
+                    .size(108.dp),
+            cornerRadiusDp = 12,
+        )
+        NutritionActionRow(
+            node = actions,
+            context = context,
+        )
+    }
+}
+
+@Composable
 private fun MediaActionButton(
     node: SceneNode,
     context: RenderContext,
@@ -2248,6 +2293,7 @@ private fun PackageImage(
     node: SceneNode,
     context: RenderContext,
     modifier: Modifier,
+    cornerRadiusDp: Int = 24,
 ) {
     val assetHash = requireNotNull(node.props.primaryText)
     val assetManager = LocalContext.current.assets
@@ -2257,7 +2303,7 @@ private fun PackageImage(
         }
     val imageModifier =
         modifier
-            .clip(RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(cornerRadiusDp.dp))
             .appSpecNode(node, context.evidenceCollector)
     if (bitmap != null) {
         Image(

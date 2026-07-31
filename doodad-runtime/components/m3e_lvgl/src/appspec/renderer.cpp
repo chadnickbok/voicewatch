@@ -526,6 +526,46 @@ bool is_media_player_document(const WireDocument& document) {
         rows == 1 && buttons == 2;
 }
 
+bool is_wallet_qr_document(const WireDocument& document) {
+    if (document.node_count != 6 ||
+        document.nodes[0].child_count != 3) {
+        return false;
+    }
+    std::size_t images = 0;
+    std::size_t texts = 0;
+    std::size_t rows = 0;
+    std::size_t buttons = 0;
+    std::size_t row_index = Reconciler::kCapacity;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == 0) {
+            if (node.kind == ComponentKind::image) {
+                ++images;
+            } else if (node.kind == ComponentKind::text) {
+                ++texts;
+            } else if (node.kind == ComponentKind::row) {
+                ++rows;
+                row_index = index;
+                if (node.child_count != 2) return false;
+            } else {
+                return false;
+            }
+        }
+    }
+    if (row_index == Reconciler::kCapacity) return false;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == row_index &&
+            node.kind == ComponentKind::button) {
+            ++buttons;
+        } else if (node.parent_index != 0) {
+            return false;
+        }
+    }
+    return images == 1 && texts == 1 &&
+        rows == 1 && buttons == 2;
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -782,6 +822,8 @@ bool Renderer::mount(
         is_live_action_detail_document(document);
     const auto media_player_document =
         is_media_player_document(document);
+    const auto wallet_qr_document =
+        is_wallet_qr_document(document);
     const auto task_toggle_count =
         task_list_document
             ? count_kind(document, ComponentKind::toggle)
@@ -805,7 +847,7 @@ bool Renderer::mount(
     objects[0] = factory.screen(root);
     document.nodes[0].mounted_object = root;
     if (voice_ready_document || live_action_detail_document ||
-        media_player_document) {
+        media_player_document || wallet_qr_document) {
         lv_obj_remove_flag(root, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_scrollbar_mode(root, LV_SCROLLBAR_MODE_OFF);
     }
@@ -823,7 +865,7 @@ bool Renderer::mount(
                     nutrition_review_document ||
                     voice_ready_document ||
                     live_action_detail_document
-                    || media_player_document
+                    || media_player_document || wallet_qr_document
                 ? 0
                 : px(12),
         0);
@@ -875,7 +917,8 @@ bool Renderer::mount(
                 } else if (
                     (nutrition_quick_add_document ||
                      nutrition_review_document ||
-                    live_action_detail_document) &&
+                     live_action_detail_document ||
+                     wallet_qr_document) &&
                     node.kind == ComponentKind::row) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(48));
@@ -1205,7 +1248,8 @@ bool Renderer::mount(
                     lv_label_set_long_mode(
                         object, LV_LABEL_LONG_DOT);
                 } else if (voice_ready_document ||
-                           live_action_detail_document) {
+                           live_action_detail_document ||
+                           wallet_qr_document) {
                     const auto is_value =
                         live_action_detail_document && node.variant == 4;
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
@@ -1515,7 +1559,8 @@ bool Renderer::mount(
                 } else if (
                     nutrition_quick_add_document ||
                     nutrition_review_document ||
-                    live_action_detail_document) {
+                    live_action_detail_document ||
+                    wallet_qr_document) {
                     const auto ordinal =
                         kind_ordinal(
                             document, index, ComponentKind::button);
@@ -2570,9 +2615,17 @@ bool Renderer::mount(
                 ComponentFactory::reset(object);
                 lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                 lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
-                lv_obj_set_size(object, px(76), px(76));
-                lv_obj_set_pos(object, px(4), px(4));
-                lv_obj_set_style_radius(object, px(24), 0);
+                const auto image_size =
+                    wallet_qr_document ? px(108) : px(76);
+                lv_obj_set_size(object, image_size, image_size);
+                lv_obj_set_pos(
+                    object,
+                    wallet_qr_document ? px(42) : px(4),
+                    wallet_qr_document ? px(26) : px(4));
+                lv_obj_set_style_radius(
+                    object,
+                    wallet_qr_document ? px(12) : px(24),
+                    0);
                 lv_obj_set_style_clip_corner(object, true, 0);
                 lv_obj_set_style_bg_color(
                     object,
@@ -2590,10 +2643,10 @@ bool Renderer::mount(
                         asset.height,
                         LV_COLOR_FORMAT_RGB565);
                     const auto width_scale =
-                        (px(76) * 256 + asset.width - 1) /
+                        (image_size * 256 + asset.width - 1) /
                         asset.width;
                     const auto height_scale =
-                        (px(76) * 256 + asset.height - 1) /
+                        (image_size * 256 + asset.height - 1) /
                         asset.height;
                     lv_image_set_scale(
                         canvas,

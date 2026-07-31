@@ -131,14 +131,14 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 140,
-      "card": 31,
+      "button": 141,
+      "card": 26,
       "column": 5,
-      "image": 5,
+      "image": 6,
       "keypad": 2,
-      "live_card": 42,
+      "live_card": 46,
       "progress": 7,
-      "row": 47,
+      "row": 52,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
@@ -148,30 +148,30 @@
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 140,
-      "button.size": 140,
-      "button.tone": 140,
-      "button.variant": 140,
-      "card.body": 31,
-      "card.title": 31,
-      "card.tone": 31,
+      "button.label": 141,
+      "button.size": 141,
+      "button.tone": 141,
+      "button.variant": 141,
+      "card.body": 26,
+      "card.title": 26,
+      "card.tone": 26,
       "column.align": 5,
       "column.gap": 5,
-      "image.asset": 5,
-      "image.fit": 5,
+      "image.asset": 6,
+      "image.fit": 6,
       "keypad.columns": 2,
       "keypad.keys": 2,
-      "live_card.body": 42,
-      "live_card.progress": 39,
-      "live_card.title": 42,
-      "live_card.tone": 42,
+      "live_card.body": 46,
+      "live_card.progress": 43,
+      "live_card.title": 46,
+      "live_card.tone": 46,
       "progress.label": 7,
       "progress.maximum": 7,
       "progress.style": 7,
       "progress.tone": 7,
       "progress.value": 7,
-      "row.align": 47,
-      "row.gap": 47,
+      "row.align": 52,
+      "row.gap": 52,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -182,7 +182,7 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 137,
+      "text.align": 141,
       "text.max_lines": 147,
       "text.style": 147,
       "text.text": 147,
@@ -194,50 +194,50 @@
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 148,
+      "tap": 149,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 254,
-      "value": 81
+      "label": 255,
+      "value": 80
     },
     "token_values": {
       "variant": {
         "filled": 71,
-        "outlined": 8,
+        "outlined": 4,
         "text": 4,
-        "tonal": 57
+        "tonal": 62
       },
       "style": {
         "body": 3,
         "caption": 6,
         "circular": 1,
-        "label": 72,
+        "label": 73,
         "linear": 6,
-        "numeral": 56,
+        "numeral": 55,
         "title": 10
       },
       "tone": {
-        "error": 1,
-        "neutral": 96,
-        "primary": 130,
+        "error": 3,
+        "neutral": 92,
+        "primary": 132,
         "tertiary": 2
       },
       "size": {
-        "default": 130,
+        "default": 131,
         "large": 10
       },
       "gap": {
         "lg": 1,
-        "none": 72,
-        "sm": 25,
-        "xs": 52
+        "none": 77,
+        "sm": 20,
+        "xs": 57
       },
       "align": {
-        "center": 126,
+        "center": 130,
         "end": 1,
         "start": 11,
-        "stretch": 149
+        "stretch": 154
       },
       "state": {
         "idle": 1
@@ -248,15 +248,16 @@
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
-      "live_action_detail": 39,
+      "live_action_detail": 43,
       "media_player": 5,
       "notification_stack": 6,
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 11,
+      "status_detail": 6,
       "task_list": 4,
       "voice_ready": 1,
+      "wallet_qr": 1,
       "weather_hero": 1,
       "workout_rest": 1,
       "workout_set": 2,
@@ -486,10 +487,11 @@
         "mounts": 6,
         "command_batches": 0,
         "checkpoints": 6,
-        "unique_snapshots": 4,
+        "unique_snapshots": 5,
         "screen_ids": [
           "wallet.home",
           "wallet.pass",
+          "wallet.qr",
           "wallet.rejected",
           "wallet.review"
         ]
@@ -522,7 +524,7 @@
     },
     "accepted_operations": 112,
     "checkpoints": 105,
-    "unique_snapshot_hashes": 95
+    "unique_snapshot_hashes": 96
   },
   "sources": [
     {
@@ -811,23 +813,23 @@
     },
     {
       "path": "apps/wallet/appspec.json",
-      "sha256": "43c5a90e02b9ed0e3cc59562dbaa744f4a30d8fd06d5735360698c790f8c1776"
+      "sha256": "3c8491a8b309debb9fc7d4c832a855396fa4716c255c00e3e280f9650c80d3e3"
     },
     {
       "path": "apps/wallet/screens/pass.json",
-      "sha256": "038f0751e998f3d2cd6ab8b971b2bea30f7ff30d77f4092a3bbeadaf3ecb753f"
+      "sha256": "8d6741642c5275f22efb1eb059682887a31f96528cc3cf92ebad2da638df6ed3"
     },
     {
       "path": "apps/wallet/screens/qr.json",
-      "sha256": "a149f44eb9c56e4010501db05102d57ff9a8826a296ee55b01a7914fdb1a1b1e"
+      "sha256": "968dc1e83b548f69fe2c5aec57f53cdec869bebca652a448dcef0e956c2a681b"
     },
     {
       "path": "apps/wallet/screens/rejected.json",
-      "sha256": "4acb4b61fb078cb622e689aa8c9a673d35f5b03b24cd9999145cde906d560e67"
+      "sha256": "fbf8de412a63a8ef716da858b64d8a33018fa66e1764f4c6617bbe672ee65df9"
     },
     {
       "path": "apps/wallet/screens/review.json",
-      "sha256": "387b7f36fffb52b5b258f9a74513c2803083ed56fbd2816423e0e480a6a5256c"
+      "sha256": "c86704a622970ec494933cc6403712a9534ed2a3c9f7442897c4619659222ae4"
     },
     {
       "path": "apps/remote-control/appspec.json",
@@ -858,5 +860,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "7c4fd1490d486cead71ca572ede8aed514bf88cb04acedf07ae6a673a2924221"
+  "sources_sha256": "97b635246c78c5ef1fc6286e8b57ad613cf326584d6507bc5c4d925014cf4702"
 }

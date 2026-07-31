@@ -81,11 +81,11 @@ FLOWS = {
         ("Plays", "sports.timeline.summary", "5 RUNS"),
     ],
     "wallet": [
-        ("Show pass", "wallet.pass.summary", "BOARDING 8:10"),
-        ("Test bad update", "wallet.rejected.summary", "Signature invalid"),
-        ("Review details", "wallet.review.summary", "Issuer mismatch"),
-        ("Reject", "wallet.rejected.summary", "Signature invalid"),
-        ("Use safe pass", "wallet.pass.summary", "BOARDING 8:10"),
+        ("Code", "wallet.qr.context", "SFO / JFK / B12"),
+        ("Test", "wallet.rejected.summary", "SAFE"),
+        ("Safe", "wallet.pass.summary", "8:10"),
+        ("Test", "wallet.rejected.summary", "SAFE"),
+        ("Review", "wallet.review.summary", "MISMATCH"),
     ],
     "remote-control": [
         ("Trigger", "remote-control.targets.summary", "3 controls"),

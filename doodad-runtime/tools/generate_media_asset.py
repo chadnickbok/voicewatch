@@ -16,7 +16,7 @@ from doodad_cli.parallax_image import write_png_rgb888
 ROOT = Path(__file__).resolve().parents[1]
 ASSET_DIRECTORY = ROOT / "apps" / "media" / "assets"
 PREVIEW = ASSET_DIRECTORY / "night-drive.png"
-MANIFEST = ASSET_DIRECTORY / "manifest.json"
+MANIFEST = ASSET_DIRECTORY / "media-assets.json"
 EMBEDDED_C = (
     ROOT
     / "components"

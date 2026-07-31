@@ -5,71 +5,83 @@
     "id": "wallet.pass",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "wallet.pass.heading",
+          "id": "wallet.pass.context",
           "type": "text",
           "props": {
-            "text": "SFO → JFK",
+            "text": "SFO / JFK / TODAY",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "wallet.pass.summary",
           "type": "text",
           "props": {
-            "text": "BOARDING 8:10",
+            "text": "8:10",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "SFO → JFK",
-            "value": "BOARDING 8:10"
+            "label": "Boarding time",
+            "value": "8:10 AM"
           }
         },
         {
           "id": "wallet.pass.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Gate B12 · Seat 18A · offline ready",
-            "tone": "neutral"
+            "title": "GATE B12 / SEAT 18A",
+            "body": "Boarding / offline ready",
+            "progress": 0.72,
+            "tone": "primary"
           }
         },
         {
-          "id": "wallet.pass.primary",
-          "type": "button",
+          "id": "wallet.pass.actions",
+          "type": "row",
           "props": {
-            "label": "Show QR",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "wallet.qr"
-          },
-          "semantics": {
-            "label": "Show QR"
-          }
-        },
-        {
-          "id": "wallet.pass.secondary",
-          "type": "button",
-          "props": {
-            "label": "Test bad update",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "wallet.bad"
-          },
-          "semantics": {
-            "label": "Test bad update"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "wallet.pass.primary",
+                "type": "button",
+                "props": {
+                  "label": "Code",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "wallet.qr"
+                },
+                "semantics": {
+                  "label": "Show boarding code"
+                }
+              },
+              {
+                "id": "wallet.pass.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Test",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "wallet.bad"
+                },
+                "semantics": {
+                  "label": "Test an invalid pass update"
+                }
+              }
+            ]
           }
         }
       ]

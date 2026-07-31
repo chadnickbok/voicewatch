@@ -5,7 +5,8 @@ These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
 machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
 Calories, Workout, Voice Notes, Medication, Sensor Recorder, Sleep, Media,
-Navigation, Transit, Smart Home, Sports, and Snake) live outside this generator.
+Navigation, Transit, Smart Home, Sports, Wallet, and Snake) live outside this
+generator.
 """
 
 from __future__ import annotations
@@ -39,39 +40,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "wallet": {
-        "initial": ("wallet.primary", "pass"),
-        "screens": {
-            "pass": screen(
-                "SFO → JFK",
-                "BOARDING 8:10",
-                "Gate B12 · Seat 18A · offline ready",
-                ("Show QR", "wallet.qr", "qr"),
-                ("Test bad update", "wallet.bad", "rejected"),
-            ),
-            "qr": screen(
-                "BOARDING PASS",
-                "█ ▄█ █▄ █",
-                "Brightness 100% · expires 8:25",
-                ("Done", "wallet.done", "pass"),
-                ("Bad update", "wallet.bad", "rejected"),
-            ),
-            "rejected": screen(
-                "UPDATE REJECTED",
-                "Signature invalid",
-                "Last verified pass preserved",
-                ("Use safe pass", "wallet.safe", "pass"),
-                ("Review details", "wallet.review", "review"),
-            ),
-            "review": screen(
-                "UPDATE REVIEW",
-                "Issuer mismatch",
-                "Mock Air ≠ signed Doodad Air",
-                ("Reject", "wallet.reject", "rejected"),
-                ("Home", "wallet.home", "home"),
-            ),
-        },
-    },
     "remote-control": {
         "initial": ("remote-control.primary", "targets"),
         "screens": {
@@ -117,7 +85,6 @@ BOUND_PROVIDERS: dict[str, tuple[str, str, str]] = {
     ),
     "sensor-recorder": ("request_sensor", "sensor.record", "sensor"),
     "media": ("request_media", "media.remote", "media"),
-    "wallet": ("request_wallet", "wallet.read", "wallet"),
     "remote-control": (
         "request_remote",
         "remote.control",

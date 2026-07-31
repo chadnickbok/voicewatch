@@ -4,6 +4,7 @@
 #include <cstdint>
 
 #include "lvgl.h"
+#include "m3e/assets/image_assets.hpp"
 #include "m3e/appspec/command_batch.hpp"
 #include "m3e/appspec/renderer.hpp"
 #include "m3e/appspec/runtime.hpp"
@@ -23,6 +24,31 @@ LV_FONT_DECLARE(m3e_live_action_font_32);
 
 int main() {
     using namespace m3e;
+
+    {
+        ImageAssetView media_art{};
+        assert(resolve_image_asset(
+            "2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028",
+            media_art));
+        assert(media_art.width == 96);
+        assert(media_art.height == 64);
+        assert(media_art.decoded_bytes == 96U * 64U * 2U);
+
+        ImageAssetView wallet_qr{};
+        assert(resolve_image_asset(
+            "29ee6d97e8928b49fbbaa49c20a439a1930c4d82de2217490abbe5235a798254",
+            wallet_qr));
+        assert(wallet_qr.width == 135);
+        assert(wallet_qr.height == 135);
+        assert(wallet_qr.decoded_bytes == 135U * 135U * 2U);
+
+        ImageAssetView missing{};
+        assert(!resolve_image_asset(
+            "0000000000000000000000000000000000000000000000000000000000000000",
+            missing));
+        assert(missing.pixels == nullptr);
+        assert(missing.decoded_bytes == 0);
+    }
 
     constexpr std::array<std::uint8_t, 87> hello_appspec_cbor{
         0xa3, 0x00, 0x01, 0x01, 0x65, 0x68, 0x65, 0x6c, 0x6c, 0x6f,

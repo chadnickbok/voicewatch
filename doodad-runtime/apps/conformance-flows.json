@@ -461,8 +461,20 @@
     "wallet": [
       {
         "kind": "semantic",
-        "node_id": "wallet.primary",
-        "action_id": "wallet.primary",
+        "node_id": "wallet.home.qr",
+        "action_id": "wallet.qr",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "wallet.qr.secondary",
+        "action_id": "wallet.bad",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "wallet.rejected.primary",
+        "action_id": "wallet.safe",
         "event_kind": "tap"
       },
       {
@@ -475,18 +487,6 @@
         "kind": "semantic",
         "node_id": "wallet.rejected.secondary",
         "action_id": "wallet.review",
-        "event_kind": "tap"
-      },
-      {
-        "kind": "semantic",
-        "node_id": "wallet.review.primary",
-        "action_id": "wallet.reject",
-        "event_kind": "tap"
-      },
-      {
-        "kind": "semantic",
-        "node_id": "wallet.rejected.primary",
-        "action_id": "wallet.safe",
         "event_kind": "tap"
       }
     ],
