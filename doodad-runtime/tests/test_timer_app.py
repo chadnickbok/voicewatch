@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -23,41 +24,29 @@ class TimerAppTests(unittest.TestCase):
 
     def test_exact_scheduler_drives_guest_without_remounting(self) -> None:
         self.assertEqual(self.native.node_text("timer.summary"), "1:00")
-        self.assertEqual(self.native.node_text("timer.duration"), "1 min")
+        self.assertEqual(self._duration_value(), 1)
         self.native.click_button("+")
         self.assertEqual(self.native.node_text("timer.summary"), "2:00")
-        self.assertEqual(self.native.node_text("timer.duration"), "2 min")
+        self.assertEqual(self._duration_value(), 2)
         self.native.click_button("+")
         self.assertEqual(self.native.node_text("timer.summary"), "3:00")
-        self.assertEqual(self.native.node_text("timer.duration"), "3 min")
+        self.assertEqual(self._duration_value(), 3)
 
         self.native.click_button("Start")
-        self.assertEqual(
-            self.native.node_text("timer.status"),
-            "Running in background",
-        )
+        self.assertEqual(self.native.node_text("timer.primary"), "Cancel")
         self.native.advance_time(30_000)
         self.assertEqual(self.native.node_text("timer.summary"), "2:30")
 
         self.native.advance_time(150_000)
-        self.assertEqual(self.native.node_text("timer.summary"), "TIME'S UP")
-        self.assertEqual(
-            self.native.node_text("timer.status"),
-            "Timer complete · fired once",
-        )
+        self.assertEqual(self.native.node_text("timer.summary"), "0:00")
+        self.assertEqual(self.native.node_text("timer.primary"), "Dismiss")
 
         # Re-polling the same exact deadline changes no firing ordinal.
         self.native.advance_time(0)
-        self.assertEqual(
-            self.native.node_text("timer.status"),
-            "Timer complete · fired once",
-        )
+        self.assertEqual(self.native.node_text("timer.primary"), "Dismiss")
         self.native.click_button("Dismiss")
         self.assertEqual(self.native.node_text("timer.summary"), "3:00")
-        self.assertEqual(
-            self.native.node_text("timer.status"),
-            "Ready · exact scheduler",
-        )
+        self.assertEqual(self.native.node_text("timer.primary"), "Start")
 
     def test_cancel_prevents_a_later_fire(self) -> None:
         selected = self.native.node_text("timer.summary")
@@ -65,9 +54,14 @@ class TimerAppTests(unittest.TestCase):
         self.native.click_button("Cancel")
         self.native.advance_time(120_000)
         self.assertEqual(self.native.node_text("timer.summary"), selected)
-        self.assertEqual(
-            self.native.node_text("timer.status"),
-            "Ready · exact scheduler",
+        self.assertEqual(self.native.node_text("timer.primary"), "Start")
+
+    def _duration_value(self) -> int:
+        snapshot = json.loads(self.native.scene_snapshot())
+        return next(
+            node["props"]["value"]
+            for node in snapshot["nodes"]
+            if node["id"] == "timer.duration"
         )
 
 

@@ -6,7 +6,7 @@
       "app_slug": "timer",
       "trace": "traces/timer/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "cc5cfc1fb9c03e46c28a7a57bcc74aa060acd6849d86ced9479ea85c775a8e64",
+      "snapshot_sha256": "e2d1fb677f4c73193b11ec3f53eef6f048b25c0d4938ba4b1830edced9bfb089",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -19,7 +19,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across five nodes; both renderers pass 48dp target and quality checks. Remaining 14.1667% raster delta is font and edge antialiasing. See reference/reviews/timer.md."
       }
     },
     {

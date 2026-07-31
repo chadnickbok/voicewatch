@@ -64,7 +64,14 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                 self.assertEqual(entry["profile_id"], "watch_square_240")
                 self.assertEqual(entry["compose"]["mode"], "host")
                 self.assertEqual(entry["lvgl"]["mode"], "simulator")
-                self.assertEqual(entry["review"], {"status": "pending"})
+                if entry["app_slug"] == "timer":
+                    self.assertEqual(entry["review"]["status"], "approved")
+                    self.assertEqual(
+                        entry["review"]["reviewed_at"],
+                        "2026-07-30",
+                    )
+                else:
+                    self.assertEqual(entry["review"], {"status": "pending"})
                 self.assertEqual(
                     target["after_snapshot_sha256"],
                     entry["snapshot_sha256"],

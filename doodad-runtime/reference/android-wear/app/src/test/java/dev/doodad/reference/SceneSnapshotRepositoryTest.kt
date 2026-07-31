@@ -38,10 +38,10 @@ class SceneSnapshotRepositoryTest {
                 "card" to 76,
                 "keypad" to 7,
                 "live_card" to 4,
-                "progress" to 3,
+                "progress" to 6,
                 "screen" to 97,
                 "stepper" to 10,
-                "text" to 171,
+                "text" to 168,
             ),
             loaded
                 .flatMap { it.snapshot.nodes }

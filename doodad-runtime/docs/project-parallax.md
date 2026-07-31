@@ -534,6 +534,8 @@ incomplete.
 | `scroll` | `TransformingLazyColumn`/bounded scrolling pattern | currently unused | [x] |
 | `toggle` | whole-row Wear Material toggle control | currently unused | [x] |
 | `voice_orb` | Doodad-inspired system component using Material tokens | currently unused by suite | [x] |
+| `image` | deterministic decoded bitmap with semantic content description | planned for Media | [ ] |
+| `canvas` | renderer-neutral draw-command surface; Compose `Canvas` / LVGL `lv_canvas` | planned for Snake | [ ] |
 
 ### Pattern interpretation
 
@@ -574,7 +576,7 @@ terminal LVGL frame to a different Compose fixture.
 
 | # | App | Initial trace | Compose square | LVGL replay | Report | Decisive flow |
 |---:|---|:---:|:---:|:---:|:---:|:---:|
-| 1 | Timer | [x] | [x] | [x] | [x] | [ ] |
+| 1 | Timer | [x] | [x] | [x] | [x] | [x] |
 | 2 | Weather | [x] | [x] | [x] | [x] | [ ] |
 | 3 | Notifications | [x] | [x] | [x] | [x] | [ ] |
 | 4 | Tasks | [x] | [x] | [x] | [x] | [ ] |
@@ -594,6 +596,24 @@ terminal LVGL frame to a different Compose fixture.
 | 18 | Wallet | [x] | [x] | [x] | [x] | [ ] |
 | 19 | Remote Control | [x] | [x] | [x] | [x] | [ ] |
 | 20 | Snake / persistent microgame | [x] | [x] | [x] | [x] | [ ] |
+
+### Required non-form workloads
+
+Two apps deliberately exercise rendering paths outside ordinary Material
+components:
+
+- [ ] **Media asset path:** Media must load checked-in album artwork through a
+  content-addressed package asset. The Wasm scene identifies the asset and its
+  presentation semantics; both renderers independently decode the same source.
+  Acceptance requires matching crop mode, bounds, color handling, fallback,
+  missing-asset behavior, memory accounting, and RGB565 evidence.
+- [ ] **Direct canvas path:** Snake must render its board through a bounded
+  `canvas` node driven by renderer-neutral draw commands emitted from Wasm.
+  Compose uses its native Canvas and the product uses LVGL's canvas facilities.
+  Material remains appropriate for system-owned overlays and actions, but the
+  game field is not decomposed into faux Material cards. Acceptance requires
+  deterministic pixels, bounded command and memory budgets, semantic input
+  actions, and no per-frame AppSpec remount.
 
 For each initial baseline:
 
@@ -1094,9 +1114,11 @@ required to reproduce a historical approved baseline.
 ### Snake versus virtual pet
 
 The present twentieth conformance app is Snake, serving as the persistent
-microgame representative. If a virtual pet is a distinct product requirement,
-add its own AppSpec, Wasm guest, fixtures, and flow rather than relabeling the
-Snake evidence.
+microgame representative. Snake is also the required direct-rendering
+workload: its board is a WASM-driven, renderer-neutral `canvas`, not a grid of
+Material components. If a virtual pet is a distinct product requirement, add
+its own AppSpec, Wasm guest, fixtures, and flow rather than relabeling the Snake
+evidence.
 
 ### Exact visual threshold
 
@@ -1163,6 +1185,14 @@ produce the twenty-row report.
   [`Project Parallax comparison report`](project-parallax-comparison-report.md):
   103 semantic nodes aligned, 664 bounds-field differences, 60.17% changed
   pixels, and 58 renderer-local quality findings.
+- [x] Chose Media as the deterministic bitmap/multimedia validation app and
+  Snake as the WASM-driven direct-canvas validation app; added explicit
+  cross-renderer acceptance criteria for both.
+- [x] Completed the Timer oracle redesign and decisive-flow review across
+  resting, running, and completed states. The square API 37 runtime and LVGL
+  product renderer now share exact normalized structure and bounds, pass all
+  current quality checks, and carry an approved **Equivalent** disposition in
+  [`reference/reviews/timer.md`](../reference/reviews/timer.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

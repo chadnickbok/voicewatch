@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -213,7 +214,13 @@ private fun PatternSurface(
     evidenceCollector: ComposeNodeEvidenceCollector?,
     onAction: (ReferenceActionEnvelope) -> Unit,
 ) {
-    val children = snapshot.childrenOf(snapshot.root).filter { it.visible }
+    val rootChildren = snapshot.childrenOf(snapshot.root)
+    val children =
+        if (pattern == AppSpecPattern.Countdown) {
+            rootChildren
+        } else {
+            rootChildren.filter { it.visible }
+        }
     val context =
         RenderContext(
             snapshot = snapshot,
@@ -310,6 +317,10 @@ private fun SquarePatternSurface(
         SquareKeypadSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.Countdown) {
+        SquareCountdownSurface(children, context)
+        return
+    }
     val state = rememberScrollState()
     ScreenScaffold(
         scrollState = state,
@@ -345,6 +356,119 @@ private fun SquarePatternSurface(
             }
         }
     }
+}
+
+@Composable
+private fun SquareCountdownSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val progress =
+        children.singleOrNull { it.kind == "progress" }
+            ?: error("Square countdown pattern requires one progress node")
+    val value =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "numeral"
+        } ?: error("Square countdown pattern requires one numeral value")
+    val stepper =
+        children.singleOrNull { it.kind == "stepper" }
+            ?: error("Square countdown pattern requires one stepper")
+    val action =
+        children.singleOrNull { it.kind == "button" }
+            ?: error("Square countdown pattern requires one button")
+    check(
+        children.all {
+            it == progress || it == value || it == stepper || it == action
+        },
+    ) {
+        "Square countdown pattern only supports progress, value, stepper, and action"
+    }
+    val maximum = requireNotNull(progress.props.maximum)
+    val fraction =
+        requireNotNull(progress.props.value).toFloat() /
+            maximum.coerceAtLeast(1).toFloat()
+
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            contentAlignment = Alignment.Center,
+        ) {
+            CircularProgressIndicator(
+                progress = { fraction.coerceIn(0f, 1f) },
+                modifier =
+                    Modifier
+                        .size(132.dp)
+                        .appSpecNode(
+                            progress,
+                            context.evidenceCollector,
+                        ),
+                enabled = progress.enabled,
+            )
+            Text(
+                text = requireNotNull(value.props.primaryText),
+                modifier =
+                    Modifier
+                        .width(112.dp)
+                        .appSpecNode(value, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.numeralLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                textAlign = TextAlign.Center,
+            )
+            if (stepper.visible) {
+                Box(
+                    modifier =
+                        Modifier
+                            .align(Alignment.BottomCenter)
+                            .width(140.dp)
+                            .height(48.dp),
+                ) {
+                    AppSpecStepper(stepper, context)
+                }
+            }
+        }
+        Spacer(Modifier.height(4.dp))
+        CountdownActionButton(action, context)
+    }
+}
+
+@Composable
+private fun CountdownActionButton(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    val tap = node.action("tap")
+    Button(
+        onClick = {
+            tap?.let {
+                context.dispatch(node, it)
+            }
+        },
+        modifier =
+            Modifier
+                .width(120.dp)
+                .height(48.dp)
+                .appSpecNode(node, context.evidenceCollector),
+        enabled = node.enabled && tap != null,
+        colors = ButtonDefaults.buttonColors(),
+        label = {
+            Text(
+                text = requireNotNull(node.props.primaryText),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        },
+    )
 }
 
 @Composable

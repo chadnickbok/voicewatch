@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstdio>
 #include <cstring>
 
 #include "m3e/components/components.hpp"
@@ -10,6 +11,8 @@
 
 LV_FONT_DECLARE(m3e_calculator_font_20);
 LV_FONT_DECLARE(m3e_calculator_result_font_40);
+LV_FONT_DECLARE(m3e_timer_font_55);
+LV_FONT_DECLARE(m3e_timer_value_font_28);
 
 namespace m3e::appspec {
 namespace {
@@ -60,6 +63,38 @@ bool is_keypad_document(const WireDocument& document) {
         [](const WireNode& node) {
             return node.kind == ComponentKind::keypad;
         });
+}
+
+bool is_countdown_document(const WireDocument& document) {
+    if (document.node_count != 5 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    bool progress = false;
+    bool numeral = false;
+    bool stepper = false;
+    bool button = false;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 0) return false;
+        switch (node.kind) {
+            case ComponentKind::progress:
+                progress = node.variant == 1;
+                break;
+            case ComponentKind::text:
+                numeral = node.variant == 4;
+                break;
+            case ComponentKind::stepper:
+                stepper = true;
+                break;
+            case ComponentKind::button:
+                button = true;
+                break;
+            default:
+                return false;
+        }
+    }
+    return progress && numeral && stepper && button;
 }
 
 const char* calculator_glyph(const char* key) {
@@ -268,9 +303,13 @@ bool Renderer::mount(
     ComponentFactory factory(styles_);
     std::array<lv_obj_t*, Reconciler::kCapacity> objects{};
     const auto keypad_document = is_keypad_document(document);
+    const auto countdown_document = is_countdown_document(document);
     objects[0] = factory.screen(root);
     document.nodes[0].mounted_object = root;
-    lv_obj_set_style_pad_all(root, keypad_document ? 5 : px(12), 0);
+    lv_obj_set_style_pad_all(
+        root,
+        keypad_document ? 5 : countdown_document ? 0 : px(12),
+        0);
     lv_obj_set_style_pad_gap(
         root, keypad_document ? 4 : gap_px(document.nodes[0].gap), 0);
     lv_obj_set_flex_flow(root, LV_FLEX_FLOW_COLUMN);
@@ -330,6 +369,19 @@ bool Renderer::mount(
                     lv_obj_set_style_pad_top(object, 11, 0);
                     lv_obj_set_style_text_align(
                         object, LV_TEXT_ALIGN_RIGHT, 0);
+                } else if (countdown_document && node.variant == 4) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(112), px(58));
+                    lv_obj_set_pos(
+                        object,
+                        (240 - px(112)) / 2,
+                        px(41));
+                    lv_obj_set_style_text_font(
+                        object, &m3e_timer_font_55, 0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(
+                        object, px(10), 0);
                 }
                 break;
             case ComponentKind::button:
@@ -349,6 +401,30 @@ bool Renderer::mount(
                         false,
                     });
                 lv_obj_set_width(object, LV_PCT(100));
+                if (countdown_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(120), px(40));
+                    lv_obj_set_pos(
+                        object,
+                        (240 - px(120)) / 2,
+                        px(140));
+                    lv_obj_set_height(object, px(48));
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0xD8, 0xB9, 0xFF),
+                        0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            lv_color_make(0x35, 0x11, 0x51),
+                            0);
+                    }
+                }
                 break;
             case ComponentKind::card:
                 object = factory.card(
@@ -376,11 +452,147 @@ bool Renderer::mount(
                     : factory.linear_progress(
                           parent,
                           {primary, node.value, node.maximum, tone(node.tone)});
+                if (countdown_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(132), px(132));
+                    lv_obj_set_pos(
+                        object,
+                        (240 - px(132) + 1) / 2,
+                        px(4));
+                    lv_obj_set_style_arc_width(
+                        object, px(6), LV_PART_MAIN);
+                    lv_obj_set_style_arc_width(
+                        object, px(6), LV_PART_INDICATOR);
+                    lv_obj_set_style_arc_color(
+                        object,
+                        lv_color_make(0x49, 0x44, 0x53),
+                        LV_PART_MAIN);
+                    lv_obj_set_style_arc_color(
+                        object,
+                        lv_color_make(0xD8, 0xB9, 0xFF),
+                        LV_PART_INDICATOR);
+                    lv_arc_set_bg_angles(object, 0, 360);
+                    lv_arc_set_rotation(object, 270);
+                }
                 break;
             case ComponentKind::stepper:
-                object = factory.stepper(
-                    parent,
-                    {primary, node.value, secondary, false, false});
+                if (!countdown_document) {
+                    object = factory.stepper(
+                        parent,
+                        {
+                            primary,
+                            node.value,
+                            secondary,
+                            node.value <= node.minimum,
+                            node.value >= node.maximum,
+                        });
+                } else {
+                    object = lv_obj_create(parent);
+                    ComponentFactory::reset(object);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(140), px(48));
+                    lv_obj_set_pos(
+                        object,
+                        (240 - px(140) + 1) / 2,
+                        px(88));
+                    lv_obj_set_style_pad_all(object, px(4), 0);
+                    lv_obj_set_style_pad_column(object, px(4), 0);
+                    lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
+                    lv_obj_set_flex_align(
+                        object,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_CENTER);
+
+                    auto* decrement = factory.button(
+                        object,
+                        {
+                            "decrement",
+                            "-",
+                            Tone::neutral,
+                            ButtonVariant::tonal,
+                            ComponentSize::compact,
+                            node.value > node.minimum && node.enabled,
+                            false,
+                        });
+                    lv_obj_set_size(decrement, px(40), px(40));
+                    if (lv_obj_get_child_count(decrement) == 1) {
+                        lv_obj_set_style_text_font(
+                            lv_obj_get_child(decrement, 0),
+                            &lv_font_montserrat_18,
+                            0);
+                    }
+
+                    auto* value_box = lv_obj_create(object);
+                    ComponentFactory::reset(value_box);
+                    lv_obj_set_size(
+                        value_box, px(64), px(40));
+                    lv_obj_set_style_radius(
+                        value_box, px(14), 0);
+                    lv_obj_set_style_bg_color(
+                        value_box,
+                        lv_color_make(0x49, 0x44, 0x53),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        value_box, LV_OPA_COVER, 0);
+                    lv_obj_set_flex_flow(
+                        value_box, LV_FLEX_FLOW_COLUMN);
+                    lv_obj_set_flex_align(
+                        value_box,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_CENTER);
+                    char value_text[16]{};
+                    std::snprintf(
+                        value_text,
+                        sizeof(value_text),
+                        "%ld",
+                        static_cast<long>(node.value));
+                    auto* value_label = factory.text(
+                        value_box,
+                        value_text,
+                        generated::TypographyRole::title_large);
+                    lv_obj_set_style_text_font(
+                        value_label, &m3e_timer_value_font_28, 0);
+                    lv_obj_set_style_text_color(
+                        value_label,
+                        lv_color_make(0xF6, 0xED, 0xFF),
+                        0);
+                    auto* unit_label = factory.text(
+                        value_box,
+                        secondary,
+                        generated::TypographyRole::body_extra_small);
+                    lv_obj_set_style_text_color(
+                        unit_label,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+
+                    auto* increment = factory.button(
+                        object,
+                        {
+                            "increment",
+                            "+",
+                            Tone::primary,
+                            ButtonVariant::filled,
+                            ComponentSize::compact,
+                            node.value < node.maximum && node.enabled,
+                            false,
+                        });
+                    lv_obj_set_size(increment, px(40), px(40));
+                    lv_obj_set_style_bg_color(
+                        increment,
+                        lv_color_make(0xD8, 0xB9, 0xFF),
+                        0);
+                    if (lv_obj_get_child_count(increment) == 1) {
+                        auto* label = lv_obj_get_child(increment, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            lv_color_make(0x35, 0x11, 0x51),
+                            0);
+                    }
+                }
                 break;
             case ComponentKind::toggle:
                 object = factory.toggle_row(

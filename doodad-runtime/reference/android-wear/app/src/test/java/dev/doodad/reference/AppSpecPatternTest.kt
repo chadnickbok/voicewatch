@@ -45,9 +45,10 @@ class AppSpecPatternTest {
         assertEquals(
             mapOf(
                 "action_list" to 6,
+                "countdown" to 1,
                 "empty" to 1,
                 "keypad" to 2,
-                "metric_control" to 5,
+                "metric_control" to 4,
                 "progress_dashboard" to 1,
                 "status_detail" to 68,
             ),
@@ -66,6 +67,12 @@ class AppSpecPatternTest {
             mapOf(
                 AppSpecPattern.Keypad to
                     AppSpecStructuralFacts(mapOf("keypad" to 1), 1, 1),
+                AppSpecPattern.Countdown to
+                    AppSpecStructuralFacts(
+                        mapOf("progress" to 1, "stepper" to 1),
+                        2,
+                        2,
+                    ),
                 AppSpecPattern.ProgressDashboard to
                     AppSpecStructuralFacts(mapOf("progress" to 1), 0, 0),
                 AppSpecPattern.MetricControl to

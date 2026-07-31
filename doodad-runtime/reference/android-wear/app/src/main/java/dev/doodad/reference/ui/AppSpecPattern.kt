@@ -9,6 +9,7 @@ enum class AppSpecPattern(
     ActionList("action_list"),
     MetricControl("metric_control"),
     Keypad("keypad"),
+    Countdown("countdown"),
     ProgressDashboard("progress_dashboard"),
     Empty("empty"),
 }
@@ -24,8 +25,9 @@ object AppSpecPatternSelector {
         linkedMapOf(
             AppSpecPattern.StatusDetail to 68,
             AppSpecPattern.ActionList to 6,
-            AppSpecPattern.MetricControl to 5,
+            AppSpecPattern.MetricControl to 4,
             AppSpecPattern.Keypad to 2,
+            AppSpecPattern.Countdown to 1,
             AppSpecPattern.ProgressDashboard to 1,
             AppSpecPattern.Empty to 1,
         )
@@ -45,6 +47,8 @@ object AppSpecPatternSelector {
     fun select(facts: AppSpecStructuralFacts): AppSpecPattern =
         when {
             facts.count("keypad") > 0 -> AppSpecPattern.Keypad
+            facts.count("progress") > 0 && facts.count("stepper") > 0 ->
+                AppSpecPattern.Countdown
             facts.count("progress") > 0 -> AppSpecPattern.ProgressDashboard
             facts.count("stepper") > 0 || facts.count("live_card") > 0 ->
                 AppSpecPattern.MetricControl

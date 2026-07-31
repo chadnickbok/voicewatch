@@ -24,19 +24,20 @@ class ParallaxInventoryTests(unittest.TestCase):
                 "card": 71,
                 "keypad": 2,
                 "live_card": 2,
-                "progress": 1,
+                "progress": 2,
                 "screen": 83,
                 "stepper": 4,
-                "text": 141,
+                "text": 140,
             },
         )
         self.assertEqual(
             document["authored"]["patterns"],
             {
                 "action_list": 6,
+                "countdown": 1,
                 "empty": 1,
                 "keypad": 2,
-                "metric_control": 5,
+                "metric_control": 4,
                 "progress_dashboard": 1,
                 "status_detail": 68,
             },

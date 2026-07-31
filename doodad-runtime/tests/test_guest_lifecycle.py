@@ -28,12 +28,12 @@ class GuestLifecycleTests(unittest.TestCase):
 
             host.advance_time(60_000)
             semantic = json.loads(host.semantic_snapshot())
-            status = next(
+            action = next(
                 node
                 for node in semantic["nodes"]
-                if node["id"] == "timer.status"
+                if node["id"] == "timer.primary"
             )
-            self.assertEqual(status["text"], "Timer complete · fired once")
+            self.assertEqual(action["text"], "Dismiss")
             self.assertEqual(host.framebuffer_rgb565(), sleeping_frame)
 
             host.set_display_awake(True)
@@ -56,12 +56,12 @@ class GuestLifecycleTests(unittest.TestCase):
             host.start_wasm(self.timer.wasm)
             host.advance_time(0)
             semantic = json.loads(host.semantic_snapshot())
-            status = next(
+            action = next(
                 node
                 for node in semantic["nodes"]
-                if node["id"] == "timer.status"
+                if node["id"] == "timer.primary"
             )
-            self.assertEqual(status["text"], "Timer complete · fired once")
+            self.assertEqual(action["text"], "Dismiss")
             host.click_button("Dismiss")
         finally:
             host.close()

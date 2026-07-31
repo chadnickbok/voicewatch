@@ -368,6 +368,25 @@ lv_obj_t* label_for(WireNode& node, PropertyKind property) {
     return nullptr;
 }
 
+lv_obj_t* stepper_value_label(lv_obj_t* object) {
+    if (object == nullptr || lv_obj_get_child_count(object) <= 1) {
+        return nullptr;
+    }
+    auto* value_object = lv_obj_get_child(object, 1);
+    if (value_object == nullptr) return nullptr;
+    if (lv_obj_check_type(value_object, &lv_label_class)) {
+        return value_object;
+    }
+    if (lv_obj_get_child_count(value_object) == 0) {
+        return nullptr;
+    }
+    auto* nested = lv_obj_get_child(value_object, 0);
+    return nested != nullptr &&
+            lv_obj_check_type(nested, &lv_label_class)
+        ? nested
+        : nullptr;
+}
+
 CommandResult result(
     CommandError error,
     std::size_t command = 0,
@@ -528,15 +547,7 @@ CommandResult apply_ui_command_batch(
                 if (node->kind == ComponentKind::stepper) {
                     auto* object =
                         static_cast<lv_obj_t*>(node->mounted_object);
-                    if (lv_obj_get_child_count(object) <= 1) {
-                        return result(
-                            CommandError::unsupported_property,
-                            index);
-                    }
-                    auto* value_label = lv_obj_get_child(object, 1);
-                    if (value_label == nullptr ||
-                        !lv_obj_check_type(
-                            value_label, &lv_label_class)) {
+                    if (stepper_value_label(object) == nullptr) {
                         return result(
                             CommandError::unsupported_property,
                             index);
@@ -776,8 +787,20 @@ CommandResult apply_ui_command_batch(
                 "%ld %s",
                 static_cast<long>(node.value),
                 document.string_at(node.secondary_text_offset));
-            auto* label = lv_obj_get_child(object, 1);
-            lv_label_set_text(label, value);
+            auto* value_label = stepper_value_label(object);
+            auto* value_object = lv_obj_get_child(object, 1);
+            if (value_object != nullptr &&
+                lv_obj_check_type(value_object, &lv_label_class)) {
+                lv_label_set_text(value_label, value);
+            } else if (value_label != nullptr) {
+                char number[24]{};
+                std::snprintf(
+                    number,
+                    sizeof(number),
+                    "%ld",
+                    static_cast<long>(node.value));
+                lv_label_set_text(value_label, number);
+            }
         } else if (node.variant == 1) {
             lv_arc_set_range(object, 0, node.maximum);
             lv_arc_set_value(object, node.value);

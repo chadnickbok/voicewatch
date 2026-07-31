@@ -44,7 +44,8 @@ class AppSpecDynamicScreenshotTest {
             repository.loadAll().single { candidate ->
                 candidate.snapshot.appId == "timer" &&
                     candidate.snapshot.nodes.any {
-                        it.props.primaryText == "Running in background"
+                        it.id == "timer.primary" &&
+                            it.props.primaryText == "Cancel"
                     }
             }
         val collector = ComposeNodeEvidenceCollector()
@@ -62,7 +63,7 @@ class AppSpecDynamicScreenshotTest {
         }
         composeRule.mainClock.advanceTimeBy(3_000L)
         composeRule.waitForIdle()
-        loaded.snapshot.nodes.forEach { node ->
+        loaded.snapshot.nodes.filter { it.visible }.forEach { node ->
             composeRule
                 .onNodeWithTag(node.id, useUnmergedTree = true)
                 .assertExists()
@@ -104,7 +105,7 @@ class AppSpecDynamicScreenshotTest {
         assertEquals(loaded.snapshot.nodes.size, evidence.nodes.size)
         assertEquals(240, evidence.physicalWidthPx)
         assertEquals(240, evidence.physicalHeightPx)
-        assertTrue(evidence.nodes.all { it.visible })
+        assertTrue(evidence.nodes.any { !it.visible })
         assertTrue(
             evidence.nodes
                 .filter {
