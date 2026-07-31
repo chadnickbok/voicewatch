@@ -48,14 +48,15 @@ class AppSpecPatternTest {
                 "calendar_agenda" to 5,
                 "empty" to 1,
                 "keypad" to 2,
-                "metric_control" to 1,
                 "notification_stack" to 6,
+                "nutrition_dashboard" to 1,
+                "nutrition_quick_add" to 1,
+                "nutrition_review" to 1,
                 "task_list" to 4,
                 "workout_rest" to 1,
                 "workout_set" to 2,
                 "workout_summary" to 1,
-                "progress_dashboard" to 1,
-                "status_detail" to 57,
+                "status_detail" to 56,
                 "weather_hero" to 1,
             ),
             inventory
@@ -139,6 +140,40 @@ class AppSpecPatternTest {
                         ),
                         1,
                         1,
+                    ),
+                AppSpecPattern.NutritionDashboard to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "progress" to 1,
+                            "card" to 1,
+                            "button" to 1,
+                            "text" to 2,
+                        ),
+                        1,
+                        1,
+                    ),
+                AppSpecPattern.NutritionQuickAdd to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "row" to 1,
+                            "stepper" to 1,
+                            "card" to 1,
+                            "button" to 2,
+                            "text" to 1,
+                        ),
+                        3,
+                        3,
+                    ),
+                AppSpecPattern.NutritionReview to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "row" to 1,
+                            "card" to 1,
+                            "button" to 2,
+                            "text" to 2,
+                        ),
+                        2,
+                        2,
                     ),
                 AppSpecPattern.ProgressDashboard to
                     AppSpecStructuralFacts(mapOf("progress" to 1), 0, 0),

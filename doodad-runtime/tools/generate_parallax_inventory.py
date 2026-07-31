@@ -69,6 +69,28 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         and kinds["text"] == 3
     ):
         return "workout_summary"
+    if (
+        kinds["progress"] == 1
+        and kinds["card"] == 1
+        and kinds["button"] == 1
+        and kinds["text"] == 2
+    ):
+        return "nutrition_dashboard"
+    if (
+        kinds["row"] == 1
+        and kinds["stepper"] == 1
+        and kinds["card"] == 1
+        and kinds["button"] == 2
+        and kinds["text"] == 1
+    ):
+        return "nutrition_quick_add"
+    if (
+        kinds["row"] == 1
+        and kinds["card"] == 1
+        and kinds["button"] == 2
+        and kinds["text"] == 2
+    ):
+        return "nutrition_review"
     if kinds["progress"]:
         return "progress_dashboard"
     if kinds["stepper"] or kinds["live_card"]:

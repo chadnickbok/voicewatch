@@ -14,6 +14,7 @@ LV_FONT_DECLARE(m3e_calculator_result_font_40);
 LV_FONT_DECLARE(m3e_timer_font_55);
 LV_FONT_DECLARE(m3e_timer_value_font_28);
 LV_FONT_DECLARE(m3e_weather_font_55);
+LV_FONT_DECLARE(m3e_nutrition_font_32);
 
 namespace m3e::appspec {
 namespace {
@@ -302,6 +303,120 @@ bool is_workout_summary_document(const WireDocument& document) {
         cards == 1 && buttons == 1;
 }
 
+bool is_nutrition_dashboard_document(
+    const WireDocument& document) {
+    if (document.node_count != 6 ||
+        document.nodes[0].child_count != 5) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t progress = 0;
+    std::size_t cards = 0;
+    std::size_t buttons = 0;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 0) return false;
+        if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::progress) {
+            ++progress;
+        } else if (node.kind == ComponentKind::card) {
+            ++cards;
+        } else if (node.kind == ComponentKind::button) {
+            ++buttons;
+        } else {
+            return false;
+        }
+    }
+    return texts == 2 && progress == 1 &&
+        cards == 1 && buttons == 1;
+}
+
+bool is_nutrition_quick_add_document(
+    const WireDocument& document) {
+    if (document.node_count != 7 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t steppers = 0;
+    std::size_t cards = 0;
+    std::size_t rows = 0;
+    std::size_t buttons = 0;
+    std::size_t row_index = Reconciler::kCapacity;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == 0) {
+            if (node.kind == ComponentKind::text) {
+                ++texts;
+            } else if (node.kind == ComponentKind::stepper) {
+                ++steppers;
+            } else if (node.kind == ComponentKind::card) {
+                ++cards;
+            } else if (node.kind == ComponentKind::row) {
+                ++rows;
+                row_index = index;
+                if (node.child_count != 2) return false;
+            } else {
+                return false;
+            }
+        }
+    }
+    if (row_index == Reconciler::kCapacity) return false;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == row_index &&
+            node.kind == ComponentKind::button) {
+            ++buttons;
+        } else if (node.parent_index != 0) {
+            return false;
+        }
+    }
+    return texts == 1 && steppers == 1 &&
+        cards == 1 && rows == 1 && buttons == 2;
+}
+
+bool is_nutrition_review_document(
+    const WireDocument& document) {
+    if (document.node_count != 7 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t cards = 0;
+    std::size_t rows = 0;
+    std::size_t buttons = 0;
+    std::size_t row_index = Reconciler::kCapacity;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == 0) {
+            if (node.kind == ComponentKind::text) {
+                ++texts;
+            } else if (node.kind == ComponentKind::card) {
+                ++cards;
+            } else if (node.kind == ComponentKind::row) {
+                ++rows;
+                row_index = index;
+                if (node.child_count != 2) return false;
+            } else {
+                return false;
+            }
+        }
+    }
+    if (row_index == Reconciler::kCapacity) return false;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == row_index &&
+            node.kind == ComponentKind::button) {
+            ++buttons;
+        } else if (node.parent_index != 0) {
+            return false;
+        }
+    }
+    return texts == 2 && cards == 1 &&
+        rows == 1 && buttons == 2;
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -546,6 +661,12 @@ bool Renderer::mount(
         is_workout_rest_document(document);
     const auto workout_summary_document =
         is_workout_summary_document(document);
+    const auto nutrition_dashboard_document =
+        is_nutrition_dashboard_document(document);
+    const auto nutrition_quick_add_document =
+        is_nutrition_quick_add_document(document);
+    const auto nutrition_review_document =
+        is_nutrition_review_document(document);
     const auto task_toggle_count =
         task_list_document
             ? count_kind(document, ComponentKind::toggle)
@@ -576,7 +697,10 @@ bool Renderer::mount(
                     notification_stack_document ||
                     calendar_agenda_document || task_list_document ||
                     workout_set_document || workout_rest_document ||
-                    workout_summary_document
+                    workout_summary_document ||
+                    nutrition_dashboard_document ||
+                    nutrition_quick_add_document ||
+                    nutrition_review_document
                 ? 0
                 : px(12),
         0);
@@ -623,6 +747,15 @@ bool Renderer::mount(
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(44));
                     lv_obj_set_pos(object, px(4), px(28));
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                } else if (
+                    (nutrition_quick_add_document ||
+                     nutrition_review_document) &&
+                    node.kind == ComponentKind::row) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(48));
+                    lv_obj_set_pos(object, px(4), px(136));
                     lv_obj_set_style_pad_all(object, 0, 0);
                     lv_obj_set_style_pad_gap(object, 0, 0);
                 }
@@ -892,6 +1025,54 @@ bool Renderer::mount(
                         0);
                     lv_label_set_long_mode(
                         object, LV_LABEL_LONG_DOT);
+                } else if (
+                    nutrition_dashboard_document ||
+                    nutrition_review_document) {
+                    const auto is_total = node.variant == 4;
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object,
+                        px(184),
+                        is_total ? px(48) : px(20));
+                    lv_obj_set_pos(
+                        object,
+                        px(4),
+                        is_total ? px(24) : px(4));
+                    lv_obj_set_style_text_font(
+                        object,
+                        is_total
+                            ? &m3e_nutrition_font_32
+                            : &lv_font_montserrat_18,
+                        0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        is_total
+                            ? lv_color_make(0xF6, 0xED, 0xFF)
+                            : lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(
+                        object,
+                        is_total ? px(6) : px(2),
+                        0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
+                } else if (nutrition_quick_add_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(20));
+                    lv_obj_set_pos(object, px(4), px(4));
+                    lv_obj_set_style_text_font(
+                        object, &lv_font_montserrat_18, 0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(object, px(2), 0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
                 }
                 break;
             case ComponentKind::button:
@@ -1097,6 +1278,71 @@ bool Renderer::mount(
                         node.variant ==
                         static_cast<std::uint8_t>(
                             ButtonVariant::filled);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        filled
+                            ? lv_color_make(0xD8, 0xB9, 0xFF)
+                            : lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            filled
+                                ? lv_color_make(0x35, 0x11, 0x51)
+                                : lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_set_style_text_align(
+                            label, LV_TEXT_ALIGN_CENTER, 0);
+                        lv_label_set_long_mode(
+                            label, LV_LABEL_LONG_DOT);
+                    }
+                } else if (nutrition_dashboard_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(120), px(48));
+                    lv_obj_set_pos(object, px(36), px(140));
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0xD8, 0xB9, 0xFF),
+                        0);
+                    if (lv_obj_get_child_count(object) == 1) {
+                        auto* label = lv_obj_get_child(object, 0);
+                        lv_obj_set_style_text_font(
+                            label, &lv_font_montserrat_18, 0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            lv_color_make(0x35, 0x11, 0x51),
+                            0);
+                        lv_obj_set_style_text_align(
+                            label, LV_TEXT_ALIGN_CENTER, 0);
+                        lv_label_set_long_mode(
+                            label, LV_LABEL_LONG_DOT);
+                    }
+                } else if (
+                    nutrition_quick_add_document ||
+                    nutrition_review_document) {
+                    const auto ordinal =
+                        kind_ordinal(
+                            document, index, ComponentKind::button);
+                    const auto filled =
+                        node.variant ==
+                        static_cast<std::uint8_t>(
+                            ButtonVariant::filled);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object,
+                        ordinal == 0 ? 112 : 113,
+                        px(48));
+                    lv_obj_set_pos(
+                        object,
+                        ordinal == 0 ? 0 : 117,
+                        0);
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, 0);
                     lv_obj_set_style_bg_color(
                         object,
                         filled
@@ -1332,6 +1578,63 @@ bool Renderer::mount(
                         lv_label_set_long_mode(
                             body, LV_LABEL_LONG_DOT);
                     }
+                } else if (
+                    nutrition_dashboard_document ||
+                    nutrition_quick_add_document ||
+                    nutrition_review_document) {
+                    const auto y =
+                        nutrition_dashboard_document
+                            ? px(92)
+                            : nutrition_quick_add_document
+                                ? px(80)
+                                : px(76);
+                    const auto height =
+                        nutrition_dashboard_document
+                            ? px(44)
+                            : nutrition_quick_add_document
+                                ? px(52)
+                                : px(56);
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), height);
+                    lv_obj_set_pos(object, px(4), y);
+                    lv_obj_set_style_min_height(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_radius(object, px(24), 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        object, LV_OPA_COVER, 0);
+                    if (lv_obj_get_child_count(object) == 2) {
+                        auto* title = lv_obj_get_child(object, 0);
+                        auto* body = lv_obj_get_child(object, 1);
+                        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(title, px(160), px(18));
+                        lv_obj_set_pos(title, px(12), px(5));
+                        lv_obj_set_style_text_font(
+                            title, &lv_font_montserrat_16, 0);
+                        lv_obj_set_style_text_color(
+                            title,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_label_set_long_mode(
+                            title, LV_LABEL_LONG_DOT);
+                        lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(
+                            body,
+                            px(160),
+                            std::max(px(16), height - px(23)));
+                        lv_obj_set_pos(body, px(12), px(23));
+                        lv_obj_set_style_text_font(
+                            body, &lv_font_montserrat_14, 0);
+                        lv_obj_set_style_text_color(
+                            body,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
+                        lv_label_set_long_mode(
+                            body, LV_LABEL_LONG_DOT);
+                    }
                 }
                 break;
             case ComponentKind::live_card:
@@ -1457,6 +1760,22 @@ bool Renderer::mount(
                         LV_PART_INDICATOR);
                     lv_arc_set_bg_angles(object, 0, 360);
                     lv_arc_set_rotation(object, 270);
+                } else if (nutrition_dashboard_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(12));
+                    lv_obj_set_pos(object, px(4), px(76));
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+                    lv_obj_set_style_radius(
+                        object, LV_RADIUS_CIRCLE, LV_PART_INDICATOR);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x49, 0x44, 0x53),
+                        LV_PART_MAIN);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0xD8, 0xB9, 0xFF),
+                        LV_PART_INDICATOR);
                 }
                 break;
             case ComponentKind::stepper:
@@ -1470,7 +1789,8 @@ bool Renderer::mount(
                             node.value <= node.minimum,
                             node.value >= node.maximum,
                         });
-                    if (workout_set_document) {
+                    if (workout_set_document ||
+                        nutrition_quick_add_document) {
                         lv_obj_add_flag(
                             object, LV_OBJ_FLAG_FLOATING);
                         lv_obj_set_size(

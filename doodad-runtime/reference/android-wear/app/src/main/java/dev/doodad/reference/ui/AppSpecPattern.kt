@@ -17,6 +17,9 @@ enum class AppSpecPattern(
     WorkoutSet("workout_set"),
     WorkoutRest("workout_rest"),
     WorkoutSummary("workout_summary"),
+    NutritionDashboard("nutrition_dashboard"),
+    NutritionQuickAdd("nutrition_quick_add"),
+    NutritionReview("nutrition_review"),
     ProgressDashboard("progress_dashboard"),
     Empty("empty"),
 }
@@ -30,8 +33,7 @@ data class AppSpecStructuralFacts(
 object AppSpecPatternSelector {
     val authoredCorpusExpectation: Map<AppSpecPattern, Int> =
         linkedMapOf(
-            AppSpecPattern.StatusDetail to 57,
-            AppSpecPattern.MetricControl to 1,
+            AppSpecPattern.StatusDetail to 56,
             AppSpecPattern.Keypad to 2,
             AppSpecPattern.Countdown to 1,
             AppSpecPattern.WeatherHero to 1,
@@ -41,7 +43,9 @@ object AppSpecPatternSelector {
             AppSpecPattern.WorkoutSet to 2,
             AppSpecPattern.WorkoutRest to 1,
             AppSpecPattern.WorkoutSummary to 1,
-            AppSpecPattern.ProgressDashboard to 1,
+            AppSpecPattern.NutritionDashboard to 1,
+            AppSpecPattern.NutritionQuickAdd to 1,
+            AppSpecPattern.NutritionReview to 1,
             AppSpecPattern.Empty to 1,
         )
 
@@ -88,6 +92,22 @@ object AppSpecPatternSelector {
                 facts.count("button") == 1 &&
                 facts.count("text") == 3 ->
                 AppSpecPattern.WorkoutSummary
+            facts.count("progress") == 1 &&
+                facts.count("card") == 1 &&
+                facts.count("button") == 1 &&
+                facts.count("text") == 2 ->
+                AppSpecPattern.NutritionDashboard
+            facts.count("row") == 1 &&
+                facts.count("stepper") == 1 &&
+                facts.count("card") == 1 &&
+                facts.count("button") == 2 &&
+                facts.count("text") == 1 ->
+                AppSpecPattern.NutritionQuickAdd
+            facts.count("row") == 1 &&
+                facts.count("card") == 1 &&
+                facts.count("button") == 2 &&
+                facts.count("text") == 2 ->
+                AppSpecPattern.NutritionReview
             facts.count("progress") > 0 -> AppSpecPattern.ProgressDashboard
             facts.count("stepper") > 0 || facts.count("live_card") > 0 ->
                 AppSpecPattern.MetricControl

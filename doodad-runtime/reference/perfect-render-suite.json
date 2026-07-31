@@ -164,7 +164,7 @@
       "app_slug": "calories",
       "trace": "traces/calories/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "fa9dd4de3763fdbc150fac94d3e625a0a8d410b95464fb1f2204f6f1ffab00c3",
+      "snapshot_sha256": "f514ef0b481d622187a7f8c5e1438e63e721f5b70292887e5714dc0540f9b3d1",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -177,7 +177,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across dashboard, quick-add, committed total, voice review, and over-goal states; both renderers pass 48dp target and quality checks. Remaining raster delta is font rendering, RGB565 quantization, and edge antialiasing. See reference/reviews/calories.md."
       }
     },
     {

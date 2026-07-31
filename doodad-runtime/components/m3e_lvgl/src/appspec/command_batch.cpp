@@ -376,16 +376,15 @@ lv_obj_t* stepper_value_label(lv_obj_t* object) {
     }
     auto* value_object = lv_obj_get_child(object, 1);
     if (value_object == nullptr) return nullptr;
-    if (lv_obj_check_type(value_object, &lv_label_class)) {
-        return value_object;
+    if (lv_obj_get_child_count(value_object) > 0) {
+        auto* nested = lv_obj_get_child(value_object, 0);
+        if (nested != nullptr &&
+            lv_obj_check_type(nested, &lv_label_class)) {
+            return nested;
+        }
     }
-    if (lv_obj_get_child_count(value_object) == 0) {
-        return nullptr;
-    }
-    auto* nested = lv_obj_get_child(value_object, 0);
-    return nested != nullptr &&
-            lv_obj_check_type(nested, &lv_label_class)
-        ? nested
+    return lv_obj_check_type(value_object, &lv_label_class)
+        ? value_object
         : nullptr;
 }
 
@@ -803,10 +802,13 @@ CommandResult apply_ui_command_batch(
                 document.string_at(node.secondary_text_offset));
             auto* value_label = stepper_value_label(object);
             auto* value_object = lv_obj_get_child(object, 1);
-            if (value_object != nullptr &&
-                lv_obj_check_type(value_object, &lv_label_class)) {
+            if (value_label == value_object) {
                 lv_label_set_text(value_label, value);
             } else if (value_label != nullptr) {
+                if (lv_obj_check_type(
+                        value_object, &lv_label_class)) {
+                    lv_label_set_text(value_object, value);
+                }
                 char number[24]{};
                 std::snprintf(
                     number,

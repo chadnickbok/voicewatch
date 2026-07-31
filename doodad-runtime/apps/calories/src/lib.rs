@@ -14,6 +14,7 @@ struct Runtime {
     total: u32,
     quick_amount: u32,
     text: [u8; 24],
+    context: [u8; 24],
     commands: UiCommandBuffer<256>,
 }
 
@@ -23,20 +24,31 @@ impl Runtime {
             total: 1420,
             quick_amount: 100,
             text: [0; 24],
+            context: [0; 24],
             commands: UiCommandBuffer::new(),
         }
     }
 
     fn render_home(&mut self) -> u64 {
         let total = format_kcal(self.total, &mut self.text);
-        if self.commands.begin(3).is_err()
+        let context =
+            format_context(self.total, &mut self.context);
+        let progress_maximum = core::cmp::max(2000, self.total);
+        if self.commands.begin(4).is_err()
+            || self
+                .commands
+                .set_primary_text("today.context", context)
+                .is_err()
             || self
                 .commands
                 .set_primary_text("today.total", total)
                 .is_err()
             || self
                 .commands
-                .set_maximum("today.progress", 3000)
+                .set_maximum(
+                    "today.progress",
+                    i64::from(progress_maximum),
+                )
                 .is_err()
             || self
                 .commands
@@ -134,6 +146,33 @@ pub unsafe extern "C" fn handle_event(
 }
 
 fn format_kcal(value: u32, output: &mut [u8; 24]) -> &str {
+    let cursor = write_number(value, output, 0);
+    let suffix = b" kcal";
+    output[cursor..cursor + suffix.len()].copy_from_slice(suffix);
+    let end = cursor + suffix.len();
+    unsafe { core::str::from_utf8_unchecked(&output[..end]) }
+}
+
+fn format_context(value: u32, output: &mut [u8; 24]) -> &str {
+    let prefix = b"TODAY / ";
+    output[..prefix.len()].copy_from_slice(prefix);
+    let remaining = value.abs_diff(2000);
+    let cursor = write_number(remaining, output, prefix.len());
+    let suffix = if value <= 2000 {
+        b" LEFT".as_slice()
+    } else {
+        b" OVER".as_slice()
+    };
+    output[cursor..cursor + suffix.len()].copy_from_slice(suffix);
+    let end = cursor + suffix.len();
+    unsafe { core::str::from_utf8_unchecked(&output[..end]) }
+}
+
+fn write_number(
+    value: u32,
+    output: &mut [u8],
+    mut cursor: usize,
+) -> usize {
     let mut reverse = [0_u8; 10];
     let mut digits = 0;
     let mut remaining = value;
@@ -145,16 +184,17 @@ fn format_kcal(value: u32, output: &mut [u8; 24]) -> &str {
             break;
         }
     }
-    let mut cursor = 0;
+    let digit_count = digits;
     while digits != 0 {
         digits -= 1;
+        if digits != digit_count - 1 && (digits + 1) % 3 == 0 {
+            output[cursor] = b',';
+            cursor += 1;
+        }
         output[cursor] = reverse[digits];
         cursor += 1;
     }
-    let suffix = b" kcal";
-    output[cursor..cursor + suffix.len()].copy_from_slice(suffix);
-    cursor += suffix.len();
-    unsafe { core::str::from_utf8_unchecked(&output[..cursor]) }
+    cursor
 }
 
 #[panic_handler]

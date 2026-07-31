@@ -586,7 +586,7 @@ terminal LVGL frame to a different Compose fixture.
 | 5 | Calculator | [x] | [x] | [x] | [x] | [ ] |
 | 6 | Calendar | [x] | [x] | [x] | [x] | [x] |
 | 7 | Workout | [x] | [x] | [x] | [x] | [x] |
-| 8 | Calories / nutrition | [x] | [x] | [x] | [x] | [ ] |
+| 8 | Calories / nutrition | [x] | [x] | [x] | [x] | [x] |
 | 9 | Voice Notes | [x] | [x] | [x] | [x] | [ ] |
 | 10 | Medication | [x] | [x] | [x] | [x] | [ ] |
 | 11 | Sensor Recorder | [x] | [x] | [x] | [x] | [ ] |
@@ -1229,6 +1229,14 @@ produce the twenty-row report.
   structure/bounds with no quality findings, and the approved
   **Equivalent** disposition is recorded in
   [`reference/reviews/workout.md`](../reference/reviews/workout.md).
+- [x] Completed the Calories oracle redesign and decisive-flow review across
+  daily dashboard, quick add, committed total, voice review, and over-goal
+  states. The app launches directly into the full-screen nutrition dashboard;
+  its documents select three nutrition patterns by structure alone. Compose
+  and LVGL share exact normalized structure/bounds with no quality findings,
+  the styled stepper remains synchronized with WASM updates, and the approved
+  **Equivalent** disposition is recorded in
+  [`reference/reviews/calories.md`](../reference/reviews/calories.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

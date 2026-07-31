@@ -5,7 +5,7 @@
     "id": "calories.quick-add",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
@@ -14,7 +14,8 @@
           "props": {
             "text": "QUICK ADD",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
@@ -40,41 +41,51 @@
           "id": "calories.quick.detail",
           "type": "card",
           "props": {
-            "title": "Local record",
-            "body": "Updates totals atomically",
+            "title": "TODAY / 1,420 KCAL",
+            "body": "Saved locally with daily total",
             "tone": "neutral"
           }
         },
         {
-          "id": "calories.quick.add",
-          "type": "button",
+          "id": "calories.quick.actions",
+          "type": "row",
           "props": {
-            "label": "Add calories",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calories.add"
-          },
-          "semantics": {
-            "label": "Add calories"
-          }
-        },
-        {
-          "id": "calories.quick.voice",
-          "type": "button",
-          "props": {
-            "label": "Voice input",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calories.voice"
-          },
-          "semantics": {
-            "label": "Review a structured voice record"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "calories.quick.add",
+                "type": "button",
+                "props": {
+                  "label": "Add",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "calories.add"
+                },
+                "semantics": {
+                  "label": "Add calories"
+                }
+              },
+              {
+                "id": "calories.quick.voice",
+                "type": "button",
+                "props": {
+                  "label": "Voice",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "calories.voice"
+                },
+                "semantics": {
+                  "label": "Review a structured voice record"
+                }
+              }
+            ]
           }
         }
       ]

@@ -40,11 +40,11 @@ class SceneSnapshotRepositoryTest {
                 "keypad" to 7,
                 "live_card" to 6,
                 "progress" to 6,
-                "row" to 1,
+                "row" to 4,
                 "screen" to 96,
                 "scroll" to 13,
                 "stepper" to 10,
-                "text" to 169,
+                "text" to 172,
                 "toggle" to 11,
             ),
             loaded

@@ -345,6 +345,18 @@ private fun SquarePatternSurface(
         SquareWorkoutSummarySurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.NutritionDashboard) {
+        SquareNutritionDashboardSurface(children, context)
+        return
+    }
+    if (pattern == AppSpecPattern.NutritionQuickAdd) {
+        SquareNutritionQuickAddSurface(children, context)
+        return
+    }
+    if (pattern == AppSpecPattern.NutritionReview) {
+        SquareNutritionReviewSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.NotificationStack) {
         SquareNotificationStackSurface(children, context)
         return
@@ -671,6 +683,265 @@ private fun WorkoutLiveMetricCard(
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = node.enabled,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SquareNutritionDashboardSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val texts = children.filter { it.kind == "text" }
+    val heading =
+        texts.singleOrNull { it.props.variant == "label" }
+            ?: error("Nutrition dashboard requires one context label")
+    val total =
+        texts.singleOrNull { it.props.variant == "numeral" }
+            ?: error("Nutrition dashboard requires one total")
+    val progress =
+        children.singleOrNull { it.kind == "progress" }
+            ?: error("Nutrition dashboard requires one progress indicator")
+    val card =
+        children.singleOrNull { it.kind == "card" }
+            ?: error("Nutrition dashboard requires one meal card")
+    val action =
+        children.singleOrNull { it.kind == "button" }
+            ?: error("Nutrition dashboard requires one add action")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        Text(
+            text = requireNotNull(heading.props.primaryText),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(20.dp)
+                    .appSpecNode(heading, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            style = MaterialTheme.typography.labelLarge,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = requireNotNull(total.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(y = 20.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .appSpecNode(total, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.displaySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        LinearProgressIndicator(
+            progress = {
+                requireNotNull(progress.props.value).toFloat() /
+                    requireNotNull(progress.props.maximum).toFloat()
+            },
+            modifier =
+                Modifier
+                    .offset(y = 72.dp)
+                    .fillMaxWidth()
+                    .height(12.dp)
+                    .appSpecNode(progress, context.evidenceCollector),
+            enabled = progress.enabled,
+        )
+        CalendarEventCard(
+            node = card,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 88.dp)
+                    .fillMaxWidth()
+                    .height(44.dp),
+        )
+        NotificationActionButton(
+            node = action,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(x = 32.dp, y = 136.dp)
+                    .width(120.dp)
+                    .height(48.dp),
+        )
+    }
+}
+
+@Composable
+private fun SquareNutritionQuickAddSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val heading =
+        children.singleOrNull { it.kind == "text" }
+            ?: error("Nutrition quick add requires one context label")
+    val stepper =
+        children.singleOrNull { it.kind == "stepper" }
+            ?: error("Nutrition quick add requires one calorie stepper")
+    val card =
+        children.singleOrNull { it.kind == "card" }
+            ?: error("Nutrition quick add requires one context card")
+    val actions =
+        children.singleOrNull { it.kind == "row" }
+            ?: error("Nutrition quick add requires one action row")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        NutritionContextLabel(
+            node = heading,
+            context = context,
+        )
+        InlineAppSpecStepper(
+            node = stepper,
+            context = context,
+            action =
+                stepper.action("value_committed")
+                    ?: error("Nutrition amount requires valueCommitted"),
+            current = requireNotNull(stepper.props.value),
+            minimum = requireNotNull(stepper.props.minimum),
+            maximum = requireNotNull(stepper.props.maximum),
+            step = requireNotNull(stepper.props.step),
+            modifier =
+                Modifier
+                    .offset(y = 24.dp)
+                    .fillMaxWidth()
+                    .height(48.dp),
+        )
+        CalendarEventCard(
+            node = card,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 76.dp)
+                    .fillMaxWidth()
+                    .height(52.dp),
+        )
+        NutritionActionRow(
+            node = actions,
+            context = context,
+        )
+    }
+}
+
+@Composable
+private fun SquareNutritionReviewSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val texts = children.filter { it.kind == "text" }
+    val heading =
+        texts.singleOrNull { it.props.variant == "label" }
+            ?: error("Nutrition review requires one context label")
+    val total =
+        texts.singleOrNull { it.props.variant == "numeral" }
+            ?: error("Nutrition review requires one total")
+    val card =
+        children.singleOrNull { it.kind == "card" }
+            ?: error("Nutrition review requires one meal card")
+    val actions =
+        children.singleOrNull { it.kind == "row" }
+            ?: error("Nutrition review requires one action row")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        NutritionContextLabel(
+            node = heading,
+            context = context,
+        )
+        Text(
+            text = requireNotNull(total.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(y = 20.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .appSpecNode(total, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.displaySmall,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+        )
+        CalendarEventCard(
+            node = card,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 72.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
+        )
+        NutritionActionRow(
+            node = actions,
+            context = context,
+        )
+    }
+}
+
+@Composable
+private fun NutritionContextLabel(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    Text(
+        text = requireNotNull(node.props.primaryText),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(20.dp)
+                .appSpecNode(node, context.evidenceCollector),
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        style = MaterialTheme.typography.labelLarge,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+        textAlign = TextAlign.Center,
+    )
+}
+
+@Composable
+private fun NutritionActionRow(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    val actions =
+        context.snapshot.childrenOf(node).filter { it.visible }
+    check(actions.size == 2 && actions.all { it.kind == "button" }) {
+        "Nutrition action row requires two buttons"
+    }
+    Row(
+        modifier =
+            Modifier
+                .offset(y = 132.dp)
+                .fillMaxWidth()
+                .height(48.dp)
+                .appSpecNode(node, context.evidenceCollector),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        actions.forEach { action ->
+            NotificationActionButton(
+                node = action,
+                context = context,
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight(),
             )
         }
     }

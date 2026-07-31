@@ -137,11 +137,11 @@
       "keypad": 2,
       "live_card": 3,
       "progress": 2,
-      "row": 1,
+      "row": 3,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
-      "text": 138,
+      "text": 139,
       "toggle": 9
     },
     "property_counts": {
@@ -166,8 +166,8 @@
       "progress.style": 2,
       "progress.tone": 2,
       "progress.value": 2,
-      "row.align": 1,
-      "row.gap": 1,
+      "row.align": 3,
+      "row.gap": 3,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -178,10 +178,10 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 90,
-      "text.max_lines": 138,
-      "text.style": 138,
-      "text.text": 138,
+      "text.align": 93,
+      "text.max_lines": 139,
+      "text.style": 139,
+      "text.text": 139,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9
@@ -198,15 +198,15 @@
     "token_values": {
       "variant": {
         "filled": 72,
-        "outlined": 46,
+        "outlined": 44,
         "text": 4,
-        "tonal": 11
+        "tonal": 13
       },
       "style": {
         "body": 3,
         "caption": 1,
         "circular": 1,
-        "label": 67,
+        "label": 68,
         "linear": 1,
         "numeral": 62,
         "title": 5
@@ -221,15 +221,15 @@
       },
       "gap": {
         "lg": 1,
-        "none": 24,
-        "sm": 73,
-        "xs": 6
+        "none": 27,
+        "sm": 70,
+        "xs": 8
       },
       "align": {
-        "center": 89,
+        "center": 92,
         "end": 1,
         "start": 1,
-        "stretch": 103
+        "stretch": 105
       }
     },
     "patterns": {
@@ -237,10 +237,11 @@
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
-      "metric_control": 1,
       "notification_stack": 6,
-      "progress_dashboard": 1,
-      "status_detail": 57,
+      "nutrition_dashboard": 1,
+      "nutrition_quick_add": 1,
+      "nutrition_review": 1,
+      "status_detail": 56,
       "task_list": 4,
       "weather_hero": 1,
       "workout_rest": 1,
@@ -588,7 +589,7 @@
     },
     {
       "path": "apps/workout/appspec.json",
-      "sha256": "17306faf3a76c259f34f74101b8529fe4b3661411be27617fb2256cb54a31f37"
+      "sha256": "e887b7db6dc352c19d01c36a76617916643212aeab11f8b7373b321bb013cf0b"
     },
     {
       "path": "apps/workout/screens/next-set.json",
@@ -604,15 +605,15 @@
     },
     {
       "path": "apps/calories/appspec.json",
-      "sha256": "e2a03300f4b776ac86eb5bd57e35cfc8bd51ca87c80db2130567cfa7fa62d5c8"
+      "sha256": "c72605d4fce79851856b62d77048bd567d50e02967a4c3a663e9a0cb26dfec19"
     },
     {
       "path": "apps/calories/screens/quick-add.json",
-      "sha256": "2059db4fc449eda6a182f9fc49d3d4dd78f3a8065597f2d46b6ec33ca41ecf23"
+      "sha256": "a7a366823cada6427028b6af5b3f04dadeaa6b4d9b22d46c6283284a7cca3523"
     },
     {
       "path": "apps/calories/screens/voice-review.json",
-      "sha256": "4b4a76c23af8e581cc76aaa7c4db88ccfd47cda190d451a6310a475aacf060f5"
+      "sha256": "b8c72ee986a0c8bb4b8e6226a0179a2ad3ff1f8fc3d503cb28dcad3430e477cc"
     },
     {
       "path": "apps/voice-notes/appspec.json",
@@ -843,5 +844,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "68c0b47df17984b359d70144a513e98701a94fdc89a5611886af3ddb52fbceca"
+  "sources_sha256": "32a7530c57a760723393cc3df47ab96a186eb2471bbf0a8b884511921994dcf4"
 }

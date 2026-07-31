@@ -22,7 +22,7 @@ class WaveTwoAndSnakeTests(unittest.TestCase):
 
     def test_calorie_stepper_and_voice_review_commit_atomically(self) -> None:
         def flow(native: NativeHost) -> None:
-            native.click_button("Quick add")
+            native.click_button("Add food")
             self.assertEqual(
                 native.node_text("calories.quick.amount"), "100 kcal"
             )
@@ -30,16 +30,16 @@ class WaveTwoAndSnakeTests(unittest.TestCase):
             self.assertEqual(
                 native.node_text("calories.quick.amount"), "150 kcal"
             )
-            native.click_button("Add calories")
-            self.assertEqual(native.node_text("today.total"), "1570 kcal")
+            native.click_button("Add")
+            self.assertEqual(native.node_text("today.total"), "1,570 kcal")
 
-            native.click_button("Quick add")
-            native.click_button("Voice input")
+            native.click_button("Add food")
+            native.click_button("Voice")
             self.assertEqual(
                 native.node_text("calories.review.summary"), "650 kcal"
             )
-            native.click_button("Confirm record")
-            self.assertEqual(native.node_text("today.total"), "2220 kcal")
+            native.click_button("Save")
+            self.assertEqual(native.node_text("today.total"), "2,220 kcal")
 
         self.run_app("calories", flow)
 
