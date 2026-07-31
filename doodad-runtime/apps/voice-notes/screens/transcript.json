@@ -5,71 +5,83 @@
     "id": "voice-notes.transcript",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "voice-notes.transcript.heading",
           "type": "text",
           "props": {
-            "text": "TRANSCRIBED",
+            "text": "TRANSCRIPT",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "voice-notes.transcript.summary",
           "type": "text",
           "props": {
-            "text": "1 note",
+            "text": "1 NOTE",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "TRANSCRIBED",
+            "label": "Transcript count",
             "value": "1 note"
           }
         },
         {
           "id": "voice-notes.transcript.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "“Book the train after lunch.”",
-            "tone": "neutral"
+            "title": "7 WORDS / 00:31",
+            "body": "Book the train after lunch.",
+            "progress": 1,
+            "tone": "primary"
           }
         },
         {
-          "id": "voice-notes.transcript.primary",
-          "type": "button",
+          "id": "voice-notes.transcript.actions",
+          "type": "row",
           "props": {
-            "label": "Save note",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "voice-notes.save"
-          },
-          "semantics": {
-            "label": "Save note"
-          }
-        },
-        {
-          "id": "voice-notes.transcript.secondary",
-          "type": "button",
-          "props": {
-            "label": "Record again",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "voice-notes.again"
-          },
-          "semantics": {
-            "label": "Record again"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "voice-notes.transcript.save",
+                "type": "button",
+                "props": {
+                  "label": "Save",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "voice-notes.save"
+                },
+                "semantics": {
+                  "label": "Save voice note"
+                }
+              },
+              {
+                "id": "voice-notes.transcript.again",
+                "type": "button",
+                "props": {
+                  "label": "Again",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "voice-notes.again"
+                },
+                "semantics": {
+                  "label": "Record again"
+                }
+              }
+            ]
           }
         }
       ]

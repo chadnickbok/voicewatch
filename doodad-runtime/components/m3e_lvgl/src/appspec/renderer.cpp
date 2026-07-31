@@ -15,6 +15,7 @@ LV_FONT_DECLARE(m3e_timer_font_55);
 LV_FONT_DECLARE(m3e_timer_value_font_28);
 LV_FONT_DECLARE(m3e_weather_font_55);
 LV_FONT_DECLARE(m3e_nutrition_font_32);
+LV_FONT_DECLARE(m3e_voice_font_32);
 
 namespace m3e::appspec {
 namespace {
@@ -417,6 +418,70 @@ bool is_nutrition_review_document(
         rows == 1 && buttons == 2;
 }
 
+bool is_voice_ready_document(const WireDocument& document) {
+    if (document.node_count != 4 ||
+        document.nodes[0].child_count != 3) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t cards = 0;
+    std::size_t orbs = 0;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 0) return false;
+        if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::card) {
+            ++cards;
+        } else if (node.kind == ComponentKind::voice_orb) {
+            ++orbs;
+        } else {
+            return false;
+        }
+    }
+    return texts == 1 && cards == 1 && orbs == 1;
+}
+
+bool is_voice_detail_document(const WireDocument& document) {
+    if (document.node_count != 7 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    std::size_t texts = 0;
+    std::size_t live_cards = 0;
+    std::size_t rows = 0;
+    std::size_t buttons = 0;
+    std::size_t row_index = Reconciler::kCapacity;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == 0) {
+            if (node.kind == ComponentKind::text) {
+                ++texts;
+            } else if (node.kind == ComponentKind::live_card) {
+                ++live_cards;
+            } else if (node.kind == ComponentKind::row) {
+                ++rows;
+                row_index = index;
+                if (node.child_count != 2) return false;
+            } else {
+                return false;
+            }
+        }
+    }
+    if (row_index == Reconciler::kCapacity) return false;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index == row_index &&
+            node.kind == ComponentKind::button) {
+            ++buttons;
+        } else if (node.parent_index != 0) {
+            return false;
+        }
+    }
+    return texts == 2 && live_cards == 1 &&
+        rows == 1 && buttons == 2;
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -667,6 +732,10 @@ bool Renderer::mount(
         is_nutrition_quick_add_document(document);
     const auto nutrition_review_document =
         is_nutrition_review_document(document);
+    const auto voice_ready_document =
+        is_voice_ready_document(document);
+    const auto voice_detail_document =
+        is_voice_detail_document(document);
     const auto task_toggle_count =
         task_list_document
             ? count_kind(document, ComponentKind::toggle)
@@ -700,7 +769,9 @@ bool Renderer::mount(
                     workout_summary_document ||
                     nutrition_dashboard_document ||
                     nutrition_quick_add_document ||
-                    nutrition_review_document
+                    nutrition_review_document ||
+                    voice_ready_document ||
+                    voice_detail_document
                 ? 0
                 : px(12),
         0);
@@ -751,7 +822,8 @@ bool Renderer::mount(
                     lv_obj_set_style_pad_gap(object, 0, 0);
                 } else if (
                     (nutrition_quick_add_document ||
-                     nutrition_review_document) &&
+                     nutrition_review_document ||
+                     voice_detail_document) &&
                     node.kind == ComponentKind::row) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), px(48));
@@ -1073,6 +1145,39 @@ bool Renderer::mount(
                     lv_obj_set_style_pad_top(object, px(2), 0);
                     lv_label_set_long_mode(
                         object, LV_LABEL_LONG_DOT);
+                } else if (voice_ready_document ||
+                           voice_detail_document) {
+                    const auto is_value =
+                        voice_detail_document && node.variant == 4;
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        object,
+                        px(184),
+                        is_value ? px(48) : px(20));
+                    lv_obj_set_pos(
+                        object,
+                        px(4),
+                        is_value ? px(24) : px(4));
+                    lv_obj_set_style_text_font(
+                        object,
+                        is_value
+                            ? &m3e_voice_font_32
+                            : &lv_font_montserrat_18,
+                        0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        is_value
+                            ? lv_color_make(0xF6, 0xED, 0xFF)
+                            : lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_obj_set_style_pad_top(
+                        object,
+                        is_value ? px(6) : px(2),
+                        0);
+                    lv_label_set_long_mode(
+                        object, LV_LABEL_LONG_DOT);
                 }
                 break;
             case ComponentKind::button:
@@ -1324,7 +1429,8 @@ bool Renderer::mount(
                     }
                 } else if (
                     nutrition_quick_add_document ||
-                    nutrition_review_document) {
+                    nutrition_review_document ||
+                    voice_detail_document) {
                     const auto ordinal =
                         kind_ordinal(
                             document, index, ComponentKind::button);
@@ -1635,6 +1741,45 @@ bool Renderer::mount(
                         lv_label_set_long_mode(
                             body, LV_LABEL_LONG_DOT);
                     }
+                } else if (voice_ready_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(56));
+                    lv_obj_set_pos(object, px(4), px(132));
+                    lv_obj_set_style_min_height(object, 0, 0);
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_radius(object, px(24), 0);
+                    lv_obj_set_style_bg_color(
+                        object,
+                        lv_color_make(0x33, 0x2E, 0x3C),
+                        0);
+                    lv_obj_set_style_bg_opa(
+                        object, LV_OPA_COVER, 0);
+                    if (lv_obj_get_child_count(object) == 2) {
+                        auto* title = lv_obj_get_child(object, 0);
+                        auto* body = lv_obj_get_child(object, 1);
+                        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(title, px(160), px(18));
+                        lv_obj_set_pos(title, px(12), px(5));
+                        lv_obj_set_style_text_font(
+                            title, &lv_font_montserrat_16, 0);
+                        lv_obj_set_style_text_color(
+                            title,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_label_set_long_mode(
+                            title, LV_LABEL_LONG_DOT);
+                        lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(body, px(160), px(28));
+                        lv_obj_set_pos(body, px(12), px(23));
+                        lv_obj_set_style_text_font(
+                            body, &lv_font_montserrat_14, 0);
+                        lv_obj_set_style_text_color(
+                            body,
+                            lv_color_make(0xCA, 0xC4, 0xD0),
+                            0);
+                        lv_label_set_long_mode(
+                            body, LV_LABEL_LONG_DOT);
+                    }
                 }
                 break;
             case ComponentKind::live_card:
@@ -1650,15 +1795,19 @@ bool Renderer::mount(
                         tone(node.tone),
                     });
                 if (workout_set_document ||
-                    workout_rest_document) {
+                    workout_rest_document ||
+                    voice_detail_document) {
                     const auto is_rest = workout_rest_document;
-                    const auto height = is_rest ? px(60) : px(56);
+                    const auto height =
+                        is_rest ? px(60) : px(56);
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(184), height);
                     lv_obj_set_pos(
                         object,
                         px(4),
-                        is_rest ? px(76) : px(80));
+                        is_rest || voice_detail_document
+                            ? px(76)
+                            : px(80));
                     lv_obj_set_style_min_height(object, 0, 0);
                     lv_obj_set_style_pad_all(object, 0, 0);
                     lv_obj_set_style_pad_gap(object, 0, 0);
@@ -2089,6 +2238,75 @@ bool Renderer::mount(
             case ComponentKind::voice_orb:
                 object = factory.voice_orb(
                     parent, primary, tone(node.tone));
+                if (voice_ready_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_add_flag(
+                        object, LV_OBJ_FLAG_OVERFLOW_VISIBLE);
+                    lv_obj_set_size(object, px(96), px(97));
+                    lv_obj_set_pos(object, px(48), px(28));
+                    lv_obj_set_style_bg_opa(
+                        object, LV_OPA_TRANSP, 0);
+                    lv_obj_set_style_border_width(object, 0, 0);
+                    if (lv_obj_get_child_count(object) == 2) {
+                        auto* symbol = lv_obj_get_child(object, 0);
+                        auto* state = lv_obj_get_child(object, 1);
+                        auto* circle = lv_obj_create(object);
+                        ComponentFactory::reset(circle);
+                        lv_obj_add_flag(
+                            circle, LV_OBJ_FLAG_FLOATING);
+                        lv_obj_set_size(circle, px(76), px(76));
+                        lv_obj_set_pos(circle, px(10), 0);
+                        lv_obj_set_style_radius(
+                            circle, LV_RADIUS_CIRCLE, 0);
+                        lv_obj_set_style_bg_color(
+                            circle,
+                            lv_color_make(0x33, 0x2E, 0x3C),
+                            0);
+                        lv_obj_set_style_bg_opa(
+                            circle, LV_OPA_COVER, 0);
+                        lv_obj_set_style_border_width(
+                            circle, px(3), 0);
+                        lv_obj_set_style_border_color(
+                            circle,
+                            lv_color_make(0xD8, 0xB9, 0xFF),
+                            0);
+                        lv_obj_set_parent(symbol, circle);
+                        lv_obj_set_parent(state, circle);
+                        lv_obj_set_style_text_color(
+                            symbol,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_set_style_text_color(
+                            state,
+                            lv_color_make(0xF6, 0xED, 0xFF),
+                            0);
+                        lv_obj_align(
+                            symbol, LV_ALIGN_CENTER, 0, -px(8));
+                        lv_obj_align(
+                            state, LV_ALIGN_CENTER, 0, px(16));
+                    }
+                    auto* transcript = factory.text(
+                        object,
+                        secondary,
+                        generated::TypographyRole::body_extra_small,
+                        true);
+                    lv_obj_add_flag(
+                        transcript, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        transcript, px(96), px(20));
+                    lv_obj_set_pos(
+                        transcript, 0, px(78));
+                    lv_obj_set_style_text_font(
+                        transcript, &lv_font_montserrat_14, 0);
+                    lv_obj_set_style_text_color(
+                        transcript,
+                        lv_color_make(0xCA, 0xC4, 0xD0),
+                        0);
+                    lv_obj_set_style_text_align(
+                        transcript, LV_TEXT_ALIGN_CENTER, 0);
+                    lv_label_set_long_mode(
+                        transcript, LV_LABEL_LONG_DOT);
+                }
                 break;
             case ComponentKind::keypad: {
                 object = layout(factory, parent, node, false);

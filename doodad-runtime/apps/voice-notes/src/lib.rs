@@ -11,15 +11,15 @@ const SAVED: &[u8] = include_bytes!("../screens/saved.cbor");
 
 fn target_for(action_id: &str) -> Option<&'static [u8]> {
     match action_id {
-        "voice-notes.primary" => Some(RECORDING),
-        "voice-notes.disconnect" => Some(BUFFERED),
-        "voice-notes.finish" => Some(TRANSCRIPT),
-        "voice-notes.reconnect" => Some(TRANSCRIPT),
+        "voice-notes.record" => Some(RECORDING),
+        "voice-notes.finish-capture" => Some(BUFFERED),
         "voice-notes.pause" => Some(BUFFERED),
+        "voice-notes.transcribe" => Some(TRANSCRIPT),
+        "voice-notes.delete" => Some(HOME),
         "voice-notes.save" => Some(SAVED),
         "voice-notes.again" => Some(RECORDING),
         "voice-notes.open" => Some(TRANSCRIPT),
-        "voice-notes.home" => Some(HOME),
+        "voice-notes.done" => Some(HOME),
         _ => None,
     }
 }

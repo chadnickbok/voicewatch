@@ -5,16 +5,17 @@
     "id": "voice-notes.recording",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "voice-notes.recording.heading",
           "type": "text",
           "props": {
-            "text": "RECORDING",
+            "text": "REC / LOCAL",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
@@ -23,53 +24,64 @@
           "props": {
             "text": "00:18",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "RECORDING",
+            "label": "Recording elapsed time",
             "value": "00:18"
           }
         },
         {
           "id": "voice-notes.recording.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "▁▃▅▇▆▃▅ · 3 chunks buffered",
-            "tone": "neutral"
+            "title": "SAFE / 3 CHUNKS",
+            "body": "On watch / sleeps safely",
+            "progress": 0.6,
+            "tone": "primary"
           }
         },
         {
-          "id": "voice-notes.recording.primary",
-          "type": "button",
+          "id": "voice-notes.recording.actions",
+          "type": "row",
           "props": {
-            "label": "Lose network",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "voice-notes.disconnect"
-          },
-          "semantics": {
-            "label": "Lose network"
-          }
-        },
-        {
-          "id": "voice-notes.recording.secondary",
-          "type": "button",
-          "props": {
-            "label": "Finish",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "voice-notes.finish"
-          },
-          "semantics": {
-            "label": "Finish"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "voice-notes.recording.finish",
+                "type": "button",
+                "props": {
+                  "label": "Finish",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "voice-notes.finish-capture"
+                },
+                "semantics": {
+                  "label": "Finish recording"
+                }
+              },
+              {
+                "id": "voice-notes.recording.pause",
+                "type": "button",
+                "props": {
+                  "label": "Pause",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "voice-notes.pause"
+                },
+                "semantics": {
+                  "label": "Pause recording"
+                }
+              }
+            ]
           }
         }
       ]

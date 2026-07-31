@@ -587,7 +587,7 @@ terminal LVGL frame to a different Compose fixture.
 | 6 | Calendar | [x] | [x] | [x] | [x] | [x] |
 | 7 | Workout | [x] | [x] | [x] | [x] | [x] |
 | 8 | Calories / nutrition | [x] | [x] | [x] | [x] | [x] |
-| 9 | Voice Notes | [x] | [x] | [x] | [x] | [ ] |
+| 9 | Voice Notes | [x] | [x] | [x] | [x] | [x] |
 | 10 | Medication | [x] | [x] | [x] | [x] | [ ] |
 | 11 | Sensor Recorder | [x] | [x] | [x] | [x] | [ ] |
 | 12 | Sleep | [x] | [x] | [x] | [x] | [ ] |
@@ -1237,6 +1237,13 @@ produce the twenty-row report.
   the styled stepper remains synchronized with WASM updates, and the approved
   **Equivalent** disposition is recorded in
   [`reference/reviews/calories.md`](../reference/reviews/calories.md).
+- [x] Completed the Voice Notes oracle redesign and decisive-flow review
+  across ready, recording, locally captured, transcript review, and saved
+  states. The app launches directly into a full-screen Material record
+  affordance; its five documents select two voice patterns by structure alone.
+  Compose and LVGL share exact normalized structure/bounds with no quality
+  findings, and the approved **Equivalent** disposition is recorded in
+  [`reference/reviews/voice-notes.md`](../reference/reviews/voice-notes.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

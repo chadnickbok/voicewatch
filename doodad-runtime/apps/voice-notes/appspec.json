@@ -5,46 +5,44 @@
     "id": "voice-notes.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "voice-notes.summary",
+          "id": "voice-notes.ready",
           "type": "text",
           "props": {
-            "text": "Recording ready",
-            "style": "numeral",
-            "max_lines": 2,
+            "text": "READY / WATCH",
+            "style": "label",
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Voice Notes status",
-            "value": "Recording ready"
+            "label": "Recorder status",
+            "value": "Ready"
           }
         },
         {
-          "id": "voice-notes.mock",
-          "type": "card",
+          "id": "voice-notes.record",
+          "type": "voice_orb",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
-          }
-        },
-        {
-          "id": "voice-notes.primary",
-          "type": "button",
-          "props": {
-            "label": "Record note",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
+            "state": "idle",
+            "transcript": "Tap to record"
           },
           "events": {
-            "tap": "voice-notes.primary"
+            "tap": "voice-notes.record"
           },
           "semantics": {
-            "label": "Record note"
+            "label": "Record voice note"
+          }
+        },
+        {
+          "id": "voice-notes.recent",
+          "type": "card",
+          "props": {
+            "title": "LAST NOTE / 00:24",
+            "body": "Train after lunch / synced",
+            "tone": "neutral"
           }
         }
       ]

@@ -20,18 +20,19 @@ class ParallaxInventoryTests(unittest.TestCase):
         self.assertEqual(
             document["authored"]["component_counts"],
             {
-                "button": 133,
-                "card": 75,
+                "button": 132,
+                "card": 71,
                 "column": 5,
                 "keypad": 2,
-                "live_card": 3,
+                "live_card": 7,
                 "progress": 2,
-                "row": 3,
+                "row": 7,
                 "screen": 83,
                 "scroll": 15,
                 "stepper": 4,
                 "text": 139,
                 "toggle": 9,
+                "voice_orb": 1,
             },
         )
         self.assertEqual(
@@ -46,10 +47,12 @@ class ParallaxInventoryTests(unittest.TestCase):
                 "nutrition_quick_add": 1,
                 "nutrition_review": 1,
                 "task_list": 4,
+                "voice_detail": 4,
+                "voice_ready": 1,
                 "workout_rest": 1,
                 "workout_set": 2,
                 "workout_summary": 1,
-                "status_detail": 56,
+                "status_detail": 51,
                 "weather_hero": 1,
             },
         )

@@ -357,6 +357,14 @@ private fun SquarePatternSurface(
         SquareNutritionReviewSurface(children, context)
         return
     }
+    if (pattern == AppSpecPattern.VoiceReady) {
+        SquareVoiceReadySurface(children, context)
+        return
+    }
+    if (pattern == AppSpecPattern.VoiceDetail) {
+        SquareVoiceDetailSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.NotificationStack) {
         SquareNotificationStackSurface(children, context)
         return
@@ -944,6 +952,115 @@ private fun NutritionActionRow(
                         .fillMaxHeight(),
             )
         }
+    }
+}
+
+@Composable
+private fun SquareVoiceReadySurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val heading =
+        children.singleOrNull { it.kind == "text" }
+            ?: error("Voice ready requires one context label")
+    val orb =
+        children.singleOrNull { it.kind == "voice_orb" }
+            ?: error("Voice ready requires one record orb")
+    val recent =
+        children.singleOrNull { it.kind == "card" }
+            ?: error("Voice ready requires one recent recording")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        NutritionContextLabel(
+            node = heading,
+            context = context,
+        )
+        Box(
+            modifier =
+                Modifier
+                    .offset(x = 44.dp, y = 24.dp)
+                    .width(96.dp)
+                    .height(100.dp),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            AppSpecVoiceOrb(
+                node = orb,
+                context = context,
+            )
+        }
+        CalendarEventCard(
+            node = recent,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 128.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
+        )
+    }
+}
+
+@Composable
+private fun SquareVoiceDetailSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val texts = children.filter { it.kind == "text" }
+    val heading =
+        texts.singleOrNull { it.props.variant == "label" }
+            ?: error("Voice detail requires one context label")
+    val elapsed =
+        texts.singleOrNull { it.props.variant == "numeral" }
+            ?: error("Voice detail requires one primary value")
+    val detail =
+        children.singleOrNull { it.kind == "live_card" }
+            ?: error("Voice detail requires one audio detail card")
+    val actions =
+        children.singleOrNull { it.kind == "row" }
+            ?: error("Voice detail requires one action row")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        NutritionContextLabel(
+            node = heading,
+            context = context,
+        )
+        Text(
+            text = requireNotNull(elapsed.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(y = 20.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .appSpecNode(elapsed, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onSurface,
+            style = MaterialTheme.typography.displaySmall,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            textAlign = TextAlign.Center,
+        )
+        WorkoutLiveMetricCard(
+            node = detail,
+            context = context,
+            modifier =
+                Modifier
+                    .offset(y = 72.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
+        )
+        NutritionActionRow(
+            node = actions,
+            context = context,
+        )
     }
 }
 

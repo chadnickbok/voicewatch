@@ -3,8 +3,8 @@
 
 These packages exercise the real AppSpec/Wasm/host capability path while their
 external integrations are still deterministic. Product-specific state
-machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar, Calories,
-Workout, and Snake) live outside this generator.
+machines (Timer, Weather, Notifications, Tasks, Calculator, Calendar,
+Calories, Workout, Voice Notes, and Snake) live outside this generator.
 """
 
 from __future__ import annotations
@@ -38,39 +38,6 @@ def screen(
 
 
 FLOWS: dict[str, dict[str, Any]] = {
-    "voice-notes": {
-        "initial": ("voice-notes.primary", "recording"),
-        "screens": {
-            "recording": screen(
-                "RECORDING",
-                "00:18",
-                "▁▃▅▇▆▃▅ · 3 chunks buffered",
-                ("Lose network", "voice-notes.disconnect", "buffered"),
-                ("Finish", "voice-notes.finish", "transcript"),
-            ),
-            "buffered": screen(
-                "STILL RECORDING",
-                "Offline · 00:31",
-                "Audio is safe locally · upload paused",
-                ("Reconnect", "voice-notes.reconnect", "transcript"),
-                ("Pause", "voice-notes.pause", "buffered"),
-            ),
-            "transcript": screen(
-                "TRANSCRIBED",
-                "1 note",
-                "“Book the train after lunch.”",
-                ("Save note", "voice-notes.save", "saved"),
-                ("Record again", "voice-notes.again", "recording"),
-            ),
-            "saved": screen(
-                "VOICE NOTES",
-                "Saved ✓",
-                "Upload resumed · no duplicate chunks",
-                ("Open note", "voice-notes.open", "transcript"),
-                ("Home", "voice-notes.home", "home"),
-            ),
-        },
-    },
     "medication": {
         "initial": ("medication.primary", "taken"),
         "screens": {

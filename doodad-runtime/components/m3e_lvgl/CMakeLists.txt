@@ -4,6 +4,7 @@ set(M3E_LVGL_SOURCES
     src/assets/nutrition_font_32.c
     src/assets/timer_font_55.c
     src/assets/timer_value_font_28.c
+    src/assets/voice_font_32.c
     src/assets/weather_font_55.c
     src/appspec/c_api.cpp
     src/appspec/command_batch.cpp

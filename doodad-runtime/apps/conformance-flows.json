@@ -233,25 +233,25 @@
     "voice-notes": [
       {
         "kind": "semantic",
-        "node_id": "voice-notes.primary",
-        "action_id": "voice-notes.primary",
+        "node_id": "voice-notes.record",
+        "action_id": "voice-notes.record",
         "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "voice-notes.recording.primary",
-        "action_id": "voice-notes.disconnect",
+        "node_id": "voice-notes.recording.finish",
+        "action_id": "voice-notes.finish-capture",
         "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "voice-notes.buffered.primary",
-        "action_id": "voice-notes.reconnect",
+        "node_id": "voice-notes.buffered.transcribe",
+        "action_id": "voice-notes.transcribe",
         "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "voice-notes.transcript.primary",
+        "node_id": "voice-notes.transcript.save",
         "action_id": "voice-notes.save",
         "event_kind": "tap"
       }

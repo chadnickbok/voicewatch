@@ -57,6 +57,13 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
     ):
         return "workout_set"
     if (
+        kinds["row"] == 1
+        and kinds["live_card"] == 1
+        and kinds["button"] == 2
+        and kinds["text"] == 2
+    ):
+        return "voice_detail"
+    if (
         kinds["live_card"] == 1
         and kinds["button"] == 2
         and kinds["text"] == 2
@@ -91,6 +98,12 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         and kinds["text"] == 2
     ):
         return "nutrition_review"
+    if (
+        kinds["voice_orb"] == 1
+        and kinds["card"] == 1
+        and kinds["text"] == 1
+    ):
+        return "voice_ready"
     if kinds["progress"]:
         return "progress_dashboard"
     if kinds["stepper"] or kinds["live_card"]:

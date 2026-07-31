@@ -187,7 +187,7 @@
       "app_slug": "voice-notes",
       "trace": "traces/voice-notes/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "77b8a60206be2a76ed2ad9dd1643d979115f29fd189bcea1325f1d02e02906fb",
+      "snapshot_sha256": "9de3a57ee982b657fdd125f317c0173a0fc17f0f96f9ac22bbfad6bb59b0ff44",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -200,7 +200,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across ready, recording, captured, transcript, and saved states; both renderers pass 48dp target and quality checks. The launch screen uses a real Material voice action without generic app-title chrome. See reference/reviews/voice-notes.md."
       }
     },
     {

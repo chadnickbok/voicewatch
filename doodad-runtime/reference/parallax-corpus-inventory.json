@@ -131,43 +131,44 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 133,
-      "card": 75,
+      "button": 132,
+      "card": 71,
       "column": 5,
       "keypad": 2,
-      "live_card": 3,
+      "live_card": 7,
       "progress": 2,
-      "row": 3,
+      "row": 7,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
       "text": 139,
-      "toggle": 9
+      "toggle": 9,
+      "voice_orb": 1
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 133,
-      "button.size": 133,
-      "button.tone": 133,
-      "button.variant": 133,
-      "card.body": 75,
-      "card.title": 75,
-      "card.tone": 75,
+      "button.label": 132,
+      "button.size": 132,
+      "button.tone": 132,
+      "button.variant": 132,
+      "card.body": 71,
+      "card.title": 71,
+      "card.tone": 71,
       "column.align": 5,
       "column.gap": 5,
       "keypad.columns": 2,
       "keypad.keys": 2,
-      "live_card.body": 3,
-      "live_card.progress": 3,
-      "live_card.title": 3,
-      "live_card.tone": 3,
+      "live_card.body": 7,
+      "live_card.progress": 7,
+      "live_card.title": 7,
+      "live_card.tone": 7,
       "progress.label": 2,
       "progress.maximum": 2,
       "progress.style": 2,
       "progress.tone": 2,
       "progress.value": 2,
-      "row.align": 3,
-      "row.gap": 3,
+      "row.align": 7,
+      "row.gap": 7,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -178,13 +179,15 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 93,
+      "text.align": 97,
       "text.max_lines": 139,
       "text.style": 139,
       "text.text": 139,
       "toggle.checked": 9,
       "toggle.label": 9,
-      "toggle.tone": 9
+      "toggle.tone": 9,
+      "voice_orb.state": 1,
+      "voice_orb.transcript": 1
     },
     "event_counts": {
       "checkedChanged": 9,
@@ -197,39 +200,42 @@
     },
     "token_values": {
       "variant": {
-        "filled": 72,
-        "outlined": 44,
+        "filled": 71,
+        "outlined": 40,
         "text": 4,
-        "tonal": 13
+        "tonal": 17
       },
       "style": {
         "body": 3,
         "caption": 1,
         "circular": 1,
-        "label": 68,
+        "label": 69,
         "linear": 1,
-        "numeral": 62,
+        "numeral": 61,
         "title": 5
       },
       "tone": {
-        "neutral": 130,
-        "primary": 90,
+        "neutral": 126,
+        "primary": 93,
         "tertiary": 2
       },
       "size": {
-        "default": 133
+        "default": 132
       },
       "gap": {
         "lg": 1,
-        "none": 27,
-        "sm": 70,
-        "xs": 8
+        "none": 32,
+        "sm": 65,
+        "xs": 12
       },
       "align": {
-        "center": 92,
+        "center": 96,
         "end": 1,
         "start": 1,
-        "stretch": 105
+        "stretch": 109
+      },
+      "state": {
+        "idle": 1
       }
     },
     "patterns": {
@@ -241,8 +247,10 @@
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 56,
+      "status_detail": 51,
       "task_list": 4,
+      "voice_detail": 4,
+      "voice_ready": 1,
       "weather_hero": 1,
       "workout_rest": 1,
       "workout_set": 2,
@@ -617,23 +625,23 @@
     },
     {
       "path": "apps/voice-notes/appspec.json",
-      "sha256": "9db5eab987461c671caa6f9a5841dc38b202c1e60c37d9e81a4f0a00f122e0ec"
+      "sha256": "2cd3ad4c67673e7753b7438bdee5446f1accefccb94f333d12120e2aaf8cfb44"
     },
     {
       "path": "apps/voice-notes/screens/buffered.json",
-      "sha256": "b953fc935063d8c2e064027dc5264de6820a7610749282912392eb7b320d2ba9"
+      "sha256": "1f683571924618032808cff95cb5463b6ad1efd3e6af809e1e8a3059d0c60b75"
     },
     {
       "path": "apps/voice-notes/screens/recording.json",
-      "sha256": "4e4be675db1b1dd86c29dec3d835a9fc281877f2b51a56741a15839c6c7730ef"
+      "sha256": "b3f48095665f67a23ae6d50eedfe17d344d06ee480bef7d7c690e83d752d3270"
     },
     {
       "path": "apps/voice-notes/screens/saved.json",
-      "sha256": "4be14e901566745a09ca6c6e5f056bd81b7eda627bd2f91af1c63098ea81f342"
+      "sha256": "21675ea4c3f2112b95432249f016f1d6641ef5ca03acf4bd0758f1a00b622e09"
     },
     {
       "path": "apps/voice-notes/screens/transcript.json",
-      "sha256": "19116004b524de6700d0c9e8e037c773bee776707ef263a4b4fd344264183bec"
+      "sha256": "568e7c8f25023d27dfb0316b82fc6e1ec5b6d7cef4c091ca3ba3d18cc0dea0ab"
     },
     {
       "path": "apps/medication/appspec.json",
@@ -844,5 +852,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "32a7530c57a760723393cc3df47ab96a186eb2471bbf0a8b884511921994dcf4"
+  "sources_sha256": "e901e535546a551c94cd16906e3fc4ab9d20c5ac91765580f48d34767259f614"
 }

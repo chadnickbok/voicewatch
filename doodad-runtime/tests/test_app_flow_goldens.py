@@ -22,7 +22,7 @@ EXPECTED = {
     "calendar": "605afaf378547668bc3849febd6a8c8c88233d340cce60e3cc4347c0b7424882",
     "workout": "1db39fbc0ce7fc3844ca729a30d13eae9d9fe5887d79d82620afac7d9b7070e3",
     "calories": "30a1f14478bb443f23ec058f6dba90ad36c9607678d4bc86ebfe8bf9c4de0985",
-    "voice-notes": "53534c59d380ee2cd76dc4ea1bf9b09de41a910cd2c91a46761893130cb13f5e",
+    "voice-notes": "199a140cc7035a6ab959ce2cabc3408e75101b7a89b2e7ffe626006c3db6f0a5",
     "medication": "802207cb78d2b0938581461d8d091da4226bbafc03f2f6904d7ded7f2f8635d2",
     "sensor-recorder": "fb0d7aa170aaa0ad24f34d3fa061b235bcc20bade742c9df99afb65858310cff",
     "sleep": "6b2e7abc07517d684418317226f0e33e955ef7dfab67f57c45758a43a6c9f994",

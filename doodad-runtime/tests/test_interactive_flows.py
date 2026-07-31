@@ -22,10 +22,14 @@ FLOWS = {
         ("Reconnect", "calendar.confirmed.event", "You're going"),
     ],
     "voice-notes": [
-        ("Record note", "voice-notes.recording.summary", "00:18"),
-        ("Lose network", "voice-notes.buffered.summary", "Offline · 00:31"),
-        ("Reconnect", "voice-notes.transcript.summary", "1 note"),
-        ("Save note", "voice-notes.saved.summary", "Saved ✓"),
+        (
+            ("voice-notes.record", "voice-notes.record"),
+            "voice-notes.recording.summary",
+            "00:18",
+        ),
+        ("Finish", "voice-notes.buffered.summary", "00:31"),
+        ("Text", "voice-notes.transcript.summary", "1 NOTE"),
+        ("Save", "voice-notes.saved.summary", "00:31"),
     ],
     "medication": [
         ("Mark taken", "medication.taken.summary", "Taken · 9:02"),

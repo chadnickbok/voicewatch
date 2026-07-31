@@ -5,71 +5,83 @@
     "id": "voice-notes.saved",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "voice-notes.saved.heading",
           "type": "text",
           "props": {
-            "text": "VOICE NOTES",
+            "text": "SAVED / WATCH",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "voice-notes.saved.summary",
           "type": "text",
           "props": {
-            "text": "Saved ✓",
+            "text": "00:31",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "VOICE NOTES",
-            "value": "Saved ✓"
+            "label": "Saved voice note duration",
+            "value": "00:31"
           }
         },
         {
           "id": "voice-notes.saved.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Upload resumed · no duplicate chunks",
-            "tone": "neutral"
+            "title": "TRAIN AFTER LUNCH",
+            "body": "Sync queued / deduped",
+            "progress": 1,
+            "tone": "primary"
           }
         },
         {
-          "id": "voice-notes.saved.primary",
-          "type": "button",
+          "id": "voice-notes.saved.actions",
+          "type": "row",
           "props": {
-            "label": "Open note",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "voice-notes.open"
-          },
-          "semantics": {
-            "label": "Open note"
-          }
-        },
-        {
-          "id": "voice-notes.saved.secondary",
-          "type": "button",
-          "props": {
-            "label": "Home",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "voice-notes.home"
-          },
-          "semantics": {
-            "label": "Home"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "voice-notes.saved.open",
+                "type": "button",
+                "props": {
+                  "label": "Open",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "voice-notes.open"
+                },
+                "semantics": {
+                  "label": "Open saved note"
+                }
+              },
+              {
+                "id": "voice-notes.saved.done",
+                "type": "button",
+                "props": {
+                  "label": "Done",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "voice-notes.done"
+                },
+                "semantics": {
+                  "label": "Return to recorder"
+                }
+              }
+            ]
           }
         }
       ]

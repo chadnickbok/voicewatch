@@ -53,10 +53,12 @@ class AppSpecPatternTest {
                 "nutrition_quick_add" to 1,
                 "nutrition_review" to 1,
                 "task_list" to 4,
+                "voice_detail" to 4,
+                "voice_ready" to 1,
                 "workout_rest" to 1,
                 "workout_set" to 2,
                 "workout_summary" to 1,
-                "status_detail" to 56,
+                "status_detail" to 51,
                 "weather_hero" to 1,
             ),
             inventory
@@ -169,6 +171,27 @@ class AppSpecPatternTest {
                         mapOf(
                             "row" to 1,
                             "card" to 1,
+                            "button" to 2,
+                            "text" to 2,
+                        ),
+                        2,
+                        2,
+                    ),
+                AppSpecPattern.VoiceReady to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "voice_orb" to 1,
+                            "card" to 1,
+                            "text" to 1,
+                        ),
+                        1,
+                        1,
+                    ),
+                AppSpecPattern.VoiceDetail to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "row" to 1,
+                            "live_card" to 1,
                             "button" to 2,
                             "text" to 2,
                         ),
