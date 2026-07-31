@@ -21,7 +21,7 @@ enum class AppSpecPattern(
     NutritionQuickAdd("nutrition_quick_add"),
     NutritionReview("nutrition_review"),
     VoiceReady("voice_ready"),
-    VoiceDetail("voice_detail"),
+    LiveActionDetail("live_action_detail"),
     ProgressDashboard("progress_dashboard"),
     Empty("empty"),
 }
@@ -35,7 +35,7 @@ data class AppSpecStructuralFacts(
 object AppSpecPatternSelector {
     val authoredCorpusExpectation: Map<AppSpecPattern, Int> =
         linkedMapOf(
-            AppSpecPattern.StatusDetail to 51,
+            AppSpecPattern.StatusDetail to 46,
             AppSpecPattern.Keypad to 2,
             AppSpecPattern.Countdown to 1,
             AppSpecPattern.WeatherHero to 1,
@@ -49,7 +49,7 @@ object AppSpecPatternSelector {
             AppSpecPattern.NutritionQuickAdd to 1,
             AppSpecPattern.NutritionReview to 1,
             AppSpecPattern.VoiceReady to 1,
-            AppSpecPattern.VoiceDetail to 4,
+            AppSpecPattern.LiveActionDetail to 9,
             AppSpecPattern.Empty to 1,
         )
 
@@ -91,7 +91,7 @@ object AppSpecPatternSelector {
                 facts.count("live_card") == 1 &&
                 facts.count("button") == 2 &&
                 facts.count("text") == 2 ->
-                AppSpecPattern.VoiceDetail
+                AppSpecPattern.LiveActionDetail
             facts.count("live_card") == 1 &&
                 facts.count("button") == 2 &&
                 facts.count("text") == 2 ->

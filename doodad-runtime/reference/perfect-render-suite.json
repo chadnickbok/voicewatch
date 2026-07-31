@@ -210,7 +210,7 @@
       "app_slug": "medication",
       "trace": "traces/medication/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "3cfb574187755509a56bba3dab706c3c44818a5e98856c720d228ead034c2cbe",
+      "snapshot_sha256": "43f65e5e02a253ea2607378c279c228a0bb462d44ac1c3f672c4c10dbe5326dd",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -223,7 +223,10 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "pending"
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across due, logged, reminder editing, due-after-save, and snoozed states; both renderers pass 48dp target and quality checks. The title-free launch surface keeps dose, timing, taken, and ten-minute reminder actions visible together. See reference/reviews/medication.md."
       }
     },
     {

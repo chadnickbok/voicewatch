@@ -32,10 +32,10 @@ FLOWS = {
         ("Save", "voice-notes.saved.summary", "00:31"),
     ],
     "medication": [
-        ("Mark taken", "medication.taken.summary", "Taken · 9:02"),
-        ("Add reminder", "medication.editor.summary", "8:00 daily"),
-        ("Save", "medication.due.summary", "Vitamin D"),
-        ("Snooze 10m", "medication.snoozed.summary", "Due at 9:12"),
+        ("Taken", "medication.taken.summary", "TAKEN"),
+        ("Edit", "medication.editor.summary", "8:00"),
+        ("Save", "medication.due.summary", "VITAMIN D"),
+        ("10 min", "medication.snoozed.summary", "10 MIN"),
     ],
     "sensor-recorder": [
         ("Start recording", "sensor-recorder.recording.summary", "50 Hz · 1,024"),

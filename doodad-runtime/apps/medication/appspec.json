@@ -5,46 +5,82 @@
     "id": "medication.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
+        {
+          "id": "medication.due.label",
+          "type": "text",
+          "props": {
+            "text": "DUE / 9:00",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
         {
           "id": "medication.summary",
           "type": "text",
           "props": {
-            "text": "Vitamin D at 9",
+            "text": "VITAMIN D",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Medication + Habits status",
+            "label": "Medication due",
             "value": "Vitamin D at 9"
           }
         },
         {
-          "id": "medication.mock",
-          "type": "card",
+          "id": "medication.dose",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "title": "1 TABLET / 1000 IU",
+            "body": "Due now / on watch",
+            "tone": "primary"
           }
         },
         {
-          "id": "medication.primary",
-          "type": "button",
+          "id": "medication.actions",
+          "type": "row",
           "props": {
-            "label": "Mark taken",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "medication.primary"
-          },
-          "semantics": {
-            "label": "Mark taken"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "medication.primary",
+                "type": "button",
+                "props": {
+                  "label": "Taken",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.primary"
+                },
+                "semantics": {
+                  "label": "Log Vitamin D as taken"
+                }
+              },
+              {
+                "id": "medication.snooze",
+                "type": "button",
+                "props": {
+                  "label": "10 min",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.snooze"
+                },
+                "semantics": {
+                  "label": "Remind me in ten minutes"
+                }
+              }
+            ]
           }
         }
       ]

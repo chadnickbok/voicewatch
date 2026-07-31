@@ -77,7 +77,7 @@ revision in its generated runtime manifest.
 
 ## Implementation notes
 
-- Pattern selection is structural. `voice_ready` and `voice_detail` are
+- Pattern selection is structural. `voice_ready` and `live_action_detail` are
   generic compositions selected without consulting the Voice Notes app ID.
 - Wear uses Material 3 `CompactButton`, `Card`, `LinearProgressIndicator`,
   `Button`, and `FilledTonalButton` components.

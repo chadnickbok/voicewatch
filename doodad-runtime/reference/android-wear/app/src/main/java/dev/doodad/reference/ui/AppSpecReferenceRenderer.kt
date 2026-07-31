@@ -361,8 +361,8 @@ private fun SquarePatternSurface(
         SquareVoiceReadySurface(children, context)
         return
     }
-    if (pattern == AppSpecPattern.VoiceDetail) {
-        SquareVoiceDetailSurface(children, context)
+    if (pattern == AppSpecPattern.LiveActionDetail) {
+        SquareLiveActionDetailSurface(children, context)
         return
     }
     if (pattern == AppSpecPattern.NotificationStack) {
@@ -1006,23 +1006,23 @@ private fun SquareVoiceReadySurface(
 }
 
 @Composable
-private fun SquareVoiceDetailSurface(
+private fun SquareLiveActionDetailSurface(
     children: List<SceneNode>,
     context: RenderContext,
 ) {
     val texts = children.filter { it.kind == "text" }
     val heading =
         texts.singleOrNull { it.props.variant == "label" }
-            ?: error("Voice detail requires one context label")
+            ?: error("Live action detail requires one context label")
     val elapsed =
         texts.singleOrNull { it.props.variant == "numeral" }
-            ?: error("Voice detail requires one primary value")
+            ?: error("Live action detail requires one primary value")
     val detail =
         children.singleOrNull { it.kind == "live_card" }
-            ?: error("Voice detail requires one audio detail card")
+            ?: error("Live action detail requires one detail card")
     val actions =
         children.singleOrNull { it.kind == "row" }
-            ?: error("Voice detail requires one action row")
+            ?: error("Live action detail requires one action row")
 
     Box(
         modifier =

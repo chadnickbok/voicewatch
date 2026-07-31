@@ -62,7 +62,7 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
         and kinds["button"] == 2
         and kinds["text"] == 2
     ):
-        return "voice_detail"
+        return "live_action_detail"
     if (
         kinds["live_card"] == 1
         and kinds["button"] == 2

@@ -131,44 +131,44 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 132,
-      "card": 71,
+      "button": 133,
+      "card": 66,
       "column": 5,
       "keypad": 2,
-      "live_card": 7,
+      "live_card": 12,
       "progress": 2,
-      "row": 7,
+      "row": 12,
       "screen": 83,
       "scroll": 15,
       "stepper": 4,
-      "text": 139,
+      "text": 140,
       "toggle": 9,
       "voice_orb": 1
     },
     "property_counts": {
       "button.icon": 2,
-      "button.label": 132,
-      "button.size": 132,
-      "button.tone": 132,
-      "button.variant": 132,
-      "card.body": 71,
-      "card.title": 71,
-      "card.tone": 71,
+      "button.label": 133,
+      "button.size": 133,
+      "button.tone": 133,
+      "button.variant": 133,
+      "card.body": 66,
+      "card.title": 66,
+      "card.tone": 66,
       "column.align": 5,
       "column.gap": 5,
       "keypad.columns": 2,
       "keypad.keys": 2,
-      "live_card.body": 7,
-      "live_card.progress": 7,
-      "live_card.title": 7,
-      "live_card.tone": 7,
+      "live_card.body": 12,
+      "live_card.progress": 10,
+      "live_card.title": 12,
+      "live_card.tone": 12,
       "progress.label": 2,
       "progress.maximum": 2,
       "progress.style": 2,
       "progress.tone": 2,
       "progress.value": 2,
-      "row.align": 7,
-      "row.gap": 7,
+      "row.align": 12,
+      "row.gap": 12,
       "screen.align": 83,
       "screen.gap": 83,
       "scroll.align": 15,
@@ -179,10 +179,10 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 97,
-      "text.max_lines": 139,
-      "text.style": 139,
-      "text.text": 139,
+      "text.align": 102,
+      "text.max_lines": 140,
+      "text.style": 140,
+      "text.text": 140,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9,
@@ -191,48 +191,48 @@
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 140,
+      "tap": 141,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 231,
+      "label": 232,
       "value": 76
     },
     "token_values": {
       "variant": {
         "filled": 71,
-        "outlined": 40,
+        "outlined": 36,
         "text": 4,
-        "tonal": 17
+        "tonal": 22
       },
       "style": {
         "body": 3,
         "caption": 1,
         "circular": 1,
-        "label": 69,
+        "label": 70,
         "linear": 1,
         "numeral": 61,
         "title": 5
       },
       "tone": {
-        "neutral": 126,
-        "primary": 93,
+        "neutral": 123,
+        "primary": 97,
         "tertiary": 2
       },
       "size": {
-        "default": 132
+        "default": 133
       },
       "gap": {
         "lg": 1,
-        "none": 32,
-        "sm": 65,
-        "xs": 12
+        "none": 37,
+        "sm": 60,
+        "xs": 17
       },
       "align": {
-        "center": 96,
+        "center": 101,
         "end": 1,
         "start": 1,
-        "stretch": 109
+        "stretch": 114
       },
       "state": {
         "idle": 1
@@ -243,13 +243,13 @@
       "countdown": 1,
       "empty": 1,
       "keypad": 2,
+      "live_action_detail": 9,
       "notification_stack": 6,
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 51,
+      "status_detail": 46,
       "task_list": 4,
-      "voice_detail": 4,
       "voice_ready": 1,
       "weather_hero": 1,
       "workout_rest": 1,
@@ -645,23 +645,23 @@
     },
     {
       "path": "apps/medication/appspec.json",
-      "sha256": "eedc9b732a834024e30cf90d55305a6c17582d0bc6ff6d0cb7f5df5e5473af94"
+      "sha256": "a50552c17d3bda3917111bacd2114d526f10e1f5ca0e3368f029d608b0f48bd0"
     },
     {
       "path": "apps/medication/screens/due.json",
-      "sha256": "9c33598b2b45c305b01adfd74f6c095fbc77c3319c33d2a548337d56bccd9007"
+      "sha256": "5342d8c4e8c9e929138ca59b99fcb9bf8d55dfe051ad5c734982e8819a730726"
     },
     {
       "path": "apps/medication/screens/editor.json",
-      "sha256": "4171135eb75cf47529ae7a98c9daabc879e50e4b2d82a8eef4a180167fbe8d73"
+      "sha256": "56d47f5245bceac4b4b19427bce2f48899420e4a393fcf445d8ec3998e6d48ac"
     },
     {
       "path": "apps/medication/screens/snoozed.json",
-      "sha256": "ea01b4aefe28cb5cda6a1e6ae60a6f9081b41b0572538f76106b984299889c36"
+      "sha256": "3a78d8c4e717a46a9155c8a644d8dcfe4b3aa5bd6b40376bed9f9941805839dc"
     },
     {
       "path": "apps/medication/screens/taken.json",
-      "sha256": "cde8b1ec9c9ad8ddc3763e42e548f649e41f5a90034dc422a4e350512e4d5f1b"
+      "sha256": "458b053c884c199d0f2da9dacbc18292762559ae396e136e1d649376508c460e"
     },
     {
       "path": "apps/sensor-recorder/appspec.json",
@@ -852,5 +852,5 @@
       "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
     }
   ],
-  "sources_sha256": "e901e535546a551c94cd16906e3fc4ab9d20c5ac91765580f48d34767259f614"
+  "sources_sha256": "f3a7e7a0218e51ed3f55e37bbc941d0d4ab149d1f9a9ab10b6d2b66839512222"
 }

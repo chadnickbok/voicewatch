@@ -588,7 +588,7 @@ terminal LVGL frame to a different Compose fixture.
 | 7 | Workout | [x] | [x] | [x] | [x] | [x] |
 | 8 | Calories / nutrition | [x] | [x] | [x] | [x] | [x] |
 | 9 | Voice Notes | [x] | [x] | [x] | [x] | [x] |
-| 10 | Medication | [x] | [x] | [x] | [x] | [ ] |
+| 10 | Medication | [x] | [x] | [x] | [x] | [x] |
 | 11 | Sensor Recorder | [x] | [x] | [x] | [x] | [ ] |
 | 12 | Sleep | [x] | [x] | [x] | [x] | [ ] |
 | 13 | Media | [x] | [x] | [x] | [x] | [ ] |
@@ -1240,10 +1240,18 @@ produce the twenty-row report.
 - [x] Completed the Voice Notes oracle redesign and decisive-flow review
   across ready, recording, locally captured, transcript review, and saved
   states. The app launches directly into a full-screen Material record
-  affordance; its five documents select two voice patterns by structure alone.
+  affordance; its five documents select the voice-ready and shared live-action
+  patterns by structure alone.
   Compose and LVGL share exact normalized structure/bounds with no quality
   findings, and the approved **Equivalent** disposition is recorded in
   [`reference/reviews/voice-notes.md`](../reference/reviews/voice-notes.md).
+- [x] Completed the Medication oracle redesign and decisive-flow review across
+  due, logged, reminder editing, due-after-save, and snoozed states. The app
+  launches directly into a title-free dose surface; its five documents select
+  the shared live-action pattern by structure alone. Compose and LVGL share
+  exact normalized structure/bounds with no quality findings, and the approved
+  **Equivalent** disposition is recorded in
+  [`reference/reviews/medication.md`](../reference/reviews/medication.md).
 
 Future progress entries should identify the completed milestone, commit or
 pull request, tests run, generated evidence, and any decision changed.

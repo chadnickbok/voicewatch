@@ -53,12 +53,12 @@ class AppSpecPatternTest {
                 "nutrition_quick_add" to 1,
                 "nutrition_review" to 1,
                 "task_list" to 4,
-                "voice_detail" to 4,
+                "live_action_detail" to 9,
                 "voice_ready" to 1,
                 "workout_rest" to 1,
                 "workout_set" to 2,
                 "workout_summary" to 1,
-                "status_detail" to 51,
+                "status_detail" to 46,
                 "weather_hero" to 1,
             ),
             inventory
@@ -187,7 +187,7 @@ class AppSpecPatternTest {
                         1,
                         1,
                     ),
-                AppSpecPattern.VoiceDetail to
+                AppSpecPattern.LiveActionDetail to
                     AppSpecStructuralFacts(
                         mapOf(
                             "row" to 1,
