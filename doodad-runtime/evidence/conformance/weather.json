@@ -1,0 +1,696 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "weather",
+    "id": "dev.doodad.weather",
+    "name": "Weather + Rain",
+    "mode": "hybrid",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 7406,
+    "package_bytes": 7611,
+    "authored_json_documents": 8,
+    "canonical_cbor_documents": 2,
+    "maximum_appspec_bytes": 336,
+    "decisive_actions": 6,
+    "distinct_screens": 1,
+    "distinct_semantic_states": 7,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 9,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 10536,
+    "semantic_events": 3,
+    "provider_requests": 3
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "weather.home",
+      "semantic_sha256": "f227eaea531fe347f42957b2e10e8585945d7a704f01914c89c2b80c8c27fce4",
+      "framebuffer_rgb565_sha256": "66657c34473665f0c948a555ff765c508c1d884dcfc67faf2ad375ba56c4f029",
+      "changed_pixels": 57600,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "weather",
+        "nodes": [
+          {
+            "id": "weather.home",
+            "role": "screen",
+            "label": "weather",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "weather.heading",
+            "role": "text",
+            "label": "SAN FRANCISCO",
+            "text": "SAN FRANCISCO",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.summary",
+            "role": "text",
+            "label": "Current temperature",
+            "text": "72°",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.forecast",
+            "role": "list_item",
+            "label": "Clear",
+            "text": "Clear",
+            "secondary": "High 76 · Low 59 · Rain 10%",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.status",
+            "role": "text",
+            "label": "Updated now · revision 1",
+            "text": "Updated now · revision 1",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.primary",
+            "role": "button",
+            "label": "Refresh weather",
+            "text": "Refresh",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Refresh"
+      },
+      "screen_id": "weather.home",
+      "semantic_sha256": "17bdeb1241c783d7f6ab5a9690cf9b189377564c76d25adc6f515eeefc746f34",
+      "framebuffer_rgb565_sha256": "83011e774285c254f24f1822e0afc69f510a4979661e66acc3a51953a67b3206",
+      "changed_pixels": 1008,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "weather",
+        "nodes": [
+          {
+            "id": "weather.home",
+            "role": "screen",
+            "label": "weather",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "weather.heading",
+            "role": "text",
+            "label": "SAN FRANCISCO",
+            "text": "SAN FRANCISCO",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.summary",
+            "role": "text",
+            "label": "Current temperature",
+            "text": "72°",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.forecast",
+            "role": "list_item",
+            "label": "Clear",
+            "text": "Clear",
+            "secondary": "High 76 · Low 59 · Rain 10%",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.status",
+            "role": "text",
+            "label": "Updating…",
+            "text": "Updating…",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.primary",
+            "role": "button",
+            "label": "Refresh weather",
+            "text": "Waiting…",
+            "secondary": "",
+            "state": 1,
+            "visible": true,
+            "enabled": false,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "deliver"
+      },
+      "screen_id": "weather.home",
+      "semantic_sha256": "c46a0a40c1ad4a1e874976f2edbd64167d3c21eba639ac7eb3e30f975178d0aa",
+      "framebuffer_rgb565_sha256": "436cdb1e9c1f45f62f1889df967334ee87620a9a858cb0657ec2283af4d9405c",
+      "changed_pixels": 1669,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "weather",
+        "nodes": [
+          {
+            "id": "weather.home",
+            "role": "screen",
+            "label": "weather",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "weather.heading",
+            "role": "text",
+            "label": "SAN FRANCISCO",
+            "text": "SAN FRANCISCO",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.summary",
+            "role": "text",
+            "label": "Current temperature",
+            "text": "72°",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.forecast",
+            "role": "list_item",
+            "label": "Clear",
+            "text": "Clear",
+            "secondary": "High 76 - Low 59 - Rain 10%",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.status",
+            "role": "text",
+            "label": "Cached · 12 min old",
+            "text": "Cached · 12 min old",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.primary",
+            "role": "button",
+            "label": "Refresh weather",
+            "text": "Refresh",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Refresh"
+      },
+      "screen_id": "weather.home",
+      "semantic_sha256": "e708c3349ed0f3333d5652ff47163ebd619dee4db0ee0bd0f3ed192afb70e6d3",
+      "framebuffer_rgb565_sha256": "49ef1052d964c3ef1e22b9cb11c2dd20817e0611a4d700043a89298775feebd6",
+      "changed_pixels": 938,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "weather",
+        "nodes": [
+          {
+            "id": "weather.home",
+            "role": "screen",
+            "label": "weather",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "weather.heading",
+            "role": "text",
+            "label": "SAN FRANCISCO",
+            "text": "SAN FRANCISCO",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.summary",
+            "role": "text",
+            "label": "Current temperature",
+            "text": "72°",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.forecast",
+            "role": "list_item",
+            "label": "Clear",
+            "text": "Clear",
+            "secondary": "High 76 - Low 59 - Rain 10%",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.status",
+            "role": "text",
+            "label": "Updating…",
+            "text": "Updating…",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.primary",
+            "role": "button",
+            "label": "Refresh weather",
+            "text": "Waiting…",
+            "secondary": "",
+            "state": 1,
+            "visible": true,
+            "enabled": false,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "deliver"
+      },
+      "screen_id": "weather.home",
+      "semantic_sha256": "ae37a86bc466231ae1a39aa460f4fbeca7f1a3880ea83ca3f891e47cc535b724",
+      "framebuffer_rgb565_sha256": "ced8a3ce5df9ff2ed03726b078c226fe97c6814a4d97e959763472d1eba0d0d6",
+      "changed_pixels": 2882,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "weather",
+        "nodes": [
+          {
+            "id": "weather.home",
+            "role": "screen",
+            "label": "weather",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "weather.heading",
+            "role": "text",
+            "label": "SAN FRANCISCO",
+            "text": "SAN FRANCISCO",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.summary",
+            "role": "text",
+            "label": "Current temperature",
+            "text": "72°",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.forecast",
+            "role": "list_item",
+            "label": "Offline",
+            "text": "Offline",
+            "secondary": "Forecast unavailable - cached data",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.status",
+            "role": "text",
+            "label": "Offline · cache 18 min",
+            "text": "Offline · cache 18 min",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.primary",
+            "role": "button",
+            "label": "Refresh weather",
+            "text": "Refresh",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "trigger": {
+        "kind": "click",
+        "value": "Refresh"
+      },
+      "screen_id": "weather.home",
+      "semantic_sha256": "6ccf2eaa27a3c13553c0eb5434f8034d599ad94b765eebf3cb38dffdf217de84",
+      "framebuffer_rgb565_sha256": "f90fd5c2d7af8c320b88e345d9436d5254b7f3b9250295e0bdaddcd1bae76d74",
+      "changed_pixels": 984,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "weather",
+        "nodes": [
+          {
+            "id": "weather.home",
+            "role": "screen",
+            "label": "weather",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "weather.heading",
+            "role": "text",
+            "label": "SAN FRANCISCO",
+            "text": "SAN FRANCISCO",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.summary",
+            "role": "text",
+            "label": "Current temperature",
+            "text": "72°",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.forecast",
+            "role": "list_item",
+            "label": "Offline",
+            "text": "Offline",
+            "secondary": "Forecast unavailable - cached data",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.status",
+            "role": "text",
+            "label": "Updating…",
+            "text": "Updating…",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.primary",
+            "role": "button",
+            "label": "Refresh weather",
+            "text": "Waiting…",
+            "secondary": "",
+            "state": 1,
+            "visible": true,
+            "enabled": false,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "trigger": {
+        "kind": "deliver"
+      },
+      "screen_id": "weather.home",
+      "semantic_sha256": "0bfe81ad4a1e6313c2165a7c4f1d26d7459359bcf2c6c0e0cba579e314ca26bb",
+      "framebuffer_rgb565_sha256": "c852544107db60bb967b0d92740a6331b91568d555e733b410c64f8b58b19572",
+      "changed_pixels": 3055,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "weather",
+        "nodes": [
+          {
+            "id": "weather.home",
+            "role": "screen",
+            "label": "weather",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "weather.heading",
+            "role": "text",
+            "label": "SAN FRANCISCO",
+            "text": "SAN FRANCISCO",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.summary",
+            "role": "text",
+            "label": "Current temperature",
+            "text": "71°",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.forecast",
+            "role": "list_item",
+            "label": "Clear",
+            "text": "Clear",
+            "secondary": "High 75 - Low 58 - Rain 5%",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.status",
+            "role": "text",
+            "label": "Updated now · revision 2",
+            "text": "Updated now · revision 2",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "weather.primary",
+            "role": "button",
+            "label": "Refresh weather",
+            "text": "Refresh",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+; Host-to-guest provider event envelope. The payload is a bounded,
+; provider-specific canonical CBOR document carried as a byte string so new
+; providers do not expand the stable host ABI.
+provider-event-v1 = {
+  0 => 1,                         ; schema version
+  1 => tstr .size (1..64),        ; provider id
+  2 => tstr .size (1..64),        ; event id
+  3 => uint,                      ; provider revision
+  4 => 0..3,                      ; current / stale / offline / error
+  5 => uint,                      ; observed scenario milliseconds
+  6 => bstr .size (0..512),       ; provider-specific canonical CBOR
+}
+
+; Payload emitted by the exact-scheduler mock/host service.
+timer-state-v1 = {
+  0 => tstr .size (1..48),        ; timer id
+  1 => 0..3,                      ; scheduled / firing / acknowledged / cancelled
+  2 => uint,                      ; remaining milliseconds
+  3 => uint,                      ; absolute scenario deadline
+  4 => uint,                      ; firing ordinal (zero before first fire)
+}
+
+weather-state-v1 = {
+  0 => int,                       ; temperature, tenths of a degree F
+  1 => tstr .size (1..48),        ; condition
+  2 => tstr .size (1..96),        ; forecast / precipitation detail
+  3 => tstr .size (1..48),        ; location
+  4 => uint,                      ; authoritative data revision
+  5 => uint,                      ; cache age in minutes
+}

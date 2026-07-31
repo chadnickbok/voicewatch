@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "workout.set-entry.resting",
+  "scene": "workout-set-entry",
+  "title": "Workout set entry",
+  "appspec": "apps/workout/appspec.json",
+  "data": {
+    "exercise": "Goblet squat",
+    "set": "Set 3 of 4",
+    "reps": 10,
+    "minimum_reps": 1,
+    "maximum_reps": 20
+  },
+  "ui_state": {
+    "status": "editing"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "target": "stepper.reps",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.workout-set",
+    "role": "screen",
+    "label": "Goblet squat set entry",
+    "children": [
+      {
+        "id": "stepper.reps",
+        "role": "stepper",
+        "label": "Repetitions",
+        "value": "10"
+      },
+      {
+        "id": "value.reps",
+        "role": "text",
+        "label": "10 repetitions"
+      }
+    ]
+  }
+}

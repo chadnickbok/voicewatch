@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.calculator",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "calculator.home",
+      "title": "Calculator",
+      "summary": "42",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "calculator.primary",
+          "example": "Calculate",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

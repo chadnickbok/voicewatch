@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "media",
+  "screen": {
+    "id": "media.paused",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "media.paused.heading",
+          "type": "text",
+          "props": {
+            "text": "PAUSED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "media.paused.summary",
+          "type": "text",
+          "props": {
+            "text": "1:42",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "PAUSED",
+            "value": "1:42"
+          }
+        },
+        {
+          "id": "media.paused.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Optimistic command acknowledged #41",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "media.paused.primary",
+          "type": "button",
+          "props": {
+            "label": "Play",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.play"
+          },
+          "semantics": {
+            "label": "Play"
+          }
+        },
+        {
+          "id": "media.paused.secondary",
+          "type": "button",
+          "props": {
+            "label": "Disconnect",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.disconnect"
+          },
+          "semantics": {
+            "label": "Disconnect"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,685 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "remote-control",
+    "id": "dev.doodad.remote-control",
+    "name": "Remote Control Lab",
+    "mode": "trusted",
+    "surfaces": [
+      "app",
+      "glance",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5597,
+    "package_bytes": 5815,
+    "authored_json_documents": 12,
+    "canonical_cbor_documents": 6,
+    "maximum_appspec_bytes": 481,
+    "decisive_actions": 6,
+    "distinct_screens": 5,
+    "distinct_semantic_states": 5,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 10,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 52029,
+    "semantic_events": 6,
+    "provider_requests": 6
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "remote-control.home",
+      "semantic_sha256": "89f055a8955d6ca315c606834e3d261876ae66e0a17f56e89f3d4badbf669302",
+      "framebuffer_rgb565_sha256": "25949aa04e155e403a77e7716b68928eedc973dc97aa359e94c0e125eb20c145",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "remote-control",
+        "nodes": [
+          {
+            "id": "remote-control.home",
+            "role": "screen",
+            "label": "remote-control",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "remote-control.heading",
+            "role": "text",
+            "label": "REMOTE CONTROL LAB",
+            "text": "REMOTE CONTROL LAB",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.summary",
+            "role": "text",
+            "label": "Remote Control Lab status",
+            "text": "Phone connected",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.primary",
+            "role": "button",
+            "label": "Trigger",
+            "text": "Trigger",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Trigger"
+      },
+      "screen_id": "remote-control.targets",
+      "semantic_sha256": "9bb9a2192c894e7eb5c935eab5691e7fde9500ea9c7fb1993bb95f0b86632bda",
+      "framebuffer_rgb565_sha256": "9f5df988cdfb095221771996bbc4c2cb4fd47d11921e10bde9b5a1ca04b098f0",
+      "changed_pixels": 28497,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "remote-control",
+        "nodes": [
+          {
+            "id": "remote-control.targets",
+            "role": "screen",
+            "label": "remote-control",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "remote-control.targets.heading",
+            "role": "text",
+            "label": "PHONE CONNECTED",
+            "text": "PHONE CONNECTED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.summary",
+            "role": "text",
+            "label": "PHONE CONNECTED",
+            "text": "3 controls",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Find phone · Camera · Slides",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.primary",
+            "role": "button",
+            "label": "Camera shutter",
+            "text": "Camera shutter",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.secondary",
+            "role": "button",
+            "label": "Disconnect",
+            "text": "Disconnect",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Camera shutter"
+      },
+      "screen_id": "remote-control.pending",
+      "semantic_sha256": "0575380fd8b7adf5ab3e8f7eee3935c2471eed6058f41ddedbeb87b04b988774",
+      "framebuffer_rgb565_sha256": "6f3b2bea3392c6183c6c1a72d2f2fab2104a7caa483994185b420d0d40b713fe",
+      "changed_pixels": 4872,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "remote-control",
+        "nodes": [
+          {
+            "id": "remote-control.pending",
+            "role": "screen",
+            "label": "remote-control",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "remote-control.pending.heading",
+            "role": "text",
+            "label": "CAMERA",
+            "text": "CAMERA",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.summary",
+            "role": "text",
+            "label": "CAMERA",
+            "text": "Sending #73",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Tap locked until acknowledgement",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.primary",
+            "role": "button",
+            "label": "Deliver ack",
+            "text": "Deliver ack",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.secondary",
+            "role": "button",
+            "label": "Lose link",
+            "text": "Lose link",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Lose link"
+      },
+      "screen_id": "remote-control.offline",
+      "semantic_sha256": "33f5e06cbd71e76b0ae325ed61f2ebf52719fddcede18992a7dc7be7a9cafbc5",
+      "framebuffer_rgb565_sha256": "c7f55ac7febc479b637c9bdd36be10eed3b169ee09c4f52b6bd1bc296fb870da",
+      "changed_pixels": 4759,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "remote-control",
+        "nodes": [
+          {
+            "id": "remote-control.offline",
+            "role": "screen",
+            "label": "remote-control",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "remote-control.offline.heading",
+            "role": "text",
+            "label": "DISCONNECTED",
+            "text": "DISCONNECTED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.offline.summary",
+            "role": "text",
+            "label": "DISCONNECTED",
+            "text": "No action sent",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.offline.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Retry ledger preserved · discovery active",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.offline.primary",
+            "role": "button",
+            "label": "Reconnect",
+            "text": "Reconnect",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.offline.secondary",
+            "role": "button",
+            "label": "Home",
+            "text": "Home",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Reconnect"
+      },
+      "screen_id": "remote-control.targets",
+      "semantic_sha256": "9bb9a2192c894e7eb5c935eab5691e7fde9500ea9c7fb1993bb95f0b86632bda",
+      "framebuffer_rgb565_sha256": "9f5df988cdfb095221771996bbc4c2cb4fd47d11921e10bde9b5a1ca04b098f0",
+      "changed_pixels": 4945,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 4,
+      "provider_requests": 4,
+      "semantic_tree": {
+        "app": "remote-control",
+        "nodes": [
+          {
+            "id": "remote-control.targets",
+            "role": "screen",
+            "label": "remote-control",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "remote-control.targets.heading",
+            "role": "text",
+            "label": "PHONE CONNECTED",
+            "text": "PHONE CONNECTED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.summary",
+            "role": "text",
+            "label": "PHONE CONNECTED",
+            "text": "3 controls",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Find phone · Camera · Slides",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.primary",
+            "role": "button",
+            "label": "Camera shutter",
+            "text": "Camera shutter",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.targets.secondary",
+            "role": "button",
+            "label": "Disconnect",
+            "text": "Disconnect",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "trigger": {
+        "kind": "click",
+        "value": "Camera shutter"
+      },
+      "screen_id": "remote-control.pending",
+      "semantic_sha256": "0575380fd8b7adf5ab3e8f7eee3935c2471eed6058f41ddedbeb87b04b988774",
+      "framebuffer_rgb565_sha256": "6f3b2bea3392c6183c6c1a72d2f2fab2104a7caa483994185b420d0d40b713fe",
+      "changed_pixels": 4872,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 5,
+      "provider_requests": 5,
+      "semantic_tree": {
+        "app": "remote-control",
+        "nodes": [
+          {
+            "id": "remote-control.pending",
+            "role": "screen",
+            "label": "remote-control",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "remote-control.pending.heading",
+            "role": "text",
+            "label": "CAMERA",
+            "text": "CAMERA",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.summary",
+            "role": "text",
+            "label": "CAMERA",
+            "text": "Sending #73",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Tap locked until acknowledgement",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.primary",
+            "role": "button",
+            "label": "Deliver ack",
+            "text": "Deliver ack",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.pending.secondary",
+            "role": "button",
+            "label": "Lose link",
+            "text": "Lose link",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "trigger": {
+        "kind": "click",
+        "value": "Deliver ack"
+      },
+      "screen_id": "remote-control.done",
+      "semantic_sha256": "a27aa750419a7e7b81fcf8017a4a2e6bdf05a758a32100c0213850831c65e704",
+      "framebuffer_rgb565_sha256": "10bf26c73e96a712823ca2e9a19fd5848849627573514da5c12adee80796af4c",
+      "changed_pixels": 4084,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 6,
+      "provider_requests": 6,
+      "semantic_tree": {
+        "app": "remote-control",
+        "nodes": [
+          {
+            "id": "remote-control.done",
+            "role": "screen",
+            "label": "remote-control",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "remote-control.done.heading",
+            "role": "text",
+            "label": "CAMERA",
+            "text": "CAMERA",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.done.summary",
+            "role": "text",
+            "label": "CAMERA",
+            "text": "Captured ✓",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.done.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Command #73 applied exactly once",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.done.primary",
+            "role": "button",
+            "label": "Capture again",
+            "text": "Capture again",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "remote-control.done.secondary",
+            "role": "button",
+            "label": "Targets",
+            "text": "Targets",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

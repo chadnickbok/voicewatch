@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "id": "dev.doodad.smart-home",
+  "name": "Smart Home",
+  "version": "0.1.0",
+  "host_abi": 1,
+  "capabilities": [
+    "ui.mount",
+    "home.control"
+  ],
+  "wasm": "app.wasm"
+}

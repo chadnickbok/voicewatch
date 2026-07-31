@@ -1,0 +1,520 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "notifications",
+    "id": "dev.doodad.notifications",
+    "name": "Notification Inbox",
+    "mode": "trusted",
+    "surfaces": [
+      "app",
+      "glance",
+      "notification",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 6134,
+    "package_bytes": 6329,
+    "authored_json_documents": 14,
+    "canonical_cbor_documents": 8,
+    "maximum_appspec_bytes": 478,
+    "decisive_actions": 5,
+    "distinct_screens": 5,
+    "distinct_semantic_states": 6,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 11,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 136060,
+    "semantic_events": 5,
+    "provider_requests": 0
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "notifications.inbox",
+      "semantic_sha256": "7f895f360f0572ef7aa90f9d6050435065338fa51f0c0cbca749744eac7a19a9",
+      "framebuffer_rgb565_sha256": "75b96b753d475961c82b692bb8b77aec8edf629365f920514360869126b1e8cf",
+      "changed_pixels": 57600,
+      "mounted_nodes": 6,
+      "mounted_events": 3,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "notifications",
+        "nodes": [
+          {
+            "id": "notifications.inbox",
+            "role": "screen",
+            "label": "notifications",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "notifications.heading",
+            "role": "text",
+            "label": "INBOX",
+            "text": "INBOX",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.summary",
+            "role": "heading",
+            "label": "2 unread",
+            "text": "2 unread",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.maya",
+            "role": "button",
+            "label": "Open notification from Maya",
+            "text": "Maya · Dinner at 7?",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.build",
+            "role": "button",
+            "label": "Open build notification",
+            "text": "CI · Build finished",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.clear",
+            "role": "button",
+            "label": "Clear all notifications",
+            "text": "Clear all",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Maya · Dinner at 7?"
+      },
+      "screen_id": "notifications.detail",
+      "semantic_sha256": "321a2049914dcceb9920937942f69d9489a8445391bd10a1846c5a8678f2898c",
+      "framebuffer_rgb565_sha256": "e21322f0adf8d4b09df1254d8b895556b7ec92ae64a1a5fadee35104132d9480",
+      "changed_pixels": 29862,
+      "mounted_nodes": 6,
+      "mounted_events": 3,
+      "lvgl_objects": 11,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "notifications",
+        "nodes": [
+          {
+            "id": "notifications.detail",
+            "role": "screen",
+            "label": "notifications",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "notification.detail.heading",
+            "role": "text",
+            "label": "MAYA · NOW",
+            "text": "MAYA · NOW",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.detail.message",
+            "role": "list_item",
+            "label": "Dinner at 7?",
+            "text": "Dinner at 7?",
+            "secondary": "I found a place near the hotel 🍜",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.detail.reply",
+            "role": "button",
+            "label": "Reply to Maya",
+            "text": "Quick reply",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.detail.dismiss",
+            "role": "button",
+            "label": "Dismiss notification",
+            "text": "Dismiss",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.detail.back",
+            "role": "button",
+            "label": "Back to inbox",
+            "text": "Back",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Quick reply"
+      },
+      "screen_id": "notifications.reply",
+      "semantic_sha256": "7a3f532751cfa9a3fc42cc715d3a7d70ae45ee2312263d52a0b7e228d13b9af0",
+      "framebuffer_rgb565_sha256": "835241ce43d09c2d51a90f975b51ba19528c404d6dd579d04f18d46ae53ffe2d",
+      "changed_pixels": 30490,
+      "mounted_nodes": 5,
+      "mounted_events": 3,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "notifications",
+        "nodes": [
+          {
+            "id": "notifications.reply",
+            "role": "screen",
+            "label": "notifications",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "notification.reply.heading",
+            "role": "text",
+            "label": "QUICK REPLY",
+            "text": "QUICK REPLY",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.reply.one",
+            "role": "button",
+            "label": "Reply On my way",
+            "text": "On my way",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.reply.two",
+            "role": "button",
+            "label": "Reply Sounds good",
+            "text": "Sounds good",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.reply.back",
+            "role": "button",
+            "label": "Back to notification",
+            "text": "Back",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "On my way"
+      },
+      "screen_id": "notifications.replied",
+      "semantic_sha256": "9566797fce54c87dcb7fa9d8976d2495209717902c0b83214148eff792379a2d",
+      "framebuffer_rgb565_sha256": "17a85f5e09c91e53cbe01ecccfa15ff61b75ac180ce9f22c2c9f104d77cc2720",
+      "changed_pixels": 35048,
+      "mounted_nodes": 4,
+      "mounted_events": 1,
+      "lvgl_objects": 7,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "notifications",
+        "nodes": [
+          {
+            "id": "notifications.replied",
+            "role": "screen",
+            "label": "notifications",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 3
+          },
+          {
+            "id": "notification.replied.heading",
+            "role": "text",
+            "label": "REPLY SENT",
+            "text": "REPLY SENT",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.replied.message",
+            "role": "list_item",
+            "label": "On my way",
+            "text": "On my way",
+            "secondary": "Delivered to Maya · exactly once",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notification.replied.done",
+            "role": "button",
+            "label": "Return to inbox",
+            "text": "Done",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Done"
+      },
+      "screen_id": "notifications.inbox",
+      "semantic_sha256": "10cafe9ad4fa93324d13902d33b34aee5f17b74b85388db3e48aaf075b597752",
+      "framebuffer_rgb565_sha256": "4c305007aef18f2bf17bce00b5800672dd0e016600ff52b049da9ef62493f2fc",
+      "changed_pixels": 28632,
+      "mounted_nodes": 5,
+      "mounted_events": 2,
+      "lvgl_objects": 7,
+      "lvgl_depth": 2,
+      "semantic_events": 4,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "notifications",
+        "nodes": [
+          {
+            "id": "notifications.inbox",
+            "role": "screen",
+            "label": "notifications",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "notifications.heading",
+            "role": "text",
+            "label": "INBOX",
+            "text": "INBOX",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.summary",
+            "role": "heading",
+            "label": "1 unread",
+            "text": "1 unread",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.build",
+            "role": "button",
+            "label": "Open build notification",
+            "text": "CI · Build finished",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.clear",
+            "role": "button",
+            "label": "Clear all notifications",
+            "text": "Clear all",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "trigger": {
+        "kind": "click",
+        "value": "Clear all"
+      },
+      "screen_id": "notifications.empty",
+      "semantic_sha256": "c3acdac11efbb5876a5e5b6efa63a59047f6b0348514b0bfbc4de5216dc99cc4",
+      "framebuffer_rgb565_sha256": "83560bd603b3b0516c58d2518fc769cb4b5a38832f82901e50cdec83a91d8187",
+      "changed_pixels": 12028,
+      "mounted_nodes": 3,
+      "mounted_events": 0,
+      "lvgl_objects": 3,
+      "lvgl_depth": 1,
+      "semantic_events": 5,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "notifications",
+        "nodes": [
+          {
+            "id": "notifications.empty",
+            "role": "screen",
+            "label": "notifications",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 2
+          },
+          {
+            "id": "notifications.empty.heading",
+            "role": "heading",
+            "label": "ALL CAUGHT UP",
+            "text": "ALL CAUGHT UP",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "notifications.empty.body",
+            "role": "text",
+            "label": "New notifications will appear here.",
+            "text": "New notifications will appear here.",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

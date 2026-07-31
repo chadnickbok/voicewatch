@@ -3,7 +3,63 @@
 version = 4
 
 [[package]]
+name = "doodad-calculator"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-calendar"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-calories"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
 name = "doodad-hello"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-media"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-medication"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-navigation"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-notifications"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-remote-control"
 version = "0.1.0"
 dependencies = [
  "doodad-sdk",
@@ -12,3 +68,87 @@ dependencies = [
 [[package]]
 name = "doodad-sdk"
 version = "0.1.0"
+
+[[package]]
+name = "doodad-sensor-recorder"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-sleep"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-smart-home"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-snake"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-sports"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-tasks"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-timer"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-transit"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-voice-notes"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-wallet"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-weather"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]
+
+[[package]]
+name = "doodad-workout"
+version = "0.1.0"
+dependencies = [
+ "doodad-sdk",
+]

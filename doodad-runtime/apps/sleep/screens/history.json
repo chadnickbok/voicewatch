@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sleep",
+  "screen": {
+    "id": "sleep.history",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sleep.history.heading",
+          "type": "text",
+          "props": {
+            "text": "7 DAY HISTORY",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sleep.history.summary",
+          "type": "text",
+          "props": {
+            "text": "7h 28m avg",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "7 DAY HISTORY",
+            "value": "7h 28m avg"
+          }
+        },
+        {
+          "id": "sleep.history.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Budget 3.2% · no retained UI",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sleep.history.primary",
+          "type": "button",
+          "props": {
+            "label": "Last night",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.last"
+          },
+          "semantics": {
+            "label": "Last night"
+          }
+        },
+        {
+          "id": "sleep.history.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -84,6 +84,28 @@ if(BUILD_TESTING)
   target_link_libraries(m3e_framework_test PRIVATE m3e::lvgl)
   add_test(NAME m3e_framework COMMAND m3e_framework_test)
 
+  add_executable(m3e_deterministic_system_test
+    "${DOODAD_ROOT}/tests/m3e/deterministic_system_test.cpp")
+  target_link_libraries(m3e_deterministic_system_test PRIVATE m3e::lvgl)
+  add_test(
+    NAME m3e_deterministic_system
+    COMMAND m3e_deterministic_system_test)
+
+  add_executable(m3e_os_shell_test
+    "${DOODAD_ROOT}/tests/m3e/os_shell_test.cpp")
+  target_link_libraries(m3e_os_shell_test PRIVATE m3e::lvgl)
+  add_test(NAME m3e_os_shell COMMAND m3e_os_shell_test)
+
+  add_executable(m3e_exact_scheduler_test
+    "${DOODAD_ROOT}/tests/m3e/exact_scheduler_test.cpp")
+  target_link_libraries(m3e_exact_scheduler_test PRIVATE m3e::lvgl)
+  add_test(NAME m3e_exact_scheduler COMMAND m3e_exact_scheduler_test)
+
+  add_executable(m3e_surface_registry_test
+    "${DOODAD_ROOT}/tests/m3e/surface_registry_test.cpp")
+  target_link_libraries(m3e_surface_registry_test PRIVATE m3e::lvgl)
+  add_test(NAME m3e_surface_registry COMMAND m3e_surface_registry_test)
+
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(
     NAME m3e_token_sync

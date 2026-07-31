@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "navigation",
+  "screen": {
+    "id": "navigation.maneuver",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "navigation.maneuver.heading",
+          "type": "text",
+          "props": {
+            "text": "NEXT TURN",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "navigation.maneuver.summary",
+          "type": "text",
+          "props": {
+            "text": "Right · 200 ft",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "NEXT TURN",
+            "value": "Right · 200 ft"
+          }
+        },
+        {
+          "id": "navigation.maneuver.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Market St · haptic in 8 sec",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "navigation.maneuver.primary",
+          "type": "button",
+          "props": {
+            "label": "Lose location",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "navigation.lose"
+          },
+          "semantics": {
+            "label": "Lose location"
+          }
+        },
+        {
+          "id": "navigation.maneuver.secondary",
+          "type": "button",
+          "props": {
+            "label": "Route overview",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "navigation.overview"
+          },
+          "semantics": {
+            "label": "Route overview"
+          }
+        }
+      ]
+    }
+  }
+}

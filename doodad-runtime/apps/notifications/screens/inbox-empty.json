@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "app_id": "notifications",
+  "screen": {
+    "id": "notifications.empty",
+    "type": "screen",
+    "props": {
+      "gap": "lg",
+      "align": "center",
+      "children": [
+        {
+          "id": "notifications.empty.heading",
+          "type": "text",
+          "props": {
+            "text": "ALL CAUGHT UP",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "notifications.empty.body",
+          "type": "text",
+          "props": {
+            "text": "New notifications will appear here.",
+            "style": "body",
+            "max_lines": 2,
+            "align": "center"
+          }
+        }
+      ]
+    }
+  }
+}

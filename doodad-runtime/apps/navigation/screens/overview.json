@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "navigation",
+  "screen": {
+    "id": "navigation.overview",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "navigation.overview.heading",
+          "type": "text",
+          "props": {
+            "text": "ROUTE",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "navigation.overview.summary",
+          "type": "text",
+          "props": {
+            "text": "1.4 mi · 8 min",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "ROUTE",
+            "value": "1.4 mi · 8 min"
+          }
+        },
+        {
+          "id": "navigation.overview.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "3 maneuvers cached · north-up",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "navigation.overview.primary",
+          "type": "button",
+          "props": {
+            "label": "Continue",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "navigation.continue"
+          },
+          "semantics": {
+            "label": "Continue"
+          }
+        },
+        {
+          "id": "navigation.overview.secondary",
+          "type": "button",
+          "props": {
+            "label": "Lose location",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "navigation.lose"
+          },
+          "semantics": {
+            "label": "Lose location"
+          }
+        }
+      ]
+    }
+  }
+}

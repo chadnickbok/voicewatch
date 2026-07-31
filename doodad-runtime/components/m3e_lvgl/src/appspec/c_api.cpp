@@ -1,11 +1,13 @@
 #include "m3e/appspec/c_api.h"
 
 #include <cstdio>
+#include <cstring>
 #include <new>
 
 #include "m3e/appspec/command_batch.hpp"
 #include "m3e/appspec/renderer.hpp"
 #include "m3e/appspec/wire.hpp"
+#include "m3e/semantics/semantic_tree.hpp"
 #include "m3e/theme/resolved_theme.hpp"
 
 namespace {
@@ -17,6 +19,97 @@ struct EventBridge {
 
 m3e::appspec::WireDocument* g_event_document = nullptr;
 EventBridge g_event_bridge{};
+
+class SnapshotWriter {
+ public:
+    SnapshotWriter(char* output, std::size_t size)
+        : output_(output), size_(size) {
+        if (output_ != nullptr && size_ != 0) output_[0] = '\0';
+    }
+
+    void text(const char* value) {
+        if (value == nullptr) value = "";
+        while (*value != '\0') byte(*value++);
+    }
+
+    void json_string(const char* value) {
+        byte('"');
+        if (value == nullptr) value = "";
+        for (const auto* cursor = value; *cursor != '\0'; ++cursor) {
+            const auto character =
+                static_cast<unsigned char>(*cursor);
+            switch (character) {
+                case '"': text("\\\""); break;
+                case '\\': text("\\\\"); break;
+                case '\b': text("\\b"); break;
+                case '\f': text("\\f"); break;
+                case '\n': text("\\n"); break;
+                case '\r': text("\\r"); break;
+                case '\t': text("\\t"); break;
+                default:
+                    if (character < 0x20U) {
+                        char escaped[7]{};
+                        std::snprintf(
+                            escaped,
+                            sizeof(escaped),
+                            "\\u%04x",
+                            static_cast<unsigned>(character));
+                        text(escaped);
+                    } else {
+                        byte(static_cast<char>(character));
+                    }
+                    break;
+            }
+        }
+        byte('"');
+    }
+
+    void unsigned_integer(std::uint64_t value) {
+        char encoded[24]{};
+        std::snprintf(
+            encoded,
+            sizeof(encoded),
+            "%llu",
+            static_cast<unsigned long long>(value));
+        text(encoded);
+    }
+
+    std::size_t length() {
+        if (output_ != nullptr && size_ != 0) {
+            output_[written_ < size_ ? written_ : size_ - 1] = '\0';
+        }
+        return written_;
+    }
+
+ private:
+    void byte(char value) {
+        if (output_ != nullptr && written_ + 1 < size_) {
+            output_[written_] = value;
+        }
+        ++written_;
+    }
+
+    char* output_;
+    std::size_t size_;
+    std::size_t written_ = 0;
+};
+
+const char* semantic_role_name(m3e::SemanticRole role) {
+    switch (role) {
+        case m3e::SemanticRole::screen: return "screen";
+        case m3e::SemanticRole::heading: return "heading";
+        case m3e::SemanticRole::text: return "text";
+        case m3e::SemanticRole::button: return "button";
+        case m3e::SemanticRole::toggle: return "toggle";
+        case m3e::SemanticRole::slider: return "slider";
+        case m3e::SemanticRole::progress: return "progress";
+        case m3e::SemanticRole::list: return "list";
+        case m3e::SemanticRole::list_item: return "list_item";
+        case m3e::SemanticRole::dialog: return "dialog";
+        case m3e::SemanticRole::timer: return "timer";
+    }
+    return "unknown";
+}
 
 void forward_event(
     const m3e::appspec::UiEvent& event,
@@ -185,4 +278,122 @@ extern "C" int m3e_appspec_apply_command_batch(
     }
     if (error != nullptr && error_size != 0) error[0] = '\0';
     return 1;
+}
+
+extern "C" const char* m3e_appspec_mounted_text(
+    const char* node_id,
+    int secondary) {
+    if (g_event_document == nullptr || node_id == nullptr) return nullptr;
+    for (std::size_t index = 0;
+         index < g_event_document->node_count;
+         ++index) {
+        auto& node = g_event_document->nodes[index];
+        if (std::strcmp(
+                g_event_document->string_at(node.id_offset),
+                node_id) != 0 ||
+            node.mounted_object == nullptr) {
+            continue;
+        }
+        auto* object = static_cast<lv_obj_t*>(node.mounted_object);
+        lv_obj_t* label = nullptr;
+        if (node.kind == m3e::appspec::ComponentKind::text) {
+            label = secondary == 0 ? object : nullptr;
+        } else if (
+            node.kind == m3e::appspec::ComponentKind::button ||
+            node.kind == m3e::appspec::ComponentKind::toggle ||
+            node.kind == m3e::appspec::ComponentKind::voice_orb) {
+            label = secondary == 0 &&
+                            lv_obj_get_child_count(object) > 0
+                        ? lv_obj_get_child(object, 0)
+                        : nullptr;
+        } else if (
+            node.kind == m3e::appspec::ComponentKind::card ||
+            node.kind == m3e::appspec::ComponentKind::live_card) {
+            const auto child = secondary == 0 ? 0 : 1;
+            label = lv_obj_get_child_count(object) >
+                            static_cast<std::uint32_t>(child)
+                        ? lv_obj_get_child(object, child)
+                        : nullptr;
+        } else if (
+            node.kind == m3e::appspec::ComponentKind::stepper) {
+            label = secondary == 0 &&
+                            lv_obj_get_child_count(object) > 1
+                        ? lv_obj_get_child(object, 1)
+                        : nullptr;
+        }
+        return label != nullptr &&
+                       lv_obj_check_type(label, &lv_label_class)
+                   ? lv_label_get_text(label)
+                   : nullptr;
+    }
+    return nullptr;
+}
+
+extern "C" std::size_t m3e_appspec_semantic_snapshot(
+    char* output,
+    std::size_t output_size) {
+    if (g_event_document == nullptr) {
+        if (output != nullptr && output_size != 0) output[0] = '\0';
+        return 0;
+    }
+    m3e::SemanticTree tree;
+    if (!m3e::appspec::build_semantic_tree(
+            *g_event_document, tree)) {
+        if (output != nullptr && output_size != 0) output[0] = '\0';
+        return 0;
+    }
+
+    SnapshotWriter writer(output, output_size);
+    writer.text("{\"app\":");
+    writer.json_string(
+        g_event_document->string_at(g_event_document->app_id_offset));
+    writer.text(",\"nodes\":[");
+    for (std::size_t index = 0; index < tree.size(); ++index) {
+        const auto& node = tree.at(index);
+        if (index != 0) writer.text(",");
+        writer.text("{\"id\":");
+        writer.json_string(node.id);
+        writer.text(",\"role\":");
+        writer.json_string(semantic_role_name(node.role));
+        writer.text(",\"label\":");
+        writer.json_string(node.label);
+        const auto& wire_node = g_event_document->nodes[index];
+        writer.text(",\"text\":");
+        writer.json_string(
+            g_event_document->string_at(
+                wire_node.primary_text_offset));
+        writer.text(",\"secondary\":");
+        writer.json_string(
+            g_event_document->string_at(
+                wire_node.secondary_text_offset));
+        writer.text(",\"state\":");
+        writer.unsigned_integer(node.state);
+        writer.text(",\"visible\":");
+        writer.text(wire_node.visible ? "true" : "false");
+        writer.text(",\"enabled\":");
+        writer.text(wire_node.enabled ? "true" : "false");
+        writer.text(",\"parent\":");
+        if (node.parent_index == m3e::SemanticTree::kNoIndex) {
+            writer.text("null");
+        } else {
+            writer.unsigned_integer(node.parent_index);
+        }
+        writer.text(",\"children\":");
+        writer.unsigned_integer(node.child_count);
+        writer.text("}");
+    }
+    writer.text("]}");
+    return writer.length();
+}
+
+extern "C" std::size_t m3e_appspec_mounted_node_count(void) {
+    return g_event_document == nullptr
+               ? 0
+               : g_event_document->node_count;
+}
+
+extern "C" std::size_t m3e_appspec_mounted_event_count(void) {
+    return g_event_document == nullptr
+               ? 0
+               : g_event_document->event_count;
 }

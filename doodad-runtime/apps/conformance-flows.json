@@ -1,0 +1,130 @@
+{
+  "schema": 1,
+  "flows": {
+    "timer": [
+      {"kind": "click", "value": "Start"},
+      {"kind": "advance", "value": 60000},
+      {"kind": "click", "value": "Dismiss"}
+    ],
+    "weather": [
+      {"kind": "click", "value": "Refresh"},
+      {"kind": "deliver"},
+      {"kind": "click", "value": "Refresh"},
+      {"kind": "deliver"},
+      {"kind": "click", "value": "Refresh"},
+      {"kind": "deliver"}
+    ],
+    "notifications": [
+      {"kind": "click", "value": "Maya · Dinner at 7?"},
+      {"kind": "click", "value": "Quick reply"},
+      {"kind": "click", "value": "On my way"},
+      {"kind": "click", "value": "Done"},
+      {"kind": "click", "value": "Clear all"}
+    ],
+    "tasks": [
+      {"kind": "click", "value": "Open groceries"},
+      {"kind": "click", "value": "+ Bananas"},
+      {"kind": "click", "value": "○  Bananas"},
+      {"kind": "click", "value": "Back"}
+    ],
+    "calculator": [
+      {"kind": "click", "value": "7"},
+      {"kind": "click", "value": "*"},
+      {"kind": "click", "value": "8"},
+      {"kind": "click", "value": "="}
+    ],
+    "calendar": [
+      {"kind": "click", "value": "Open event"},
+      {"kind": "click", "value": "Travel mode"},
+      {"kind": "click", "value": "Reconnect"}
+    ],
+    "workout": [
+      {"kind": "click", "value": "+"},
+      {"kind": "click", "value": "+"},
+      {"kind": "click", "value": "Complete set"},
+      {"kind": "click", "value": "Finish rest"},
+      {"kind": "click", "value": "Complete next set"}
+    ],
+    "calories": [
+      {"kind": "click", "value": "Quick add"},
+      {"kind": "click", "value": "+"},
+      {"kind": "click", "value": "Add calories"},
+      {"kind": "click", "value": "Quick add"},
+      {"kind": "click", "value": "Voice input"},
+      {"kind": "click", "value": "Confirm record"}
+    ],
+    "voice-notes": [
+      {"kind": "click", "value": "Record note"},
+      {"kind": "click", "value": "Lose network"},
+      {"kind": "click", "value": "Reconnect"},
+      {"kind": "click", "value": "Save note"}
+    ],
+    "medication": [
+      {"kind": "click", "value": "Mark taken"},
+      {"kind": "click", "value": "Add reminder"},
+      {"kind": "click", "value": "Save"},
+      {"kind": "click", "value": "Snooze 10m"}
+    ],
+    "sensor-recorder": [
+      {"kind": "click", "value": "Start recording"},
+      {"kind": "click", "value": "Pause"},
+      {"kind": "click", "value": "Export"},
+      {"kind": "click", "value": "Export CSV"}
+    ],
+    "sleep": [
+      {"kind": "click", "value": "Start sleep"},
+      {"kind": "click", "value": "Simulate morning"},
+      {"kind": "click", "value": "View stages"},
+      {"kind": "click", "value": "History"}
+    ],
+    "media": [
+      {"kind": "click", "value": "Play"},
+      {"kind": "click", "value": "Disconnect"},
+      {"kind": "click", "value": "Reconnect"}
+    ],
+    "navigation": [
+      {"kind": "click", "value": "Start route"},
+      {"kind": "click", "value": "Lose location"},
+      {"kind": "click", "value": "Recover GPS"}
+    ],
+    "transit": [
+      {"kind": "click", "value": "Refresh"},
+      {"kind": "click", "value": "Go offline"},
+      {"kind": "click", "value": "Reconnect"},
+      {"kind": "click", "value": "Alert"}
+    ],
+    "smart-home": [
+      {"kind": "click", "value": "Toggle light"},
+      {"kind": "click", "value": "Fail next command"},
+      {"kind": "click", "value": "Retry"},
+      {"kind": "click", "value": "Front door"},
+      {"kind": "click", "value": "Confirm unlock"}
+    ],
+    "sports": [
+      {"kind": "click", "value": "Follow game"},
+      {"kind": "click", "value": "Replay burst"},
+      {"kind": "click", "value": "End game"},
+      {"kind": "click", "value": "Scoring plays"}
+    ],
+    "wallet": [
+      {"kind": "click", "value": "Show pass"},
+      {"kind": "click", "value": "Test bad update"},
+      {"kind": "click", "value": "Review details"},
+      {"kind": "click", "value": "Reject"},
+      {"kind": "click", "value": "Use safe pass"}
+    ],
+    "remote-control": [
+      {"kind": "click", "value": "Trigger"},
+      {"kind": "click", "value": "Camera shutter"},
+      {"kind": "click", "value": "Lose link"},
+      {"kind": "click", "value": "Reconnect"},
+      {"kind": "click", "value": "Camera shutter"},
+      {"kind": "click", "value": "Deliver ack"}
+    ],
+    "snake": [
+      {"kind": "click", "value": "Play Snake"},
+      {"kind": "click", "value": "Go"},
+      {"kind": "click", "value": "Go"}
+    ]
+  }
+}

@@ -1,0 +1,500 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "sensor-recorder",
+    "id": "dev.doodad.sensor-recorder",
+    "name": "Sensor Recorder",
+    "mode": "trusted",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "ongoing",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5673,
+    "package_bytes": 5888,
+    "authored_json_documents": 12,
+    "canonical_cbor_documents": 6,
+    "maximum_appspec_bytes": 469,
+    "decisive_actions": 4,
+    "distinct_screens": 5,
+    "distinct_semantic_states": 5,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 10,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 46936,
+    "semantic_events": 4,
+    "provider_requests": 4
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "sensor-recorder.home",
+      "semantic_sha256": "113d9ccb8120fc93a64bfa2c8b2a374b8b8c397212d2877dceece9c453e1c2c0",
+      "framebuffer_rgb565_sha256": "6872554fdea88964fafdf04907565db97a6b71b893fc986dca0f43a2b527d2a8",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "sensor-recorder",
+        "nodes": [
+          {
+            "id": "sensor-recorder.home",
+            "role": "screen",
+            "label": "sensor-recorder",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "sensor-recorder.heading",
+            "role": "text",
+            "label": "SENSOR RECORDER",
+            "text": "SENSOR RECORDER",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.summary",
+            "role": "text",
+            "label": "Sensor Recorder status",
+            "text": "1,024 samples",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.primary",
+            "role": "button",
+            "label": "Start recording",
+            "text": "Start recording",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Start recording"
+      },
+      "screen_id": "sensor-recorder.recording",
+      "semantic_sha256": "1ec25004fa6b611c4b3c71dbc1a7ab43d71d9eb3f576f81f4e517f16d8d969bd",
+      "framebuffer_rgb565_sha256": "00769f3aee47e0e50b167112d5bf3cf958cfd09d641b81cfb8cdd69280bd7241",
+      "changed_pixels": 28332,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "sensor-recorder",
+        "nodes": [
+          {
+            "id": "sensor-recorder.recording",
+            "role": "screen",
+            "label": "sensor-recorder",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sensor-recorder.recording.heading",
+            "role": "text",
+            "label": "RECORDING",
+            "text": "RECORDING",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.recording.summary",
+            "role": "text",
+            "label": "RECORDING",
+            "text": "50 Hz · 1,024",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.recording.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "X +0.04  Y −0.12  Z +0.98",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.recording.primary",
+            "role": "button",
+            "label": "Pause",
+            "text": "Pause",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.recording.secondary",
+            "role": "button",
+            "label": "Finish",
+            "text": "Finish",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Pause"
+      },
+      "screen_id": "sensor-recorder.paused",
+      "semantic_sha256": "ebc9d3a414a910e66a46b84b1fd90e5d13f28554ff726f7e433bc6f367f9957a",
+      "framebuffer_rgb565_sha256": "823fd5468f10a4a4c7e8d825cbbc7467a5b97367641b7e50d2053299ce8fadc4",
+      "changed_pixels": 9492,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "sensor-recorder",
+        "nodes": [
+          {
+            "id": "sensor-recorder.paused",
+            "role": "screen",
+            "label": "sensor-recorder",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sensor-recorder.paused.heading",
+            "role": "text",
+            "label": "PAUSED",
+            "text": "PAUSED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.paused.summary",
+            "role": "text",
+            "label": "PAUSED",
+            "text": "20.5 seconds",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.paused.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Samples committed · UI idle",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.paused.primary",
+            "role": "button",
+            "label": "Resume",
+            "text": "Resume",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.paused.secondary",
+            "role": "button",
+            "label": "Export",
+            "text": "Export",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Export"
+      },
+      "screen_id": "sensor-recorder.export",
+      "semantic_sha256": "02b03fb196b7cc20317021c772d2595d45a9b41a77047c6c926f74f0d02ce91c",
+      "framebuffer_rgb565_sha256": "d7ae63f30ebd4bc21dd06fede57dde5d9ac077990a5db06ffdf8e2a66de8a04e",
+      "changed_pixels": 4309,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "sensor-recorder",
+        "nodes": [
+          {
+            "id": "sensor-recorder.export",
+            "role": "screen",
+            "label": "sensor-recorder",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sensor-recorder.export.heading",
+            "role": "text",
+            "label": "SESSION",
+            "text": "SESSION",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.export.summary",
+            "role": "text",
+            "label": "SESSION",
+            "text": "1,024 samples",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.export.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "No gaps · 48 KiB · checksum OK",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.export.primary",
+            "role": "button",
+            "label": "Export CSV",
+            "text": "Export CSV",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.export.secondary",
+            "role": "button",
+            "label": "Record again",
+            "text": "Record again",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Export CSV"
+      },
+      "screen_id": "sensor-recorder.exported",
+      "semantic_sha256": "b1677131eccd48b70195f48803ab8acbd1849a1a5b34651de84a2b6da784a8c0",
+      "framebuffer_rgb565_sha256": "7eba7d958ea26fd7958d321a28dc039afe78905f6cfe4c41dde40acfc44eae52",
+      "changed_pixels": 4803,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 4,
+      "provider_requests": 4,
+      "semantic_tree": {
+        "app": "sensor-recorder",
+        "nodes": [
+          {
+            "id": "sensor-recorder.exported",
+            "role": "screen",
+            "label": "sensor-recorder",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sensor-recorder.exported.heading",
+            "role": "text",
+            "label": "EXPORT READY",
+            "text": "EXPORT READY",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.exported.summary",
+            "role": "text",
+            "label": "EXPORT READY",
+            "text": "session-001.csv",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.exported.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Mock transfer complete · revision 8",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.exported.primary",
+            "role": "button",
+            "label": "Session",
+            "text": "Session",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sensor-recorder.exported.secondary",
+            "role": "button",
+            "label": "Home",
+            "text": "Home",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

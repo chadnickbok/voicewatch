@@ -40,6 +40,13 @@ guest's `handle_event` export. The Hello fixture exercises the complete
 button → LVGL event → actor queue → WAMR export → canonical CommandBatch →
 in-place native patch path.
 
+Control events add one optional typed value without changing ordinary button
+events: keypad events carry the exact key string, steppers carry the new
+bounded integer value, and toggles carry their checked boolean state. Events
+without a value retain the original seven-field canonical envelope. This
+keeps existing guests compatible while allowing generated apps to respond to
+real input rather than guessing from a node ID.
+
 ## Resource and safety limits
 
 - 250 nodes hard maximum;
@@ -108,6 +115,14 @@ same native Material components through `m3e_lvgl`. The current hard wire limit
 is 4096 bytes. Indefinite-length CBOR, non-minimal integers, unordered or
 duplicate numeric keys, invalid UTF-8, unknown fields, and quota violations
 fail before rendering.
+
+## Package navigation
+
+A guest may navigate by synchronously mounting another bounded AppSpec from
+its event handler and returning zero to indicate that no follow-up
+CommandBatch is required. Nonzero results remain packed borrowed CommandBatch
+slices. Screen changes remount; ordinary state changes patch the current
+screen in place.
 
 ## Reference fixtures
 

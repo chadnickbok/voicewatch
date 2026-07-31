@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "id": "catalog.transforming-list.resting",
+  "scene": "transforming-list",
+  "title": "Transforming list",
+  "data": {
+    "items": [
+      "Morning summary",
+      "Heart rate",
+      "Weather",
+      "Next event",
+      "Start workout"
+    ]
+  },
+  "ui_state": {
+    "status": "ready",
+    "focused_index": 1
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.transforming-list",
+    "role": "screen",
+    "label": "Transforming list",
+    "children": [
+      {
+        "id": "list.catalog",
+        "role": "list",
+        "label": "Reference items"
+      },
+      {
+        "id": "item.heart-rate",
+        "role": "list_item",
+        "label": "Heart rate"
+      }
+    ]
+  }
+}

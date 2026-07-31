@@ -1,0 +1,546 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "workout",
+    "id": "dev.doodad.workout",
+    "name": "Workout Tracker",
+    "mode": "generated",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "ongoing",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5832,
+    "package_bytes": 6039,
+    "authored_json_documents": 11,
+    "canonical_cbor_documents": 5,
+    "maximum_appspec_bytes": 384,
+    "decisive_actions": 5,
+    "distinct_screens": 4,
+    "distinct_semantic_states": 4,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 15,
+    "maximum_lvgl_depth": 3,
+    "total_changed_pixels": 79997,
+    "semantic_events": 5,
+    "provider_requests": 3
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "active_set",
+      "semantic_sha256": "e65fa491ef974934b9f082b5d576e3f97bb4d1801a489ae8363eb979a7a857d1",
+      "framebuffer_rgb565_sha256": "7f5754c9b3b0c8a2042194263edc9a708f16d0f0cc1695d0df774e1800b1215e",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 2,
+      "lvgl_objects": 15,
+      "lvgl_depth": 3,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "workout",
+        "nodes": [
+          {
+            "id": "active_set",
+            "role": "screen",
+            "label": "workout",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "active_set.heading",
+            "role": "heading",
+            "label": "Squat / Set 3 of 5",
+            "text": "Squat / Set 3 of 5",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.weight",
+            "role": "slider",
+            "label": "Current set weight",
+            "text": "Weight",
+            "secondary": "lb",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.summary",
+            "role": "list_item",
+            "label": "8 reps",
+            "text": "8 reps",
+            "secondary": "Rest timer 0:38",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.complete",
+            "role": "button",
+            "label": "Complete current set",
+            "text": "Complete set",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "+"
+      },
+      "screen_id": "active_set",
+      "semantic_sha256": "e65fa491ef974934b9f082b5d576e3f97bb4d1801a489ae8363eb979a7a857d1",
+      "framebuffer_rgb565_sha256": "e4c43f68ccfc88bf7633603ff355c48d30466071354c5f1a601c788e686bdc77",
+      "changed_pixels": 394,
+      "mounted_nodes": 5,
+      "mounted_events": 2,
+      "lvgl_objects": 15,
+      "lvgl_depth": 3,
+      "semantic_events": 1,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "workout",
+        "nodes": [
+          {
+            "id": "active_set",
+            "role": "screen",
+            "label": "workout",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "active_set.heading",
+            "role": "heading",
+            "label": "Squat / Set 3 of 5",
+            "text": "Squat / Set 3 of 5",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.weight",
+            "role": "slider",
+            "label": "Current set weight",
+            "text": "Weight",
+            "secondary": "lb",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.summary",
+            "role": "list_item",
+            "label": "8 reps",
+            "text": "8 reps",
+            "secondary": "Rest timer 0:38",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.complete",
+            "role": "button",
+            "label": "Complete current set",
+            "text": "Complete set",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "+"
+      },
+      "screen_id": "active_set",
+      "semantic_sha256": "e65fa491ef974934b9f082b5d576e3f97bb4d1801a489ae8363eb979a7a857d1",
+      "framebuffer_rgb565_sha256": "fddc5e52550fa9669d50447124b243d6fb8682c9f25a41a6cc67ab77e6350fdc",
+      "changed_pixels": 312,
+      "mounted_nodes": 5,
+      "mounted_events": 2,
+      "lvgl_objects": 15,
+      "lvgl_depth": 3,
+      "semantic_events": 2,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "workout",
+        "nodes": [
+          {
+            "id": "active_set",
+            "role": "screen",
+            "label": "workout",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "active_set.heading",
+            "role": "heading",
+            "label": "Squat / Set 3 of 5",
+            "text": "Squat / Set 3 of 5",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.weight",
+            "role": "slider",
+            "label": "Current set weight",
+            "text": "Weight",
+            "secondary": "lb",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.summary",
+            "role": "list_item",
+            "label": "8 reps",
+            "text": "8 reps",
+            "secondary": "Rest timer 0:38",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "active_set.complete",
+            "role": "button",
+            "label": "Complete current set",
+            "text": "Complete set",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Complete set"
+      },
+      "screen_id": "workout.rest",
+      "semantic_sha256": "da0259b2f142a1614512913f7388a75702c19eda336dad308283aa422fc6be82",
+      "framebuffer_rgb565_sha256": "0621ebe733c6a4eb3fcefe37e2384763a2e3b0a190101bbb5971f4e6fa68945b",
+      "changed_pixels": 28143,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 12,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "workout",
+        "nodes": [
+          {
+            "id": "workout.rest",
+            "role": "screen",
+            "label": "workout",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "workout.rest.heading",
+            "role": "text",
+            "label": "SET RECORDED",
+            "text": "SET RECORDED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.rest.time",
+            "role": "text",
+            "label": "1:00",
+            "text": "1:00",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.rest.detail",
+            "role": "list_item",
+            "label": "Rest timer",
+            "text": "Rest timer",
+            "secondary": "135 lb × 8 committed atomically",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.rest.finish",
+            "role": "button",
+            "label": "Finish rest and open next set",
+            "text": "Finish rest",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.rest.end",
+            "role": "button",
+            "label": "End workout",
+            "text": "End workout",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Finish rest"
+      },
+      "screen_id": "workout.next-set",
+      "semantic_sha256": "f878e02430dfa145e73747387ab3c60f5d746008c321466c77b7a1dfd7ae11cf",
+      "framebuffer_rgb565_sha256": "5ef503a4355a6c79e3245bc9b11b5bb130cb9c75f1db85f9bbb4ab8e63a47d19",
+      "changed_pixels": 25944,
+      "mounted_nodes": 5,
+      "mounted_events": 2,
+      "lvgl_objects": 13,
+      "lvgl_depth": 3,
+      "semantic_events": 4,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "workout",
+        "nodes": [
+          {
+            "id": "workout.next-set",
+            "role": "screen",
+            "label": "workout",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "workout.next.heading",
+            "role": "text",
+            "label": "SQUAT / SET 4 OF 5",
+            "text": "SQUAT / SET 4 OF 5",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.next.weight",
+            "role": "slider",
+            "label": "Next set weight",
+            "text": "Weight",
+            "secondary": "lb",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.next.detail",
+            "role": "list_item",
+            "label": "Target · 8 reps",
+            "text": "Target · 8 reps",
+            "secondary": "Session journal revision 7",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.next.complete",
+            "role": "button",
+            "label": "Complete next set",
+            "text": "Complete next set",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "trigger": {
+        "kind": "click",
+        "value": "Complete next set"
+      },
+      "screen_id": "workout.summary",
+      "semantic_sha256": "933346b9cc7223230ebc282fa4119284975482c0877b1d0a6a326dda77848177",
+      "framebuffer_rgb565_sha256": "852314f365fed0cd83eef88f757145583f04cb000f278d605da2d51bf2aea1bc",
+      "changed_pixels": 25204,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 5,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "workout",
+        "nodes": [
+          {
+            "id": "workout.summary",
+            "role": "screen",
+            "label": "workout",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "workout.summary.heading",
+            "role": "text",
+            "label": "WORKOUT SAVED",
+            "text": "WORKOUT SAVED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.summary.total",
+            "role": "text",
+            "label": "4 sets",
+            "text": "4 sets",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.summary.detail",
+            "role": "list_item",
+            "label": "Squat · 4 × 8",
+            "text": "Squat · 4 × 8",
+            "secondary": "4,320 lb volume · 12:08",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "workout.summary.again",
+            "role": "button",
+            "label": "Start another workout",
+            "text": "Start another",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

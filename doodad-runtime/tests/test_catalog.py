@@ -26,6 +26,23 @@ EXPECTED = {
     "mockup-focus": "0f0f8491593baf17f735ef61814e00714907e0e07011de019e4385870a657119",
     "mockup-travel": "2b9afd3fec28f9fafbd7dc4887810866e1a2a6bf3ebd1479a18d324ac0d1816e",
     "mockup-music": "c93dc7afb7aa5debc3f67644d227820ad5975d653bf24a53448da948a9f2a7ae",
+    "os-home": "e4ea362a7f418932683f8638ce3a2321fa5204734ff0c1482240fe3d8f83841e",
+    "os-live-cards": "04566e5812696f6200af2fd5e60d8bc6997733aa8481b8ac20482872eb8a4e5f",
+    "os-launcher": "706f0c86c6bcbd3a6a32697e6eed654ecf5b5efe79ce4f635f6b559554b88e0e",
+    "os-control-center": "56bf7a1d016cc0910e759e303fbe86651fc3de2691d5fa8cb0790e59abad31b6",
+    "os-app-manager": "34272ca9a3949b0a5e80ba601cc3a4aa6693b79f7eeb6445987c76f716350a84",
+    "os-voice": "9014735c7eee3c53eb2bfa570bfb84443512feaa7a51ac46e290e089dd9bfa2e",
+    "os-app-detail": "e4023a67bc3f4229a5cbdcebe8a5c4e4a60b19f5917170ebe89168ed496ce1bc",
+    "os-install-progress": "9ed6e671b55c9a3578011e97568bb2a182633e1ca71dd743e3a5d39e647240b4",
+    "os-crash-recovery": "2525fe81d9625ce7699ebe660e5c21913529d281f13bed74cb126473c26c9632",
+    "os-notification": "90c2ccb13d557e68f7b53f55df557bc7a17d8836ef4711cf897ef4895ffd8330",
+    "os-permission-review": "34674e4191ed02ee551c2918d5f983b8cb19edeca8691e04ad2c75577d6acaba",
+    "os-action-review": "e5afa0a56d6665fe68ef2c814199075ea354eb286aea363e9149576b980ecf3a",
+    "os-error": "0a06f9bc9a6804103a16270c7d41031ef616f45fdcae602603da96568ba9bcc1",
+    "os-voice-thinking": "000c91ff5ff4234531cc7f59f6274d719a58b7544dc2ce7b20c1c7dd44dfafcd",
+    "os-voice-review": "b3acc3e18fae01ab0cc79e1c512135ccc8a70d7aa3d50438305b20d67778c47e",
+    "os-voice-build": "6a3b93f18353bc4a9e7ffc06b5f21338df9cc1271d9b741a4c8ed9c4851a4a90",
+    "os-voice-result": "b71c340c5d8d2294d78d0fbd4163fa532f1097118fc7a5f63737ebe41cb38a7a",
 }
 
 

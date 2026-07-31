@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "wallet",
+  "screen": {
+    "id": "wallet.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "wallet.heading",
+          "type": "text",
+          "props": {
+            "text": "PASS + QR WALLET",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "wallet.summary",
+          "type": "text",
+          "props": {
+            "text": "Boarding pass ready",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Pass + QR Wallet status",
+            "value": "Boarding pass ready"
+          }
+        },
+        {
+          "id": "wallet.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "wallet.primary",
+          "type": "button",
+          "props": {
+            "label": "Show pass",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.primary"
+          },
+          "semantics": {
+            "label": "Show pass"
+          }
+        }
+      ]
+    }
+  }
+}

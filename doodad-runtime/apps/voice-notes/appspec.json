@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "voice-notes",
+  "screen": {
+    "id": "voice-notes.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "voice-notes.heading",
+          "type": "text",
+          "props": {
+            "text": "VOICE NOTES",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "voice-notes.summary",
+          "type": "text",
+          "props": {
+            "text": "Recording ready",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Voice Notes status",
+            "value": "Recording ready"
+          }
+        },
+        {
+          "id": "voice-notes.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "voice-notes.primary",
+          "type": "button",
+          "props": {
+            "label": "Record note",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.primary"
+          },
+          "semantics": {
+            "label": "Record note"
+          }
+        }
+      ]
+    }
+  }
+}

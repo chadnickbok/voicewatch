@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.timer",
+  "domain_revision": 2,
+  "observed_at_ms": 55000,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 2,
+      "screen_id": "timer.running",
+      "title": "Timer",
+      "summary": "5 seconds remaining",
+      "state": {
+        "remaining_ms": 5000,
+        "running": true
+      }
+    },
+    "glance": {
+      "revision": 2,
+      "template": "ongoing",
+      "title": "Timer",
+      "primary": "0:05",
+      "secondary": "Tea",
+      "progress": 0.9167,
+      "action": {
+        "id": "timer.pause",
+        "label": "Pause"
+      }
+    },
+    "complication": {
+      "revision": 2,
+      "label": "Timer",
+      "value": "0:05",
+      "icon": "timer"
+    },
+    "notification": {
+      "revision": 2,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 2,
+      "status": "active",
+      "title": "Tea timer",
+      "detail": "0:05 remaining",
+      "progress": 0.9167,
+      "actions": [
+        {
+          "id": "timer.pause",
+          "label": "Pause"
+        },
+        {
+          "id": "timer.cancel",
+          "label": "Cancel",
+          "destructive": true
+        }
+      ]
+    },
+    "voice": {
+      "revision": 2,
+      "actions": [
+        {
+          "id": "timer.create",
+          "example": "Set a timer for five minutes",
+          "confirmation": "never"
+        },
+        {
+          "id": "timer.cancel",
+          "example": "Cancel my tea timer",
+          "confirmation": "destructive"
+        }
+      ]
+    }
+  }
+}

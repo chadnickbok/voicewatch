@@ -287,7 +287,7 @@ bool parse_properties(
     WireNode& node,
     std::uint16_t node_index) {
     std::size_t count = 0;
-    if (!reader.map(count) || count > 12) return false;
+    if (!reader.map(count) || count > 14) return false;
     std::uint64_t previous = 0;
     bool has_previous = false;
     bool has_primary = false;
@@ -297,7 +297,7 @@ bool parse_properties(
     for (std::size_t index = 0; index < count; ++index) {
         std::uint64_t key = 0;
         if (!reader.ordered_key(key, previous, has_previous)) return false;
-        if (key > 11) return false;
+        if (key > 13) return false;
         property_mask |= static_cast<std::uint16_t>(1U << key);
         switch (key) {
             case 0:
@@ -365,6 +365,12 @@ bool parse_properties(
                     return false;
                 }
                 break;
+            case 12:
+                if (!reader.signed_integer(node.minimum)) return false;
+                break;
+            case 13:
+                if (!reader.signed_integer(node.step)) return false;
+                break;
             default:
                 return false;
         }
@@ -420,8 +426,15 @@ bool parse_properties(
         case ComponentKind::stepper:
             allowed =
                 (1U << 0U) | (1U << 1U) |
-                (1U << 2U) | (1U << 3U);
-            if (!has_primary || !has_value) return false;
+                (1U << 2U) | (1U << 3U) |
+                (1U << 12U) | (1U << 13U);
+            if (!has_primary || !has_value || !has_maximum ||
+                node.minimum > node.maximum ||
+                node.value < node.minimum ||
+                node.value > node.maximum ||
+                node.step <= 0) {
+                return false;
+            }
             break;
         case ComponentKind::keypad:
             (void)node_index;
@@ -489,7 +502,9 @@ bool parse_node(
     node.parent_index = kWireNoParent;
     node.visible = true;
     node.enabled = true;
+    node.minimum = 0;
     node.maximum = 100;
+    node.step = 1;
     node.gap = 3;
     node.alignment = 1;
     node.key_columns = 4;
@@ -819,6 +834,10 @@ std::size_t encode_event_canonical_cbor(
             return true;
         }
 
+        bool simple(bool value) {
+            return byte(value ? 0xf5U : 0xf4U);
+        }
+
         std::size_t size() const { return offset_; }
 
      private:
@@ -844,8 +863,10 @@ std::size_t encode_event_canonical_cbor(
     };
 
     Writer writer(output, output_size);
+    const auto has_value =
+        event.value.kind != EventValueKind::none;
     const bool ok =
-        writer.head(kMajorMap, 7) &&
+        writer.head(kMajorMap, has_value ? 8 : 7) &&
         writer.head(kMajorUnsigned, 0) &&
         writer.head(kMajorUnsigned, event.schema) &&
         writer.head(kMajorUnsigned, 1) &&
@@ -861,7 +882,30 @@ std::size_t encode_event_canonical_cbor(
             kMajorUnsigned,
             static_cast<std::uint8_t>(event.kind)) &&
         writer.head(kMajorUnsigned, 6) &&
-        writer.head(kMajorUnsigned, event.timestamp_monotonic_ms);
+        writer.head(kMajorUnsigned, event.timestamp_monotonic_ms) &&
+        (!has_value ||
+         (writer.head(kMajorUnsigned, 7) &&
+          ([&writer, &event]() {
+              switch (event.value.kind) {
+                  case EventValueKind::none:
+                      return false;
+                  case EventValueKind::integer:
+                      return event.value.integer_value >= 0
+                          ? writer.head(
+                                kMajorUnsigned,
+                                static_cast<std::uint32_t>(
+                                    event.value.integer_value))
+                          : writer.head(
+                                kMajorNegative,
+                                static_cast<std::uint32_t>(
+                                    -1 - event.value.integer_value));
+                  case EventValueKind::boolean:
+                      return writer.simple(event.value.boolean_value);
+                  case EventValueKind::text:
+                      return writer.text(event.value.text_value);
+              }
+              return false;
+          })()));
     return ok ? writer.size() : 0;
 }
 

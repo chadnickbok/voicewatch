@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "smart-home",
+  "screen": {
+    "id": "smart-home.rollback",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "smart-home.rollback.heading",
+          "type": "text",
+          "props": {
+            "text": "COMMAND FAILED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "smart-home.rollback.summary",
+          "type": "text",
+          "props": {
+            "text": "Light restored",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "COMMAND FAILED",
+            "value": "Light restored"
+          }
+        },
+        {
+          "id": "smart-home.rollback.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Provider rejected · rolled back to 72%",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "smart-home.rollback.primary",
+          "type": "button",
+          "props": {
+            "label": "Retry",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "home.retry"
+          },
+          "semantics": {
+            "label": "Retry"
+          }
+        },
+        {
+          "id": "smart-home.rollback.secondary",
+          "type": "button",
+          "props": {
+            "label": "Front door",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "home.lock"
+          },
+          "semantics": {
+            "label": "Front door"
+          }
+        }
+      ]
+    }
+  }
+}

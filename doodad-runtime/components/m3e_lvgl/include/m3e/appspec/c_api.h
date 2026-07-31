@@ -36,6 +36,17 @@ int m3e_appspec_apply_command_batch(
     char* error,
     size_t error_size);
 
+const char* m3e_appspec_mounted_text(
+    const char* node_id,
+    int secondary);
+
+size_t m3e_appspec_semantic_snapshot(
+    char* output,
+    size_t output_size);
+
+size_t m3e_appspec_mounted_node_count(void);
+size_t m3e_appspec_mounted_event_count(void);
+
 #ifdef __cplusplus
 }
 #endif

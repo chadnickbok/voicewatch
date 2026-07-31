@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.sleep",
+  "domain_revision": 3,
+  "observed_at_ms": 2000,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 3,
+      "screen_id": "sleep.home",
+      "title": "Sleep + Smart Alarm",
+      "summary": "7h 42m",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "current"
+      }
+    },
+    "glance": {
+      "revision": 3,
+      "template": "ongoing",
+      "title": "Sleep + Smart Alarm",
+      "primary": "7h 42m",
+      "secondary": "Updated now",
+      "action": {
+        "id": "sleep.primary",
+        "label": "Start sleep"
+      }
+    },
+    "complication": {
+      "revision": 3,
+      "label": "Sleep + Smart Alarm",
+      "value": "7h 42m",
+      "icon": "sleep"
+    },
+    "notification": {
+      "revision": 3,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 3,
+      "status": "active",
+      "title": "Sleep + Smart Alarm",
+      "detail": "7h 42m",
+      "actions": [
+        {
+          "id": "sleep.primary",
+          "label": "Start sleep"
+        }
+      ]
+    },
+    "voice": {
+      "revision": 3,
+      "actions": [
+        {
+          "id": "sleep.primary",
+          "example": "Start sleep",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

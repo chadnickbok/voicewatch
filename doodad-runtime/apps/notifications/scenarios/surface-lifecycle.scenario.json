@@ -1,0 +1,228 @@
+{
+  "schema_version": 1,
+  "id": "notifications.surface.lifecycle",
+  "app_id": "dev.doodad.notifications",
+  "initial_state": {
+    "wall_time_ms": 1700000000000,
+    "timezone_offset_minutes": -420,
+    "app_state": "foreground",
+    "display_state": "awake",
+    "connectivity": "online"
+  },
+  "steps": [
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.notifications",
+        "domain_revision": 1,
+        "observed_at_ms": 0,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 1,
+            "screen_id": "notifications.home",
+            "title": "Notification Inbox",
+            "summary": "2 unread",
+            "state": {
+              "provider": "mock",
+              "interactive": true
+            }
+          },
+          "glance": {
+            "revision": 1,
+            "template": "metric",
+            "title": "Notification Inbox",
+            "primary": "2 unread",
+            "secondary": "Mock data · now",
+            "action": {
+              "id": "notifications.primary",
+              "label": "Quick reply"
+            }
+          },
+          "notification": {
+            "revision": 1,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 1,
+            "actions": [
+              {
+                "id": "notifications.primary",
+                "example": "Quick reply",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "clock.advance",
+      "milliseconds": 1000
+    },
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "notifications.stale",
+      "revision": 1,
+      "status": "stale",
+      "payload": {
+        "age_minutes": 18
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.notifications",
+        "domain_revision": 2,
+        "observed_at_ms": 1000,
+        "freshness": "stale",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 2,
+            "screen_id": "notifications.home",
+            "title": "Notification Inbox",
+            "summary": "2 unread",
+            "state": {
+              "provider": "mock",
+              "interactive": true,
+              "freshness": "stale"
+            }
+          },
+          "glance": {
+            "revision": 2,
+            "template": "metric",
+            "title": "Notification Inbox",
+            "primary": "2 unread",
+            "secondary": "Cached · 18 min",
+            "action": {
+              "id": "notifications.primary",
+              "label": "Quick reply"
+            }
+          },
+          "notification": {
+            "revision": 2,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 2,
+            "actions": [
+              {
+                "id": "notifications.primary",
+                "example": "Quick reply",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "lifecycle.set",
+      "connectivity": "offline"
+    },
+    {
+      "op": "clock.advance",
+      "milliseconds": 1000
+    },
+    {
+      "op": "lifecycle.set",
+      "connectivity": "online"
+    },
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "notifications.recovered",
+      "revision": 2,
+      "status": "current",
+      "payload": {
+        "reconciled": true
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.notifications",
+        "domain_revision": 3,
+        "observed_at_ms": 2000,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 3,
+            "screen_id": "notifications.home",
+            "title": "Notification Inbox",
+            "summary": "2 unread",
+            "state": {
+              "provider": "mock",
+              "interactive": true,
+              "freshness": "current"
+            }
+          },
+          "glance": {
+            "revision": 3,
+            "template": "metric",
+            "title": "Notification Inbox",
+            "primary": "2 unread",
+            "secondary": "Updated now",
+            "action": {
+              "id": "notifications.primary",
+              "label": "Quick reply"
+            }
+          },
+          "notification": {
+            "revision": 3,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 3,
+            "actions": [
+              {
+                "id": "notifications.primary",
+                "example": "Quick reply",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "action.dispatch",
+      "target": "notifications.primary",
+      "value": {
+        "source": "voice"
+      }
+    },
+    {
+      "op": "assert.state",
+      "equals": {
+        "surfaces.dev.doodad.notifications.domain_revision": 3,
+        "surfaces.dev.doodad.notifications.freshness": "current",
+        "providers.mock.revision": 2,
+        "lifecycle.connectivity": "online",
+        "actions.count": 1
+      }
+    }
+  ]
+}

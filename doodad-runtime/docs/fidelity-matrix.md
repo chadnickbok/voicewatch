@@ -8,10 +8,12 @@ Fidelity labels describe the intended implementation and current evidence:
 - **Deferred:** intentionally absent with a documented fallback.
 - **Planned:** no fidelity claim has been earned yet.
 
-No component currently qualifies as Exact because the Android oracle/diff lane
-is not yet checked in. “Prototype” below means production LVGL source, native
-behavior tests, and deterministic RGB565 catalog evidence exist, but visual
-fidelity against the pinned Android reference has not been earned.
+The initial Android oracle and host-golden lane is checked in, but no component
+yet qualifies as Exact. Exact still requires reviewed API 37 runtime evidence
+and per-state Compose-to-LVGL comparison. “Prototype” below means production
+LVGL source, native behavior tests, deterministic RGB565 catalog evidence and,
+where applicable, an initial Compose story exist; cross-renderer fidelity has
+not yet been earned.
 
 | Area | Component or behavior | Target | Current evidence |
 |---|---|---:|---|

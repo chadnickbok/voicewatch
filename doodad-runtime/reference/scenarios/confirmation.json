@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "id": "catalog.confirmation.end-state",
+  "scene": "confirmation",
+  "title": "Confirmation dialog",
+  "data": {
+    "message": "Set saved"
+  },
+  "ui_state": {
+    "status": "success"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "end_state",
+    "animation_fraction": 1.0
+  },
+  "expected_semantics": {
+    "id": "screen.confirmation",
+    "role": "screen",
+    "label": "Confirmation",
+    "children": [
+      {
+        "id": "dialog.confirmation",
+        "role": "dialog",
+        "label": "Set saved"
+      }
+    ]
+  }
+}

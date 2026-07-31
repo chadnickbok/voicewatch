@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.weather",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "weather.home",
+      "title": "Weather + Rain",
+      "summary": "72° and clear",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "metric",
+      "title": "Weather + Rain",
+      "primary": "72° and clear",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "weather.primary",
+        "label": "Refresh"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Weather + Rain",
+      "value": "72° and clear",
+      "icon": "weather"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "weather.primary",
+          "example": "Refresh",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

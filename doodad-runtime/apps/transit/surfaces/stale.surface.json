@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.transit",
+  "domain_revision": 2,
+  "observed_at_ms": 1000,
+  "freshness": "stale",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 2,
+      "screen_id": "transit.home",
+      "title": "Transit Departures",
+      "summary": "N in 3 min",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "stale"
+      }
+    },
+    "glance": {
+      "revision": 2,
+      "template": "metric",
+      "title": "Transit Departures",
+      "primary": "N in 3 min",
+      "secondary": "Cached · 18 min",
+      "action": {
+        "id": "transit.primary",
+        "label": "Refresh"
+      }
+    },
+    "complication": {
+      "revision": 2,
+      "label": "Transit Departures",
+      "value": "N in 3 min",
+      "icon": "transit"
+    },
+    "notification": {
+      "revision": 2,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 2,
+      "actions": [
+        {
+          "id": "transit.primary",
+          "example": "Refresh",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

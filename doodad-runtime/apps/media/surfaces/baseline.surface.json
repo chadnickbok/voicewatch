@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.media",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "media.home",
+      "title": "Media Remote",
+      "summary": "Now playing",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "ongoing",
+      "title": "Media Remote",
+      "primary": "Now playing",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "media.primary",
+        "label": "Play"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Media Remote",
+      "value": "Now playing",
+      "icon": "media"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 1,
+      "status": "active",
+      "title": "Media Remote",
+      "detail": "Now playing",
+      "actions": [
+        {
+          "id": "media.primary",
+          "label": "Play"
+        }
+      ]
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "media.primary",
+          "example": "Play",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "remote-control",
+  "screen": {
+    "id": "remote-control.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "remote-control.heading",
+          "type": "text",
+          "props": {
+            "text": "REMOTE CONTROL LAB",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "remote-control.summary",
+          "type": "text",
+          "props": {
+            "text": "Phone connected",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Remote Control Lab status",
+            "value": "Phone connected"
+          }
+        },
+        {
+          "id": "remote-control.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "remote-control.primary",
+          "type": "button",
+          "props": {
+            "label": "Trigger",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote-control.primary"
+          },
+          "semantics": {
+            "label": "Trigger"
+          }
+        }
+      ]
+    }
+  }
+}

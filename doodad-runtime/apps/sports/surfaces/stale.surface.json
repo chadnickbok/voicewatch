@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.sports",
+  "domain_revision": 2,
+  "observed_at_ms": 1000,
+  "freshness": "stale",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 2,
+      "screen_id": "sports.home",
+      "title": "Live Sports",
+      "summary": "SF 3 · LA 2",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "stale"
+      }
+    },
+    "glance": {
+      "revision": 2,
+      "template": "ongoing",
+      "title": "Live Sports",
+      "primary": "SF 3 · LA 2",
+      "secondary": "Cached · 18 min",
+      "action": {
+        "id": "sports.primary",
+        "label": "Follow game"
+      }
+    },
+    "complication": {
+      "revision": 2,
+      "label": "Live Sports",
+      "value": "SF 3 · LA 2",
+      "icon": "sports"
+    },
+    "notification": {
+      "revision": 2,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 2,
+      "status": "active",
+      "title": "Live Sports",
+      "detail": "SF 3 · LA 2",
+      "actions": [
+        {
+          "id": "sports.primary",
+          "label": "Follow game"
+        }
+      ]
+    },
+    "voice": {
+      "revision": 2,
+      "actions": [
+        {
+          "id": "sports.primary",
+          "example": "Follow game",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

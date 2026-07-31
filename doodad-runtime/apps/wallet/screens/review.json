@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "wallet",
+  "screen": {
+    "id": "wallet.review",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "wallet.review.heading",
+          "type": "text",
+          "props": {
+            "text": "UPDATE REVIEW",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "wallet.review.summary",
+          "type": "text",
+          "props": {
+            "text": "Issuer mismatch",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "UPDATE REVIEW",
+            "value": "Issuer mismatch"
+          }
+        },
+        {
+          "id": "wallet.review.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Mock Air ≠ signed Doodad Air",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "wallet.review.primary",
+          "type": "button",
+          "props": {
+            "label": "Reject",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.reject"
+          },
+          "semantics": {
+            "label": "Reject"
+          }
+        },
+        {
+          "id": "wallet.review.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

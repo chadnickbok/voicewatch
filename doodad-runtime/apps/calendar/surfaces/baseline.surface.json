@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.calendar",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "calendar.home",
+      "title": "Calendar + Agenda",
+      "summary": "Design review at 2",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "metric",
+      "title": "Calendar + Agenda",
+      "primary": "Design review at 2",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "calendar.primary",
+        "label": "Open event"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Calendar + Agenda",
+      "value": "Design review at 2",
+      "icon": "calendar"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "calendar.primary",
+          "example": "Open event",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "suite_index": 17,
+  "mode": "generated",
+  "surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "mock_provider": "deterministic",
+  "implementation_status": "interactive-mock-flow",
+  "screen_count": 5,
+  "provider": "sports.read"
+}

@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.notifications",
+  "domain_revision": 3,
+  "observed_at_ms": 2000,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 3,
+      "screen_id": "notifications.home",
+      "title": "Notification Inbox",
+      "summary": "2 unread",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "current"
+      }
+    },
+    "glance": {
+      "revision": 3,
+      "template": "metric",
+      "title": "Notification Inbox",
+      "primary": "2 unread",
+      "secondary": "Updated now",
+      "action": {
+        "id": "notifications.primary",
+        "label": "Quick reply"
+      }
+    },
+    "notification": {
+      "revision": 3,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 3,
+      "actions": [
+        {
+          "id": "notifications.primary",
+          "example": "Quick reply",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

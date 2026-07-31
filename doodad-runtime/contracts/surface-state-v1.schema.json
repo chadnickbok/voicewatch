@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doodad.dev/schemas/surface-state-v1.schema.json",
+  "title": "Doodad cross-surface state v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "app_id",
+    "domain_revision",
+    "observed_at_ms",
+    "freshness",
+    "declared_surfaces",
+    "surfaces"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "app_id": {"$ref": "#/$defs/id"},
+    "domain_revision": {"type": "integer", "minimum": 0},
+    "observed_at_ms": {"type": "integer", "minimum": 0},
+    "freshness": {"enum": ["current", "stale", "offline", "error"]},
+    "declared_surfaces": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"enum": ["app", "glance", "complication", "notification", "ongoing", "voice"]}
+    },
+    "surfaces": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "app": {"$ref": "#/$defs/app"},
+        "glance": {"$ref": "#/$defs/glance"},
+        "complication": {"$ref": "#/$defs/complication"},
+        "notification": {"$ref": "#/$defs/notification"},
+        "ongoing": {"$ref": "#/$defs/ongoing"},
+        "voice": {"$ref": "#/$defs/voice"}
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,95}$"
+    },
+    "label": {"type": "string", "minLength": 1, "maxLength": 128},
+    "projection": {
+      "type": "object",
+      "required": ["revision"],
+      "properties": {
+        "revision": {"type": "integer", "minimum": 0}
+      }
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "label"],
+      "properties": {
+        "id": {"$ref": "#/$defs/id"},
+        "label": {"$ref": "#/$defs/label"},
+        "destructive": {"type": "boolean"}
+      }
+    },
+    "app": {
+      "allOf": [
+        {"$ref": "#/$defs/projection"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["revision", "screen_id", "title", "summary"],
+          "properties": {
+            "revision": {"type": "integer", "minimum": 0},
+            "screen_id": {"$ref": "#/$defs/id"},
+            "title": {"$ref": "#/$defs/label"},
+            "summary": {"type": "string", "maxLength": 256},
+            "state": {"type": "object"}
+          }
+        }
+      ]
+    },
+    "glance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "template", "title", "primary"],
+      "properties": {
+        "revision": {"type": "integer", "minimum": 0},
+        "template": {"enum": ["metric", "ongoing", "alert", "list"]},
+        "title": {"$ref": "#/$defs/label"},
+        "primary": {"$ref": "#/$defs/label"},
+        "secondary": {"type": "string", "maxLength": 128},
+        "progress": {"type": "number", "minimum": 0, "maximum": 1},
+        "action": {"$ref": "#/$defs/action"}
+      }
+    },
+    "complication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "label", "value"],
+      "properties": {
+        "revision": {"type": "integer", "minimum": 0},
+        "label": {"$ref": "#/$defs/label"},
+        "value": {"$ref": "#/$defs/label"},
+        "icon": {"$ref": "#/$defs/id"}
+      }
+    },
+    "notification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "status"],
+      "properties": {
+        "revision": {"type": "integer", "minimum": 0},
+        "status": {"enum": ["inactive", "active"]},
+        "title": {"type": "string", "maxLength": 128},
+        "body": {"type": "string", "maxLength": 512},
+        "privacy": {"enum": ["public", "private", "secret"]},
+        "actions": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/action"}
+        }
+      }
+    },
+    "ongoing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "status"],
+      "properties": {
+        "revision": {"type": "integer", "minimum": 0},
+        "status": {"enum": ["inactive", "active"]},
+        "title": {"type": "string", "maxLength": 128},
+        "detail": {"type": "string", "maxLength": 128},
+        "progress": {"type": "number", "minimum": 0, "maximum": 1},
+        "actions": {
+          "type": "array",
+          "maxItems": 2,
+          "items": {"$ref": "#/$defs/action"}
+        }
+      }
+    },
+    "voice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["revision", "actions"],
+      "properties": {
+        "revision": {"type": "integer", "minimum": 0},
+        "actions": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 16,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["id", "example", "confirmation"],
+            "properties": {
+              "id": {"$ref": "#/$defs/id"},
+              "example": {"$ref": "#/$defs/label"},
+              "confirmation": {"enum": ["never", "destructive", "always"]}
+            }
+          }
+        }
+      }
+    }
+  }
+}

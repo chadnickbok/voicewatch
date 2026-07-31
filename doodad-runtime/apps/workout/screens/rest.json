@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "workout.rest",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "workout.rest.heading",
+          "type": "text",
+          "props": {
+            "text": "SET RECORDED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "workout.rest.time",
+          "type": "text",
+          "props": {
+            "text": "1:00",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "workout.rest.detail",
+          "type": "live_card",
+          "props": {
+            "title": "Rest timer",
+            "body": "135 lb × 8 committed atomically",
+            "progress": 0.0,
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "workout.rest.finish",
+          "type": "button",
+          "props": {
+            "label": "Finish rest",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.rest.finish"
+          },
+          "semantics": {
+            "label": "Finish rest and open next set"
+          }
+        },
+        {
+          "id": "workout.rest.end",
+          "type": "button",
+          "props": {
+            "label": "End workout",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.end"
+          },
+          "semantics": {
+            "label": "End workout"
+          }
+        }
+      ]
+    }
+  }
+}

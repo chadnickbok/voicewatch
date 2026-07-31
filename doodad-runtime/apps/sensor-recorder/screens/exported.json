@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sensor-recorder",
+  "screen": {
+    "id": "sensor-recorder.exported",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sensor-recorder.exported.heading",
+          "type": "text",
+          "props": {
+            "text": "EXPORT READY",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sensor-recorder.exported.summary",
+          "type": "text",
+          "props": {
+            "text": "session-001.csv",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "EXPORT READY",
+            "value": "session-001.csv"
+          }
+        },
+        {
+          "id": "sensor-recorder.exported.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Mock transfer complete · revision 8",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sensor-recorder.exported.primary",
+          "type": "button",
+          "props": {
+            "label": "Session",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sensor.session"
+          },
+          "semantics": {
+            "label": "Session"
+          }
+        },
+        {
+          "id": "sensor-recorder.exported.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sensor.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

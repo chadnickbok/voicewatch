@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "suite_index": 6,
+  "mode": "hybrid",
+  "surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "mock_provider": "deterministic",
+  "implementation_status": "interactive-mock-flow",
+  "screen_count": 5,
+  "provider": "calendar.sync"
+}

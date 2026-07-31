@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "id": "tasks.baseline.interaction",
+  "app_id": "dev.doodad.tasks",
+  "initial_state": {
+    "wall_time_ms": 1700000000000,
+    "timezone_offset_minutes": -420,
+    "app_state": "foreground",
+    "display_state": "awake",
+    "connectivity": "online"
+  },
+  "steps": [
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "tasks.loaded",
+      "revision": 1,
+      "status": "current",
+      "payload": {
+        "deterministic": true
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.tasks",
+        "domain_revision": 1,
+        "observed_at_ms": 0,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 1,
+            "screen_id": "tasks.home",
+            "title": "Tasks + Reminders",
+            "summary": "3 tasks today",
+            "state": {
+              "provider": "mock",
+              "interactive": true
+            }
+          },
+          "glance": {
+            "revision": 1,
+            "template": "metric",
+            "title": "Tasks + Reminders",
+            "primary": "3 tasks today",
+            "secondary": "Mock data · now",
+            "action": {
+              "id": "tasks.primary",
+              "label": "Add task"
+            }
+          },
+          "complication": {
+            "revision": 1,
+            "label": "Tasks + Reminders",
+            "value": "3 tasks today",
+            "icon": "tasks"
+          },
+          "notification": {
+            "revision": 1,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 1,
+            "actions": [
+              {
+                "id": "tasks.primary",
+                "example": "Add task",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "action.dispatch",
+      "target": "tasks.primary",
+      "value": {
+        "source": "touch"
+      }
+    },
+    {
+      "op": "assert.state",
+      "equals": {
+        "providers.mock.revision": 1,
+        "surfaces.dev.doodad.tasks.domain_revision": 1,
+        "actions.count": 1,
+        "actions.last_target": "tasks.primary"
+      }
+    }
+  ]
+}

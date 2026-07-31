@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "app_id": "timer",
+  "screen": {
+    "id": "timer.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "timer.heading",
+          "type": "text",
+          "props": {
+            "text": "TIMER SUITE",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "timer.summary",
+          "type": "text",
+          "props": {
+            "text": "1:00",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Timer Suite status",
+            "value": "1 minute"
+          }
+        },
+        {
+          "id": "timer.duration",
+          "type": "stepper",
+          "props": {
+            "label": "Minutes",
+            "value": 1,
+            "unit": "min",
+            "minimum": 1,
+            "maximum": 60,
+            "step": 1
+          },
+          "events": {
+            "valueCommitted": "timer.duration.changed"
+          },
+          "semantics": {
+            "label": "Timer duration",
+            "value": "1 minute"
+          }
+        },
+        {
+          "id": "timer.status",
+          "type": "text",
+          "props": {
+            "text": "Ready · exact scheduler",
+            "style": "caption",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "timer.primary",
+          "type": "button",
+          "props": {
+            "label": "Start",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "timer.primary"
+          },
+          "semantics": {
+            "label": "Start one minute timer"
+          }
+        }
+      ]
+    }
+  }
+}

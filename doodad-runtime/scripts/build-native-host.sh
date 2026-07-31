@@ -26,6 +26,10 @@ if [[ "${DOODAD_BUILD_TESTS:-1}" == "1" ]]; then
     cmake --build "${HOST_BUILD}" --target \
         m3e_display_profile_test \
         m3e_core_tokens_test \
+        m3e_deterministic_system_test \
+        m3e_exact_scheduler_test \
+        m3e_surface_registry_test \
+        m3e_os_shell_test \
         m3e_framework_test
 fi
 

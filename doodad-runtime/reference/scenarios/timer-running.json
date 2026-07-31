@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "id": "timer.running.resting",
+  "scene": "timer-running",
+  "title": "Running timer",
+  "appspec": "apps/timer/appspec.json",
+  "lifecycle_scenario": "fixtures/scenarios/timer-reboot.scenario.json",
+  "data": {
+    "label": "Tea",
+    "remaining": "01:42",
+    "progress": 0.43,
+    "action": "Pause"
+  },
+  "ui_state": {
+    "status": "running"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "target": "button.timer-action",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.timer",
+    "role": "screen",
+    "label": "Tea timer",
+    "children": [
+      {
+        "id": "progress.timer",
+        "role": "progress",
+        "label": "Timer progress",
+        "value": "43%",
+        "state_description": "running"
+      },
+      {
+        "id": "value.timer",
+        "role": "text",
+        "label": "1 minute 42 seconds remaining"
+      },
+      {
+        "id": "button.timer-action",
+        "role": "button",
+        "label": "Pause timer"
+      }
+    ]
+  }
+}

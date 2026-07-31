@@ -92,3 +92,22 @@ reason. Unmeasured targets are explicitly labeled as targets.
   app.
 - **Consequence:** generated apps can request semantic navigation and system
   actions but cannot impersonate trusted surfaces.
+
+## ADR-012: Dual-renderer oracle
+
+- **Status:** accepted
+- **Decision:** renderer-neutral reference scenarios drive both the pinned Wear
+  Compose oracle and the AppSpec/LVGL renderer. Lifecycle/provider scenarios
+  remain a separate linked contract.
+- **Consequence:** Compose defines Material behavior and visual grammar; it does
+  not define square product geometry or embedded performance.
+
+## ADR-013: Geometry families
+
+- **Status:** accepted
+- **Decision:** `wear_round` and `watch_square_240` share semantic, color,
+  typography, shape, motion and interaction roles while retaining independent
+  safe areas, edge components, list transforms, curved text, arcs and margins.
+- **Consequence:** an approved square adaptation may be Equivalent without
+  reproducing round-screen coordinates, and raw pixel equality is not a
+  cross-renderer gate.

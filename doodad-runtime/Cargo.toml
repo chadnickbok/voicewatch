@@ -1,6 +1,26 @@
 [workspace]
 members = [
     "apps/hello",
+    "apps/timer",
+    "apps/weather",
+    "apps/notifications",
+    "apps/tasks",
+    "apps/calculator",
+    "apps/calendar",
+    "apps/workout",
+    "apps/calories",
+    "apps/voice-notes",
+    "apps/medication",
+    "apps/sensor-recorder",
+    "apps/sleep",
+    "apps/media",
+    "apps/navigation",
+    "apps/transit",
+    "apps/smart-home",
+    "apps/sports",
+    "apps/wallet",
+    "apps/remote-control",
+    "apps/snake",
     "sdk/rust/doodad-sdk",
 ]
 resolver = "2"

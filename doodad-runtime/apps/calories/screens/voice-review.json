@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "app_id": "calories",
+  "screen": {
+    "id": "calories.voice-review",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "calories.review.heading",
+          "type": "text",
+          "props": {
+            "text": "VOICE REVIEW",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "calories.review.summary",
+          "type": "text",
+          "props": {
+            "text": "650 kcal",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "calories.review.detail",
+          "type": "card",
+          "props": {
+            "title": "Lunch",
+            "body": "45g protein · structured locally",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "calories.review.confirm",
+          "type": "button",
+          "props": {
+            "label": "Confirm record",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calories.confirm.voice"
+          },
+          "semantics": {
+            "label": "Confirm voice nutrition record"
+          }
+        },
+        {
+          "id": "calories.review.correct",
+          "type": "button",
+          "props": {
+            "label": "Correct amount",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calories.correct"
+          },
+          "semantics": {
+            "label": "Correct voice nutrition record"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "voice-notes",
+  "screen": {
+    "id": "voice-notes.buffered",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "voice-notes.buffered.heading",
+          "type": "text",
+          "props": {
+            "text": "STILL RECORDING",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "voice-notes.buffered.summary",
+          "type": "text",
+          "props": {
+            "text": "Offline · 00:31",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "STILL RECORDING",
+            "value": "Offline · 00:31"
+          }
+        },
+        {
+          "id": "voice-notes.buffered.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Audio is safe locally · upload paused",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "voice-notes.buffered.primary",
+          "type": "button",
+          "props": {
+            "label": "Reconnect",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.reconnect"
+          },
+          "semantics": {
+            "label": "Reconnect"
+          }
+        },
+        {
+          "id": "voice-notes.buffered.secondary",
+          "type": "button",
+          "props": {
+            "label": "Pause",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.pause"
+          },
+          "semantics": {
+            "label": "Pause"
+          }
+        }
+      ]
+    }
+  }
+}

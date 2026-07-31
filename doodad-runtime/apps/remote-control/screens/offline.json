@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "remote-control",
+  "screen": {
+    "id": "remote-control.offline",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "remote-control.offline.heading",
+          "type": "text",
+          "props": {
+            "text": "DISCONNECTED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "remote-control.offline.summary",
+          "type": "text",
+          "props": {
+            "text": "No action sent",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "DISCONNECTED",
+            "value": "No action sent"
+          }
+        },
+        {
+          "id": "remote-control.offline.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Retry ledger preserved · discovery active",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "remote-control.offline.primary",
+          "type": "button",
+          "props": {
+            "label": "Reconnect",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.reconnect"
+          },
+          "semantics": {
+            "label": "Reconnect"
+          }
+        },
+        {
+          "id": "remote-control.offline.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

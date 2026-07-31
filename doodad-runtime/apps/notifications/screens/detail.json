@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "app_id": "notifications",
+  "screen": {
+    "id": "notifications.detail",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "notification.detail.heading",
+          "type": "text",
+          "props": {
+            "text": "MAYA · NOW",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "notification.detail.message",
+          "type": "card",
+          "props": {
+            "title": "Dinner at 7?",
+            "body": "I found a place near the hotel 🍜",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "notification.detail.reply",
+          "type": "button",
+          "props": {
+            "label": "Quick reply",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "compact"
+          },
+          "events": {
+            "tap": "notification.reply"
+          },
+          "semantics": {
+            "label": "Reply to Maya"
+          }
+        },
+        {
+          "id": "notification.detail.dismiss",
+          "type": "button",
+          "props": {
+            "label": "Dismiss",
+            "tone": "neutral",
+            "variant": "tonal",
+            "size": "compact"
+          },
+          "events": {
+            "tap": "notification.dismiss"
+          },
+          "semantics": {
+            "label": "Dismiss notification"
+          }
+        },
+        {
+          "id": "notification.detail.back",
+          "type": "button",
+          "props": {
+            "label": "Back",
+            "tone": "neutral",
+            "variant": "text",
+            "size": "compact"
+          },
+          "events": {
+            "tap": "notification.back"
+          },
+          "semantics": {
+            "label": "Back to inbox"
+          }
+        }
+      ]
+    }
+  }
+}

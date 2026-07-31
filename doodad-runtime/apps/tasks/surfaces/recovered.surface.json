@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.tasks",
+  "domain_revision": 3,
+  "observed_at_ms": 2000,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 3,
+      "screen_id": "tasks.home",
+      "title": "Tasks + Reminders",
+      "summary": "3 tasks today",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "current"
+      }
+    },
+    "glance": {
+      "revision": 3,
+      "template": "metric",
+      "title": "Tasks + Reminders",
+      "primary": "3 tasks today",
+      "secondary": "Updated now",
+      "action": {
+        "id": "tasks.primary",
+        "label": "Add task"
+      }
+    },
+    "complication": {
+      "revision": 3,
+      "label": "Tasks + Reminders",
+      "value": "3 tasks today",
+      "icon": "tasks"
+    },
+    "notification": {
+      "revision": 3,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 3,
+      "actions": [
+        {
+          "id": "tasks.primary",
+          "example": "Add task",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

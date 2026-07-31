@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "id": "dev.doodad.sleep",
+  "name": "Sleep + Smart Alarm",
+  "version": "0.1.0",
+  "host_abi": 1,
+  "capabilities": [
+    "ui.mount",
+    "sleep.track"
+  ],
+  "wasm": "app.wasm"
+}

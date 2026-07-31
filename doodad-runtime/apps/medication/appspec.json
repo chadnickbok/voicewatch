@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "medication",
+  "screen": {
+    "id": "medication.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "medication.heading",
+          "type": "text",
+          "props": {
+            "text": "MEDICATION + HABITS",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "medication.summary",
+          "type": "text",
+          "props": {
+            "text": "Vitamin D at 9",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Medication + Habits status",
+            "value": "Vitamin D at 9"
+          }
+        },
+        {
+          "id": "medication.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "medication.primary",
+          "type": "button",
+          "props": {
+            "label": "Mark taken",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "medication.primary"
+          },
+          "semantics": {
+            "label": "Mark taken"
+          }
+        }
+      ]
+    }
+  }
+}

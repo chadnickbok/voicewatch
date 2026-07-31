@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "media",
+  "screen": {
+    "id": "media.playing",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "media.playing.heading",
+          "type": "text",
+          "props": {
+            "text": "NOW PLAYING",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "media.playing.summary",
+          "type": "text",
+          "props": {
+            "text": "Midnight City",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "NOW PLAYING",
+            "value": "Midnight City"
+          }
+        },
+        {
+          "id": "media.playing.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "M83 · 1:42 / 4:03 · Living Room",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "media.playing.primary",
+          "type": "button",
+          "props": {
+            "label": "Pause",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.pause"
+          },
+          "semantics": {
+            "label": "Pause"
+          }
+        },
+        {
+          "id": "media.playing.secondary",
+          "type": "button",
+          "props": {
+            "label": "Disconnect",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.disconnect"
+          },
+          "semantics": {
+            "label": "Disconnect"
+          }
+        }
+      ]
+    }
+  }
+}

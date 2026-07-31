@@ -1,6 +1,7 @@
 #include "m3e/appspec/command_batch.hpp"
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <limits>
 #include <new>
@@ -471,7 +472,7 @@ CommandResult apply_ui_command_batch(
     bool has_text_replacement = false;
     std::array<std::int32_t, Reconciler::kCapacity> staged_values{};
     std::array<std::int32_t, Reconciler::kCapacity> staged_maxima{};
-    std::array<bool, Reconciler::kCapacity> progress_touched{};
+    std::array<bool, Reconciler::kCapacity> numeric_touched{};
     for (std::size_t index = 0; index < document.node_count; ++index) {
         staged_values[index] = document.nodes[index].value;
         staged_maxima[index] = document.nodes[index].maximum;
@@ -516,7 +517,8 @@ CommandResult apply_ui_command_batch(
             } else if (
                 command.property == PropertyKind::value ||
                 command.property == PropertyKind::maximum) {
-                if (node->kind != ComponentKind::progress ||
+                if ((node->kind != ComponentKind::progress &&
+                     node->kind != ComponentKind::stepper) ||
                     command.integer_value <
                         std::numeric_limits<std::int32_t>::min() ||
                     command.integer_value >
@@ -525,14 +527,22 @@ CommandResult apply_ui_command_batch(
                 }
                 const auto value = static_cast<std::int32_t>(
                     command.integer_value);
-                if ((command.property == PropertyKind::maximum && value < 1) ||
-                    (command.property == PropertyKind::value && value < 0)) {
+                if ((node->kind == ComponentKind::progress &&
+                     ((command.property == PropertyKind::maximum &&
+                       value < 1) ||
+                      (command.property == PropertyKind::value &&
+                       value < 0))) ||
+                    (node->kind == ComponentKind::stepper &&
+                     ((command.property == PropertyKind::maximum &&
+                       value < node->minimum) ||
+                      (command.property == PropertyKind::value &&
+                       value < node->minimum)))) {
                     return result(CommandError::value_out_of_range, index);
                 }
                 const auto node_index =
                     static_cast<std::size_t>(
                         node - document.nodes.data());
-                progress_touched[node_index] = true;
+                numeric_touched[node_index] = true;
                 if (command.property == PropertyKind::maximum) {
                     staged_maxima[node_index] = value;
                 } else {
@@ -548,8 +558,12 @@ CommandResult apply_ui_command_batch(
         }
     }
     for (std::size_t index = 0; index < document.node_count; ++index) {
-        if (progress_touched[index] &&
-            staged_values[index] > staged_maxima[index]) {
+        if (numeric_touched[index] &&
+            (staged_maxima[index] < 1 ||
+             staged_values[index] > staged_maxima[index] ||
+             (document.nodes[index].kind == ComponentKind::stepper &&
+              staged_values[index] <
+                  document.nodes[index].minimum))) {
             return result(CommandError::value_out_of_range, index);
         }
         has_text_replacement =
@@ -662,6 +676,20 @@ CommandResult apply_ui_command_batch(
                 old_string_at(
                     document.events[index].action_id_offset));
         }
+        // Mounted AppSpec objects keep their stable node id in user data for
+        // semantic inspection. String compaction can move every id, so repair
+        // those borrowed pointers before releasing the old snapshot.
+        for (std::size_t index = 0;
+             index < document.node_count;
+             ++index) {
+            auto& node = document.nodes[index];
+            if (node.mounted_object != nullptr) {
+                lv_obj_set_user_data(
+                    static_cast<lv_obj_t*>(node.mounted_object),
+                    const_cast<char*>(
+                        document.string_at(node.id_offset)));
+            }
+        }
         delete old_strings;
         old_strings = nullptr;
     }
@@ -705,12 +733,26 @@ CommandResult apply_ui_command_batch(
         }
     }
     for (std::size_t index = 0; index < document.node_count; ++index) {
-        if (!progress_touched[index]) continue;
+        if (!numeric_touched[index]) continue;
         auto& node = document.nodes[index];
         auto* object = static_cast<lv_obj_t*>(node.mounted_object);
         node.maximum = staged_maxima[index];
         node.value = staged_values[index];
-        if (node.variant == 1) {
+        if (node.kind == ComponentKind::stepper) {
+            char value[40]{};
+            std::snprintf(
+                value,
+                sizeof(value),
+                "%ld %s",
+                static_cast<long>(node.value),
+                document.string_at(node.secondary_text_offset));
+            auto* label = lv_obj_get_child(object, 1);
+            if (label == nullptr ||
+                !lv_obj_check_type(label, &lv_label_class)) {
+                return result(CommandError::unsupported_property, index);
+            }
+            lv_label_set_text(label, value);
+        } else if (node.variant == 1) {
             lv_arc_set_range(object, 0, node.maximum);
             lv_arc_set_value(object, node.value);
         } else {

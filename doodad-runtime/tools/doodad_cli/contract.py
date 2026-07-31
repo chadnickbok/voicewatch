@@ -221,6 +221,36 @@ def validate_module(
                 f"{signatures.get(event_export)!r} does not match "
                 f"{expected_event_signature!r}"
             )
+    provider_handler = abi.get("provider_event_handler")
+    if isinstance(provider_handler, dict):
+        prefixes = provider_handler.get(
+            "required_when_capability_prefixes", []
+        )
+        requires_provider_handler = any(
+            capability.startswith(prefix)
+            for capability in manifest["capabilities"]
+            for prefix in prefixes
+        )
+        if requires_provider_handler:
+            provider_export = provider_handler["export"]
+            if (provider_export, "function") not in set(exports):
+                raise DoodadError(
+                    f"app.wasm is missing provider export "
+                    f"{provider_export!r}"
+                )
+            expected_provider_signature = (
+                tuple(provider_handler["params"]),
+                tuple(provider_handler["results"]),
+            )
+            if (
+                signatures.get(provider_export)
+                != expected_provider_signature
+            ):
+                raise DoodadError(
+                    f"{provider_export} signature "
+                    f"{signatures.get(provider_export)!r} does not match "
+                    f"{expected_provider_signature!r}"
+                )
     expected_memory = [
         (
             int(abi["wasm_profile"]["initial_memory_pages"]),

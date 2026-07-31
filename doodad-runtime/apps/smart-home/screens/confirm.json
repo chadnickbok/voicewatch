@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "smart-home",
+  "screen": {
+    "id": "smart-home.confirm",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "smart-home.confirm.heading",
+          "type": "text",
+          "props": {
+            "text": "TRUSTED REVIEW",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "smart-home.confirm.summary",
+          "type": "text",
+          "props": {
+            "text": "Unlock front door?",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "TRUSTED REVIEW",
+            "value": "Unlock front door?"
+          }
+        },
+        {
+          "id": "smart-home.confirm.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Hazardous action · identity required",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "smart-home.confirm.primary",
+          "type": "button",
+          "props": {
+            "label": "Confirm unlock",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "home.confirm"
+          },
+          "semantics": {
+            "label": "Confirm unlock"
+          }
+        },
+        {
+          "id": "smart-home.confirm.secondary",
+          "type": "button",
+          "props": {
+            "label": "Cancel",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "home.cancel"
+          },
+          "semantics": {
+            "label": "Cancel"
+          }
+        }
+      ]
+    }
+  }
+}

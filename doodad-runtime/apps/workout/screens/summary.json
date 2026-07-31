@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "workout.summary",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "workout.summary.heading",
+          "type": "text",
+          "props": {
+            "text": "WORKOUT SAVED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "workout.summary.total",
+          "type": "text",
+          "props": {
+            "text": "4 sets",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "workout.summary.detail",
+          "type": "card",
+          "props": {
+            "title": "Squat · 4 × 8",
+            "body": "4,320 lb volume · 12:08",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "workout.summary.again",
+          "type": "button",
+          "props": {
+            "label": "Start another",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.again"
+          },
+          "semantics": {
+            "label": "Start another workout"
+          }
+        }
+      ]
+    }
+  }
+}

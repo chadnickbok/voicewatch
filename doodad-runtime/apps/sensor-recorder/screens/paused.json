@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sensor-recorder",
+  "screen": {
+    "id": "sensor-recorder.paused",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sensor-recorder.paused.heading",
+          "type": "text",
+          "props": {
+            "text": "PAUSED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sensor-recorder.paused.summary",
+          "type": "text",
+          "props": {
+            "text": "20.5 seconds",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "PAUSED",
+            "value": "20.5 seconds"
+          }
+        },
+        {
+          "id": "sensor-recorder.paused.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Samples committed · UI idle",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sensor-recorder.paused.primary",
+          "type": "button",
+          "props": {
+            "label": "Resume",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sensor.resume"
+          },
+          "semantics": {
+            "label": "Resume"
+          }
+        },
+        {
+          "id": "sensor-recorder.paused.secondary",
+          "type": "button",
+          "props": {
+            "label": "Export",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sensor.export"
+          },
+          "semantics": {
+            "label": "Export"
+          }
+        }
+      ]
+    }
+  }
+}

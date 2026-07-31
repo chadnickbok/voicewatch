@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "snake",
+  "screen": {
+    "id": "snake.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "snake.heading",
+          "type": "text",
+          "props": {
+            "text": "SNAKE",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "snake.summary",
+          "type": "text",
+          "props": {
+            "text": "Score 12",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Snake status",
+            "value": "Score 12"
+          }
+        },
+        {
+          "id": "snake.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "snake.primary",
+          "type": "button",
+          "props": {
+            "label": "Play Snake",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "snake.primary"
+          },
+          "semantics": {
+            "label": "Play Snake"
+          }
+        }
+      ]
+    }
+  }
+}

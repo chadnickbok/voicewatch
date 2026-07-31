@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "remote-control",
+  "screen": {
+    "id": "remote-control.targets",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "remote-control.targets.heading",
+          "type": "text",
+          "props": {
+            "text": "PHONE CONNECTED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "remote-control.targets.summary",
+          "type": "text",
+          "props": {
+            "text": "3 controls",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "PHONE CONNECTED",
+            "value": "3 controls"
+          }
+        },
+        {
+          "id": "remote-control.targets.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Find phone · Camera · Slides",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "remote-control.targets.primary",
+          "type": "button",
+          "props": {
+            "label": "Camera shutter",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.camera"
+          },
+          "semantics": {
+            "label": "Camera shutter"
+          }
+        },
+        {
+          "id": "remote-control.targets.secondary",
+          "type": "button",
+          "props": {
+            "label": "Disconnect",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.disconnect"
+          },
+          "semantics": {
+            "label": "Disconnect"
+          }
+        }
+      ]
+    }
+  }
+}

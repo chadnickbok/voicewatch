@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "id": "catalog.theme-switcher.selected",
+  "scene": "theme-switcher",
+  "title": "Theme switcher",
+  "data": {
+    "scheme": "Violet",
+    "dynamic_color": false,
+    "reduced_motion": false
+  },
+  "ui_state": {
+    "status": "selected"
+  },
+  "theme": {
+    "color_scheme": "violet-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "selected",
+    "target": "toggle.violet",
+    "animation_fraction": 1.0
+  },
+  "expected_semantics": {
+    "id": "screen.theme-switcher",
+    "role": "screen",
+    "label": "Theme switcher",
+    "children": [
+      {
+        "id": "toggle.violet",
+        "role": "toggle",
+        "label": "Violet color scheme",
+        "checked": true
+      },
+      {
+        "id": "toggle.dynamic-color",
+        "role": "toggle",
+        "label": "Dynamic color",
+        "checked": false
+      },
+      {
+        "id": "toggle.reduced-motion",
+        "role": "toggle",
+        "label": "Reduced motion",
+        "checked": false
+      }
+    ]
+  }
+}

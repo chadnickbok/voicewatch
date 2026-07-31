@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "remote-control",
+  "screen": {
+    "id": "remote-control.pending",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "remote-control.pending.heading",
+          "type": "text",
+          "props": {
+            "text": "CAMERA",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "remote-control.pending.summary",
+          "type": "text",
+          "props": {
+            "text": "Sending #73",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "CAMERA",
+            "value": "Sending #73"
+          }
+        },
+        {
+          "id": "remote-control.pending.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Tap locked until acknowledgement",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "remote-control.pending.primary",
+          "type": "button",
+          "props": {
+            "label": "Deliver ack",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.ack"
+          },
+          "semantics": {
+            "label": "Deliver ack"
+          }
+        },
+        {
+          "id": "remote-control.pending.secondary",
+          "type": "button",
+          "props": {
+            "label": "Lose link",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.disconnect"
+          },
+          "semantics": {
+            "label": "Lose link"
+          }
+        }
+      ]
+    }
+  }
+}

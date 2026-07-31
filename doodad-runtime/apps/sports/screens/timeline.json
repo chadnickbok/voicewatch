@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sports",
+  "screen": {
+    "id": "sports.timeline",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sports.timeline.heading",
+          "type": "text",
+          "props": {
+            "text": "SCORING PLAYS",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sports.timeline.summary",
+          "type": "text",
+          "props": {
+            "text": "5 runs · 4 plays",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "SCORING PLAYS",
+            "value": "5 runs · 4 plays"
+          }
+        },
+        {
+          "id": "sports.timeline.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "8th: Lee doubled · two scored",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sports.timeline.primary",
+          "type": "button",
+          "props": {
+            "label": "Final score",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.final"
+          },
+          "semantics": {
+            "label": "Final score"
+          }
+        },
+        {
+          "id": "sports.timeline.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

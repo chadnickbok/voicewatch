@@ -16,10 +16,30 @@
       "i64"
     ],
     "encoding": "canonical-cbor",
+    "event_schema": "ui-event-v1",
     "schema": "command-batch-v1",
     "maximum_event_bytes": 512,
     "maximum_result_bytes": 4096,
-    "result_ownership": "borrowed-guest-slice-packed-pointer-high-length-low"
+    "result_ownership": "zero-for-no-commands-or-borrowed-guest-slice-packed-pointer-high-length-low"
+  },
+  "provider_event_handler": {
+    "export": "handle_provider_event",
+    "params": [
+      "i32",
+      "i32"
+    ],
+    "results": [
+      "i64"
+    ],
+    "encoding": "canonical-cbor",
+    "event_schema": "provider-event-v1",
+    "schema": "command-batch-v1",
+    "maximum_event_bytes": 1024,
+    "maximum_result_bytes": 4096,
+    "required_when_capability_prefixes": [
+      "timer.",
+      "weather."
+    ]
   },
   "wasm_profile": {
     "wasi": false,
@@ -42,6 +62,206 @@
       "schema": "appspec-v1",
       "minimum_bytes": 1,
       "maximum_bytes": 4096
+    },
+    "timer.schedule": {
+      "import_module": "doodad",
+      "import_name": "timer_schedule_after",
+      "params": [
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i64"
+      ],
+      "maximum_duration_ms": 604800000
+    },
+    "timer.cancel": {
+      "import_module": "doodad",
+      "import_name": "timer_cancel",
+      "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "timer.acknowledge": {
+      "import_module": "doodad",
+      "import_name": "timer_acknowledge",
+      "params": [
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i32"
+      ]
+    },
+    "weather.read": {
+      "import_module": "doodad",
+      "import_name": "provider_request",
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i64"
+      ],
+      "provider": "weather",
+      "operations": [
+        "refresh"
+      ]
+    },
+    "calendar.sync": {
+      "import_module": "doodad",
+      "import_name": "calendar_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "calendar",
+      "operations": ["calendar.*"],
+      "mocked": true
+    },
+    "audio.capture": {
+      "import_module": "doodad",
+      "import_name": "audio_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "audio",
+      "operations": ["voice-notes.*"],
+      "mocked": true
+    },
+    "medication.schedule": {
+      "import_module": "doodad",
+      "import_name": "medication_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "medication",
+      "operations": ["medication.*"],
+      "mocked": true
+    },
+    "sensor.record": {
+      "import_module": "doodad",
+      "import_name": "sensor_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "sensor",
+      "operations": ["sensor.*", "sensor-recorder.*"],
+      "mocked": true
+    },
+    "sleep.track": {
+      "import_module": "doodad",
+      "import_name": "sleep_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "sleep",
+      "operations": ["sleep.*"],
+      "mocked": true
+    },
+    "media.remote": {
+      "import_module": "doodad",
+      "import_name": "media_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "media",
+      "operations": ["media.*"],
+      "mocked": true
+    },
+    "navigation.route": {
+      "import_module": "doodad",
+      "import_name": "navigation_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "navigation",
+      "operations": ["navigation.*"],
+      "mocked": true
+    },
+    "transit.read": {
+      "import_module": "doodad",
+      "import_name": "transit_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "transit",
+      "operations": ["transit.*"],
+      "mocked": true
+    },
+    "home.control": {
+      "import_module": "doodad",
+      "import_name": "home_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "home",
+      "operations": ["home.*", "smart-home.*"],
+      "mocked": true
+    },
+    "sports.read": {
+      "import_module": "doodad",
+      "import_name": "sports_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "sports",
+      "operations": ["sports.*"],
+      "mocked": true
+    },
+    "wallet.read": {
+      "import_module": "doodad",
+      "import_name": "wallet_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "wallet",
+      "operations": ["wallet.*"],
+      "mocked": true
+    },
+    "remote.control": {
+      "import_module": "doodad",
+      "import_name": "remote_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "remote",
+      "operations": ["remote.*", "remote-control.*"],
+      "mocked": true
+    },
+    "workout.store": {
+      "import_module": "doodad",
+      "import_name": "workout_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "workout",
+      "operations": ["complete_set", "workout.*"],
+      "mocked": true
+    },
+    "game.clock": {
+      "import_module": "doodad",
+      "import_name": "game_request",
+      "params": ["i32", "i32", "i32", "i32"],
+      "results": ["i64"],
+      "provider": "game",
+      "operations": ["snake.*"],
+      "mocked": true
+    },
+    "fixture.interact": {
+      "import_module": "doodad",
+      "import_name": "provider_request",
+      "params": [
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32",
+        "i32"
+      ],
+      "results": [
+        "i64"
+      ],
+      "provider": "fixture",
+      "operations": [
+        "*"
+      ],
+      "test_only": true
     }
   }
 }

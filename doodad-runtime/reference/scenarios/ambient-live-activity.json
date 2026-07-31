@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "activity.live.ambient",
+  "scene": "ambient-live-activity",
+  "title": "Ambient live activity",
+  "data": {
+    "label": "Outdoor run",
+    "value": "24:18",
+    "secondary": "3.42 km",
+    "progress": 0.61
+  },
+  "ui_state": {
+    "status": "running"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "standard",
+    "dynamic_color": false,
+    "ambient": true,
+    "reduced_motion": true
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.ambient-activity",
+    "role": "screen",
+    "label": "Outdoor run",
+    "children": [
+      {
+        "id": "progress.activity",
+        "role": "progress",
+        "label": "Workout progress",
+        "value": "61%",
+        "state_description": "ambient"
+      },
+      {
+        "id": "value.activity-time",
+        "role": "text",
+        "label": "24 minutes 18 seconds"
+      },
+      {
+        "id": "value.activity-distance",
+        "role": "text",
+        "label": "3.42 kilometers"
+      }
+    ]
+  }
+}

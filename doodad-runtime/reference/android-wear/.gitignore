@@ -1,0 +1,6 @@
+.gradle/
+local.properties
+**/build/
+captures/
+app/src/test/screenshots/*_compare.png
+app/src/test/screenshots/*_actual.png

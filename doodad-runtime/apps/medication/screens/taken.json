@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "medication",
+  "screen": {
+    "id": "medication.taken",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "medication.taken.heading",
+          "type": "text",
+          "props": {
+            "text": "VITAMIN D",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "medication.taken.summary",
+          "type": "text",
+          "props": {
+            "text": "Taken · 9:02",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "VITAMIN D",
+            "value": "Taken · 9:02"
+          }
+        },
+        {
+          "id": "medication.taken.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Recorded once · 12 day streak",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "medication.taken.primary",
+          "type": "button",
+          "props": {
+            "label": "Add reminder",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "medication.add"
+          },
+          "semantics": {
+            "label": "Add reminder"
+          }
+        },
+        {
+          "id": "medication.taken.secondary",
+          "type": "button",
+          "props": {
+            "label": "Undo",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "medication.undo"
+          },
+          "semantics": {
+            "label": "Undo"
+          }
+        }
+      ]
+    }
+  }
+}

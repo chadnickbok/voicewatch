@@ -4,8 +4,8 @@ This project implements the first three vertical slices of the Doodad watch
 runtime on an M5Stack CoreS3 SE:
 
 1. A trusted ESP-IDF shell embeds and runs a Rust WebAssembly guest.
-2. The same guest can be loaded from microSD, with the embedded image retained
-   as the recovery fallback.
+2. Packages load from a 9.94 MiB onboard wear-levelled partition first, with
+   optional microSD and the embedded recovery image as fallbacks.
 3. A package-first desktop simulator builds the guest, validates its manifest
    and ABI, runs it in WAMR, and renders declarative UI through LVGL.
 
@@ -22,6 +22,44 @@ It now also contains a substantial Material 3 Expressive framework slice:
 - semantic AppSpec v1 plus calories, calculator, workout, and voice fixtures;
 - deterministic 240×240 RGB565 catalog goldens;
 - an instrumented CoreS3 asynchronous-DMA display path.
+
+The active UI/runtime milestone is specified in the
+[20-app and OS conformance-suite plan](docs/20-app-conformance-suite.md).
+The suite now includes 20 separate interactive Wasm packages, deterministic
+scenario and cross-surface contracts, a trusted Home/Voice/App Manager shell,
+CoreS3 system-shortcut wiring, dual 3 MiB firmware slots, and 9.94 MiB of
+onboard package storage. Run the complete package lane with:
+
+```bash
+./scripts/test-conformance-suite.sh
+```
+
+Run or inspect one deterministic lifecycle scenario with:
+
+```bash
+./doodad conformance fixtures/scenarios/timer-reboot.scenario.json --trace
+```
+
+The pinned Wear Compose implementation is executable as a dual-renderer oracle
+under [`reference/android-wear`](reference/android-wear/README.md). It consumes
+ten renderer-neutral scenarios, records 30 small-round, large-round, and
+240-square host goldens, asserts live Compose semantics, and includes API 37
+emulator capture plus Compose-to-LVGL overlay tooling. Run its independent lane
+with:
+
+```bash
+./scripts/test-reference-oracle.sh
+```
+
+See
+[`docs/dual-renderer-conformance.md`](docs/dual-renderer-conformance.md)
+for the evidence and geometry policy.
+
+All 20 decisive flows are executable and emit checked-in semantic/resource
+evidence. Cross-app replacement stress, display-sleep service behavior,
+surface-revision consistency, and selected physical CoreS3 traces are covered.
+Production networking, flash-backed scheduler journals, long-running
+audio/sensor services, and power budgets are subsequent milestones.
 
 The guest exports `app_start` and imports one capability:
 `doodad.ui_mount(i32 pointer, i32 length) -> i32`. Its payload is canonical
@@ -102,6 +140,8 @@ python3 tools/token_sync/sync.py --check
 AppSpec intentionally exposes semantic components, tones, sizes, spacing, and
 events. It has no raw colors, radii, coordinates, LVGL names, animation
 curves, or generic style object. See [docs/appspec-v1.md](docs/appspec-v1.md).
+Privileged host-service events and cross-surface publication are specified in
+[docs/provider-contracts.md](docs/provider-contracts.md).
 
 The staged package is written to `target/doodad/<app-id>/`. `check` executes
 `app_start` in the native WAMR host; `test` additionally verifies that LVGL
@@ -194,7 +234,9 @@ The normal successful lifecycle includes:
 [host] boot
 [host] display ready
 [host] WAMR ready (interpreter, stack=16384, heap=16384)
-[host] embedded app size: ... bytes
+[host] onboard package storage: 10060 KiB free / 10060 KiB
+[host] using embedded recovery app
+[host] EMBEDDED app size: ... bytes
 [host] module loaded
 [host] module instantiated
 [host] invoking app_start
@@ -204,6 +246,11 @@ The normal successful lifecycle includes:
 [host] steady state; free heap: ... bytes
 ```
 
+The connected CoreS3 SE has also been physically traced through this lifecycle:
+16MB flash, both 3MiB OTA slots, the 9.94MiB package partition, 8MB Quad PSRAM
+with a passing memory test, no-SD recovery fallback, WAMR instantiation, and
+AppSpec mount all completed successfully.
+
 With no prepared card, the embedded semantic app should show:
 
 ```text
@@ -212,6 +259,12 @@ With no prepared card, the embedded semantic app should show:
 ```
 
 ## Run the microSD milestone
+
+An SD card is not required for current development. The firmware now formats
+and mounts the onboard `packages` partition and checks
+`/packages/active.wasm` first. Until the package activation command is added,
+an empty onboard store simply falls through to optional microSD and then the
+embedded recovery guest.
 
 First build the guest. Put the CoreS3 SE's card in a Mac card reader, identify
 its mounted volume, and copy the exact built module:

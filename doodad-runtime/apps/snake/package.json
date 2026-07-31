@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "suite_index": 20,
+  "mode": "generated",
+  "surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification"
+  ],
+  "mock_provider": "deterministic",
+  "provider": "game.clock",
+  "implementation_status": "wave4-functional"
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "transit",
+  "screen": {
+    "id": "transit.recovered",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "transit.recovered.heading",
+          "type": "text",
+          "props": {
+            "text": "UPDATED NOW",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "transit.recovered.summary",
+          "type": "text",
+          "props": {
+            "text": "N · 4 min",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "UPDATED NOW",
+            "value": "N · 4 min"
+          }
+        },
+        {
+          "id": "transit.recovered.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Revision 12 · Castro selection kept",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "transit.recovered.primary",
+          "type": "button",
+          "props": {
+            "label": "Alert",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "transit.alert"
+          },
+          "semantics": {
+            "label": "Alert"
+          }
+        },
+        {
+          "id": "transit.recovered.secondary",
+          "type": "button",
+          "props": {
+            "label": "Refresh again",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "transit.refresh"
+          },
+          "semantics": {
+            "label": "Refresh again"
+          }
+        }
+      ]
+    }
+  }
+}

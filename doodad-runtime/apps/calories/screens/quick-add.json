@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "app_id": "calories",
+  "screen": {
+    "id": "calories.quick-add",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "calories.quick.heading",
+          "type": "text",
+          "props": {
+            "text": "QUICK ADD",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "calories.quick.amount",
+          "type": "stepper",
+          "props": {
+            "label": "Calories",
+            "value": 100,
+            "unit": "kcal",
+            "minimum": 50,
+            "maximum": 1000,
+            "step": 50
+          },
+          "events": {
+            "valueCommitted": "calories.amount.changed"
+          },
+          "semantics": {
+            "label": "Calories to add",
+            "value": "100 kilocalories"
+          }
+        },
+        {
+          "id": "calories.quick.detail",
+          "type": "card",
+          "props": {
+            "title": "Local record",
+            "body": "Updates totals atomically",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "calories.quick.add",
+          "type": "button",
+          "props": {
+            "label": "Add calories",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calories.add"
+          },
+          "semantics": {
+            "label": "Add calories"
+          }
+        },
+        {
+          "id": "calories.quick.voice",
+          "type": "button",
+          "props": {
+            "label": "Voice input",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calories.voice"
+          },
+          "semantics": {
+            "label": "Review a structured voice record"
+          }
+        }
+      ]
+    }
+  }
+}

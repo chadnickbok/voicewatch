@@ -1,0 +1,15 @@
+[package]
+name = "doodad-voice-notes"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+bench = false
+doctest = false
+test = false
+
+[dependencies]
+doodad-sdk = { path = "../../sdk/rust/doodad-sdk" }

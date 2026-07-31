@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "id": "calculator.keypad.resting",
+  "scene": "calculator-keypad",
+  "title": "Calculator keypad",
+  "appspec": "apps/calculator/appspec.json",
+  "data": {
+    "expression": "24 × 3",
+    "result": "72",
+    "rows": [
+      [
+        "7",
+        "8",
+        "9"
+      ],
+      [
+        "1",
+        "2",
+        "="
+      ]
+    ]
+  },
+  "ui_state": {
+    "status": "ready"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.calculator",
+    "role": "screen",
+    "label": "Calculator",
+    "children": [
+      {
+        "id": "value.calculator",
+        "role": "text",
+        "label": "24 times 3 equals 72"
+      },
+      {
+        "id": "group.keypad",
+        "role": "group",
+        "label": "Calculator keypad"
+      },
+      {
+        "id": "button.key-equals",
+        "role": "button",
+        "label": "Equals"
+      }
+    ]
+  }
+}

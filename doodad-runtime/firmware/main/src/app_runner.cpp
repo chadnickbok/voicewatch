@@ -3,6 +3,7 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
+#include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #include <limits>
@@ -11,10 +12,14 @@
 #include "bh_platform.h"
 #include "display.hpp"
 #include "esp_log.h"
+#include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "m3e/appspec/command_batch.hpp"
 #include "m3e/appspec/wire.hpp"
+#include "m3e/services/exact_scheduler_c.h"
+#include "m3e/services/provider_event_c.h"
+#include "m3e/os/surface_registry.hpp"
 #include "m3e/state/store.hpp"
 #include "wasm_export.h"
 
@@ -25,6 +30,8 @@ constexpr std::uint32_t kWasmStackBytes = 16 * 1024;
 constexpr std::uint32_t kWasmHeapBytes = 16 * 1024;
 constexpr std::uint32_t kExecEnvStackBytes = 8 * 1024;
 constexpr std::size_t kEventQueueDepth = 16;
+constexpr std::uint32_t kMaximumTimerDurationMs =
+    7 * 24 * 60 * 60 * 1000;
 
 struct GuestEvent {
     std::uint8_t schema;
@@ -32,8 +39,12 @@ struct GuestEvent {
     std::array<char, 65> screen_id;
     std::array<char, 65> node_id;
     std::array<char, 65> action_id;
-m3e::appspec::EventKind kind;
+    m3e::appspec::EventKind kind;
     std::uint64_t timestamp_monotonic_ms;
+    m3e::appspec::EventValueKind value_kind;
+    std::int32_t integer_value;
+    bool boolean_value;
+    std::array<char, 65> text_value;
 };
 
 bool g_runtime_ready = false;
@@ -44,10 +55,20 @@ wasm_module_t g_module = nullptr;
 wasm_module_inst_t g_instance = nullptr;
 wasm_exec_env_t g_execution_environment = nullptr;
 wasm_function_inst_t g_handle_event = nullptr;
+wasm_function_inst_t g_handle_provider_event = nullptr;
 QueueHandle_t g_event_queue = nullptr;
 m3e::state::Store* g_app_store = nullptr;
+m3e_exact_scheduler_handle g_scheduler = nullptr;
+std::uint64_t g_provider_revision = 0;
+std::uint64_t g_last_timer_publish_ms = 0;
+std::uint64_t g_timer_surface_revision = 0;
+std::uint64_t g_weather_request_id = 0;
+std::uint64_t g_weather_surface_revision = 0;
+bool g_weather_request_pending = false;
+std::uint8_t g_weather_cycle = 0;
 
 void log_exception(wasm_module_inst_t module_instance);
+std::uint64_t scenario_now_ms();
 
 bool copy_identifier(
     std::array<char, 65>& destination,
@@ -59,8 +80,179 @@ bool copy_identifier(
     return true;
 }
 
+template <std::size_t Size>
+void set_text(
+    std::array<char, Size>& destination,
+    const char* source) {
+    if (source == nullptr) return;
+    std::strncpy(destination.data(), source, destination.size() - 1);
+    destination.back() = '\0';
+}
+
+bool publish_timer_surfaces(
+    const m3e_schedule_record& record,
+    std::uint64_t now) {
+    if (record.state != 1 && record.state != 2) return true;
+    if (g_timer_surface_revision ==
+        std::numeric_limits<std::uint64_t>::max()) {
+        return false;
+    }
+    const auto remaining =
+        record.state == 1 && record.deadline_scenario_ms > now
+            ? record.deadline_scenario_ms - now
+            : 0;
+    const auto seconds = (remaining + 999) / 1'000;
+    char duration[32]{};
+    std::snprintf(
+        duration,
+        sizeof(duration),
+        "%llu:%02llu",
+        static_cast<unsigned long long>(seconds / 60),
+        static_cast<unsigned long long>(seconds % 60));
+
+    m3e::os::DomainSurfaceSnapshot snapshot{};
+    set_text(snapshot.app_id, "dev.doodad.timer");
+    snapshot.domain_revision = ++g_timer_surface_revision;
+    snapshot.observed_at_ms = now;
+    snapshot.declared_mask =
+        m3e::os::surface_bit(m3e::os::SurfaceKind::app) |
+        m3e::os::surface_bit(m3e::os::SurfaceKind::glance) |
+        m3e::os::surface_bit(
+            m3e::os::SurfaceKind::complication) |
+        m3e::os::surface_bit(
+            m3e::os::SurfaceKind::notification) |
+        m3e::os::surface_bit(m3e::os::SurfaceKind::ongoing) |
+        m3e::os::surface_bit(m3e::os::SurfaceKind::voice);
+    for (auto& projection : snapshot.projections) {
+        projection.revision = snapshot.domain_revision;
+    }
+
+    const bool firing = record.state == 2;
+    auto& app = snapshot.projections[
+        static_cast<std::size_t>(m3e::os::SurfaceKind::app)];
+    app.active = true;
+    set_text(app.primary, firing ? "TIME'S UP" : duration);
+    set_text(
+        app.secondary,
+        firing ? "Timer complete" : "Running in background");
+
+    auto& glance = snapshot.projections[
+        static_cast<std::size_t>(m3e::os::SurfaceKind::glance)];
+    glance.active = true;
+    set_text(glance.primary, firing ? "Timer complete" : duration);
+    set_text(glance.secondary, "Exact scheduler");
+    set_text(
+        glance.action_id,
+        firing ? "timer.dismiss" : "timer.cancel");
+
+    auto& complication = snapshot.projections[
+        static_cast<std::size_t>(
+            m3e::os::SurfaceKind::complication)];
+    complication.active = true;
+    set_text(
+        complication.primary, firing ? "Done" : duration);
+
+    auto& notification = snapshot.projections[
+        static_cast<std::size_t>(
+            m3e::os::SurfaceKind::notification)];
+    notification.active = firing;
+    if (firing) {
+        set_text(notification.primary, "Timer complete");
+        set_text(notification.secondary, "Your timer is ready");
+        set_text(notification.action_id, "timer.dismiss");
+    }
+
+    auto& ongoing = snapshot.projections[
+        static_cast<std::size_t>(m3e::os::SurfaceKind::ongoing)];
+    ongoing.active = !firing;
+    if (!firing) {
+        set_text(ongoing.primary, "Timer");
+        set_text(ongoing.secondary, duration);
+        set_text(ongoing.action_id, "timer.cancel");
+    }
+
+    auto& voice = snapshot.projections[
+        static_cast<std::size_t>(m3e::os::SurfaceKind::voice)];
+    voice.active = true;
+    set_text(
+        voice.primary,
+        firing ? "Dismiss my timer" : "Cancel my timer");
+    set_text(
+        voice.action_id,
+        firing ? "timer.dismiss" : "timer.cancel");
+    return display_publish_surfaces(snapshot);
+}
+
+bool publish_weather_surfaces(
+    std::int32_t temperature_tenths,
+    const char* condition,
+    const char* detail,
+    std::uint8_t freshness,
+    std::uint64_t now) {
+    if (freshness > 3 ||
+        g_weather_surface_revision ==
+            std::numeric_limits<std::uint64_t>::max()) {
+        return false;
+    }
+    const auto rounded = temperature_tenths >= 0
+        ? (temperature_tenths + 5) / 10
+        : (temperature_tenths - 5) / 10;
+    char temperature[24]{};
+    std::snprintf(
+        temperature,
+        sizeof(temperature),
+        "%ld°",
+        static_cast<long>(rounded));
+
+    m3e::os::DomainSurfaceSnapshot snapshot{};
+    set_text(snapshot.app_id, "dev.doodad.weather");
+    snapshot.domain_revision = ++g_weather_surface_revision;
+    snapshot.observed_at_ms = now;
+    snapshot.freshness =
+        static_cast<m3e::os::Freshness>(freshness);
+    snapshot.declared_mask =
+        m3e::os::surface_bit(m3e::os::SurfaceKind::app) |
+        m3e::os::surface_bit(m3e::os::SurfaceKind::glance) |
+        m3e::os::surface_bit(
+            m3e::os::SurfaceKind::complication) |
+        m3e::os::surface_bit(
+            m3e::os::SurfaceKind::notification) |
+        m3e::os::surface_bit(m3e::os::SurfaceKind::voice);
+    for (auto& projection : snapshot.projections) {
+        if ((snapshot.declared_mask &
+             (1U << (&projection - snapshot.projections.data()))) != 0) {
+            projection.revision = snapshot.domain_revision;
+        }
+    }
+    auto& app = snapshot.projections[
+        static_cast<std::size_t>(m3e::os::SurfaceKind::app)];
+    app.active = true;
+    set_text(app.primary, temperature);
+    set_text(app.secondary, condition);
+    auto& glance = snapshot.projections[
+        static_cast<std::size_t>(m3e::os::SurfaceKind::glance)];
+    glance.active = true;
+    set_text(glance.primary, temperature);
+    set_text(glance.secondary, condition);
+    set_text(glance.action_id, "weather.refresh");
+    auto& complication = snapshot.projections[
+        static_cast<std::size_t>(
+            m3e::os::SurfaceKind::complication)];
+    complication.active = true;
+    set_text(complication.primary, temperature);
+    set_text(complication.secondary, condition);
+    auto& voice = snapshot.projections[
+        static_cast<std::size_t>(m3e::os::SurfaceKind::voice)];
+    voice.active = true;
+    set_text(voice.primary, "Refresh the weather");
+    set_text(voice.secondary, detail);
+    set_text(voice.action_id, "weather.refresh");
+    return display_publish_surfaces(snapshot);
+}
+
 void release_app() {
     g_handle_event = nullptr;
+    g_handle_provider_event = nullptr;
     if (g_execution_environment != nullptr) {
         wasm_runtime_destroy_exec_env(g_execution_environment);
         g_execution_environment = nullptr;
@@ -79,28 +271,18 @@ void release_app() {
     g_app_store = nullptr;
 }
 
-bool dispatch_event(const GuestEvent& event) {
+bool invoke_guest_handler(
+    wasm_function_inst_t handler,
+    const std::uint8_t* encoded,
+    std::size_t encoded_size,
+    const char* label) {
     if (g_instance == nullptr ||
         g_execution_environment == nullptr ||
-        g_handle_event == nullptr) {
-        ESP_LOGW(kTag, "[host] guest has no handle_event export");
-        return false;
-    }
-    const m3e::appspec::UiEvent envelope{
-        event.schema,
-        event.app_id.data(),
-        event.screen_id.data(),
-        event.node_id.data(),
-        event.action_id.data(),
-        event.kind,
-        event.timestamp_monotonic_ms,
-    };
-    std::array<std::uint8_t, 512> encoded{};
-    const auto encoded_size =
-        m3e::appspec::encode_event_canonical_cbor(
-            envelope, encoded.data(), encoded.size());
-    if (encoded_size == 0) {
-        ESP_LOGE(kTag, "[host] failed to encode semantic UI event");
+        handler == nullptr ||
+        encoded == nullptr ||
+        encoded_size == 0 ||
+        encoded_size > 1024) {
+        ESP_LOGW(kTag, "[host] guest handler unavailable: %s", label);
         return false;
     }
     void* guest_native = nullptr;
@@ -111,21 +293,25 @@ bool dispatch_event(const GuestEvent& event) {
         ESP_LOGE(kTag, "[host] guest event allocation failed");
         return false;
     }
-    std::memcpy(guest_native, encoded.data(), encoded_size);
+    std::memcpy(guest_native, encoded, encoded_size);
     std::uint32_t arguments[2]{
         static_cast<std::uint32_t>(guest_pointer),
         static_cast<std::uint32_t>(encoded_size),
     };
     const bool called = wasm_runtime_call_wasm(
-        g_execution_environment, g_handle_event, 2, arguments);
+        g_execution_environment, handler, 2, arguments);
     wasm_runtime_module_free(g_instance, guest_pointer);
     if (!called) {
         log_exception(g_instance);
-        ESP_LOGE(kTag, "[host] guest handle_event trapped");
+        ESP_LOGE(kTag, "[host] guest %s trapped", label);
         return false;
     }
     std::uint64_t packed_result = 0;
     std::memcpy(&packed_result, arguments, sizeof(packed_result));
+    if (packed_result == 0) {
+        // The guest may have navigated by mounting a new bounded AppSpec.
+        return true;
+    }
     const auto result_pointer =
         static_cast<std::uint32_t>(packed_result >> 32U);
     const auto result_length =
@@ -166,7 +352,6 @@ bool dispatch_event(const GuestEvent& event) {
         delete batch;
         return false;
     }
-    const auto command_count = batch->command_count;
     if (batch->domain == m3e::appspec::CommandDomain::ui) {
         if (!display_apply_command_batch(batch)) {
             delete batch;
@@ -196,13 +381,108 @@ bool dispatch_event(const GuestEvent& event) {
             return false;
         }
     }
-    ESP_LOGI(
-        kTag,
-        "[host] delivered action=%s node=%s commands=%u",
-        event.action_id.data(),
-        event.node_id.data(),
-        static_cast<unsigned>(command_count));
     return true;
+}
+
+bool dispatch_event(const GuestEvent& event) {
+    m3e::appspec::EventValue value{};
+    switch (event.value_kind) {
+        case m3e::appspec::EventValueKind::none:
+            break;
+        case m3e::appspec::EventValueKind::integer:
+            value = m3e::appspec::EventValue::integer(
+                event.integer_value);
+            break;
+        case m3e::appspec::EventValueKind::boolean:
+            value = m3e::appspec::EventValue::boolean(
+                event.boolean_value);
+            break;
+        case m3e::appspec::EventValueKind::text:
+            value = m3e::appspec::EventValue::text(
+                event.text_value.data());
+            break;
+    }
+    const m3e::appspec::UiEvent envelope{
+        event.schema,
+        event.app_id.data(),
+        event.screen_id.data(),
+        event.node_id.data(),
+        event.action_id.data(),
+        event.kind,
+        event.timestamp_monotonic_ms,
+        value,
+    };
+    std::array<std::uint8_t, 512> encoded{};
+    const auto encoded_size =
+        m3e::appspec::encode_event_canonical_cbor(
+            envelope, encoded.data(), encoded.size());
+    if (encoded_size == 0) {
+        ESP_LOGE(kTag, "[host] failed to encode semantic UI event");
+        return false;
+    }
+    return invoke_guest_handler(
+        g_handle_event,
+        encoded.data(),
+        encoded_size,
+        "handle_event");
+}
+
+bool deliver_weather_provider() {
+    if (!g_weather_request_pending) return true;
+    if (g_handle_provider_event == nullptr ||
+        g_provider_revision ==
+            std::numeric_limits<std::uint64_t>::max()) {
+        return false;
+    }
+    g_weather_request_pending = false;
+    g_weather_cycle =
+        static_cast<std::uint8_t>((g_weather_cycle + 1) % 3);
+
+    std::int32_t temperature = 720;
+    const char* condition = "Clear";
+    const char* detail = "High 76 - Low 59 - Rain 10%";
+    std::uint64_t data_revision = 1;
+    std::uint64_t age_minutes = 12;
+    std::uint8_t freshness = 1;
+    if (g_weather_cycle == 2) {
+        condition = "Offline";
+        detail = "Forecast unavailable - cached data";
+        age_minutes = 18;
+        freshness = 2;
+    } else if (g_weather_cycle == 0) {
+        temperature = 710;
+        detail = "High 75 - Low 58 - Rain 5%";
+        data_revision = 2;
+        age_minutes = 0;
+        freshness = 0;
+    }
+    const auto now = scenario_now_ms();
+    std::array<std::uint8_t, 512> encoded{};
+    const auto encoded_size =
+        m3e_encode_weather_provider_event(
+            temperature,
+            condition,
+            detail,
+            "San Francisco",
+            data_revision,
+            age_minutes,
+            ++g_provider_revision,
+            freshness,
+            now,
+            encoded.data(),
+            encoded.size());
+    return encoded_size != 0 &&
+           invoke_guest_handler(
+               g_handle_provider_event,
+               encoded.data(),
+               encoded_size,
+               "handle_provider_event") &&
+           publish_weather_surfaces(
+               temperature,
+               condition,
+               detail,
+               freshness,
+               now);
 }
 
 std::int32_t reject_guest_appspec(
@@ -273,11 +553,323 @@ std::int32_t host_ui_mount(
     return 1;
 }
 
+std::uint64_t scenario_now_ms() {
+    return static_cast<std::uint64_t>(esp_timer_get_time() / 1000);
+}
+
+bool copy_guest_service_id(
+    wasm_exec_env_t execution_environment,
+    std::uint32_t guest_pointer,
+    std::uint32_t guest_length,
+    std::array<char, 49>& output) {
+    if (guest_length == 0 || guest_length >= output.size()) return false;
+    auto instance =
+        wasm_runtime_get_module_inst(execution_environment);
+    if (!wasm_runtime_validate_app_addr(
+            instance, guest_pointer, guest_length)) {
+        return false;
+    }
+    const auto* bytes = static_cast<const std::uint8_t*>(
+        wasm_runtime_addr_app_to_native(instance, guest_pointer));
+    if (bytes == nullptr) return false;
+    for (std::uint32_t index = 0; index < guest_length; ++index) {
+        const auto byte = bytes[index];
+        if (!((byte >= 'a' && byte <= 'z') ||
+              (byte >= '0' && byte <= '9') ||
+              byte == '.' || byte == '-' || byte == '_')) {
+            return false;
+        }
+    }
+    std::memcpy(output.data(), bytes, guest_length);
+    output[guest_length] = '\0';
+    return true;
+}
+
+std::uint64_t host_timer_schedule_after(
+    wasm_exec_env_t execution_environment,
+    std::uint32_t guest_pointer,
+    std::uint32_t guest_length,
+    std::uint32_t duration_ms) {
+    std::array<char, 49> id{};
+    if (g_scheduler == nullptr ||
+        duration_ms == 0 ||
+        duration_ms > kMaximumTimerDurationMs ||
+        !copy_guest_service_id(
+            execution_environment,
+            guest_pointer,
+            guest_length,
+            id)) {
+        return 0;
+    }
+    return m3e_exact_scheduler_schedule_after(
+        g_scheduler,
+        id.data(),
+        duration_ms,
+        scenario_now_ms());
+}
+
+std::int32_t host_timer_cancel(
+    wasm_exec_env_t execution_environment,
+    std::uint32_t guest_pointer,
+    std::uint32_t guest_length) {
+    std::array<char, 49> id{};
+    if (g_scheduler == nullptr ||
+        !copy_guest_service_id(
+            execution_environment,
+            guest_pointer,
+            guest_length,
+            id)) {
+        return 0;
+    }
+    return m3e_exact_scheduler_cancel(g_scheduler, id.data());
+}
+
+std::int32_t host_timer_acknowledge(
+    wasm_exec_env_t execution_environment,
+    std::uint32_t guest_pointer,
+    std::uint32_t guest_length) {
+    std::array<char, 49> id{};
+    if (g_scheduler == nullptr ||
+        !copy_guest_service_id(
+            execution_environment,
+            guest_pointer,
+            guest_length,
+            id)) {
+        return 0;
+    }
+    return m3e_exact_scheduler_acknowledge(
+        g_scheduler, id.data());
+}
+
+std::uint64_t host_provider_request(
+    wasm_exec_env_t execution_environment,
+    std::uint32_t provider_pointer,
+    std::uint32_t provider_length,
+    std::uint32_t operation_pointer,
+    std::uint32_t operation_length,
+    std::uint32_t payload_pointer,
+    std::uint32_t payload_length) {
+    std::array<char, 49> provider{};
+    std::array<char, 49> operation{};
+    auto instance =
+        wasm_runtime_get_module_inst(execution_environment);
+    if (g_weather_request_id ==
+            std::numeric_limits<std::uint64_t>::max() ||
+        !copy_guest_service_id(
+            execution_environment,
+            provider_pointer,
+            provider_length,
+            provider) ||
+        !copy_guest_service_id(
+            execution_environment,
+            operation_pointer,
+            operation_length,
+            operation) ||
+        payload_length > 512 ||
+        (payload_length != 0 &&
+         !wasm_runtime_validate_app_addr(
+             instance, payload_pointer, payload_length))) {
+        return 0;
+    }
+    const auto weather =
+        std::strcmp(provider.data(), "weather") == 0 &&
+        std::strcmp(operation.data(), "refresh") == 0;
+    const auto fixture =
+        std::strcmp(provider.data(), "fixture") == 0;
+    if ((!weather && !fixture) ||
+        (weather && g_weather_request_pending)) {
+        return 0;
+    }
+    if (weather) g_weather_request_pending = true;
+    return ++g_weather_request_id;
+}
+
+#define DEFINE_BOUND_PROVIDER_REQUEST(                                \
+    function_name, prefix_one, prefix_two)                            \
+    std::uint64_t function_name(                                      \
+        wasm_exec_env_t execution_environment,                        \
+        std::uint32_t operation_pointer,                              \
+        std::uint32_t operation_length,                               \
+        std::uint32_t payload_pointer,                                \
+        std::uint32_t payload_length) {                               \
+        std::array<char, 49> operation{};                             \
+        auto instance = wasm_runtime_get_module_inst(                 \
+            execution_environment);                                  \
+        if (g_weather_request_id ==                                   \
+                std::numeric_limits<std::uint64_t>::max() ||          \
+            !copy_guest_service_id(                                   \
+                execution_environment, operation_pointer,            \
+                operation_length, operation) ||                       \
+            payload_length > 512 ||                                   \
+            (payload_length != 0 &&                                   \
+             !wasm_runtime_validate_app_addr(                         \
+                 instance, payload_pointer, payload_length))) {       \
+            return 0;                                                 \
+        }                                                             \
+        const auto prefix_one_ok =                                    \
+            std::strncmp(                                             \
+                operation.data(), prefix_one,                         \
+                std::strlen(prefix_one)) == 0;                        \
+        const auto prefix_two_ok =                                    \
+            prefix_two[0] != '\0' &&                                  \
+            std::strncmp(                                             \
+                operation.data(), prefix_two,                         \
+                std::strlen(prefix_two)) == 0;                        \
+        if (!prefix_one_ok && !prefix_two_ok) return 0;                \
+        return ++g_weather_request_id;                                \
+    }
+
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_calendar_request, "calendar.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_audio_request, "voice-notes.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_medication_request, "medication.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_sensor_request, "sensor.", "sensor-recorder.")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_sleep_request, "sleep.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_media_request, "media.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_navigation_request, "navigation.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_transit_request, "transit.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_home_request, "home.", "smart-home.")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_sports_request, "sports.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_wallet_request, "wallet.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_remote_request, "remote.", "remote-control.")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_workout_request, "workout.", "complete_set")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_game_request, "snake.", "")
+
+#undef DEFINE_BOUND_PROVIDER_REQUEST
+
 NativeSymbol g_native_symbols[] = {
     {
         .symbol = "ui_mount",
         .func_ptr = reinterpret_cast<void*>(host_ui_mount),
         .signature = "(ii)i",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "timer_schedule_after",
+        .func_ptr =
+            reinterpret_cast<void*>(host_timer_schedule_after),
+        .signature = "(iii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "timer_cancel",
+        .func_ptr = reinterpret_cast<void*>(host_timer_cancel),
+        .signature = "(ii)i",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "timer_acknowledge",
+        .func_ptr =
+            reinterpret_cast<void*>(host_timer_acknowledge),
+        .signature = "(ii)i",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "provider_request",
+        .func_ptr =
+            reinterpret_cast<void*>(host_provider_request),
+        .signature = "(iiiiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "calendar_request",
+        .func_ptr =
+            reinterpret_cast<void*>(host_calendar_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "audio_request",
+        .func_ptr = reinterpret_cast<void*>(host_audio_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "medication_request",
+        .func_ptr =
+            reinterpret_cast<void*>(host_medication_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "sensor_request",
+        .func_ptr = reinterpret_cast<void*>(host_sensor_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "sleep_request",
+        .func_ptr = reinterpret_cast<void*>(host_sleep_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "media_request",
+        .func_ptr = reinterpret_cast<void*>(host_media_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "navigation_request",
+        .func_ptr =
+            reinterpret_cast<void*>(host_navigation_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "transit_request",
+        .func_ptr = reinterpret_cast<void*>(host_transit_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "home_request",
+        .func_ptr = reinterpret_cast<void*>(host_home_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "sports_request",
+        .func_ptr = reinterpret_cast<void*>(host_sports_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "wallet_request",
+        .func_ptr = reinterpret_cast<void*>(host_wallet_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "remote_request",
+        .func_ptr = reinterpret_cast<void*>(host_remote_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "workout_request",
+        .func_ptr =
+            reinterpret_cast<void*>(host_workout_request),
+        .signature = "(iiii)I",
+        .attachment = nullptr,
+    },
+    {
+        .symbol = "game_request",
+        .func_ptr = reinterpret_cast<void*>(host_game_request),
+        .signature = "(iiii)I",
         .attachment = nullptr,
     },
 };
@@ -296,6 +888,12 @@ bool app_runtime_init() {
     if (g_event_queue == nullptr) {
         ESP_LOGE(kTag, "[host] semantic event queue allocation failed");
         display_error("WAMR INIT FAILED");
+        return false;
+    }
+    g_scheduler = m3e_exact_scheduler_create();
+    if (g_scheduler == nullptr) {
+        ESP_LOGE(kTag, "[host] exact scheduler allocation failed");
+        display_error("SCHEDULER INIT FAILED");
         return false;
     }
     RuntimeInitArgs arguments{};
@@ -395,6 +993,9 @@ bool run_app(const AppImage& image) {
     }
     g_handle_event =
         wasm_runtime_lookup_function(g_instance, "handle_event");
+    g_handle_provider_event =
+        wasm_runtime_lookup_function(
+            g_instance, "handle_provider_event");
     xQueueReset(g_event_queue);
 
     display_shell("WASM RUNNING", image.source);
@@ -433,11 +1034,24 @@ bool app_post_ui_event(const m3e::appspec::UiEvent& event) {
     copy.schema = event.schema;
     copy.kind = event.kind;
     copy.timestamp_monotonic_ms = event.timestamp_monotonic_ms;
+    copy.value_kind = event.value.kind;
+    copy.integer_value = event.value.integer_value;
+    copy.boolean_value = event.value.boolean_value;
     if (!copy_identifier(copy.app_id, event.app_id) ||
         !copy_identifier(copy.screen_id, event.screen_id) ||
         !copy_identifier(copy.node_id, event.node_id) ||
         !copy_identifier(copy.action_id, event.action_id)) {
         return false;
+    }
+    if (event.value.kind == m3e::appspec::EventValueKind::text) {
+        const auto length = std::strlen(event.value.text_value);
+        if (length == 0 || length >= copy.text_value.size()) {
+            return false;
+        }
+        std::memcpy(
+            copy.text_value.data(),
+            event.value.text_value,
+            length + 1);
     }
     if (xQueueSend(g_event_queue, &copy, 0) != pdTRUE) {
         ESP_LOGE(kTag, "[host] semantic event queue overflow");
@@ -452,11 +1066,65 @@ void app_runtime_update(std::uint32_t maximum_wait_ms) {
     if (xQueueReceive(
             g_event_queue,
             &event,
-            pdMS_TO_TICKS(maximum_wait_ms)) != pdTRUE) {
+            pdMS_TO_TICKS(maximum_wait_ms)) == pdTRUE) {
+        dispatch_event(event);
+        while (xQueueReceive(g_event_queue, &event, 0) == pdTRUE) {
+            dispatch_event(event);
+        }
+    }
+    if (!deliver_weather_provider()) {
+        ESP_LOGE(kTag, "[host] weather provider delivery failed");
+    }
+
+    if (g_scheduler == nullptr) return;
+    const auto now = scenario_now_ms();
+    m3e_due_delivery due[8]{};
+    const auto due_count = m3e_exact_scheduler_poll(
+        g_scheduler, now, due, 8);
+    if (due_count == 0 &&
+        now - g_last_timer_publish_ms < 1'000) {
         return;
     }
-    dispatch_event(event);
-    while (xQueueReceive(g_event_queue, &event, 0) == pdTRUE) {
-        dispatch_event(event);
+    g_last_timer_publish_ms = now;
+    if (g_handle_provider_event == nullptr) return;
+
+    m3e_schedule_record records[8]{};
+    const auto count = m3e_exact_scheduler_records(
+        g_scheduler, records, 8, now);
+    for (std::size_t index = 0; index < count; ++index) {
+        if (records[index].state != 1 &&
+            records[index].state != 2) {
+            continue;
+        }
+        if (g_provider_revision ==
+            std::numeric_limits<std::uint64_t>::max()) {
+            ESP_LOGE(kTag, "[host] provider revision overflow");
+            return;
+        }
+        std::array<std::uint8_t, 256> encoded{};
+        const auto encoded_size =
+            m3e_encode_timer_provider_event(
+                &records[index],
+                ++g_provider_revision,
+                now,
+                encoded.data(),
+                encoded.size());
+        if (encoded_size == 0 ||
+            !invoke_guest_handler(
+                g_handle_provider_event,
+                encoded.data(),
+                encoded_size,
+                "handle_provider_event")) {
+            ESP_LOGE(
+                kTag,
+                "[host] timer provider delivery failed");
+            return;
+        }
+        if (!publish_timer_surfaces(records[index], now)) {
+            ESP_LOGE(
+                kTag,
+                "[host] timer surface publication failed");
+            return;
+        }
     }
 }

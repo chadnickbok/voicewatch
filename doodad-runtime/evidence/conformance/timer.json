@@ -1,0 +1,418 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "timer",
+    "id": "dev.doodad.timer",
+    "name": "Timer Suite",
+    "mode": "hybrid",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "ongoing",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 8138,
+    "package_bytes": 8385,
+    "authored_json_documents": 8,
+    "canonical_cbor_documents": 2,
+    "maximum_appspec_bytes": 348,
+    "decisive_actions": 3,
+    "distinct_screens": 1,
+    "distinct_semantic_states": 3,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 12,
+    "maximum_lvgl_depth": 3,
+    "total_changed_pixels": 4304,
+    "semantic_events": 2,
+    "provider_requests": 0
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "timer.home",
+      "semantic_sha256": "1bd92e65b0a720a328d3ae070e3270dbe8e1ab8e0656332390a8a8153e94454c",
+      "framebuffer_rgb565_sha256": "3854edefeda41362e9af0772c0b37c70e99c817f32c5f973b0ec8b93663a7b40",
+      "changed_pixels": 57600,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 12,
+      "lvgl_depth": 3,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "timer",
+        "nodes": [
+          {
+            "id": "timer.home",
+            "role": "screen",
+            "label": "timer",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "timer.heading",
+            "role": "text",
+            "label": "TIMER SUITE",
+            "text": "TIMER SUITE",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.summary",
+            "role": "text",
+            "label": "Timer Suite status",
+            "text": "1:00",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.duration",
+            "role": "slider",
+            "label": "Timer duration",
+            "text": "Minutes",
+            "secondary": "min",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.status",
+            "role": "text",
+            "label": "Ready · exact scheduler",
+            "text": "Ready · exact scheduler",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.primary",
+            "role": "button",
+            "label": "Start one minute timer",
+            "text": "Start",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Start"
+      },
+      "screen_id": "timer.home",
+      "semantic_sha256": "84931f3753c9bba1779a372d7d42fbb0b8cd3d517ec03abe7317badcf2cefb86",
+      "framebuffer_rgb565_sha256": "69624fd8b5333887485d52148fd737712e8ba47871d8e12cebadc7b6c8f4fede",
+      "changed_pixels": 918,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 12,
+      "lvgl_depth": 3,
+      "semantic_events": 1,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "timer",
+        "nodes": [
+          {
+            "id": "timer.home",
+            "role": "screen",
+            "label": "timer",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "timer.heading",
+            "role": "text",
+            "label": "TIMER SUITE",
+            "text": "TIMER SUITE",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.summary",
+            "role": "text",
+            "label": "Timer Suite status",
+            "text": "1:00",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.duration",
+            "role": "slider",
+            "label": "Timer duration",
+            "text": "Minutes",
+            "secondary": "min",
+            "state": 1,
+            "visible": true,
+            "enabled": false,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.status",
+            "role": "text",
+            "label": "Running in background",
+            "text": "Running in background",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.primary",
+            "role": "button",
+            "label": "Start one minute timer",
+            "text": "Cancel",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "advance",
+        "value": 60000
+      },
+      "screen_id": "timer.home",
+      "semantic_sha256": "4adb5d6234254e5f08c83ecb9c2596c837ba4e34c15002767d7ae9c99828bbb1",
+      "framebuffer_rgb565_sha256": "435223bc8cb8675f6c2ae8d8f160a3af43da090c1af4355f3d822b71b89ba42f",
+      "changed_pixels": 1672,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 12,
+      "lvgl_depth": 3,
+      "semantic_events": 1,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "timer",
+        "nodes": [
+          {
+            "id": "timer.home",
+            "role": "screen",
+            "label": "timer",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "timer.heading",
+            "role": "text",
+            "label": "TIMER SUITE",
+            "text": "TIMER SUITE",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.summary",
+            "role": "text",
+            "label": "Timer Suite status",
+            "text": "TIME'S UP",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.duration",
+            "role": "slider",
+            "label": "Timer duration",
+            "text": "Minutes",
+            "secondary": "min",
+            "state": 1,
+            "visible": true,
+            "enabled": false,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.status",
+            "role": "text",
+            "label": "Timer complete · fired once",
+            "text": "Timer complete · fired once",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.primary",
+            "role": "button",
+            "label": "Start one minute timer",
+            "text": "Dismiss",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Dismiss"
+      },
+      "screen_id": "timer.home",
+      "semantic_sha256": "1bd92e65b0a720a328d3ae070e3270dbe8e1ab8e0656332390a8a8153e94454c",
+      "framebuffer_rgb565_sha256": "3854edefeda41362e9af0772c0b37c70e99c817f32c5f973b0ec8b93663a7b40",
+      "changed_pixels": 1714,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 12,
+      "lvgl_depth": 3,
+      "semantic_events": 2,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "timer",
+        "nodes": [
+          {
+            "id": "timer.home",
+            "role": "screen",
+            "label": "timer",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "timer.heading",
+            "role": "text",
+            "label": "TIMER SUITE",
+            "text": "TIMER SUITE",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.summary",
+            "role": "text",
+            "label": "Timer Suite status",
+            "text": "1:00",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.duration",
+            "role": "slider",
+            "label": "Timer duration",
+            "text": "Minutes",
+            "secondary": "min",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.status",
+            "role": "text",
+            "label": "Ready · exact scheduler",
+            "text": "Ready · exact scheduler",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "timer.primary",
+            "role": "button",
+            "label": "Start one minute timer",
+            "text": "Start",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

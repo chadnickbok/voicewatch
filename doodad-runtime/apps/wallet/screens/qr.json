@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "wallet",
+  "screen": {
+    "id": "wallet.qr",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "wallet.qr.heading",
+          "type": "text",
+          "props": {
+            "text": "BOARDING PASS",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "wallet.qr.summary",
+          "type": "text",
+          "props": {
+            "text": "█ ▄█ █▄ █",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "BOARDING PASS",
+            "value": "█ ▄█ █▄ █"
+          }
+        },
+        {
+          "id": "wallet.qr.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Brightness 100% · expires 8:25",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "wallet.qr.primary",
+          "type": "button",
+          "props": {
+            "label": "Done",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.done"
+          },
+          "semantics": {
+            "label": "Done"
+          }
+        },
+        {
+          "id": "wallet.qr.secondary",
+          "type": "button",
+          "props": {
+            "label": "Bad update",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.bad"
+          },
+          "semantics": {
+            "label": "Bad update"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.medication",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "medication.home",
+      "title": "Medication + Habits",
+      "summary": "Vitamin D at 9",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "metric",
+      "title": "Medication + Habits",
+      "primary": "Vitamin D at 9",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "medication.primary",
+        "label": "Mark taken"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Medication + Habits",
+      "value": "Vitamin D at 9",
+      "icon": "medication"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "medication.primary",
+          "example": "Mark taken",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

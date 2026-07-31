@@ -14,7 +14,7 @@
 namespace {
 
 constexpr char kTag[] = "doodad";
-constexpr std::size_t kRuntimeThreadStackBytes = 32 * 1024;
+constexpr std::size_t kRuntimeThreadStackBytes = 16 * 1024;
 constexpr std::uint32_t kHeartbeatIntervalMilliseconds = 60 * 1000;
 constexpr std::uint32_t kRuntimePollMilliseconds = 50;
 constexpr TickType_t kUiUpdateInterval = pdMS_TO_TICKS(2);
@@ -24,12 +24,21 @@ void* runtime_thread(void*) {
         return nullptr;
     }
 
-    std::vector<std::uint8_t> sd_storage;
+    std::vector<std::uint8_t> package_storage;
     AppImage selected{};
     bool running = false;
     bool running_embedded = false;
 
-    if (load_microsd_app(sd_storage, selected)) {
+    if (load_onboard_app(package_storage, selected)) {
+        running = run_app(selected);
+        if (!running) {
+            ESP_LOGW(
+                kTag,
+                "[host] onboard package failed; trying microSD");
+        }
+    }
+
+    if (!running && load_microsd_app(package_storage, selected)) {
         running = run_app(selected);
         if (!running) {
             ESP_LOGW(kTag, "[host] microSD app failed; trying embedded recovery app");
@@ -70,6 +79,11 @@ void* runtime_thread(void*) {
                 "[host] reference semantic event injection failed");
         }
     }
+
+    // The guest remains loaded, but the trusted host shell owns the root
+    // surface. Packages are entered from the launcher rather than replacing
+    // the watch face at boot.
+    display_show_system_home();
 
     ESP_LOGI(kTag, "[host] steady state; free heap: %u bytes",
              static_cast<unsigned>(heap_caps_get_free_size(MALLOC_CAP_8BIT)));

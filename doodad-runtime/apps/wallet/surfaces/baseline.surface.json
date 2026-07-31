@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.wallet",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "wallet.home",
+      "title": "Pass + QR Wallet",
+      "summary": "Boarding pass ready",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "metric",
+      "title": "Pass + QR Wallet",
+      "primary": "Boarding pass ready",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "wallet.primary",
+        "label": "Show pass"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Pass + QR Wallet",
+      "value": "Boarding pass ready",
+      "icon": "wallet"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "wallet.primary",
+          "example": "Show pass",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

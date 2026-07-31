@@ -38,6 +38,20 @@ size_t doodad_host_framebuffer_pixels(void);
 void doodad_host_show_catalog(int story);
 int doodad_host_show_appspec(const uint8_t* bytes, size_t size);
 int doodad_host_click_first_action(void);
+int doodad_host_click_button(const char* label);
+const char* doodad_host_node_text(const char* node_id);
+size_t doodad_host_semantic_snapshot(char* output, size_t output_size);
+size_t doodad_host_mounted_node_count(void);
+size_t doodad_host_mounted_event_count(void);
+size_t doodad_host_lvgl_object_count(void);
+size_t doodad_host_lvgl_max_depth(void);
+uint64_t doodad_host_semantic_event_count(void);
+uint64_t doodad_host_provider_request_count(void);
+void doodad_host_set_display_awake(int awake);
+int doodad_host_display_awake(void);
+int doodad_host_advance_time(uint64_t milliseconds);
+uint64_t doodad_host_scenario_time(void);
+int doodad_host_deliver_provider(void);
 
 void* doodad_host_ui_begin_document(int direction, int align, int gap);
 void* doodad_host_ui_add_stack(

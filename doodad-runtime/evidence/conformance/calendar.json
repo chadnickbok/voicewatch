@@ -1,0 +1,405 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "calendar",
+    "id": "dev.doodad.calendar",
+    "name": "Calendar + Agenda",
+    "mode": "hybrid",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5363,
+    "package_bytes": 5573,
+    "authored_json_documents": 12,
+    "canonical_cbor_documents": 6,
+    "maximum_appspec_bytes": 436,
+    "decisive_actions": 3,
+    "distinct_screens": 4,
+    "distinct_semantic_states": 4,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 10,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 35923,
+    "semantic_events": 3,
+    "provider_requests": 3
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "calendar.home",
+      "semantic_sha256": "697e4b8a5ec225f6d107bc90e6e45d9f2bc2a91d84b3cff02346214869ed99de",
+      "framebuffer_rgb565_sha256": "bb136c73b5d029d3fe2512b0187d1b358727027e9495b3c3cb6d761e173b4ccb",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calendar",
+        "nodes": [
+          {
+            "id": "calendar.home",
+            "role": "screen",
+            "label": "calendar",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "calendar.heading",
+            "role": "text",
+            "label": "CALENDAR + AGENDA",
+            "text": "CALENDAR + AGENDA",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.summary",
+            "role": "text",
+            "label": "Calendar + Agenda status",
+            "text": "Design review at 2",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.primary",
+            "role": "button",
+            "label": "Open event",
+            "text": "Open event",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Open event"
+      },
+      "screen_id": "calendar.agenda",
+      "semantic_sha256": "d2e4f82a05e9955350b67f05093df4de1a26757c79e924b8e3276c96aed9991f",
+      "framebuffer_rgb565_sha256": "6ea7a291f7b0c7dcd8447a477b250c8b310dcb980e210ac6d1364944ee0cd2cf",
+      "changed_pixels": 27950,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "calendar",
+        "nodes": [
+          {
+            "id": "calendar.agenda",
+            "role": "screen",
+            "label": "calendar",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "calendar.agenda.heading",
+            "role": "text",
+            "label": "TODAY",
+            "text": "TODAY",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.agenda.summary",
+            "role": "text",
+            "label": "TODAY",
+            "text": "2 events",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.agenda.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "11:00 Stand-up\n2:00 Design review",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.agenda.primary",
+            "role": "button",
+            "label": "Open event",
+            "text": "Open event",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.agenda.secondary",
+            "role": "button",
+            "label": "Travel mode",
+            "text": "Travel mode",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Travel mode"
+      },
+      "screen_id": "calendar.travel",
+      "semantic_sha256": "e92015306a642175cf0a3b4cdffe1e62bc26ed2d347465af239ef4f61f813db7",
+      "framebuffer_rgb565_sha256": "38e9e41fed0fcf4cacabe0e9d93d3795b77a896c154be8ac2820e02296536a10",
+      "changed_pixels": 4205,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "calendar",
+        "nodes": [
+          {
+            "id": "calendar.travel",
+            "role": "screen",
+            "label": "calendar",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "calendar.travel.heading",
+            "role": "text",
+            "label": "TIME ZONE",
+            "text": "TIME ZONE",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.travel.summary",
+            "role": "text",
+            "label": "TIME ZONE",
+            "text": "11:00 PDT",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.travel.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Same event · DST-safe · offline",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.travel.primary",
+            "role": "button",
+            "label": "Reconnect",
+            "text": "Reconnect",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.travel.secondary",
+            "role": "button",
+            "label": "Agenda",
+            "text": "Agenda",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Reconnect"
+      },
+      "screen_id": "calendar.confirmed",
+      "semantic_sha256": "b5ed1987d27fac73bcf2a23b71739953b6e64fc1c9974d80eba116e3dc4735fd",
+      "framebuffer_rgb565_sha256": "4e53a251b4f2cd801fbdb9e699843990d0fac9c96097d1fe03fd61d0db3f75d6",
+      "changed_pixels": 3768,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "calendar",
+        "nodes": [
+          {
+            "id": "calendar.confirmed",
+            "role": "screen",
+            "label": "calendar",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "calendar.confirmed.heading",
+            "role": "text",
+            "label": "RSVP RECORDED",
+            "text": "RSVP RECORDED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.confirmed.summary",
+            "role": "text",
+            "label": "RSVP RECORDED",
+            "text": "Going ✓",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.confirmed.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Queued offline · revision 4",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.confirmed.primary",
+            "role": "button",
+            "label": "Simulate travel",
+            "text": "Simulate travel",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calendar.confirmed.secondary",
+            "role": "button",
+            "label": "Agenda",
+            "text": "Agenda",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

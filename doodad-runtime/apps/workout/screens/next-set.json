@@ -1,0 +1,67 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "workout.next-set",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "workout.next.heading",
+          "type": "text",
+          "props": {
+            "text": "SQUAT / SET 4 OF 5",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "workout.next.weight",
+          "type": "stepper",
+          "props": {
+            "label": "Weight",
+            "value": 135,
+            "unit": "lb",
+            "minimum": 45,
+            "maximum": 500,
+            "step": 5
+          },
+          "events": {
+            "valueCommitted": "workout.next.weight"
+          },
+          "semantics": {
+            "label": "Next set weight",
+            "value": "135 pounds"
+          }
+        },
+        {
+          "id": "workout.next.detail",
+          "type": "card",
+          "props": {
+            "title": "Target · 8 reps",
+            "body": "Session journal revision 7",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "workout.next.complete",
+          "type": "button",
+          "props": {
+            "label": "Complete next set",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.next.complete"
+          },
+          "semantics": {
+            "label": "Complete next set"
+          }
+        }
+      ]
+    }
+  }
+}

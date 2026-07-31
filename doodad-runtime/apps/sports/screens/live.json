@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sports",
+  "screen": {
+    "id": "sports.live",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sports.live.heading",
+          "type": "text",
+          "props": {
+            "text": "TOP 8TH",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sports.live.summary",
+          "type": "text",
+          "props": {
+            "text": "SF 3 · LA 2",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "TOP 8TH",
+            "value": "SF 3 · LA 2"
+          }
+        },
+        {
+          "id": "sports.live.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "1 out · runners on 1st and 2nd",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sports.live.primary",
+          "type": "button",
+          "props": {
+            "label": "Replay burst",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.burst"
+          },
+          "semantics": {
+            "label": "Replay burst"
+          }
+        },
+        {
+          "id": "sports.live.secondary",
+          "type": "button",
+          "props": {
+            "label": "Unfollow",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.unfollow"
+          },
+          "semantics": {
+            "label": "Unfollow"
+          }
+        }
+      ]
+    }
+  }
+}

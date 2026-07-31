@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "calendar",
+  "screen": {
+    "id": "calendar.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "calendar.heading",
+          "type": "text",
+          "props": {
+            "text": "CALENDAR + AGENDA",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "calendar.summary",
+          "type": "text",
+          "props": {
+            "text": "Design review at 2",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Calendar + Agenda status",
+            "value": "Design review at 2"
+          }
+        },
+        {
+          "id": "calendar.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "calendar.primary",
+          "type": "button",
+          "props": {
+            "label": "Open event",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calendar.primary"
+          },
+          "semantics": {
+            "label": "Open event"
+          }
+        }
+      ]
+    }
+  }
+}

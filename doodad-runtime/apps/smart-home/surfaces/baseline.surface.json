@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.smart-home",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "smart-home.home",
+      "title": "Smart Home",
+      "summary": "Living room on",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "metric",
+      "title": "Smart Home",
+      "primary": "Living room on",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "smart-home.primary",
+        "label": "Toggle light"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Smart Home",
+      "value": "Living room on",
+      "icon": "smart-home"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "smart-home.primary",
+          "example": "Toggle light",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "catalog.two-button-group.resting",
+  "scene": "two-button-group",
+  "title": "Expressive button group",
+  "data": {
+    "label": "Quick actions",
+    "left": "Pause",
+    "right": "Finish"
+  },
+  "ui_state": {
+    "status": "ready"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "target": "button.pause",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.two-button-group",
+    "role": "screen",
+    "label": "Expressive button group",
+    "children": [
+      {
+        "id": "group.quick-actions",
+        "role": "group",
+        "label": "Quick actions",
+        "children": [
+          {
+            "id": "button.pause",
+            "role": "button",
+            "label": "Pause"
+          },
+          {
+            "id": "button.finish",
+            "role": "button",
+            "label": "Finish"
+          }
+        ]
+      }
+    ]
+  }
+}

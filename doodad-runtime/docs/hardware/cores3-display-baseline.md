@@ -1,5 +1,10 @@
 # CoreS3 SE display baseline
 
+This is the historical pre-package-partition display benchmark. Its 1MiB
+single-app sizing and internal-only heap figures are intentionally preserved as
+the before-state. The current PSRAM/onboard-package boot trace is recorded in
+[`evidence/hardware/cores3-se-boot.md`](../../evidence/hardware/cores3-se-boot.md).
+
 Date: 2026-07-30  
 Board: M5Stack CoreS3 SE, ESP32-S3 revision 0.2  
 Transport: USB Serial/JTAG at `/dev/cu.usbmodem21101`  

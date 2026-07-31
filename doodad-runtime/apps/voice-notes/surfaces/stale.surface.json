@@ -1,0 +1,64 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.voice-notes",
+  "domain_revision": 2,
+  "observed_at_ms": 1000,
+  "freshness": "stale",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 2,
+      "screen_id": "voice-notes.home",
+      "title": "Voice Notes",
+      "summary": "Recording ready",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "stale"
+      }
+    },
+    "glance": {
+      "revision": 2,
+      "template": "ongoing",
+      "title": "Voice Notes",
+      "primary": "Recording ready",
+      "secondary": "Cached · 18 min",
+      "action": {
+        "id": "voice-notes.primary",
+        "label": "Record note"
+      }
+    },
+    "notification": {
+      "revision": 2,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 2,
+      "status": "active",
+      "title": "Voice Notes",
+      "detail": "Recording ready",
+      "actions": [
+        {
+          "id": "voice-notes.primary",
+          "label": "Record note"
+        }
+      ]
+    },
+    "voice": {
+      "revision": 2,
+      "actions": [
+        {
+          "id": "voice-notes.primary",
+          "example": "Record note",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

@@ -1,5 +1,6 @@
 #include "m3e/appspec/renderer.hpp"
 
+#include <algorithm>
 #include <array>
 
 #include "m3e/components/components.hpp"
@@ -107,8 +108,9 @@ lv_event_code_t lvgl_event_code(EventKind kind) {
 }
 
 void dispatch_event(lv_event_t* lv_event) {
-    auto* event = static_cast<WireEvent*>(
+    auto* binding = static_cast<MountedEventBinding*>(
         lv_event_get_user_data(lv_event));
+    auto* event = binding == nullptr ? nullptr : binding->event;
     if (event == nullptr || event->document == nullptr ||
         event->sink == nullptr ||
         event->node_index >= event->document->node_count) {
@@ -116,6 +118,34 @@ void dispatch_event(lv_event_t* lv_event) {
     }
     const auto& document = *event->document;
     const auto& node = document.nodes[event->node_index];
+    EventValue value{};
+    switch (binding->value_kind) {
+        case MountedEventValue::none:
+            break;
+        case MountedEventValue::integer:
+            value = EventValue::integer(binding->integer_value);
+            break;
+        case MountedEventValue::stepper_decrement:
+            value = EventValue::integer(std::max(
+                node.minimum, node.value - node.step));
+            break;
+        case MountedEventValue::stepper_increment:
+            value = EventValue::integer(std::min(
+                node.maximum, node.value + node.step));
+            break;
+        case MountedEventValue::checked_state:
+            value = EventValue::boolean(
+                node.mounted_object != nullptr &&
+                lv_obj_has_state(
+                    static_cast<lv_obj_t*>(node.mounted_object),
+                    LV_STATE_CHECKED));
+            break;
+        case MountedEventValue::keypad_key:
+            if (binding->key_index >= document.key_count) return;
+            value = EventValue::text(document.string_at(
+                document.key_offsets[binding->key_index]));
+            break;
+    }
     const UiEvent envelope{
         1,
         document.string_at(document.app_id_offset),
@@ -124,8 +154,33 @@ void dispatch_event(lv_event_t* lv_event) {
         document.string_at(event->action_id_offset),
         event->kind,
         lv_tick_get(),
+        value,
     };
     event->sink(envelope, event->sink_context);
+}
+
+bool bind_event(
+    WireDocument& document,
+    WireEvent& event,
+    lv_obj_t* object,
+    MountedEventValue value_kind = MountedEventValue::none,
+    std::int32_t integer_value = 0,
+    std::uint16_t key_index = 0) {
+    if (object == nullptr ||
+        document.mounted_event_binding_count >=
+            document.mounted_event_bindings.size()) {
+        return false;
+    }
+    auto& binding =
+        document.mounted_event_bindings[
+            document.mounted_event_binding_count++];
+    binding = {&event, value_kind, integer_value, key_index};
+    lv_obj_add_event_cb(
+        object,
+        dispatch_event,
+        lvgl_event_code(event.kind),
+        &binding);
+    return true;
 }
 
 }  // namespace
@@ -141,6 +196,7 @@ bool Renderer::mount(
         !styles_.initialized()) {
         return false;
     }
+    document.mounted_event_binding_count = 0;
     ComponentFactory factory(styles_);
     std::array<lv_obj_t*, Reconciler::kCapacity> objects{};
     objects[0] = factory.screen(root);
@@ -242,6 +298,10 @@ bool Renderer::mount(
             case ComponentKind::toggle:
                 object = factory.toggle_row(
                     parent, primary, node.value != 0, node.enabled);
+                lv_obj_add_flag(object, LV_OBJ_FLAG_CHECKABLE);
+                if (node.value != 0) {
+                    lv_obj_add_state(object, LV_STATE_CHECKED);
+                }
                 break;
             case ComponentKind::voice_orb:
                 object = factory.voice_orb(
@@ -277,6 +337,28 @@ bool Renderer::mount(
                                 false,
                             });
                         lv_obj_set_flex_grow(key, 1);
+                        if (event_sink != nullptr) {
+                            for (std::size_t event_index = 0;
+                                 event_index < document.event_count;
+                                 ++event_index) {
+                                auto& event =
+                                    document.events[event_index];
+                                if (event.node_index != index) {
+                                    continue;
+                                }
+                                if (!bind_event(
+                                        document,
+                                        event,
+                                        key,
+                                        MountedEventValue::keypad_key,
+                                        0,
+                                        static_cast<std::uint16_t>(
+                                            node.key_start +
+                                            key_index))) {
+                                    return false;
+                                }
+                            }
+                        }
                     }
                 }
                 break;
@@ -300,11 +382,34 @@ bool Renderer::mount(
                 event.document = &document;
                 event.sink = event_sink;
                 event.sink_context = event_context;
-                lv_obj_add_event_cb(
-                    object,
-                    dispatch_event,
-                    lvgl_event_code(event.kind),
-                    &event);
+                if (node.kind == ComponentKind::keypad) {
+                    continue;
+                }
+                if (node.kind == ComponentKind::stepper) {
+                    if (lv_obj_get_child_count(object) < 3 ||
+                        !bind_event(
+                            document,
+                            event,
+                            lv_obj_get_child(object, 0),
+                            MountedEventValue::stepper_decrement) ||
+                        !bind_event(
+                            document,
+                            event,
+                            lv_obj_get_child(object, 2),
+                            MountedEventValue::stepper_increment)) {
+                        return false;
+                    }
+                    continue;
+                }
+                if (!bind_event(
+                        document,
+                        event,
+                        object,
+                        node.kind == ComponentKind::toggle
+                            ? MountedEventValue::checked_state
+                            : MountedEventValue::none)) {
+                    return false;
+                }
             }
         }
         objects[index] = object;

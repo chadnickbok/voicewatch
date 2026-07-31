@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.workout",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "workout.home",
+      "title": "Workout Tracker",
+      "summary": "Set 3 of 5",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "ongoing",
+      "title": "Workout Tracker",
+      "primary": "Set 3 of 5",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "workout.primary",
+        "label": "Complete set"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Workout Tracker",
+      "value": "Set 3 of 5",
+      "icon": "workout"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 1,
+      "status": "active",
+      "title": "Workout Tracker",
+      "detail": "Set 3 of 5",
+      "actions": [
+        {
+          "id": "workout.primary",
+          "label": "Complete set"
+        }
+      ]
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "workout.primary",
+          "example": "Complete set",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

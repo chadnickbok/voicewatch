@@ -11,6 +11,7 @@ from typing import Any
 
 from .appspec import validate_appspec
 from .appspec_cbor import compile_canonical_cbor
+from .conformance import ScenarioRunner
 from .contract import (
     DoodadError,
     ProjectPaths,
@@ -76,6 +77,23 @@ def parser() -> argparse.ArgumentParser:
             "mockup-focus",
             "mockup-travel",
             "mockup-music",
+            "os-home",
+            "os-live-cards",
+            "os-launcher",
+            "os-control-center",
+            "os-app-manager",
+            "os-voice",
+            "os-app-detail",
+            "os-install-progress",
+            "os-crash-recovery",
+            "os-notification",
+            "os-permission-review",
+            "os-action-review",
+            "os-error",
+            "os-voice-thinking",
+            "os-voice-review",
+            "os-voice-build",
+            "os-voice-result",
         ),
         default="foundation",
     )
@@ -90,6 +108,12 @@ def parser() -> argparse.ArgumentParser:
         "--output", type=Path, default=Path("target/appspec/preview.bmp")
     )
     appspec_parser.add_argument("--validate-only", action="store_true")
+    conformance_parser = subcommands.add_parser(
+        "conformance",
+        help="validate and execute a deterministic app/OS scenario",
+    )
+    conformance_parser.add_argument("file", type=Path)
+    conformance_parser.add_argument("--trace", action="store_true")
     return result
 
 
@@ -122,6 +146,23 @@ def main(arguments: list[str] | None = None) -> int:
                         "mockup-focus": 13,
                         "mockup-travel": 14,
                         "mockup-music": 15,
+                        "os-home": 16,
+                        "os-live-cards": 17,
+                        "os-launcher": 18,
+                        "os-control-center": 19,
+                        "os-app-manager": 20,
+                        "os-voice": 21,
+                        "os-app-detail": 22,
+                        "os-install-progress": 23,
+                        "os-crash-recovery": 24,
+                        "os-notification": 25,
+                        "os-permission-review": 26,
+                        "os-action-review": 27,
+                        "os-error": 28,
+                        "os-voice-thinking": 29,
+                        "os-voice-review": 30,
+                        "os-voice-build": 31,
+                        "os-voice-result": 32,
                     }[options.story]
                 )
                 host.write_bmp(output)
@@ -145,6 +186,23 @@ def main(arguments: list[str] | None = None) -> int:
                 f"AppSpec passed: {document['app_id']}\n"
                 f"nodes: {stats.nodes}; depth: {stats.maximum_depth}\n"
                 f"preview: {output}"
+            )
+            return 0
+        if options.command == "conformance":
+            scenario = read_json(options.file.resolve())
+            result = ScenarioRunner().run(scenario)
+            if options.trace:
+                for entry in result.trace:
+                    print(
+                        f"{entry['step']:03} {entry['scenario_ms']:>10}ms "
+                        f"boot={entry['boot_generation']} "
+                        f"app={entry['app_state']:<10} {entry['op']}"
+                    )
+            print(
+                f"conformance passed: {result.scenario_id}\n"
+                f"steps: {result.steps_executed}; "
+                f"scenario time: {result.state['clock']['scenario_ms']}ms; "
+                f"boots: {result.state['clock']['boot_generation']}"
             )
             return 0
         app = resolve_app(root, options.app)

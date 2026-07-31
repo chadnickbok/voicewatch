@@ -1,0 +1,500 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "sleep",
+    "id": "dev.doodad.sleep",
+    "name": "Sleep + Smart Alarm",
+    "mode": "trusted",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "ongoing",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5312,
+    "package_bytes": 5519,
+    "authored_json_documents": 12,
+    "canonical_cbor_documents": 6,
+    "maximum_appspec_bytes": 410,
+    "decisive_actions": 4,
+    "distinct_screens": 5,
+    "distinct_semantic_states": 5,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 10,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 52602,
+    "semantic_events": 4,
+    "provider_requests": 4
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "sleep.home",
+      "semantic_sha256": "b9c147ab6568eaa7877608ac8136ea178e81e7118cb9ae75d398eff9d4bbd920",
+      "framebuffer_rgb565_sha256": "58c73d17360c54f05af64aaa4b42f1205f756f9e25bd4e62f95ffd5be5ee4b45",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "sleep",
+        "nodes": [
+          {
+            "id": "sleep.home",
+            "role": "screen",
+            "label": "sleep",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "sleep.heading",
+            "role": "text",
+            "label": "SLEEP + SMART ALARM",
+            "text": "SLEEP + SMART ALARM",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.summary",
+            "role": "text",
+            "label": "Sleep + Smart Alarm status",
+            "text": "7h 42m",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.primary",
+            "role": "button",
+            "label": "Start sleep",
+            "text": "Start sleep",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Start sleep"
+      },
+      "screen_id": "sleep.overnight",
+      "semantic_sha256": "9b0c54762780cf1d22b43e03dd2cd85057a842befa5ba2e674afc4df8010b613",
+      "framebuffer_rgb565_sha256": "4459e237bcbcd9543d92290ac6e6b75ca6564a32c41869723313d3dae23e756a",
+      "changed_pixels": 28145,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "sleep",
+        "nodes": [
+          {
+            "id": "sleep.overnight",
+            "role": "screen",
+            "label": "sleep",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sleep.overnight.heading",
+            "role": "text",
+            "label": "SLEEPING",
+            "text": "SLEEPING",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.overnight.summary",
+            "role": "text",
+            "label": "SLEEPING",
+            "text": "6h 18m",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.overnight.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Low-power motion service · UI inactive",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.overnight.primary",
+            "role": "button",
+            "label": "Simulate morning",
+            "text": "Simulate morning",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.overnight.secondary",
+            "role": "button",
+            "label": "Wake now",
+            "text": "Wake now",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Simulate morning"
+      },
+      "screen_id": "sleep.summary",
+      "semantic_sha256": "dff36e03fc6c4c4d79f6463196502463f4b55c5cd15a19ccf418abbf815e677a",
+      "framebuffer_rgb565_sha256": "b7fe5078a9454da2f8b3cf7ee843538c1380fb129749895b606898d765235a3c",
+      "changed_pixels": 10444,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "sleep",
+        "nodes": [
+          {
+            "id": "sleep.summary",
+            "role": "screen",
+            "label": "sleep",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sleep.summary.heading",
+            "role": "text",
+            "label": "GOOD MORNING",
+            "text": "GOOD MORNING",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.summary.summary",
+            "role": "text",
+            "label": "GOOD MORNING",
+            "text": "7h 42m",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.summary.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Deep 1h 36 · Restful 82%",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.summary.primary",
+            "role": "button",
+            "label": "View stages",
+            "text": "View stages",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.summary.secondary",
+            "role": "button",
+            "label": "Start again",
+            "text": "Start again",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "View stages"
+      },
+      "screen_id": "sleep.stages",
+      "semantic_sha256": "ce609897eb572fae31fd3c80d6bec995cdb91390e680073fd750a9df36f61e00",
+      "framebuffer_rgb565_sha256": "7457ad4ce7cab9222355be23f5ff032ecfa485f252722c87dcb90e93e1abc365",
+      "changed_pixels": 9988,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "sleep",
+        "nodes": [
+          {
+            "id": "sleep.stages",
+            "role": "screen",
+            "label": "sleep",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sleep.stages.heading",
+            "role": "text",
+            "label": "SLEEP STAGES",
+            "text": "SLEEP STAGES",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.stages.summary",
+            "role": "text",
+            "label": "SLEEP STAGES",
+            "text": "▂▅▃▇▆▂▅",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.stages.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Smart alarm fired once at 7:18",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.stages.primary",
+            "role": "button",
+            "label": "History",
+            "text": "History",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.stages.secondary",
+            "role": "button",
+            "label": "Summary",
+            "text": "Summary",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "History"
+      },
+      "screen_id": "sleep.history",
+      "semantic_sha256": "4689ebfa850c6a989aee5bc6ccbd51274068910551738a5e97f0cf490c879ce4",
+      "framebuffer_rgb565_sha256": "bbda17b7a32c1b271e6a5a14fc20fb3d1a00892a1cd3c8eaaea286adee4f43fa",
+      "changed_pixels": 4025,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 4,
+      "provider_requests": 4,
+      "semantic_tree": {
+        "app": "sleep",
+        "nodes": [
+          {
+            "id": "sleep.history",
+            "role": "screen",
+            "label": "sleep",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "sleep.history.heading",
+            "role": "text",
+            "label": "7 DAY HISTORY",
+            "text": "7 DAY HISTORY",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.history.summary",
+            "role": "text",
+            "label": "7 DAY HISTORY",
+            "text": "7h 28m avg",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.history.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Budget 3.2% · no retained UI",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.history.primary",
+            "role": "button",
+            "label": "Last night",
+            "text": "Last night",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "sleep.history.secondary",
+            "role": "button",
+            "label": "Home",
+            "text": "Home",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

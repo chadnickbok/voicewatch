@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "app_id": "notifications",
+  "screen": {
+    "id": "notifications.reply",
+    "type": "screen",
+    "props": {
+      "gap": "md",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "notification.reply.heading",
+          "type": "text",
+          "props": {
+            "text": "QUICK REPLY",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "notification.reply.one",
+          "type": "button",
+          "props": {
+            "label": "On my way",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "notification.reply.on_my_way"
+          },
+          "semantics": {
+            "label": "Reply On my way"
+          }
+        },
+        {
+          "id": "notification.reply.two",
+          "type": "button",
+          "props": {
+            "label": "Sounds good",
+            "tone": "neutral",
+            "variant": "tonal",
+            "size": "default"
+          },
+          "events": {
+            "tap": "notification.reply.sounds_good"
+          },
+          "semantics": {
+            "label": "Reply Sounds good"
+          }
+        },
+        {
+          "id": "notification.reply.back",
+          "type": "button",
+          "props": {
+            "label": "Back",
+            "tone": "neutral",
+            "variant": "text",
+            "size": "compact"
+          },
+          "events": {
+            "tap": "notification.reply.back"
+          },
+          "semantics": {
+            "label": "Back to notification"
+          }
+        }
+      ]
+    }
+  }
+}

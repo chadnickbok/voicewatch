@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import ctypes
+import atexit
 import struct
 import subprocess
 import sys
@@ -12,15 +13,42 @@ from .contract import DoodadError
 class NativeHost:
     WIDTH = 240
     HEIGHT = 240
+    _shared_library: ctypes.CDLL | None = None
+    _shared_library_path: Path | None = None
+    _shared_created = False
+    _atexit_registered = False
 
     def __init__(self, project_root: Path):
         self.project_root = project_root
         self.library_path = ensure_native_host(project_root)
-        self.library = ctypes.CDLL(str(self.library_path))
+        if NativeHost._shared_library is None:
+            NativeHost._shared_library = ctypes.CDLL(
+                str(self.library_path)
+            )
+            NativeHost._shared_library_path = self.library_path
+        elif NativeHost._shared_library_path != self.library_path:
+            raise DoodadError(
+                "one process cannot host two native Doodad runtimes"
+            )
+        self.library = NativeHost._shared_library
         self._configure()
-        if not self.library.doodad_host_create():
-            raise DoodadError(self.last_error())
+        if not NativeHost._shared_created:
+            if not self.library.doodad_host_create():
+                raise DoodadError(self.last_error())
+            NativeHost._shared_created = True
+        if not NativeHost._atexit_registered:
+            atexit.register(NativeHost._destroy_shared)
+            NativeHost._atexit_registered = True
         self.created = True
+
+    @staticmethod
+    def _destroy_shared() -> None:
+        if (
+            NativeHost._shared_created
+            and NativeHost._shared_library is not None
+        ):
+            NativeHost._shared_library.doodad_host_destroy()
+            NativeHost._shared_created = False
 
     def _configure(self) -> None:
         library = self.library
@@ -40,6 +68,28 @@ class NativeHost:
         ]
         library.doodad_host_show_appspec.restype = ctypes.c_int
         library.doodad_host_click_first_action.restype = ctypes.c_int
+        library.doodad_host_click_button.argtypes = [ctypes.c_char_p]
+        library.doodad_host_click_button.restype = ctypes.c_int
+        library.doodad_host_node_text.argtypes = [ctypes.c_char_p]
+        library.doodad_host_node_text.restype = ctypes.c_char_p
+        library.doodad_host_semantic_snapshot.argtypes = [
+            ctypes.c_char_p,
+            ctypes.c_size_t,
+        ]
+        library.doodad_host_semantic_snapshot.restype = ctypes.c_size_t
+        library.doodad_host_mounted_node_count.restype = ctypes.c_size_t
+        library.doodad_host_mounted_event_count.restype = ctypes.c_size_t
+        library.doodad_host_lvgl_object_count.restype = ctypes.c_size_t
+        library.doodad_host_lvgl_max_depth.restype = ctypes.c_size_t
+        library.doodad_host_semantic_event_count.restype = ctypes.c_uint64
+        library.doodad_host_provider_request_count.restype = ctypes.c_uint64
+        library.doodad_host_set_display_awake.argtypes = [ctypes.c_int]
+        library.doodad_host_set_display_awake.restype = None
+        library.doodad_host_display_awake.restype = ctypes.c_int
+        library.doodad_host_advance_time.argtypes = [ctypes.c_uint64]
+        library.doodad_host_advance_time.restype = ctypes.c_int
+        library.doodad_host_scenario_time.restype = ctypes.c_uint64
+        library.doodad_host_deliver_provider.restype = ctypes.c_int
 
         library.doodad_host_ui_begin_document.argtypes = [
             ctypes.c_int,
@@ -78,6 +128,7 @@ class NativeHost:
     def close(self) -> None:
         if getattr(self, "created", False):
             self.library.doodad_host_destroy()
+            NativeHost._shared_created = False
             self.created = False
 
     def __enter__(self) -> "NativeHost":
@@ -111,6 +162,80 @@ class NativeHost:
 
     def click_first_action(self) -> None:
         if not self.library.doodad_host_click_first_action():
+            raise DoodadError(self.last_error())
+
+    def click_button(self, label: str) -> None:
+        if not self.library.doodad_host_click_button(label.encode("utf-8")):
+            raise DoodadError(self.last_error())
+
+    def node_text(self, node_id: str) -> str:
+        value = self.library.doodad_host_node_text(node_id.encode("utf-8"))
+        if not value:
+            raise DoodadError(f"node has no readable text: {node_id}")
+        return value.decode("utf-8", errors="strict")
+
+    def semantic_snapshot(self) -> str:
+        capacity = 64 * 1024
+        output = ctypes.create_string_buffer(capacity)
+        length = self.library.doodad_host_semantic_snapshot(
+            output, capacity
+        )
+        if length == 0:
+            raise DoodadError("no mounted semantic tree")
+        if length >= capacity:
+            raise DoodadError(
+                f"semantic snapshot needs {length + 1} bytes"
+            )
+        return output.value.decode("utf-8", errors="strict")
+
+    def mounted_node_count(self) -> int:
+        return int(self.library.doodad_host_mounted_node_count())
+
+    def mounted_event_count(self) -> int:
+        return int(self.library.doodad_host_mounted_event_count())
+
+    def lvgl_object_count(self) -> int:
+        return int(self.library.doodad_host_lvgl_object_count())
+
+    def lvgl_max_depth(self) -> int:
+        return int(self.library.doodad_host_lvgl_max_depth())
+
+    def semantic_event_count(self) -> int:
+        return int(self.library.doodad_host_semantic_event_count())
+
+    def provider_request_count(self) -> int:
+        return int(self.library.doodad_host_provider_request_count())
+
+    def set_display_awake(self, awake: bool) -> None:
+        self.library.doodad_host_set_display_awake(int(awake))
+
+    def display_awake(self) -> bool:
+        return bool(self.library.doodad_host_display_awake())
+
+    def framebuffer_rgb565(self) -> bytes:
+        self.render_now()
+        pixel_count = self.library.doodad_host_framebuffer_pixels()
+        expected = self.WIDTH * self.HEIGHT
+        if pixel_count != expected:
+            raise DoodadError(
+                f"native framebuffer has {pixel_count} pixels; expected {expected}"
+            )
+        pixels = self.library.doodad_host_framebuffer()
+        return ctypes.string_at(
+            pixels, pixel_count * ctypes.sizeof(ctypes.c_uint16)
+        )
+
+    def advance_time(self, milliseconds: int) -> None:
+        if milliseconds < 0:
+            raise ValueError("milliseconds must be non-negative")
+        if not self.library.doodad_host_advance_time(milliseconds):
+            raise DoodadError(self.last_error())
+
+    def scenario_time(self) -> int:
+        return int(self.library.doodad_host_scenario_time())
+
+    def deliver_provider(self) -> None:
+        if not self.library.doodad_host_deliver_provider():
             raise DoodadError(self.last_error())
 
     def ui_begin_document(self, direction: int, align: int, gap: int) -> int:

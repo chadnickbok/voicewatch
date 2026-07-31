@@ -1,0 +1,499 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "voice-notes",
+    "id": "dev.doodad.voice-notes",
+    "name": "Voice Notes",
+    "mode": "trusted",
+    "surfaces": [
+      "app",
+      "glance",
+      "notification",
+      "ongoing",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5671,
+    "package_bytes": 5878,
+    "authored_json_documents": 12,
+    "canonical_cbor_documents": 6,
+    "maximum_appspec_bytes": 468,
+    "decisive_actions": 4,
+    "distinct_screens": 5,
+    "distinct_semantic_states": 5,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 10,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 40873,
+    "semantic_events": 4,
+    "provider_requests": 4
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "voice-notes.home",
+      "semantic_sha256": "d755fc07500bed406cef8f66f2cc6a7320e9580910ff6ff5fa25aee244c73f4c",
+      "framebuffer_rgb565_sha256": "afef1e7f1c5ed49a44913ba70c63800d0b2356e221580f81f22a71fffd611356",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "voice-notes",
+        "nodes": [
+          {
+            "id": "voice-notes.home",
+            "role": "screen",
+            "label": "voice-notes",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "voice-notes.heading",
+            "role": "text",
+            "label": "VOICE NOTES",
+            "text": "VOICE NOTES",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.summary",
+            "role": "text",
+            "label": "Voice Notes status",
+            "text": "Recording ready",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.primary",
+            "role": "button",
+            "label": "Record note",
+            "text": "Record note",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Record note"
+      },
+      "screen_id": "voice-notes.recording",
+      "semantic_sha256": "fc4152d04ab913b60e7c7c0da0ac8f21cd1dbd5d03e7c6f4958412509236c644",
+      "framebuffer_rgb565_sha256": "922414778d57d34d3760a097b96b1496421261e7d4c6b6aa0a56ff5958704c6a",
+      "changed_pixels": 27614,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "voice-notes",
+        "nodes": [
+          {
+            "id": "voice-notes.recording",
+            "role": "screen",
+            "label": "voice-notes",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "voice-notes.recording.heading",
+            "role": "text",
+            "label": "RECORDING",
+            "text": "RECORDING",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.recording.summary",
+            "role": "text",
+            "label": "RECORDING",
+            "text": "00:18",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.recording.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "▁▃▅▇▆▃▅ · 3 chunks buffered",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.recording.primary",
+            "role": "button",
+            "label": "Lose network",
+            "text": "Lose network",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.recording.secondary",
+            "role": "button",
+            "label": "Finish",
+            "text": "Finish",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Lose network"
+      },
+      "screen_id": "voice-notes.buffered",
+      "semantic_sha256": "1271b9c9bb1c23dd8cf36b51cb7d5d4945a47eb698cf8220a15652c2920d97c8",
+      "framebuffer_rgb565_sha256": "1af5773841dac9991568481eab54c9b99bf5fbd2966a239a41a9ab2b660954aa",
+      "changed_pixels": 4527,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "voice-notes",
+        "nodes": [
+          {
+            "id": "voice-notes.buffered",
+            "role": "screen",
+            "label": "voice-notes",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "voice-notes.buffered.heading",
+            "role": "text",
+            "label": "STILL RECORDING",
+            "text": "STILL RECORDING",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.buffered.summary",
+            "role": "text",
+            "label": "STILL RECORDING",
+            "text": "Offline · 00:31",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.buffered.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Audio is safe locally · upload paused",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.buffered.primary",
+            "role": "button",
+            "label": "Reconnect",
+            "text": "Reconnect",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.buffered.secondary",
+            "role": "button",
+            "label": "Pause",
+            "text": "Pause",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Reconnect"
+      },
+      "screen_id": "voice-notes.transcript",
+      "semantic_sha256": "462bc395f0908a02be24e008ed581dd012a15a34d24c40272bff60f2f1b2ae8f",
+      "framebuffer_rgb565_sha256": "35ddec5ae0682eab8955276c0203eee708dc81d6c0e9a695faa257e50a80d307",
+      "changed_pixels": 4592,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "voice-notes",
+        "nodes": [
+          {
+            "id": "voice-notes.transcript",
+            "role": "screen",
+            "label": "voice-notes",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "voice-notes.transcript.heading",
+            "role": "text",
+            "label": "TRANSCRIBED",
+            "text": "TRANSCRIBED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.transcript.summary",
+            "role": "text",
+            "label": "TRANSCRIBED",
+            "text": "1 note",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.transcript.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "“Book the train after lunch.”",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.transcript.primary",
+            "role": "button",
+            "label": "Save note",
+            "text": "Save note",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.transcript.secondary",
+            "role": "button",
+            "label": "Record again",
+            "text": "Record again",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Save note"
+      },
+      "screen_id": "voice-notes.saved",
+      "semantic_sha256": "a216f99c860eb29214c9b0d2d041beef948e9def1a81e6de2ec831ce8bf34b42",
+      "framebuffer_rgb565_sha256": "64fd399a5c3c2cea221dab5f5955fbd246acb959aca72fb36029f8990d0be4ce",
+      "changed_pixels": 4140,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 4,
+      "provider_requests": 4,
+      "semantic_tree": {
+        "app": "voice-notes",
+        "nodes": [
+          {
+            "id": "voice-notes.saved",
+            "role": "screen",
+            "label": "voice-notes",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "voice-notes.saved.heading",
+            "role": "text",
+            "label": "VOICE NOTES",
+            "text": "VOICE NOTES",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.saved.summary",
+            "role": "text",
+            "label": "VOICE NOTES",
+            "text": "Saved ✓",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.saved.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Upload resumed · no duplicate chunks",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.saved.primary",
+            "role": "button",
+            "label": "Open note",
+            "text": "Open note",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "voice-notes.saved.secondary",
+            "role": "button",
+            "label": "Home",
+            "text": "Home",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

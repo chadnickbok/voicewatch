@@ -1,0 +1,72 @@
+{
+  "schema_version": 1,
+  "app_id": "weather",
+  "screen": {
+    "id": "weather.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "weather.heading",
+          "type": "text",
+          "props": {
+            "text": "SAN FRANCISCO",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "weather.summary",
+          "type": "text",
+          "props": {
+            "text": "72°",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Current temperature",
+            "value": "72 degrees"
+          }
+        },
+        {
+          "id": "weather.forecast",
+          "type": "card",
+          "props": {
+            "title": "Clear",
+            "body": "High 76 · Low 59 · Rain 10%",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "weather.status",
+          "type": "text",
+          "props": {
+            "text": "Updated now · revision 1",
+            "style": "caption",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "weather.primary",
+          "type": "button",
+          "props": {
+            "label": "Refresh",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "weather.refresh"
+          },
+          "semantics": {
+            "label": "Refresh weather"
+          }
+        }
+      ]
+    }
+  }
+}

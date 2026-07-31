@@ -1,0 +1,232 @@
+#include "m3e/services/provider_event_c.h"
+
+#include <cstddef>
+#include <cstdint>
+#include <cstring>
+
+namespace {
+
+class Writer {
+public:
+    Writer(std::uint8_t* bytes, std::size_t capacity)
+        : bytes_(bytes), capacity_(capacity) {}
+
+    bool unsigned_integer(std::uint8_t major, std::uint64_t value) {
+        if (value < 24) {
+            return byte(static_cast<std::uint8_t>((major << 5U) | value));
+        }
+        if (value <= UINT8_MAX) {
+            return byte(static_cast<std::uint8_t>((major << 5U) | 24U)) &&
+                   byte(static_cast<std::uint8_t>(value));
+        }
+        if (value <= UINT16_MAX) {
+            return byte(static_cast<std::uint8_t>((major << 5U) | 25U)) &&
+                   byte(static_cast<std::uint8_t>(value >> 8U)) &&
+                   byte(static_cast<std::uint8_t>(value));
+        }
+        if (value <= UINT32_MAX) {
+            if (!byte(static_cast<std::uint8_t>((major << 5U) | 26U))) {
+                return false;
+            }
+            for (int shift = 24; shift >= 0; shift -= 8) {
+                if (!byte(static_cast<std::uint8_t>(value >> shift))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+        if (!byte(static_cast<std::uint8_t>((major << 5U) | 27U))) {
+            return false;
+        }
+        for (int shift = 56; shift >= 0; shift -= 8) {
+            if (!byte(static_cast<std::uint8_t>(value >> shift))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool text(const char* value) {
+        if (value == nullptr) return false;
+        const auto length = std::strlen(value);
+        return unsigned_integer(3, length) &&
+               copy(
+                   reinterpret_cast<const std::uint8_t*>(value),
+                   length);
+    }
+
+    bool signed_integer(std::int64_t value) {
+        if (value >= 0) {
+            return unsigned_integer(0, static_cast<std::uint64_t>(value));
+        }
+        return unsigned_integer(
+            1, static_cast<std::uint64_t>(-1 - value));
+    }
+
+    bool bytes(const std::uint8_t* value, std::size_t length) {
+        return value != nullptr &&
+               unsigned_integer(2, length) &&
+               copy(value, length);
+    }
+
+    std::size_t size() const { return length_; }
+
+private:
+    bool byte(std::uint8_t value) {
+        if (bytes_ == nullptr || length_ >= capacity_) return false;
+        bytes_[length_++] = value;
+        return true;
+    }
+
+    bool copy(const std::uint8_t* value, std::size_t length) {
+        if (value == nullptr || length > capacity_ - length_) {
+            return false;
+        }
+        std::memcpy(bytes_ + length_, value, length);
+        length_ += length;
+        return true;
+    }
+
+    std::uint8_t* bytes_;
+    std::size_t capacity_;
+    std::size_t length_ = 0;
+};
+
+std::size_t encode_timer_payload(
+    const m3e_schedule_record& record,
+    std::uint64_t observed_scenario_ms,
+    std::uint8_t* output,
+    std::size_t output_capacity) {
+    if (record.state < 1 || record.state > 4) return 0;
+    const auto state = static_cast<std::uint8_t>(record.state - 1);
+    const auto remaining =
+        record.state == 1 &&
+                record.deadline_scenario_ms > observed_scenario_ms
+            ? record.deadline_scenario_ms - observed_scenario_ms
+            : 0;
+    Writer writer(output, output_capacity);
+    if (!writer.unsigned_integer(5, 5) ||
+        !writer.unsigned_integer(0, 0) ||
+        !writer.text(record.id) ||
+        !writer.unsigned_integer(0, 1) ||
+        !writer.unsigned_integer(0, state) ||
+        !writer.unsigned_integer(0, 2) ||
+        !writer.unsigned_integer(0, remaining) ||
+        !writer.unsigned_integer(0, 3) ||
+        !writer.unsigned_integer(0, record.deadline_scenario_ms) ||
+        !writer.unsigned_integer(0, 4) ||
+        !writer.unsigned_integer(0, record.fire_count)) {
+        return 0;
+    }
+    return writer.size();
+}
+
+}  // namespace
+
+extern "C" size_t m3e_encode_timer_provider_event(
+    const m3e_schedule_record* record,
+    uint64_t provider_revision,
+    uint64_t observed_scenario_ms,
+    uint8_t* output,
+    size_t output_capacity) {
+    if (record == nullptr || provider_revision == 0 ||
+        output == nullptr) {
+        return 0;
+    }
+    std::uint8_t payload[160]{};
+    const auto payload_size = encode_timer_payload(
+        *record,
+        observed_scenario_ms,
+        payload,
+        sizeof(payload));
+    if (payload_size == 0) return 0;
+
+    return m3e_encode_provider_event(
+        "exact_scheduler",
+        "timer.changed",
+        provider_revision,
+        0,
+        observed_scenario_ms,
+        payload,
+        payload_size,
+        output,
+        output_capacity);
+}
+
+extern "C" size_t m3e_encode_provider_event(
+    const char* provider_id,
+    const char* event_id,
+    uint64_t provider_revision,
+    uint8_t freshness,
+    uint64_t observed_scenario_ms,
+    const uint8_t* payload,
+    size_t payload_size,
+    uint8_t* output,
+    size_t output_capacity) {
+    if (provider_id == nullptr || event_id == nullptr ||
+        provider_revision == 0 || freshness > 3 ||
+        payload == nullptr || payload_size > 512 ||
+        output == nullptr) {
+        return 0;
+    }
+    Writer writer(output, output_capacity);
+    if (!writer.unsigned_integer(5, 7) ||
+        !writer.unsigned_integer(0, 0) ||
+        !writer.unsigned_integer(0, 1) ||
+        !writer.unsigned_integer(0, 1) ||
+        !writer.text(provider_id) ||
+        !writer.unsigned_integer(0, 2) ||
+        !writer.text(event_id) ||
+        !writer.unsigned_integer(0, 3) ||
+        !writer.unsigned_integer(0, provider_revision) ||
+        !writer.unsigned_integer(0, 4) ||
+        !writer.unsigned_integer(0, freshness) ||
+        !writer.unsigned_integer(0, 5) ||
+        !writer.unsigned_integer(0, observed_scenario_ms) ||
+        !writer.unsigned_integer(0, 6) ||
+        !writer.bytes(payload, payload_size)) {
+        return 0;
+    }
+    return writer.size();
+}
+
+extern "C" size_t m3e_encode_weather_provider_event(
+    int32_t temperature_tenths_f,
+    const char* condition,
+    const char* detail,
+    const char* location,
+    uint64_t data_revision,
+    uint64_t cache_age_minutes,
+    uint64_t provider_revision,
+    uint8_t freshness,
+    uint64_t observed_scenario_ms,
+    uint8_t* output,
+    size_t output_capacity) {
+    std::uint8_t payload[256]{};
+    Writer writer(payload, sizeof(payload));
+    if (!writer.unsigned_integer(5, 6) ||
+        !writer.unsigned_integer(0, 0) ||
+        !writer.signed_integer(temperature_tenths_f) ||
+        !writer.unsigned_integer(0, 1) ||
+        !writer.text(condition) ||
+        !writer.unsigned_integer(0, 2) ||
+        !writer.text(detail) ||
+        !writer.unsigned_integer(0, 3) ||
+        !writer.text(location) ||
+        !writer.unsigned_integer(0, 4) ||
+        !writer.unsigned_integer(0, data_revision) ||
+        !writer.unsigned_integer(0, 5) ||
+        !writer.unsigned_integer(0, cache_age_minutes)) {
+        return 0;
+    }
+    return m3e_encode_provider_event(
+        "weather",
+        "weather.snapshot",
+        provider_revision,
+        freshness,
+        observed_scenario_ms,
+        payload,
+        writer.size(),
+        output,
+        output_capacity);
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "voice-notes",
+  "screen": {
+    "id": "voice-notes.saved",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "voice-notes.saved.heading",
+          "type": "text",
+          "props": {
+            "text": "VOICE NOTES",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "voice-notes.saved.summary",
+          "type": "text",
+          "props": {
+            "text": "Saved ✓",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "VOICE NOTES",
+            "value": "Saved ✓"
+          }
+        },
+        {
+          "id": "voice-notes.saved.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Upload resumed · no duplicate chunks",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "voice-notes.saved.primary",
+          "type": "button",
+          "props": {
+            "label": "Open note",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.open"
+          },
+          "semantics": {
+            "label": "Open note"
+          }
+        },
+        {
+          "id": "voice-notes.saved.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

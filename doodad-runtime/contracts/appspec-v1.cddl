@@ -31,7 +31,7 @@ component-kind = 0..12
 ; that have no meaning for the selected component.
 ; 0 primary text, 1 secondary text, 2 value, 3 maximum, 4 variant/style,
 ; 5 tone, 6 size, 7 checked, 8 gap, 9 alignment, 10 keypad keys,
-; 11 keypad columns.
+; 11 keypad columns, 12 minimum, 13 step.
 
 identifier = tstr .regexp "[a-z][a-z0-9_.-]{0,63}"
 
@@ -43,6 +43,8 @@ ui-event = {
   4: identifier,                  ; action id
   5: 0..10,                       ; semantic EventKind
   6: uint,                        ; monotonic milliseconds
+  ? 7: int / bool / tstr .size (1..64),
+                                     ; typed control value/key when present
 }
 
 ; A returned batch is intentionally UI-only or state-only. Hosts reject

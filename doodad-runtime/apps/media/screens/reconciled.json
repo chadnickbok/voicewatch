@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "media",
+  "screen": {
+    "id": "media.reconciled",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "media.reconciled.heading",
+          "type": "text",
+          "props": {
+            "text": "RECONCILED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "media.reconciled.summary",
+          "type": "text",
+          "props": {
+            "text": "Playing · 1:45",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "RECONCILED",
+            "value": "Playing · 1:45"
+          }
+        },
+        {
+          "id": "media.reconciled.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Phone state wins · no double action",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "media.reconciled.primary",
+          "type": "button",
+          "props": {
+            "label": "Controls",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.controls"
+          },
+          "semantics": {
+            "label": "Controls"
+          }
+        },
+        {
+          "id": "media.reconciled.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

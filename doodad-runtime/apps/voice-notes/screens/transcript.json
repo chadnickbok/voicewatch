@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "voice-notes",
+  "screen": {
+    "id": "voice-notes.transcript",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "voice-notes.transcript.heading",
+          "type": "text",
+          "props": {
+            "text": "TRANSCRIBED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "voice-notes.transcript.summary",
+          "type": "text",
+          "props": {
+            "text": "1 note",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "TRANSCRIBED",
+            "value": "1 note"
+          }
+        },
+        {
+          "id": "voice-notes.transcript.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "“Book the train after lunch.”",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "voice-notes.transcript.primary",
+          "type": "button",
+          "props": {
+            "label": "Save note",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.save"
+          },
+          "semantics": {
+            "label": "Save note"
+          }
+        },
+        {
+          "id": "voice-notes.transcript.secondary",
+          "type": "button",
+          "props": {
+            "label": "Record again",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.again"
+          },
+          "semantics": {
+            "label": "Record again"
+          }
+        }
+      ]
+    }
+  }
+}

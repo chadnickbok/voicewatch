@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "suite_index": 19,
+  "mode": "trusted",
+  "surfaces": [
+    "app",
+    "glance",
+    "voice"
+  ],
+  "mock_provider": "deterministic",
+  "implementation_status": "interactive-mock-flow",
+  "screen_count": 5,
+  "provider": "remote.control"
+}

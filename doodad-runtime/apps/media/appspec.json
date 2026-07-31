@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "media",
+  "screen": {
+    "id": "media.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "media.heading",
+          "type": "text",
+          "props": {
+            "text": "MEDIA REMOTE",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "media.summary",
+          "type": "text",
+          "props": {
+            "text": "Now playing",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Media Remote status",
+            "value": "Now playing"
+          }
+        },
+        {
+          "id": "media.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "media.primary",
+          "type": "button",
+          "props": {
+            "label": "Play",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.primary"
+          },
+          "semantics": {
+            "label": "Play"
+          }
+        }
+      ]
+    }
+  }
+}

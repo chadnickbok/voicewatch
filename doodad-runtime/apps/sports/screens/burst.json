@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sports",
+  "screen": {
+    "id": "sports.burst",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sports.burst.heading",
+          "type": "text",
+          "props": {
+            "text": "SCORE UPDATE",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sports.burst.summary",
+          "type": "text",
+          "props": {
+            "text": "SF 5 · LA 2",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "SCORE UPDATE",
+            "value": "SF 5 · LA 2"
+          }
+        },
+        {
+          "id": "sports.burst.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "3 events coalesced · latest revision 44",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sports.burst.primary",
+          "type": "button",
+          "props": {
+            "label": "End game",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.end"
+          },
+          "semantics": {
+            "label": "End game"
+          }
+        },
+        {
+          "id": "sports.burst.secondary",
+          "type": "button",
+          "props": {
+            "label": "Live view",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.live"
+          },
+          "semantics": {
+            "label": "Live view"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -11,6 +11,8 @@
 #include "lvgl.h"
 #include "m3e/appspec/c_api.h"
 #include "m3e/catalog/catalog.h"
+#include "m3e/services/exact_scheduler_c.h"
+#include "m3e/services/provider_event_c.h"
 #include "wasm_export.h"
 
 enum {
@@ -23,6 +25,8 @@ enum {
     kWasmStackBytes = 16 * 1024,
     kWasmHeapBytes = 16 * 1024,
     kExecEnvStackBytes = 8 * 1024,
+    kMaximumProviderEventBytes = 1024,
+    kMaximumTimerDurationMs = 7 * 24 * 60 * 60 * 1000,
 };
 
 static uint16_t g_framebuffer[kSurfaceWidth * kSurfaceHeight];
@@ -34,12 +38,23 @@ static wasm_module_t g_module;
 static wasm_module_inst_t g_instance;
 static wasm_exec_env_t g_execution_environment;
 static wasm_function_inst_t g_handle_event;
+static wasm_function_inst_t g_handle_provider_event;
 static uint8_t* g_module_bytes;
 static bool g_runtime_ready;
+static bool g_lvgl_ready;
 static bool g_semantic_mount_called;
 static uint8_t g_pending_event[512];
 static size_t g_pending_event_size;
 static char g_last_error[256];
+static m3e_exact_scheduler_handle g_scheduler;
+static uint64_t g_scenario_ms;
+static uint64_t g_provider_revision;
+static uint64_t g_provider_request_id;
+static uint64_t g_semantic_event_count;
+static uint64_t g_provider_request_count;
+static bool g_display_awake;
+static bool g_weather_request_pending;
+static uint8_t g_weather_cycle;
 
 static void set_error(const char* message) {
     snprintf(g_last_error, sizeof(g_last_error), "%s", message);
@@ -74,10 +89,15 @@ static int32_t reject_guest_appspec(
     return 0;
 }
 
-static int dispatch_guest_event(const uint8_t* bytes, size_t length) {
+static int dispatch_guest_handler(
+    wasm_function_inst_t handler,
+    const char* handler_name,
+    const uint8_t* bytes,
+    size_t length) {
     if (g_instance == NULL || g_execution_environment == NULL
-        || g_handle_event == NULL || length == 0 || length > 512) {
-        set_error("guest event handler unavailable");
+        || handler == NULL || length == 0
+        || length > kMaximumProviderEventBytes) {
+        set_error("guest handler unavailable");
         return 0;
     }
     void* guest_native = NULL;
@@ -94,15 +114,21 @@ static int dispatch_guest_event(const uint8_t* bytes, size_t length) {
         (uint32_t)length,
     };
     const bool called = wasm_runtime_call_wasm(
-        g_execution_environment, g_handle_event, 2, arguments);
+        g_execution_environment, handler, 2, arguments);
     wasm_runtime_module_free(g_instance, guest_pointer);
     if (!called) {
         const char* exception = wasm_runtime_get_exception(g_instance);
-        set_error(exception != NULL ? exception : "handle_event trapped");
+        set_error(exception != NULL ? exception : handler_name);
         return 0;
     }
     uint64_t packed_result = 0;
     memcpy(&packed_result, arguments, sizeof(packed_result));
+    if (packed_result == 0) {
+        // Navigation may synchronously mount another AppSpec and require no
+        // follow-up patch batch.
+        doodad_host_render_now();
+        return 1;
+    }
     const uint32_t result_pointer = (uint32_t)(packed_result >> 32);
     const uint32_t result_length = (uint32_t)packed_result;
     if (result_pointer == 0 || result_length == 0
@@ -135,6 +161,15 @@ static int dispatch_guest_event(const uint8_t* bytes, size_t length) {
     return 1;
 }
 
+static int dispatch_guest_event(const uint8_t* bytes, size_t length) {
+    if (length > sizeof(g_pending_event)) {
+        set_error("guest UI event exceeds maximum");
+        return 0;
+    }
+    return dispatch_guest_handler(
+        g_handle_event, "handle_event trapped", bytes, length);
+}
+
 static void host_semantic_event(
     const uint8_t* bytes, size_t length, void* context) {
     (void)context;
@@ -144,6 +179,7 @@ static void host_semantic_event(
     }
     memcpy(g_pending_event, bytes, length);
     g_pending_event_size = length;
+    ++g_semantic_event_count;
 }
 
 static int32_t host_ui_mount(
@@ -180,6 +216,177 @@ static int32_t host_ui_mount(
     return 1;
 }
 
+static bool copy_guest_service_id(
+    wasm_exec_env_t environment,
+    uint32_t pointer,
+    uint32_t length,
+    char output[49]) {
+    if (length == 0 || length > 48) return false;
+    wasm_module_inst_t instance = wasm_runtime_get_module_inst(environment);
+    if (!wasm_runtime_validate_app_addr(instance, pointer, length)) {
+        return false;
+    }
+    const uint8_t* bytes =
+        (const uint8_t*)wasm_runtime_addr_app_to_native(instance, pointer);
+    if (bytes == NULL) return false;
+    for (uint32_t index = 0; index < length; ++index) {
+        const uint8_t byte = bytes[index];
+        if (!((byte >= 'a' && byte <= 'z') ||
+              (byte >= '0' && byte <= '9') ||
+              byte == '.' || byte == '-' || byte == '_')) {
+            return false;
+        }
+    }
+    memcpy(output, bytes, length);
+    output[length] = '\0';
+    return true;
+}
+
+static uint64_t host_timer_schedule_after(
+    wasm_exec_env_t environment,
+    uint32_t pointer,
+    uint32_t length,
+    uint32_t duration_ms) {
+    char id[49] = {0};
+    if (g_scheduler == NULL ||
+        duration_ms == 0 ||
+        duration_ms > kMaximumTimerDurationMs ||
+        !copy_guest_service_id(environment, pointer, length, id)) {
+        return 0;
+    }
+    return m3e_exact_scheduler_schedule_after(
+        g_scheduler, id, duration_ms, g_scenario_ms);
+}
+
+static int32_t host_timer_cancel(
+    wasm_exec_env_t environment,
+    uint32_t pointer,
+    uint32_t length) {
+    char id[49] = {0};
+    if (g_scheduler == NULL ||
+        !copy_guest_service_id(environment, pointer, length, id)) {
+        return 0;
+    }
+    return m3e_exact_scheduler_cancel(g_scheduler, id);
+}
+
+static int32_t host_timer_acknowledge(
+    wasm_exec_env_t environment,
+    uint32_t pointer,
+    uint32_t length) {
+    char id[49] = {0};
+    if (g_scheduler == NULL ||
+        !copy_guest_service_id(environment, pointer, length, id)) {
+        return 0;
+    }
+    return m3e_exact_scheduler_acknowledge(g_scheduler, id);
+}
+
+static uint64_t host_provider_request(
+    wasm_exec_env_t environment,
+    uint32_t provider_pointer,
+    uint32_t provider_length,
+    uint32_t operation_pointer,
+    uint32_t operation_length,
+    uint32_t payload_pointer,
+    uint32_t payload_length) {
+    char provider[49] = {0};
+    char operation[49] = {0};
+    wasm_module_inst_t instance =
+        wasm_runtime_get_module_inst(environment);
+    if (g_provider_request_id == UINT64_MAX ||
+        !copy_guest_service_id(
+            environment,
+            provider_pointer,
+            provider_length,
+            provider) ||
+        !copy_guest_service_id(
+            environment,
+            operation_pointer,
+            operation_length,
+            operation) ||
+        payload_length > 512 ||
+        (payload_length != 0 &&
+         !wasm_runtime_validate_app_addr(
+             instance, payload_pointer, payload_length))) {
+        return 0;
+    }
+    const bool weather =
+        strcmp(provider, "weather") == 0 &&
+        strcmp(operation, "refresh") == 0;
+    const bool fixture = strcmp(provider, "fixture") == 0;
+    if ((!weather && !fixture) ||
+        (weather && g_weather_request_pending)) {
+        return 0;
+    }
+    if (weather) g_weather_request_pending = true;
+    ++g_provider_request_count;
+    return ++g_provider_request_id;
+}
+
+#define DEFINE_BOUND_PROVIDER_REQUEST(                                \
+    function_name, provider_name, prefix_one, prefix_two)             \
+    static uint64_t function_name(                                    \
+        wasm_exec_env_t environment,                                  \
+        uint32_t operation_pointer,                                   \
+        uint32_t operation_length,                                    \
+        uint32_t payload_pointer,                                     \
+        uint32_t payload_length) {                                    \
+        char operation[49] = {0};                                     \
+        wasm_module_inst_t instance =                                 \
+            wasm_runtime_get_module_inst(environment);                \
+        if (g_provider_request_id == UINT64_MAX ||                    \
+            !copy_guest_service_id(                                   \
+                environment, operation_pointer,                       \
+                operation_length, operation) ||                       \
+            payload_length > 512 ||                                   \
+            (payload_length != 0 &&                                   \
+             !wasm_runtime_validate_app_addr(                         \
+                 instance, payload_pointer, payload_length))) {       \
+            return 0;                                                 \
+        }                                                             \
+        const bool prefix_one_ok =                                    \
+            strncmp(operation, prefix_one, strlen(prefix_one)) == 0;  \
+        const bool prefix_two_ok =                                    \
+            prefix_two[0] != '\0' &&                                  \
+            strncmp(operation, prefix_two, strlen(prefix_two)) == 0;  \
+        if (!prefix_one_ok && !prefix_two_ok) return 0;                \
+        (void)provider_name;                                          \
+        ++g_provider_request_count;                                   \
+        return ++g_provider_request_id;                               \
+    }
+
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_calendar_request, "calendar", "calendar.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_audio_request, "audio", "voice-notes.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_medication_request, "medication", "medication.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_sensor_request, "sensor", "sensor.", "sensor-recorder.")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_sleep_request, "sleep", "sleep.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_media_request, "media", "media.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_navigation_request, "navigation", "navigation.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_transit_request, "transit", "transit.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_home_request, "home", "home.", "smart-home.")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_sports_request, "sports", "sports.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_wallet_request, "wallet", "wallet.", "")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_remote_request, "remote", "remote.", "remote-control.")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_workout_request, "workout", "workout.", "complete_set")
+DEFINE_BOUND_PROVIDER_REQUEST(
+    host_game_request, "game", "snake.", "")
+
+#undef DEFINE_BOUND_PROVIDER_REQUEST
+
 static NativeSymbol g_native_symbols[] = {
     {
         .symbol = "ui_mount",
@@ -187,10 +394,119 @@ static NativeSymbol g_native_symbols[] = {
         .signature = "(ii)i",
         .attachment = NULL,
     },
+    {
+        .symbol = "timer_schedule_after",
+        .func_ptr = (void*)host_timer_schedule_after,
+        .signature = "(iii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "timer_cancel",
+        .func_ptr = (void*)host_timer_cancel,
+        .signature = "(ii)i",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "timer_acknowledge",
+        .func_ptr = (void*)host_timer_acknowledge,
+        .signature = "(ii)i",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "provider_request",
+        .func_ptr = (void*)host_provider_request,
+        .signature = "(iiiiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "calendar_request",
+        .func_ptr = (void*)host_calendar_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "audio_request",
+        .func_ptr = (void*)host_audio_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "medication_request",
+        .func_ptr = (void*)host_medication_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "sensor_request",
+        .func_ptr = (void*)host_sensor_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "sleep_request",
+        .func_ptr = (void*)host_sleep_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "media_request",
+        .func_ptr = (void*)host_media_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "navigation_request",
+        .func_ptr = (void*)host_navigation_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "transit_request",
+        .func_ptr = (void*)host_transit_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "home_request",
+        .func_ptr = (void*)host_home_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "sports_request",
+        .func_ptr = (void*)host_sports_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "wallet_request",
+        .func_ptr = (void*)host_wallet_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "remote_request",
+        .func_ptr = (void*)host_remote_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "workout_request",
+        .func_ptr = (void*)host_workout_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
+    {
+        .symbol = "game_request",
+        .func_ptr = (void*)host_game_request,
+        .signature = "(iiii)I",
+        .attachment = NULL,
+    },
 };
 
 static void release_wasm(void) {
     g_handle_event = NULL;
+    g_handle_provider_event = NULL;
     if (g_execution_environment != NULL) {
         wasm_runtime_destroy_exec_env(g_execution_environment);
         g_execution_environment = NULL;
@@ -207,12 +523,59 @@ static void release_wasm(void) {
     g_module_bytes = NULL;
 }
 
+static int initialize_wamr(void) {
+    RuntimeInitArgs arguments;
+    memset(&arguments, 0, sizeof(arguments));
+    arguments.mem_alloc_type = Alloc_With_Allocator;
+    arguments.mem_alloc_option.allocator.malloc_func = (void*)os_malloc;
+    arguments.mem_alloc_option.allocator.realloc_func = (void*)os_realloc;
+    arguments.mem_alloc_option.allocator.free_func = (void*)os_free;
+    if (!wasm_runtime_full_init(&arguments)) {
+        set_error("WAMR initialization failed");
+        return 0;
+    }
+    if (!wasm_runtime_register_natives(
+            "doodad",
+            g_native_symbols,
+            sizeof(g_native_symbols) / sizeof(g_native_symbols[0]))) {
+        set_error("WAMR native ABI registration failed");
+        wasm_runtime_destroy();
+        return 0;
+    }
+    g_runtime_ready = true;
+    return 1;
+}
+
+static void reset_native_shell(void) {
+    if (g_display == NULL) return;
+    lv_obj_t* screen = lv_screen_active();
+    lv_obj_clean(screen);
+    doodad_lvgl_ui_init(&g_ui, screen);
+    doodad_lvgl_ui_show_shell(&g_ui, "STARTING", "DEV");
+}
+
 int doodad_host_create(void) {
     memset(g_last_error, 0, sizeof(g_last_error));
     memset(g_framebuffer, 0, sizeof(g_framebuffer));
+    g_scenario_ms = 0;
+    g_provider_revision = 0;
+    g_provider_request_id = 0;
+    g_semantic_event_count = 0;
+    g_provider_request_count = 0;
+    g_display_awake = true;
+    g_weather_request_pending = false;
+    g_weather_cycle = 0;
+    g_scheduler = m3e_exact_scheduler_create();
+    if (g_scheduler == NULL) {
+        set_error("exact scheduler allocation failed");
+        return 0;
+    }
 
-    lv_init();
-    lv_tick_set_cb(tick_milliseconds);
+    if (!g_lvgl_ready) {
+        lv_init();
+        lv_tick_set_cb(tick_milliseconds);
+        g_lvgl_ready = true;
+    }
     g_display = lv_display_create(kSurfaceWidth, kSurfaceHeight);
     if (g_display == NULL) {
         set_error("LVGL display creation failed");
@@ -229,27 +592,10 @@ int doodad_host_create(void) {
     doodad_lvgl_ui_init(&g_ui, lv_screen_active());
     doodad_lvgl_ui_show_shell(&g_ui, "STARTING", "DEV");
 
-    RuntimeInitArgs arguments;
-    memset(&arguments, 0, sizeof(arguments));
-    arguments.mem_alloc_type = Alloc_With_Allocator;
-    arguments.mem_alloc_option.allocator.malloc_func = (void*)os_malloc;
-    arguments.mem_alloc_option.allocator.realloc_func = (void*)os_realloc;
-    arguments.mem_alloc_option.allocator.free_func = (void*)os_free;
-    if (!wasm_runtime_full_init(&arguments)) {
-        set_error("WAMR initialization failed");
+    if (!initialize_wamr()) {
         doodad_lvgl_ui_show_error(&g_ui, "WAMR INIT FAILED");
         return 0;
     }
-    if (!wasm_runtime_register_natives(
-            "doodad",
-            g_native_symbols,
-            sizeof(g_native_symbols) / sizeof(g_native_symbols[0]))) {
-        set_error("WAMR native ABI registration failed");
-        doodad_lvgl_ui_show_error(&g_ui, "WAMR INIT FAILED");
-        wasm_runtime_destroy();
-        return 0;
-    }
-    g_runtime_ready = true;
     doodad_host_render_now();
     return 1;
 }
@@ -264,7 +610,11 @@ void doodad_host_destroy(void) {
         lv_display_delete(g_display);
         g_display = NULL;
     }
-    lv_deinit();
+    // LVGL's global registries are not reliably reentrant across
+    // deinit/reinit in every pinned desktop build. Keep the process-global
+    // core initialized while deleting each test display and guest runtime.
+    m3e_exact_scheduler_destroy(g_scheduler);
+    g_scheduler = NULL;
 }
 
 const char* doodad_host_last_error(void) {
@@ -276,7 +626,20 @@ int doodad_host_start_wasm(const char* path) {
         set_error("WAMR is not initialized");
         return 0;
     }
+    const bool replacing_guest = g_module != NULL;
     release_wasm();
+    if (replacing_guest) {
+        wasm_runtime_destroy();
+        g_runtime_ready = false;
+        if (!initialize_wamr()) {
+            doodad_lvgl_ui_show_error(&g_ui, "WAMR INIT FAILED");
+            return 0;
+        }
+    }
+    // AppSpec owns and clears the full screen, so every prior g_ui child
+    // pointer becomes invalid after the first guest mount. Rebuild the
+    // trusted loading shell before touching those pointers on replacement.
+    reset_native_shell();
 
     FILE* file = fopen(path, "rb");
     if (file == NULL) {
@@ -349,6 +712,8 @@ int doodad_host_start_wasm(const char* path) {
     }
     g_handle_event =
         wasm_runtime_lookup_function(g_instance, "handle_event");
+    g_handle_provider_event =
+        wasm_runtime_lookup_function(g_instance, "handle_provider_event");
 
     doodad_lvgl_ui_show_shell(&g_ui, "WASM RUNNING", "DEV");
     g_semantic_mount_called = false;
@@ -372,10 +737,123 @@ int doodad_host_start_wasm(const char* path) {
 }
 
 void doodad_host_render_now(void) {
-    if (g_display != NULL) {
+    if (g_display != NULL && g_display_awake) {
         lv_obj_invalidate(lv_screen_active());
         lv_refr_now(g_display);
     }
+}
+
+void doodad_host_set_display_awake(int awake) {
+    g_display_awake = awake != 0;
+    if (g_display_awake) doodad_host_render_now();
+}
+
+int doodad_host_display_awake(void) {
+    return g_display_awake ? 1 : 0;
+}
+
+int doodad_host_advance_time(uint64_t milliseconds) {
+    if (milliseconds > UINT64_MAX - g_scenario_ms) {
+        set_error("scenario clock overflow");
+        return 0;
+    }
+    g_scenario_ms += milliseconds;
+    m3e_due_delivery due[8] = {0};
+    (void)m3e_exact_scheduler_poll(
+        g_scheduler, g_scenario_ms, due, 8);
+
+    m3e_schedule_record records[8] = {0};
+    const size_t count = m3e_exact_scheduler_records(
+        g_scheduler, records, 8, g_scenario_ms);
+    for (size_t index = 0; index < count; ++index) {
+        if (g_handle_provider_event == NULL) {
+            set_error("guest has no handle_provider_event export");
+            return 0;
+        }
+        uint8_t envelope[256];
+        if (g_provider_revision == UINT64_MAX) {
+            set_error("provider event encoding failed");
+            return 0;
+        }
+        const size_t envelope_length =
+            m3e_encode_timer_provider_event(
+            &records[index],
+            ++g_provider_revision,
+            g_scenario_ms,
+            envelope,
+            sizeof(envelope));
+        if (envelope_length == 0 ||
+            !dispatch_guest_handler(
+                g_handle_provider_event,
+                "handle_provider_event trapped",
+                envelope,
+                envelope_length)) {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+uint64_t doodad_host_scenario_time(void) {
+    return g_scenario_ms;
+}
+
+int doodad_host_deliver_provider(void) {
+    if (!g_weather_request_pending) {
+        set_error("no provider request is pending");
+        return 0;
+    }
+    if (g_handle_provider_event == NULL ||
+        g_provider_revision == UINT64_MAX) {
+        set_error("guest provider handler unavailable");
+        return 0;
+    }
+    g_weather_request_pending = false;
+    g_weather_cycle = (uint8_t)((g_weather_cycle + 1) % 3);
+
+    int32_t temperature = 720;
+    const char* condition = "Clear";
+    const char* detail = "High 76 - Low 59 - Rain 10%";
+    uint64_t data_revision = 1;
+    uint64_t age_minutes = 12;
+    uint8_t freshness = 1;
+    if (g_weather_cycle == 2) {
+        condition = "Offline";
+        detail = "Forecast unavailable - cached data";
+        age_minutes = 18;
+        freshness = 2;
+    } else if (g_weather_cycle == 0) {
+        temperature = 710;
+        condition = "Clear";
+        detail = "High 75 - Low 58 - Rain 5%";
+        data_revision = 2;
+        age_minutes = 0;
+        freshness = 0;
+    }
+
+    uint8_t envelope[512];
+    const size_t envelope_length =
+        m3e_encode_weather_provider_event(
+            temperature,
+            condition,
+            detail,
+            "San Francisco",
+            data_revision,
+            age_minutes,
+            ++g_provider_revision,
+            freshness,
+            g_scenario_ms,
+            envelope,
+            sizeof(envelope));
+    if (envelope_length == 0 ||
+        !dispatch_guest_handler(
+            g_handle_provider_event,
+            "handle_provider_event trapped",
+            envelope,
+            envelope_length)) {
+        return 0;
+    }
+    return 1;
 }
 
 const uint16_t* doodad_host_framebuffer(void) {
@@ -406,28 +884,30 @@ int doodad_host_show_appspec(const uint8_t* bytes, size_t size) {
     return 1;
 }
 
-static lv_obj_t* first_clickable(lv_obj_t* parent) {
+static int send_first_semantic_click(lv_obj_t* parent) {
     const uint32_t count = lv_obj_get_child_count(parent);
     for (uint32_t index = 0; index < count; ++index) {
         lv_obj_t* child = lv_obj_get_child(parent, (int32_t)index);
         if (lv_obj_has_flag(child, LV_OBJ_FLAG_CLICKABLE)
             && !lv_obj_has_state(child, LV_STATE_DISABLED)) {
-            return child;
+            g_pending_event_size = 0;
+            const lv_result_t result =
+                lv_obj_send_event(child, LV_EVENT_CLICKED, NULL);
+            if (g_pending_event_size != 0) {
+                return result == LV_RESULT_OK ? 1 : -1;
+            }
         }
-        lv_obj_t* nested = first_clickable(child);
-        if (nested != NULL) return nested;
+        const int nested = send_first_semantic_click(child);
+        if (nested != 0) return nested;
     }
-    return NULL;
+    return 0;
 }
 
-int doodad_host_click_first_action(void) {
-    lv_obj_t* object = first_clickable(lv_screen_active());
-    if (object == NULL) {
+static int finish_semantic_click(int event_result) {
+    if (event_result == 0) {
         set_error("no clickable semantic action");
         return 0;
     }
-    const lv_result_t result =
-        lv_obj_send_event(object, LV_EVENT_CLICKED, NULL);
     const int dispatched =
         g_pending_event_size == 0
             ? 0
@@ -435,7 +915,159 @@ int doodad_host_click_first_action(void) {
                   g_pending_event, g_pending_event_size);
     g_pending_event_size = 0;
     doodad_host_render_now();
-    return result == LV_RESULT_OK && dispatched;
+    if (event_result < 0) {
+        set_error("LVGL action callback rejected the event");
+        return 0;
+    }
+    if (!dispatched) {
+        if (g_last_error[0] == '\0') {
+            set_error("clickable object had no semantic action");
+        }
+        return 0;
+    }
+    return 1;
+}
+
+int doodad_host_click_first_action(void) {
+    return finish_semantic_click(
+        send_first_semantic_click(lv_screen_active()));
+}
+
+static lv_obj_t* find_button_with_label(
+    lv_obj_t* parent, const char* label) {
+    const uint32_t count = lv_obj_get_child_count(parent);
+    for (uint32_t index = 0; index < count; ++index) {
+        lv_obj_t* child = lv_obj_get_child(parent, (int32_t)index);
+        if (lv_obj_check_type(child, &lv_button_class)
+            && !lv_obj_has_state(child, LV_STATE_DISABLED)) {
+            const uint32_t child_count = lv_obj_get_child_count(child);
+            for (uint32_t nested = 0; nested < child_count; ++nested) {
+                lv_obj_t* candidate =
+                    lv_obj_get_child(child, (int32_t)nested);
+                if (lv_obj_check_type(candidate, &lv_label_class)
+                    && strcmp(lv_label_get_text(candidate), label) == 0) {
+                    return child;
+                }
+            }
+        }
+        lv_obj_t* nested = find_button_with_label(child, label);
+        if (nested != NULL) return nested;
+    }
+    return NULL;
+}
+
+int doodad_host_click_button(const char* label) {
+    if (label == NULL || label[0] == '\0') {
+        set_error("button label is empty");
+        return 0;
+    }
+    lv_obj_t* button =
+        find_button_with_label(lv_screen_active(), label);
+    if (button == NULL) {
+        set_error("button label not found");
+        return 0;
+    }
+    g_pending_event_size = 0;
+    lv_result_t result =
+        lv_obj_send_event(button, LV_EVENT_CLICKED, NULL);
+    if (result == LV_RESULT_OK && g_pending_event_size == 0) {
+        result = lv_obj_send_event(button, LV_EVENT_RELEASED, NULL);
+    }
+    return finish_semantic_click(
+        result == LV_RESULT_OK && g_pending_event_size != 0 ? 1 : -1);
+}
+
+static lv_obj_t* find_node(lv_obj_t* parent, const char* node_id) {
+    // AppSpec text nodes are labels whose user data is the stable node id.
+    // Other framework widgets may store non-string context pointers in user
+    // data, so never interpret arbitrary objects' user data as text.
+    if (lv_obj_check_type(parent, &lv_label_class)) {
+        const char* id = (const char*)lv_obj_get_user_data(parent);
+        if (id != NULL && strcmp(id, node_id) == 0) {
+            return parent;
+        }
+    }
+    const uint32_t count = lv_obj_get_child_count(parent);
+    for (uint32_t index = 0; index < count; ++index) {
+        lv_obj_t* result =
+            find_node(lv_obj_get_child(parent, (int32_t)index), node_id);
+        if (result != NULL) return result;
+    }
+    return NULL;
+}
+
+const char* doodad_host_node_text(const char* node_id) {
+    if (node_id == NULL || node_id[0] == '\0') return NULL;
+    const char* mounted = m3e_appspec_mounted_text(node_id, 0);
+    if (mounted != NULL) return mounted;
+    lv_obj_t* object = find_node(lv_screen_active(), node_id);
+    if (object == NULL) return NULL;
+    if (lv_obj_check_type(object, &lv_label_class)) {
+        return lv_label_get_text(object);
+    }
+    const uint32_t count = lv_obj_get_child_count(object);
+    for (uint32_t index = 0; index < count; ++index) {
+        lv_obj_t* child = lv_obj_get_child(object, (int32_t)index);
+        if (lv_obj_check_type(child, &lv_label_class)) {
+            return lv_label_get_text(child);
+        }
+    }
+    return NULL;
+}
+
+size_t doodad_host_semantic_snapshot(
+    char* output, size_t output_size) {
+    return m3e_appspec_semantic_snapshot(output, output_size);
+}
+
+size_t doodad_host_mounted_node_count(void) {
+    return m3e_appspec_mounted_node_count();
+}
+
+size_t doodad_host_mounted_event_count(void) {
+    return m3e_appspec_mounted_event_count();
+}
+
+static void collect_lvgl_metrics(
+    lv_obj_t* object,
+    size_t depth,
+    size_t* count,
+    size_t* maximum_depth) {
+    if (object == NULL) return;
+    ++*count;
+    if (depth > *maximum_depth) *maximum_depth = depth;
+    const uint32_t children = lv_obj_get_child_count(object);
+    for (uint32_t index = 0; index < children; ++index) {
+        collect_lvgl_metrics(
+            lv_obj_get_child(object, (int32_t)index),
+            depth + 1,
+            count,
+            maximum_depth);
+    }
+}
+
+size_t doodad_host_lvgl_object_count(void) {
+    size_t count = 0;
+    size_t depth = 0;
+    collect_lvgl_metrics(
+        lv_screen_active(), 0, &count, &depth);
+    return count;
+}
+
+size_t doodad_host_lvgl_max_depth(void) {
+    size_t count = 0;
+    size_t depth = 0;
+    collect_lvgl_metrics(
+        lv_screen_active(), 0, &count, &depth);
+    return depth;
+}
+
+uint64_t doodad_host_semantic_event_count(void) {
+    return g_semantic_event_count;
+}
+
+uint64_t doodad_host_provider_request_count(void) {
+    return g_provider_request_count;
 }
 
 static lv_flex_align_t flex_align(int align) {

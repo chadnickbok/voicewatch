@@ -1,0 +1,58 @@
+{
+  "schema_version": 1,
+  "id": "calories.dashboard.resting",
+  "scene": "calorie-dashboard",
+  "title": "Calorie dashboard",
+  "appspec": "apps/calories/appspec.json",
+  "data": {
+    "consumed": 1840,
+    "goal": 2200,
+    "remaining": 360,
+    "progress": 0.84
+  },
+  "ui_state": {
+    "status": "current"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.calories",
+    "role": "screen",
+    "label": "Calories dashboard",
+    "children": [
+      {
+        "id": "progress.calories",
+        "role": "progress",
+        "label": "Daily calorie progress",
+        "value": "84%"
+      },
+      {
+        "id": "value.calories",
+        "role": "text",
+        "label": "1,840 of 2,200 calories"
+      },
+      {
+        "id": "value.remaining",
+        "role": "text",
+        "label": "360 calories remaining"
+      }
+    ]
+  }
+}

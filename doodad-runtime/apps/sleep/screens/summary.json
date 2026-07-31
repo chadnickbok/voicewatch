@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sleep",
+  "screen": {
+    "id": "sleep.summary",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sleep.summary.heading",
+          "type": "text",
+          "props": {
+            "text": "GOOD MORNING",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sleep.summary.summary",
+          "type": "text",
+          "props": {
+            "text": "7h 42m",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "GOOD MORNING",
+            "value": "7h 42m"
+          }
+        },
+        {
+          "id": "sleep.summary.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Deep 1h 36 · Restful 82%",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sleep.summary.primary",
+          "type": "button",
+          "props": {
+            "label": "View stages",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.stages"
+          },
+          "semantics": {
+            "label": "View stages"
+          }
+        },
+        {
+          "id": "sleep.summary.secondary",
+          "type": "button",
+          "props": {
+            "label": "Start again",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.again"
+          },
+          "semantics": {
+            "label": "Start again"
+          }
+        }
+      ]
+    }
+  }
+}

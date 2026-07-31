@@ -1,0 +1,499 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "transit",
+    "id": "dev.doodad.transit",
+    "name": "Transit Departures",
+    "mode": "generated",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5389,
+    "package_bytes": 5598,
+    "authored_json_documents": 12,
+    "canonical_cbor_documents": 6,
+    "maximum_appspec_bytes": 441,
+    "decisive_actions": 4,
+    "distinct_screens": 5,
+    "distinct_semantic_states": 5,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 10,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 53036,
+    "semantic_events": 4,
+    "provider_requests": 4
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "transit.home",
+      "semantic_sha256": "5d4e422a860ecbf9e260695a6b111a8e3bcd057f86b5507207f0693a3081b347",
+      "framebuffer_rgb565_sha256": "0c329e977ade94db72f20d016fcec0a77e51abb2032fb34e49ab22150db3c232",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "transit",
+        "nodes": [
+          {
+            "id": "transit.home",
+            "role": "screen",
+            "label": "transit",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "transit.heading",
+            "role": "text",
+            "label": "TRANSIT DEPARTURES",
+            "text": "TRANSIT DEPARTURES",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.summary",
+            "role": "text",
+            "label": "Transit Departures status",
+            "text": "N in 3 min",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.primary",
+            "role": "button",
+            "label": "Refresh",
+            "text": "Refresh",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Refresh"
+      },
+      "screen_id": "transit.departures",
+      "semantic_sha256": "e578b3d6ecd9cc5deec598f01d12f2d8e7eae559dcb593cb47513b5f66183092",
+      "framebuffer_rgb565_sha256": "6cc6621d05845084ff02cfc83c19ebac8c48a265cbd73edca01a9b5c9c7ed322",
+      "changed_pixels": 27446,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "transit",
+        "nodes": [
+          {
+            "id": "transit.departures",
+            "role": "screen",
+            "label": "transit",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "transit.departures.heading",
+            "role": "text",
+            "label": "CASTRO STATION",
+            "text": "CASTRO STATION",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.departures.summary",
+            "role": "text",
+            "label": "CASTRO STATION",
+            "text": "N · 3 min",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.departures.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "N  3 min\nN  14 min\nL  8 min",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.departures.primary",
+            "role": "button",
+            "label": "Go offline",
+            "text": "Go offline",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.departures.secondary",
+            "role": "button",
+            "label": "Service alert",
+            "text": "Service alert",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Go offline"
+      },
+      "screen_id": "transit.stale",
+      "semantic_sha256": "0395fd17e63d93d443988beec26e933bed823de533ab46a31b60f6effb1d2653",
+      "framebuffer_rgb565_sha256": "efba8ac48826cecc60f0f50e9a53503302daf53441d68dea7dbeb2c752d1c13c",
+      "changed_pixels": 10572,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "transit",
+        "nodes": [
+          {
+            "id": "transit.stale",
+            "role": "screen",
+            "label": "transit",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "transit.stale.heading",
+            "role": "text",
+            "label": "CACHED DEPARTURES",
+            "text": "CACHED DEPARTURES",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.stale.summary",
+            "role": "text",
+            "label": "CACHED DEPARTURES",
+            "text": "N · 2 min",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.stale.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "18 minutes old · refreshing…",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.stale.primary",
+            "role": "button",
+            "label": "Reconnect",
+            "text": "Reconnect",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.stale.secondary",
+            "role": "button",
+            "label": "Keep cache",
+            "text": "Keep cache",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Reconnect"
+      },
+      "screen_id": "transit.recovered",
+      "semantic_sha256": "d9b576a1ca97be6d067e93948bab5faa459c699344824abdfb1236950fe30adb",
+      "framebuffer_rgb565_sha256": "63ce74edcf6117791fd3d112089b9911cc0fe08a35eded890491b238ebbc80c8",
+      "changed_pixels": 4405,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "transit",
+        "nodes": [
+          {
+            "id": "transit.recovered",
+            "role": "screen",
+            "label": "transit",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "transit.recovered.heading",
+            "role": "text",
+            "label": "UPDATED NOW",
+            "text": "UPDATED NOW",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.recovered.summary",
+            "role": "text",
+            "label": "UPDATED NOW",
+            "text": "N · 4 min",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.recovered.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Revision 12 · Castro selection kept",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.recovered.primary",
+            "role": "button",
+            "label": "Alert",
+            "text": "Alert",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.recovered.secondary",
+            "role": "button",
+            "label": "Refresh again",
+            "text": "Refresh again",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Alert"
+      },
+      "screen_id": "transit.alert",
+      "semantic_sha256": "59fb3a6d85b95f1de227412878accbd12e43c7f3c877e82d5c6bb1f103d45cbe",
+      "framebuffer_rgb565_sha256": "b567469396e8bee48dc8d104ff2afbbdc7a8ea45514d11c00b5a38c6b25305f9",
+      "changed_pixels": 10613,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 4,
+      "provider_requests": 4,
+      "semantic_tree": {
+        "app": "transit",
+        "nodes": [
+          {
+            "id": "transit.alert",
+            "role": "screen",
+            "label": "transit",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "transit.alert.heading",
+            "role": "text",
+            "label": "SERVICE ALERT",
+            "text": "SERVICE ALERT",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.alert.summary",
+            "role": "text",
+            "label": "SERVICE ALERT",
+            "text": "N delayed 6 min",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.alert.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Track work near Duboce",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.alert.primary",
+            "role": "button",
+            "label": "Departures",
+            "text": "Departures",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "transit.alert.secondary",
+            "role": "button",
+            "label": "Go offline",
+            "text": "Go offline",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

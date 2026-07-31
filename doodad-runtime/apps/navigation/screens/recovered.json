@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "navigation",
+  "screen": {
+    "id": "navigation.recovered",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "navigation.recovered.heading",
+          "type": "text",
+          "props": {
+            "text": "ROUTE RECOVERED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "navigation.recovered.summary",
+          "type": "text",
+          "props": {
+            "text": "Right · 120 ft",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "ROUTE RECOVERED",
+            "value": "Right · 120 ft"
+          }
+        },
+        {
+          "id": "navigation.recovered.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Progress monotonic · no backward jump",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "navigation.recovered.primary",
+          "type": "button",
+          "props": {
+            "label": "Next turn",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "navigation.next"
+          },
+          "semantics": {
+            "label": "Next turn"
+          }
+        },
+        {
+          "id": "navigation.recovered.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "navigation.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

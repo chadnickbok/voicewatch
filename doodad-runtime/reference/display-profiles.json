@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "profiles": [
+    {
+      "id": "wear_round_small",
+      "physical_width_px": 384,
+      "physical_height_px": 384,
+      "logical_width_dp": 192,
+      "logical_height_dp": 192,
+      "density": 2.0,
+      "shape": "round",
+      "geometry_family": "wear_round",
+      "input": [
+        "touch",
+        "rotary",
+        "buttons"
+      ]
+    },
+    {
+      "id": "wear_round_large",
+      "physical_width_px": 454,
+      "physical_height_px": 454,
+      "logical_width_dp": 227,
+      "logical_height_dp": 227,
+      "density": 2.0,
+      "shape": "round",
+      "geometry_family": "wear_round",
+      "input": [
+        "touch",
+        "rotary",
+        "buttons"
+      ]
+    },
+    {
+      "id": "watch_square_240",
+      "physical_width_px": 240,
+      "physical_height_px": 240,
+      "logical_width_dp": 192,
+      "logical_height_dp": 192,
+      "density": 1.25,
+      "shape": "square",
+      "geometry_family": "watch_square_240",
+      "input": [
+        "touch",
+        "buttons"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "transit",
+  "screen": {
+    "id": "transit.departures",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "transit.departures.heading",
+          "type": "text",
+          "props": {
+            "text": "CASTRO STATION",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "transit.departures.summary",
+          "type": "text",
+          "props": {
+            "text": "N · 3 min",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "CASTRO STATION",
+            "value": "N · 3 min"
+          }
+        },
+        {
+          "id": "transit.departures.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "N  3 min\nN  14 min\nL  8 min",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "transit.departures.primary",
+          "type": "button",
+          "props": {
+            "label": "Go offline",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "transit.offline"
+          },
+          "semantics": {
+            "label": "Go offline"
+          }
+        },
+        {
+          "id": "transit.departures.secondary",
+          "type": "button",
+          "props": {
+            "label": "Service alert",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "transit.alert"
+          },
+          "semantics": {
+            "label": "Service alert"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "sleep",
+  "screen": {
+    "id": "sleep.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sleep.heading",
+          "type": "text",
+          "props": {
+            "text": "SLEEP + SMART ALARM",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sleep.summary",
+          "type": "text",
+          "props": {
+            "text": "7h 42m",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Sleep + Smart Alarm status",
+            "value": "7h 42m"
+          }
+        },
+        {
+          "id": "sleep.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sleep.primary",
+          "type": "button",
+          "props": {
+            "label": "Start sleep",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.primary"
+          },
+          "semantics": {
+            "label": "Start sleep"
+          }
+        }
+      ]
+    }
+  }
+}

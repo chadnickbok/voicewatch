@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "id": "sensor-recorder.baseline.interaction",
+  "app_id": "dev.doodad.sensor-recorder",
+  "initial_state": {
+    "wall_time_ms": 1700000000000,
+    "timezone_offset_minutes": -420,
+    "app_state": "foreground",
+    "display_state": "awake",
+    "connectivity": "online"
+  },
+  "steps": [
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "sensor-recorder.loaded",
+      "revision": 1,
+      "status": "current",
+      "payload": {
+        "deterministic": true
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.sensor-recorder",
+        "domain_revision": 1,
+        "observed_at_ms": 0,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "ongoing",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 1,
+            "screen_id": "sensor-recorder.home",
+            "title": "Sensor Recorder",
+            "summary": "1,024 samples",
+            "state": {
+              "provider": "mock",
+              "interactive": true
+            }
+          },
+          "glance": {
+            "revision": 1,
+            "template": "ongoing",
+            "title": "Sensor Recorder",
+            "primary": "1,024 samples",
+            "secondary": "Mock data · now",
+            "action": {
+              "id": "sensor-recorder.primary",
+              "label": "Start recording"
+            }
+          },
+          "complication": {
+            "revision": 1,
+            "label": "Sensor Recorder",
+            "value": "1,024 samples",
+            "icon": "sensor-recorder"
+          },
+          "notification": {
+            "revision": 1,
+            "status": "inactive"
+          },
+          "ongoing": {
+            "revision": 1,
+            "status": "active",
+            "title": "Sensor Recorder",
+            "detail": "1,024 samples",
+            "actions": [
+              {
+                "id": "sensor-recorder.primary",
+                "label": "Start recording"
+              }
+            ]
+          },
+          "voice": {
+            "revision": 1,
+            "actions": [
+              {
+                "id": "sensor-recorder.primary",
+                "example": "Start recording",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "action.dispatch",
+      "target": "sensor-recorder.primary",
+      "value": {
+        "source": "touch"
+      }
+    },
+    {
+      "op": "assert.state",
+      "equals": {
+        "providers.mock.revision": 1,
+        "surfaces.dev.doodad.sensor-recorder.domain_revision": 1,
+        "actions.count": 1,
+        "actions.last_target": "sensor-recorder.primary"
+      }
+    }
+  ]
+}

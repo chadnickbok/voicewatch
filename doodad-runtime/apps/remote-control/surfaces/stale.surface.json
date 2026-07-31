@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.remote-control",
+  "domain_revision": 2,
+  "observed_at_ms": 1000,
+  "freshness": "stale",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 2,
+      "screen_id": "remote-control.home",
+      "title": "Remote Control Lab",
+      "summary": "Phone connected",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "stale"
+      }
+    },
+    "glance": {
+      "revision": 2,
+      "template": "metric",
+      "title": "Remote Control Lab",
+      "primary": "Phone connected",
+      "secondary": "Cached · 18 min",
+      "action": {
+        "id": "remote-control.primary",
+        "label": "Trigger"
+      }
+    },
+    "voice": {
+      "revision": 2,
+      "actions": [
+        {
+          "id": "remote-control.primary",
+          "example": "Trigger",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "sports",
+  "screen": {
+    "id": "sports.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sports.heading",
+          "type": "text",
+          "props": {
+            "text": "LIVE SPORTS",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sports.summary",
+          "type": "text",
+          "props": {
+            "text": "SF 3 · LA 2",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Live Sports status",
+            "value": "SF 3 · LA 2"
+          }
+        },
+        {
+          "id": "sports.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sports.primary",
+          "type": "button",
+          "props": {
+            "label": "Follow game",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.primary"
+          },
+          "semantics": {
+            "label": "Follow game"
+          }
+        }
+      ]
+    }
+  }
+}

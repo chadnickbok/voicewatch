@@ -127,6 +127,38 @@ int main() {
         assert(event_bytes[event_size - 3] == 0x19);
         assert(event_bytes[event_size - 2] == 0x03);
         assert(event_bytes[event_size - 1] == 0xe8);
+        constexpr UiEvent key_event{
+            1,
+            "calculator",
+            "calculator",
+            "calculator.keys",
+            "key_pressed",
+            EventKind::tap,
+            1001,
+            EventValue::text("7"),
+        };
+        const auto key_event_size = encode_event_canonical_cbor(
+            key_event, event_bytes.data(), event_bytes.size());
+        assert(key_event_size > 0);
+        assert(event_bytes[0] == 0xa8);
+        assert(event_bytes[key_event_size - 3] == 0x07);
+        assert(event_bytes[key_event_size - 2] == 0x61);
+        assert(event_bytes[key_event_size - 1] == '7');
+        constexpr UiEvent decrement_event{
+            1,
+            "workout",
+            "active_set",
+            "active_set.weight",
+            "set_weight",
+            EventKind::value_committed,
+            1002,
+            EventValue::integer(-5),
+        };
+        const auto decrement_event_size = encode_event_canonical_cbor(
+            decrement_event, event_bytes.data(), event_bytes.size());
+        assert(decrement_event_size > 0);
+        assert(event_bytes[decrement_event_size - 2] == 0x07);
+        assert(event_bytes[decrement_event_size - 1] == 0x24);
 
         constexpr std::array<std::uint8_t, 56> ui_batch_bytes{
             0xa2, 0x00, 0x01, 0x01, 0x82,

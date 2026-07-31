@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sensor-recorder",
+  "screen": {
+    "id": "sensor-recorder.export",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sensor-recorder.export.heading",
+          "type": "text",
+          "props": {
+            "text": "SESSION",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sensor-recorder.export.summary",
+          "type": "text",
+          "props": {
+            "text": "1,024 samples",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "SESSION",
+            "value": "1,024 samples"
+          }
+        },
+        {
+          "id": "sensor-recorder.export.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "No gaps · 48 KiB · checksum OK",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sensor-recorder.export.primary",
+          "type": "button",
+          "props": {
+            "label": "Export CSV",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sensor.export.csv"
+          },
+          "semantics": {
+            "label": "Export CSV"
+          }
+        },
+        {
+          "id": "sensor-recorder.export.secondary",
+          "type": "button",
+          "props": {
+            "label": "Record again",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sensor.again"
+          },
+          "semantics": {
+            "label": "Record again"
+          }
+        }
+      ]
+    }
+  }
+}

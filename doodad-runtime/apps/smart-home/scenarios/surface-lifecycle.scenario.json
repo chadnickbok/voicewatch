@@ -1,0 +1,249 @@
+{
+  "schema_version": 1,
+  "id": "smart-home.surface.lifecycle",
+  "app_id": "dev.doodad.smart-home",
+  "initial_state": {
+    "wall_time_ms": 1700000000000,
+    "timezone_offset_minutes": -420,
+    "app_state": "foreground",
+    "display_state": "awake",
+    "connectivity": "online"
+  },
+  "steps": [
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.smart-home",
+        "domain_revision": 1,
+        "observed_at_ms": 0,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 1,
+            "screen_id": "smart-home.home",
+            "title": "Smart Home",
+            "summary": "Living room on",
+            "state": {
+              "provider": "mock",
+              "interactive": true
+            }
+          },
+          "glance": {
+            "revision": 1,
+            "template": "metric",
+            "title": "Smart Home",
+            "primary": "Living room on",
+            "secondary": "Mock data · now",
+            "action": {
+              "id": "smart-home.primary",
+              "label": "Toggle light"
+            }
+          },
+          "complication": {
+            "revision": 1,
+            "label": "Smart Home",
+            "value": "Living room on",
+            "icon": "smart-home"
+          },
+          "notification": {
+            "revision": 1,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 1,
+            "actions": [
+              {
+                "id": "smart-home.primary",
+                "example": "Toggle light",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "clock.advance",
+      "milliseconds": 1000
+    },
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "smart-home.stale",
+      "revision": 1,
+      "status": "stale",
+      "payload": {
+        "age_minutes": 18
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.smart-home",
+        "domain_revision": 2,
+        "observed_at_ms": 1000,
+        "freshness": "stale",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 2,
+            "screen_id": "smart-home.home",
+            "title": "Smart Home",
+            "summary": "Living room on",
+            "state": {
+              "provider": "mock",
+              "interactive": true,
+              "freshness": "stale"
+            }
+          },
+          "glance": {
+            "revision": 2,
+            "template": "metric",
+            "title": "Smart Home",
+            "primary": "Living room on",
+            "secondary": "Cached · 18 min",
+            "action": {
+              "id": "smart-home.primary",
+              "label": "Toggle light"
+            }
+          },
+          "complication": {
+            "revision": 2,
+            "label": "Smart Home",
+            "value": "Living room on",
+            "icon": "smart-home"
+          },
+          "notification": {
+            "revision": 2,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 2,
+            "actions": [
+              {
+                "id": "smart-home.primary",
+                "example": "Toggle light",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "lifecycle.set",
+      "connectivity": "offline"
+    },
+    {
+      "op": "clock.advance",
+      "milliseconds": 1000
+    },
+    {
+      "op": "lifecycle.set",
+      "connectivity": "online"
+    },
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "smart-home.recovered",
+      "revision": 2,
+      "status": "current",
+      "payload": {
+        "reconciled": true
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.smart-home",
+        "domain_revision": 3,
+        "observed_at_ms": 2000,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 3,
+            "screen_id": "smart-home.home",
+            "title": "Smart Home",
+            "summary": "Living room on",
+            "state": {
+              "provider": "mock",
+              "interactive": true,
+              "freshness": "current"
+            }
+          },
+          "glance": {
+            "revision": 3,
+            "template": "metric",
+            "title": "Smart Home",
+            "primary": "Living room on",
+            "secondary": "Updated now",
+            "action": {
+              "id": "smart-home.primary",
+              "label": "Toggle light"
+            }
+          },
+          "complication": {
+            "revision": 3,
+            "label": "Smart Home",
+            "value": "Living room on",
+            "icon": "smart-home"
+          },
+          "notification": {
+            "revision": 3,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 3,
+            "actions": [
+              {
+                "id": "smart-home.primary",
+                "example": "Toggle light",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "action.dispatch",
+      "target": "smart-home.primary",
+      "value": {
+        "source": "voice"
+      }
+    },
+    {
+      "op": "assert.state",
+      "equals": {
+        "surfaces.dev.doodad.smart-home.domain_revision": 3,
+        "surfaces.dev.doodad.smart-home.freshness": "current",
+        "providers.mock.revision": 2,
+        "lifecycle.connectivity": "online",
+        "actions.count": 1
+      }
+    }
+  ]
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sleep",
+  "screen": {
+    "id": "sleep.overnight",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sleep.overnight.heading",
+          "type": "text",
+          "props": {
+            "text": "SLEEPING",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sleep.overnight.summary",
+          "type": "text",
+          "props": {
+            "text": "6h 18m",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "SLEEPING",
+            "value": "6h 18m"
+          }
+        },
+        {
+          "id": "sleep.overnight.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Low-power motion service · UI inactive",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sleep.overnight.primary",
+          "type": "button",
+          "props": {
+            "label": "Simulate morning",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.morning"
+          },
+          "semantics": {
+            "label": "Simulate morning"
+          }
+        },
+        {
+          "id": "sleep.overnight.secondary",
+          "type": "button",
+          "props": {
+            "label": "Wake now",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.wake"
+          },
+          "semantics": {
+            "label": "Wake now"
+          }
+        }
+      ]
+    }
+  }
+}

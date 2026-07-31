@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "app_id": "snake",
+  "screen": {
+    "id": "snake.game",
+    "type": "screen",
+    "props": {
+      "gap": "xs",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "snake.game.heading",
+          "type": "text",
+          "props": {
+            "text": "SNAKE · MOCK CLOCK",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "snake.game.score",
+          "type": "text",
+          "props": {
+            "text": "SCORE 0",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Snake score",
+            "value": "0"
+          }
+        },
+        {
+          "id": "snake.game.board-top",
+          "type": "text",
+          "props": {
+            "text": "........\n........\n........\n.oo@.*..",
+            "style": "body",
+            "max_lines": 4,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Top half of eight by eight Snake board"
+          }
+        },
+        {
+          "id": "snake.game.board-bottom",
+          "type": "text",
+          "props": {
+            "text": "........\n........\n........\n........",
+            "style": "body",
+            "max_lines": 4,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Bottom half of eight by eight Snake board"
+          }
+        },
+        {
+          "id": "snake.game.controls",
+          "type": "keypad",
+          "props": {
+            "columns": 3,
+            "keys": [
+              "L",
+              "Go",
+              "R",
+              "New",
+              "Quit"
+            ]
+          },
+          "events": {
+            "tap": "snake.control"
+          },
+          "semantics": {
+            "label": "Snake controls"
+          }
+        }
+      ]
+    }
+  }
+}

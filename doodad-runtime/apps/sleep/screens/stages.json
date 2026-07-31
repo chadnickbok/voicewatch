@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sleep",
+  "screen": {
+    "id": "sleep.stages",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sleep.stages.heading",
+          "type": "text",
+          "props": {
+            "text": "SLEEP STAGES",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sleep.stages.summary",
+          "type": "text",
+          "props": {
+            "text": "▂▅▃▇▆▂▅",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "SLEEP STAGES",
+            "value": "▂▅▃▇▆▂▅"
+          }
+        },
+        {
+          "id": "sleep.stages.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Smart alarm fired once at 7:18",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sleep.stages.primary",
+          "type": "button",
+          "props": {
+            "label": "History",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.history"
+          },
+          "semantics": {
+            "label": "History"
+          }
+        },
+        {
+          "id": "sleep.stages.secondary",
+          "type": "button",
+          "props": {
+            "label": "Summary",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sleep.summary"
+          },
+          "semantics": {
+            "label": "Summary"
+          }
+        }
+      ]
+    }
+  }
+}

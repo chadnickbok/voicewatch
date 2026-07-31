@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "sports",
+  "screen": {
+    "id": "sports.final",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sports.final.heading",
+          "type": "text",
+          "props": {
+            "text": "FINAL",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sports.final.summary",
+          "type": "text",
+          "props": {
+            "text": "SF 5 · LA 3",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "FINAL",
+            "value": "SF 5 · LA 3"
+          }
+        },
+        {
+          "id": "sports.final.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Ongoing card ended · one haptic",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sports.final.primary",
+          "type": "button",
+          "props": {
+            "label": "Scoring plays",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.plays"
+          },
+          "semantics": {
+            "label": "Scoring plays"
+          }
+        },
+        {
+          "id": "sports.final.secondary",
+          "type": "button",
+          "props": {
+            "label": "Follow rematch",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sports.follow"
+          },
+          "semantics": {
+            "label": "Follow rematch"
+          }
+        }
+      ]
+    }
+  }
+}

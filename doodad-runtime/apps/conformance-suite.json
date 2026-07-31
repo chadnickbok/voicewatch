@@ -1,0 +1,285 @@
+{
+  "schema_version": 1,
+  "apps": [
+    {
+      "index": 1,
+      "slug": "timer",
+      "id": "dev.doodad.timer",
+      "name": "Timer Suite",
+      "mode": "hybrid",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 2,
+      "slug": "weather",
+      "id": "dev.doodad.weather",
+      "name": "Weather + Rain",
+      "mode": "hybrid",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 3,
+      "slug": "notifications",
+      "id": "dev.doodad.notifications",
+      "name": "Notification Inbox",
+      "mode": "trusted",
+      "surfaces": [
+        "app",
+        "glance",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 4,
+      "slug": "tasks",
+      "id": "dev.doodad.tasks",
+      "name": "Tasks + Reminders",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 5,
+      "slug": "calculator",
+      "id": "dev.doodad.calculator",
+      "name": "Calculator",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "voice"
+      ]
+    },
+    {
+      "index": 6,
+      "slug": "calendar",
+      "id": "dev.doodad.calendar",
+      "name": "Calendar + Agenda",
+      "mode": "hybrid",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 7,
+      "slug": "workout",
+      "id": "dev.doodad.workout",
+      "name": "Workout Tracker",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 8,
+      "slug": "calories",
+      "id": "dev.doodad.calories",
+      "name": "Nutrition + Hydration",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 9,
+      "slug": "voice-notes",
+      "id": "dev.doodad.voice-notes",
+      "name": "Voice Notes",
+      "mode": "trusted",
+      "surfaces": [
+        "app",
+        "glance",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 10,
+      "slug": "medication",
+      "id": "dev.doodad.medication",
+      "name": "Medication + Habits",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 11,
+      "slug": "sensor-recorder",
+      "id": "dev.doodad.sensor-recorder",
+      "name": "Sensor Recorder",
+      "mode": "trusted",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 12,
+      "slug": "sleep",
+      "id": "dev.doodad.sleep",
+      "name": "Sleep + Smart Alarm",
+      "mode": "trusted",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 13,
+      "slug": "media",
+      "id": "dev.doodad.media",
+      "name": "Media Remote",
+      "mode": "hybrid",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 14,
+      "slug": "navigation",
+      "id": "dev.doodad.navigation",
+      "name": "Navigation",
+      "mode": "hybrid",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 15,
+      "slug": "transit",
+      "id": "dev.doodad.transit",
+      "name": "Transit Departures",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 16,
+      "slug": "smart-home",
+      "id": "dev.doodad.smart-home",
+      "name": "Smart Home",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 17,
+      "slug": "sports",
+      "id": "dev.doodad.sports",
+      "name": "Live Sports",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "ongoing",
+        "voice"
+      ]
+    },
+    {
+      "index": 18,
+      "slug": "wallet",
+      "id": "dev.doodad.wallet",
+      "name": "Pass + QR Wallet",
+      "mode": "trusted",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification",
+        "voice"
+      ]
+    },
+    {
+      "index": 19,
+      "slug": "remote-control",
+      "id": "dev.doodad.remote-control",
+      "name": "Remote Control Lab",
+      "mode": "trusted",
+      "surfaces": [
+        "app",
+        "glance",
+        "voice"
+      ]
+    },
+    {
+      "index": 20,
+      "slug": "snake",
+      "id": "dev.doodad.snake",
+      "name": "Snake",
+      "mode": "generated",
+      "surfaces": [
+        "app",
+        "glance",
+        "complication",
+        "notification"
+      ]
+    }
+  ]
+}

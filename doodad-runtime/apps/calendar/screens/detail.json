@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "calendar",
+  "screen": {
+    "id": "calendar.detail",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "calendar.detail.heading",
+          "type": "text",
+          "props": {
+            "text": "DESIGN REVIEW",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "calendar.detail.summary",
+          "type": "text",
+          "props": {
+            "text": "2:00–2:45",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "DESIGN REVIEW",
+            "value": "2:00–2:45"
+          }
+        },
+        {
+          "id": "calendar.detail.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Studio · 4 guests · cached",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "calendar.detail.primary",
+          "type": "button",
+          "props": {
+            "label": "RSVP yes",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calendar.rsvp.yes"
+          },
+          "semantics": {
+            "label": "RSVP yes"
+          }
+        },
+        {
+          "id": "calendar.detail.secondary",
+          "type": "button",
+          "props": {
+            "label": "Back to agenda",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calendar.back"
+          },
+          "semantics": {
+            "label": "Back to agenda"
+          }
+        }
+      ]
+    }
+  }
+}

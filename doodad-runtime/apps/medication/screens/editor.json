@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "medication",
+  "screen": {
+    "id": "medication.editor",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "medication.editor.heading",
+          "type": "text",
+          "props": {
+            "text": "NEW REMINDER",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "medication.editor.summary",
+          "type": "text",
+          "props": {
+            "text": "8:00 daily",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "NEW REMINDER",
+            "value": "8:00 daily"
+          }
+        },
+        {
+          "id": "medication.editor.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Schedule survives app replacement",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "medication.editor.primary",
+          "type": "button",
+          "props": {
+            "label": "Save",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "medication.save"
+          },
+          "semantics": {
+            "label": "Save"
+          }
+        },
+        {
+          "id": "medication.editor.secondary",
+          "type": "button",
+          "props": {
+            "label": "Cancel",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "medication.cancel"
+          },
+          "semantics": {
+            "label": "Cancel"
+          }
+        }
+      ]
+    }
+  }
+}

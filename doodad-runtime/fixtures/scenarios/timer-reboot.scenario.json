@@ -1,0 +1,341 @@
+{
+  "schema_version": 1,
+  "id": "timer.reboot.delivery",
+  "app_id": "dev.doodad.timer",
+  "initial_state": {
+    "wall_time_ms": 1700000000000,
+    "timezone_offset_minutes": -420,
+    "app_state": "foreground",
+    "display_state": "awake",
+    "connectivity": "online"
+  },
+  "steps": [
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.timer",
+        "domain_revision": 1,
+        "observed_at_ms": 0,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "ongoing",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 1,
+            "screen_id": "timer.running",
+            "title": "Timer",
+            "summary": "1 minute remaining",
+            "state": {
+              "remaining_ms": 60000,
+              "running": true
+            }
+          },
+          "glance": {
+            "revision": 1,
+            "template": "ongoing",
+            "title": "Timer",
+            "primary": "1:00",
+            "secondary": "Tea",
+            "progress": 0,
+            "action": {
+              "id": "timer.pause",
+              "label": "Pause"
+            }
+          },
+          "complication": {
+            "revision": 1,
+            "label": "Timer",
+            "value": "1:00",
+            "icon": "timer"
+          },
+          "notification": {
+            "revision": 1,
+            "status": "inactive"
+          },
+          "ongoing": {
+            "revision": 1,
+            "status": "active",
+            "title": "Tea timer",
+            "detail": "1:00 remaining",
+            "progress": 0,
+            "actions": [
+              {
+                "id": "timer.pause",
+                "label": "Pause"
+              },
+              {
+                "id": "timer.cancel",
+                "label": "Cancel",
+                "destructive": true
+              }
+            ]
+          },
+          "voice": {
+            "revision": 1,
+            "actions": [
+              {
+                "id": "timer.create",
+                "example": "Set a timer for five minutes",
+                "confirmation": "never"
+              },
+              {
+                "id": "timer.cancel",
+                "example": "Cancel my tea timer",
+                "confirmation": "destructive"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "provider.emit",
+      "provider": "scheduler",
+      "event": "timer.created",
+      "revision": 1,
+      "status": "current",
+      "payload": {
+        "timer_id": "tea",
+        "deadline_scenario_ms": 60000
+      }
+    },
+    {
+      "op": "action.dispatch",
+      "target": "timer.start",
+      "value": {
+        "duration_ms": 60000,
+        "label": "Tea"
+      }
+    },
+    {
+      "op": "clock.advance",
+      "milliseconds": 55000
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.timer",
+        "domain_revision": 2,
+        "observed_at_ms": 55000,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "ongoing",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 2,
+            "screen_id": "timer.running",
+            "title": "Timer",
+            "summary": "5 seconds remaining",
+            "state": {
+              "remaining_ms": 5000,
+              "running": true
+            }
+          },
+          "glance": {
+            "revision": 2,
+            "template": "ongoing",
+            "title": "Timer",
+            "primary": "0:05",
+            "secondary": "Tea",
+            "progress": 0.9167,
+            "action": {
+              "id": "timer.pause",
+              "label": "Pause"
+            }
+          },
+          "complication": {
+            "revision": 2,
+            "label": "Timer",
+            "value": "0:05",
+            "icon": "timer"
+          },
+          "notification": {
+            "revision": 2,
+            "status": "inactive"
+          },
+          "ongoing": {
+            "revision": 2,
+            "status": "active",
+            "title": "Tea timer",
+            "detail": "0:05 remaining",
+            "progress": 0.9167,
+            "actions": [
+              {
+                "id": "timer.pause",
+                "label": "Pause"
+              },
+              {
+                "id": "timer.cancel",
+                "label": "Cancel",
+                "destructive": true
+              }
+            ]
+          },
+          "voice": {
+            "revision": 2,
+            "actions": [
+              {
+                "id": "timer.create",
+                "example": "Set a timer for five minutes",
+                "confirmation": "never"
+              },
+              {
+                "id": "timer.cancel",
+                "example": "Cancel my tea timer",
+                "confirmation": "destructive"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "lifecycle.set",
+      "app_state": "background",
+      "display_state": "asleep"
+    },
+    {
+      "op": "system.reboot",
+      "downtime_ms": 2500
+    },
+    {
+      "op": "lifecycle.set",
+      "app_state": "foreground",
+      "connectivity": "online"
+    },
+    {
+      "op": "lifecycle.set",
+      "app_state": "background"
+    },
+    {
+      "op": "clock.advance",
+      "milliseconds": 2500
+    },
+    {
+      "op": "provider.emit",
+      "provider": "scheduler",
+      "event": "timer.fired",
+      "revision": 2,
+      "status": "current",
+      "payload": {
+        "timer_id": "tea",
+        "delivered_exactly_once": true
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.timer",
+        "domain_revision": 3,
+        "observed_at_ms": 60000,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "ongoing",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 3,
+            "screen_id": "timer.complete",
+            "title": "Timer",
+            "summary": "Tea timer complete",
+            "state": {
+              "remaining_ms": 0,
+              "running": false
+            }
+          },
+          "glance": {
+            "revision": 3,
+            "template": "alert",
+            "title": "Timer complete",
+            "primary": "Tea",
+            "secondary": "Now",
+            "action": {
+              "id": "timer.dismiss",
+              "label": "Dismiss"
+            }
+          },
+          "complication": {
+            "revision": 3,
+            "label": "Timer",
+            "value": "Done",
+            "icon": "timer"
+          },
+          "notification": {
+            "revision": 3,
+            "status": "active",
+            "title": "Timer complete",
+            "body": "Tea is ready",
+            "privacy": "public",
+            "actions": [
+              {
+                "id": "timer.dismiss",
+                "label": "Dismiss"
+              },
+              {
+                "id": "timer.restart",
+                "label": "Restart"
+              }
+            ]
+          },
+          "ongoing": {
+            "revision": 3,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 3,
+            "actions": [
+              {
+                "id": "timer.create",
+                "example": "Set a timer for five minutes",
+                "confirmation": "never"
+              },
+              {
+                "id": "timer.restart",
+                "example": "Restart my tea timer",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "assert.state",
+      "equals": {
+        "clock.scenario_ms": 60000,
+        "clock.uptime_ms": 2500,
+        "clock.wall_time_ms": 1700000060000,
+        "clock.boot_generation": 2,
+        "lifecycle.app_state": "background",
+        "lifecycle.display_state": "asleep",
+        "lifecycle.connectivity": "online",
+        "providers.scheduler.revision": 2,
+        "providers.scheduler.event": "timer.fired",
+        "surfaces.dev.doodad.timer.domain_revision": 3,
+        "surfaces.dev.doodad.timer.surfaces.notification.status": "active",
+        "surfaces.dev.doodad.timer.surfaces.ongoing.status": "inactive",
+        "actions.count": 1
+      }
+    }
+  ]
+}

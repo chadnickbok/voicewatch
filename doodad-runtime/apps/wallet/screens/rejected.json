@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "wallet",
+  "screen": {
+    "id": "wallet.rejected",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "wallet.rejected.heading",
+          "type": "text",
+          "props": {
+            "text": "UPDATE REJECTED",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "wallet.rejected.summary",
+          "type": "text",
+          "props": {
+            "text": "Signature invalid",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "UPDATE REJECTED",
+            "value": "Signature invalid"
+          }
+        },
+        {
+          "id": "wallet.rejected.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Last verified pass preserved",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "wallet.rejected.primary",
+          "type": "button",
+          "props": {
+            "label": "Use safe pass",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.safe"
+          },
+          "semantics": {
+            "label": "Use safe pass"
+          }
+        },
+        {
+          "id": "wallet.rejected.secondary",
+          "type": "button",
+          "props": {
+            "label": "Review details",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.review"
+          },
+          "semantics": {
+            "label": "Review details"
+          }
+        }
+      ]
+    }
+  }
+}

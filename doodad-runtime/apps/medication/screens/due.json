@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "medication",
+  "screen": {
+    "id": "medication.due",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "medication.due.heading",
+          "type": "text",
+          "props": {
+            "text": "MEDICATION DUE",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "medication.due.summary",
+          "type": "text",
+          "props": {
+            "text": "Vitamin D",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "MEDICATION DUE",
+            "value": "Vitamin D"
+          }
+        },
+        {
+          "id": "medication.due.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "One exact notification · private",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "medication.due.primary",
+          "type": "button",
+          "props": {
+            "label": "Take now",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "medication.take"
+          },
+          "semantics": {
+            "label": "Take now"
+          }
+        },
+        {
+          "id": "medication.due.secondary",
+          "type": "button",
+          "props": {
+            "label": "Snooze 10m",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "medication.snooze"
+          },
+          "semantics": {
+            "label": "Snooze 10m"
+          }
+        }
+      ]
+    }
+  }
+}

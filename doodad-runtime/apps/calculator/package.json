@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "suite_index": 5,
+  "mode": "generated",
+  "surfaces": [
+    "app",
+    "voice"
+  ],
+  "mock_provider": "deterministic",
+  "implementation_status": "wave1-functional"
+}

@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "id": "catalog.hero-metric.resting",
+  "scene": "hero-metric",
+  "title": "Hero metric",
+  "data": {
+    "label": "Move",
+    "value": "7,420",
+    "unit": "steps",
+    "progress": 0.74
+  },
+  "ui_state": {
+    "status": "current"
+  },
+  "theme": {
+    "color_scheme": "baseline-dark",
+    "typography": "wear-default",
+    "shapes": "wear-default",
+    "motion_scheme": "expressive",
+    "dynamic_color": false,
+    "ambient": false,
+    "reduced_motion": false
+  },
+  "render_profiles": [
+    "wear_round_small",
+    "wear_round_large",
+    "watch_square_240"
+  ],
+  "font_scale": 1.0,
+  "interaction": {
+    "state": "resting",
+    "animation_fraction": 0.0
+  },
+  "expected_semantics": {
+    "id": "screen.hero-metric",
+    "role": "screen",
+    "label": "Move progress",
+    "children": [
+      {
+        "id": "progress.move",
+        "role": "progress",
+        "label": "Move progress",
+        "value": "74%"
+      },
+      {
+        "id": "value.move",
+        "role": "text",
+        "label": "7,420 steps"
+      }
+    ]
+  }
+}

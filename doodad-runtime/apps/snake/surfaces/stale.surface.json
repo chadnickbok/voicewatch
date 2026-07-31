@@ -1,0 +1,47 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.snake",
+  "domain_revision": 2,
+  "observed_at_ms": 1000,
+  "freshness": "stale",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 2,
+      "screen_id": "snake.home",
+      "title": "Snake",
+      "summary": "Score 12",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "stale"
+      }
+    },
+    "glance": {
+      "revision": 2,
+      "template": "metric",
+      "title": "Snake",
+      "primary": "Score 12",
+      "secondary": "Cached · 18 min",
+      "action": {
+        "id": "snake.primary",
+        "label": "Play Snake"
+      }
+    },
+    "complication": {
+      "revision": 2,
+      "label": "Snake",
+      "value": "Score 12",
+      "icon": "snake"
+    },
+    "notification": {
+      "revision": 2,
+      "status": "inactive"
+    }
+  }
+}

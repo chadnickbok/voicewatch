@@ -1,0 +1,217 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doodad.dev/schemas/reference-render-scenario-v1.schema.json",
+  "title": "Doodad dual-renderer reference scenario v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "id",
+    "scene",
+    "title",
+    "data",
+    "ui_state",
+    "theme",
+    "render_profiles",
+    "font_scale",
+    "interaction",
+    "expected_semantics"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "id": {
+      "$ref": "#/$defs/id"
+    },
+    "scene": {
+      "$ref": "#/$defs/id"
+    },
+    "title": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64
+    },
+    "appspec": {
+      "$ref": "#/$defs/repository_path"
+    },
+    "lifecycle_scenario": {
+      "$ref": "#/$defs/repository_path"
+    },
+    "data": {
+      "type": "object"
+    },
+    "ui_state": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "theme": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "color_scheme",
+        "typography",
+        "shapes",
+        "motion_scheme",
+        "dynamic_color",
+        "ambient",
+        "reduced_motion"
+      ],
+      "properties": {
+        "color_scheme": {
+          "$ref": "#/$defs/id"
+        },
+        "typography": {
+          "$ref": "#/$defs/id"
+        },
+        "shapes": {
+          "$ref": "#/$defs/id"
+        },
+        "motion_scheme": {
+          "enum": [
+            "expressive",
+            "standard"
+          ]
+        },
+        "dynamic_color": {
+          "type": "boolean"
+        },
+        "ambient": {
+          "type": "boolean"
+        },
+        "reduced_motion": {
+          "type": "boolean"
+        }
+      }
+    },
+    "render_profiles": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "wear_round_small",
+          "wear_round_large",
+          "watch_square_240"
+        ]
+      }
+    },
+    "font_scale": {
+      "type": "number",
+      "minimum": 0.85,
+      "maximum": 1.3
+    },
+    "interaction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "animation_fraction"
+      ],
+      "properties": {
+        "state": {
+          "enum": [
+            "resting",
+            "pressed",
+            "selected",
+            "disabled",
+            "loading",
+            "error",
+            "mid_animation",
+            "end_state"
+          ]
+        },
+        "target": {
+          "$ref": "#/$defs/id"
+        },
+        "animation_fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      }
+    },
+    "expected_semantics": {
+      "$ref": "#/$defs/semantic_node"
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,95}$"
+    },
+    "repository_path": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 256,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$)).+$"
+    },
+    "semantic_node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "role",
+        "label"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "role": {
+          "enum": [
+            "screen",
+            "header",
+            "text",
+            "button",
+            "toggle",
+            "progress",
+            "list",
+            "list_item",
+            "dialog",
+            "stepper",
+            "group"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "value": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "state_description": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "selected": {
+          "type": "boolean"
+        },
+        "checked": {
+          "type": "boolean"
+        },
+        "children": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "$ref": "#/$defs/semantic_node"
+          }
+        }
+      }
+    }
+  }
+}

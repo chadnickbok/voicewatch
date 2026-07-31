@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "smart-home",
+  "screen": {
+    "id": "smart-home.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "smart-home.heading",
+          "type": "text",
+          "props": {
+            "text": "SMART HOME",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "smart-home.summary",
+          "type": "text",
+          "props": {
+            "text": "Living room on",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Smart Home status",
+            "value": "Living room on"
+          }
+        },
+        {
+          "id": "smart-home.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "smart-home.primary",
+          "type": "button",
+          "props": {
+            "label": "Toggle light",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "smart-home.primary"
+          },
+          "semantics": {
+            "label": "Toggle light"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "smart-home",
+  "screen": {
+    "id": "smart-home.unlocked",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "smart-home.unlocked.heading",
+          "type": "text",
+          "props": {
+            "text": "FRONT DOOR",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "smart-home.unlocked.summary",
+          "type": "text",
+          "props": {
+            "text": "Unlocked ✓",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "FRONT DOOR",
+            "value": "Unlocked ✓"
+          }
+        },
+        {
+          "id": "smart-home.unlocked.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Acknowledged once · audit #204",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "smart-home.unlocked.primary",
+          "type": "button",
+          "props": {
+            "label": "Lock again",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "home.relock"
+          },
+          "semantics": {
+            "label": "Lock again"
+          }
+        },
+        {
+          "id": "smart-home.unlocked.secondary",
+          "type": "button",
+          "props": {
+            "label": "Home",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "home.home"
+          },
+          "semantics": {
+            "label": "Home"
+          }
+        }
+      ]
+    }
+  }
+}

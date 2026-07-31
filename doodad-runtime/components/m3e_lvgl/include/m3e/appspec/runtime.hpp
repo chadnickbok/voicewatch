@@ -36,6 +36,30 @@ enum class EventKind : std::uint8_t {
     cancel,
 };
 
+enum class EventValueKind : std::uint8_t {
+    none,
+    integer,
+    boolean,
+    text,
+};
+
+struct EventValue {
+    EventValueKind kind = EventValueKind::none;
+    std::int32_t integer_value = 0;
+    bool boolean_value = false;
+    const char* text_value = nullptr;
+
+    static constexpr EventValue integer(std::int32_t value) {
+        return {EventValueKind::integer, value, false, nullptr};
+    }
+    static constexpr EventValue boolean(bool value) {
+        return {EventValueKind::boolean, 0, value, nullptr};
+    }
+    static constexpr EventValue text(const char* value) {
+        return {EventValueKind::text, 0, false, value};
+    }
+};
+
 struct Node {
     const char* id;
     ComponentKind kind;
@@ -141,6 +165,7 @@ struct UiEvent {
     const char* action_id;
     EventKind kind;
     std::uint64_t timestamp_monotonic_ms;
+    EventValue value{};
 };
 
 bool event_is_valid(const UiEvent& event);

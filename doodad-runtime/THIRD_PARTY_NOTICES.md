@@ -14,6 +14,18 @@ assets must retain their individual notices and exact revision metadata.
 No AndroidX runtime code executes on the watch. Adapted copyrightable source or
 generated constants must carry the required Apache notice.
 
+The Android reference lane adapts the test-device and screenshot-test structure
+from Google's `android/wear-os-samples` ComposeStarter project. The adapted
+source files retain Android Open Source Project copyright and Apache-2.0
+notices.
+
+## Roborazzi
+
+- Version: 1.59.0
+- License: Apache License 2.0
+- Use: host-side Compose screenshot recording and comparison
+- Source: `https://github.com/takahirom/roborazzi`
+
 ## Material Color Utilities
 
 - License: Apache License 2.0

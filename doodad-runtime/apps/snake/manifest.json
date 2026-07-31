@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "id": "dev.doodad.snake",
+  "name": "Snake",
+  "version": "0.1.0",
+  "host_abi": 1,
+  "capabilities": [
+    "ui.mount",
+    "game.clock"
+  ],
+  "wasm": "app.wasm"
+}

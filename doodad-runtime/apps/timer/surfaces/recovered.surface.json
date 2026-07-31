@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.timer",
+  "domain_revision": 3,
+  "observed_at_ms": 2000,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 3,
+      "screen_id": "timer.home",
+      "title": "Timer Suite",
+      "summary": "1:00 remaining",
+      "state": {
+        "provider": "mock",
+        "interactive": true,
+        "freshness": "current"
+      }
+    },
+    "glance": {
+      "revision": 3,
+      "template": "ongoing",
+      "title": "Timer Suite",
+      "primary": "1:00 remaining",
+      "secondary": "Updated now",
+      "action": {
+        "id": "timer.primary",
+        "label": "Start timer"
+      }
+    },
+    "complication": {
+      "revision": 3,
+      "label": "Timer Suite",
+      "value": "1:00 remaining",
+      "icon": "timer"
+    },
+    "notification": {
+      "revision": 3,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 3,
+      "status": "active",
+      "title": "Timer Suite",
+      "detail": "1:00 remaining",
+      "actions": [
+        {
+          "id": "timer.primary",
+          "label": "Start timer"
+        }
+      ]
+    },
+    "voice": {
+      "revision": 3,
+      "actions": [
+        {
+          "id": "timer.primary",
+          "example": "Start timer",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

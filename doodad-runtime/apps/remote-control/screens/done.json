@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "remote-control",
+  "screen": {
+    "id": "remote-control.done",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "remote-control.done.heading",
+          "type": "text",
+          "props": {
+            "text": "CAMERA",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "remote-control.done.summary",
+          "type": "text",
+          "props": {
+            "text": "Captured ✓",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "CAMERA",
+            "value": "Captured ✓"
+          }
+        },
+        {
+          "id": "remote-control.done.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Command #73 applied exactly once",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "remote-control.done.primary",
+          "type": "button",
+          "props": {
+            "label": "Capture again",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.camera"
+          },
+          "semantics": {
+            "label": "Capture again"
+          }
+        },
+        {
+          "id": "remote-control.done.secondary",
+          "type": "button",
+          "props": {
+            "label": "Targets",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "remote.targets"
+          },
+          "semantics": {
+            "label": "Targets"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -7,12 +7,18 @@ set(M3E_LVGL_SOURCES
     src/catalog/catalog.cpp
     src/components/components.cpp
     src/components/transforming_list.cpp
+    src/conformance/deterministic_system.cpp
     src/foundation/color.cpp
     src/foundation/display_profile.cpp
     src/foundation/geometry.cpp
     src/foundation/semantic_tokens.cpp
     src/navigation/route_stack.cpp
+    src/os/shell_state.cpp
+    src/os/surface_registry.cpp
     src/semantics/semantic_tree.cpp
+    src/services/exact_scheduler.cpp
+    src/services/exact_scheduler_c.cpp
+    src/services/provider_event_c.cpp
     src/state/binding_hub.cpp
     src/state/store.cpp
     src/theme/resolved_theme.cpp

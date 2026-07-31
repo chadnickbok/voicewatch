@@ -1,0 +1,699 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "calories",
+    "id": "dev.doodad.calories",
+    "name": "Nutrition + Hydration",
+    "mode": "generated",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 7252,
+    "package_bytes": 7445,
+    "authored_json_documents": 10,
+    "canonical_cbor_documents": 4,
+    "maximum_appspec_bytes": 456,
+    "decisive_actions": 6,
+    "distinct_screens": 3,
+    "distinct_semantic_states": 5,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 15,
+    "maximum_lvgl_depth": 3,
+    "total_changed_pixels": 144402,
+    "semantic_events": 6,
+    "provider_requests": 0
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "today",
+      "semantic_sha256": "88dcc12b3d699fd348e2e8873b384609a939f8658c8ec3fe40cae13702412a67",
+      "framebuffer_rgb565_sha256": "6fb401cfb1909762d9cc0e9dff33ab04c869406db325149b3d901f34180bc30c",
+      "changed_pixels": 57600,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calories",
+        "nodes": [
+          {
+            "id": "today",
+            "role": "screen",
+            "label": "calories",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "today.heading",
+            "role": "text",
+            "label": "Today / Calories",
+            "text": "Today / Calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.total",
+            "role": "text",
+            "label": "1,420 kcal",
+            "text": "1,420 kcal",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.progress",
+            "role": "progress",
+            "label": "Daily calorie target",
+            "text": "Daily calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.lunch",
+            "role": "list_item",
+            "label": "Lunch",
+            "text": "Lunch",
+            "secondary": "Chicken bowl | 560 kcal",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.quick_add",
+            "role": "button",
+            "label": "Quick add calories",
+            "text": "Quick add",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Quick add"
+      },
+      "screen_id": "calories.quick-add",
+      "semantic_sha256": "aa59fbce0a187441b48afd7f6904f56b25a20fb55ee52047de8fc8df739ffd7a",
+      "framebuffer_rgb565_sha256": "123135eea99f633bf9bc645af66e1eb1ba635003b74884d4a74a75b70de44ae2",
+      "changed_pixels": 32598,
+      "mounted_nodes": 6,
+      "mounted_events": 3,
+      "lvgl_objects": 15,
+      "lvgl_depth": 3,
+      "semantic_events": 1,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calories",
+        "nodes": [
+          {
+            "id": "calories.quick-add",
+            "role": "screen",
+            "label": "calories",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "calories.quick.heading",
+            "role": "text",
+            "label": "QUICK ADD",
+            "text": "QUICK ADD",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.amount",
+            "role": "slider",
+            "label": "Calories to add",
+            "text": "Calories",
+            "secondary": "kcal",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.detail",
+            "role": "list_item",
+            "label": "Local record",
+            "text": "Local record",
+            "secondary": "Updates totals atomically",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.add",
+            "role": "button",
+            "label": "Add calories",
+            "text": "Add calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.voice",
+            "role": "button",
+            "label": "Review a structured voice record",
+            "text": "Voice input",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "+"
+      },
+      "screen_id": "calories.quick-add",
+      "semantic_sha256": "aa59fbce0a187441b48afd7f6904f56b25a20fb55ee52047de8fc8df739ffd7a",
+      "framebuffer_rgb565_sha256": "e0b0a7ed46a9b340d6cb23e48fbe8f22b5ab6ffbfdb6306d0621b3e2ebeea25b",
+      "changed_pixels": 439,
+      "mounted_nodes": 6,
+      "mounted_events": 3,
+      "lvgl_objects": 15,
+      "lvgl_depth": 3,
+      "semantic_events": 2,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calories",
+        "nodes": [
+          {
+            "id": "calories.quick-add",
+            "role": "screen",
+            "label": "calories",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "calories.quick.heading",
+            "role": "text",
+            "label": "QUICK ADD",
+            "text": "QUICK ADD",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.amount",
+            "role": "slider",
+            "label": "Calories to add",
+            "text": "Calories",
+            "secondary": "kcal",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.detail",
+            "role": "list_item",
+            "label": "Local record",
+            "text": "Local record",
+            "secondary": "Updates totals atomically",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.add",
+            "role": "button",
+            "label": "Add calories",
+            "text": "Add calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.voice",
+            "role": "button",
+            "label": "Review a structured voice record",
+            "text": "Voice input",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Add calories"
+      },
+      "screen_id": "today",
+      "semantic_sha256": "cdded74e1b6df00824a239d5cb1e8d5b62433dca6c0fca3f31bfb73618cb164d",
+      "framebuffer_rgb565_sha256": "fa0d162be9dfbd8c227c61bbdc0e37fafa94f61f1a46eb06768a8294066218b6",
+      "changed_pixels": 32593,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calories",
+        "nodes": [
+          {
+            "id": "today",
+            "role": "screen",
+            "label": "calories",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "today.heading",
+            "role": "text",
+            "label": "Today / Calories",
+            "text": "Today / Calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.total",
+            "role": "text",
+            "label": "1570 kcal",
+            "text": "1570 kcal",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.progress",
+            "role": "progress",
+            "label": "Daily calorie target",
+            "text": "Daily calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.lunch",
+            "role": "list_item",
+            "label": "Lunch",
+            "text": "Lunch",
+            "secondary": "Chicken bowl | 560 kcal",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.quick_add",
+            "role": "button",
+            "label": "Quick add calories",
+            "text": "Quick add",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Quick add"
+      },
+      "screen_id": "calories.quick-add",
+      "semantic_sha256": "aa59fbce0a187441b48afd7f6904f56b25a20fb55ee52047de8fc8df739ffd7a",
+      "framebuffer_rgb565_sha256": "e0b0a7ed46a9b340d6cb23e48fbe8f22b5ab6ffbfdb6306d0621b3e2ebeea25b",
+      "changed_pixels": 32593,
+      "mounted_nodes": 6,
+      "mounted_events": 3,
+      "lvgl_objects": 15,
+      "lvgl_depth": 3,
+      "semantic_events": 4,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calories",
+        "nodes": [
+          {
+            "id": "calories.quick-add",
+            "role": "screen",
+            "label": "calories",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "calories.quick.heading",
+            "role": "text",
+            "label": "QUICK ADD",
+            "text": "QUICK ADD",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.amount",
+            "role": "slider",
+            "label": "Calories to add",
+            "text": "Calories",
+            "secondary": "kcal",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.detail",
+            "role": "list_item",
+            "label": "Local record",
+            "text": "Local record",
+            "secondary": "Updates totals atomically",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.add",
+            "role": "button",
+            "label": "Add calories",
+            "text": "Add calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.quick.voice",
+            "role": "button",
+            "label": "Review a structured voice record",
+            "text": "Voice input",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 5,
+      "trigger": {
+        "kind": "click",
+        "value": "Voice input"
+      },
+      "screen_id": "calories.voice-review",
+      "semantic_sha256": "787370f8c0fa5a46258057b664af46bd610fd60ed477dc97e710420002c022e5",
+      "framebuffer_rgb565_sha256": "1d64516fe939b3f98a04342ac40f9cf9e2f10b76f21a71a7cc74ebcfab361654",
+      "changed_pixels": 17639,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 5,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calories",
+        "nodes": [
+          {
+            "id": "calories.voice-review",
+            "role": "screen",
+            "label": "calories",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "calories.review.heading",
+            "role": "text",
+            "label": "VOICE REVIEW",
+            "text": "VOICE REVIEW",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.review.summary",
+            "role": "text",
+            "label": "650 kcal",
+            "text": "650 kcal",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.review.detail",
+            "role": "list_item",
+            "label": "Lunch",
+            "text": "Lunch",
+            "secondary": "45g protein · structured locally",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.review.confirm",
+            "role": "button",
+            "label": "Confirm voice nutrition record",
+            "text": "Confirm record",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "calories.review.correct",
+            "role": "button",
+            "label": "Correct voice nutrition record",
+            "text": "Correct amount",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 6,
+      "trigger": {
+        "kind": "click",
+        "value": "Confirm record"
+      },
+      "screen_id": "today",
+      "semantic_sha256": "0fa782f584d1fb149aa7df8f47bfe2bfee7545d27adf0726a8c5ceed23ea3852",
+      "framebuffer_rgb565_sha256": "b510d821b81ee424a058c0433381807bdc00eeca9d03084afe972208cb943dfa",
+      "changed_pixels": 28540,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 9,
+      "lvgl_depth": 2,
+      "semantic_events": 6,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "calories",
+        "nodes": [
+          {
+            "id": "today",
+            "role": "screen",
+            "label": "calories",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "today.heading",
+            "role": "text",
+            "label": "Today / Calories",
+            "text": "Today / Calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.total",
+            "role": "text",
+            "label": "2220 kcal",
+            "text": "2220 kcal",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.progress",
+            "role": "progress",
+            "label": "Daily calorie target",
+            "text": "Daily calories",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.lunch",
+            "role": "list_item",
+            "label": "Lunch",
+            "text": "Lunch",
+            "secondary": "Chicken bowl | 560 kcal",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "today.quick_add",
+            "role": "button",
+            "label": "Quick add calories",
+            "text": "Quick add",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

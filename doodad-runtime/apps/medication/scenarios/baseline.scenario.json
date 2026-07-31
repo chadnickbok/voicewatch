@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "id": "medication.baseline.interaction",
+  "app_id": "dev.doodad.medication",
+  "initial_state": {
+    "wall_time_ms": 1700000000000,
+    "timezone_offset_minutes": -420,
+    "app_state": "foreground",
+    "display_state": "awake",
+    "connectivity": "online"
+  },
+  "steps": [
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "medication.loaded",
+      "revision": 1,
+      "status": "current",
+      "payload": {
+        "deterministic": true
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.medication",
+        "domain_revision": 1,
+        "observed_at_ms": 0,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 1,
+            "screen_id": "medication.home",
+            "title": "Medication + Habits",
+            "summary": "Vitamin D at 9",
+            "state": {
+              "provider": "mock",
+              "interactive": true
+            }
+          },
+          "glance": {
+            "revision": 1,
+            "template": "metric",
+            "title": "Medication + Habits",
+            "primary": "Vitamin D at 9",
+            "secondary": "Mock data · now",
+            "action": {
+              "id": "medication.primary",
+              "label": "Mark taken"
+            }
+          },
+          "complication": {
+            "revision": 1,
+            "label": "Medication + Habits",
+            "value": "Vitamin D at 9",
+            "icon": "medication"
+          },
+          "notification": {
+            "revision": 1,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 1,
+            "actions": [
+              {
+                "id": "medication.primary",
+                "example": "Mark taken",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "action.dispatch",
+      "target": "medication.primary",
+      "value": {
+        "source": "touch"
+      }
+    },
+    {
+      "op": "assert.state",
+      "equals": {
+        "providers.mock.revision": 1,
+        "surfaces.dev.doodad.medication.domain_revision": 1,
+        "actions.count": 1,
+        "actions.last_target": "medication.primary"
+      }
+    }
+  ]
+}

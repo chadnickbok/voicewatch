@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "id": "calendar.baseline.interaction",
+  "app_id": "dev.doodad.calendar",
+  "initial_state": {
+    "wall_time_ms": 1700000000000,
+    "timezone_offset_minutes": -420,
+    "app_state": "foreground",
+    "display_state": "awake",
+    "connectivity": "online"
+  },
+  "steps": [
+    {
+      "op": "provider.emit",
+      "provider": "mock",
+      "event": "calendar.loaded",
+      "revision": 1,
+      "status": "current",
+      "payload": {
+        "deterministic": true
+      }
+    },
+    {
+      "op": "surface.publish",
+      "snapshot": {
+        "schema_version": 1,
+        "app_id": "dev.doodad.calendar",
+        "domain_revision": 1,
+        "observed_at_ms": 0,
+        "freshness": "current",
+        "declared_surfaces": [
+          "app",
+          "glance",
+          "complication",
+          "notification",
+          "voice"
+        ],
+        "surfaces": {
+          "app": {
+            "revision": 1,
+            "screen_id": "calendar.home",
+            "title": "Calendar + Agenda",
+            "summary": "Design review at 2",
+            "state": {
+              "provider": "mock",
+              "interactive": true
+            }
+          },
+          "glance": {
+            "revision": 1,
+            "template": "metric",
+            "title": "Calendar + Agenda",
+            "primary": "Design review at 2",
+            "secondary": "Mock data · now",
+            "action": {
+              "id": "calendar.primary",
+              "label": "Open event"
+            }
+          },
+          "complication": {
+            "revision": 1,
+            "label": "Calendar + Agenda",
+            "value": "Design review at 2",
+            "icon": "calendar"
+          },
+          "notification": {
+            "revision": 1,
+            "status": "inactive"
+          },
+          "voice": {
+            "revision": 1,
+            "actions": [
+              {
+                "id": "calendar.primary",
+                "example": "Open event",
+                "confirmation": "never"
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "op": "action.dispatch",
+      "target": "calendar.primary",
+      "value": {
+        "source": "touch"
+      }
+    },
+    {
+      "op": "assert.state",
+      "equals": {
+        "providers.mock.revision": 1,
+        "surfaces.dev.doodad.calendar.domain_revision": 1,
+        "actions.count": 1,
+        "actions.last_target": "calendar.primary"
+      }
+    }
+  ]
+}

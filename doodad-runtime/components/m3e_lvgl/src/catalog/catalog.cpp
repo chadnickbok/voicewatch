@@ -469,6 +469,493 @@ void system_story(lv_obj_t* screen) {
     lv_obj_set_height(permission, 66);
 }
 
+void os_home_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    factory.screen(screen);
+
+    auto* status = factory.text(
+        screen,
+        "DOODAD  •  82%",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    lv_obj_align(status, LV_ALIGN_TOP_MID, 0, 10);
+
+    auto* time = factory.text(
+        screen,
+        "10:09",
+        m3e::generated::TypographyRole::display_large);
+    lv_obj_align(time, LV_ALIGN_TOP_MID, 0, 42);
+    auto* date = factory.text(
+        screen,
+        "THU, JUL 30",
+        m3e::generated::TypographyRole::label_medium,
+        true);
+    lv_obj_align(date, LV_ALIGN_TOP_MID, 0, 92);
+
+    auto* weather = factory.card(
+        screen,
+        {"72°", "San Francisco", m3e::Tone::secondary, true});
+    lv_obj_set_pos(weather, 12, 126);
+    lv_obj_set_size(weather, 103, 70);
+    auto* timer = factory.card(
+        screen,
+        {"0:05", "Tea timer", m3e::Tone::tertiary, true});
+    lv_obj_set_pos(timer, 125, 126);
+    lv_obj_set_size(timer, 103, 70);
+
+    auto* hint = factory.text(
+        screen,
+        "C: cards   B: apps   hold B: voice",
+        m3e::generated::TypographyRole::body_extra_small,
+        true);
+    lv_obj_align(hint, LV_ALIGN_BOTTOM_MID, 0, -10);
+}
+
+void os_live_cards_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    factory.screen(screen);
+    auto* title = factory.text(
+        screen,
+        "LIVE CARDS",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 9);
+
+    auto* card = factory.live_card(
+        screen,
+        {
+            "Timer",
+            "0:05",
+            "Tea  •  running",
+            "NOW",
+            55,
+            60,
+            m3e::Tone::tertiary,
+        });
+    lv_obj_set_pos(card, 12, 34);
+    lv_obj_set_size(card, 216, 146);
+    auto* pause = factory.button(
+        screen,
+        {
+            "timer.pause",
+            "Pause",
+            m3e::Tone::primary,
+            m3e::ButtonVariant::filled,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_pos(pause, 55, 188);
+    lv_obj_set_size(pause, 130, 38);
+    auto* pager = factory.page_indicator(screen, 3, 0);
+    lv_obj_align(pager, LV_ALIGN_BOTTOM_MID, 0, -3);
+}
+
+void os_launcher_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    factory.screen(screen);
+    auto* title = factory.text(
+        screen,
+        "APPS",
+        m3e::generated::TypographyRole::title_medium);
+    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 8);
+
+    struct LauncherItem {
+        const char* id;
+        const char* label;
+        m3e::Tone tone;
+    };
+    constexpr LauncherItem items[] = {
+        {"launcher.timer", "Timer", m3e::Tone::primary},
+        {"launcher.weather", "Weather", m3e::Tone::secondary},
+        {"launcher.tasks", "Tasks", m3e::Tone::tertiary},
+        {"launcher.more", "All 20", m3e::Tone::neutral},
+    };
+    for (std::size_t index = 0; index < 4; ++index) {
+        auto* button = factory.button(
+            screen,
+            {
+                items[index].id,
+                items[index].label,
+                items[index].tone,
+                m3e::ButtonVariant::filled,
+                m3e::ComponentSize::large,
+                true,
+                false,
+            });
+        lv_obj_set_pos(
+            button,
+            12 + static_cast<std::int32_t>(index % 2) * 110,
+            42 + static_cast<std::int32_t>(index / 2) * 86);
+        lv_obj_set_size(button, 106, 76);
+    }
+    auto* hint = factory.text(
+        screen,
+        "B: home  •  hold B: voice",
+        m3e::generated::TypographyRole::body_extra_small,
+        true);
+    lv_obj_align(hint, LV_ALIGN_BOTTOM_MID, 0, -6);
+}
+
+void os_control_center_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "CONTROL CENTER",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* wifi = factory.status_chip(
+        column,
+        "Wi-Fi  connected",
+        m3e::IconName::check,
+        m3e::Tone::primary);
+    lv_obj_set_width(wifi, LV_PCT(100));
+    auto* battery = factory.status_chip(
+        column,
+        "Battery  82%  •  1d 4h",
+        m3e::IconName::information,
+        m3e::Tone::secondary);
+    lv_obj_set_width(battery, LV_PCT(100));
+    factory.text(
+        column,
+        "BRIGHTNESS",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    factory.slider(column, 64, 0, 100, 10);
+    auto* voice = factory.toggle_row(column, "Voice wake", true);
+    lv_obj_set_height(voice, 44);
+    auto* manager = factory.button(
+        column,
+        {
+            "system.app-manager",
+            "App manager",
+            m3e::Tone::neutral,
+            m3e::ButtonVariant::tonal,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_width(manager, LV_PCT(100));
+}
+
+void os_app_manager_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "APP MANAGER  •  20",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* title = factory.text(
+        column,
+        "Packages",
+        m3e::generated::TypographyRole::title_large);
+    lv_obj_set_style_margin_bottom(title, 2, 0);
+    auto* installed = factory.card(
+        column,
+        {"Timer  0.1.0", "Installed  •  84 KB",
+         m3e::Tone::primary, true});
+    lv_obj_set_height(installed, 54);
+    auto* update = factory.card(
+        column,
+        {"Weather  0.2.0", "Update ready  •  mocked",
+         m3e::Tone::secondary, true});
+    lv_obj_set_height(update, 54);
+    auto* rollback = factory.card(
+        column,
+        {"Tasks  0.1.0", "Rollback available",
+         m3e::Tone::tertiary, true});
+    lv_obj_set_height(rollback, 54);
+    auto* storage = factory.linear_progress(
+        column,
+        {"Onboard app storage", 3, 9, m3e::Tone::primary});
+    lv_obj_set_height(storage, 34);
+}
+
+void os_app_detail_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "APP MANAGER / TIMER",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* health = factory.card(
+        column,
+        {"Timer  0.1.0", "Healthy  •  84 KB  •  gen 7",
+         m3e::Tone::primary, false});
+    lv_obj_set_height(health, 50);
+    auto* surfaces = factory.card(
+        column,
+        {"Declared surfaces", "A  G  C  N  O  V",
+         m3e::Tone::secondary, false});
+    lv_obj_set_height(surfaces, 50);
+    auto* permissions = factory.card(
+        column,
+        {"Exact alarms + haptics", "Only while a timer exists",
+         m3e::Tone::neutral, false});
+    lv_obj_set_height(permissions, 50);
+}
+
+void os_install_progress_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "ATOMIC UPDATE",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* progress = factory.build_progress(
+        column,
+        {"Health check", 4, 6, true});
+    lv_obj_set_height(progress, 84);
+    auto* safety = factory.card(
+        column,
+        {"Last known good retained", "Timer 0.1.0 remains active until commit",
+         m3e::Tone::primary, false});
+    lv_obj_set_height(safety, 68);
+    auto* cancel = factory.button(
+        column,
+        {
+            "install.cancel",
+            "Cancel update",
+            m3e::Tone::neutral,
+            m3e::ButtonVariant::outlined,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_width(cancel, LV_PCT(100));
+}
+
+void os_crash_recovery_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "SAFE MODE",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* crash = factory.card(
+        column,
+        {"Weather quarantined", "3 traps  •  guest stopped",
+         m3e::Tone::error, false});
+    lv_obj_set_height(crash, 64);
+    auto* home = factory.card(
+        column,
+        {"Home is still available", "Broken cards are hidden",
+         m3e::Tone::primary, false});
+    lv_obj_set_height(home, 64);
+    auto* rollback = factory.button(
+        column,
+        {
+            "recovery.rollback",
+            "Restore last known good",
+            m3e::Tone::primary,
+            m3e::ButtonVariant::filled,
+            m3e::ComponentSize::normal,
+            true,
+            false,
+        });
+    lv_obj_set_width(rollback, LV_PCT(100));
+    auto* details = factory.button(
+        column,
+        {
+            "recovery.details",
+            "View crash telemetry",
+            m3e::Tone::neutral,
+            m3e::ButtonVariant::text,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_width(details, LV_PCT(100));
+}
+
+void os_notification_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    os_home_story(screen);
+    auto* panel = factory.card(
+        screen,
+        {"Maya", "Dinner at 7?  •  Reply available",
+         m3e::Tone::secondary, true});
+    lv_obj_set_pos(panel, 12, 116);
+    lv_obj_set_size(panel, 216, 78);
+    auto* reply = factory.button(
+        screen,
+        {
+            "notification.reply",
+            "Quick reply",
+            m3e::Tone::primary,
+            m3e::ButtonVariant::filled,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_pos(reply, 55, 198);
+    lv_obj_set_size(reply, 130, 34);
+}
+
+void os_permission_review_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "TRUSTED PERMISSION REVIEW",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* review = factory.permission_review(
+        column,
+        "Microphone while recording",
+        "Only while this screen is recording.");
+    lv_obj_set_height(review, 102);
+    auto* allow = factory.button(
+        column,
+        {
+            "permission.allow",
+            "Allow while recording",
+            m3e::Tone::primary,
+            m3e::ButtonVariant::filled,
+            m3e::ComponentSize::normal,
+            true,
+            false,
+        });
+    lv_obj_set_width(allow, LV_PCT(100));
+    auto* deny = factory.button(
+        column,
+        {
+            "permission.deny",
+            "Not now",
+            m3e::Tone::neutral,
+            m3e::ButtonVariant::outlined,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_width(deny, LV_PCT(100));
+}
+
+void os_action_review_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "TRUSTED ACTION REVIEW",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* review = factory.change_review(
+        column,
+        {"Front door", "State", "Locked", "Unlock"});
+    lv_obj_set_height(review, 82);
+    auto* warning = factory.card(
+        column,
+        {"Always confirm", "Physical access",
+         m3e::Tone::error, false});
+    lv_obj_set_height(warning, 60);
+    auto* confirm = factory.button(
+        column,
+        {
+            "action.confirm",
+            "Confirm unlock",
+            m3e::Tone::error,
+            m3e::ButtonVariant::filled,
+            m3e::ComponentSize::normal,
+            true,
+            false,
+        });
+    lv_obj_set_width(confirm, LV_PCT(100));
+}
+
+void os_error_story(lv_obj_t* screen) {
+    auto& factory = component_factory();
+    auto* column = story_column(screen);
+    factory.text(
+        column,
+        "SYSTEM RECOVERY",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    auto* failure = factory.card(
+        column,
+        {"Provider unavailable", "Cache safe  •  nothing committed",
+         m3e::Tone::error, false});
+    lv_obj_set_height(failure, 80);
+    auto* retry = factory.button(
+        column,
+        {
+            "error.retry",
+            "Retry safely",
+            m3e::Tone::primary,
+            m3e::ButtonVariant::filled,
+            m3e::ComponentSize::normal,
+            true,
+            false,
+        });
+    lv_obj_set_width(retry, LV_PCT(100));
+    auto* home = factory.button(
+        column,
+        {
+            "error.home",
+            "Return Home",
+            m3e::Tone::neutral,
+            m3e::ButtonVariant::outlined,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_width(home, LV_PCT(100));
+}
+
+void os_voice_phase_story(
+    lv_obj_t* screen,
+    const char* status,
+    const char* transcript,
+    m3e::Tone tone) {
+    auto& factory = component_factory();
+    os_home_story(screen);
+    factory.voice_overlay(screen, status, transcript, tone);
+}
+
+void os_voice_story(lv_obj_t* screen) {
+    os_voice_phase_story(
+        screen,
+        "LISTENING",
+        "Set a timer for five minutes",
+        m3e::Tone::primary);
+}
+
+void os_voice_thinking_story(lv_obj_t* screen) {
+    os_voice_phase_story(
+        screen,
+        "THINKING",
+        "Checking the exact scheduler...",
+        m3e::Tone::secondary);
+}
+
+void os_voice_review_story(lv_obj_t* screen) {
+    os_voice_phase_story(
+        screen,
+        "REVIEW",
+        "Start a five minute timer?",
+        m3e::Tone::tertiary);
+}
+
+void os_voice_build_story(lv_obj_t* screen) {
+    os_voice_phase_story(
+        screen,
+        "BUILDING APP  4 / 9",
+        "Compiling bounded Wasm package…",
+        m3e::Tone::secondary);
+}
+
+void os_voice_result_story(lv_obj_t* screen) {
+    os_voice_phase_story(
+        screen,
+        "DONE",
+        "Timer started  •  5:00",
+        m3e::Tone::primary);
+}
+
 void transforming_list_story(lv_obj_t* screen) {
     auto& factory = component_factory();
     factory.screen(screen);
@@ -819,6 +1306,57 @@ extern "C" void m3e_catalog_show(lv_obj_t* screen, int story) {
             break;
         case M3E_CATALOG_STORY_MOCKUP_MUSIC:
             music_mockup_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_HOME:
+            os_home_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_LIVE_CARDS:
+            os_live_cards_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_LAUNCHER:
+            os_launcher_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_CONTROL_CENTER:
+            os_control_center_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_APP_MANAGER:
+            os_app_manager_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_VOICE:
+            os_voice_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_APP_DETAIL:
+            os_app_detail_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_INSTALL_PROGRESS:
+            os_install_progress_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_CRASH_RECOVERY:
+            os_crash_recovery_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_NOTIFICATION:
+            os_notification_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_PERMISSION_REVIEW:
+            os_permission_review_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_ACTION_REVIEW:
+            os_action_review_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_ERROR:
+            os_error_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_VOICE_THINKING:
+            os_voice_thinking_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_VOICE_REVIEW:
+            os_voice_review_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_VOICE_BUILD:
+            os_voice_build_story(screen);
+            break;
+        case M3E_CATALOG_STORY_OS_VOICE_RESULT:
+            os_voice_result_story(screen);
             break;
         case M3E_CATALOG_STORY_DISPLAY_STRESS:
             display_stress_story(screen);

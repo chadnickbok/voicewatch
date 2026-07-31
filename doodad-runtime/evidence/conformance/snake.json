@@ -1,0 +1,404 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "snake",
+    "id": "dev.doodad.snake",
+    "name": "Snake",
+    "mode": "generated",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 7163,
+    "package_bytes": 7355,
+    "authored_json_documents": 9,
+    "canonical_cbor_documents": 3,
+    "maximum_appspec_bytes": 452,
+    "decisive_actions": 3,
+    "distinct_screens": 2,
+    "distinct_semantic_states": 4,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 18,
+    "maximum_lvgl_depth": 4,
+    "total_changed_pixels": 34965,
+    "semantic_events": 3,
+    "provider_requests": 3
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "snake.home",
+      "semantic_sha256": "bd5786a85a80b78e84ee1236989c3db7f483f2029d3bcbc01773fabb8e846c92",
+      "framebuffer_rgb565_sha256": "7129a4f415fd8be9adb4e1ee0d5f2c1f9365fcb6fbf18fd4e32aa30edfd0b57b",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "snake",
+        "nodes": [
+          {
+            "id": "snake.home",
+            "role": "screen",
+            "label": "snake",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "snake.heading",
+            "role": "text",
+            "label": "SNAKE",
+            "text": "SNAKE",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.summary",
+            "role": "text",
+            "label": "Snake status",
+            "text": "Score 12",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.primary",
+            "role": "button",
+            "label": "Play Snake",
+            "text": "Play Snake",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Play Snake"
+      },
+      "screen_id": "snake.game",
+      "semantic_sha256": "5ae0814e82c3927b0c04ae1420f8931729e21bd7abc9037e5f6faab2c41e6365",
+      "framebuffer_rgb565_sha256": "c9f384f820b57153211ebbaa11a5c6ec6d6ee302f9b79c74749672736847bde6",
+      "changed_pixels": 33646,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 18,
+      "lvgl_depth": 4,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "snake",
+        "nodes": [
+          {
+            "id": "snake.game",
+            "role": "screen",
+            "label": "snake",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "snake.game.heading",
+            "role": "text",
+            "label": "SNAKE · MOCK CLOCK",
+            "text": "SNAKE · MOCK CLOCK",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.score",
+            "role": "heading",
+            "label": "Snake score",
+            "text": "SCORE 0",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.board-top",
+            "role": "text",
+            "label": "Top half of eight by eight Snake board",
+            "text": "........\n........\n........\n.oo@.*..",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.board-bottom",
+            "role": "text",
+            "label": "Bottom half of eight by eight Snake board",
+            "text": "........\n........\n........\n........",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.controls",
+            "role": "button",
+            "label": "Snake controls",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Go"
+      },
+      "screen_id": "snake.game",
+      "semantic_sha256": "03deea371227bc28cb0b74fe804b6557c6bcf393c073afa3244a2524a0997e2b",
+      "framebuffer_rgb565_sha256": "e3c4bf6f0d5cdc5bde8498db196929040a168caf12fe72418b1348c789e26375",
+      "changed_pixels": 326,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 18,
+      "lvgl_depth": 4,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "snake",
+        "nodes": [
+          {
+            "id": "snake.game",
+            "role": "screen",
+            "label": "snake",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "snake.game.heading",
+            "role": "text",
+            "label": "SNAKE · MOCK CLOCK",
+            "text": "SNAKE · MOCK CLOCK",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.score",
+            "role": "heading",
+            "label": "Snake score",
+            "text": "SCORE 0",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.board-top",
+            "role": "text",
+            "label": "Top half of eight by eight Snake board",
+            "text": "........\n........\n........\n..oo@*..",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.board-bottom",
+            "role": "text",
+            "label": "Bottom half of eight by eight Snake board",
+            "text": "........\n........\n........\n........",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.controls",
+            "role": "button",
+            "label": "Snake controls",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Go"
+      },
+      "screen_id": "snake.game",
+      "semantic_sha256": "2e122575e75effbac787aa3d9628b7f1d10f7c4ebe0031a12dd7f70cec1dcd3b",
+      "framebuffer_rgb565_sha256": "4433e7b4e86dd8c8f9e9c36f2ce2edfa88d0927863927d097b70707c9713e6fd",
+      "changed_pixels": 993,
+      "mounted_nodes": 6,
+      "mounted_events": 1,
+      "lvgl_objects": 18,
+      "lvgl_depth": 4,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "snake",
+        "nodes": [
+          {
+            "id": "snake.game",
+            "role": "screen",
+            "label": "snake",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "snake.game.heading",
+            "role": "text",
+            "label": "SNAKE · MOCK CLOCK",
+            "text": "SNAKE · MOCK CLOCK",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.score",
+            "role": "heading",
+            "label": "Snake score",
+            "text": "SCORE 1",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.board-top",
+            "role": "text",
+            "label": "Top half of eight by eight Snake board",
+            "text": "........\n........\n........\n..ooo@..",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.board-bottom",
+            "role": "text",
+            "label": "Bottom half of eight by eight Snake board",
+            "text": "........\n......*.\n........\n........",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "snake.game.controls",
+            "role": "button",
+            "label": "Snake controls",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

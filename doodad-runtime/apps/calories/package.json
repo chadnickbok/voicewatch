@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "suite_index": 8,
+  "mode": "generated",
+  "surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "voice"
+  ],
+  "mock_provider": "deterministic",
+  "implementation_status": "wave2-functional"
+}

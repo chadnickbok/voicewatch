@@ -1,0 +1,499 @@
+{
+  "schema": 1,
+  "app": {
+    "slug": "medication",
+    "id": "dev.doodad.medication",
+    "name": "Medication + Habits",
+    "mode": "generated",
+    "surfaces": [
+      "app",
+      "glance",
+      "complication",
+      "notification",
+      "voice"
+    ]
+  },
+  "budgets": {
+    "maximum_module_bytes": 262144,
+    "maximum_appspec_bytes": 4096,
+    "maximum_semantic_nodes": 64,
+    "maximum_lvgl_objects": 96,
+    "maximum_lvgl_depth": 10,
+    "maximum_decisive_actions": 12
+  },
+  "summary": {
+    "module_bytes": 5467,
+    "package_bytes": 5687,
+    "authored_json_documents": 12,
+    "canonical_cbor_documents": 6,
+    "maximum_appspec_bytes": 426,
+    "decisive_actions": 4,
+    "distinct_screens": 5,
+    "distinct_semantic_states": 5,
+    "maximum_semantic_nodes": 6,
+    "maximum_lvgl_objects": 10,
+    "maximum_lvgl_depth": 2,
+    "total_changed_pixels": 40596,
+    "semantic_events": 4,
+    "provider_requests": 4
+  },
+  "stages": [
+    {
+      "index": 0,
+      "trigger": {
+        "kind": "start"
+      },
+      "screen_id": "medication.home",
+      "semantic_sha256": "b3b74132aabf05ebd8bf0df3ad3d2a421a5c420f3e04ff075ccf7843456b5524",
+      "framebuffer_rgb565_sha256": "39bad2af4f25079ed5ca3d570b9c0c5ced87e211ec8ae0fcc73802c8bbf9f9a8",
+      "changed_pixels": 57600,
+      "mounted_nodes": 5,
+      "mounted_events": 1,
+      "lvgl_objects": 8,
+      "lvgl_depth": 2,
+      "semantic_events": 0,
+      "provider_requests": 0,
+      "semantic_tree": {
+        "app": "medication",
+        "nodes": [
+          {
+            "id": "medication.home",
+            "role": "screen",
+            "label": "medication",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 4
+          },
+          {
+            "id": "medication.heading",
+            "role": "text",
+            "label": "MEDICATION + HABITS",
+            "text": "MEDICATION + HABITS",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.summary",
+            "role": "text",
+            "label": "Medication + Habits status",
+            "text": "Vitamin D at 9",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.mock",
+            "role": "list_item",
+            "label": "Deterministic provider",
+            "text": "Deterministic provider",
+            "secondary": "Interactive mock data · revision 1",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.primary",
+            "role": "button",
+            "label": "Mark taken",
+            "text": "Mark taken",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 1,
+      "trigger": {
+        "kind": "click",
+        "value": "Mark taken"
+      },
+      "screen_id": "medication.taken",
+      "semantic_sha256": "167733ee24994264ca9ad544c08d83a57b750f1a967ca4d00dec0dcaf35e1d5d",
+      "framebuffer_rgb565_sha256": "35a23fc34ed909fd1989bd06d51128777a0618d6ea443e9cf0b3c66139b6bfb9",
+      "changed_pixels": 28214,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 1,
+      "provider_requests": 1,
+      "semantic_tree": {
+        "app": "medication",
+        "nodes": [
+          {
+            "id": "medication.taken",
+            "role": "screen",
+            "label": "medication",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "medication.taken.heading",
+            "role": "text",
+            "label": "VITAMIN D",
+            "text": "VITAMIN D",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.taken.summary",
+            "role": "text",
+            "label": "VITAMIN D",
+            "text": "Taken · 9:02",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.taken.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Recorded once · 12 day streak",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.taken.primary",
+            "role": "button",
+            "label": "Add reminder",
+            "text": "Add reminder",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.taken.secondary",
+            "role": "button",
+            "label": "Undo",
+            "text": "Undo",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 2,
+      "trigger": {
+        "kind": "click",
+        "value": "Add reminder"
+      },
+      "screen_id": "medication.editor",
+      "semantic_sha256": "5b3e669fde2b8eeabfbf288329ce955e322837b469e744375c951fa8dcd09aa2",
+      "framebuffer_rgb565_sha256": "434b28270582eae1c013ab70f677c4ad75d0d01e062562fd597b2a0c008fc244",
+      "changed_pixels": 4432,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 2,
+      "provider_requests": 2,
+      "semantic_tree": {
+        "app": "medication",
+        "nodes": [
+          {
+            "id": "medication.editor",
+            "role": "screen",
+            "label": "medication",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "medication.editor.heading",
+            "role": "text",
+            "label": "NEW REMINDER",
+            "text": "NEW REMINDER",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.editor.summary",
+            "role": "text",
+            "label": "NEW REMINDER",
+            "text": "8:00 daily",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.editor.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Schedule survives app replacement",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.editor.primary",
+            "role": "button",
+            "label": "Save",
+            "text": "Save",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.editor.secondary",
+            "role": "button",
+            "label": "Cancel",
+            "text": "Cancel",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 3,
+      "trigger": {
+        "kind": "click",
+        "value": "Save"
+      },
+      "screen_id": "medication.due",
+      "semantic_sha256": "88867e5f600da075d50a967d465448fa15ed7d109dbf19b3f7f0facf28223fbe",
+      "framebuffer_rgb565_sha256": "f8f5e98e1aa2270e71000467f6573f5ae361ec87bb3b73cc81e36d9d2b6cefcb",
+      "changed_pixels": 4212,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 3,
+      "provider_requests": 3,
+      "semantic_tree": {
+        "app": "medication",
+        "nodes": [
+          {
+            "id": "medication.due",
+            "role": "screen",
+            "label": "medication",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "medication.due.heading",
+            "role": "text",
+            "label": "MEDICATION DUE",
+            "text": "MEDICATION DUE",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.due.summary",
+            "role": "text",
+            "label": "MEDICATION DUE",
+            "text": "Vitamin D",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.due.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "One exact notification · private",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.due.primary",
+            "role": "button",
+            "label": "Take now",
+            "text": "Take now",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.due.secondary",
+            "role": "button",
+            "label": "Snooze 10m",
+            "text": "Snooze 10m",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    },
+    {
+      "index": 4,
+      "trigger": {
+        "kind": "click",
+        "value": "Snooze 10m"
+      },
+      "screen_id": "medication.snoozed",
+      "semantic_sha256": "967994b695a5d45a606c6faedf020eff8129fd51ff1aeec63d7be0158a941c09",
+      "framebuffer_rgb565_sha256": "e89569cf40ae912f55cb3afaa7601c136acd6899ffd132a091eeb72fa1b25a48",
+      "changed_pixels": 3738,
+      "mounted_nodes": 6,
+      "mounted_events": 2,
+      "lvgl_objects": 10,
+      "lvgl_depth": 2,
+      "semantic_events": 4,
+      "provider_requests": 4,
+      "semantic_tree": {
+        "app": "medication",
+        "nodes": [
+          {
+            "id": "medication.snoozed",
+            "role": "screen",
+            "label": "medication",
+            "text": "",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": null,
+            "children": 5
+          },
+          {
+            "id": "medication.snoozed.heading",
+            "role": "text",
+            "label": "SNOOZED",
+            "text": "SNOOZED",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.snoozed.summary",
+            "role": "text",
+            "label": "SNOOZED",
+            "text": "Due at 9:12",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.snoozed.detail",
+            "role": "list_item",
+            "label": "Deterministic fixture",
+            "text": "Deterministic fixture",
+            "secondary": "Journaled once · haptic armed",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.snoozed.primary",
+            "role": "button",
+            "label": "Take now",
+            "text": "Take now",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          },
+          {
+            "id": "medication.snoozed.secondary",
+            "role": "button",
+            "label": "Schedule",
+            "text": "Schedule",
+            "secondary": "",
+            "state": 0,
+            "visible": true,
+            "enabled": true,
+            "parent": 0,
+            "children": 0
+          }
+        ]
+      }
+    }
+  ]
+}

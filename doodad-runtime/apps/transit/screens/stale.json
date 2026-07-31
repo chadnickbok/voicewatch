@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "transit",
+  "screen": {
+    "id": "transit.stale",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "transit.stale.heading",
+          "type": "text",
+          "props": {
+            "text": "CACHED DEPARTURES",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "transit.stale.summary",
+          "type": "text",
+          "props": {
+            "text": "N · 2 min",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "CACHED DEPARTURES",
+            "value": "N · 2 min"
+          }
+        },
+        {
+          "id": "transit.stale.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "18 minutes old · refreshing…",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "transit.stale.primary",
+          "type": "button",
+          "props": {
+            "label": "Reconnect",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "transit.reconnect"
+          },
+          "semantics": {
+            "label": "Reconnect"
+          }
+        },
+        {
+          "id": "transit.stale.secondary",
+          "type": "button",
+          "props": {
+            "label": "Keep cache",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "transit.cache"
+          },
+          "semantics": {
+            "label": "Keep cache"
+          }
+        }
+      ]
+    }
+  }
+}

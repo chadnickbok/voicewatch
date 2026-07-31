@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.navigation",
+  "domain_revision": 1,
+  "observed_at_ms": 0,
+  "freshness": "current",
+  "declared_surfaces": [
+    "app",
+    "glance",
+    "complication",
+    "notification",
+    "ongoing",
+    "voice"
+  ],
+  "surfaces": {
+    "app": {
+      "revision": 1,
+      "screen_id": "navigation.home",
+      "title": "Navigation",
+      "summary": "Turn in 200 ft",
+      "state": {
+        "provider": "mock",
+        "interactive": true
+      }
+    },
+    "glance": {
+      "revision": 1,
+      "template": "ongoing",
+      "title": "Navigation",
+      "primary": "Turn in 200 ft",
+      "secondary": "Mock data · now",
+      "action": {
+        "id": "navigation.primary",
+        "label": "Start route"
+      }
+    },
+    "complication": {
+      "revision": 1,
+      "label": "Navigation",
+      "value": "Turn in 200 ft",
+      "icon": "navigation"
+    },
+    "notification": {
+      "revision": 1,
+      "status": "inactive"
+    },
+    "ongoing": {
+      "revision": 1,
+      "status": "active",
+      "title": "Navigation",
+      "detail": "Turn in 200 ft",
+      "actions": [
+        {
+          "id": "navigation.primary",
+          "label": "Start route"
+        }
+      ]
+    },
+    "voice": {
+      "revision": 1,
+      "actions": [
+        {
+          "id": "navigation.primary",
+          "example": "Start route",
+          "confirmation": "never"
+        }
+      ]
+    }
+  }
+}

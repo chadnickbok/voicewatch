@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "transit",
+  "screen": {
+    "id": "transit.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "transit.heading",
+          "type": "text",
+          "props": {
+            "text": "TRANSIT DEPARTURES",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "transit.summary",
+          "type": "text",
+          "props": {
+            "text": "N in 3 min",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Transit Departures status",
+            "value": "N in 3 min"
+          }
+        },
+        {
+          "id": "transit.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "transit.primary",
+          "type": "button",
+          "props": {
+            "label": "Refresh",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "transit.primary"
+          },
+          "semantics": {
+            "label": "Refresh"
+          }
+        }
+      ]
+    }
+  }
+}

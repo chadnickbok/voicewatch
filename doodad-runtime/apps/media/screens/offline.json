@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "media",
+  "screen": {
+    "id": "media.offline",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "media.offline.heading",
+          "type": "text",
+          "props": {
+            "text": "CONNECTION LOST",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "media.offline.summary",
+          "type": "text",
+          "props": {
+            "text": "Last at 1:42",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "CONNECTION LOST",
+            "value": "Last at 1:42"
+          }
+        },
+        {
+          "id": "media.offline.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Play request queued once",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "media.offline.primary",
+          "type": "button",
+          "props": {
+            "label": "Reconnect",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.reconnect"
+          },
+          "semantics": {
+            "label": "Reconnect"
+          }
+        },
+        {
+          "id": "media.offline.secondary",
+          "type": "button",
+          "props": {
+            "label": "Keep cached",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "media.cached"
+          },
+          "semantics": {
+            "label": "Keep cached"
+          }
+        }
+      ]
+    }
+  }
+}

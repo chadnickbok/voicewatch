@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "scenarios": [
+    "transforming-list.json",
+    "hero-metric.json",
+    "two-button-group.json",
+    "timer-running.json",
+    "calculator-keypad.json",
+    "workout-set-entry.json",
+    "calorie-dashboard.json",
+    "confirmation.json",
+    "theme-switcher.json",
+    "ambient-live-activity.json"
+  ]
+}

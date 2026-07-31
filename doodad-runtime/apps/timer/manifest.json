@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "id": "dev.doodad.timer",
+  "name": "Timer Suite",
+  "version": "0.1.0",
+  "host_abi": 1,
+  "capabilities": [
+    "ui.mount",
+    "timer.schedule",
+    "timer.cancel",
+    "timer.acknowledge"
+  ],
+  "wasm": "app.wasm"
+}

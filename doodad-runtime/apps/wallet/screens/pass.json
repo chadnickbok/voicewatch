@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "wallet",
+  "screen": {
+    "id": "wallet.pass",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "wallet.pass.heading",
+          "type": "text",
+          "props": {
+            "text": "SFO → JFK",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "wallet.pass.summary",
+          "type": "text",
+          "props": {
+            "text": "BOARDING 8:10",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "SFO → JFK",
+            "value": "BOARDING 8:10"
+          }
+        },
+        {
+          "id": "wallet.pass.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Gate B12 · Seat 18A · offline ready",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "wallet.pass.primary",
+          "type": "button",
+          "props": {
+            "label": "Show QR",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.qr"
+          },
+          "semantics": {
+            "label": "Show QR"
+          }
+        },
+        {
+          "id": "wallet.pass.secondary",
+          "type": "button",
+          "props": {
+            "label": "Test bad update",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "wallet.bad"
+          },
+          "semantics": {
+            "label": "Test bad update"
+          }
+        }
+      ]
+    }
+  }
+}

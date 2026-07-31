@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <cstring>
+#include <new>
 
 #include "M5Unified.h"
 #include "app_runner.hpp"
@@ -16,6 +17,8 @@
 #include "m3e/appspec/renderer.hpp"
 #include "m3e/appspec/wire.hpp"
 #include "m3e/catalog/catalog.h"
+#include "m3e/os/shell_state.hpp"
+#include "m3e/os/surface_registry.hpp"
 #include "m3e/theme/resolved_theme.hpp"
 
 namespace {
@@ -33,6 +36,8 @@ enum class UiCommandType : std::uint8_t {
     command_batch,
     error,
     catalog,
+    system_home,
+    surface_publish,
 };
 
 struct UiCommand {
@@ -43,6 +48,7 @@ struct UiCommand {
     int story;
     m3e::appspec::WireDocument* document;
     m3e::appspec::CommandBatch* batch;
+    m3e::os::DomainSurfaceSnapshot* surfaces;
 };
 
 bool g_display_ready = false;
@@ -72,6 +78,9 @@ std::int64_t g_window_started_us = 0;
 std::uint32_t g_window_touch_presses = 0;
 bool g_touch_pressed = false;
 lv_point_t g_last_touch_point{0, 0};
+m3e::os::ShellState g_shell{};
+m3e::os::SurfaceRegistry g_surface_registry{};
+bool g_shell_active = false;
 
 std::uint32_t tick_milliseconds() {
     return static_cast<std::uint32_t>(esp_timer_get_time() / 1000);
@@ -253,6 +262,131 @@ void catalog_now(int story) {
     render_now();
 }
 
+int shell_story() {
+    const auto& snapshot = g_shell.snapshot();
+    switch (snapshot.overlay) {
+        case m3e::os::Overlay::voice:
+            switch (snapshot.voice_phase) {
+                case m3e::os::VoicePhase::listening:
+                    return M3E_CATALOG_STORY_OS_VOICE;
+                case m3e::os::VoicePhase::transcribing:
+                case m3e::os::VoicePhase::clarifying:
+                    return M3E_CATALOG_STORY_OS_VOICE_THINKING;
+                case m3e::os::VoicePhase::reviewing:
+                    return M3E_CATALOG_STORY_OS_VOICE_REVIEW;
+                case m3e::os::VoicePhase::building:
+                    return M3E_CATALOG_STORY_OS_VOICE_BUILD;
+                case m3e::os::VoicePhase::completed:
+                    return M3E_CATALOG_STORY_OS_VOICE_RESULT;
+                case m3e::os::VoicePhase::error:
+                    return M3E_CATALOG_STORY_OS_ERROR;
+                case m3e::os::VoicePhase::idle:
+                    return M3E_CATALOG_STORY_OS_VOICE;
+            }
+            break;
+        case m3e::os::Overlay::notification:
+            return M3E_CATALOG_STORY_OS_NOTIFICATION;
+        case m3e::os::Overlay::permission_review:
+            return M3E_CATALOG_STORY_OS_PERMISSION_REVIEW;
+        case m3e::os::Overlay::action_review:
+            return M3E_CATALOG_STORY_OS_ACTION_REVIEW;
+        case m3e::os::Overlay::error:
+            return M3E_CATALOG_STORY_OS_ERROR;
+        case m3e::os::Overlay::none:
+            break;
+    }
+    switch (snapshot.surface) {
+        case m3e::os::Surface::watch_face:
+            return M3E_CATALOG_STORY_OS_HOME;
+        case m3e::os::Surface::live_cards:
+            return M3E_CATALOG_STORY_OS_LIVE_CARDS;
+        case m3e::os::Surface::launcher:
+            return M3E_CATALOG_STORY_OS_LAUNCHER;
+        case m3e::os::Surface::control_center:
+            return M3E_CATALOG_STORY_OS_CONTROL_CENTER;
+        case m3e::os::Surface::app_manager:
+            return M3E_CATALOG_STORY_OS_APP_MANAGER;
+        case m3e::os::Surface::app_detail:
+            return M3E_CATALOG_STORY_OS_APP_DETAIL;
+        case m3e::os::Surface::install_progress:
+            return M3E_CATALOG_STORY_OS_INSTALL_PROGRESS;
+        case m3e::os::Surface::crash_recovery:
+            return M3E_CATALOG_STORY_OS_CRASH_RECOVERY;
+        case m3e::os::Surface::app:
+            return M3E_CATALOG_STORY_OS_HOME;
+    }
+    return M3E_CATALOG_STORY_OS_HOME;
+}
+
+void render_shell_now() {
+    catalog_now(shell_story());
+}
+
+void system_home_now() {
+    if (!g_shell.initialize()) {
+        error_now("SYSTEM SHELL FAILED");
+        return;
+    }
+    g_surface_registry.sync_shell_counts(g_shell);
+    g_shell_active = true;
+    render_shell_now();
+}
+
+bool surface_publish_now(
+    m3e::os::DomainSurfaceSnapshot* snapshot) {
+    if (snapshot == nullptr) return false;
+    const auto published = g_surface_registry.publish(*snapshot);
+    delete snapshot;
+    if (!published) {
+        ESP_LOGW(kTag, "[system] rejected surface publication");
+        return false;
+    }
+    g_surface_registry.sync_shell_counts(g_shell);
+    if (g_shell_active && g_shell.snapshot().display_awake) {
+        render_shell_now();
+    }
+    return true;
+}
+
+void dispatch_system_input(m3e::os::Input input) {
+    if (!g_shell_active) return;
+    const auto intent = m3e::os::map_input(input);
+    if (intent == m3e::os::Intent::none ||
+        !g_shell.dispatch(intent)) {
+        return;
+    }
+    const auto& snapshot = g_shell.snapshot();
+    M5.Display.setBrightness(snapshot.display_awake ? 96 : 0);
+    if (snapshot.display_awake) {
+        render_shell_now();
+    }
+    ESP_LOGI(
+        kTag,
+        "[system] input=%u intent=%u surface=%u overlay=%u generation=%u",
+        static_cast<unsigned>(input),
+        static_cast<unsigned>(intent),
+        static_cast<unsigned>(snapshot.surface),
+        static_cast<unsigned>(snapshot.overlay),
+        static_cast<unsigned>(snapshot.generation));
+}
+
+void handle_system_inputs() {
+    if (M5.BtnB.wasHold()) {
+        dispatch_system_input(m3e::os::Input::button_b_hold);
+    } else if (M5.BtnB.wasClicked()) {
+        dispatch_system_input(m3e::os::Input::button_b);
+    }
+    if (M5.BtnA.wasClicked()) {
+        dispatch_system_input(m3e::os::Input::button_a);
+    }
+    if (M5.BtnC.wasClicked()) {
+        dispatch_system_input(m3e::os::Input::button_c);
+    }
+    if (M5.BtnPWR.wasClicked()) {
+        dispatch_system_input(m3e::os::Input::power_button);
+    }
+}
+
 void drain_ui_commands() {
     UiCommand command{};
     while (xQueueReceive(g_ui_queue, &command, 0) == pdTRUE) {
@@ -271,6 +405,12 @@ void drain_ui_commands() {
                 break;
             case UiCommandType::catalog:
                 catalog_now(command.story);
+                break;
+            case UiCommandType::system_home:
+                system_home_now();
+                break;
+            case UiCommandType::surface_publish:
+                surface_publish_now(command.surfaces);
                 break;
         }
     }
@@ -378,7 +518,16 @@ void display_shell(const char* status, const char* source) {
         shell_now(status, source);
         return;
     }
-    UiCommand command{UiCommandType::shell, {}, {}, 0, 0, nullptr, nullptr};
+    UiCommand command{
+        UiCommandType::shell,
+        {},
+        {},
+        0,
+        0,
+        nullptr,
+        nullptr,
+        nullptr,
+    };
     std::strncpy(command.primary, status, sizeof(command.primary) - 1);
     std::strncpy(command.secondary, source, sizeof(command.secondary) - 1);
     enqueue(command);
@@ -393,7 +542,15 @@ bool display_mount_appspec(
         return appspec_now(owned_document);
     }
     UiCommand command{
-        UiCommandType::appspec, {}, {}, 0, 0, owned_document, nullptr};
+        UiCommandType::appspec,
+        {},
+        {},
+        0,
+        0,
+        owned_document,
+        nullptr,
+        nullptr,
+    };
     return enqueue(command);
 }
 
@@ -413,6 +570,7 @@ bool display_apply_command_batch(
         0,
         nullptr,
         owned_batch,
+        nullptr,
     };
     return enqueue(command);
 }
@@ -426,7 +584,15 @@ void display_error(const char* stage) {
         return;
     }
     UiCommand command{
-        UiCommandType::error, {}, {}, 0, 0, nullptr, nullptr};
+        UiCommandType::error,
+        {},
+        {},
+        0,
+        0,
+        nullptr,
+        nullptr,
+        nullptr,
+    };
     std::strncpy(command.primary, stage, sizeof(command.primary) - 1);
     enqueue(command);
 }
@@ -440,8 +606,63 @@ void display_show_catalog(int story) {
         return;
     }
     UiCommand command{
-        UiCommandType::catalog, {}, {}, 0, story, nullptr, nullptr};
+        UiCommandType::catalog,
+        {},
+        {},
+        0,
+        story,
+        nullptr,
+        nullptr,
+        nullptr,
+    };
     enqueue(command);
+}
+
+void display_show_system_home() {
+    if (!g_display_ready) {
+        return;
+    }
+    if (on_ui_task()) {
+        system_home_now();
+        return;
+    }
+    UiCommand command{
+        UiCommandType::system_home,
+        {},
+        {},
+        0,
+        0,
+        nullptr,
+        nullptr,
+        nullptr,
+    };
+    enqueue(command);
+}
+
+bool display_publish_surfaces(
+    const m3e::os::DomainSurfaceSnapshot& snapshot) {
+    if (!g_display_ready) return false;
+    auto* copy =
+        new (std::nothrow) m3e::os::DomainSurfaceSnapshot(snapshot);
+    if (copy == nullptr) return false;
+    if (on_ui_task()) {
+        return surface_publish_now(copy);
+    }
+    UiCommand command{
+        UiCommandType::surface_publish,
+        {},
+        {},
+        0,
+        0,
+        nullptr,
+        nullptr,
+        copy,
+    };
+    if (!enqueue(command)) {
+        delete copy;
+        return false;
+    }
+    return true;
 }
 
 void display_update() {
@@ -454,6 +675,7 @@ void display_update() {
     }
     drain_ui_commands();
     M5.update();
+    handle_system_inputs();
     complete_pending_flush();
     lv_timer_handler();
     complete_pending_flush();

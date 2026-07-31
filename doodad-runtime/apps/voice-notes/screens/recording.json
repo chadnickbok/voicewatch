@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "voice-notes",
+  "screen": {
+    "id": "voice-notes.recording",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "voice-notes.recording.heading",
+          "type": "text",
+          "props": {
+            "text": "RECORDING",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "voice-notes.recording.summary",
+          "type": "text",
+          "props": {
+            "text": "00:18",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "RECORDING",
+            "value": "00:18"
+          }
+        },
+        {
+          "id": "voice-notes.recording.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "▁▃▅▇▆▃▅ · 3 chunks buffered",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "voice-notes.recording.primary",
+          "type": "button",
+          "props": {
+            "label": "Lose network",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.disconnect"
+          },
+          "semantics": {
+            "label": "Lose network"
+          }
+        },
+        {
+          "id": "voice-notes.recording.secondary",
+          "type": "button",
+          "props": {
+            "label": "Finish",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "voice-notes.finish"
+          },
+          "semantics": {
+            "label": "Finish"
+          }
+        }
+      ]
+    }
+  }
+}

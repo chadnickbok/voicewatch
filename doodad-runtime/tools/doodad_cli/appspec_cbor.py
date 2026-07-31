@@ -107,6 +107,8 @@ def _properties(node: dict[str, Any]) -> dict[int, Any]:
             1: props.get("unit", ""),
             2: _literal(props["value"], f"{node['id']}.value"),
             3: props["maximum"],
+            12: props["minimum"],
+            13: props["step"],
         }
     if kind == "toggle":
         return {

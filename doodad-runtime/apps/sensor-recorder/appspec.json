@@ -1,0 +1,62 @@
+{
+  "schema_version": 1,
+  "app_id": "sensor-recorder",
+  "screen": {
+    "id": "sensor-recorder.home",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "sensor-recorder.heading",
+          "type": "text",
+          "props": {
+            "text": "SENSOR RECORDER",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "sensor-recorder.summary",
+          "type": "text",
+          "props": {
+            "text": "1,024 samples",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "Sensor Recorder status",
+            "value": "1,024 samples"
+          }
+        },
+        {
+          "id": "sensor-recorder.mock",
+          "type": "card",
+          "props": {
+            "title": "Deterministic provider",
+            "body": "Interactive mock data · revision 1",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "sensor-recorder.primary",
+          "type": "button",
+          "props": {
+            "label": "Start recording",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "sensor-recorder.primary"
+          },
+          "semantics": {
+            "label": "Start recording"
+          }
+        }
+      ]
+    }
+  }
+}

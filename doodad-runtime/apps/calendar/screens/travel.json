@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "calendar",
+  "screen": {
+    "id": "calendar.travel",
+    "type": "screen",
+    "props": {
+      "gap": "sm",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "calendar.travel.heading",
+          "type": "text",
+          "props": {
+            "text": "TIME ZONE",
+            "style": "label",
+            "max_lines": 1
+          }
+        },
+        {
+          "id": "calendar.travel.summary",
+          "type": "text",
+          "props": {
+            "text": "11:00 PDT",
+            "style": "numeral",
+            "max_lines": 2,
+            "align": "center"
+          },
+          "semantics": {
+            "label": "TIME ZONE",
+            "value": "11:00 PDT"
+          }
+        },
+        {
+          "id": "calendar.travel.detail",
+          "type": "card",
+          "props": {
+            "title": "Deterministic fixture",
+            "body": "Same event · DST-safe · offline",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "calendar.travel.primary",
+          "type": "button",
+          "props": {
+            "label": "Reconnect",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calendar.reconnect"
+          },
+          "semantics": {
+            "label": "Reconnect"
+          }
+        },
+        {
+          "id": "calendar.travel.secondary",
+          "type": "button",
+          "props": {
+            "label": "Agenda",
+            "tone": "neutral",
+            "variant": "outlined",
+            "size": "default"
+          },
+          "events": {
+            "tap": "calendar.back"
+          },
+          "semantics": {
+            "label": "Agenda"
+          }
+        }
+      ]
+    }
+  }
+}

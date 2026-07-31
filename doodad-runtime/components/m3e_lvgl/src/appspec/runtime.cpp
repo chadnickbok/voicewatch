@@ -242,11 +242,24 @@ CapabilityManifest capabilities() {
 }
 
 bool event_is_valid(const UiEvent& event) {
-    return event.schema == 1 &&
-           valid_id(event.app_id) &&
-           valid_id(event.screen_id) &&
-           valid_id(event.node_id) &&
-           valid_id(event.action_id);
+    if (event.schema != 1 ||
+        !valid_id(event.app_id) ||
+        !valid_id(event.screen_id) ||
+        !valid_id(event.node_id) ||
+        !valid_id(event.action_id)) {
+        return false;
+    }
+    switch (event.value.kind) {
+        case EventValueKind::none:
+        case EventValueKind::integer:
+        case EventValueKind::boolean:
+            return true;
+        case EventValueKind::text:
+            return event.value.text_value != nullptr &&
+                   event.value.text_value[0] != '\0' &&
+                   std::strlen(event.value.text_value) <= 64;
+    }
+    return false;
 }
 
 }  // namespace m3e::appspec

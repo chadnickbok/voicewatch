@@ -16,6 +16,7 @@ constexpr std::size_t kMaximumWireBytes = 4096;
 constexpr std::size_t kMaximumWireStrings = 4096;
 constexpr std::size_t kMaximumWireEvents = 128;
 constexpr std::size_t kMaximumWireKeys = 64;
+constexpr std::size_t kMaximumMountedEventBindings = 256;
 constexpr std::uint16_t kWireNoParent = 0xffffU;
 
 struct WireEvent {
@@ -46,20 +47,41 @@ struct WireNode {
     std::uint8_t key_columns;
     std::uint8_t event_count;
     std::int32_t value;
+    std::int32_t minimum;
     std::int32_t maximum;
+    std::int32_t step;
     bool visible;
     bool enabled;
     void* mounted_object;
+};
+
+enum class MountedEventValue : std::uint8_t {
+    none,
+    integer,
+    stepper_decrement,
+    stepper_increment,
+    checked_state,
+    keypad_key,
+};
+
+struct MountedEventBinding {
+    WireEvent* event = nullptr;
+    MountedEventValue value_kind = MountedEventValue::none;
+    std::int32_t integer_value = 0;
+    std::uint16_t key_index = 0;
 };
 
 struct WireDocument {
     std::array<WireNode, Reconciler::kCapacity> nodes{};
     std::array<WireEvent, kMaximumWireEvents> events{};
     std::array<std::uint16_t, kMaximumWireKeys> key_offsets{};
+    std::array<MountedEventBinding, kMaximumMountedEventBindings>
+        mounted_event_bindings{};
     std::array<char, kMaximumWireStrings> strings{};
     std::size_t node_count = 0;
     std::size_t event_count = 0;
     std::size_t key_count = 0;
+    std::size_t mounted_event_binding_count = 0;
     std::size_t string_bytes = 1;
     std::uint16_t app_id_offset = 0;
     std::uint32_t schema_version = 0;
