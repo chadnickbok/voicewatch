@@ -160,34 +160,118 @@
     "workout": [
       {
         "kind": "semantic",
-        "node_id": "active_set.weight",
-        "action_id": "set_weight",
-        "event_kind": "value_committed",
-        "typed_value": 140
+        "node_id": "powerlifting.today.start",
+        "action_id": "workout.start",
+        "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "active_set.weight",
-        "action_id": "set_weight",
+        "node_id": "powerlifting.session.squat",
+        "action_id": "workout.choose.exercise",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.exercise-picker.back-squat",
+        "action_id": "workout.exercise.back-squat",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.session.begin",
+        "action_id": "workout.begin",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.active-set.target",
+        "action_id": "workout.edit.weight",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.weight-editor.value",
+        "action_id": "workout.weight",
         "event_kind": "value_committed",
         "typed_value": 145
       },
       {
         "kind": "semantic",
-        "node_id": "active_set.complete",
-        "action_id": "complete_set",
+        "node_id": "powerlifting.weight-editor.done",
+        "action_id": "workout.weight.done",
         "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "workout.rest.finish",
-        "action_id": "workout.rest.finish",
+        "node_id": "powerlifting.active-set.complete",
+        "action_id": "workout.complete",
         "event_kind": "tap"
       },
       {
         "kind": "semantic",
-        "node_id": "workout.next.complete",
-        "action_id": "workout.next.complete",
+        "node_id": "powerlifting.set-result.reps",
+        "action_id": "workout.reps",
+        "event_kind": "value_committed",
+        "typed_value": 3
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.set-result.rpe-8",
+        "action_id": "workout.rpe.8",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.set-result.save",
+        "action_id": "workout.save",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.missed-set.next",
+        "action_id": "workout.missed.next",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.rest.next",
+        "action_id": "workout.plates",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.plate-loading.ready",
+        "action_id": "workout.plates.ready",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.active-set.complete",
+        "action_id": "workout.switch.preview",
+        "event_kind": "long_press"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.exercise-switcher.bench",
+        "action_id": "workout.finish",
+        "event_kind": "long_press"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.summary.done",
+        "action_id": "workout.summary.done",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.today.start",
+        "action_id": "workout.resume.preview",
+        "event_kind": "long_press"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.resume.action",
+        "action_id": "workout.resume",
         "event_kind": "tap"
       }
     ],

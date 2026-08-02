@@ -105,7 +105,7 @@
       }
     ],
     "app_count": 20,
-    "document_count": 87
+    "document_count": 95
   },
   "authored": {
     "documents_by_app": {
@@ -115,7 +115,7 @@
       "tasks": 4,
       "calculator": 1,
       "calendar": 5,
-      "workout": 4,
+      "workout": 12,
       "calories": 3,
       "voice-notes": 5,
       "medication": 5,
@@ -131,38 +131,38 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 146,
+      "button": 160,
       "canvas": 2,
-      "card": 19,
+      "card": 38,
       "chart": 2,
       "column": 22,
       "icon": 23,
       "image": 11,
       "keypad": 3,
-      "live_card": 46,
-      "progress": 7,
-      "row": 81,
-      "screen": 87,
+      "live_card": 43,
+      "progress": 10,
+      "row": 84,
+      "screen": 95,
       "scroll": 15,
       "stepper": 4,
       "surface": 29,
-      "text": 203,
+      "text": 214,
       "toggle": 9,
       "voice_orb": 1
     },
     "property_counts": {
       "button.icon": 6,
-      "button.label": 146,
-      "button.size": 146,
-      "button.tone": 146,
-      "button.variant": 146,
+      "button.label": 160,
+      "button.size": 160,
+      "button.tone": 160,
+      "button.variant": 160,
       "canvas.display_list": 2,
       "canvas.height": 2,
       "canvas.palette": 2,
       "canvas.width": 2,
-      "card.body": 19,
-      "card.title": 19,
-      "card.tone": 19,
+      "card.body": 38,
+      "card.title": 38,
+      "card.tone": 38,
       "chart.maximum": 2,
       "chart.samples": 2,
       "chart.style": 2,
@@ -176,19 +176,19 @@
       "image.fit": 11,
       "keypad.columns": 3,
       "keypad.keys": 3,
-      "live_card.body": 46,
-      "live_card.progress": 43,
-      "live_card.title": 46,
-      "live_card.tone": 46,
-      "progress.label": 7,
-      "progress.maximum": 7,
-      "progress.style": 7,
-      "progress.tone": 7,
-      "progress.value": 7,
-      "row.align": 81,
-      "row.gap": 81,
-      "screen.align": 87,
-      "screen.gap": 87,
+      "live_card.body": 43,
+      "live_card.progress": 40,
+      "live_card.title": 43,
+      "live_card.tone": 43,
+      "progress.label": 10,
+      "progress.maximum": 10,
+      "progress.style": 10,
+      "progress.tone": 10,
+      "progress.value": 10,
+      "row.align": 84,
+      "row.gap": 84,
+      "screen.align": 95,
+      "screen.gap": 95,
       "scroll.align": 15,
       "scroll.gap": 15,
       "stepper.label": 4,
@@ -201,10 +201,10 @@
       "surface.gap": 29,
       "surface.shape": 29,
       "surface.tone": 29,
-      "text.align": 186,
-      "text.max_lines": 203,
-      "text.style": 203,
-      "text.text": 203,
+      "text.align": 197,
+      "text.max_lines": 214,
+      "text.style": 214,
+      "text.text": 214,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9,
@@ -213,63 +213,64 @@
     },
     "event_counts": {
       "checkedChanged": 9,
+      "longPress": 4,
       "pageChanged": 5,
-      "tap": 157,
+      "tap": 180,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
       "hint": 2,
-      "label": 312,
-      "value": 82
+      "label": 332,
+      "value": 79
     },
     "token_values": {
       "variant": {
-        "filled": 72,
-        "text": 7,
-        "tonal": 67
+        "filled": 78,
+        "text": 8,
+        "tonal": 74
       },
       "style": {
         "bars": 1,
         "body": 11,
-        "caption": 35,
+        "caption": 37,
         "circular": 1,
-        "label": 86,
+        "label": 90,
         "line": 1,
-        "linear": 6,
-        "numeral": 62,
-        "title": 9
+        "linear": 9,
+        "numeral": 64,
+        "title": 12
       },
       "tone": {
-        "error": 3,
-        "neutral": 104,
-        "primary": 144,
-        "secondary": 14,
+        "error": 5,
+        "neutral": 114,
+        "primary": 162,
+        "secondary": 17,
         "tertiary": 16
       },
       "size": {
-        "compact": 16,
-        "default": 130,
+        "compact": 26,
+        "default": 134,
         "hero": 2,
         "large": 21
       },
       "gap": {
         "lg": 1,
-        "none": 139,
+        "none": 147,
         "sm": 13,
-        "xs": 81
+        "xs": 84
       },
       "align": {
-        "center": 178,
+        "center": 189,
         "end": 13,
         "start": 38,
-        "stretch": 191
+        "stretch": 202
       },
       "state": {
         "idle": 1
       }
     },
     "patterns": {
-      "action_list": 5,
+      "action_list": 1,
       "calendar_agenda": 5,
       "camera_remote": 5,
       "canvas_game": 2,
@@ -282,12 +283,11 @@
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
+      "powerlifting": 12,
+      "status_detail": 4,
       "task_list": 4,
       "voice_ready": 1,
-      "wallet_qr": 1,
-      "workout_rest": 1,
-      "workout_set": 2,
-      "workout_summary": 1
+      "wallet_qr": 1
     }
   },
   "runtime": {
@@ -364,16 +364,24 @@
         ]
       },
       "workout": {
-        "accepted_operations": 7,
-        "mounts": 4,
-        "command_batches": 3,
-        "checkpoints": 6,
-        "unique_snapshots": 6,
+        "accepted_operations": 19,
+        "mounts": 17,
+        "command_batches": 2,
+        "checkpoints": 20,
+        "unique_snapshots": 14,
         "screen_ids": [
-          "active_set",
-          "workout.next-set",
-          "workout.rest",
-          "workout.summary"
+          "powerlifting.active-set",
+          "powerlifting.exercise-picker",
+          "powerlifting.exercise-switcher",
+          "powerlifting.missed-set",
+          "powerlifting.plate-loading",
+          "powerlifting.rest",
+          "powerlifting.resume",
+          "powerlifting.session",
+          "powerlifting.set-result",
+          "powerlifting.summary",
+          "powerlifting.today",
+          "powerlifting.weight-editor"
         ]
       },
       "calories": {
@@ -551,9 +559,9 @@
         ]
       }
     },
-    "accepted_operations": 112,
-    "checkpoints": 103,
-    "unique_snapshot_hashes": 95
+    "accepted_operations": 124,
+    "checkpoints": 117,
+    "unique_snapshot_hashes": 103
   },
   "sources": [
     {
@@ -650,19 +658,51 @@
     },
     {
       "path": "apps/workout/appspec.json",
-      "sha256": "e887b7db6dc352c19d01c36a76617916643212aeab11f8b7373b321bb013cf0b"
+      "sha256": "ca3dfddbf89c59da729bea9a55d9592bc18a60e9be2592211f995e89f44aabb8"
     },
     {
-      "path": "apps/workout/screens/next-set.json",
-      "sha256": "f4b60f28d06b7c065fc4e23884c61b19ceab918e5345d256b811c363c00dc350"
+      "path": "apps/workout/screens/active-set.json",
+      "sha256": "6e489d2dc7a39a0e67856da0d3c311e7c474a6a3c8f5c5703c2952b77289ebbf"
+    },
+    {
+      "path": "apps/workout/screens/exercise-picker.json",
+      "sha256": "7a84d2e84cbdb709b6dff7311e3bc20cb2726ef91426e8558e96cc591e9d17f6"
+    },
+    {
+      "path": "apps/workout/screens/exercise-switcher.json",
+      "sha256": "a703069425c71ec967c08bbd37b33193bea731165e43da08678bf274d97e6a94"
+    },
+    {
+      "path": "apps/workout/screens/missed-set.json",
+      "sha256": "71dd8cf7d01869ea255a0c0c17952c8982c1ba0c16f99b74c893444dc54a7ce6"
+    },
+    {
+      "path": "apps/workout/screens/plate-loading.json",
+      "sha256": "78f4af0744ac6e04ac6a533360fd111eb9aae4282a7d194f3a6a13129ca9462c"
     },
     {
       "path": "apps/workout/screens/rest.json",
-      "sha256": "26747f078bc746bf81421aa0b2d95c02e6eec9acc74c22c7e5861ba423f2a6d0"
+      "sha256": "3da7aa920b80bc274e1f05b7ba92848c2ba9be1d8055051bbb211ee295a95483"
+    },
+    {
+      "path": "apps/workout/screens/resume.json",
+      "sha256": "599ee4c2a87d6985aa7503d8b0e80cf77a46c579e96bc7459933d250239cc3c2"
+    },
+    {
+      "path": "apps/workout/screens/session.json",
+      "sha256": "dff2cd4b73dbf4cd9901ad1e63768da1996ad77012a7b789f689c755c860e999"
+    },
+    {
+      "path": "apps/workout/screens/set-result.json",
+      "sha256": "9905d0582f56c3e4f97fd0038b54eb307502635f1fe8378175f0f9e065d3fe26"
     },
     {
       "path": "apps/workout/screens/summary.json",
-      "sha256": "c88f74dbc9145145c6eb973c0f529e467bb0f13cf8cde82d65501db8bc550152"
+      "sha256": "1fa7f81cafcd849790d731e488165efea7ffb2323efa3c3b8ba5c6042e730363"
+    },
+    {
+      "path": "apps/workout/screens/weight-editor.json",
+      "sha256": "1ebef2aba0d461c2a3705fe4e0f39fd8e4d999842960743100056da2cb1ad763"
     },
     {
       "path": "apps/calories/appspec.json",
@@ -905,5 +945,5 @@
       "sha256": "b8a5b8ec421b21e34fc3653403289c1a6ad9e89e525db3a420e631708ceddd9a"
     }
   ],
-  "sources_sha256": "d1ea2fa56adba2ae2b4a2772cfe85560671402d1920eeeb8fe2e4e992da3c7e1"
+  "sources_sha256": "52bd01a5ce4b0d3eebab470fe4d3c123979373b12c2b1fc11cf38297a174531f"
 }

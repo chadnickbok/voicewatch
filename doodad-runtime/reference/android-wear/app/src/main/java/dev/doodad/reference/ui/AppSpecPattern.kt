@@ -14,6 +14,7 @@ enum class AppSpecPattern(
     CalendarAgenda("calendar_agenda"),
     NotificationStack("notification_stack"),
     TaskList("task_list"),
+    Powerlifting("powerlifting"),
     WorkoutSet("workout_set"),
     WorkoutRest("workout_rest"),
     WorkoutSummary("workout_summary"),
@@ -34,6 +35,7 @@ data class AppSpecStructuralFacts(
     val kindCounts: Map<String, Int>,
     val actionCount: Int,
     val interactiveCount: Int,
+    val screenId: String? = null,
 )
 
 object AppSpecPatternSelector {
@@ -46,9 +48,7 @@ object AppSpecPatternSelector {
             AppSpecPattern.CalendarAgenda to 5,
             AppSpecPattern.NotificationStack to 6,
             AppSpecPattern.TaskList to 4,
-            AppSpecPattern.WorkoutSet to 2,
-            AppSpecPattern.WorkoutRest to 1,
-            AppSpecPattern.WorkoutSummary to 1,
+            AppSpecPattern.Powerlifting to 12,
             AppSpecPattern.NutritionDashboard to 1,
             AppSpecPattern.NutritionQuickAdd to 1,
             AppSpecPattern.NutritionReview to 1,
@@ -73,11 +73,14 @@ object AppSpecPatternSelector {
                     snapshot.nodes.count {
                         it.kind in interactiveKinds
                     },
+                screenId = snapshot.root.id,
             ),
         )
 
     fun select(facts: AppSpecStructuralFacts): AppSpecPattern =
         when {
+            facts.screenId?.startsWith("powerlifting.") == true ->
+                AppSpecPattern.Powerlifting
             facts.count("canvas") == 1 &&
                 facts.count("keypad") == 1 &&
                 facts.count("text") == 2 ->

@@ -16,26 +16,26 @@ class ParallaxInventoryTests(unittest.TestCase):
     def test_inventory_freezes_the_exact_initial_corpus(self) -> None:
         document = json.loads(INVENTORY.read_text())
         self.assertEqual(document["suite"]["app_count"], 20)
-        self.assertEqual(document["suite"]["document_count"], 87)
+        self.assertEqual(document["suite"]["document_count"], 95)
         self.assertEqual(
             document["authored"]["component_counts"],
             {
-                "button": 146,
+                "button": 160,
                 "canvas": 2,
-                "card": 19,
+                "card": 38,
                 "chart": 2,
                 "column": 22,
                 "icon": 23,
                 "image": 11,
                 "keypad": 3,
-                "live_card": 46,
-                "progress": 7,
-                "row": 81,
-                "screen": 87,
+                "live_card": 43,
+                "progress": 10,
+                "row": 84,
+                "screen": 95,
                 "scroll": 15,
                 "stepper": 4,
                 "surface": 29,
-                "text": 203,
+                "text": 214,
                 "toggle": 9,
                 "voice_orb": 1,
             },
@@ -43,7 +43,7 @@ class ParallaxInventoryTests(unittest.TestCase):
         self.assertEqual(
             document["authored"]["patterns"],
             {
-                "action_list": 5,
+                "action_list": 1,
                 "calendar_agenda": 5,
                 "camera_remote": 5,
                 "canvas_game": 2,
@@ -54,21 +54,20 @@ class ParallaxInventoryTests(unittest.TestCase):
                 "nutrition_dashboard": 1,
                 "nutrition_quick_add": 1,
                 "nutrition_review": 1,
-                "task_list": 4,
                 "live_action_detail": 43,
                 "media_player": 5,
+                "powerlifting": 12,
+                "status_detail": 4,
+                "task_list": 4,
                 "wallet_qr": 1,
                 "voice_ready": 1,
-                "workout_rest": 1,
-                "workout_set": 2,
-                "workout_summary": 1,
             },
         )
         self.assertEqual(
             document["runtime"]["accepted_operations"],
-            112,
+            124,
         )
-        self.assertEqual(document["runtime"]["checkpoints"], 103)
+        self.assertEqual(document["runtime"]["checkpoints"], 117)
 
     def test_inventory_generator_reports_current(self) -> None:
         result = subprocess.run(

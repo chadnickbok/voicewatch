@@ -42,7 +42,7 @@ class SceneTraceTests(unittest.TestCase):
                 len(self.flows[app["slug"]]) + 1,
             )
         self.assertEqual(len(self.suite), 20)
-        self.assertEqual(entries, 112)
+        self.assertEqual(entries, 124)
         self.assertEqual(
             checkpoints,
             sum(len(self.flows[app["slug"]]) + 1 for app in self.suite),

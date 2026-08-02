@@ -14,7 +14,7 @@ import org.junit.Test
 
 class AppSpecPatternTest {
     @Test
-    fun selectorReproducesTheFrozenEightySevenDocumentCorpus() {
+    fun selectorReproducesTheFrozenNinetyFiveDocumentCorpus() {
         val root = findDoodadRuntimeRoot()
         val inventory =
             Json.parseToJsonElement(
@@ -37,7 +37,7 @@ class AppSpecPatternTest {
                 )
             }
 
-        assertEquals(87, selected.size)
+        assertEquals(95, selected.size)
         assertEquals(
             AppSpecPatternSelector.authoredCorpusExpectation,
             selected.groupingBy { it }.eachCount(),
@@ -61,9 +61,7 @@ class AppSpecPatternTest {
                 "media_player" to 5,
                 "wallet_qr" to 1,
                 "voice_ready" to 1,
-                "workout_rest" to 1,
-                "workout_set" to 2,
-                "workout_summary" to 1,
+                "powerlifting" to 12,
             ),
             inventory
                 .getValue("authored")
@@ -124,6 +122,13 @@ class AppSpecPatternTest {
                         mapOf("scroll" to 1, "toggle" to 2, "button" to 1),
                         3,
                         3,
+                    ),
+                AppSpecPattern.Powerlifting to
+                    AppSpecStructuralFacts(
+                        mapOf("card" to 2, "button" to 1),
+                        1,
+                        1,
+                        screenId = "powerlifting.today",
                     ),
                 AppSpecPattern.WorkoutSet to
                     AppSpecStructuralFacts(
@@ -293,6 +298,7 @@ class AppSpecPatternTest {
                             "voice_orb",
                         )
                 },
+            screenId = root.getValue("id").jsonPrimitive.content,
         )
     }
 

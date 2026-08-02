@@ -319,6 +319,10 @@ private fun PatternSurface(
             evidenceCollector = evidenceCollector,
             onAction = onAction,
         )
+    if (!profile.isRound && snapshot.root.id.startsWith("powerlifting.")) {
+        SquarePowerliftingSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.Empty && snapshot.appId != "weather") {
         val state = rememberScrollState()
         ScreenScaffold(
@@ -404,6 +408,10 @@ private fun SquarePatternSurface(
     context: RenderContext,
     pattern: AppSpecPattern,
 ) {
+    if (context.snapshot.root.id.startsWith("powerlifting.")) {
+        SquarePowerliftingSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.CanvasGame) {
         SquareCanvasGameSurface(children, context)
         return
@@ -531,6 +539,499 @@ private fun SquarePatternSurface(
                     context.onAction,
                 )
             }
+        }
+    }
+}
+
+private val PowerliftingBackground = Color(0xFF00102B)
+private val PowerliftingSurface = Color(0xFF0A2046)
+private val PowerliftingSurfaceHigh = Color(0xFF132B5A)
+private val PowerliftingPrimary = Color(0xFFA98CFF)
+private val PowerliftingPrimaryContainer = Color(0xFF5146B6)
+private val PowerliftingOnSurface = Color(0xFFF3F0FF)
+private val PowerliftingOnSurfaceVariant = Color(0xFFB8C7F2)
+private val PowerliftingSuccess = Color(0xFF72DDA7)
+private val PowerliftingError = Color(0xFFFF817D)
+private val PowerliftingAmber = Color(0xFFFFC857)
+
+private data class PowerliftingRect(
+    val x: Int,
+    val y: Int,
+    val width: Int,
+    val height: Int,
+)
+
+private fun powerliftingRect(id: String): PowerliftingRect =
+    when (id) {
+        "powerlifting.today.kicker" -> PowerliftingRect(8, 4, 176, 18)
+        "powerlifting.today.hero" -> PowerliftingRect(8, 26, 176, 76)
+        "powerlifting.today.volume" -> PowerliftingRect(8, 106, 176, 30)
+        "powerlifting.today.start" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.session.title" -> PowerliftingRect(8, 2, 176, 18)
+        "powerlifting.session.count" -> PowerliftingRect(8, 20, 176, 32)
+        "powerlifting.session.progress" -> PowerliftingRect(8, 52, 176, 4)
+        "powerlifting.session.squat" -> PowerliftingRect(8, 58, 176, 48)
+        "powerlifting.session.bench" -> PowerliftingRect(8, 108, 176, 15)
+        "powerlifting.session.deadlift" -> PowerliftingRect(8, 125, 176, 15)
+        "powerlifting.session.begin" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.exercise-picker.title" -> PowerliftingRect(8, 2, 176, 18)
+        "powerlifting.exercise-picker.back-squat" -> PowerliftingRect(8, 24, 176, 48)
+        "powerlifting.exercise-picker.front-squat" -> PowerliftingRect(8, 76, 176, 48)
+        "powerlifting.exercise-picker.paused-squat" -> PowerliftingRect(8, 128, 176, 48)
+        "powerlifting.active-set.exercise" -> PowerliftingRect(8, 4, 128, 18)
+        "powerlifting.active-set.set" -> PowerliftingRect(8, 24, 128, 14)
+        "powerlifting.active-set.progress" -> PowerliftingRect(142, 7, 42, 6)
+        "powerlifting.active-set.target" -> PowerliftingRect(8, 42, 176, 76)
+        "powerlifting.active-set.previous" -> PowerliftingRect(8, 122, 176, 16)
+        "powerlifting.active-set.complete" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.weight-editor.title" -> PowerliftingRect(8, 5, 176, 18)
+        "powerlifting.weight-editor.value" -> PowerliftingRect(8, 28, 176, 90)
+        "powerlifting.weight-editor.plates" -> PowerliftingRect(8, 122, 176, 16)
+        "powerlifting.weight-editor.done" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.set-result.summary" -> PowerliftingRect(8, 4, 176, 36)
+        "powerlifting.set-result.reps" -> PowerliftingRect(8, 40, 176, 48)
+        "powerlifting.set-result.rpe" -> PowerliftingRect(8, 90, 176, 48)
+        "powerlifting.set-result.save" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.rest.label" -> PowerliftingRect(8, 2, 176, 16)
+        "powerlifting.rest.time" -> PowerliftingRect(8, 18, 176, 50)
+        "powerlifting.rest.progress" -> PowerliftingRect(24, 70, 144, 5)
+        "powerlifting.rest.next" -> PowerliftingRect(8, 78, 176, 54)
+        "powerlifting.rest.controls" -> PowerliftingRect(8, 136, 176, 48)
+        "powerlifting.plate-loading.total" -> PowerliftingRect(8, 4, 176, 36)
+        "powerlifting.plate-loading.side" -> PowerliftingRect(8, 40, 176, 16)
+        "powerlifting.plate-loading.diagram" -> PowerliftingRect(8, 58, 176, 80)
+        "powerlifting.plate-loading.ready" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.exercise-switcher.count" -> PowerliftingRect(8, 4, 176, 20)
+        "powerlifting.exercise-switcher.squat" -> PowerliftingRect(8, 28, 176, 48)
+        "powerlifting.exercise-switcher.bench" -> PowerliftingRect(8, 80, 176, 48)
+        "powerlifting.exercise-switcher.deadlift" -> PowerliftingRect(8, 132, 176, 48)
+        "powerlifting.missed-set.label" -> PowerliftingRect(8, 2, 176, 18)
+        "powerlifting.missed-set.actual" -> PowerliftingRect(8, 24, 176, 66)
+        "powerlifting.missed-set.options" -> PowerliftingRect(8, 92, 176, 48)
+        "powerlifting.missed-set.next" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.summary.title" -> PowerliftingRect(8, 4, 176, 18)
+        "powerlifting.summary.metrics" -> PowerliftingRect(8, 28, 176, 58)
+        "powerlifting.summary.pr" -> PowerliftingRect(8, 92, 176, 46)
+        "powerlifting.summary.done" -> PowerliftingRect(8, 140, 176, 48)
+        "powerlifting.resume.label" -> PowerliftingRect(8, 2, 176, 18)
+        "powerlifting.resume.state" -> PowerliftingRect(8, 24, 176, 68)
+        "powerlifting.resume.action" -> PowerliftingRect(8, 96, 176, 48)
+        "powerlifting.resume.discard" -> PowerliftingRect(8, 144, 176, 48)
+        else -> error("No Powerlifting bounds for $id")
+    }
+
+private fun Modifier.powerliftingBounds(node: SceneNode): Modifier {
+    val bounds = powerliftingRect(node.id)
+    return offset(x = bounds.x.dp, y = bounds.y.dp)
+        .width(bounds.width.dp)
+        .height(bounds.height.dp)
+}
+
+@Composable
+private fun SquarePowerliftingSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(PowerliftingBackground),
+    ) {
+        children.forEach { node ->
+            when (node.kind) {
+                "text" -> PowerliftingText(node, context)
+                "progress" -> PowerliftingProgress(node, context)
+                "card" -> PowerliftingCard(node, context)
+                "stepper" -> PowerliftingStepper(node, context)
+                "row" -> PowerliftingRow(node, context)
+                "button" -> PowerliftingButton(node, context)
+                else -> error("Unsupported Powerlifting node ${node.kind}")
+            }
+        }
+    }
+}
+
+@Composable
+private fun PowerliftingText(node: SceneNode, context: RenderContext) {
+    val isNumeral = node.props.variant == "numeral"
+    val isSuccess = node.id == "powerlifting.summary.title"
+    val isError = node.id == "powerlifting.missed-set.label"
+    Text(
+        text = requireNotNull(node.props.primaryText),
+        modifier =
+            Modifier
+                .powerliftingBounds(node)
+                .appSpecNode(node, context.evidenceCollector),
+        color =
+            when {
+                isSuccess -> PowerliftingSuccess
+                isError -> PowerliftingError
+                isNumeral -> PowerliftingOnSurface
+                else -> PowerliftingOnSurfaceVariant
+            },
+        style =
+            when {
+                node.id == "powerlifting.session.count" ->
+                    MaterialTheme.typography.displaySmall.copy(fontSize = 26.sp)
+                isNumeral -> MaterialTheme.typography.displayMedium
+                node.props.variant == "title" -> MaterialTheme.typography.titleLarge
+                else -> MaterialTheme.typography.labelMedium
+            },
+        textAlign = TextAlign.Center,
+        maxLines = 1,
+        overflow = TextOverflow.Ellipsis,
+    )
+}
+
+@Composable
+private fun PowerliftingProgress(node: SceneNode, context: RenderContext) {
+    LinearProgressIndicator(
+        progress = {
+            requireNotNull(node.props.value).toFloat() /
+                requireNotNull(node.props.maximum).toFloat()
+        },
+        modifier =
+            Modifier
+                .powerliftingBounds(node)
+                .appSpecNode(node, context.evidenceCollector),
+        enabled = node.enabled,
+        colors =
+            androidx.wear.compose.material3.ProgressIndicatorDefaults
+                .colors(
+                    indicatorColor = PowerliftingPrimary,
+                    trackColor = PowerliftingSurfaceHigh,
+                ),
+    )
+}
+
+@Composable
+private fun PowerliftingCard(node: SceneNode, context: RenderContext) {
+    val action = node.action("tap")
+    val isHero =
+        node.id in
+            setOf(
+                "powerlifting.today.hero",
+                "powerlifting.active-set.target",
+                "powerlifting.missed-set.actual",
+                "powerlifting.resume.state",
+            )
+    val isPlateDiagram = node.id == "powerlifting.plate-loading.diagram"
+    val isPr = node.id == "powerlifting.summary.pr"
+    val bounds = powerliftingRect(node.id)
+    val container =
+        when {
+            isPr -> Color(0xFF123F3C)
+            node.props.tone == "error" -> Color(0xFF3B1F31)
+            node.props.tone == "primary" -> PowerliftingSurfaceHigh
+            else -> PowerliftingSurface
+        }
+    val modifier =
+        Modifier
+            .powerliftingBounds(node)
+            .clip(RoundedCornerShape(if (isHero) 15.dp else 11.dp))
+            .background(container)
+            .then(
+                if (action == null) {
+                    Modifier
+                } else {
+                    Modifier.clickable(
+                        enabled = node.enabled,
+                        onClick = { context.dispatch(node, action) },
+                    )
+                },
+            )
+            .appSpecNode(node, context.evidenceCollector)
+
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        when {
+            bounds.height <= 30 -> {
+                Text(
+                    text =
+                        if (node.id == "powerlifting.today.volume") {
+                            "14 SETS  /  3 LIFTS"
+                        } else {
+                            requireNotNull(node.props.primaryText)
+                        },
+                    color = PowerliftingOnSurface,
+                    fontSize = if (node.id == "powerlifting.today.volume") 14.sp else 11.sp,
+                    textAlign = TextAlign.Center,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+            isPlateDiagram -> PowerliftingPlateDiagram()
+            node.id == "powerlifting.active-set.target" -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "140",
+                        color = PowerliftingPrimary,
+                        fontSize = 46.sp,
+                        lineHeight = 46.sp,
+                    )
+                    Text(
+                        text = "KG   X 5",
+                        color = PowerliftingPrimary,
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                }
+            }
+            node.id == "powerlifting.missed-set.actual" -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "140 KG  X  3",
+                        color = PowerliftingOnSurface,
+                        fontSize = 30.sp,
+                        maxLines = 1,
+                    )
+                    Text(
+                        text = requireNotNull(node.props.secondaryText),
+                        color = PowerliftingOnSurfaceVariant,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
+            node.id == "powerlifting.today.hero" -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = "HEAVY",
+                        color = PowerliftingPrimary,
+                        fontSize = 31.sp,
+                        lineHeight = 31.sp,
+                    )
+                    Text(
+                        text = "DAY",
+                        color = PowerliftingPrimary,
+                        fontSize = 31.sp,
+                        lineHeight = 31.sp,
+                    )
+                }
+            }
+            node.id == "powerlifting.resume.state" -> {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = requireNotNull(node.props.secondaryText).substringBefore(" / SAVED"),
+                        color = PowerliftingOnSurfaceVariant,
+                        style = MaterialTheme.typography.labelMedium,
+                    )
+                    Text(
+                        text = "142.5 KG  X 5",
+                        color = PowerliftingPrimary,
+                        fontSize = 24.sp,
+                        maxLines = 1,
+                    )
+                    Text(
+                        text = "SAVED 24 SEC AGO",
+                        color = PowerliftingSuccess,
+                        style = MaterialTheme.typography.labelSmall,
+                    )
+                }
+            }
+            else -> {
+                Column(
+                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 3.dp),
+                    verticalArrangement = Arrangement.Center,
+                ) {
+                    Text(
+                        text = requireNotNull(node.props.primaryText),
+                        color = if (isPr) PowerliftingSuccess else PowerliftingOnSurface,
+                        style =
+                            if (isHero) MaterialTheme.typography.titleLarge
+                            else MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Text(
+                        text = requireNotNull(node.props.secondaryText),
+                        color = PowerliftingOnSurfaceVariant,
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PowerliftingStepper(node: SceneNode, context: RenderContext) {
+    val value = requireNotNull(node.props.value)
+    val action = node.action("value_committed")
+        ?: error("Powerlifting stepper requires valueCommitted")
+    val isWeight = node.id.endsWith("weight-editor.value")
+    Box(
+        modifier =
+            Modifier
+                .powerliftingBounds(node)
+                .clip(RoundedCornerShape(14.dp))
+                .background(PowerliftingSurface)
+                .appSpecNode(node, context.evidenceCollector),
+    ) {
+        Text(
+            text = if (isWeight) "$value.0" else value.toString(),
+            modifier = Modifier.align(Alignment.Center),
+            color = PowerliftingPrimary,
+            fontSize = if (isWeight) 46.sp else 40.sp,
+            maxLines = 1,
+        )
+        Text(
+            text = requireNotNull(node.props.secondaryText).uppercase(),
+            modifier = Modifier.align(Alignment.CenterEnd).padding(end = 10.dp),
+            color = PowerliftingOnSurfaceVariant,
+            style = MaterialTheme.typography.labelMedium,
+        )
+        CompactButton(
+            onClick = {
+                context.dispatch(
+                    node,
+                    action,
+                    ReferenceActionPayload.Number(value - requireNotNull(node.props.step)),
+                )
+            },
+            modifier = Modifier.align(Alignment.BottomStart).size(40.dp),
+            colors = ButtonDefaults.filledTonalButtonColors(),
+            label = { Text("−") },
+        )
+        CompactButton(
+            onClick = {
+                context.dispatch(
+                    node,
+                    action,
+                    ReferenceActionPayload.Number(value + requireNotNull(node.props.step)),
+                )
+            },
+            modifier = Modifier.align(Alignment.BottomEnd).size(40.dp),
+            colors = ButtonDefaults.filledTonalButtonColors(),
+            label = { Text("+") },
+        )
+    }
+}
+
+@Composable
+private fun PowerliftingRow(node: SceneNode, context: RenderContext) {
+    val children = context.snapshot.childrenOf(node).filter { it.visible }
+    if (node.id == "powerlifting.set-result.rpe") {
+        Box(
+            modifier =
+                Modifier
+                    .powerliftingBounds(node)
+                    .appSpecNode(node, context.evidenceCollector),
+        ) {
+            children.forEachIndexed { index, child ->
+                NotificationActionButton(
+                    node = child,
+                    context = context,
+                    modifier =
+                        Modifier
+                            .offset(x = (index * 43).dp)
+                            .width(48.dp)
+                            .fillMaxHeight(),
+                )
+            }
+        }
+        return
+    }
+    Row(
+        modifier =
+            Modifier
+                .powerliftingBounds(node)
+                .appSpecNode(node, context.evidenceCollector),
+        horizontalArrangement = Arrangement.spacedBy(3.dp),
+    ) {
+        children.forEach { child ->
+            if (child.kind == "button") {
+                NotificationActionButton(
+                    node = child,
+                    context = context,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                )
+            } else {
+                Box(
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(10.dp))
+                            .background(PowerliftingSurface)
+                            .appSpecNode(child, context.evidenceCollector),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        text = requireNotNull(child.props.primaryText),
+                        color = PowerliftingOnSurface,
+                        style = MaterialTheme.typography.labelMedium,
+                        textAlign = TextAlign.Center,
+                        maxLines = 2,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun PowerliftingButton(node: SceneNode, context: RenderContext) {
+    if (node.props.variant == "text") {
+        val tap = node.action("tap") ?: error("Powerlifting text action requires tap")
+        Text(
+            text = requireNotNull(node.props.primaryText),
+            modifier =
+                Modifier
+                    .powerliftingBounds(node)
+                    .clickable(enabled = node.enabled) { context.dispatch(node, tap) }
+                    .appSpecNode(node, context.evidenceCollector),
+            color = PowerliftingError,
+            style = MaterialTheme.typography.labelSmall,
+            textAlign = TextAlign.Center,
+        )
+        return
+    }
+    NotificationActionButton(
+        node = node,
+        context = context,
+        modifier = Modifier.powerliftingBounds(node),
+    )
+}
+
+@Composable
+private fun PowerliftingPlateDiagram() {
+    Canvas(modifier = Modifier.fillMaxSize().padding(10.dp)) {
+        val centerY = size.height * 0.52f
+        drawRoundRect(
+            color = PowerliftingOnSurfaceVariant.copy(alpha = 0.6f),
+            topLeft = Offset(size.width * 0.08f, centerY - 4f),
+            size = Size(size.width * 0.84f, 8f),
+            cornerRadius = androidx.compose.ui.geometry.CornerRadius(3f, 3f),
+        )
+        val colors =
+            listOf(
+                PowerliftingAmber,
+                Color(0xFFE55D5D),
+                Color(0xFFE55D5D),
+                Color(0xFF74A9E8),
+                PowerliftingSuccess,
+            )
+        colors.forEachIndexed { index, color ->
+            val plateWidth = if (index in 1..2) 11f else 6f
+            val plateHeight = 28f - index * 3f
+            val left = size.width * 0.5f - 8f - index * 11f
+            val right = size.width * 0.5f + 8f + index * 11f - plateWidth
+            drawRoundRect(
+                color = color,
+                topLeft = Offset(left, centerY - plateHeight / 2f),
+                size = Size(plateWidth, plateHeight),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(2f, 2f),
+            )
+            drawRoundRect(
+                color = color,
+                topLeft = Offset(right, centerY - plateHeight / 2f),
+                size = Size(plateWidth, plateHeight),
+                cornerRadius = androidx.compose.ui.geometry.CornerRadius(2f, 2f),
+            )
         }
     }
 }

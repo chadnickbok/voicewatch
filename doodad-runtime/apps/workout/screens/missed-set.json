@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.missed-set",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.missed-set.label",
+          "type": "text",
+          "props": {
+            "text": "SET MISSED",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.missed-set.actual",
+          "type": "card",
+          "props": {
+            "title": "140 KG  X  3",
+            "body": "TARGET 5 REPS @8",
+            "tone": "error"
+          }
+        },
+        {
+          "id": "powerlifting.missed-set.options",
+          "type": "row",
+          "props": {
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "powerlifting.missed-set.drop",
+                "type": "button",
+                "props": {
+                  "label": "135",
+                  "tone": "secondary",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.missed.drop"
+                },
+                "semantics": {
+                  "label": "135"
+                }
+              },
+              {
+                "id": "powerlifting.missed-set.log",
+                "type": "button",
+                "props": {
+                  "label": "LOG 3",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.missed.log"
+                },
+                "semantics": {
+                  "label": "LOG 3"
+                }
+              },
+              {
+                "id": "powerlifting.missed-set.retry",
+                "type": "button",
+                "props": {
+                  "label": "RETRY",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.missed.retry"
+                },
+                "semantics": {
+                  "label": "RETRY"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "powerlifting.missed-set.next",
+          "type": "button",
+          "props": {
+            "label": "135 NEXT",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.missed.next"
+          },
+          "semantics": {
+            "label": "135 NEXT"
+          }
+        }
+      ]
+    }
+  }
+}

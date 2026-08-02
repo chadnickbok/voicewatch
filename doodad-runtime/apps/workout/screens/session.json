@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.session",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.session.title",
+          "type": "text",
+          "props": {
+            "text": "HEAVY DAY",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.session.count",
+          "type": "text",
+          "props": {
+            "text": "0 OF 14",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.session.progress",
+          "type": "progress",
+          "props": {
+            "label": "Workout progress",
+            "value": 0,
+            "maximum": 14,
+            "style": "linear",
+            "tone": "primary"
+          },
+          "semantics": {
+            "label": "Workout progress",
+            "value": "0 of 14"
+          }
+        },
+        {
+          "id": "powerlifting.session.squat",
+          "type": "card",
+          "props": {
+            "title": "BACK SQUAT",
+            "body": "5 SETS",
+            "tone": "primary"
+          },
+          "events": {
+            "tap": "workout.choose.exercise"
+          },
+          "semantics": {
+            "label": "BACK SQUAT"
+          }
+        },
+        {
+          "id": "powerlifting.session.bench",
+          "type": "card",
+          "props": {
+            "title": "BENCH PRESS",
+            "body": "5 SETS",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "powerlifting.session.deadlift",
+          "type": "card",
+          "props": {
+            "title": "DEADLIFT",
+            "body": "4 SETS",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "powerlifting.session.begin",
+          "type": "button",
+          "props": {
+            "label": "BEGIN SQUAT",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.begin"
+          },
+          "semantics": {
+            "label": "BEGIN SQUAT"
+          }
+        }
+      ]
+    }
+  }
+}

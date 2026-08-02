@@ -2,69 +2,55 @@
   "schema_version": 1,
   "app_id": "workout",
   "screen": {
-    "id": "active_set",
+    "id": "powerlifting.today",
     "type": "screen",
     "props": {
       "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "active_set.heading",
+          "id": "powerlifting.today.kicker",
           "type": "text",
           "props": {
-            "text": "SQUAT  /  SET 3/5",
+            "text": "SAT / WEEK 4",
             "style": "label",
             "max_lines": 1,
             "align": "center"
           }
         },
         {
-          "id": "active_set.weight",
-          "type": "stepper",
+          "id": "powerlifting.today.hero",
+          "type": "card",
           "props": {
-            "label": "Weight",
-            "value": 135,
-            "unit": "lb",
-            "minimum": 45,
-            "maximum": 500,
-            "step": 5
-          },
-          "events": {
-            "valueCommitted": "set_weight"
-          },
-          "semantics": {
-            "label": "Current set weight",
-            "value": "135 pounds"
+            "title": "HEAVY DAY",
+            "body": "SQUAT / BENCH / DEADLIFT",
+            "tone": "primary"
           }
         },
         {
-          "id": "active_set.summary",
-          "type": "live_card",
+          "id": "powerlifting.today.volume",
+          "type": "card",
           "props": {
-            "title": "TARGET  /  8 REPS",
-            "body": "Rest after set  /  1:00",
-            "progress": 0.63,
+            "title": "14 SETS",
+            "body": "3 LIFTS / ABOUT 67 MIN",
             "tone": "neutral"
-          },
-          "semantics": {
-            "label": "Set target",
-            "value": "8 reps, then rest 1 minute"
           }
         },
         {
-          "id": "active_set.complete",
+          "id": "powerlifting.today.start",
           "type": "button",
           "props": {
-            "label": "Log set",
+            "label": "START WORKOUT",
             "tone": "primary",
             "variant": "filled",
             "size": "default"
           },
           "events": {
-            "tap": "complete_set"
+            "tap": "workout.start",
+            "longPress": "workout.resume.preview"
           },
           "semantics": {
-            "label": "Log current set"
+            "label": "START WORKOUT"
           }
         }
       ]

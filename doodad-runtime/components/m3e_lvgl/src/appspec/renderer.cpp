@@ -698,6 +698,13 @@ bool is_weather_current_document(const WireDocument& document) {
          has_node_id(document, "weather.rain-page"));
 }
 
+bool is_powerlifting_document(const WireDocument& document) {
+    return std::strncmp(
+               document.string_at(document.nodes[0].id_offset),
+               "powerlifting.",
+               std::strlen("powerlifting.")) == 0;
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -2104,6 +2111,412 @@ void configure_weather_current_node(
     }
 }
 
+struct PowerliftingBounds {
+    std::int16_t x;
+    std::int16_t y;
+    std::int16_t width;
+    std::int16_t height;
+};
+
+bool powerlifting_bounds(
+    const char* id,
+    PowerliftingBounds& bounds) {
+    struct Entry {
+        const char* id;
+        PowerliftingBounds bounds;
+    };
+    static constexpr std::array<Entry, 57> entries{{
+        {"powerlifting.today.kicker", {8, 4, 176, 18}},
+        {"powerlifting.today.hero", {8, 26, 176, 76}},
+        {"powerlifting.today.volume", {8, 106, 176, 30}},
+        {"powerlifting.today.start", {8, 140, 176, 48}},
+        {"powerlifting.session.title", {8, 2, 176, 18}},
+        {"powerlifting.session.count", {8, 20, 176, 32}},
+        {"powerlifting.session.progress", {8, 52, 176, 4}},
+        {"powerlifting.session.squat", {8, 58, 176, 48}},
+        {"powerlifting.session.bench", {8, 108, 176, 15}},
+        {"powerlifting.session.deadlift", {8, 125, 176, 15}},
+        {"powerlifting.session.begin", {8, 140, 176, 48}},
+        {"powerlifting.exercise-picker.title", {8, 2, 176, 18}},
+        {"powerlifting.exercise-picker.back-squat", {8, 24, 176, 48}},
+        {"powerlifting.exercise-picker.front-squat", {8, 76, 176, 48}},
+        {"powerlifting.exercise-picker.paused-squat", {8, 128, 176, 48}},
+        {"powerlifting.exercise-picker.custom", {8, 148, 176, 40}},
+        {"powerlifting.active-set.exercise", {8, 4, 128, 18}},
+        {"powerlifting.active-set.set", {8, 24, 128, 14}},
+        {"powerlifting.active-set.progress", {142, 7, 42, 6}},
+        {"powerlifting.active-set.target", {8, 42, 176, 76}},
+        {"powerlifting.active-set.previous", {8, 122, 176, 16}},
+        {"powerlifting.active-set.complete", {8, 140, 176, 48}},
+        {"powerlifting.weight-editor.title", {8, 5, 176, 18}},
+        {"powerlifting.weight-editor.value", {8, 28, 176, 90}},
+        {"powerlifting.weight-editor.plates", {8, 122, 176, 16}},
+        {"powerlifting.weight-editor.done", {8, 140, 176, 48}},
+        {"powerlifting.set-result.summary", {8, 4, 176, 36}},
+        {"powerlifting.set-result.reps", {8, 40, 176, 48}},
+        {"powerlifting.set-result.rpe", {8, 90, 176, 48}},
+        {"powerlifting.set-result.save", {8, 140, 176, 48}},
+        {"powerlifting.rest.label", {8, 2, 176, 16}},
+        {"powerlifting.rest.time", {8, 18, 176, 50}},
+        {"powerlifting.rest.progress", {24, 70, 144, 5}},
+        {"powerlifting.rest.next", {8, 78, 176, 54}},
+        {"powerlifting.rest.controls", {8, 136, 176, 48}},
+        {"powerlifting.rest.edit", {8, 164, 176, 24}},
+        {"powerlifting.plate-loading.total", {8, 4, 176, 36}},
+        {"powerlifting.plate-loading.side", {8, 40, 176, 16}},
+        {"powerlifting.plate-loading.diagram", {8, 58, 176, 80}},
+        {"powerlifting.plate-loading.ready", {8, 140, 176, 48}},
+        {"powerlifting.exercise-switcher.count", {8, 4, 176, 20}},
+        {"powerlifting.exercise-switcher.squat", {8, 28, 176, 48}},
+        {"powerlifting.exercise-switcher.bench", {8, 80, 176, 48}},
+        {"powerlifting.exercise-switcher.deadlift", {8, 132, 176, 48}},
+        {"powerlifting.exercise-switcher.finish", {8, 140, 176, 48}},
+        {"powerlifting.missed-set.label", {8, 2, 176, 18}},
+        {"powerlifting.missed-set.actual", {8, 24, 176, 66}},
+        {"powerlifting.missed-set.options", {8, 92, 176, 48}},
+        {"powerlifting.missed-set.next", {8, 140, 176, 48}},
+        {"powerlifting.summary.title", {8, 4, 176, 18}},
+        {"powerlifting.summary.metrics", {8, 28, 176, 58}},
+        {"powerlifting.summary.pr", {8, 92, 176, 46}},
+        {"powerlifting.summary.done", {8, 140, 176, 48}},
+        {"powerlifting.resume.label", {8, 2, 176, 18}},
+        {"powerlifting.resume.state", {8, 24, 176, 68}},
+        {"powerlifting.resume.action", {8, 96, 176, 48}},
+        {"powerlifting.resume.discard", {8, 144, 176, 48}},
+    }};
+    const auto match = std::find_if(
+        entries.begin(),
+        entries.end(),
+        [id](const Entry& entry) {
+            return std::strcmp(id, entry.id) == 0;
+        });
+    if (match == entries.end()) return false;
+    bounds = match->bounds;
+    return true;
+}
+
+lv_color_t powerlifting_color(const char* role) {
+    if (std::strcmp(role, "background") == 0) {
+        return lv_color_make(0x00, 0x10, 0x2B);
+    }
+    if (std::strcmp(role, "surface") == 0) {
+        return lv_color_make(0x0A, 0x20, 0x46);
+    }
+    if (std::strcmp(role, "surface_high") == 0) {
+        return lv_color_make(0x13, 0x2B, 0x5A);
+    }
+    if (std::strcmp(role, "primary") == 0) {
+        return lv_color_make(0xA9, 0x8C, 0xFF);
+    }
+    if (std::strcmp(role, "button") == 0) {
+        return lv_color_make(0xD8, 0xB9, 0xFF);
+    }
+    if (std::strcmp(role, "on_button") == 0) {
+        return lv_color_make(0x35, 0x11, 0x51);
+    }
+    if (std::strcmp(role, "on_surface") == 0) {
+        return lv_color_make(0xF3, 0xF0, 0xFF);
+    }
+    if (std::strcmp(role, "success") == 0) {
+        return lv_color_make(0x72, 0xDD, 0xA7);
+    }
+    if (std::strcmp(role, "error") == 0) {
+        return lv_color_make(0xFF, 0x81, 0x7D);
+    }
+    return lv_color_make(0xB8, 0xC7, 0xF2);
+}
+
+void powerlifting_plate(
+    lv_obj_t* parent,
+    std::int32_t x,
+    std::int32_t y,
+    std::int32_t width,
+    std::int32_t height,
+    lv_color_t color) {
+    auto* plate = lv_obj_create(parent);
+    ComponentFactory::reset(plate);
+    lv_obj_add_flag(plate, LV_OBJ_FLAG_FLOATING);
+    lv_obj_set_size(plate, px(width), px(height));
+    lv_obj_set_pos(plate, px(x), px(y));
+    lv_obj_set_style_radius(plate, px(2), 0);
+    lv_obj_set_style_bg_color(plate, color, 0);
+    lv_obj_set_style_bg_opa(plate, LV_OPA_COVER, 0);
+}
+
+void configure_powerlifting_node(
+    const WireDocument& document,
+    const WireNode& node,
+    lv_obj_t* object) {
+    const auto* id = document.string_at(node.id_offset);
+    PowerliftingBounds bounds{};
+    const auto has_bounds = powerlifting_bounds(id, bounds);
+    if (has_bounds) {
+        floating_box(
+            object,
+            bounds.x,
+            bounds.y,
+            bounds.width,
+            bounds.height);
+    }
+
+    if (node.kind == ComponentKind::text) {
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_CENTER, 0);
+        lv_label_set_long_mode(object, LV_LABEL_LONG_DOT);
+        lv_obj_set_style_text_font(
+            object,
+            node.variant == 4
+                ? &m3e_live_action_font_32
+                : node.variant == 1
+                    ? &lv_font_montserrat_18
+                    : &lv_font_montserrat_14,
+            0);
+        const auto color =
+            std::strcmp(id, "powerlifting.summary.title") == 0
+                ? powerlifting_color("success")
+                : std::strcmp(id, "powerlifting.missed-set.label") == 0
+                    ? powerlifting_color("error")
+                    : node.variant == 4
+                        ? powerlifting_color("on_surface")
+                        : powerlifting_color("on_surface_variant");
+        lv_obj_set_style_text_color(object, color, 0);
+        if (!has_bounds) {
+            if (std::strcmp(id, "powerlifting.summary.sets") == 0) {
+                floating_box(object, 0, 0, 56, 58);
+            } else if (std::strcmp(id, "powerlifting.summary.volume") == 0) {
+                floating_box(object, 59, 0, 57, 58);
+            } else if (std::strcmp(id, "powerlifting.summary.duration") == 0) {
+                floating_box(object, 119, 0, 57, 58);
+            }
+            lv_obj_set_height(object, LV_PCT(100));
+            lv_obj_set_style_bg_color(
+                object, powerlifting_color("surface"), 0);
+            lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
+            lv_obj_set_style_radius(object, px(10), 0);
+        }
+        return;
+    }
+
+    if (node.kind == ComponentKind::progress) {
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, LV_PART_MAIN);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, LV_PART_INDICATOR);
+        lv_obj_set_style_bg_color(
+            object, powerlifting_color("surface_high"), LV_PART_MAIN);
+        lv_obj_set_style_bg_color(
+            object, powerlifting_color("primary"), LV_PART_INDICATOR);
+        return;
+    }
+
+    if (node.kind == ComponentKind::row) {
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_SPACE_EVENLY,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+
+    if (node.kind == ComponentKind::button) {
+        if (std::strncmp(id, "powerlifting.set-result.rpe-", 28) == 0) {
+            const auto last = id[std::strlen(id) - 1];
+            const auto ordinal = last == '7' ? 0 : last == '8' ? 1 : last == '9' ? 2 : 3;
+            floating_box(object, ordinal * 43, 0, 48, 48);
+        } else if (std::strcmp(id, "powerlifting.missed-set.drop") == 0) {
+            floating_box(object, 0, 0, 56, 48);
+        } else if (std::strcmp(id, "powerlifting.missed-set.log") == 0) {
+            floating_box(object, 59, 0, 57, 48);
+        } else if (std::strcmp(id, "powerlifting.missed-set.retry") == 0) {
+            floating_box(object, 119, 0, 57, 48);
+        }
+        lv_obj_set_style_min_height(object, 0, 0);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(
+            object,
+            node.variant == static_cast<std::uint8_t>(ButtonVariant::text)
+                ? 0
+                : LV_RADIUS_CIRCLE,
+            0);
+        lv_obj_set_style_bg_color(
+            object,
+            node.variant == static_cast<std::uint8_t>(ButtonVariant::filled)
+                ? powerlifting_color("button")
+                : powerlifting_color("surface_high"),
+            0);
+        lv_obj_set_style_bg_opa(
+            object,
+            node.variant == static_cast<std::uint8_t>(ButtonVariant::text)
+                ? LV_OPA_TRANSP
+                : LV_OPA_COVER,
+            0);
+        if (!has_bounds) lv_obj_set_height(object, LV_PCT(100));
+        if (lv_obj_get_child_count(object) == 1) {
+            auto* label = lv_obj_get_child(object, 0);
+            lv_obj_set_style_text_font(label, &lv_font_montserrat_14, 0);
+            lv_obj_set_style_text_align(label, LV_TEXT_ALIGN_CENTER, 0);
+            lv_obj_set_style_text_color(
+                label,
+                node.variant == static_cast<std::uint8_t>(ButtonVariant::text)
+                    ? powerlifting_color("error")
+                    : node.variant == static_cast<std::uint8_t>(ButtonVariant::filled)
+                        ? powerlifting_color("on_button")
+                        : powerlifting_color("on_surface"),
+                0);
+            lv_label_set_long_mode(label, LV_LABEL_LONG_DOT);
+        }
+        return;
+    }
+
+    if (node.kind == ComponentKind::stepper) {
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_bg_color(
+            object, powerlifting_color("surface"), 0);
+        lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
+        lv_obj_set_style_radius(object, px(14), 0);
+        if (lv_obj_get_child_count(object) == 3) {
+            auto* decrement = lv_obj_get_child(object, 0);
+            auto* value = lv_obj_get_child(object, 1);
+            auto* increment = lv_obj_get_child(object, 2);
+            lv_obj_set_size(decrement, px(40), px(40));
+            lv_obj_set_size(increment, px(40), px(40));
+            lv_obj_set_style_radius(decrement, LV_RADIUS_CIRCLE, 0);
+            lv_obj_set_style_radius(increment, LV_RADIUS_CIRCLE, 0);
+            lv_obj_set_style_bg_color(
+                decrement, powerlifting_color("surface_high"), 0);
+            lv_obj_set_style_bg_color(
+                increment, powerlifting_color("surface_high"), 0);
+            lv_obj_set_flex_grow(value, 1);
+            lv_obj_set_style_bg_opa(value, LV_OPA_TRANSP, 0);
+            lv_obj_set_style_text_font(
+                value, &m3e_live_action_font_32, 0);
+            lv_obj_set_style_text_color(
+                value, powerlifting_color("primary"), 0);
+            lv_obj_set_style_text_align(value, LV_TEXT_ALIGN_CENTER, 0);
+        }
+        return;
+    }
+
+    if (node.kind != ComponentKind::card) return;
+    lv_obj_set_style_min_height(object, 0, 0);
+    lv_obj_set_style_pad_all(object, 0, 0);
+    lv_obj_set_style_radius(object, px(11), 0);
+    const auto is_pr =
+        std::strcmp(id, "powerlifting.summary.pr") == 0;
+    lv_obj_set_style_bg_color(
+        object,
+        is_pr
+            ? lv_color_make(0x12, 0x3F, 0x3C)
+            : node.tone == static_cast<std::uint8_t>(Tone::error)
+                ? lv_color_make(0x3B, 0x1F, 0x31)
+                : node.tone == static_cast<std::uint8_t>(Tone::primary)
+                    ? powerlifting_color("surface_high")
+                    : powerlifting_color("surface"),
+        0);
+    lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
+    if (lv_obj_get_child_count(object) >= 2) {
+        auto* title = lv_obj_get_child(object, 0);
+        auto* body = lv_obj_get_child(object, 1);
+        const auto compact = bounds.height <= 30;
+        lv_obj_add_flag(title, LV_OBJ_FLAG_FLOATING);
+        lv_obj_set_pos(title, px(10), compact ? 0 : px(5));
+        lv_obj_set_size(
+            title,
+            px(std::max(20, static_cast<int>(bounds.width) - 20)),
+            px(compact ? bounds.height : std::max(16, bounds.height / 2)));
+        lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, 0);
+        lv_obj_set_style_text_font(
+            title,
+            std::strcmp(id, "powerlifting.active-set.target") == 0 ||
+                    std::strcmp(id, "powerlifting.missed-set.actual") == 0 ||
+                    std::strcmp(id, "powerlifting.resume.state") == 0
+                ? &m3e_live_action_font_32
+                : &lv_font_montserrat_16,
+            0);
+        lv_obj_set_style_text_color(
+            title,
+            is_pr
+                ? powerlifting_color("success")
+                : std::strcmp(id, "powerlifting.active-set.target") == 0 ||
+                          std::strcmp(id, "powerlifting.today.hero") == 0 ||
+                          std::strcmp(id, "powerlifting.resume.state") == 0
+                    ? powerlifting_color("primary")
+                    : powerlifting_color("on_surface"),
+            0);
+        lv_label_set_long_mode(title, LV_LABEL_LONG_DOT);
+        if (compact) {
+            lv_obj_add_flag(body, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_add_flag(body, LV_OBJ_FLAG_FLOATING);
+            lv_obj_set_pos(body, px(10), px(bounds.height / 2));
+            lv_obj_set_size(
+                body,
+                px(std::max(20, static_cast<int>(bounds.width) - 20)),
+                px(std::max(12, bounds.height / 2 - 4)));
+            lv_obj_set_style_text_align(body, LV_TEXT_ALIGN_CENTER, 0);
+            lv_obj_set_style_text_font(body, &lv_font_montserrat_12, 0);
+            lv_obj_set_style_text_color(
+                body, powerlifting_color("on_surface_variant"), 0);
+            lv_label_set_long_mode(body, LV_LABEL_LONG_DOT);
+        }
+        if (std::strcmp(id, "powerlifting.today.hero") == 0) {
+            lv_label_set_text(title, "HEAVY\nDAY");
+            lv_label_set_long_mode(title, LV_LABEL_LONG_WRAP);
+            lv_obj_set_style_text_font(title, &m3e_live_action_font_32, 0);
+            lv_obj_set_height(title, px(bounds.height));
+            lv_obj_set_pos(title, px(10), 0);
+            lv_obj_add_flag(body, LV_OBJ_FLAG_HIDDEN);
+        } else if (std::strcmp(id, "powerlifting.active-set.target") == 0) {
+            lv_label_set_text(title, "140");
+            lv_label_set_text(body, "KG   X 5");
+            lv_obj_set_style_text_font(title, &m3e_weather_font_55, 0);
+            lv_obj_set_pos(title, px(10), 0);
+            lv_obj_set_size(title, px(156), px(50));
+            lv_obj_set_pos(body, px(10), px(52));
+            lv_obj_set_size(body, px(156), px(20));
+        } else if (std::strcmp(id, "powerlifting.today.volume") == 0) {
+            lv_label_set_text(title, "14 SETS  /  3 LIFTS");
+        } else if (std::strcmp(id, "powerlifting.resume.state") == 0) {
+            lv_label_set_text(title, "142.5 KG X 5");
+            lv_label_set_text(body, "BACK SQUAT / SET 4 OF 5");
+        }
+    }
+    if (std::strcmp(id, "powerlifting.plate-loading.diagram") == 0) {
+        if (lv_obj_get_child_count(object) >= 2) {
+            lv_obj_add_flag(lv_obj_get_child(object, 0), LV_OBJ_FLAG_HIDDEN);
+            lv_obj_add_flag(lv_obj_get_child(object, 1), LV_OBJ_FLAG_HIDDEN);
+        }
+        powerlifting_plate(
+            object, 20, 36, 136, 7,
+            powerlifting_color("on_surface_variant"));
+        const std::array<lv_color_t, 5> colors{{
+            lv_color_make(0xFF, 0xC8, 0x57),
+            lv_color_make(0xE5, 0x5D, 0x5D),
+            lv_color_make(0xE5, 0x5D, 0x5D),
+            lv_color_make(0x74, 0xA9, 0xE8),
+            lv_color_make(0x72, 0xDD, 0xA7),
+        }};
+        for (std::size_t index = 0; index < colors.size(); ++index) {
+            const auto width = index == 1 || index == 2 ? 9 : 5;
+            const auto height = 34 - static_cast<int>(index) * 4;
+            powerlifting_plate(
+                object,
+                80 - static_cast<int>(index) * 10,
+                39 - height / 2,
+                width,
+                height,
+                colors[index]);
+            powerlifting_plate(
+                object,
+                88 + static_cast<int>(index) * 10,
+                39 - height / 2,
+                width,
+                height,
+                colors[index]);
+        }
+    }
+}
+
 lv_obj_t* layout(
     ComponentFactory& factory,
     lv_obj_t* parent,
@@ -2478,6 +2891,8 @@ bool Renderer::mount(
         uses_weather_components(document);
     const auto weather_current_document =
         is_weather_current_document(document);
+    const auto powerlifting_document =
+        is_powerlifting_document(document);
     const auto task_toggle_count =
         task_list_document
             ? count_kind(document, ComponentKind::toggle)
@@ -2506,11 +2921,16 @@ bool Renderer::mount(
             0);
         lv_obj_set_style_bg_opa(root, LV_OPA_COVER, 0);
     }
+    if (powerlifting_document) {
+        lv_obj_set_style_bg_color(
+            root, powerlifting_color("background"), 0);
+        lv_obj_set_style_bg_opa(root, LV_OPA_COVER, 0);
+    }
     document.nodes[0].mounted_object = root;
     if (voice_ready_document || live_action_detail_document ||
         media_player_document || camera_remote_document ||
         wallet_qr_document || canvas_game_document ||
-        weather_current_document) {
+        weather_current_document || powerlifting_document) {
         lv_obj_remove_flag(root, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_scrollbar_mode(root, LV_SCROLLBAR_MODE_OFF);
     }
@@ -2532,7 +2952,7 @@ bool Renderer::mount(
                     live_action_detail_document
                     || media_player_document || camera_remote_document ||
                     wallet_qr_document || canvas_game_document ||
-                    weather_component_document
+                    weather_component_document || powerlifting_document
                 ? 0
                 : px(12),
         0);
@@ -4710,6 +5130,9 @@ bool Renderer::mount(
             configure_weather_current_node(
                 document, node, object, parent);
         }
+        if (powerlifting_document) {
+            configure_powerlifting_node(document, node, object);
+        }
         if (!node.visible) lv_obj_add_flag(object, LV_OBJ_FLAG_HIDDEN);
         const auto& parent_node = document.nodes[node.parent_index];
         if (parent_node.kind == ComponentKind::pager) {
@@ -4724,8 +5147,18 @@ bool Renderer::mount(
                 lv_obj_add_flag(object, LV_OBJ_FLAG_HIDDEN);
             }
         }
+        const auto* mounted_id = document.string_at(node.id_offset);
+        const auto fixed_powerlifting_row_child =
+            powerlifting_document &&
+            (std::strncmp(
+                 mounted_id, "powerlifting.set-result.rpe-", 28) == 0 ||
+             std::strncmp(
+                 mounted_id, "powerlifting.missed-set.", 24) == 0 ||
+             std::strncmp(
+                 mounted_id, "powerlifting.summary.", 21) == 0);
         if (parent_node.kind == ComponentKind::row &&
-            parent_node.alignment == 3) {
+            parent_node.alignment == 3 &&
+            !fixed_powerlifting_row_child) {
             lv_obj_set_flex_grow(object, 1);
         } else if (
             parent_node.kind == ComponentKind::row &&

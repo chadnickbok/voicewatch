@@ -2,80 +2,103 @@
   "schema_version": 1,
   "app_id": "workout",
   "screen": {
-    "id": "workout.rest",
+    "id": "powerlifting.rest",
     "type": "screen",
     "props": {
       "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "workout.rest.heading",
+          "id": "powerlifting.rest.label",
           "type": "text",
           "props": {
-        "text": "REST  /  SET 3",
+            "text": "REST",
             "style": "label",
             "max_lines": 1,
             "align": "center"
           }
         },
         {
-          "id": "workout.rest.time",
+          "id": "powerlifting.rest.time",
           "type": "text",
           "props": {
-            "text": "1:00",
+            "text": "2:41",
             "style": "numeral",
             "max_lines": 1,
             "align": "center"
-          },
-          "semantics": {
-            "label": "Rest time remaining",
-            "value": "1 minute"
           }
         },
         {
-          "id": "workout.rest.detail",
-          "type": "live_card",
+          "id": "powerlifting.rest.progress",
+          "type": "progress",
           "props": {
-            "title": "145 LB  X  8",
-            "body": "NEXT  /  SET 4 OF 5",
-            "progress": 0.0,
-            "tone": "neutral"
+            "label": "Workout progress",
+            "value": 19,
+            "maximum": 180,
+            "style": "linear",
+            "tone": "primary"
           },
           "semantics": {
-            "label": "Recorded set",
-            "value": "145 pounds for 8 reps"
+            "label": "Workout progress",
+            "value": "19 of 180"
           }
         },
         {
-          "id": "workout.rest.finish",
-          "type": "button",
+          "id": "powerlifting.rest.next",
+          "type": "card",
           "props": {
-            "label": "Next set",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
+            "title": "NEXT  /  142.5 KG X 5",
+            "body": "SET 4 OF 5 / HOLD TO EDIT LAST",
+            "tone": "primary"
           },
           "events": {
-            "tap": "workout.rest.finish"
+            "tap": "workout.plates",
+            "longPress": "workout.edit.result"
           },
           "semantics": {
-            "label": "Finish rest and open next set"
+            "label": "NEXT  /  142.5 KG X 5"
           }
         },
         {
-          "id": "workout.rest.end",
-          "type": "button",
+          "id": "powerlifting.rest.controls",
+          "type": "row",
           "props": {
-            "label": "End",
-            "tone": "neutral",
-            "variant": "tonal",
-            "size": "default"
-          },
-          "events": {
-            "tap": "workout.end"
-          },
-          "semantics": {
-            "label": "End workout"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "powerlifting.rest.extend",
+                "type": "button",
+                "props": {
+                  "label": "+30",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.rest.extend"
+                },
+                "semantics": {
+                  "label": "+30"
+                }
+              },
+              {
+                "id": "powerlifting.rest.skip",
+                "type": "button",
+                "props": {
+                  "label": "SKIP",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.rest.skip"
+                },
+                "semantics": {
+                  "label": "SKIP"
+                }
+              }
+            ]
           }
         }
       ]

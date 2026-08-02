@@ -28,8 +28,13 @@ def walk(node: dict[str, Any]) -> Iterable[dict[str, Any]]:
 
 
 def pattern(nodes: list[dict[str, Any]]) -> str:
+    if nodes[0]["id"].startswith("powerlifting."):
+        return "powerlifting"
     kinds = Counter(node["type"] for node in nodes)
-    actions = sum(len(node.get("events", {})) for node in nodes)
+    actions = sum(
+        sum(event != "pageChanged" for event in node.get("events", {}))
+        for node in nodes
+    )
     interactive = sum(
         node["type"] in INTERACTIVE_TYPES for node in nodes
     )

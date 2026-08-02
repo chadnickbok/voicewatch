@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.weight-editor",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.weight-editor.title",
+          "type": "text",
+          "props": {
+            "text": "WEIGHT",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.weight-editor.value",
+          "type": "stepper",
+          "props": {
+            "label": "Set weight",
+            "value": 140,
+            "unit": "KG",
+            "minimum": 20,
+            "maximum": 400,
+            "step": 5
+          },
+          "events": {
+            "valueCommitted": "workout.weight"
+          },
+          "semantics": {
+            "label": "Set weight",
+            "value": "140 KG"
+          }
+        },
+        {
+          "id": "powerlifting.weight-editor.plates",
+          "type": "card",
+          "props": {
+            "title": "20 / 20 / 10 / 2.5",
+            "body": "PLATES PER SIDE",
+            "tone": "secondary"
+          }
+        },
+        {
+          "id": "powerlifting.weight-editor.done",
+          "type": "button",
+          "props": {
+            "label": "DONE",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.weight.done"
+          },
+          "semantics": {
+            "label": "DONE"
+          }
+        }
+      ]
+    }
+  }
+}

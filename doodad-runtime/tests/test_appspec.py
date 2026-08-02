@@ -115,7 +115,19 @@ class AppSpecTests(unittest.TestCase):
 
     def test_interactive_nodes_require_useful_semantics(self) -> None:
         document = self.load("workout")
-        del document["screen"]["props"]["children"][1]["semantics"]
+
+        def first_interactive(node: dict) -> dict:
+            if node.get("events"):
+                return node
+            for child in node.get("props", {}).get("children", []):
+                found = first_interactive(child)
+                if found:
+                    return found
+            return {}
+
+        interactive = first_interactive(document["screen"])
+        self.assertTrue(interactive)
+        del interactive["semantics"]
         with self.assertRaisesRegex(DoodadError, "semantics.label"):
             validate_appspec(document)
 
