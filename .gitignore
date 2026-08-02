@@ -9,6 +9,12 @@ __pycache__/
 # Rust guests
 doodad-runtime/target/
 
+# Local agent/session state
+doodad-runtime/.codex/
+
+# Root-level scratch builds
+/target/
+
 # ESP-IDF
 doodad-runtime/firmware/build/
 doodad-runtime/build-*/
