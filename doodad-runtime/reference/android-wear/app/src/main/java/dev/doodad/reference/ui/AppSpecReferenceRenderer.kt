@@ -9,6 +9,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,8 +30,12 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CutCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -40,8 +45,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.boundsInRoot
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.SemanticsPropertyKey
 import androidx.compose.ui.semantics.SemanticsPropertyReceiver
 import androidx.compose.ui.semantics.contentDescription
@@ -51,6 +58,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.wear.compose.foundation.lazy.TransformingLazyColumn
 import androidx.wear.compose.foundation.lazy.rememberTransformingLazyColumnState
@@ -74,10 +85,14 @@ import androidx.wear.compose.material3.SwitchButton
 import androidx.wear.compose.material3.Text
 import androidx.wear.compose.material3.TitleCard
 import dev.doodad.reference.model.SceneAction
+import dev.doodad.reference.model.CanvasCommand
+import dev.doodad.reference.model.CanvasDisplayListCodec
 import dev.doodad.reference.model.SceneNode
 import dev.doodad.reference.model.SceneSnapshot
 import dev.doodad.reference.model.SceneSnapshotValidator
 import dev.doodad.reference.model.ThemeSpec
+import dev.doodad.reference.ui.generated.WeatherIcons
+import dev.doodad.reference.ui.generated.WeatherColorRole
 
 data class ReferenceActionEnvelope(
     val nodeId: String,
@@ -119,6 +134,11 @@ enum class AppSpecComponentMapping(
     VoiceOrb("voice_orb"),
     LiveCard("live_card"),
     Image("image"),
+    Canvas("canvas"),
+    Icon("icon"),
+    Surface("surface"),
+    Chart("chart"),
+    Pager("pager"),
 }
 
 object AppSpecComponentRegistry {
@@ -163,6 +183,11 @@ object AppSpecComponentRegistry {
             AppSpecComponentMapping.VoiceOrb -> AppSpecVoiceOrb(node, context)
             AppSpecComponentMapping.LiveCard -> AppSpecLiveCard(node, context)
             AppSpecComponentMapping.Image -> AppSpecImage(node, context)
+            AppSpecComponentMapping.Canvas -> AppSpecCanvas(node, context)
+            AppSpecComponentMapping.Icon -> AppSpecIcon(node, context)
+            AppSpecComponentMapping.Surface -> AppSpecSurface(node, context)
+            AppSpecComponentMapping.Chart -> AppSpecChart(node, context)
+            AppSpecComponentMapping.Pager -> AppSpecPager(node, context)
         }
     }
 }
@@ -183,12 +208,58 @@ fun AppSpecReferenceRenderer(
     val pattern = AppSpecPatternSelector.select(snapshot)
     val root = snapshot.root
 
-    ReferenceTheme(spec = theme) {
+    val resolvedTheme =
+        if (snapshot.appId == "weather" && theme == AppSpecReferenceDefaults.theme) {
+            AppSpecReferenceDefaults.weatherTheme
+        } else {
+            theme
+        }
+    ReferenceTheme(spec = resolvedTheme) {
         AppScaffold(timeText = {}) {
+            val pageChanged = root.action("page_changed")
+            val dragDistance = remember { floatArrayOf(0f) }
             Box(
                 modifier =
                     modifier
                         .fillMaxSize()
+                        .then(
+                            if (pageChanged == null) {
+                                Modifier
+                            } else {
+                                Modifier.pointerInput(
+                                    root.id,
+                                    pageChanged.actionId,
+                                ) {
+                                    val threshold = 48.dp.toPx()
+                                    detectHorizontalDragGestures(
+                                        onDragStart = { dragDistance[0] = 0f },
+                                        onHorizontalDrag = { _, amount ->
+                                            dragDistance[0] += amount
+                                        },
+                                        onDragEnd = {
+                                            val delta =
+                                                when {
+                                                    dragDistance[0] <= -threshold -> 1
+                                                    dragDistance[0] >= threshold -> -1
+                                                    else -> 0
+                                                }
+                                            if (delta != 0) {
+                                                onAction(
+                                                    ReferenceActionEnvelope(
+                                                        nodeId = root.id,
+                                                        actionId = pageChanged.actionId,
+                                                        eventKind = pageChanged.kind,
+                                                        payload = ReferenceActionPayload.Number(delta),
+                                                    ),
+                                                )
+                                            }
+                                            dragDistance[0] = 0f
+                                        },
+                                        onDragCancel = { dragDistance[0] = 0f },
+                                    )
+                                }
+                            },
+                        )
                         .appSpecNode(root, evidenceCollector),
             ) {
                 PatternSurface(
@@ -209,6 +280,16 @@ object AppSpecReferenceDefaults {
             colorScheme = "violet-dark",
             typography = "wear-material-3",
             shapes = "expressive",
+            motionScheme = "expressive",
+            dynamicColor = false,
+            ambient = false,
+            reducedMotion = true,
+        )
+    val weatherTheme =
+        ThemeSpec(
+            colorScheme = "weather-dark",
+            typography = "weather-roboto",
+            shapes = "weather-square",
             motionScheme = "expressive",
             dynamicColor = false,
             ambient = false,
@@ -238,7 +319,7 @@ private fun PatternSurface(
             evidenceCollector = evidenceCollector,
             onAction = onAction,
         )
-    if (pattern == AppSpecPattern.Empty) {
+    if (pattern == AppSpecPattern.Empty && snapshot.appId != "weather") {
         val state = rememberScrollState()
         ScreenScaffold(
             scrollState = state,
@@ -323,6 +404,10 @@ private fun SquarePatternSurface(
     context: RenderContext,
     pattern: AppSpecPattern,
 ) {
+    if (pattern == AppSpecPattern.CanvasGame) {
+        SquareCanvasGameSurface(children, context)
+        return
+    }
     if (pattern == AppSpecPattern.Keypad) {
         SquareKeypadSurface(children, context)
         return
@@ -331,7 +416,29 @@ private fun SquarePatternSurface(
         SquareCountdownSurface(children, context)
         return
     }
-    if (pattern == AppSpecPattern.WeatherHero) {
+    if (context.snapshot.appId == "weather" && children.size == 1) {
+        when (children.single().id) {
+            "weather.current" -> SquareWeatherCurrentSurface(context)
+            "weather.hourly" -> SquareWeatherHourlySurface(context)
+            "weather.daily-page" -> SquareWeatherDailySurface(context)
+            "weather.details-page" -> SquareWeatherDetailsSurface(context)
+            "weather.rain-page" -> SquareWeatherRainSurface(context)
+            else -> Unit
+        }
+        if (children.single().id in setOf(
+                "weather.current",
+                "weather.hourly",
+                "weather.daily-page",
+                "weather.details-page",
+                "weather.rain-page",
+            )
+        ) {
+            return
+        }
+    }
+    if (pattern == AppSpecPattern.WeatherHero &&
+        children.none { it.kind == "pager" }
+    ) {
         SquareWeatherHeroSurface(children, context)
         return
     }
@@ -422,6 +529,1509 @@ private fun SquarePatternSurface(
                     context.profile,
                     context.evidenceCollector,
                     context.onAction,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SquareWeatherCurrentSurface(context: RenderContext) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+
+    val locationIcon = node("weather.location-icon")
+    val location = node("weather.location")
+    val summary = node("weather.summary")
+    val conditionIcon = node("weather.condition-icon")
+    val condition = node("weather.symbol")
+    val highIcon = node("weather.high-icon")
+    val high = node("weather.high")
+    val lowIcon = node("weather.low-icon")
+    val low = node("weather.low")
+    val feelsIcon = node("weather.feels-icon")
+    val feelsLabel = node("weather.feels-label")
+    val feels = node("weather.feels")
+    val statusChip = node("weather.status-chip")
+    val status = node("weather.status")
+    val action = node("weather.primary")
+    val tap = action.action("tap")
+    val largeText = LocalDensity.current.fontScale >= 1.2f
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 8.dp, y = 6.4.dp)
+                    .width(128.dp)
+                    .height(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(locationIcon.props.icon)),
+                modifier =
+                    Modifier
+                        .size(10.4.dp)
+                        .appSpecNode(locationIcon, context.evidenceCollector),
+                contentDescription = locationIcon.semantics.label,
+            )
+            Text(
+                text = requireNotNull(location.props.primaryText),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .appSpecNode(location, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 148.8.dp, y = 5.6.dp)
+                    .width(38.4.dp)
+                    .height(17.6.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .appSpecNode(statusChip, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Canvas(Modifier.size(4.8.dp)) {
+                drawCircle(weatherColor(WeatherColorRole.Fresh))
+            }
+            Spacer(Modifier.width(3.2.dp))
+            Text(
+                text = "Now",
+                modifier = Modifier.appSpecNode(status, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyExtraSmall,
+                maxLines = 1,
+            )
+        }
+
+        Text(
+            text = requireNotNull(summary.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 8.dp, y = 21.6.dp)
+                    .width(107.2.dp)
+                    .height(60.8.dp)
+                    .appSpecNode(summary, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onBackground,
+            style =
+                if (largeText) {
+                    MaterialTheme.typography.numeralLarge.copy(
+                        fontSize = 41.85.sp,
+                        lineHeight = 44.92.sp,
+                    )
+                } else {
+                    MaterialTheme.typography.numeralLarge
+                },
+            maxLines = 1,
+            overflow = TextOverflow.Clip,
+            textAlign = TextAlign.Start,
+        )
+
+        Box(
+            modifier =
+                Modifier
+                    .offset(x = 110.4.dp, y = 22.4.dp)
+                    .width(72.dp)
+                    .height(60.dp)
+                    .appSpecNode(conditionIcon, context.evidenceCollector),
+            contentAlignment = Alignment.Center,
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(conditionIcon.props.icon)),
+                modifier = Modifier.fillMaxSize().scale(1.45f),
+                contentDescription = conditionIcon.semantics.label,
+            )
+        }
+
+        Text(
+            text = requireNotNull(condition.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 9.6.dp, y = 80.8.dp)
+                    .width(172.8.dp)
+                    .height(17.6.dp)
+                    .appSpecNode(condition, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.bodySmall,
+            maxLines = 1,
+        )
+
+        WeatherMetricPill(
+            icon = highIcon,
+            label = high,
+            x = 8.dp,
+            context = context,
+        )
+        WeatherMetricPill(
+            icon = lowIcon,
+            label = low,
+            x = 98.4.dp,
+            context = context,
+        )
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 8.dp, y = 127.2.dp)
+                    .width(176.dp)
+                    .height(19.2.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.surfaceContainerLow)
+                    .padding(horizontal = 8.dp)
+                    .appSpecNode(node("weather.feels-pill"), context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(feelsIcon.props.icon)),
+                modifier =
+                    Modifier
+                        .size(12.8.dp)
+                        .appSpecNode(feelsIcon, context.evidenceCollector),
+                contentDescription = feelsIcon.semantics.label,
+            )
+            Spacer(Modifier.width(5.6.dp))
+            Text(
+                text = requireNotNull(feelsLabel.props.primaryText),
+                modifier =
+                    Modifier.appSpecNode(feelsLabel, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.6.sp),
+                maxLines = 1,
+            )
+            Spacer(Modifier.weight(1f))
+            Text(
+                text = requireNotNull(feels.props.primaryText),
+                modifier = Modifier.appSpecNode(feels, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onBackground,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+            )
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset(y = 144.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .clickable(
+                        enabled = action.enabled && tap != null,
+                        onClick = { tap?.let { context.dispatch(action, it) } },
+                    )
+                    .appSpecNode(action, context.evidenceCollector),
+            contentAlignment = Alignment.Center,
+        ) {
+            Button(
+                onClick = { tap?.let { context.dispatch(action, it) } },
+                enabled = action.enabled && tap != null,
+                modifier =
+                    Modifier
+                        .offset(y = 6.4.dp)
+                        .width(179.2.dp)
+                        .height(28.8.dp),
+                colors = ButtonDefaults.buttonColors(),
+                contentPadding = PaddingValues(horizontal = 14.4.dp),
+                label = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = requireNotNull(action.props.primaryText),
+                            modifier = Modifier.weight(1f),
+                            color = MaterialTheme.colorScheme.onPrimary,
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                            textAlign = TextAlign.Start,
+                        )
+                        WeatherGlyph(
+                            icon = WeatherIcons.fromWireName("utility_chevron_right"),
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                },
+            )
+        }
+
+        // Structural containers and the off-screen hourly page remain part of
+        // the shared semantic snapshot even though this exact-grid oracle
+        // paints the selected page directly.
+        Box(
+            Modifier
+                .fillMaxSize()
+                .appSpecNode(node("weather.current"), context.evidenceCollector),
+        )
+        listOf(
+            "weather.location-row",
+            "weather.hero-row",
+            "weather.high-low",
+            "weather.high-row",
+            "weather.low-row",
+            "weather.feels-row",
+            "weather.status-row",
+        ).forEach { id ->
+            Box(
+                Modifier
+                    .size(1.dp)
+                    .appSpecNode(node(id), context.evidenceCollector),
+            )
+        }
+    }
+}
+
+@Composable
+private fun WeatherMetricPill(
+    icon: SceneNode,
+    label: SceneNode,
+    x: androidx.compose.ui.unit.Dp,
+    context: RenderContext,
+) {
+    Row(
+        modifier =
+            Modifier
+                .offset(x = x, y = 100.8.dp)
+                .width(85.6.dp)
+                .height(24.dp)
+                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.secondaryContainer)
+                .appSpecNode(
+                    context.snapshot.nodes.single {
+                        it.id == if (label.id == "weather.high") {
+                            "weather.high-pill"
+                        } else {
+                            "weather.low-pill"
+                        }
+                    },
+                    context.evidenceCollector,
+                ),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        WeatherGlyph(
+            icon = WeatherIcons.fromWireName(requireNotNull(icon.props.icon)),
+            modifier =
+                Modifier
+                    .size(14.4.dp)
+                    .appSpecNode(icon, context.evidenceCollector),
+            contentDescription = icon.semantics.label,
+        )
+        Spacer(Modifier.width(3.2.dp))
+        Text(
+            text = requireNotNull(label.props.primaryText),
+            modifier = Modifier.appSpecNode(label, context.evidenceCollector),
+            color = MaterialTheme.colorScheme.onBackground,
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+        )
+    }
+}
+
+@Composable
+private fun SquareWeatherHourlySurface(context: RenderContext) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+
+    val summary = node("weather.hourly-summary")
+    val conditionIcon = node("weather.hourly-condition-icon")
+    val summaryCopy = node("weather.hourly-summary-copy")
+    val now = node("weather.hourly-now")
+    val condition = node("weather.hourly-condition")
+    val statusChip = node("weather.hourly-status-chip")
+    val status = node("weather.hourly-status")
+    val chartCard = node("weather.hourly-chart-card")
+    val chartHeading = node("weather.hourly-chart-heading")
+    val rainIcon = node("weather.hourly-rain-icon")
+    val rainLabel = node("weather.hourly-rain-label")
+    val rainValue = node("weather.hourly-rain-value")
+    val chart = node("weather.rain-chart")
+    val times = node("weather.hourly-times")
+    val tiles = node("weather.hourly-tiles")
+    val action = node("weather.daily-action")
+    val tap = action.action("tap")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 6.4.dp, y = 4.dp)
+                    .width(123.2.dp)
+                    .height(34.4.dp)
+                    .appSpecNode(summary, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.6.dp),
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(conditionIcon.props.icon)),
+                modifier =
+                    Modifier
+                        .width(32.dp)
+                        .height(27.2.dp)
+                        .scale(1.4f)
+                        .appSpecNode(conditionIcon, context.evidenceCollector),
+                contentDescription = conditionIcon.semantics.label,
+            )
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .appSpecNode(summaryCopy, context.evidenceCollector),
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(
+                    text = requireNotNull(now.props.primaryText),
+                    modifier = Modifier.appSpecNode(now, context.evidenceCollector),
+                    color = MaterialTheme.colorScheme.onBackground,
+                    style = MaterialTheme.typography.bodySmall.copy(fontSize = 16.8.sp),
+                    maxLines = 1,
+                )
+                Text(
+                    text = requireNotNull(condition.props.primaryText),
+                    modifier = Modifier.appSpecNode(condition, context.evidenceCollector),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyExtraSmall,
+                    maxLines = 1,
+                )
+            }
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 148.8.dp, y = 5.6.dp)
+                    .width(38.4.dp)
+                    .height(17.6.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .appSpecNode(statusChip, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Canvas(Modifier.size(4.8.dp)) {
+                drawCircle(weatherColor(WeatherColorRole.Fresh))
+            }
+            Spacer(Modifier.width(3.2.dp))
+            Text(
+                text = requireNotNull(status.props.primaryText),
+                modifier = Modifier.appSpecNode(status, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyExtraSmall,
+                maxLines = 1,
+            )
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset(x = 6.4.dp, y = 41.6.dp)
+                    .width(179.2.dp)
+                    .height(46.4.dp)
+                    .clip(RoundedCornerShape(14.4.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainer)
+                    .appSpecNode(chartCard, context.evidenceCollector),
+        ) {
+            Row(
+                modifier =
+                    Modifier
+                        .offset(x = 6.4.dp, y = 3.2.dp)
+                        .width(166.4.dp)
+                        .height(13.6.dp)
+                        .appSpecNode(chartHeading, context.evidenceCollector),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                WeatherGlyph(
+                    icon = WeatherIcons.fromWireName(requireNotNull(rainIcon.props.icon)),
+                    modifier =
+                        Modifier
+                            .size(11.2.dp)
+                            .appSpecNode(rainIcon, context.evidenceCollector),
+                    contentDescription = rainIcon.semantics.label,
+                )
+                Spacer(Modifier.width(3.2.dp))
+                Text(
+                    text = requireNotNull(rainLabel.props.primaryText),
+                    modifier = Modifier.appSpecNode(rainLabel, context.evidenceCollector),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyExtraSmall,
+                    maxLines = 1,
+                )
+                Spacer(Modifier.weight(1f))
+                Text(
+                    text = requireNotNull(rainValue.props.primaryText),
+                    modifier = Modifier.appSpecNode(rainValue, context.evidenceCollector),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.labelSmall.copy(fontSize = 9.6.sp),
+                    maxLines = 1,
+                )
+            }
+
+            Canvas(
+                Modifier
+                    .offset(x = 6.4.dp, y = 16.8.dp)
+                    .width(166.4.dp)
+                    .height(19.2.dp)
+                    .appSpecNode(chart, context.evidenceCollector),
+            ) {
+                val lineY = size.height * 0.64f
+                val rain = weatherColor(WeatherColorRole.Rain)
+                drawLine(
+                    color = weatherColor(WeatherColorRole.OutlineVariant),
+                    start = Offset(0f, lineY),
+                    end = Offset(size.width, lineY),
+                    strokeWidth = 1f,
+                )
+                drawLine(
+                    color = rain,
+                    start = Offset(0f, lineY),
+                    end = Offset(size.width, lineY),
+                    strokeWidth = 2f,
+                )
+                listOf(0f, size.width / 3f, size.width * 2f / 3f, size.width)
+                    .forEach { x -> drawCircle(rain, radius = 2.5f, center = Offset(x, lineY)) }
+            }
+
+            Row(
+                modifier =
+                    Modifier
+                        .offset(x = 6.4.dp, y = 37.6.dp)
+                        .width(166.4.dp)
+                        .height(6.4.dp)
+                        .appSpecNode(times, context.evidenceCollector),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                listOf(
+                    node("weather.hourly-time-now"),
+                    node("weather.hourly-time-20"),
+                    node("weather.hourly-time-40"),
+                    node("weather.hourly-time-60"),
+                ).forEach { time ->
+                    Text(
+                        text = requireNotNull(time.props.primaryText),
+                        modifier = Modifier.appSpecNode(time, context.evidenceCollector),
+                        color = weatherColor(WeatherColorRole.OutlineVariant),
+                        style = MaterialTheme.typography.bodyExtraSmall.copy(fontSize = 6.4.sp),
+                        maxLines = 1,
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 6.4.dp, y = 92.8.dp)
+                    .width(179.2.dp)
+                    .height(46.4.dp)
+                    .appSpecNode(tiles, context.evidenceCollector),
+            horizontalArrangement = Arrangement.spacedBy(4.8.dp),
+        ) {
+            WeatherHourlyTile("now", selected = true, context = context)
+            WeatherHourlyTile("10", selected = false, context = context)
+            WeatherHourlyTile("11", selected = false, context = context)
+            WeatherHourlyTile("12", selected = false, context = context)
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset(y = 144.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .clickable(
+                        enabled = action.enabled && tap != null,
+                        onClick = { tap?.let { context.dispatch(action, it) } },
+                    )
+                    .appSpecNode(action, context.evidenceCollector),
+            contentAlignment = Alignment.Center,
+        ) {
+            Button(
+                onClick = { tap?.let { context.dispatch(action, it) } },
+                enabled = action.enabled && tap != null,
+                modifier =
+                    Modifier
+                        .offset(y = 6.4.dp)
+                        .width(179.2.dp)
+                        .height(28.8.dp),
+                colors =
+                    ButtonDefaults.filledTonalButtonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    ),
+                contentPadding = PaddingValues(horizontal = 14.4.dp),
+                label = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = requireNotNull(action.props.primaryText),
+                            modifier = Modifier.weight(1f),
+                            style = MaterialTheme.typography.bodySmall,
+                            maxLines = 1,
+                        )
+                        WeatherGlyph(
+                            icon = WeatherIcons.fromWireName("utility_chevron_right"),
+                            modifier = Modifier.size(16.dp),
+                        )
+                    }
+                },
+            )
+        }
+
+        Box(Modifier.fillMaxSize().appSpecNode(node("weather.hourly"), context.evidenceCollector))
+    }
+}
+
+@Composable
+private fun RowScope.WeatherHourlyTile(
+    suffix: String,
+    selected: Boolean,
+    context: RenderContext,
+) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+    val prefix = "weather.hour-$suffix"
+    val tile = node("$prefix-tile")
+    val column = node(prefix)
+    val label = node("$prefix-label")
+    val icon = node("$prefix-icon")
+    val temperature = node("$prefix-temp")
+    Box(
+        modifier =
+            Modifier
+                .weight(1f)
+                .fillMaxHeight()
+                .clip(RoundedCornerShape(13.6.dp))
+                .background(
+                    if (selected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainerLow
+                    },
+                )
+                .appSpecNode(tile, context.evidenceCollector),
+    ) {
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .appSpecNode(column, context.evidenceCollector),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Text(
+                text = requireNotNull(label.props.primaryText),
+                modifier = Modifier.appSpecNode(label, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyExtraSmall.copy(fontSize = 7.2.sp),
+                maxLines = 1,
+            )
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(icon.props.icon)),
+                modifier =
+                    Modifier
+                        .width(19.2.dp)
+                        .height(15.2.dp)
+                        .scale(2.05f)
+                        .appSpecNode(icon, context.evidenceCollector),
+                contentDescription = icon.semantics.label,
+            )
+            Text(
+                text = requireNotNull(temperature.props.primaryText),
+                modifier = Modifier.appSpecNode(temperature, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall.copy(fontSize = 13.6.sp),
+                maxLines = 1,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SquareWeatherDailySurface(context: RenderContext) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+
+    val page = node("weather.daily-page")
+    val locationRow = node("weather.daily-location-row")
+    val locationIcon = node("weather.daily-location-icon")
+    val location = node("weather.daily-location")
+    val statusChip = node("weather.daily-status-chip")
+    val status = node("weather.daily-status")
+    val list = node("weather.daily-list")
+    val dots = node("weather.daily-dots")
+    val action = node("weather.details-action")
+    val tap = action.action("tap")
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .appSpecNode(page, context.evidenceCollector),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 8.dp, y = 6.4.dp)
+                    .width(128.dp)
+                    .height(16.dp)
+                    .appSpecNode(locationRow, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(locationIcon.props.icon)),
+                modifier =
+                    Modifier
+                        .size(10.4.dp)
+                        .appSpecNode(locationIcon, context.evidenceCollector),
+                contentDescription = locationIcon.semantics.label,
+            )
+            Text(
+                text = requireNotNull(location.props.primaryText),
+                modifier = Modifier.weight(1f).appSpecNode(location, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 148.8.dp, y = 5.6.dp)
+                    .width(38.4.dp)
+                    .height(17.6.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .appSpecNode(statusChip, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Canvas(Modifier.size(4.8.dp)) {
+                drawCircle(weatherColor(WeatherColorRole.Fresh))
+            }
+            Spacer(Modifier.width(3.2.dp))
+            Text(
+                text = requireNotNull(status.props.primaryText),
+                modifier = Modifier.appSpecNode(status, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyExtraSmall,
+                maxLines = 1,
+            )
+        }
+
+        Column(
+            modifier =
+                Modifier
+                    .offset(x = 6.4.dp, y = 30.4.dp)
+                    .width(179.2.dp)
+                    .height(149.6.dp)
+                    .appSpecNode(list, context.evidenceCollector),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            WeatherDailyRow("today", selected = true, context = context)
+            WeatherDailyRow("mon", selected = false, context = context)
+            WeatherDailyRow("tue", selected = false, context = context)
+            WeatherDailyRow("wed", selected = false, context = context)
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 78.4.dp, y = 184.dp)
+                    .width(35.2.dp)
+                    .height(4.8.dp)
+                    .appSpecNode(dots, context.evidenceCollector),
+            horizontalArrangement = Arrangement.spacedBy(3.2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            listOf(
+                "weather.daily-dot-current",
+                "weather.daily-dot-hourly",
+                "weather.daily-dot-selected",
+                "weather.daily-dot-details",
+            ).forEach { id ->
+                val dot = node(id)
+                Box(
+                    Modifier
+                        .width(if (id == "weather.daily-dot-selected") 6.4.dp else 3.2.dp)
+                        .height(3.2.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (id == "weather.daily-dot-selected") {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                weatherColor(WeatherColorRole.OutlineVariant)
+                            },
+                        )
+                        .appSpecNode(dot, context.evidenceCollector),
+                )
+            }
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset(y = 144.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .clickable(
+                        enabled = action.enabled && tap != null,
+                        onClick = { tap?.let { context.dispatch(action, it) } },
+                    )
+                    .appSpecNode(action, context.evidenceCollector),
+        )
+    }
+}
+
+@Composable
+private fun ColumnScope.WeatherDailyRow(
+    suffix: String,
+    selected: Boolean,
+    context: RenderContext,
+) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+    val prefix = "weather.day-$suffix"
+    val tile = node("$prefix-tile")
+    val row = node(prefix)
+    val label = node("$prefix-label")
+    val icon = node("$prefix-icon")
+    val low = node("$prefix-low")
+    val high = node("$prefix-high")
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(34.4.dp)
+                .clip(RoundedCornerShape(14.4.dp))
+                .background(
+                    if (selected) {
+                        MaterialTheme.colorScheme.primaryContainer
+                    } else {
+                        MaterialTheme.colorScheme.surfaceContainerLow
+                    },
+                )
+                .appSpecNode(tile, context.evidenceCollector),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 9.6.dp)
+                    .appSpecNode(row, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = requireNotNull(label.props.primaryText),
+                modifier = Modifier.width(54.4.dp).appSpecNode(label, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.labelSmall.copy(fontSize = 12.sp),
+                maxLines = 1,
+            )
+            Box(
+                modifier = Modifier.width(36.8.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                WeatherGlyph(
+                    icon = WeatherIcons.fromWireName(requireNotNull(icon.props.icon)),
+                    modifier =
+                        Modifier
+                            .width(24.dp)
+                            .height(20.dp)
+                            .scale(1.7f)
+                            .appSpecNode(icon, context.evidenceCollector),
+                    contentDescription = icon.semantics.label,
+                )
+            }
+            Text(
+                text = requireNotNull(low.props.primaryText),
+                modifier = Modifier.width(34.4.dp).appSpecNode(low, context.evidenceCollector),
+                color =
+                    if (selected) {
+                        MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.8f)
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    },
+                style = MaterialTheme.typography.labelSmall,
+                maxLines = 1,
+                textAlign = TextAlign.End,
+            )
+            Text(
+                text = requireNotNull(high.props.primaryText),
+                modifier = Modifier.width(34.4.dp).appSpecNode(high, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 1,
+                textAlign = TextAlign.End,
+            )
+        }
+    }
+}
+
+@Composable
+private fun SquareWeatherDetailsSurface(context: RenderContext) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+
+    val page = node("weather.details-page")
+    val summary = node("weather.details-summary")
+    val conditionIcon = node("weather.details-condition-icon")
+    val temperature = node("weather.details-temperature")
+    val condition = node("weather.details-condition")
+    val statusChip = node("weather.details-status-chip")
+    val status = node("weather.details-status")
+    val grid = node("weather.details-grid")
+    val dots = node("weather.details-dots")
+    val action = node("weather.rain-preview-action")
+    val tap = action.action("tap")
+    val largeText = LocalDensity.current.fontScale >= 1.2f
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .appSpecNode(page, context.evidenceCollector),
+    ) {
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 6.4.dp, y = 3.2.dp)
+                    .width(128.dp)
+                    .height(32.dp)
+                    .appSpecNode(summary, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(conditionIcon.props.icon)),
+                modifier =
+                    Modifier
+                        .width(28.8.dp)
+                        .height(24.dp)
+                        .appSpecNode(conditionIcon, context.evidenceCollector)
+                        .scale(1.7f),
+                contentDescription = conditionIcon.semantics.label,
+            )
+            Spacer(Modifier.width(4.dp))
+            Text(
+                text = requireNotNull(temperature.props.primaryText),
+                modifier =
+                    Modifier
+                        .width(37.6.dp)
+                        .appSpecNode(temperature, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.numeralSmall,
+                maxLines = 1,
+            )
+            Text(
+                text = requireNotNull(condition.props.primaryText),
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .appSpecNode(condition, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style =
+                    MaterialTheme.typography.bodyExtraSmall.copy(
+                        fontSize = if (largeText) 6.8.sp else 7.2.sp,
+                    ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 148.8.dp, y = 5.6.dp)
+                    .width(38.4.dp)
+                    .height(17.6.dp)
+                    .clip(CircleShape)
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .appSpecNode(statusChip, context.evidenceCollector),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            Canvas(Modifier.size(4.8.dp)) {
+                drawCircle(weatherColor(WeatherColorRole.Fresh))
+            }
+            Spacer(Modifier.width(3.2.dp))
+            Text(
+                text = requireNotNull(status.props.primaryText),
+                modifier = Modifier.appSpecNode(status, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyExtraSmall,
+                maxLines = 1,
+            )
+        }
+
+        Column(
+            modifier =
+                Modifier
+                    .offset(x = 6.4.dp, y = 37.6.dp)
+                    .width(179.2.dp)
+                    .height(147.2.dp)
+                    .appSpecNode(grid, context.evidenceCollector),
+            verticalArrangement = Arrangement.spacedBy(6.4.dp),
+        ) {
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(70.4.dp)
+                        .appSpecNode(node("weather.details-row-top"), context.evidenceCollector),
+                horizontalArrangement = Arrangement.spacedBy(6.4.dp),
+            ) {
+                WeatherDetailsTile("humidity", Modifier.weight(1f), context)
+                WeatherDetailsTile("wind", Modifier.weight(1f), context)
+            }
+            Row(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(70.4.dp)
+                        .appSpecNode(node("weather.details-row-bottom"), context.evidenceCollector),
+                horizontalArrangement = Arrangement.spacedBy(6.4.dp),
+            ) {
+                WeatherDetailsTile("uv", Modifier.weight(1f), context)
+                WeatherDetailsTile("sunrise", Modifier.weight(1f), context)
+            }
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(x = 78.4.dp, y = 184.dp)
+                    .width(35.2.dp)
+                    .height(4.8.dp)
+                    .appSpecNode(dots, context.evidenceCollector),
+            horizontalArrangement = Arrangement.spacedBy(3.2.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            listOf(
+                "weather.details-dot-current",
+                "weather.details-dot-hourly",
+                "weather.details-dot-daily",
+                "weather.details-dot-selected",
+            ).forEach { id ->
+                val dot = node(id)
+                Box(
+                    Modifier
+                        .width(if (id == "weather.details-dot-selected") 6.4.dp else 3.2.dp)
+                        .height(3.2.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (id == "weather.details-dot-selected") {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                weatherColor(WeatherColorRole.OutlineVariant)
+                            },
+                        )
+                        .appSpecNode(dot, context.evidenceCollector),
+                )
+            }
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset(y = 144.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .clickable(
+                        enabled = action.enabled && tap != null,
+                        onClick = { tap?.let { context.dispatch(action, it) } },
+                    )
+                    .appSpecNode(action, context.evidenceCollector),
+        )
+    }
+}
+
+@Composable
+private fun RowScope.WeatherDetailsTile(
+    suffix: String,
+    modifier: Modifier,
+    context: RenderContext,
+) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+    val tile = node("weather.$suffix-tile")
+    val group = node("weather.$suffix")
+    val icon = node("weather.$suffix-icon")
+    val label = node("weather.$suffix-label")
+    val value = node("weather.$suffix-value")
+    val unit = context.snapshot.nodes.singleOrNull { it.id == "weather.$suffix-unit" }
+    val selected = suffix == "uv"
+    val largeText = LocalDensity.current.fontScale >= 1.2f
+    val shape =
+        when (suffix) {
+            "humidity" -> RoundedCornerShape(18.4.dp, 12.8.dp, 18.4.dp, 12.8.dp)
+            "wind" -> RoundedCornerShape(12.8.dp, 22.4.dp, 12.8.dp, 22.4.dp)
+            "uv" -> CutCornerShape(9.6.dp)
+            else -> RoundedCornerShape(22.4.dp, 12.8.dp, 22.4.dp, 12.8.dp)
+        }
+    val container =
+        when (suffix) {
+            "humidity" -> weatherColor(WeatherColorRole.SurfaceHigh)
+            "wind" -> weatherColor(WeatherColorRole.PrimaryContainer)
+            "uv" -> weatherColor(WeatherColorRole.Rain)
+            else -> weatherColor(WeatherColorRole.SurfaceHigh)
+        }
+    val content =
+        if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface
+
+    Box(
+        modifier =
+            modifier
+                .fillMaxHeight()
+                .clip(shape)
+                .background(container)
+                .appSpecNode(tile, context.evidenceCollector),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .appSpecNode(group, context.evidenceCollector),
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(icon.props.icon)),
+                modifier =
+                    Modifier
+                        .offset(x = 7.2.dp, y = 10.4.dp)
+                        .size(22.4.dp)
+                        .scale(1.35f)
+                        .appSpecNode(icon, context.evidenceCollector),
+                contentDescription = icon.semantics.label,
+            )
+            Text(
+                text = requireNotNull(label.props.primaryText),
+                modifier =
+                    Modifier
+                        .offset(x = 32.8.dp, y = 10.4.dp)
+                        .width(48.dp)
+                        .appSpecNode(label, context.evidenceCollector),
+                color = if (selected) content.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyExtraSmall.copy(fontSize = 7.2.sp),
+                maxLines = 1,
+            )
+            Text(
+                text = requireNotNull(value.props.primaryText),
+                modifier =
+                    Modifier
+                        .offset(
+                            x = if (selected && largeText) 12.dp else 31.2.dp,
+                            y = if (selected && largeText) 32.dp else 35.2.dp,
+                        )
+                        .width(if (selected && largeText) 24.dp else 51.2.dp)
+                        .height(28.dp)
+                        .appSpecNode(value, context.evidenceCollector),
+                color = content,
+                style = MaterialTheme.typography.numeralSmall,
+                maxLines = 1,
+            )
+            unit?.let {
+                Text(
+                    text = requireNotNull(it.props.primaryText),
+                    modifier =
+                        Modifier
+                            .offset(
+                                x = if (selected && largeText) 20.dp else 49.6.dp,
+                                y = if (selected && largeText) 56.dp else 47.2.dp,
+                            )
+                            .width(if (selected && largeText) 60.dp else 28.8.dp)
+                            .appSpecNode(it, context.evidenceCollector),
+                    color = if (selected) content.copy(alpha = 0.75f) else MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyExtraSmall.copy(fontSize = 7.2.sp),
+                    maxLines = 1,
+                    textAlign = if (selected && largeText) TextAlign.End else TextAlign.Start,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SquareWeatherRainSurface(context: RenderContext) {
+    fun node(id: String): SceneNode =
+        context.snapshot.nodes.single { it.id == id }
+
+    val page = node("weather.rain-page")
+    val hero = node("weather.rain-hero")
+    val headline = node("weather.rain-headline")
+    val title = node("weather.rain-title")
+    val duration = node("weather.rain-duration")
+    val card = node("weather.rain-chart-card")
+    val probability = node("weather.rain-probability")
+    val probabilityIcon = node("weather.rain-probability-icon")
+    val probabilityValue = node("weather.rain-probability-value")
+    val probabilityLabel = node("weather.rain-probability-label")
+    val chart = node("weather.rain-bars")
+    val times = node("weather.rain-times")
+    val actions = node("weather.rain-actions")
+    val details = node("weather.rain-details")
+    val detailsTap = details.action("tap")
+    val status = node("weather.rain-status")
+    val statusTap = status.action("tap")
+    val largeText = LocalDensity.current.fontScale >= 1.2f
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
+                .appSpecNode(page, context.evidenceCollector),
+    ) {
+        Box(
+            modifier =
+                Modifier
+                    .offset(x = 12.dp, y = 4.dp)
+                    .width(60.dp)
+                    .height(56.dp)
+                    .appSpecNode(hero, context.evidenceCollector),
+            contentAlignment = Alignment.Center,
+        ) {
+            WeatherGlyph(
+                icon = WeatherIcons.fromWireName(requireNotNull(hero.props.icon)),
+                modifier = Modifier.fillMaxSize().scale(1.3f),
+                contentDescription = hero.semantics.label,
+            )
+        }
+        Column(
+            modifier =
+                Modifier
+                    .offset(x = 82.4.dp, y = 6.4.dp)
+                    .width(102.4.dp)
+                    .height(56.dp)
+                    .appSpecNode(headline, context.evidenceCollector),
+        ) {
+            Text(
+                text = requireNotNull(title.props.primaryText),
+                modifier = Modifier.appSpecNode(title, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurface,
+                style =
+                    if (largeText) {
+                        MaterialTheme.typography.numeralSmall.copy(
+                            fontSize = 17.23.sp,
+                            lineHeight = 16.62.sp,
+                        )
+                    } else {
+                        MaterialTheme.typography.numeralSmall.copy(lineHeight = 21.6.sp)
+                    },
+                maxLines = 2,
+            )
+            Text(
+                text = requireNotNull(duration.props.primaryText),
+                modifier = Modifier.appSpecNode(duration, context.evidenceCollector),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                style = MaterialTheme.typography.bodyExtraSmall,
+                maxLines = 1,
+            )
+        }
+
+        Box(
+            modifier =
+                Modifier
+                    .offset(x = 6.4.dp, y = 68.8.dp)
+                    .width(179.2.dp)
+                    .height(89.6.dp)
+                    .clip(RoundedCornerShape(14.4.dp))
+                    .background(MaterialTheme.colorScheme.secondaryContainer)
+                    .appSpecNode(card, context.evidenceCollector),
+        ) {
+            Row(
+                modifier =
+                    Modifier
+                        .offset(x = 6.4.dp, y = 4.8.dp)
+                        .width(166.4.dp)
+                        .height(27.2.dp)
+                        .appSpecNode(probability, context.evidenceCollector),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                WeatherGlyph(
+                    icon = WeatherIcons.fromWireName(requireNotNull(probabilityIcon.props.icon)),
+                    modifier =
+                        Modifier
+                            .size(20.dp)
+                            .appSpecNode(probabilityIcon, context.evidenceCollector),
+                    contentDescription = probabilityIcon.semantics.label,
+                )
+                Spacer(Modifier.width(3.2.dp))
+                Text(
+                    text = requireNotNull(probabilityValue.props.primaryText),
+                    modifier = Modifier.appSpecNode(probabilityValue, context.evidenceCollector),
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.numeralSmall,
+                    maxLines = 1,
+                )
+                Spacer(Modifier.width(5.6.dp))
+                Text(
+                    text = requireNotNull(probabilityLabel.props.primaryText),
+                    modifier = Modifier.appSpecNode(probabilityLabel, context.evidenceCollector),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyExtraSmall.copy(fontSize = 6.4.sp, lineHeight = 7.2.sp),
+                    maxLines = 2,
+                )
+            }
+            Canvas(
+                modifier =
+                    Modifier
+                        .offset(x = 6.4.dp, y = 33.6.dp)
+                        .width(166.4.dp)
+                        .height(44.dp)
+                        .appSpecNode(chart, context.evidenceCollector),
+            ) {
+                val samples = requireNotNull(chart.props.samples)
+                val maximum = requireNotNull(chart.props.maximum).toFloat()
+                val gap = size.width / samples.size
+                val barWidth = gap * 0.55f
+                drawLine(
+                    color = weatherColor(WeatherColorRole.OutlineVariant),
+                    start = Offset(0f, size.height - 1f),
+                    end = Offset(size.width, size.height - 1f),
+                    strokeWidth = 1f,
+                )
+                samples.forEachIndexed { index, sample ->
+                    val height = (sample / maximum) * (size.height - 3f)
+                    drawRoundRect(
+                        color = weatherColor(WeatherColorRole.Rain),
+                        topLeft = Offset(index * gap + (gap - barWidth) / 2f, size.height - height),
+                        size = Size(barWidth, height),
+                        cornerRadius = androidx.compose.ui.geometry.CornerRadius(barWidth / 2f),
+                    )
+                }
+            }
+            Row(
+                modifier =
+                    Modifier
+                        .offset(x = 6.4.dp, y = 80.8.dp)
+                        .width(166.4.dp)
+                        .height(8.dp)
+                        .appSpecNode(times, context.evidenceCollector),
+            ) {
+                listOf("now", "20", "40", "60").forEach { suffix ->
+                    val item = node("weather.rain-time-$suffix")
+                    Text(
+                        text = requireNotNull(item.props.primaryText),
+                        modifier = Modifier.weight(1f).appSpecNode(item, context.evidenceCollector),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.bodyExtraSmall.copy(fontSize = 5.6.sp),
+                        maxLines = 1,
+                        textAlign = if (suffix == "now") TextAlign.Start else if (suffix == "60") TextAlign.End else TextAlign.Center,
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier =
+                Modifier
+                    .offset(y = 144.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .appSpecNode(actions, context.evidenceCollector),
+        ) {
+            Box(
+                modifier =
+                    Modifier
+                        .width(132.8.dp)
+                        .fillMaxHeight()
+                        .clickable(
+                            enabled = details.enabled && detailsTap != null,
+                            onClick = { detailsTap?.let { context.dispatch(details, it) } },
+                        )
+                        .appSpecNode(details, context.evidenceCollector),
+                contentAlignment = Alignment.Center,
+            ) {
+                Button(
+                    onClick = { detailsTap?.let { context.dispatch(details, it) } },
+                    modifier =
+                        Modifier
+                            .offset(y = 6.4.dp)
+                            .width(120.dp)
+                            .height(28.8.dp),
+                    colors =
+                        ButtonDefaults.filledTonalButtonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        ),
+                    contentPadding = PaddingValues(horizontal = 9.6.dp),
+                    label = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            WeatherGlyph(
+                                icon = WeatherIcons.fromWireName("utility_details"),
+                                modifier = Modifier.size(14.4.dp),
+                            )
+                            Spacer(Modifier.width(6.4.dp))
+                            Text("Details", modifier = Modifier.weight(1f), style = MaterialTheme.typography.bodySmall)
+                            WeatherGlyph(
+                                icon = WeatherIcons.fromWireName("utility_chevron_right"),
+                                modifier = Modifier.size(14.4.dp),
+                            )
+                        }
+                    },
+                )
+            }
+            Column(
+                modifier =
+                    Modifier
+                        .weight(1f)
+                        .fillMaxHeight()
+                        .clickable(
+                            enabled = status.enabled && statusTap != null,
+                            onClick = { statusTap?.let { context.dispatch(status, it) } },
+                        )
+                        .appSpecNode(status, context.evidenceCollector),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                WeatherGlyph(
+                    icon = WeatherIcons.fromWireName("utility_clock"),
+                    modifier = Modifier.size(15.2.dp),
+                )
+                Text(
+                    text = requireNotNull(status.props.primaryText),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyExtraSmall,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun SquareCanvasGameSurface(
+    children: List<SceneNode>,
+    context: RenderContext,
+) {
+    val canvas =
+        children.singleOrNull { it.kind == "canvas" }
+            ?: error("Canvas game requires one canvas")
+    val label =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "label"
+        } ?: error("Canvas game requires one score label")
+    val score =
+        children.singleOrNull {
+            it.kind == "text" && it.props.variant == "numeral"
+        } ?: error("Canvas game requires one score value")
+    val controls =
+        children.singleOrNull { it.kind == "keypad" }
+            ?: error("Canvas game requires one three-key control row")
+    val action =
+        controls.action("tap")
+            ?: error("Canvas game controls require tap")
+    val keys = requireNotNull(controls.props.keys)
+    check(keys.size == 3 && controls.props.keyColumns == 3) {
+        "Canvas game controls must be a single three-key row"
+    }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(4.dp),
+    ) {
+        AppSpecCanvas(
+            node = canvas,
+            context = context,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(128.dp),
+        )
+        Text(
+            text = requireNotNull(label.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 128.dp, y = 14.dp)
+                    .width(52.dp)
+                    .height(20.dp)
+                    .appSpecNode(label, context.evidenceCollector),
+            color = Color(0xFF9CE8C2),
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+        )
+        Text(
+            text = requireNotNull(score.props.primaryText),
+            modifier =
+                Modifier
+                    .offset(x = 128.dp, y = 36.dp)
+                    .width(52.dp)
+                    .height(52.dp)
+                    .appSpecNode(score, context.evidenceCollector),
+            color = Color(0xFFA8F279),
+            style = MaterialTheme.typography.displaySmall,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+        )
+        ButtonGroup(
+            modifier =
+                Modifier
+                    .offset(y = 132.dp)
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .appSpecNode(controls, context.evidenceCollector),
+            spacing = 4.dp,
+            expansionWidth = 8.dp,
+            contentPadding = PaddingValues(0.dp),
+        ) {
+            keys.forEachIndexed { index, key ->
+                CompactButton(
+                    onClick = {
+                        context.dispatch(
+                            controls,
+                            action,
+                            ReferenceActionPayload.Text(key),
+                        )
+                    },
+                    enabled = controls.enabled,
+                    modifier =
+                        Modifier
+                            .weight(1f)
+                            .fillMaxHeight(),
+                    colors =
+                        if (index == 1) {
+                            ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFFA8F279),
+                                contentColor = Color(0xFF07110D),
+                            )
+                        } else {
+                            ButtonDefaults.filledTonalButtonColors(
+                                containerColor = Color(0xFF163026),
+                                contentColor = Color(0xFFD5F5E4),
+                            )
+                        },
+                    label = {
+                        Text(
+                            text = key,
+                            style = MaterialTheme.typography.titleSmall,
+                        )
+                    },
                 )
             }
         }
@@ -2298,7 +3908,13 @@ private fun ContainerRow(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         context.snapshot.childrenOf(node).forEach { child ->
-            Box(Modifier.weight(1f)) {
+            val childModifier =
+                if (node.props.alignment == "stretch") {
+                    Modifier.weight(1f)
+                } else {
+                    Modifier
+                }
+            Box(childModifier) {
                 AppSpecComponentRegistry.Render(
                     child,
                     context.snapshot,
@@ -2356,7 +3972,14 @@ private fun AppSpecText(
             } else {
                 MaterialTheme.colorScheme.onBackground
             },
-        style = node.props.variant.textStyle(),
+        style =
+            if (context.snapshot.appId == "weather" &&
+                node.props.variant == "numeral"
+            ) {
+                MaterialTheme.typography.numeralSmall
+            } else {
+                node.props.variant.textStyle()
+            },
         maxLines = node.props.maxLines ?: 4,
         overflow = TextOverflow.Ellipsis,
         textAlign = node.props.alignment.textAlign(),
@@ -2376,6 +3999,150 @@ private fun AppSpecImage(
                 .fillMaxWidth()
                 .height(76.dp),
     )
+}
+
+@Composable
+private fun AppSpecCanvas(
+    node: SceneNode,
+    context: RenderContext,
+    modifier: Modifier =
+        Modifier
+            .fillMaxWidth()
+            .height(requireNotNull(node.props.height).dp),
+) {
+    val width = requireNotNull(node.props.width)
+    val height = requireNotNull(node.props.height)
+    val parsed =
+        remember(
+            node.props.displayList,
+            node.props.palette,
+            width,
+            height,
+        ) {
+            CanvasDisplayListCodec.parse(
+                requireNotNull(node.props.displayList),
+                requireNotNull(node.props.palette),
+                width,
+                height,
+            )
+        }
+    val colors =
+        remember(parsed.palette) {
+            parsed.palette.map { rgb ->
+                Color(0xFF000000L or rgb.toLong())
+            }
+        }
+    val tap = node.action("tap")
+    Canvas(
+        modifier =
+            modifier
+                .clip(RoundedCornerShape(20.dp))
+                .clickable(
+                    enabled = node.enabled && tap != null,
+                    onClick = {
+                        tap?.let {
+                            context.dispatch(node, it)
+                        }
+                    },
+                )
+                .appSpecNode(node, context.evidenceCollector),
+    ) {
+        val scaleX = size.width / width.toFloat()
+        val scaleY = size.height / height.toFloat()
+        parsed.commands.forEach { command ->
+            when (command) {
+                is CanvasCommand.Clear ->
+                    drawRect(colors[command.color])
+                is CanvasCommand.RoundedRect ->
+                    drawRoundRect(
+                        color = colors[command.color],
+                        topLeft =
+                            Offset(
+                                command.x * scaleX,
+                                command.y * scaleY,
+                            ),
+                        size =
+                            Size(
+                                command.width * scaleX,
+                                command.height * scaleY,
+                            ),
+                        cornerRadius =
+                            androidx.compose.ui.geometry.CornerRadius(
+                                command.radius * scaleX,
+                                command.radius * scaleY,
+                            ),
+                    )
+                is CanvasCommand.Circle ->
+                    drawCircle(
+                        color = colors[command.color],
+                        radius =
+                            command.radius * minOf(scaleX, scaleY),
+                        center =
+                            Offset(
+                                command.centerX * scaleX,
+                                command.centerY * scaleY,
+                            ),
+                    )
+                is CanvasCommand.Line ->
+                    drawLine(
+                        color = colors[command.color],
+                        start =
+                            Offset(
+                                command.x1 * scaleX,
+                                command.y1 * scaleY,
+                            ),
+                        end =
+                            Offset(
+                                command.x2 * scaleX,
+                                command.y2 * scaleY,
+                            ),
+                        strokeWidth =
+                            command.stroke * minOf(scaleX, scaleY),
+                    )
+                is CanvasCommand.TileMap ->
+                    command.cells.forEachIndexed { index, color ->
+                        if (color == 0) return@forEachIndexed
+                        val column = index % command.columns
+                        val row = index / command.columns
+                        val innerWidth =
+                            command.cellWidth - command.inset * 2
+                        val innerHeight =
+                            command.cellHeight - command.inset * 2
+                        val radius =
+                            minOf(
+                                3,
+                                minOf(innerWidth, innerHeight) / 3,
+                            )
+                        drawRoundRect(
+                            color = colors[color],
+                            topLeft =
+                                Offset(
+                                    (
+                                        command.x +
+                                            column * command.cellWidth +
+                                            command.inset
+                                    ) * scaleX,
+                                    (
+                                        command.y +
+                                            row * command.cellHeight +
+                                            command.inset
+                                    ) * scaleY,
+                                ),
+                            size =
+                                Size(
+                                    innerWidth * scaleX,
+                                    innerHeight * scaleY,
+                                ),
+                            cornerRadius =
+                                androidx.compose.ui.geometry.CornerRadius(
+                                    radius * scaleX,
+                                    radius * scaleY,
+                                ),
+                        )
+                    }
+            }
+        }
+    }
 }
 
 @Composable
@@ -2467,11 +4234,6 @@ private fun AppSpecButton(
             "large" -> 56.dp
             else -> error("Unsupported button size ${node.props.size}")
         }
-    val label =
-        node.props.icon?.let { icon ->
-            "${icon.symbol()} ${requireNotNull(node.props.primaryText)}"
-        } ?: requireNotNull(node.props.primaryText)
-
     val onClick: () -> Unit = {
         tap?.let {
             context.dispatch(node, it)
@@ -2490,11 +4252,27 @@ private fun AppSpecButton(
             .heightIn(min = minimumHeight)
             .appSpecNode(node, context.evidenceCollector)
     val content: @Composable () -> Unit = {
-        Text(
-            text = label,
-            maxLines = if (node.props.size == "compact") 1 else 3,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            node.props.icon?.let { icon ->
+                if (icon.startsWith("utility_") || icon.startsWith("condition_")) {
+                    WeatherGlyph(
+                        icon = WeatherIcons.fromWireName(icon),
+                        modifier = Modifier.size(18.dp),
+                        contentDescription = null,
+                    )
+                } else {
+                    Text(icon.symbol())
+                }
+            }
+            Text(
+                text = requireNotNull(node.props.primaryText),
+                maxLines = if (node.props.size == "compact") 1 else 3,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
     if (node.props.size == "compact") {
         CompactButton(
@@ -2550,6 +4328,199 @@ private fun AppSpecButton(
             ) {
                 content()
             }
+    }
+}
+
+@Composable
+private fun AppSpecIcon(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    val dimension =
+        when (node.props.size) {
+            "compact" -> 18.dp
+            "default" -> 24.dp
+            "large" -> 32.dp
+            "hero" -> 64.dp
+            else -> error("Unsupported icon size ${node.props.size}")
+        }
+    WeatherGlyph(
+        icon = WeatherIcons.fromWireName(requireNotNull(node.props.icon)),
+        modifier =
+            Modifier
+                .size(dimension)
+                .appSpecNode(node, context.evidenceCollector),
+        contentDescription = node.semantics.label.takeIf(String::isNotEmpty),
+    )
+}
+
+@Composable
+private fun AppSpecSurface(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    val shape =
+        when (node.props.variant) {
+            "standard" -> MaterialTheme.shapes.medium
+            "hero" -> MaterialTheme.shapes.extraLarge
+            "metric_a" -> RoundedCornerShape(22.dp, 14.dp, 22.dp, 14.dp)
+            "metric_b" -> RoundedCornerShape(14.dp, 24.dp, 14.dp, 24.dp)
+            "metric_c" -> CutCornerShape(10.dp)
+            "pill" -> CircleShape
+            else -> error("Unsupported surface shape ${node.props.variant}")
+        }
+    val container =
+        when (node.props.tone) {
+            "primary" -> MaterialTheme.colorScheme.primaryContainer
+            "secondary" -> MaterialTheme.colorScheme.secondaryContainer
+            "tertiary" -> MaterialTheme.colorScheme.tertiaryContainer
+            "error" -> MaterialTheme.colorScheme.errorContainer
+            else -> MaterialTheme.colorScheme.surfaceContainer
+        }
+    val tap = node.action("tap")
+    val interaction =
+        if (tap == null) {
+            Modifier
+        } else {
+            Modifier.clickable(
+                enabled = node.enabled,
+                onClick = { context.dispatch(node, tap) },
+            )
+        }
+    Column(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clip(shape)
+                .background(container)
+                .then(interaction)
+                .padding(
+                    if (node.props.variant in setOf("hero", "pill")) 4.dp else 8.dp,
+                )
+                .appSpecNode(node, context.evidenceCollector),
+        horizontalAlignment = node.props.alignment.horizontalAlignment(),
+        verticalArrangement = Arrangement.spacedBy(node.props.gap.spacing()),
+    ) {
+        context.snapshot.childrenOf(node).filter { it.visible }.forEach { child ->
+            AppSpecComponentRegistry.Render(
+                child,
+                context.snapshot,
+                context.profile,
+                context.evidenceCollector,
+                context.onAction,
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppSpecChart(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    val samples = requireNotNull(node.props.samples)
+    val maximum = requireNotNull(node.props.maximum).coerceAtLeast(1)
+    val color =
+        when (node.props.tone) {
+            "tertiary" -> MaterialTheme.colorScheme.tertiary
+            "error" -> MaterialTheme.colorScheme.error
+            "secondary" -> MaterialTheme.colorScheme.secondary
+            else -> MaterialTheme.colorScheme.primary
+        }
+    val grid = MaterialTheme.colorScheme.outlineVariant
+    Canvas(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(32.dp)
+                .semantics { contentDescription = node.semantics.label }
+                .appSpecNode(node, context.evidenceCollector),
+    ) {
+        drawLine(grid, Offset(0f, size.height - 1f), Offset(size.width, size.height - 1f), 1f)
+        val slot = size.width / samples.size
+        if (node.props.variant == "bars") {
+            samples.forEachIndexed { index, sample ->
+                val height = size.height * sample / maximum
+                drawRoundRect(
+                    color = color,
+                    topLeft = Offset(index * slot + slot * 0.18f, size.height - height),
+                    size = Size(slot * 0.64f, height),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(slot * 0.18f),
+                )
+            }
+        } else {
+            val points = samples.mapIndexed { index, sample ->
+                Offset(
+                    x = if (samples.size == 1) size.width / 2f else index * size.width / (samples.size - 1),
+                    y = size.height - size.height * sample / maximum,
+                )
+            }
+            points.zipWithNext().forEach { (start, end) ->
+                drawLine(color, start, end, 3f, cap = androidx.compose.ui.graphics.StrokeCap.Round)
+            }
+            points.forEach { drawCircle(color, 3.5f, it) }
+        }
+    }
+}
+
+@Composable
+private fun AppSpecPager(
+    node: SceneNode,
+    context: RenderContext,
+) {
+    val pages = context.snapshot.childrenOf(node).filter { it.visible }
+    val selected = requireNotNull(node.props.value).coerceIn(0, pages.lastIndex)
+    val pagerState =
+        rememberPagerState(initialPage = selected) { pages.size }
+    val pageChanged = node.action("page_changed")
+    LaunchedEffect(pagerState.settledPage) {
+        if (pagerState.settledPage != selected && pageChanged != null) {
+            context.dispatch(
+                node,
+                pageChanged,
+                ReferenceActionPayload.Number(pagerState.settledPage),
+            )
+        }
+    }
+    Box(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .appSpecNode(node, context.evidenceCollector),
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier.fillMaxWidth(),
+        ) { page ->
+            AppSpecComponentRegistry.Render(
+                pages[page],
+                context.snapshot,
+                context.profile,
+                context.evidenceCollector,
+                context.onAction,
+            )
+        }
+        if (node.props.checked == true && pages.size > 1) {
+            Row(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                pages.indices.forEach { page ->
+                    Box(
+                        Modifier
+                            .size(if (page == pagerState.currentPage) 6.dp else 4.dp)
+                            .clip(CircleShape)
+                            .background(
+                                if (page == pagerState.currentPage) {
+                                    MaterialTheme.colorScheme.primary
+                                } else {
+                                    MaterialTheme.colorScheme.outlineVariant
+                                },
+                            ),
+                    )
+                }
+            }
+        }
     }
 }
 

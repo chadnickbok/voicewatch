@@ -65,7 +65,12 @@
         "keypad",
         "voice_orb",
         "live_card",
-        "image"
+        "image",
+        "canvas",
+        "icon",
+        "surface",
+        "chart",
+        "pager"
       ]
     },
     "role": {
@@ -81,7 +86,8 @@
         "dialog",
         "slider",
         "group",
-        "image"
+        "image",
+        "canvas"
       ]
     },
     "event_kind": {
@@ -180,6 +186,37 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 4
+        },
+        "display_list": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "palette": {
+          "type": "string",
+          "minLength": 6,
+          "maxLength": 64,
+          "pattern": "^[0-9a-f]{6}(,[0-9a-f]{6}){0,7}$"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 192
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 192
+        },
+        "samples": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 13,
+          "items": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          }
         }
       }
     },

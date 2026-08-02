@@ -79,6 +79,24 @@ if(BUILD_TESTING)
   target_link_libraries(m3e_core_tokens_test PRIVATE m3e::lvgl)
   add_test(NAME m3e_core_tokens COMMAND m3e_core_tokens_test)
 
+  add_executable(m3e_weather_foundations_test
+    "${DOODAD_ROOT}/tests/m3e/weather_foundations_test.cpp")
+  target_link_libraries(m3e_weather_foundations_test PRIVATE m3e::lvgl)
+  add_test(NAME m3e_weather_foundations COMMAND m3e_weather_foundations_test)
+
+  add_executable(m3e_weather_provider_v2_test
+    "${DOODAD_ROOT}/tests/m3e/weather_provider_v2_test.cpp")
+  target_link_libraries(m3e_weather_provider_v2_test PRIVATE m3e::lvgl)
+  add_test(NAME m3e_weather_provider_v2 COMMAND m3e_weather_provider_v2_test)
+
+  add_executable(m3e_weather_provider_model_test
+    "${DOODAD_ROOT}/tests/m3e/weather_provider_model_test.cpp")
+  target_include_directories(m3e_weather_provider_model_test PRIVATE
+    "${DOODAD_ROOT}/firmware/main/include")
+  add_test(
+    NAME m3e_weather_provider_model
+    COMMAND m3e_weather_provider_model_test)
+
   add_executable(m3e_framework_test
     "${DOODAD_ROOT}/tests/m3e/framework_test.cpp")
   target_link_libraries(m3e_framework_test PRIVATE m3e::lvgl)
@@ -111,6 +129,18 @@ if(BUILD_TESTING)
     NAME m3e_token_sync
     COMMAND "${Python3_EXECUTABLE}"
       "${DOODAD_ROOT}/tools/token_sync/sync.py" --check)
+  add_test(
+    NAME m3e_weather_foundation_generation
+    COMMAND "${Python3_EXECUTABLE}"
+      "${DOODAD_ROOT}/tools/weather_foundations/generate.py" --check)
+  add_test(
+    NAME m3e_weather_font_assets
+    COMMAND "${Python3_EXECUTABLE}"
+      "${DOODAD_ROOT}/tools/weather_foundations/generate_fonts.py" --check)
+  add_test(
+    NAME m3e_weather_snapshot_fixtures
+    COMMAND "${Python3_EXECUTABLE}"
+      "${DOODAD_ROOT}/tools/weather_snapshot/generate.py" --check)
 endif()
 
 if(APPLE)

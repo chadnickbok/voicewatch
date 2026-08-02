@@ -56,7 +56,6 @@ COMPOSE_CAPTURE_TEST = (
     "dev.doodad.reference.SceneSnapshotBatchCaptureTest"
 )
 COMPOSE_DENSITY = 1.25
-COMPOSE_FONT_SCALE = 1.0
 COMPOSE_LOCALE = "en-US"
 COMPOSE_TIME_ZONE = "UTC"
 
@@ -160,14 +159,26 @@ def capture_compose_suite(
     project_root = find_project_root(project_root)
     if not selections:
         raise DoodadError("Compose capture requires at least one suite entry")
+    supported_capture_phases = {
+        "resting": "resting",
+        "selected": "selected",
+        "end_state": "end_state",
+        "baseline_state": "resting",
+        "extreme_state": "resting",
+        "rain_state": "end_state",
+        "stale_state": "disabled",
+        "error_state": "error",
+        "large_font": "resting",
+    }
     for selection in selections:
         if (
             selection.entry["profile_id"] != "watch_square_240"
-            or selection.entry["capture_phase"] != "resting"
+            or selection.entry["capture_phase"]
+            not in supported_capture_phases
         ):
             raise DoodadError(
-                "the initial host batch supports resting watch_square_240 "
-                "captures only"
+                "the host batch does not support the requested capture phase "
+                "watch_square_240 captures only"
             )
 
     output_root = output_root.resolve()
@@ -186,6 +197,13 @@ def capture_compose_suite(
             {
                 "snapshot": str(snapshot_path.resolve()),
                 "output": str((output_directory / "compose.png").resolve()),
+                "capture_phase": selection.entry["capture_phase"],
+                "capture_state": supported_capture_phases[
+                    selection.entry["capture_phase"]
+                ],
+                "font_scale_milli": selection.entry.get(
+                    "font_scale_milli", 1000
+                ),
             }
         )
 
@@ -257,9 +275,16 @@ def compare_captured_suite(
         raise DoodadError("comparison requires at least one suite entry")
     output_root = output_root.resolve()
     report_root = output_root / "report"
+    if report_root.is_dir():
+        shutil.rmtree(report_root)
     cases: list[ComparisonCaseReport] = []
     contact_pairs: list[tuple[bytes, bytes]] = []
     titles = _app_titles(project_root)
+
+    app_counts: dict[str, int] = {}
+    for selection in selections:
+        slug = selection.entry["app_slug"]
+        app_counts[slug] = app_counts.get(slug, 0) + 1
 
     for selection in selections:
         entry = selection.entry
@@ -306,7 +331,15 @@ def compare_captured_suite(
             f"{entry['app_slug']}.{entry['capture_phase']}."
             f"{entry['profile_id']}"
         )
-        case_directory = report_root / "cases" / entry["app_slug"]
+        if app_counts[entry["app_slug"]] > 1:
+            case_id += f".sequence-{int(entry['sequence']):04d}"
+        case_name = entry["app_slug"]
+        if app_counts[entry["app_slug"]] > 1:
+            case_name = (
+                f"{entry['app_slug']}-{entry['capture_phase']}-"
+                f"{int(entry['sequence']):04d}"
+            )
+        case_directory = report_root / "cases" / case_name
         image_paths = write_render_pair_images(
             case_directory,
             reference_rgb888,
@@ -599,7 +632,7 @@ def _validate_compose_capture(
             "logical_width_dp": 192,
             "logical_height_dp": 192,
             "density": COMPOSE_DENSITY,
-            "font_scale": COMPOSE_FONT_SCALE,
+            "font_scale": entry.get("font_scale_milli", 1000) / 1000,
             "row_order": "top_to_bottom",
         },
         "environment": {

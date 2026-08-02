@@ -29,7 +29,7 @@
       "app_slug": "weather",
       "trace": "traces/weather/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "a4e29030836fabac2d380bfafa3301dcf6916c2c16b25d3d943c9d2363c64793",
+      "snapshot_sha256": "49ca96f2cafe09f0ef874822342351b5092790cb6231df4178facd2fdfabb255",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {
@@ -42,10 +42,102 @@
       },
       "comparison_policy": "square-app-baseline",
       "review": {
-        "status": "approved",
-        "reviewer": "Project Parallax engineering review",
-        "reviewed_at": "2026-07-30",
-        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across seven nodes; both renderers pass 48dp target and quality checks. Remaining 14.9392% raster delta is text and refresh-glyph rasterization. See reference/reviews/weather.md."
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Current Conditions oracle mounted from its bounded weather AppSpec."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 3,
+      "snapshot_sha256": "dbf8ecbffb372f8b1391d25a28418f65942b34a97f8d6edea79a7ab0abc1a2b5",
+      "capture_phase": "selected",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Hourly oracle selected through the real weather.hourly Wasm action."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 5,
+      "snapshot_sha256": "2384a928a47b6e90124d6ecdcf83ea26d6ffab56144ec9fe0256f9410f26df94",
+      "capture_phase": "end_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Daily oracle mounted through the real weather.daily Wasm action."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 7,
+      "snapshot_sha256": "deb9d9cf6f5d0d1f9f9eed9b3e91d840e5d72370696656beb0d9a72da373b8a5",
+      "capture_phase": "end_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Details metric oracle mounted through the real weather.details Wasm action."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 8,
+      "snapshot_sha256": "291cac7cae17c3c45be2c2d5ffce86dda792840ade291874e117e5004ae2b97c",
+      "capture_phase": "end_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the imminent-rain oracle mounted through the provider-equivalent weather.rain-preview route."
       }
     },
     {
@@ -440,7 +532,7 @@
       "app_slug": "snake",
       "trace": "traces/snake/decisive/trace.json",
       "sequence": 0,
-      "snapshot_sha256": "27562bd4d7588607957d20108f66369f350e3fabb3d45902e0a178e9cc94f660",
+      "snapshot_sha256": "63eeff44bec6a2171b2339ade7c8aca9783202a94785e28adcbc2560f041d624",
       "capture_phase": "resting",
       "profile_id": "watch_square_240",
       "compose": {

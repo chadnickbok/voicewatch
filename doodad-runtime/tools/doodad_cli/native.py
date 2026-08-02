@@ -163,6 +163,11 @@ class NativeHost:
         library.doodad_host_set_scene_operation_callback.restype = None
         library.doodad_host_scene_revision.restype = ctypes.c_uint64
         library.doodad_host_route_generation.restype = ctypes.c_uint64
+        library.doodad_host_set_font_scale_milli.argtypes = [
+            ctypes.c_uint16,
+        ]
+        library.doodad_host_set_font_scale_milli.restype = ctypes.c_int
+        library.doodad_host_font_scale_milli.restype = ctypes.c_uint16
         library.doodad_host_replay_mount.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
@@ -189,6 +194,12 @@ class NativeHost:
         library.doodad_host_advance_time.restype = ctypes.c_int
         library.doodad_host_scenario_time.restype = ctypes.c_uint64
         library.doodad_host_deliver_provider.restype = ctypes.c_int
+        library.doodad_host_deliver_weather_payload.argtypes = [
+            ctypes.POINTER(ctypes.c_uint8),
+            ctypes.c_size_t,
+            ctypes.c_uint8,
+        ]
+        library.doodad_host_deliver_weather_payload.restype = ctypes.c_int
 
         library.doodad_host_ui_begin_document.argtypes = [
             ctypes.c_int,
@@ -247,6 +258,13 @@ class NativeHost:
     def start_wasm(self, path: Path) -> None:
         if not self.library.doodad_host_start_wasm(str(path).encode()):
             raise DoodadError(self.last_error())
+
+    def set_font_scale_milli(self, scale_milli: int) -> None:
+        if not self.library.doodad_host_set_font_scale_milli(scale_milli):
+            raise DoodadError(self.last_error())
+
+    def font_scale_milli(self) -> int:
+        return int(self.library.doodad_host_font_scale_milli())
 
     def render_now(self) -> None:
         self.library.doodad_host_render_now()
@@ -525,6 +543,24 @@ class NativeHost:
 
     def deliver_provider(self) -> None:
         if not self.library.doodad_host_deliver_provider():
+            raise DoodadError(self.last_error())
+
+    def deliver_weather_payload(
+        self,
+        payload: bytes,
+        *,
+        freshness: int,
+    ) -> None:
+        if not payload or len(payload) > 512:
+            raise ValueError("weather payload must contain 1..512 bytes")
+        if freshness not in range(4):
+            raise ValueError("weather freshness must be 0..3")
+        buffer = (ctypes.c_uint8 * len(payload)).from_buffer_copy(payload)
+        if not self.library.doodad_host_deliver_weather_payload(
+            buffer,
+            len(payload),
+            freshness,
+        ):
             raise DoodadError(self.last_error())
 
     def ui_begin_document(self, direction: int, align: int, gap: int) -> int:

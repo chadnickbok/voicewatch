@@ -5,83 +5,312 @@
     "id": "weather.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "weather.heading",
-          "type": "text",
+          "id": "weather.current",
+          "type": "column",
           "props": {
-            "text": "SAN FRANCISCO",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "weather.forecast",
-          "type": "card",
-          "props": {
-            "title": "Clear",
-            "body": "High 76 - Low 59 - Rain 10%",
-            "tone": "primary"
-          }
-        },
-        {
-          "id": "weather.symbol",
-          "type": "text",
-          "props": {
-            "text": "Clear skies",
-            "style": "title",
-            "max_lines": 1,
-            "align": "center"
-          },
-          "semantics": {
-            "label": "Clear skies",
-            "value": "Clear"
-          }
-        },
-        {
-          "id": "weather.summary",
-          "type": "text",
-          "props": {
-            "text": "72°",
-            "style": "numeral",
-            "max_lines": 1,
-            "align": "center"
-          },
-          "semantics": {
-            "label": "Current temperature",
-            "value": "72 degrees"
-          }
-        },
-        {
-          "id": "weather.status",
-          "type": "text",
-          "props": {
-            "text": "Updated now",
-            "style": "caption",
-            "max_lines": 1,
-            "align": "start"
-          }
-        },
-        {
-          "id": "weather.primary",
-          "type": "button",
-          "props": {
-            "label": "Refresh",
-            "icon": "refresh",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "weather.refresh"
-          },
-          "semantics": {
-            "label": "Refresh weather"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "weather.location-row",
+                "type": "row",
+                "props": {
+                  "gap": "xs",
+                  "align": "start",
+                  "children": [
+                    {
+                      "id": "weather.location-icon",
+                      "type": "icon",
+                      "props": {
+                        "name": "utility_location",
+                        "tone": "neutral",
+                        "size": "compact"
+                      },
+                      "semantics": {
+                        "label": "Location"
+                      }
+                    },
+                    {
+                      "id": "weather.location",
+                      "type": "text",
+                      "props": {
+                        "text": "San Francisco",
+                        "style": "caption",
+                        "max_lines": 1,
+                        "align": "start"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.hero-row",
+                "type": "row",
+                "props": {
+                  "gap": "xs",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.summary",
+                      "type": "text",
+                      "props": {
+                        "text": "62°",
+                        "style": "numeral",
+                        "max_lines": 1,
+                        "align": "start"
+                      },
+                      "semantics": {
+                        "label": "Current temperature",
+                        "value": "62 degrees"
+                      }
+                    },
+                    {
+                      "id": "weather.condition-icon",
+                      "type": "icon",
+                      "props": {
+                        "name": "condition_partly_cloudy_day",
+                        "tone": "tertiary",
+                        "size": "hero"
+                      },
+                      "semantics": {
+                        "label": "Partly cloudy"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.symbol",
+                "type": "text",
+                "props": {
+                  "text": "Partly cloudy",
+                  "style": "body",
+                  "max_lines": 1,
+                  "align": "start"
+                },
+                "semantics": {
+                  "label": "Condition",
+                  "value": "Partly cloudy"
+                }
+              },
+              {
+                "id": "weather.high-low",
+                "type": "row",
+                "props": {
+                  "gap": "xs",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.high-pill",
+                      "type": "surface",
+                      "props": {
+                        "tone": "secondary",
+                        "shape": "pill",
+                        "gap": "none",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.high-row",
+                            "type": "row",
+                            "props": {
+                              "gap": "xs",
+                              "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.high-icon",
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "utility_arrow_high",
+                                    "tone": "tertiary",
+                                    "size": "compact"
+                                  },
+                                  "semantics": {
+                                    "label": "High temperature"
+                                  }
+                                },
+                                {
+                                  "id": "weather.high",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "H 67°",
+                                    "style": "label",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.low-pill",
+                      "type": "surface",
+                      "props": {
+                        "tone": "secondary",
+                        "shape": "pill",
+                        "gap": "none",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.low-row",
+                            "type": "row",
+                            "props": {
+                              "gap": "xs",
+                              "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.low-icon",
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "utility_arrow_low",
+                                    "tone": "primary",
+                                    "size": "compact"
+                                  },
+                                  "semantics": {
+                                    "label": "Low temperature"
+                                  }
+                                },
+                                {
+                                  "id": "weather.low",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "L 54°",
+                                    "style": "label",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.feels-pill",
+                "type": "surface",
+                "props": {
+                  "tone": "secondary",
+                  "shape": "pill",
+                  "gap": "none",
+                  "align": "start",
+                  "children": [
+                    {
+                      "id": "weather.feels-row",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "start",
+                        "children": [
+                          {
+                            "id": "weather.feels-icon",
+                            "type": "icon",
+                            "props": {
+                              "name": "utility_thermometer",
+                              "tone": "neutral",
+                              "size": "compact"
+                            },
+                            "semantics": {
+                              "label": "Feels like"
+                            }
+                          },
+                          {
+                            "id": "weather.feels-label",
+                            "type": "text",
+                            "props": {
+                              "text": "Feels like",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "start"
+                            }
+                          },
+                          {
+                            "id": "weather.feels",
+                            "type": "text",
+                            "props": {
+                              "text": "59°",
+                              "style": "label",
+                              "max_lines": 1,
+                              "align": "end"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.status-chip",
+                "type": "surface",
+                "props": {
+                  "tone": "secondary",
+                  "shape": "pill",
+                  "gap": "none",
+                  "align": "center",
+                  "children": [
+                    {
+                      "id": "weather.status-row",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.status",
+                            "type": "text",
+                            "props": {
+                              "text": "Now",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "center"
+                            },
+                            "semantics": {
+                              "label": "Weather updated now"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.primary",
+                "type": "button",
+                "props": {
+                  "label": "Hourly",
+                  "icon": "utility_chevron_right",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "weather.hourly"
+                },
+                "semantics": {
+                  "label": "Show hourly forecast"
+                }
+              }
+            ]
           }
         }
       ]
+    },
+    "events": {
+      "pageChanged": "weather.page-changed"
+    },
+    "semantics": {
+      "label": "Current weather"
     }
   }
 }

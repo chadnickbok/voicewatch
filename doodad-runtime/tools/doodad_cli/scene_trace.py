@@ -167,7 +167,7 @@ def trace_environment(root: Path) -> dict[str, Any]:
             "wamr": "2.4.0",
             "lvgl": "9.5.0",
             "host_abi": "1",
-            "appspec": "1.2",
+            "appspec": "1.3",
             "component_set": "1",
             "simulator": "parallax-v1",
         },
@@ -302,6 +302,18 @@ def run_flow_action(host: NativeHost, action: dict[str, Any]) -> None:
         host.advance_time(int(action["value"]))
     elif kind == "deliver":
         host.deliver_provider()
+    elif kind == "deliver_weather_fixture":
+        name = str(action["fixture"])
+        if not name.replace("-", "").replace("_", "").isalnum():
+            raise DoodadError("weather fixture name is invalid")
+        fixture_root = (
+            host.project_root / "reference" / "weather-fixtures" / "v2"
+        )
+        source = read_json(fixture_root / "sources" / f"{name}.json")
+        host.deliver_weather_payload(
+            (fixture_root / "generated" / f"{name}.cbor").read_bytes(),
+            freshness=int(source["freshness"]),
+        )
     else:
         raise DoodadError(f"unknown conformance action {kind!r}")
 
@@ -393,11 +405,32 @@ def _trace_entries(
     return entries
 
 
+def _prune_unreferenced_trace_artifacts(
+    directory: Path,
+    trace: dict[str, Any],
+) -> None:
+    """Keep a decisive bundle content-addressed instead of accumulating old runs."""
+    referenced: set[Path] = set()
+    for entry in trace["entries"]:
+        for field in ("cause_payload", "mount", "command_batch", "snapshot"):
+            if field in entry:
+                referenced.add((directory / entry[field]["path"]).resolve())
+    for subdirectory in ("causes", "objects", "snapshots"):
+        artifact_directory = directory / subdirectory
+        if not artifact_directory.is_dir():
+            continue
+        for artifact in artifact_directory.iterdir():
+            if artifact.is_file() and artifact.resolve() not in referenced:
+                artifact.unlink()
+
+
 def record_flow_trace(
     root: Path,
     slug: str,
     actions: list[dict[str, Any]],
     output_directory: Path,
+    *,
+    scenario_id: str | None = None,
 ) -> TraceBundle:
     root = root.resolve()
     output_directory = output_directory.resolve()
@@ -421,9 +454,10 @@ def record_flow_trace(
     finally:
         host.close()
 
+    scenario = scenario_id or "decisive"
     trace = {
         "schema_version": 1,
-        "id": f"{slug}.decisive",
+        "id": f"{slug}.{scenario}",
         "app": {
             "slug": slug,
             "id": manifest["id"],
@@ -432,7 +466,7 @@ def record_flow_trace(
             "manifest_sha256": sha256_bytes(manifest_path.read_bytes()),
         },
         "environment": trace_environment(root),
-        "scenario_id": f"{slug}.decisive",
+        "scenario_id": f"{slug}.{scenario}",
         "entries": _trace_entries(output_directory, records),
     }
     validate_scene_trace(trace)
@@ -451,6 +485,7 @@ def record_flow_trace(
         output_directory / "checkpoints.json",
         _canonical_document(checkpoint_document),
     )
+    _prune_unreferenced_trace_artifacts(output_directory, trace)
     return TraceBundle(output_directory, trace, checkpoint_document)
 
 

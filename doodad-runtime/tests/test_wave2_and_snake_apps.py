@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import unittest
 from pathlib import Path
 
@@ -66,23 +67,30 @@ class WaveTwoAndSnakeTests(unittest.TestCase):
 
     def test_snake_has_deterministic_playable_game_state(self) -> None:
         def flow(native: NativeHost) -> None:
-            native.click_button("Play Snake")
-            initial = native.node_text("snake.game.board-top")
-            self.assertIn("@", initial)
-            self.assertEqual(native.node_text("snake.game.score"), "SCORE 0")
+            def canvas_display_list() -> str:
+                snapshot = json.loads(native.scene_snapshot())
+                return next(
+                    node["props"]["display_list"]
+                    for node in snapshot["nodes"]
+                    if node["id"] == "snake.game.canvas"
+                )
 
-            native.click_button("Go")
-            moved = native.node_text("snake.game.board-top")
+            initial = canvas_display_list()
+            self.assertTrue(initial.startswith("v1|C0|R1"))
+            self.assertEqual(native.node_text("snake.game.score"), "0")
+
+            native.click_button("GO")
+            moved = canvas_display_list()
             self.assertNotEqual(moved, initial)
-            native.click_button("Go")
-            self.assertEqual(native.node_text("snake.game.score"), "SCORE 1")
+            native.click_button("GO")
+            self.assertEqual(native.node_text("snake.game.score"), "1")
 
             native.click_button("R")
-            self.assertEqual(native.node_text("snake.game.score"), "SCORE 1")
-            native.click_button("New")
-            self.assertEqual(native.node_text("snake.game.score"), "SCORE 0")
-            native.click_button("Quit")
-            self.assertEqual(native.node_text("snake.summary"), "Score 12")
+            self.assertEqual(native.node_text("snake.game.score"), "1")
+            self.assertNotEqual(
+                canvas_display_list(),
+                moved,
+            )
 
         self.run_app("snake", flow)
 

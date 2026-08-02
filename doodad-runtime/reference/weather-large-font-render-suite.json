@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "id": "weather-large-font-goldens",
+  "entries": [
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "49ca96f2cafe09f0ef874822342351b5092790cb6231df4178facd2fdfabb255",
+      "capture_phase": "large_font",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus large-font pass",
+        "reviewed_at": "2026-08-01",
+        "notes": "The production Weather snapshot rendered at font scale 1.3 through both Wear Compose and LVGL."
+      },
+      "font_scale_milli": 1300
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 3,
+      "snapshot_sha256": "dbf8ecbffb372f8b1391d25a28418f65942b34a97f8d6edea79a7ab0abc1a2b5",
+      "capture_phase": "large_font",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus large-font pass",
+        "reviewed_at": "2026-08-01",
+        "notes": "The production Weather snapshot rendered at font scale 1.3 through both Wear Compose and LVGL."
+      },
+      "font_scale_milli": 1300
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 5,
+      "snapshot_sha256": "2384a928a47b6e90124d6ecdcf83ea26d6ffab56144ec9fe0256f9410f26df94",
+      "capture_phase": "large_font",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus large-font pass",
+        "reviewed_at": "2026-08-01",
+        "notes": "The production Weather snapshot rendered at font scale 1.3 through both Wear Compose and LVGL."
+      },
+      "font_scale_milli": 1300
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 7,
+      "snapshot_sha256": "deb9d9cf6f5d0d1f9f9eed9b3e91d840e5d72370696656beb0d9a72da373b8a5",
+      "capture_phase": "large_font",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus large-font pass",
+        "reviewed_at": "2026-08-01",
+        "notes": "The production Weather snapshot rendered at font scale 1.3 through both Wear Compose and LVGL."
+      },
+      "font_scale_milli": 1300
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 8,
+      "snapshot_sha256": "291cac7cae17c3c45be2c2d5ffce86dda792840ade291874e117e5004ae2b97c",
+      "capture_phase": "large_font",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus large-font pass",
+        "reviewed_at": "2026-08-01",
+        "notes": "The production Weather snapshot rendered at font scale 1.3 through both Wear Compose and LVGL."
+      },
+      "font_scale_milli": 1300
+    }
+  ]
+}

@@ -8,6 +8,8 @@ PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 cd "${PROJECT_DIR}"
 
 python3 tools/token_sync/sync.py --check
+python3 tools/weather_foundations/generate.py --check
+python3 tools/weather_foundations/generate_fonts.py --check
 PYTHONPATH=tools python3 tools/generate_media_asset.py --check
 PYTHONPATH=tools python3 tools/generate_wallet_asset.py --check
 PYTHONPATH=tools python3 tools/generate_remote_asset.py --check

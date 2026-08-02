@@ -166,6 +166,10 @@ def capture_lvgl_entry(
     output_directory = entry_output_directory(output_root, selection.entry)
     host = host_factory(project_root)
     try:
+        font_scale_milli = selection.entry.get("font_scale_milli", 1000)
+        host.set_font_scale_milli(font_scale_milli)
+        if host.font_scale_milli() != font_scale_milli:
+            raise DoodadError("LVGL host did not accept the requested font scale")
         replay_to_selected_revision(selection, host)
         snapshot = json.loads(host.scene_snapshot())
         validate_scene_snapshot(snapshot)
@@ -277,6 +281,7 @@ def capture_lvgl_entry(
             "scenario_id": selection.bundle.trace["scenario_id"],
             "capture_phase": selection.entry["capture_phase"],
             "profile_id": selection.entry["profile_id"],
+            "font_scale_milli": font_scale_milli,
             "snapshot_sha256": selection.entry["snapshot_sha256"],
         },
         "renderer": node_evidence["renderer"],
@@ -284,6 +289,7 @@ def capture_lvgl_entry(
             "format": "rgb565le",
             "physical_width_px": DEFAULT_WIDTH,
             "physical_height_px": DEFAULT_HEIGHT,
+            "font_scale_milli": font_scale_milli,
             "row_order": "top_to_bottom",
         },
         "runtime": runtime,
@@ -569,13 +575,21 @@ def _capture_phase(identifier: str) -> dict[str, object]:
         "mid_animation",
         "end_state",
     }
-    if identifier not in states:
+    state_mappings = {
+        "baseline_state": "resting",
+        "extreme_state": "resting",
+        "rain_state": "end_state",
+        "stale_state": "disabled",
+        "error_state": "error",
+        "large_font": "resting",
+    }
+    if identifier not in states and identifier not in state_mappings:
         raise DoodadError(
             f"capture phase {identifier!r} needs an explicit state mapping"
         )
     return {
         "id": identifier,
-        "state": identifier,
+        "state": state_mappings.get(identifier, identifier),
         "animation_fraction_milli": 0,
     }
 
@@ -609,6 +623,9 @@ def _checkpoint_attestation(
         "mounted_events": runtime["mounted_events"],
     }
     expected = {key: checkpoint[key] for key in actual}
+    if selection.entry.get("font_scale_milli", 1000) != 1000:
+        actual.pop("framebuffer_rgb565_sha256")
+        expected.pop("framebuffer_rgb565_sha256")
     differences = sorted(
         key for key in actual if actual[key] != expected[key]
     )

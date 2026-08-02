@@ -33,10 +33,18 @@ def pattern(nodes: list[dict[str, Any]]) -> str:
     interactive = sum(
         node["type"] in INTERACTIVE_TYPES for node in nodes
     )
+    if (
+        kinds["canvas"] == 1
+        and kinds["keypad"] == 1
+        and kinds["text"] == 2
+    ):
+        return "canvas_game"
     if kinds["keypad"]:
         return "keypad"
     if kinds["progress"] and kinds["stepper"]:
         return "countdown"
+    if kinds["pager"] == 1 and kinds["icon"] and kinds["chart"]:
+        return "weather_hero"
     if (
         kinds["card"] == 1
         and kinds["button"] == 1

@@ -7,6 +7,7 @@ import re
 from pathlib import Path
 from typing import Any
 
+from .canvas_display_list import validate_canvas
 from .contract import DoodadError
 
 
@@ -28,9 +29,22 @@ COMPONENT_KINDS = {
     "voice_orb",
     "live_card",
     "image",
+    "canvas",
+    "icon",
+    "surface",
+    "chart",
+    "pager",
 }
-CONTAINER_KINDS = {"screen", "column", "row", "scroll"}
-INTERACTIVE_KINDS = {"button", "stepper", "toggle", "keypad", "voice_orb"}
+CONTAINER_KINDS = {"screen", "column", "row", "scroll", "surface", "pager"}
+INTERACTIVE_KINDS = {
+    "button",
+    "stepper",
+    "toggle",
+    "keypad",
+    "voice_orb",
+    "canvas",
+    "pager",
+}
 EVENT_KINDS = {
     "tap",
     "long_press",
@@ -58,6 +72,7 @@ SEMANTIC_ROLES = {
     "slider",
     "group",
     "image",
+    "canvas",
 }
 
 NODE_KEYS = {
@@ -90,6 +105,11 @@ PROP_KEYS = {
     "state",
     "icon",
     "max_lines",
+    "display_list",
+    "palette",
+    "width",
+    "height",
+    "samples",
 }
 SEMANTIC_KEYS = {
     "role",
@@ -151,6 +171,26 @@ KIND_PROPS: dict[str, tuple[set[str], set[str]]] = {
     "image": (
         {"primary_text", "variant"},
         {"primary_text", "variant"},
+    ),
+    "canvas": (
+        {"display_list", "palette", "width", "height"},
+        {"display_list", "palette", "width", "height"},
+    ),
+    "icon": (
+        {"icon", "tone", "size"},
+        {"icon", "tone", "size"},
+    ),
+    "surface": (
+        {"tone", "variant", "gap", "alignment"},
+        {"tone", "variant", "gap", "alignment"},
+    ),
+    "chart": (
+        {"samples", "maximum", "variant", "tone"},
+        {"samples", "maximum", "variant", "tone"},
+    ),
+    "pager": (
+        {"value", "maximum", "checked", "gap", "alignment"},
+        {"value", "maximum", "checked", "gap", "alignment"},
     ),
 }
 
@@ -365,6 +405,33 @@ def _validate_props(kind: str, value: Any, path: str) -> None:
         _sha256(props["primary_text"], f"{path}.primary_text")
         if props["variant"] not in {"cover", "contain"}:
             raise DoodadError(f"{path}.variant is unsupported")
+    if kind == "canvas":
+        validate_canvas(
+            props["display_list"],
+            props["palette"],
+            props["width"],
+            props["height"],
+            path,
+        )
+    if kind == "chart":
+        samples = _array(
+            props["samples"], f"{path}.samples", minimum=1, maximum=13
+        )
+        maximum = props["maximum"]
+        if maximum < 1:
+            raise DoodadError(f"{path}.maximum must be positive")
+        for index, sample in enumerate(samples):
+            if (
+                isinstance(sample, bool)
+                or not isinstance(sample, int)
+                or not 0 <= sample <= maximum
+            ):
+                raise DoodadError(f"{path}.samples[{index}] is out of range")
+        if props["variant"] not in {"line", "bars"}:
+            raise DoodadError(f"{path}.variant is unsupported")
+    if kind == "pager":
+        if props["maximum"] < 2 or not 0 <= props["value"] < props["maximum"]:
+            raise DoodadError(f"{path} has an invalid pager range")
 
 
 def validate_scene_snapshot(document: dict[str, Any]) -> None:
@@ -474,8 +541,8 @@ def validate_scene_snapshot(document: dict[str, Any]) -> None:
             raise DoodadError(
                 f"{path} is interactive but lacks semantics or actions"
             )
-        if kind == "image" and not node["semantics"]["label"]:
-            raise DoodadError(f"{path} image lacks a semantic label")
+        if kind in {"image", "icon", "chart"} and not node["semantics"]["label"]:
+            raise DoodadError(f"{path} visual lacks a semantic label")
         ids[node_id] = (index, depth, kind)
         child_counts.setdefault(node_id, 0)
 
@@ -483,6 +550,13 @@ def validate_scene_snapshot(document: dict[str, Any]) -> None:
         if node["child_count"] != child_counts[node["id"]]:
             raise DoodadError(
                 f"snapshot.nodes[{index}].child_count is inconsistent"
+            )
+        if (
+            node["kind"] == "pager"
+            and node["child_count"] != node["props"]["maximum"]
+        ):
+            raise DoodadError(
+                f"snapshot.nodes[{index}] pager page count is inconsistent"
             )
 
 
@@ -932,7 +1006,7 @@ def validate_perfect_render_suite(document: dict[str, Any]) -> None:
         minimum=1,
         maximum=4096,
     )
-    seen: set[tuple[str, int, str, str]] = set()
+    seen: set[tuple[str, int, str, str, int]] = set()
     for index, entry_value in enumerate(entries):
         path = f"suite.entries[{index}]"
         entry = _object(entry_value, path)
@@ -943,12 +1017,18 @@ def validate_perfect_render_suite(document: dict[str, Any]) -> None:
             "snapshot_sha256",
             "capture_phase",
             "profile_id",
+            "font_scale_milli",
             "compose",
             "lvgl",
             "comparison_policy",
             "review",
         }
-        _exact_keys(entry, path, required=keys, allowed=keys)
+        _exact_keys(
+            entry,
+            path,
+            required=keys - {"font_scale_milli"},
+            allowed=keys,
+        )
         app_slug = _identifier(entry["app_slug"], f"{path}.app_slug")
         _relative_path(entry["trace"], f"{path}.trace")
         sequence = _unsigned(entry["sequence"], f"{path}.sequence")
@@ -958,6 +1038,11 @@ def validate_perfect_render_suite(document: dict[str, Any]) -> None:
             f"{path}.capture_phase",
         )
         profile = _identifier(entry["profile_id"], f"{path}.profile_id")
+        font_scale_milli = entry.get("font_scale_milli", 1000)
+        if font_scale_milli not in {1000, 1300}:
+            raise DoodadError(
+                f"{path}.font_scale_milli must be 1000 or 1300"
+            )
         for renderer_name, modes in (
             ("compose", {"host", "emulator"}),
             ("lvgl", {"simulator", "hardware"}),
@@ -998,7 +1083,13 @@ def validate_perfect_render_suite(document: dict[str, Any]) -> None:
                     f"{path}.review.{key}",
                     512 if key == "notes" else 128,
                 )
-        identity = (app_slug, sequence, capture_phase, profile)
+        identity = (
+            app_slug,
+            sequence,
+            capture_phase,
+            profile,
+            font_scale_milli,
+        )
         if identity in seen:
             raise DoodadError(f"{path} duplicates a suite entry")
         seen.add(identity)

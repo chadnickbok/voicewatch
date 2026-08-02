@@ -105,12 +105,12 @@
       }
     ],
     "app_count": 20,
-    "document_count": 83
+    "document_count": 87
   },
   "authored": {
     "documents_by_app": {
       "timer": 1,
-      "weather": 1,
+      "weather": 5,
       "notifications": 7,
       "tasks": 4,
       "calculator": 1,
@@ -131,36 +131,51 @@
       "snake": 2
     },
     "component_counts": {
-      "button": 142,
-      "card": 21,
-      "column": 5,
+      "button": 146,
+      "canvas": 2,
+      "card": 19,
+      "chart": 2,
+      "column": 22,
+      "icon": 23,
       "image": 11,
-      "keypad": 2,
+      "keypad": 3,
       "live_card": 46,
       "progress": 7,
-      "row": 57,
-      "screen": 83,
+      "row": 81,
+      "screen": 87,
       "scroll": 15,
       "stepper": 4,
-      "text": 148,
+      "surface": 29,
+      "text": 203,
       "toggle": 9,
       "voice_orb": 1
     },
     "property_counts": {
-      "button.icon": 2,
-      "button.label": 142,
-      "button.size": 142,
-      "button.tone": 142,
-      "button.variant": 142,
-      "card.body": 21,
-      "card.title": 21,
-      "card.tone": 21,
-      "column.align": 5,
-      "column.gap": 5,
+      "button.icon": 6,
+      "button.label": 146,
+      "button.size": 146,
+      "button.tone": 146,
+      "button.variant": 146,
+      "canvas.display_list": 2,
+      "canvas.height": 2,
+      "canvas.palette": 2,
+      "canvas.width": 2,
+      "card.body": 19,
+      "card.title": 19,
+      "card.tone": 19,
+      "chart.maximum": 2,
+      "chart.samples": 2,
+      "chart.style": 2,
+      "chart.tone": 2,
+      "column.align": 22,
+      "column.gap": 22,
+      "icon.name": 23,
+      "icon.size": 23,
+      "icon.tone": 23,
       "image.asset": 11,
       "image.fit": 11,
-      "keypad.columns": 2,
-      "keypad.keys": 2,
+      "keypad.columns": 3,
+      "keypad.keys": 3,
       "live_card.body": 46,
       "live_card.progress": 43,
       "live_card.title": 46,
@@ -170,10 +185,10 @@
       "progress.style": 7,
       "progress.tone": 7,
       "progress.value": 7,
-      "row.align": 57,
-      "row.gap": 57,
-      "screen.align": 83,
-      "screen.gap": 83,
+      "row.align": 81,
+      "row.gap": 81,
+      "screen.align": 87,
+      "screen.gap": 87,
       "scroll.align": 15,
       "scroll.gap": 15,
       "stepper.label": 4,
@@ -182,10 +197,14 @@
       "stepper.step": 4,
       "stepper.unit": 4,
       "stepper.value": 4,
-      "text.align": 146,
-      "text.max_lines": 148,
-      "text.style": 148,
-      "text.text": 148,
+      "surface.align": 29,
+      "surface.gap": 29,
+      "surface.shape": 29,
+      "surface.tone": 29,
+      "text.align": 186,
+      "text.max_lines": 203,
+      "text.style": 203,
+      "text.text": 203,
       "toggle.checked": 9,
       "toggle.label": 9,
       "toggle.tone": 9,
@@ -194,71 +213,78 @@
     },
     "event_counts": {
       "checkedChanged": 9,
-      "tap": 150,
+      "pageChanged": 5,
+      "tap": 157,
       "valueCommitted": 4
     },
     "semantic_field_counts": {
-      "label": 261,
-      "value": 80
+      "hint": 2,
+      "label": 312,
+      "value": 82
     },
     "token_values": {
       "variant": {
-        "filled": 71,
-        "text": 4,
+        "filled": 72,
+        "text": 7,
         "tonal": 67
       },
       "style": {
-        "body": 3,
-        "caption": 6,
+        "bars": 1,
+        "body": 11,
+        "caption": 35,
         "circular": 1,
-        "label": 74,
+        "label": 86,
+        "line": 1,
         "linear": 6,
-        "numeral": 55,
-        "title": 10
+        "numeral": 62,
+        "title": 9
       },
       "tone": {
         "error": 3,
-        "neutral": 88,
-        "primary": 132,
-        "tertiary": 2
+        "neutral": 104,
+        "primary": 144,
+        "secondary": 14,
+        "tertiary": 16
       },
       "size": {
-        "default": 132,
-        "large": 10
+        "compact": 16,
+        "default": 130,
+        "hero": 2,
+        "large": 21
       },
       "gap": {
         "lg": 1,
-        "none": 82,
-        "sm": 15,
-        "xs": 62
+        "none": 139,
+        "sm": 13,
+        "xs": 81
       },
       "align": {
-        "center": 135,
-        "end": 1,
-        "start": 11,
-        "stretch": 159
+        "center": 178,
+        "end": 13,
+        "start": 38,
+        "stretch": 191
       },
       "state": {
         "idle": 1
       }
     },
     "patterns": {
+      "action_list": 5,
       "calendar_agenda": 5,
       "camera_remote": 5,
+      "canvas_game": 2,
       "countdown": 1,
       "empty": 1,
-      "keypad": 2,
+      "keypad": 1,
       "live_action_detail": 43,
       "media_player": 5,
       "notification_stack": 6,
       "nutrition_dashboard": 1,
       "nutrition_quick_add": 1,
       "nutrition_review": 1,
-      "status_detail": 1,
       "task_list": 4,
       "voice_ready": 1,
       "wallet_qr": 1,
-      "weather_hero": 1,
       "workout_rest": 1,
       "workout_set": 2,
       "workout_summary": 1
@@ -277,13 +303,17 @@
         ]
       },
       "weather": {
-        "accepted_operations": 7,
-        "mounts": 1,
-        "command_batches": 6,
-        "checkpoints": 7,
+        "accepted_operations": 9,
+        "mounts": 5,
+        "command_batches": 4,
+        "checkpoints": 6,
         "unique_snapshots": 6,
         "screen_ids": [
-          "weather.home"
+          "weather.daily-screen",
+          "weather.details-screen",
+          "weather.home",
+          "weather.hourly-screen",
+          "weather.rain-screen"
         ]
       },
       "notifications": {
@@ -511,20 +541,19 @@
         ]
       },
       "snake": {
-        "accepted_operations": 5,
-        "mounts": 2,
-        "command_batches": 3,
-        "checkpoints": 4,
-        "unique_snapshots": 4,
+        "accepted_operations": 3,
+        "mounts": 1,
+        "command_batches": 2,
+        "checkpoints": 3,
+        "unique_snapshots": 3,
         "screen_ids": [
-          "snake.game",
-          "snake.home"
+          "snake.game"
         ]
       }
     },
     "accepted_operations": 112,
-    "checkpoints": 105,
-    "unique_snapshot_hashes": 96
+    "checkpoints": 103,
+    "unique_snapshot_hashes": 95
   },
   "sources": [
     {
@@ -533,7 +562,23 @@
     },
     {
       "path": "apps/weather/appspec.json",
-      "sha256": "8f0c250a4d61dd705d406840cf310fef2b7764b6c3a7fc42ae88a00a75869023"
+      "sha256": "116517cb66a13c1b1211b8df40de9c14127e58b9155520a5067291d8aa441925"
+    },
+    {
+      "path": "apps/weather/screens/daily.json",
+      "sha256": "f5dac739eb15eb9fd1428ebe7a1deb56289a4bcb2ca8a58f756cc2ce1f4354ed"
+    },
+    {
+      "path": "apps/weather/screens/details.json",
+      "sha256": "fa6116fdf176b5ffd81a679e41c5891b7dfbf0f544b701fb96c19baf7479c6b4"
+    },
+    {
+      "path": "apps/weather/screens/hourly.json",
+      "sha256": "d6fbfb8ec0670a836dc8b64e68c566eca065fa4b7a1b44b46977bdaa803a7f69"
+    },
+    {
+      "path": "apps/weather/screens/rain.json",
+      "sha256": "81412f22f3df1d23abc641799780f182c5310fd8aa26a8271faeaef54b5e984e"
     },
     {
       "path": "apps/notifications/appspec.json",
@@ -853,12 +898,12 @@
     },
     {
       "path": "apps/snake/appspec.json",
-      "sha256": "e7af3546ed344a39838651bb0c49e8935b43bb520ff0bfc6ce28f5a538717822"
+      "sha256": "b8a5b8ec421b21e34fc3653403289c1a6ad9e89e525db3a420e631708ceddd9a"
     },
     {
       "path": "apps/snake/screens/game.json",
-      "sha256": "feca91f27613fe922f966c541ae791288d30036dd609bd7222cfb0c9d4e828b4"
+      "sha256": "b8a5b8ec421b21e34fc3653403289c1a6ad9e89e525db3a420e631708ceddd9a"
     }
   ],
-  "sources_sha256": "e2bd5d1d8eebe918e4ecc11686ea0d199154a744c9528e30474a3231171aaaa5"
+  "sources_sha256": "d1ea2fa56adba2ae2b4a2772cfe85560671402d1920eeeb8fe2e4e992da3c7e1"
 }

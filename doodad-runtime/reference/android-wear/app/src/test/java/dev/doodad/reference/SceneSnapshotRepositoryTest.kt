@@ -24,8 +24,8 @@ class SceneSnapshotRepositoryTest {
     fun loadsEveryHashedRuntimeSnapshotAcrossTheTwentyApps() {
         val loaded = repository.loadAll()
 
-        assertEquals(97, loaded.size)
-        assertEquals(97, loaded.map { it.sha256 }.distinct().size)
+        assertEquals(99, loaded.size)
+        assertEquals(99, loaded.map { it.sha256 }.distinct().size)
         assertEquals(20, loaded.map { it.snapshot.appId }.distinct().size)
         assertTrue(
             loaded.all {
@@ -34,18 +34,22 @@ class SceneSnapshotRepositoryTest {
         )
         assertEquals(
             mapOf(
-                "button" to 148,
-                "card" to 26,
-                "column" to 4,
+                "button" to 151,
+                "canvas" to 3,
+                "card" to 19,
+                "chart" to 3,
+                "column" to 36,
+                "icon" to 44,
                 "image" to 10,
                 "keypad" to 7,
                 "live_card" to 48,
                 "progress" to 10,
-                "row" to 56,
-                "screen" to 97,
+                "row" to 101,
+                "screen" to 99,
                 "scroll" to 13,
                 "stepper" to 10,
-                "text" to 183,
+                "surface" to 57,
+                "text" to 264,
                 "toggle" to 11,
                 "voice_orb" to 1,
             ),
@@ -67,6 +71,7 @@ class SceneSnapshotRepositoryTest {
                 "scroll",
                 "text",
                 "button",
+                "canvas",
                 "card",
                 "progress",
                 "stepper",
@@ -75,6 +80,10 @@ class SceneSnapshotRepositoryTest {
                 "voice_orb",
                 "live_card",
                 "image",
+                "icon",
+                "surface",
+                "chart",
+                "pager",
             ),
             AppSpecComponentRegistry.supportedKinds,
         )

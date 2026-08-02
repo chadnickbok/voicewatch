@@ -15,6 +15,7 @@ MOIRE_SIGMA=0
 OUTPUT_DIR="${PROJECT_DIR}/target/hardware-gallery/apps"
 CALIBRATION_PROFILE="${PROJECT_DIR}/config/capture/streamcam-cores3-sharp.json"
 CLEANCAM="${WORKSPACE_DIR}/.build/CleanCam.app/Contents/MacOS/CleanCam"
+CAPTURE_ONLY=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -54,12 +55,16 @@ while [[ $# -gt 0 ]]; do
             CALIBRATION_PROFILE="${2:?--calibration-profile requires a file}"
             shift 2
             ;;
+        --capture-only)
+            CAPTURE_ONLY=1
+            shift
+            ;;
         *)
             echo \
                 "Usage: $0 [--port DEVICE] [--app SLUG] [--start-at SLUG]" \
                 "[--exposure N] [--gain N] [--white-balance-temperature K]" \
                 "[--moire-sigma N] [--calibration-profile FILE]" \
-                "[--output DIR]" >&2
+                "[--output DIR] [--capture-only]" >&2
             exit 2
             ;;
     esac
@@ -148,8 +153,10 @@ for app in "${APPS[@]}"; do
         "${OUTPUT_DIR}/desktop/${app}.bmp" \
         "${OUTPUT_DIR}/desktop/${app}.png"
 
-    "${SCRIPT_DIR}/build-firmware.sh" --app "${app}" --show-app
-    "${SCRIPT_DIR}/flash.sh" --port "${PORT}" --no-monitor
+    if [[ "${CAPTURE_ONLY}" -eq 0 ]]; then
+        "${SCRIPT_DIR}/build-firmware.sh" --app "${app}" --show-app
+        "${SCRIPT_DIR}/flash.sh" --port "${PORT}" --no-monitor
+    fi
     "${CLEANCAM}" \
         --capture "${OUTPUT_DIR}/hardware-raw/${app}.png" \
         --exposure "${EXPOSURE}" \

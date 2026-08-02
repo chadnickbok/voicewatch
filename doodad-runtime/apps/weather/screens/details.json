@@ -1,0 +1,439 @@
+{
+  "schema_version": 1,
+  "app_id": "weather",
+  "screen": {
+    "id": "weather.details-screen",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "weather.details-page",
+          "type": "column",
+          "props": {
+            "gap": "none",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "weather.details-summary",
+                "type": "row",
+                "props": {
+                  "gap": "xs",
+                  "align": "start",
+                  "children": [
+                    {
+                      "id": "weather.details-condition-icon",
+                      "type": "icon",
+                      "props": {
+                        "name": "condition_partly_cloudy_day",
+                        "tone": "tertiary",
+                        "size": "large"
+                      },
+                      "semantics": {
+                        "label": "Partly cloudy"
+                      }
+                    },
+                    {
+                      "id": "weather.details-temperature",
+                      "type": "text",
+                      "props": {
+                        "text": "62°",
+                        "style": "numeral",
+                        "max_lines": 1
+                      },
+                      "semantics": {
+                        "label": "Current temperature",
+                        "value": "62 degrees"
+                      }
+                    },
+                    {
+                      "id": "weather.details-condition",
+                      "type": "text",
+                      "props": {
+                        "text": "Partly cloudy",
+                        "style": "caption",
+                        "max_lines": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.details-status-chip",
+                "type": "surface",
+                "props": {
+                  "tone": "secondary",
+                  "shape": "pill",
+                  "gap": "none",
+                  "align": "center",
+                  "children": [
+                    {
+                      "id": "weather.details-status",
+                      "type": "text",
+                      "props": {
+                        "text": "Now",
+                        "style": "caption",
+                        "max_lines": 1
+                      },
+                      "semantics": {
+                        "label": "Weather updated now"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.details-grid",
+                "type": "column",
+                "props": {
+                  "gap": "xs",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.details-row-top",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.humidity-tile",
+                            "type": "surface",
+                            "props": {
+                              "tone": "primary",
+                              "shape": "metric_a",
+                              "gap": "none",
+                              "align": "stretch",
+                              "children": [
+                                {
+                                  "id": "weather.humidity",
+                                  "type": "column",
+                                  "props": {
+                                    "gap": "none",
+                                    "align": "start",
+                                    "children": [
+                                      {
+                                        "id": "weather.humidity-icon",
+                                        "type": "icon",
+                                        "props": {
+                                          "name": "utility_humidity",
+                                          "tone": "primary",
+                                          "size": "large"
+                                        },
+                                        "semantics": {
+                                          "label": "Humidity"
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.humidity-label",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "HUMIDITY",
+                                          "style": "caption",
+                                          "max_lines": 1
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.humidity-value",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "49%",
+                                          "style": "numeral",
+                                          "max_lines": 1
+                                        },
+                                        "semantics": {
+                                          "label": "49 percent"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "id": "weather.wind-tile",
+                            "type": "surface",
+                            "props": {
+                              "tone": "secondary",
+                              "shape": "metric_b",
+                              "gap": "none",
+                              "align": "stretch",
+                              "children": [
+                                {
+                                  "id": "weather.wind",
+                                  "type": "column",
+                                  "props": {
+                                    "gap": "none",
+                                    "align": "start",
+                                    "children": [
+                                      {
+                                        "id": "weather.wind-icon",
+                                        "type": "icon",
+                                        "props": {
+                                          "name": "utility_wind",
+                                          "tone": "secondary",
+                                          "size": "large"
+                                        },
+                                        "semantics": {
+                                          "label": "Wind"
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.wind-label",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "WIND",
+                                          "style": "caption",
+                                          "max_lines": 1
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.wind-value",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "8",
+                                          "style": "numeral",
+                                          "max_lines": 1
+                                        },
+                                        "semantics": {
+                                          "label": "8 miles per hour"
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.wind-unit",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "mph",
+                                          "style": "caption",
+                                          "max_lines": 1
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.details-row-bottom",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.uv-tile",
+                            "type": "surface",
+                            "props": {
+                              "tone": "tertiary",
+                              "shape": "metric_c",
+                              "gap": "none",
+                              "align": "stretch",
+                              "children": [
+                                {
+                                  "id": "weather.uv",
+                                  "type": "column",
+                                  "props": {
+                                    "gap": "none",
+                                    "align": "start",
+                                    "children": [
+                                      {
+                                        "id": "weather.uv-icon",
+                                        "type": "icon",
+                                        "props": {
+                                          "name": "utility_uv",
+                                          "tone": "tertiary",
+                                          "size": "large"
+                                        },
+                                        "semantics": {
+                                          "label": "UV index"
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.uv-label",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "UV",
+                                          "style": "caption",
+                                          "max_lines": 1
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.uv-value",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "3",
+                                          "style": "numeral",
+                                          "max_lines": 1
+                                        },
+                                        "semantics": {
+                                          "label": "UV index 3, low"
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.uv-unit",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "Low",
+                                          "style": "caption",
+                                          "max_lines": 1
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "id": "weather.sunrise-tile",
+                            "type": "surface",
+                            "props": {
+                              "tone": "neutral",
+                              "shape": "metric_b",
+                              "gap": "none",
+                              "align": "stretch",
+                              "children": [
+                                {
+                                  "id": "weather.sunrise",
+                                  "type": "column",
+                                  "props": {
+                                    "gap": "none",
+                                    "align": "start",
+                                    "children": [
+                                      {
+                                        "id": "weather.sunrise-icon",
+                                        "type": "icon",
+                                        "props": {
+                                          "name": "utility_sunrise",
+                                          "tone": "tertiary",
+                                          "size": "large"
+                                        },
+                                        "semantics": {
+                                          "label": "Sunrise"
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.sunrise-label",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "SUNRISE",
+                                          "style": "caption",
+                                          "max_lines": 1
+                                        }
+                                      },
+                                      {
+                                        "id": "weather.sunrise-value",
+                                        "type": "text",
+                                        "props": {
+                                          "text": "6:12",
+                                          "style": "numeral",
+                                          "max_lines": 1
+                                        },
+                                        "semantics": {
+                                          "label": "Sunrise at 6:12"
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.details-dots",
+                "type": "row",
+                "props": {
+                  "gap": "xs",
+                  "align": "center",
+                  "children": [
+                    {
+                      "id": "weather.details-dot-current",
+                      "type": "surface",
+                      "props": {
+                        "tone": "neutral",
+                        "shape": "pill",
+                        "gap": "none",
+                        "align": "center",
+                        "children": []
+                      }
+                    },
+                    {
+                      "id": "weather.details-dot-hourly",
+                      "type": "surface",
+                      "props": {
+                        "tone": "neutral",
+                        "shape": "pill",
+                        "gap": "none",
+                        "align": "center",
+                        "children": []
+                      }
+                    },
+                    {
+                      "id": "weather.details-dot-daily",
+                      "type": "surface",
+                      "props": {
+                        "tone": "neutral",
+                        "shape": "pill",
+                        "gap": "none",
+                        "align": "center",
+                        "children": []
+                      }
+                    },
+                    {
+                      "id": "weather.details-dot-selected",
+                      "type": "surface",
+                      "props": {
+                        "tone": "primary",
+                        "shape": "pill",
+                        "gap": "none",
+                        "align": "center",
+                        "children": []
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.rain-preview-action",
+                "type": "button",
+                "props": {
+                  "label": "Rain preview",
+                  "tone": "secondary",
+                  "variant": "text",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "weather.rain-preview"
+                },
+                "semantics": {
+                  "label": "Show imminent rain state"
+                }
+              }
+            ]
+          },
+          "semantics": {
+            "label": "Weather details"
+          }
+        }
+      ]
+    },
+    "events": {
+      "pageChanged": "weather.page-changed"
+    },
+    "semantics": {
+      "label": "Weather details"
+    }
+  }
+}

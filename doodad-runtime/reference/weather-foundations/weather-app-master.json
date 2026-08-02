@@ -1,0 +1,495 @@
+{
+  "schema_version": 1,
+  "app_id": "weather",
+  "screen": {
+    "id": "weather.home",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "weather.pages",
+          "type": "pager",
+          "props": {
+            "selected": 0,
+            "show_indicator": false,
+            "gap": "none",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "weather.current",
+                "type": "column",
+                "props": {
+                  "gap": "xs",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.location-row",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "start",
+                        "children": [
+                          {
+                            "id": "weather.location-icon",
+                            "type": "icon",
+                            "props": {"name": "utility_location", "tone": "neutral", "size": "compact"},
+                            "semantics": {"label": "Location"}
+                          },
+                          {
+                            "id": "weather.location",
+                            "type": "text",
+                            "props": {"text": "San Francisco", "style": "caption", "max_lines": 1, "align": "start"}
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.hero-row",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.summary",
+                            "type": "text",
+                            "props": {"text": "62°", "style": "numeral", "max_lines": 1, "align": "start"},
+                            "semantics": {"label": "Current temperature", "value": "62 degrees"}
+                          },
+                          {
+                            "id": "weather.condition-icon",
+                            "type": "icon",
+                            "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "hero"},
+                            "semantics": {"label": "Partly cloudy"}
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.symbol",
+                      "type": "text",
+                      "props": {"text": "Partly cloudy", "style": "body", "max_lines": 1, "align": "start"},
+                      "semantics": {"label": "Condition", "value": "Partly cloudy"}
+                    },
+                    {
+                      "id": "weather.high-low",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.high-pill",
+                            "type": "surface",
+                            "props": {
+                              "tone": "secondary", "shape": "pill", "gap": "none", "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.high-row",
+                                  "type": "row",
+                                  "props": {
+                                    "gap": "xs", "align": "center",
+                                    "children": [
+                                      {"id": "weather.high-icon", "type": "icon", "props": {"name": "utility_arrow_high", "tone": "tertiary", "size": "compact"}, "semantics": {"label": "High temperature"}},
+                                      {"id": "weather.high", "type": "text", "props": {"text": "H 67°", "style": "label", "max_lines": 1, "align": "center"}}
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "id": "weather.low-pill",
+                            "type": "surface",
+                            "props": {
+                              "tone": "secondary", "shape": "pill", "gap": "none", "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.low-row",
+                                  "type": "row",
+                                  "props": {
+                                    "gap": "xs", "align": "center",
+                                    "children": [
+                                      {"id": "weather.low-icon", "type": "icon", "props": {"name": "utility_arrow_low", "tone": "primary", "size": "compact"}, "semantics": {"label": "Low temperature"}},
+                                      {"id": "weather.low", "type": "text", "props": {"text": "L 54°", "style": "label", "max_lines": 1, "align": "center"}}
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.feels-pill",
+                      "type": "surface",
+                      "props": {
+                        "tone": "secondary", "shape": "pill", "gap": "none", "align": "start",
+                        "children": [
+                          {
+                            "id": "weather.feels-row",
+                            "type": "row",
+                            "props": {
+                              "gap": "xs", "align": "start",
+                              "children": [
+                                {"id": "weather.feels-icon", "type": "icon", "props": {"name": "utility_thermometer", "tone": "neutral", "size": "compact"}, "semantics": {"label": "Feels like"}},
+                                {"id": "weather.feels-label", "type": "text", "props": {"text": "Feels like", "style": "caption", "max_lines": 1, "align": "start"}},
+                                {"id": "weather.feels", "type": "text", "props": {"text": "59°", "style": "label", "max_lines": 1, "align": "end"}}
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.status-chip",
+                      "type": "surface",
+                      "props": {
+                        "tone": "secondary", "shape": "pill", "gap": "none", "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.status-row",
+                            "type": "row",
+                            "props": {
+                              "gap": "xs", "align": "center",
+                              "children": [
+                                {"id": "weather.status", "type": "text", "props": {"text": "Now", "style": "caption", "max_lines": 1, "align": "center"}, "semantics": {"label": "Weather updated now"}}
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.primary",
+                      "type": "button",
+                      "props": {"label": "Hourly", "icon": "utility_chevron_right", "tone": "primary", "variant": "filled", "size": "compact"},
+                      "events": {"tap": "weather.hourly"},
+                      "semantics": {"label": "Show hourly forecast"}
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.hourly",
+                "type": "column",
+                "props": {
+                  "gap": "none",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.hourly-summary",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs", "align": "start",
+                        "children": [
+                          {"id": "weather.hourly-condition-icon", "type": "icon", "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "large"}, "semantics": {"label": "Partly cloudy"}},
+                          {
+                            "id": "weather.hourly-summary-copy",
+                            "type": "column",
+                            "props": {
+                              "gap": "none", "align": "start",
+                              "children": [
+                                {"id": "weather.hourly-now", "type": "text", "props": {"text": "Now 62°", "style": "body", "max_lines": 1, "align": "start"}, "semantics": {"label": "Current temperature", "value": "62 degrees"}},
+                                {"id": "weather.hourly-condition", "type": "text", "props": {"text": "Partly cloudy", "style": "caption", "max_lines": 1, "align": "start"}}
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.hourly-status-chip",
+                      "type": "surface",
+                      "props": {
+                        "tone": "secondary", "shape": "pill", "gap": "none", "align": "center",
+                        "children": [
+                          {"id": "weather.hourly-status", "type": "text", "props": {"text": "Now", "style": "caption", "max_lines": 1, "align": "center"}, "semantics": {"label": "Weather updated now"}}
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.hourly-chart-card",
+                      "type": "surface",
+                      "props": {
+                        "tone": "secondary", "shape": "standard", "gap": "none", "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.hourly-chart-heading",
+                            "type": "row",
+                            "props": {
+                              "gap": "xs", "align": "start",
+                              "children": [
+                                {"id": "weather.hourly-rain-icon", "type": "icon", "props": {"name": "utility_humidity", "tone": "primary", "size": "compact"}, "semantics": {"label": "Precipitation"}},
+                                {"id": "weather.hourly-rain-label", "type": "text", "props": {"text": "Rain", "style": "caption", "max_lines": 1, "align": "start"}},
+                                {"id": "weather.hourly-rain-value", "type": "text", "props": {"text": "0%", "style": "label", "max_lines": 1, "align": "end"}}
+                              ]
+                            }
+                          },
+                          {
+                            "id": "weather.rain-chart",
+                            "type": "chart",
+                            "props": {"samples": [0, 0, 0, 0], "maximum": 100, "style": "line", "tone": "primary"},
+                            "semantics": {"label": "Rain chance remains at zero percent for the next hour"}
+                          },
+                          {
+                            "id": "weather.hourly-times",
+                            "type": "row",
+                            "props": {
+                              "gap": "none", "align": "stretch",
+                              "children": [
+                                {"id": "weather.hourly-time-now", "type": "text", "props": {"text": "NOW", "style": "caption", "max_lines": 1, "align": "start"}},
+                                {"id": "weather.hourly-time-20", "type": "text", "props": {"text": "20m", "style": "caption", "max_lines": 1, "align": "center"}},
+                                {"id": "weather.hourly-time-40", "type": "text", "props": {"text": "40m", "style": "caption", "max_lines": 1, "align": "center"}},
+                                {"id": "weather.hourly-time-60", "type": "text", "props": {"text": "60m", "style": "caption", "max_lines": 1, "align": "end"}}
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.hourly-tiles",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs", "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.hour-now-tile", "type": "surface",
+                            "props": {"tone": "primary", "shape": "standard", "gap": "none", "align": "center", "children": [
+                              {"id": "weather.hour-now", "type": "column", "props": {"gap": "none", "align": "center", "children": [
+                                {"id": "weather.hour-now-label", "type": "text", "props": {"text": "NOW", "style": "caption", "max_lines": 1, "align": "center"}},
+                                {"id": "weather.hour-now-icon", "type": "icon", "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "compact"}, "semantics": {"label": "Partly cloudy"}},
+                                {"id": "weather.hour-now-temp", "type": "text", "props": {"text": "62°", "style": "body", "max_lines": 1, "align": "center"}}
+                              ]}}
+                            ]}
+                          },
+                          {
+                            "id": "weather.hour-10-tile", "type": "surface",
+                            "props": {"tone": "neutral", "shape": "standard", "gap": "none", "align": "center", "children": [
+                              {"id": "weather.hour-10", "type": "column", "props": {"gap": "none", "align": "center", "children": [
+                                {"id": "weather.hour-10-label", "type": "text", "props": {"text": "10", "style": "caption", "max_lines": 1, "align": "center"}},
+                                {"id": "weather.hour-10-icon", "type": "icon", "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "compact"}, "semantics": {"label": "Partly cloudy"}},
+                                {"id": "weather.hour-10-temp", "type": "text", "props": {"text": "63°", "style": "body", "max_lines": 1, "align": "center"}}
+                              ]}}
+                            ]}
+                          },
+                          {
+                            "id": "weather.hour-11-tile", "type": "surface",
+                            "props": {"tone": "neutral", "shape": "standard", "gap": "none", "align": "center", "children": [
+                              {"id": "weather.hour-11", "type": "column", "props": {"gap": "none", "align": "center", "children": [
+                                {"id": "weather.hour-11-label", "type": "text", "props": {"text": "11", "style": "caption", "max_lines": 1, "align": "center"}},
+                                {"id": "weather.hour-11-icon", "type": "icon", "props": {"name": "condition_clear_day", "tone": "tertiary", "size": "compact"}, "semantics": {"label": "Sunny"}},
+                                {"id": "weather.hour-11-temp", "type": "text", "props": {"text": "65°", "style": "body", "max_lines": 1, "align": "center"}}
+                              ]}}
+                            ]}
+                          },
+                          {
+                            "id": "weather.hour-12-tile", "type": "surface",
+                            "props": {"tone": "neutral", "shape": "standard", "gap": "none", "align": "center", "children": [
+                              {"id": "weather.hour-12", "type": "column", "props": {"gap": "none", "align": "center", "children": [
+                                {"id": "weather.hour-12-label", "type": "text", "props": {"text": "12", "style": "caption", "max_lines": 1, "align": "center"}},
+                                {"id": "weather.hour-12-icon", "type": "icon", "props": {"name": "condition_clear_day", "tone": "tertiary", "size": "compact"}, "semantics": {"label": "Sunny"}},
+                                {"id": "weather.hour-12-temp", "type": "text", "props": {"text": "66°", "style": "body", "max_lines": 1, "align": "center"}}
+                              ]}}
+                            ]}
+                          }
+                        ]
+                      },
+                      "semantics": {"label": "Hourly forecast"}
+                    },
+                    {
+                      "id": "weather.daily-action",
+                      "type": "button",
+                      "props": {"label": "Daily", "icon": "utility_chevron_right", "tone": "secondary", "variant": "filled", "size": "compact"},
+                      "events": {"tap": "weather.daily"},
+                      "semantics": {"label": "Show daily forecast"}
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.daily-page",
+                "type": "column",
+                "props": {
+                  "gap": "none", "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.daily-location-row", "type": "row",
+                      "props": {"gap": "xs", "align": "start", "children": [
+                        {"id": "weather.daily-location-icon", "type": "icon", "props": {"name": "utility_location", "tone": "neutral", "size": "compact"}, "semantics": {"label": "Location"}},
+                        {"id": "weather.daily-location", "type": "text", "props": {"text": "San Francisco", "style": "caption", "max_lines": 1, "align": "start"}}
+                      ]}
+                    },
+                    {
+                      "id": "weather.daily-status-chip", "type": "surface",
+                      "props": {"tone": "secondary", "shape": "pill", "gap": "none", "align": "center", "children": [
+                        {"id": "weather.daily-status", "type": "text", "props": {"text": "Now", "style": "caption", "max_lines": 1, "align": "center"}, "semantics": {"label": "Weather updated now"}}
+                      ]}
+                    },
+                    {
+                      "id": "weather.daily-list", "type": "column",
+                      "props": {"gap": "xs", "align": "stretch", "children": [
+                        {
+                          "id": "weather.day-today-tile", "type": "surface",
+                          "props": {"tone": "primary", "shape": "standard", "gap": "none", "align": "stretch", "children": [
+                            {"id": "weather.day-today", "type": "row", "props": {"gap": "none", "align": "stretch", "children": [
+                              {"id": "weather.day-today-label", "type": "text", "props": {"text": "TODAY", "style": "label", "max_lines": 1, "align": "start"}},
+                              {"id": "weather.day-today-icon", "type": "icon", "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "large"}, "semantics": {"label": "Partly cloudy"}},
+                              {"id": "weather.day-today-low", "type": "text", "props": {"text": "54°", "style": "label", "max_lines": 1, "align": "end"}},
+                              {"id": "weather.day-today-high", "type": "text", "props": {"text": "67°", "style": "body", "max_lines": 1, "align": "end"}}
+                            ]}}
+                          ]}
+                        },
+                        {
+                          "id": "weather.day-mon-tile", "type": "surface",
+                          "props": {"tone": "neutral", "shape": "standard", "gap": "none", "align": "stretch", "children": [
+                            {"id": "weather.day-mon", "type": "row", "props": {"gap": "none", "align": "stretch", "children": [
+                              {"id": "weather.day-mon-label", "type": "text", "props": {"text": "MON", "style": "label", "max_lines": 1, "align": "start"}},
+                              {"id": "weather.day-mon-icon", "type": "icon", "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "large"}, "semantics": {"label": "Partly cloudy"}},
+                              {"id": "weather.day-mon-low", "type": "text", "props": {"text": "53°", "style": "label", "max_lines": 1, "align": "end"}},
+                              {"id": "weather.day-mon-high", "type": "text", "props": {"text": "65°", "style": "body", "max_lines": 1, "align": "end"}}
+                            ]}}
+                          ]}
+                        },
+                        {
+                          "id": "weather.day-tue-tile", "type": "surface",
+                          "props": {"tone": "neutral", "shape": "standard", "gap": "none", "align": "stretch", "children": [
+                            {"id": "weather.day-tue", "type": "row", "props": {"gap": "none", "align": "stretch", "children": [
+                              {"id": "weather.day-tue-label", "type": "text", "props": {"text": "TUE", "style": "label", "max_lines": 1, "align": "start"}},
+                              {"id": "weather.day-tue-icon", "type": "icon", "props": {"name": "condition_rain", "tone": "primary", "size": "large"}, "semantics": {"label": "Rain"}},
+                              {"id": "weather.day-tue-low", "type": "text", "props": {"text": "51°", "style": "label", "max_lines": 1, "align": "end"}},
+                              {"id": "weather.day-tue-high", "type": "text", "props": {"text": "63°", "style": "body", "max_lines": 1, "align": "end"}}
+                            ]}}
+                          ]}
+                        },
+                        {
+                          "id": "weather.day-wed-tile", "type": "surface",
+                          "props": {"tone": "neutral", "shape": "standard", "gap": "none", "align": "stretch", "children": [
+                            {"id": "weather.day-wed", "type": "row", "props": {"gap": "none", "align": "stretch", "children": [
+                              {"id": "weather.day-wed-label", "type": "text", "props": {"text": "WED", "style": "label", "max_lines": 1, "align": "start"}},
+                              {"id": "weather.day-wed-icon", "type": "icon", "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "large"}, "semantics": {"label": "Partly cloudy"}},
+                              {"id": "weather.day-wed-low", "type": "text", "props": {"text": "52°", "style": "label", "max_lines": 1, "align": "end"}},
+                              {"id": "weather.day-wed-high", "type": "text", "props": {"text": "64°", "style": "body", "max_lines": 1, "align": "end"}}
+                            ]}}
+                          ]}
+                        }
+                      ]},
+                      "semantics": {"label": "Four day forecast"}
+                    },
+                    {
+                      "id": "weather.daily-dots", "type": "row",
+                      "props": {"gap": "xs", "align": "center", "children": [
+                        {"id": "weather.daily-dot-current", "type": "surface", "props": {"tone": "neutral", "shape": "pill", "gap": "none", "align": "center", "children": []}},
+                        {"id": "weather.daily-dot-hourly", "type": "surface", "props": {"tone": "neutral", "shape": "pill", "gap": "none", "align": "center", "children": []}},
+                        {"id": "weather.daily-dot-selected", "type": "surface", "props": {"tone": "primary", "shape": "pill", "gap": "none", "align": "center", "children": []}},
+                        {"id": "weather.daily-dot-details", "type": "surface", "props": {"tone": "neutral", "shape": "pill", "gap": "none", "align": "center", "children": []}}
+                      ]}
+                    },
+                    {
+                      "id": "weather.details-action", "type": "button",
+                      "props": {"label": "Details", "icon": "utility_chevron_right", "tone": "secondary", "variant": "text", "size": "compact"},
+                      "events": {"tap": "weather.details"},
+                      "semantics": {"label": "Show weather details"}
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.details-page", "type": "column",
+                "props": {"gap": "none", "align": "stretch", "children": [
+                  {"id": "weather.details-summary", "type": "row", "props": {"gap": "xs", "align": "start", "children": [
+                    {"id": "weather.details-condition-icon", "type": "icon", "props": {"name": "condition_partly_cloudy_day", "tone": "tertiary", "size": "large"}, "semantics": {"label": "Partly cloudy"}},
+                    {"id": "weather.details-temperature", "type": "text", "props": {"text": "62°", "style": "numeral", "max_lines": 1}, "semantics": {"label": "Current temperature", "value": "62 degrees"}},
+                    {"id": "weather.details-condition", "type": "text", "props": {"text": "Partly cloudy", "style": "caption", "max_lines": 1}}
+                  ]}},
+                  {"id": "weather.details-status-chip", "type": "surface", "props": {"tone": "secondary", "shape": "pill", "gap": "none", "align": "center", "children": [
+                    {"id": "weather.details-status", "type": "text", "props": {"text": "Now", "style": "caption", "max_lines": 1}, "semantics": {"label": "Weather updated now"}}
+                  ]}},
+                  {"id": "weather.details-grid", "type": "column", "props": {"gap": "xs", "align": "stretch", "children": [
+                    {"id": "weather.details-row-top", "type": "row", "props": {"gap": "xs", "align": "stretch", "children": [
+                      {"id": "weather.humidity-tile", "type": "surface", "props": {"tone": "primary", "shape": "metric_a", "gap": "none", "align": "stretch", "children": [
+                        {"id": "weather.humidity", "type": "column", "props": {"gap": "none", "align": "start", "children": [
+                          {"id": "weather.humidity-icon", "type": "icon", "props": {"name": "utility_humidity", "tone": "primary", "size": "large"}, "semantics": {"label": "Humidity"}},
+                          {"id": "weather.humidity-label", "type": "text", "props": {"text": "HUMIDITY", "style": "caption", "max_lines": 1}},
+                          {"id": "weather.humidity-value", "type": "text", "props": {"text": "49%", "style": "numeral", "max_lines": 1}, "semantics": {"label": "49 percent"}}
+                        ]}}
+                      ]}},
+                      {"id": "weather.wind-tile", "type": "surface", "props": {"tone": "secondary", "shape": "metric_b", "gap": "none", "align": "stretch", "children": [
+                        {"id": "weather.wind", "type": "column", "props": {"gap": "none", "align": "start", "children": [
+                          {"id": "weather.wind-icon", "type": "icon", "props": {"name": "utility_wind", "tone": "secondary", "size": "large"}, "semantics": {"label": "Wind"}},
+                          {"id": "weather.wind-label", "type": "text", "props": {"text": "WIND", "style": "caption", "max_lines": 1}},
+                          {"id": "weather.wind-value", "type": "text", "props": {"text": "8", "style": "numeral", "max_lines": 1}, "semantics": {"label": "8 miles per hour"}},
+                          {"id": "weather.wind-unit", "type": "text", "props": {"text": "mph", "style": "caption", "max_lines": 1}}
+                        ]}}
+                      ]}}
+                    ]}},
+                    {"id": "weather.details-row-bottom", "type": "row", "props": {"gap": "xs", "align": "stretch", "children": [
+                      {"id": "weather.uv-tile", "type": "surface", "props": {"tone": "tertiary", "shape": "metric_c", "gap": "none", "align": "stretch", "children": [
+                        {"id": "weather.uv", "type": "column", "props": {"gap": "none", "align": "start", "children": [
+                          {"id": "weather.uv-icon", "type": "icon", "props": {"name": "utility_uv", "tone": "tertiary", "size": "large"}, "semantics": {"label": "UV index"}},
+                          {"id": "weather.uv-label", "type": "text", "props": {"text": "UV", "style": "caption", "max_lines": 1}},
+                          {"id": "weather.uv-value", "type": "text", "props": {"text": "3", "style": "numeral", "max_lines": 1}, "semantics": {"label": "UV index 3, low"}},
+                          {"id": "weather.uv-unit", "type": "text", "props": {"text": "Low", "style": "caption", "max_lines": 1}}
+                        ]}}
+                      ]}},
+                      {"id": "weather.sunrise-tile", "type": "surface", "props": {"tone": "neutral", "shape": "metric_b", "gap": "none", "align": "stretch", "children": [
+                        {"id": "weather.sunrise", "type": "column", "props": {"gap": "none", "align": "start", "children": [
+                          {"id": "weather.sunrise-icon", "type": "icon", "props": {"name": "utility_sunrise", "tone": "tertiary", "size": "large"}, "semantics": {"label": "Sunrise"}},
+                          {"id": "weather.sunrise-label", "type": "text", "props": {"text": "SUNRISE", "style": "caption", "max_lines": 1}},
+                          {"id": "weather.sunrise-value", "type": "text", "props": {"text": "6:12", "style": "numeral", "max_lines": 1}, "semantics": {"label": "Sunrise at 6:12"}}
+                        ]}}
+                      ]}}
+                    ]}}
+                  ]}},
+                  {"id": "weather.details-dots", "type": "row", "props": {"gap": "xs", "align": "center", "children": [
+                    {"id": "weather.details-dot-current", "type": "surface", "props": {"tone": "neutral", "shape": "pill", "gap": "none", "align": "center", "children": []}},
+                    {"id": "weather.details-dot-hourly", "type": "surface", "props": {"tone": "neutral", "shape": "pill", "gap": "none", "align": "center", "children": []}},
+                    {"id": "weather.details-dot-daily", "type": "surface", "props": {"tone": "neutral", "shape": "pill", "gap": "none", "align": "center", "children": []}},
+                    {"id": "weather.details-dot-selected", "type": "surface", "props": {"tone": "primary", "shape": "pill", "gap": "none", "align": "center", "children": []}}
+                  ]}},
+                  {"id": "weather.rain-preview-action", "type": "button", "props": {"label": "Rain preview", "tone": "secondary", "variant": "text", "size": "compact"}, "events": {"tap": "weather.rain-preview"}, "semantics": {"label": "Show imminent rain state"}}
+                ]},
+                "semantics": {"label": "Weather details"}
+              },
+              {
+                "id": "weather.rain-page", "type": "column",
+                "props": {"gap": "none", "align": "stretch", "children": [
+                  {"id": "weather.rain-hero", "type": "icon", "props": {"name": "condition_rain", "tone": "primary", "size": "hero"}, "semantics": {"label": "Rain"}},
+                  {"id": "weather.rain-headline", "type": "column", "props": {"gap": "none", "align": "start", "children": [
+                    {"id": "weather.rain-title", "type": "text", "props": {"text": "Rain in\n20 min", "style": "title", "max_lines": 2}, "semantics": {"label": "Rain in 20 minutes"}},
+                    {"id": "weather.rain-duration", "type": "text", "props": {"text": "Light rain for 35 min", "style": "caption", "max_lines": 1}}
+                  ]}},
+                  {"id": "weather.rain-chart-card", "type": "surface", "props": {"tone": "secondary", "shape": "standard", "gap": "none", "align": "stretch", "children": [
+                    {"id": "weather.rain-probability", "type": "row", "props": {"gap": "xs", "align": "center", "children": [
+                      {"id": "weather.rain-probability-icon", "type": "icon", "props": {"name": "utility_humidity", "tone": "primary", "size": "large"}, "semantics": {"label": "Chance of rain"}},
+                      {"id": "weather.rain-probability-value", "type": "text", "props": {"text": "32%", "style": "numeral", "max_lines": 1}, "semantics": {"label": "32 percent"}},
+                      {"id": "weather.rain-probability-label", "type": "text", "props": {"text": "Chance\nof rain", "style": "caption", "max_lines": 2}}
+                    ]}},
+                    {"id": "weather.rain-bars", "type": "chart", "props": {"style": "bars", "samples": [8,16,25,38,50,63,72,70,58,44,30,18,10], "maximum": 100, "tone": "primary"}, "semantics": {"label": "Rain chance peaks near 72 percent in 30 minutes"}},
+                    {"id": "weather.rain-times", "type": "row", "props": {"gap": "none", "align": "stretch", "children": [
+                      {"id": "weather.rain-time-now", "type": "text", "props": {"text": "NOW", "style": "caption", "max_lines": 1, "align": "start"}},
+                      {"id": "weather.rain-time-20", "type": "text", "props": {"text": "20m", "style": "caption", "max_lines": 1, "align": "center"}},
+                      {"id": "weather.rain-time-40", "type": "text", "props": {"text": "40m", "style": "caption", "max_lines": 1, "align": "center"}},
+                      {"id": "weather.rain-time-60", "type": "text", "props": {"text": "60m", "style": "caption", "max_lines": 1, "align": "end"}}
+                    ]}}
+                  ]}},
+                  {"id": "weather.rain-actions", "type": "row", "props": {"gap": "none", "align": "start", "children": [
+                    {"id": "weather.rain-details", "type": "button", "props": {"label": "Details", "icon": "utility_details", "tone": "primary", "variant": "filled", "size": "compact"}, "events": {"tap": "weather.rain-details"}, "semantics": {"label": "Show weather details"}},
+                    {"id": "weather.rain-status", "type": "button", "props": {"label": "Now", "icon": "utility_clock", "tone": "neutral", "variant": "text", "size": "compact"}, "events": {"tap": "weather.retry"}, "semantics": {"label": "Weather updated now"}}
+                  ]}}
+                ]},
+                "semantics": {"label": "Imminent rain"}
+              }
+            ]
+          },
+          "events": {"pageChanged": "weather.page-changed"},
+          "semantics": {"label": "Weather pages", "value": "Current conditions, page 1 of 5"}
+        }
+      ]
+    }
+  }
+}

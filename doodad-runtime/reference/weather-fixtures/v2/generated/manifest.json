@@ -1,0 +1,35 @@
+{
+  "schema": "weather.snapshot.v2",
+  "fixtures": [
+    {
+      "name": "baseline",
+      "freshness": 0,
+      "bytes": 189,
+      "sha256": "d156d7450be6c872fcc1d6850571362f33954886476489d933211ae5278a00b6"
+    },
+    {
+      "name": "error",
+      "freshness": 3,
+      "bytes": 105,
+      "sha256": "be8f5c327f4f83ee9c1b77b07382f54a4e1a2e66003a635a902a0b69adeaeae5"
+    },
+    {
+      "name": "extreme",
+      "freshness": 0,
+      "bytes": 185,
+      "sha256": "704cf63336be34de388779844e2e5bff6853b4bf40f1a90fa4b55a64dd9a9df1"
+    },
+    {
+      "name": "rain",
+      "freshness": 0,
+      "bytes": 203,
+      "sha256": "d7657758050ca1de72f63444ac9ae12af8019ffd5fe8b1210818946f401f65f9"
+    },
+    {
+      "name": "stale",
+      "freshness": 1,
+      "bytes": 105,
+      "sha256": "d8bf16987fe440b7ef7102b2963434006fa82ce319a0624dc14e59745072f94e"
+    }
+  ]
+}

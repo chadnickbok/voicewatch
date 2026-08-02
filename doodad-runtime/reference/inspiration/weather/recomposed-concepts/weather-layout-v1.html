@@ -1,0 +1,974 @@
+<div id="nimbus-layout-v1">
+  <svg class="nimbus-symbols" aria-hidden="true">
+    <defs>
+      <symbol id="nimbus-location" viewBox="0 0 24 24">
+        <path d="M12 22s7-6.1 7-13A7 7 0 0 0 5 9c0 6.9 7 13 7 13Z" fill="none" stroke="currentColor" stroke-width="2.2"/>
+        <circle cx="12" cy="9" r="2.5" fill="currentColor"/>
+      </symbol>
+      <symbol id="nimbus-clock" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 7v5l3.5 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="nimbus-chevron" viewBox="0 0 24 24">
+        <path d="m9 5 7 7-7 7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="nimbus-up" viewBox="0 0 24 24">
+        <path d="M12 20V5m0 0L6.5 10.5M12 5l5.5 5.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="nimbus-down" viewBox="0 0 24 24">
+        <path d="M12 4v15m0 0 5.5-5.5M12 19l-5.5-5.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+      <symbol id="nimbus-thermometer" viewBox="0 0 24 24">
+        <path d="M9 14.8V5a3 3 0 0 1 6 0v9.8a5 5 0 1 1-6 0Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M12 8v9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="nimbus-droplet" viewBox="0 0 24 24">
+        <path d="M12 2.5S5.5 10.1 5.5 15a6.5 6.5 0 0 0 13 0C18.5 10.1 12 2.5 12 2.5Z" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M9 16.5c.7 1.1 1.7 1.7 3 1.7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="nimbus-wind" viewBox="0 0 24 24">
+        <path d="M3 8h10.5c3.8 0 3.8-5 0-5-1.6 0-2.7.8-3.2 2M3 12h15c4 0 4 6 0 6-1.7 0-2.8-.9-3.2-2.2M3 16h7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="nimbus-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="4.5" fill="#ffd44f"/>
+        <g stroke="#ffd44f" stroke-width="2" stroke-linecap="round">
+          <path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/>
+        </g>
+      </symbol>
+      <symbol id="nimbus-sunrise" viewBox="0 0 24 24">
+        <path d="M3 19h18M5 16h14" fill="none" stroke="#ffd44f" stroke-width="2" stroke-linecap="round"/>
+        <path d="M7 16a5 5 0 0 1 10 0" fill="#ffd44f"/>
+        <path d="M12 3v4M5.6 8.6 8 11M18.4 8.6 16 11" fill="none" stroke="#ffd44f" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="nimbus-list" viewBox="0 0 24 24">
+        <g fill="currentColor">
+          <circle cx="5" cy="6" r="1.5"/><circle cx="5" cy="12" r="1.5"/><circle cx="5" cy="18" r="1.5"/>
+        </g>
+        <path d="M9 6h10M9 12h10M9 18h10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+      <symbol id="nimbus-partly" viewBox="0 0 64 52">
+        <circle cx="40" cy="18" r="13" fill="#ffd44f"/>
+        <g stroke="#ffd44f" stroke-width="3" stroke-linecap="round">
+          <path d="M40 1v5M40 30v5M23 18h5M52 18h6M28 6l4 4M51 6l-4 4"/>
+        </g>
+        <path d="M12 45h37a10 10 0 0 0 0-20c-1.1 0-2.3.2-3.3.5A15 15 0 0 0 17 28.7 8.5 8.5 0 0 0 12 45Z" fill="#f0f4ff"/>
+        <path d="M12 45h37a10 10 0 0 0 0-20c-1.1 0-2.3.2-3.3.5A15 15 0 0 0 17 28.7 8.5 8.5 0 0 0 12 45Z" fill="none" stroke="#cbd8f5" stroke-width="1.5"/>
+      </symbol>
+      <symbol id="nimbus-cloud" viewBox="0 0 64 52">
+        <path d="M10 40h42a10 10 0 0 0 0-20c-1.5 0-3 .3-4.2.9A16 16 0 0 0 17 25.5 8.5 8.5 0 0 0 10 40Z" fill="#eef3ff"/>
+      </symbol>
+      <symbol id="nimbus-rain" viewBox="0 0 64 64">
+        <path d="M8 35h44a10 10 0 0 0 0-20c-1.5 0-3 .3-4.2.9A16 16 0 0 0 17 20.5 8.5 8.5 0 0 0 8 35Z" fill="#78b8ff"/>
+        <g stroke="#55a3ff" stroke-width="4" stroke-linecap="round">
+          <path d="m18 44-3 7M32 44l-3 7M46 44l-3 7"/>
+        </g>
+      </symbol>
+    </defs>
+  </svg>
+
+  <div class="viz-controls" role="group" aria-label="Layout inspection overlays">
+    <button type="button" class="btn" data-nimbus-grid aria-pressed="false">4dp grid</button>
+    <button type="button" class="btn" data-nimbus-touch aria-pressed="false">Touch regions</button>
+  </div>
+
+  <div class="nimbus-layouts">
+    <figure class="nimbus-figure">
+      <div class="nimbus-screen" role="group" aria-label="Current conditions screen at 240 by 240 pixels">
+        <div class="nimbus-location"><svg aria-hidden="true"><use href="#nimbus-location"/></svg><span>San Francisco</span></div>
+        <button class="nimbus-status-hit nimbus-hit" type="button" aria-label="Updated now. Refresh weather" data-hit="60×60">
+          <span class="nimbus-status-visual"><span class="nimbus-live-dot"></span>Now</span>
+        </button>
+        <div class="nimbus-current-temp">62°</div>
+        <svg class="nimbus-current-glyph" aria-hidden="true"><use href="#nimbus-partly"/></svg>
+        <div class="nimbus-current-condition">Partly cloudy</div>
+        <div class="nimbus-high-low-row" aria-label="High 67 degrees, low 54 degrees">
+          <div class="nimbus-metric-pill"><svg aria-hidden="true"><use href="#nimbus-up"/></svg><span class="nimbus-metric-key">H</span><strong>67°</strong></div>
+          <div class="nimbus-metric-pill"><svg aria-hidden="true"><use href="#nimbus-down"/></svg><span class="nimbus-metric-key">L</span><strong>54°</strong></div>
+        </div>
+        <div class="nimbus-feels-row"><svg aria-hidden="true"><use href="#nimbus-thermometer"/></svg><span>Feels like</span><strong>59°</strong></div>
+        <button class="nimbus-action-hit nimbus-hit" type="button" data-hit="240×60">
+          <span class="nimbus-action-visual"><span>Hourly</span><svg aria-hidden="true"><use href="#nimbus-chevron"/></svg></span>
+        </button>
+      </div>
+      <figcaption>Current conditions</figcaption>
+    </figure>
+
+    <figure class="nimbus-figure">
+      <div class="nimbus-screen" role="group" aria-label="Hourly forecast screen at 240 by 240 pixels">
+        <div class="nimbus-compact-summary">
+          <svg aria-hidden="true"><use href="#nimbus-partly"/></svg>
+          <div><strong>Now 62°</strong><span>Partly cloudy</span></div>
+        </div>
+        <button class="nimbus-status-hit nimbus-hit" type="button" aria-label="Updated now. Refresh weather" data-hit="60×60">
+          <span class="nimbus-status-visual"><span class="nimbus-live-dot"></span>Now</span>
+        </button>
+        <div class="nimbus-chart nimbus-hourly-chart" aria-label="Rain chance remains at zero percent for the next hour">
+          <div class="nimbus-chart-heading"><svg aria-hidden="true"><use href="#nimbus-droplet"/></svg><span>Rain</span><strong>0%</strong></div>
+          <svg viewBox="0 0 208 24" role="img" aria-label="Flat zero-percent precipitation line">
+            <path d="M3 16H205" fill="none" stroke="#31527e" stroke-width="1"/>
+            <path d="M3 16H205" fill="none" stroke="#76aaff" stroke-width="2"/>
+            <g fill="#76aaff"><circle cx="3" cy="16" r="2.5"/><circle cx="70" cy="16" r="2.5"/><circle cx="138" cy="16" r="2.5"/><circle cx="205" cy="16" r="2.5"/></g>
+          </svg>
+          <div class="nimbus-time-labels"><span>NOW</span><span>20m</span><span>40m</span><span>60m</span></div>
+        </div>
+        <div class="nimbus-hour-tiles" aria-label="Hourly temperatures">
+          <div class="nimbus-hour-tile is-current"><span>NOW</span><svg aria-hidden="true"><use href="#nimbus-partly"/></svg><strong>62°</strong></div>
+          <div class="nimbus-hour-tile"><span>10</span><svg aria-hidden="true"><use href="#nimbus-partly"/></svg><strong>63°</strong></div>
+          <div class="nimbus-hour-tile"><span>11</span><svg aria-hidden="true"><use href="#nimbus-sun"/></svg><strong>65°</strong></div>
+          <div class="nimbus-hour-tile"><span>12</span><svg aria-hidden="true"><use href="#nimbus-sun"/></svg><strong>66°</strong></div>
+        </div>
+        <button class="nimbus-action-hit nimbus-hit" type="button" data-hit="240×60">
+          <span class="nimbus-action-visual nimbus-action-muted"><span>Daily</span><svg aria-hidden="true"><use href="#nimbus-chevron"/></svg></span>
+        </button>
+      </div>
+      <figcaption>Hourly forecast</figcaption>
+    </figure>
+
+    <figure class="nimbus-figure">
+      <div class="nimbus-screen" role="group" aria-label="Daily forecast screen at 240 by 240 pixels">
+        <div class="nimbus-location"><svg aria-hidden="true"><use href="#nimbus-location"/></svg><span>San Francisco</span></div>
+        <button class="nimbus-status-hit nimbus-hit" type="button" aria-label="Updated now. Refresh weather" data-hit="60×60">
+          <span class="nimbus-status-visual"><span class="nimbus-live-dot"></span>Now</span>
+        </button>
+        <div class="nimbus-daily-list" aria-label="Four-day forecast">
+          <div class="nimbus-daily-row is-today"><strong>TODAY</strong><svg aria-hidden="true"><use href="#nimbus-partly"/></svg><span>54°</span><b>67°</b></div>
+          <div class="nimbus-daily-row"><strong>MON</strong><svg aria-hidden="true"><use href="#nimbus-partly"/></svg><span>53°</span><b>65°</b></div>
+          <div class="nimbus-daily-row"><strong>TUE</strong><svg aria-hidden="true"><use href="#nimbus-rain"/></svg><span>51°</span><b>63°</b></div>
+          <div class="nimbus-daily-row"><strong>WED</strong><svg aria-hidden="true"><use href="#nimbus-partly"/></svg><span>52°</span><b>64°</b></div>
+        </div>
+        <div class="nimbus-page-dots" aria-label="Page 3 of 4"><i></i><i></i><i class="is-active"></i><i></i></div>
+      </div>
+      <figcaption>Daily forecast</figcaption>
+    </figure>
+
+    <figure class="nimbus-figure">
+      <div class="nimbus-screen" role="group" aria-label="Weather details screen at 240 by 240 pixels">
+        <div class="nimbus-details-summary">
+          <svg aria-hidden="true"><use href="#nimbus-partly"/></svg>
+          <strong>62°</strong><span>Partly cloudy</span>
+        </div>
+        <button class="nimbus-status-hit nimbus-hit" type="button" aria-label="Updated now. Refresh weather" data-hit="60×60">
+          <span class="nimbus-status-visual"><span class="nimbus-live-dot"></span>Now</span>
+        </button>
+        <div class="nimbus-details-grid">
+          <div class="nimbus-detail-tile nimbus-detail-a"><svg aria-hidden="true"><use href="#nimbus-droplet"/></svg><span>HUMIDITY</span><strong>49<small>%</small></strong></div>
+          <div class="nimbus-detail-tile nimbus-detail-b"><svg aria-hidden="true"><use href="#nimbus-wind"/></svg><span>WIND</span><strong>8<small>mph</small></strong></div>
+          <div class="nimbus-detail-tile nimbus-detail-c"><svg aria-hidden="true"><use href="#nimbus-sun"/></svg><span>UV</span><strong>3<small>Low</small></strong></div>
+          <div class="nimbus-detail-tile nimbus-detail-d"><svg aria-hidden="true"><use href="#nimbus-sunrise"/></svg><span>SUNRISE</span><strong>6:12</strong></div>
+        </div>
+        <div class="nimbus-page-dots" aria-label="Page 4 of 4"><i></i><i></i><i></i><i class="is-active"></i></div>
+      </div>
+      <figcaption>Weather details</figcaption>
+    </figure>
+
+    <figure class="nimbus-figure">
+      <div class="nimbus-screen" role="group" aria-label="Imminent rain screen at 240 by 240 pixels">
+        <svg class="nimbus-rain-hero" aria-hidden="true"><use href="#nimbus-rain"/></svg>
+        <div class="nimbus-rain-headline"><strong>Rain in<br>20 min</strong><span>Light rain for 35 min</span></div>
+        <div class="nimbus-chart nimbus-rain-chart" aria-label="Rain chance peaks near seventy percent in thirty minutes">
+          <div class="nimbus-rain-probability"><svg aria-hidden="true"><use href="#nimbus-droplet"/></svg><strong>32%</strong><span>Chance<br>of rain</span></div>
+          <svg viewBox="0 0 208 44" role="img" aria-label="Thirteen precipitation bars from now through sixty minutes">
+            <path d="M3 39H205" fill="none" stroke="#31527e" stroke-width="1"/>
+            <g fill="#78adff">
+              <rect x="4" y="35" width="9" height="4" rx="4"/><rect x="20" y="31" width="9" height="8" rx="4"/>
+              <rect x="36" y="27" width="9" height="12" rx="4"/><rect x="52" y="22" width="9" height="17" rx="4"/>
+              <rect x="68" y="17" width="9" height="22" rx="4"/><rect x="84" y="11" width="9" height="28" rx="4"/>
+              <rect x="100" y="7" width="9" height="32" rx="4"/><rect x="116" y="8" width="9" height="31" rx="4"/>
+              <rect x="132" y="13" width="9" height="26" rx="4"/><rect x="148" y="19" width="9" height="20" rx="4"/>
+              <rect x="164" y="25" width="9" height="14" rx="4"/><rect x="180" y="30" width="9" height="9" rx="4"/>
+              <rect x="196" y="34" width="9" height="5" rx="4"/>
+            </g>
+          </svg>
+          <div class="nimbus-time-labels nimbus-rain-times"><span>NOW</span><span>20m</span><span>40m</span><span>60m</span></div>
+        </div>
+        <div class="nimbus-rain-actions">
+          <button class="nimbus-rain-details nimbus-hit" type="button" data-hit="166×60"><span><svg aria-hidden="true"><use href="#nimbus-list"/></svg>Details<svg aria-hidden="true"><use href="#nimbus-chevron"/></svg></span></button>
+          <button class="nimbus-rain-status nimbus-hit" type="button" aria-label="Updated now. Refresh weather" data-hit="74×60"><svg aria-hidden="true"><use href="#nimbus-clock"/></svg><span>Now</span></button>
+        </div>
+      </div>
+      <figcaption>Rain approaching</figcaption>
+    </figure>
+  </div>
+</div>
+
+<style>
+#nimbus-layout-v1 {
+  width: 100%;
+}
+
+#nimbus-layout-v1 .nimbus-symbols {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+
+#nimbus-layout-v1 .viz-controls {
+  margin-bottom: 16px;
+}
+
+#nimbus-layout-v1 .nimbus-layouts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 22px 18px;
+  align-items: start;
+}
+
+#nimbus-layout-v1 .nimbus-figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  min-width: 0;
+}
+
+#nimbus-layout-v1 .nimbus-figure figcaption {
+  color: var(--foreground);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-screen {
+  position: relative;
+  box-sizing: border-box;
+  width: 240px;
+  height: 240px;
+  overflow: hidden;
+  border-radius: 5px;
+  background: #020817;
+  color: #f7f8ff;
+  font-family: Roboto, Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 0 0 1px #1a2b48;
+}
+
+#nimbus-layout-v1 .nimbus-screen button {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+}
+
+#nimbus-layout-v1 .nimbus-screen button:focus-visible {
+  outline: 2px solid #ffd44f;
+  outline-offset: -3px;
+}
+
+#nimbus-layout-v1 .nimbus-location {
+  position: absolute;
+  z-index: 2;
+  top: 8px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 160px;
+  height: 20px;
+  color: #b9ccf4;
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+#nimbus-layout-v1 .nimbus-location svg {
+  flex: none;
+  width: 13px;
+  height: 13px;
+}
+
+#nimbus-layout-v1 .nimbus-status-hit {
+  position: absolute;
+  z-index: 5;
+  top: 0;
+  right: 6px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  width: 60px;
+  height: 60px;
+  background: transparent;
+}
+
+#nimbus-layout-v1 .nimbus-status-visual {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-width: 48px;
+  height: 22px;
+  margin-top: 7px;
+  padding: 0 6px;
+  box-sizing: border-box;
+  border-radius: 11px;
+  background: #12223d;
+  color: #aebfe2;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #7fd88b;
+}
+
+#nimbus-layout-v1 .nimbus-current-temp {
+  position: absolute;
+  top: 27px;
+  left: 10px;
+  width: 134px;
+  height: 76px;
+  font-size: 68px;
+  line-height: 76px;
+  font-weight: 500;
+  letter-spacing: -3px;
+}
+
+#nimbus-layout-v1 .nimbus-current-glyph {
+  position: absolute;
+  top: 37px;
+  left: 151px;
+  width: 76px;
+  height: 62px;
+}
+
+#nimbus-layout-v1 .nimbus-current-condition {
+  position: absolute;
+  top: 101px;
+  left: 12px;
+  height: 22px;
+  color: #f7f8ff;
+  font-size: 16px;
+  line-height: 22px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-high-low-row {
+  position: absolute;
+  top: 126px;
+  left: 10px;
+  display: flex;
+  gap: 6px;
+  width: 220px;
+  height: 30px;
+}
+
+#nimbus-layout-v1 .nimbus-metric-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 107px;
+  height: 30px;
+  border-radius: 15px;
+  background: #102545;
+  color: #f3f6ff;
+  font-size: 14px;
+}
+
+#nimbus-layout-v1 .nimbus-metric-pill svg {
+  width: 18px;
+  height: 18px;
+  color: #76aaff;
+}
+
+#nimbus-layout-v1 .nimbus-metric-pill:first-child svg {
+  color: #ffd44f;
+}
+
+#nimbus-layout-v1 .nimbus-metric-key {
+  color: #9fb6df;
+  font-size: 11px;
+}
+
+#nimbus-layout-v1 .nimbus-metric-pill strong {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-feels-row {
+  position: absolute;
+  top: 159px;
+  left: 10px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  box-sizing: border-box;
+  width: 220px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 12px;
+  background: #0b1c36;
+  color: #9fb6df;
+  font-size: 12px;
+}
+
+#nimbus-layout-v1 .nimbus-feels-row svg {
+  width: 16px;
+  height: 16px;
+  color: #86adff;
+}
+
+#nimbus-layout-v1 .nimbus-feels-row strong {
+  margin-left: auto;
+  color: #f7f8ff;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-action-hit {
+  position: absolute;
+  z-index: 5;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 60px;
+  background: transparent;
+}
+
+#nimbus-layout-v1 .nimbus-action-visual {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 224px;
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 24px;
+  background: #5f7ff4;
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-action-visual svg {
+  width: 20px;
+  height: 20px;
+}
+
+#nimbus-layout-v1 .nimbus-action-muted {
+  background: #1a2f4e;
+}
+
+#nimbus-layout-v1 .nimbus-compact-summary {
+  position: absolute;
+  top: 5px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  width: 154px;
+  height: 43px;
+}
+
+#nimbus-layout-v1 .nimbus-compact-summary > svg {
+  width: 40px;
+  height: 34px;
+}
+
+#nimbus-layout-v1 .nimbus-compact-summary div {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+#nimbus-layout-v1 .nimbus-compact-summary strong {
+  font-size: 21px;
+  line-height: 23px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-compact-summary span {
+  color: #aebfe2;
+  font-size: 10px;
+  line-height: 13px;
+}
+
+#nimbus-layout-v1 .nimbus-chart {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 18px;
+  background: #0d2342;
+}
+
+#nimbus-layout-v1 .nimbus-hourly-chart {
+  top: 52px;
+  left: 8px;
+  width: 224px;
+  height: 58px;
+  padding: 5px 8px 3px;
+}
+
+#nimbus-layout-v1 .nimbus-chart-heading {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 17px;
+  color: #a9bde1;
+  font-size: 10px;
+}
+
+#nimbus-layout-v1 .nimbus-chart-heading svg {
+  width: 14px;
+  height: 14px;
+  color: #76aaff;
+}
+
+#nimbus-layout-v1 .nimbus-chart-heading strong {
+  margin-left: auto;
+  color: #f7f8ff;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-hourly-chart > svg {
+  display: block;
+  width: 208px;
+  height: 24px;
+}
+
+#nimbus-layout-v1 .nimbus-time-labels {
+  display: flex;
+  justify-content: space-between;
+  color: #8199c3;
+  font-size: 8px;
+  line-height: 8px;
+}
+
+#nimbus-layout-v1 .nimbus-hour-tiles {
+  position: absolute;
+  top: 116px;
+  left: 8px;
+  display: flex;
+  gap: 6px;
+  width: 224px;
+  height: 58px;
+}
+
+#nimbus-layout-v1 .nimbus-hour-tile {
+  display: flex;
+  flex: 1 1 0;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 0;
+  height: 58px;
+  border-radius: 17px;
+  background: #102545;
+}
+
+#nimbus-layout-v1 .nimbus-hour-tile.is-current {
+  background: #315f9c;
+}
+
+#nimbus-layout-v1 .nimbus-hour-tile span {
+  color: #b7c8e9;
+  font-size: 9px;
+  line-height: 10px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-hour-tile svg {
+  width: 24px;
+  height: 19px;
+  margin: 1px 0;
+}
+
+#nimbus-layout-v1 .nimbus-hour-tile strong {
+  font-size: 17px;
+  line-height: 19px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-daily-list {
+  position: absolute;
+  top: 38px;
+  left: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  width: 224px;
+}
+
+#nimbus-layout-v1 .nimbus-daily-row {
+  display: grid;
+  grid-template-columns: 68px 1fr 43px 43px;
+  align-items: center;
+  box-sizing: border-box;
+  width: 224px;
+  height: 43px;
+  padding: 0 12px;
+  border-radius: 18px;
+  background: #0d203b;
+}
+
+#nimbus-layout-v1 .nimbus-daily-row.is-today {
+  background: #3974d6;
+}
+
+#nimbus-layout-v1 .nimbus-daily-row strong,
+#nimbus-layout-v1 .nimbus-daily-row b {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-daily-row > svg {
+  justify-self: center;
+  width: 30px;
+  height: 25px;
+}
+
+#nimbus-layout-v1 .nimbus-daily-row span {
+  justify-self: end;
+  color: #8da8d3;
+  font-size: 14px;
+}
+
+#nimbus-layout-v1 .nimbus-daily-row.is-today span {
+  color: #c8dcff;
+}
+
+#nimbus-layout-v1 .nimbus-daily-row b {
+  justify-self: end;
+  font-size: 18px;
+}
+
+#nimbus-layout-v1 .nimbus-page-dots {
+  position: absolute;
+  bottom: 4px;
+  left: 98px;
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 6px;
+}
+
+#nimbus-layout-v1 .nimbus-page-dots i {
+  display: block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: #536b91;
+}
+
+#nimbus-layout-v1 .nimbus-page-dots i.is-active {
+  width: 10px;
+  border-radius: 2px;
+  background: #89b3ff;
+}
+
+#nimbus-layout-v1 .nimbus-details-summary {
+  position: absolute;
+  top: 4px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 160px;
+  height: 40px;
+}
+
+#nimbus-layout-v1 .nimbus-details-summary > svg {
+  width: 36px;
+  height: 30px;
+}
+
+#nimbus-layout-v1 .nimbus-details-summary strong {
+  font-size: 28px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-details-summary span {
+  color: #9fb6df;
+  font-size: 10px;
+}
+
+#nimbus-layout-v1 .nimbus-details-grid {
+  position: absolute;
+  top: 47px;
+  left: 8px;
+  display: grid;
+  grid-template-columns: 108px 108px;
+  grid-template-rows: 88px 88px;
+  gap: 8px;
+  width: 224px;
+  height: 184px;
+}
+
+#nimbus-layout-v1 .nimbus-detail-tile {
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 11px 9px;
+  background: #164a7d;
+  color: #f7f8ff;
+}
+
+#nimbus-layout-v1 .nimbus-detail-a {
+  border-radius: 23px 16px 23px 16px;
+  background: #2266a0;
+}
+
+#nimbus-layout-v1 .nimbus-detail-b {
+  border-radius: 16px 28px 16px 28px;
+  background: #385eb4;
+}
+
+#nimbus-layout-v1 .nimbus-detail-c {
+  clip-path: polygon(12% 0, 88% 0, 100% 50%, 88% 100%, 12% 100%, 0 50%);
+  padding-left: 15px;
+  background: #5792ed;
+  color: #092247;
+}
+
+#nimbus-layout-v1 .nimbus-detail-d {
+  border-radius: 28px 16px 28px 16px;
+  background: #08447f;
+}
+
+#nimbus-layout-v1 .nimbus-detail-tile > svg {
+  position: absolute;
+  top: 14px;
+  left: 9px;
+  width: 28px;
+  height: 28px;
+  color: #9bc7ff;
+}
+
+#nimbus-layout-v1 .nimbus-detail-c > svg,
+#nimbus-layout-v1 .nimbus-detail-d > svg {
+  color: #ffd44f;
+}
+
+#nimbus-layout-v1 .nimbus-detail-tile > span {
+  position: absolute;
+  top: 13px;
+  left: 41px;
+  color: #b8d4ff;
+  font-size: 9px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-detail-c > span {
+  color: #17335f;
+}
+
+#nimbus-layout-v1 .nimbus-detail-tile > strong {
+  position: absolute;
+  left: 39px;
+  bottom: 12px;
+  font-size: 28px;
+  line-height: 30px;
+  font-weight: 500;
+  letter-spacing: -1px;
+  white-space: nowrap;
+}
+
+#nimbus-layout-v1 .nimbus-detail-tile small {
+  margin-left: 2px;
+  color: #c6ddff;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+#nimbus-layout-v1 .nimbus-detail-c small {
+  color: #1d4476;
+}
+
+#nimbus-layout-v1 .nimbus-rain-hero {
+  position: absolute;
+  top: 9px;
+  left: 9px;
+  width: 68px;
+  height: 62px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-headline {
+  position: absolute;
+  top: 8px;
+  left: 84px;
+  display: flex;
+  flex-direction: column;
+  width: 146px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-headline strong {
+  font-size: 28px;
+  line-height: 27px;
+  font-weight: 500;
+  letter-spacing: -0.8px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-headline span {
+  margin-top: 3px;
+  color: #9fb6df;
+  font-size: 10px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-chart {
+  top: 78px;
+  left: 8px;
+  width: 224px;
+  height: 96px;
+  padding: 6px 8px 4px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-probability {
+  display: flex;
+  align-items: center;
+  height: 34px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-probability > svg {
+  width: 25px;
+  height: 25px;
+  color: #56a5ff;
+}
+
+#nimbus-layout-v1 .nimbus-rain-probability strong {
+  margin-left: 4px;
+  font-size: 27px;
+  font-weight: 500;
+}
+
+#nimbus-layout-v1 .nimbus-rain-probability span {
+  margin-left: 7px;
+  color: #a5b9dd;
+  font-size: 8px;
+  line-height: 9px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-chart > svg {
+  display: block;
+  width: 208px;
+  height: 44px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-times {
+  margin-top: 0;
+}
+
+#nimbus-layout-v1 .nimbus-rain-actions {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  width: 240px;
+  height: 60px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-details {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 166px;
+  height: 60px;
+  background: transparent;
+}
+
+#nimbus-layout-v1 .nimbus-rain-details > span {
+  display: grid;
+  grid-template-columns: 18px 1fr 18px;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  width: 150px;
+  height: 48px;
+  padding: 0 12px;
+  border-radius: 24px;
+  background: #315f9c;
+  font-size: 16px;
+  font-weight: 500;
+  text-align: left;
+}
+
+#nimbus-layout-v1 .nimbus-rain-details svg {
+  width: 18px;
+  height: 18px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  width: 74px;
+  height: 60px;
+  background: transparent;
+  color: #8fa7cf;
+  font-size: 9px;
+}
+
+#nimbus-layout-v1 .nimbus-rain-status svg {
+  width: 19px;
+  height: 19px;
+}
+
+#nimbus-layout-v1.show-grid .nimbus-screen::after {
+  position: absolute;
+  z-index: 30;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(to right, rgba(125, 183, 255, 0.18) 0, rgba(125, 183, 255, 0.18) 1px, transparent 1px, transparent 5px),
+    repeating-linear-gradient(to bottom, rgba(125, 183, 255, 0.18) 0, rgba(125, 183, 255, 0.18) 1px, transparent 1px, transparent 5px),
+    repeating-linear-gradient(to right, rgba(255, 212, 79, 0.22) 0, rgba(255, 212, 79, 0.22) 1px, transparent 1px, transparent 20px),
+    repeating-linear-gradient(to bottom, rgba(255, 212, 79, 0.22) 0, rgba(255, 212, 79, 0.22) 1px, transparent 1px, transparent 20px);
+}
+
+#nimbus-layout-v1.show-touch .nimbus-hit {
+  box-shadow: inset 0 0 0 2px #ff8d6b;
+}
+
+#nimbus-layout-v1.show-touch .nimbus-hit::after {
+  position: absolute;
+  z-index: 40;
+  right: 2px;
+  bottom: 2px;
+  content: attr(data-hit);
+  padding: 1px 3px;
+  border-radius: 3px;
+  background: #ff8d6b;
+  color: #2b0b04;
+  font-size: 7px;
+  line-height: 9px;
+  font-weight: 500;
+  pointer-events: none;
+}
+
+@media (max-width: 360px) {
+  #nimbus-layout-v1 .nimbus-layouts {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+
+<script>
+(() => {
+  const root = document.getElementById('nimbus-layout-v1');
+  const grid = root.querySelector('[data-nimbus-grid]');
+  const touch = root.querySelector('[data-nimbus-touch]');
+  grid.addEventListener('click', () => {
+    const active = root.classList.toggle('show-grid');
+    grid.setAttribute('aria-pressed', String(active));
+  });
+  touch.addEventListener('click', () => {
+    const active = root.classList.toggle('show-touch');
+    touch.setAttribute('aria-pressed', String(active));
+  });
+})();
+</script>

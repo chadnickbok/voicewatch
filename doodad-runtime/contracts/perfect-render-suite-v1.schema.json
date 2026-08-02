@@ -126,6 +126,14 @@
         "profile_id": {
           "$ref": "#/$defs/id"
         },
+        "font_scale_milli": {
+          "type": "integer",
+          "enum": [
+            1000,
+            1300
+          ],
+          "default": 1000
+        },
         "compose": {
           "allOf": [
             {

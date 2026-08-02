@@ -97,7 +97,22 @@ def main() -> int:
                 )
                 if not OUTPUT.is_dir():
                     raise DoodadError("checked-in Parallax traces are missing")
-                differences = _different_files(generated, OUTPUT)
+                differences: list[str] = []
+                for generated_app in generated.iterdir():
+                    generated_decisive = generated_app / "decisive"
+                    checked_decisive = OUTPUT / generated_app.name / "decisive"
+                    if not checked_decisive.is_dir():
+                        differences.append(
+                            f"missing checked-in decisive trace: {generated_app.name}"
+                        )
+                        continue
+                    differences.extend(
+                        f"{generated_app.name}/decisive/{item}"
+                        for item in _different_files(
+                            generated_decisive,
+                            checked_decisive,
+                        )
+                    )
                 if differences:
                     raise DoodadError("\n".join(differences))
         else:
@@ -108,9 +123,15 @@ def main() -> int:
                 temporary,
                 replay=not options.skip_replay,
             )
-            if OUTPUT.exists():
-                shutil.rmtree(OUTPUT)
-            temporary.replace(OUTPUT)
+            OUTPUT.mkdir(parents=True, exist_ok=True)
+            for generated_app in temporary.iterdir():
+                generated_decisive = generated_app / "decisive"
+                checked_decisive = OUTPUT / generated_app.name / "decisive"
+                if checked_decisive.exists():
+                    shutil.rmtree(checked_decisive)
+                checked_decisive.parent.mkdir(parents=True, exist_ok=True)
+                generated_decisive.replace(checked_decisive)
+            shutil.rmtree(temporary)
     except (DoodadError, OSError, ValueError) as error:
         print(str(error), file=sys.stderr)
         return 1

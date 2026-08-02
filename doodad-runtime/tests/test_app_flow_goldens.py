@@ -15,7 +15,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 EXPECTED = {
     "timer": "1b729d24bda3e8a3992d09d3f73c68bf5e5cce25c197f8fdf01fcc4af0920140",
-    "weather": "626eef2211634fdc1930925a8b75ebf97fec4600a771321d1ad950ff6ec9595c",
+    "weather": "2109485abf664ca89050f51a8904cd180dd98287f3701b61a54727a38a92d513",
     "notifications": "661c5f0388eb18dc78b8c997efb5060e533a72945f159d63cc0eccfa1a0a1729",
     "tasks": "c11f8816d430395f679697543835bb9b0ec5e3494bdf3e43820c7b7d2918df3a",
     "calculator": "900b2b845c8451e333a0c6ef6f0c005006e8f3f888cdcebbf12c37919d3b73de",
@@ -33,7 +33,7 @@ EXPECTED = {
     "sports": "a0865aa57801cc69b6c0ee5f9f38407215e030ca3d768e3f748342073dce3baa",
     "wallet": "7bac76ba27a9e983b6ad44d9c3712f41df31587031313deff30b58470dd15661",
     "remote-control": "c51eea0cf16da109340f394df212b60ba934c27308f8198e8c474da4be71ced0",
-    "snake": "ae262f324764251a0c07f766e43737ab56baa66c474af4193bae570bfe9ce9c0",
+    "snake": "38d94f81ad99cf8306a1b8bb7e46fc88cadfbd08383bf11675552e1d248724c9",
 }
 
 FLOW_DOCUMENT = json.loads(

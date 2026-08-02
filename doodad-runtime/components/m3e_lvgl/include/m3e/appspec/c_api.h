@@ -71,6 +71,9 @@ size_t m3e_appspec_node_layout_evidence_json(
     char* output,
     size_t output_size);
 
+void m3e_appspec_set_font_scale_milli(uint16_t scale_milli);
+uint16_t m3e_appspec_font_scale_milli(void);
+
 void m3e_appspec_reset_mounted_document(void);
 
 size_t m3e_appspec_mounted_node_count(void);

@@ -5,12 +5,26 @@ set(M3E_LVGL_SOURCES
     src/assets/timer_font_55.c
     src/assets/timer_value_font_28.c
     src/assets/live_action_font_32.c
+    src/assets/weather_micro_10.c
+    src/assets/weather_label_14.c
+    src/assets/weather_row_18.c
+    src/assets/weather_metric_28.c
+    src/assets/weather_headline_32.c
+    src/assets/weather_hero_68.c
+    src/assets/weather_micro_13.c
+    src/assets/weather_label_18.c
+    src/assets/weather_row_23.c
+    src/assets/weather_metric_36.c
+    src/assets/weather_headline_42.c
+    src/assets/weather_icon_data.c
+    src/assets/weather_icon_assets.cpp
     src/assets/media_art_asset.c
     src/assets/remote_viewfinder_asset.c
     src/assets/wallet_qr_asset.c
     src/assets/image_assets.cpp
     src/assets/weather_font_55.c
     src/appspec/c_api.cpp
+    src/appspec/canvas_display_list.cpp
     src/appspec/command_batch.cpp
     src/appspec/renderer.cpp
     src/appspec/runtime.cpp
@@ -41,7 +55,7 @@ if(COMMAND idf_component_register)
     idf_component_register(
         SRCS ${M3E_LVGL_SOURCES}
         INCLUDE_DIRS include
-        REQUIRES lvgl
+        REQUIRES lvgl heap
     )
     target_compile_options(${COMPONENT_LIB} PRIVATE
         $<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>

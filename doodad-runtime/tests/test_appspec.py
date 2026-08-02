@@ -79,6 +79,40 @@ class AppSpecTests(unittest.TestCase):
         with self.assertRaisesRegex(DoodadError, "unsupported semantic props"):
             validate_appspec(document)
 
+    def test_canvas_display_lists_are_bounded_and_renderer_neutral(self) -> None:
+        document = {
+            "schema_version": 1,
+            "app_id": "canvas_test",
+            "screen": {
+                "id": "canvas_test.screen",
+                "type": "screen",
+                "props": {
+                    "children": [
+                        {
+                            "id": "canvas_test.game",
+                            "type": "canvas",
+                            "props": {
+                                "display_list": "v1|C0|R1,4,4,24,24,4",
+                                "palette": "07110d,a8f279",
+                                "width": 32,
+                                "height": 32,
+                            },
+                            "events": {"tap": "canvas_test.advance"},
+                            "semantics": {"label": "Game canvas"},
+                        }
+                    ]
+                },
+            },
+        }
+        validate_appspec(document)
+        self.assertLessEqual(len(compile_canonical_cbor(document)), 4096)
+
+        document["screen"]["props"]["children"][0]["props"][
+            "display_list"
+        ] = "v1|R1,4,4,24,24,4"
+        with self.assertRaisesRegex(DoodadError, "clear"):
+            validate_appspec(document)
+
     def test_interactive_nodes_require_useful_semantics(self) -> None:
         document = self.load("workout")
         del document["screen"]["props"]["children"][1]["semantics"]

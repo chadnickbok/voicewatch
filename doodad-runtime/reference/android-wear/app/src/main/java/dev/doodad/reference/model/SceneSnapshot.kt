@@ -59,6 +59,11 @@ data class SceneProps(
     val state: String? = null,
     val icon: String? = null,
     @SerialName("max_lines") val maxLines: Int? = null,
+    @SerialName("display_list") val displayList: String? = null,
+    val palette: String? = null,
+    val width: Int? = null,
+    val height: Int? = null,
+    val samples: List<Int>? = null,
 ) {
     internal fun presentFields(): Set<String> =
         buildSet {
@@ -79,6 +84,11 @@ data class SceneProps(
             if (state != null) add("state")
             if (icon != null) add("icon")
             if (maxLines != null) add("max_lines")
+            if (displayList != null) add("display_list")
+            if (palette != null) add("palette")
+            if (width != null) add("width")
+            if (height != null) add("height")
+            if (samples != null) add("samples")
         }
 }
 
@@ -218,6 +228,7 @@ object SceneSnapshotValidator {
             "slider",
             "group",
             "image",
+            "canvas",
         )
     private val actionKinds =
         setOf(
@@ -302,6 +313,31 @@ object SceneSnapshotValidator {
                     setOf("primary_text", "variant"),
                     setOf("primary_text", "variant"),
                 ),
+            "canvas" to
+                PropertyRule(
+                    setOf("display_list", "palette", "width", "height"),
+                    setOf("display_list", "palette", "width", "height"),
+                ),
+            "icon" to
+                PropertyRule(
+                    setOf("icon", "tone", "size"),
+                    setOf("icon", "tone", "size"),
+                ),
+            "surface" to
+                PropertyRule(
+                    setOf("variant", "tone", "gap", "alignment"),
+                    setOf("variant", "tone", "gap", "alignment"),
+                ),
+            "chart" to
+                PropertyRule(
+                    setOf("samples", "maximum", "variant", "tone"),
+                    setOf("samples", "maximum", "variant", "tone"),
+                ),
+            "pager" to
+                PropertyRule(
+                    setOf("value", "maximum", "checked", "gap", "alignment"),
+                    setOf("value", "maximum", "checked", "gap", "alignment"),
+                ),
         )
 
     fun validate(snapshot: SceneSnapshot) {
@@ -339,7 +375,7 @@ object SceneSnapshotValidator {
             check(actual == node.childCount) {
                 "${node.id}.child_count is $node.childCount but found $actual children"
             }
-            if (node.kind !in setOf("screen", "column", "row", "scroll")) {
+            if (node.kind !in setOf("screen", "column", "row", "scroll", "surface", "pager")) {
                 check(node.childCount == 0) {
                     "Leaf component ${node.id} cannot have children"
                 }
@@ -385,6 +421,22 @@ object SceneSnapshotValidator {
                     .matches(Regex("^[0-9a-f]{64}$")),
             ) {
                 "${node.id}.primary_text must be a lowercase SHA-256 digest"
+            }
+        }
+        if (node.kind == "canvas") {
+            check(node.semantics.label.isNotEmpty()) {
+                "${node.id} canvas requires a semantic label"
+            }
+            CanvasDisplayListCodec.parse(
+                requireNotNull(node.props.displayList),
+                requireNotNull(node.props.palette),
+                requireNotNull(node.props.width),
+                requireNotNull(node.props.height),
+            )
+        }
+        if (node.kind == "chart") {
+            check(node.semantics.label.isNotEmpty()) {
+                "${node.id} chart requires a semantic label"
             }
         }
         listOfNotNull(
@@ -452,6 +504,14 @@ object SceneSnapshotValidator {
                 check(node.actions.any { it.kind == "tap" }) {
                     "${node.id} keypad requires a tap action"
                 }
+            "canvas" ->
+                check(node.actions.any { it.kind == "tap" }) {
+                    "${node.id} canvas requires a tap action"
+                }
+            "pager" ->
+                check(node.actions.any { it.kind == "page_changed" }) {
+                    "${node.id} pager requires a page_changed action"
+                }
         }
         validateProps(node)
     }
@@ -489,7 +549,7 @@ object SceneSnapshotValidator {
             }
         }
         node.props.size?.let {
-            check(it in setOf("compact", "default", "large")) {
+            check(it in setOf("compact", "default", "large", "hero")) {
                 "${node.id} has unsupported size $it"
             }
         }
@@ -508,6 +568,9 @@ object SceneSnapshotValidator {
                     "button" -> setOf("filled", "tonal", "outlined", "text")
                     "progress" -> setOf("linear", "circular", "segmented")
                     "image" -> setOf("cover", "contain")
+                    "surface" ->
+                        setOf("standard", "hero", "metric_a", "metric_b", "metric_c", "pill")
+                    "chart" -> setOf("line", "bars")
                     else -> emptySet()
                 }
             check(it in allowed) {
@@ -551,6 +614,23 @@ object SceneSnapshotValidator {
             val step = requireNotNull(node.props.step)
             check(step > 0 && maximum >= minimum && value in minimum..maximum) {
                 "${node.id} has an invalid stepper range"
+            }
+        }
+        if (node.kind == "chart") {
+            val samples = requireNotNull(node.props.samples)
+            val maximum = requireNotNull(node.props.maximum)
+            check(
+                samples.size in 1..13 && maximum > 0 &&
+                    samples.all { it in 0..maximum },
+            ) {
+                "${node.id} has invalid bounded chart samples"
+            }
+        }
+        if (node.kind == "pager") {
+            val selected = requireNotNull(node.props.value)
+            val pageCount = requireNotNull(node.props.maximum)
+            check(pageCount in 1..5 && selected in 0 until pageCount) {
+                "${node.id} has invalid pager selection"
             }
         }
     }

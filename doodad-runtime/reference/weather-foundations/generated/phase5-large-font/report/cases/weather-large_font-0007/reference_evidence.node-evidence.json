@@ -1,0 +1,1059 @@
+{
+    "schema_version": 1,
+    "snapshot_sha256": "deb9d9cf6f5d0d1f9f9eed9b3e91d840e5d72370696656beb0d9a72da373b8a5",
+    "capture_phase": {
+        "id": "large_font",
+        "state": "resting",
+        "animation_fraction_milli": 0
+    },
+    "renderer": {
+        "kind": "compose",
+        "mode": "host",
+        "version": "wear-compose-1.6.2",
+        "build_sha256": "71d83b9a361beb6eae99e006bcd1164ebc445b351801c3189976a48091147d5c"
+    },
+    "profile_id": "watch_square_240",
+    "physical_width_px": 240,
+    "physical_height_px": 240,
+    "nodes": [
+        {
+            "id": "weather.details-screen",
+            "parent_id": null,
+            "role": "screen",
+            "label": "Weather details",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [
+                {
+                    "kind": "page_changed",
+                    "action_id": "weather.page-changed"
+                }
+            ],
+            "bounds_px": {
+                "x": 0,
+                "y": 0,
+                "width": 240,
+                "height": 240
+            },
+            "bounds_dp_q8_8": {
+                "x": 0,
+                "y": 0,
+                "width": 49152,
+                "height": 49152
+            },
+            "token_roles": {
+                "background": "background"
+            }
+        },
+        {
+            "id": "weather.details-page",
+            "parent_id": "weather.details-screen",
+            "role": "list",
+            "label": "Weather details",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 0,
+                "y": 0,
+                "width": 240,
+                "height": 240
+            },
+            "bounds_dp_q8_8": {
+                "x": 0,
+                "y": 0,
+                "width": 49152,
+                "height": 49152
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.details-summary",
+            "parent_id": "weather.details-page",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 4,
+                "width": 160,
+                "height": 40
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 819,
+                "width": 32768,
+                "height": 8192
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.details-condition-icon",
+            "parent_id": "weather.details-summary",
+            "role": "image",
+            "label": "Partly cloudy",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 9,
+                "width": 36,
+                "height": 30
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 1843,
+                "width": 7373,
+                "height": 6144
+            },
+            "token_roles": {
+                "asset": "weather_icon_registry",
+                "content": "tertiary"
+            }
+        },
+        {
+            "id": "weather.details-temperature",
+            "parent_id": "weather.details-summary",
+            "role": "text",
+            "label": "Current temperature",
+            "value": "62 degrees",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 49,
+                "y": 6,
+                "width": 47,
+                "height": 37
+            },
+            "bounds_dp_q8_8": {
+                "x": 10035,
+                "y": 1229,
+                "width": 9626,
+                "height": 7578
+            },
+            "token_roles": {
+                "typography": "numeral"
+            }
+        },
+        {
+            "id": "weather.details-condition",
+            "parent_id": "weather.details-summary",
+            "role": "text",
+            "label": "Partly cloudy",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 96,
+                "y": 16,
+                "width": 72,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 19661,
+                "y": 3277,
+                "width": 14746,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.details-status-chip",
+            "parent_id": "weather.details-page",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 186,
+                "y": 7,
+                "width": 48,
+                "height": 22
+            },
+            "bounds_dp_q8_8": {
+                "x": 38093,
+                "y": 1434,
+                "width": 9830,
+                "height": 4506
+            },
+            "token_roles": {
+                "container": "secondary",
+                "shape": "pill"
+            }
+        },
+        {
+            "id": "weather.details-status",
+            "parent_id": "weather.details-status-chip",
+            "role": "text",
+            "label": "Weather updated 12 minutes ago",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 202,
+                "y": 10,
+                "width": 27,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 41370,
+                "y": 2048,
+                "width": 5530,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.details-grid",
+            "parent_id": "weather.details-page",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 47,
+                "width": 224,
+                "height": 184
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 9626,
+                "width": 45875,
+                "height": 37683
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.details-row-top",
+            "parent_id": "weather.details-grid",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 47,
+                "width": 224,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 9626,
+                "width": 45875,
+                "height": 18022
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.humidity-tile",
+            "parent_id": "weather.details-row-top",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 47,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 9626,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "container": "primary",
+                "shape": "metric_a"
+            }
+        },
+        {
+            "id": "weather.humidity",
+            "parent_id": "weather.humidity-tile",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 47,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 9626,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.humidity-icon",
+            "parent_id": "weather.humidity",
+            "role": "image",
+            "label": "Humidity",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 12,
+                "y": 55,
+                "width": 38,
+                "height": 38
+            },
+            "bounds_dp_q8_8": {
+                "x": 2478,
+                "y": 11284,
+                "width": 7741,
+                "height": 7741
+            },
+            "token_roles": {
+                "asset": "weather_icon_registry",
+                "content": "primary"
+            }
+        },
+        {
+            "id": "weather.humidity-label",
+            "parent_id": "weather.humidity",
+            "role": "text",
+            "label": "HUMIDITY",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 49,
+                "y": 60,
+                "width": 60,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 10035,
+                "y": 12288,
+                "width": 12288,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.humidity-value",
+            "parent_id": "weather.humidity",
+            "role": "text",
+            "label": "49 percent",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 47,
+                "y": 91,
+                "width": 64,
+                "height": 35
+            },
+            "bounds_dp_q8_8": {
+                "x": 9626,
+                "y": 18637,
+                "width": 13107,
+                "height": 7168
+            },
+            "token_roles": {
+                "typography": "numeral"
+            }
+        },
+        {
+            "id": "weather.wind-tile",
+            "parent_id": "weather.details-row-top",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 124,
+                "y": 47,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 25395,
+                "y": 9626,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "container": "secondary",
+                "shape": "metric_b"
+            }
+        },
+        {
+            "id": "weather.wind",
+            "parent_id": "weather.wind-tile",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 124,
+                "y": 47,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 25395,
+                "y": 9626,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.wind-icon",
+            "parent_id": "weather.wind",
+            "role": "image",
+            "label": "Wind",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 128,
+                "y": 55,
+                "width": 38,
+                "height": 38
+            },
+            "bounds_dp_q8_8": {
+                "x": 26235,
+                "y": 11284,
+                "width": 7741,
+                "height": 7741
+            },
+            "token_roles": {
+                "asset": "weather_icon_registry",
+                "content": "secondary"
+            }
+        },
+        {
+            "id": "weather.wind-label",
+            "parent_id": "weather.wind",
+            "role": "text",
+            "label": "WIND",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 165,
+                "y": 60,
+                "width": 60,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 33792,
+                "y": 12288,
+                "width": 12288,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.wind-value",
+            "parent_id": "weather.wind",
+            "role": "text",
+            "label": "8 miles per hour",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 163,
+                "y": 91,
+                "width": 64,
+                "height": 35
+            },
+            "bounds_dp_q8_8": {
+                "x": 33382,
+                "y": 18637,
+                "width": 13107,
+                "height": 7168
+            },
+            "token_roles": {
+                "typography": "numeral"
+            }
+        },
+        {
+            "id": "weather.wind-unit",
+            "parent_id": "weather.wind",
+            "role": "text",
+            "label": "mph",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 186,
+                "y": 106,
+                "width": 36,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 38093,
+                "y": 21709,
+                "width": 7373,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.details-row-bottom",
+            "parent_id": "weather.details-grid",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 143,
+                "width": 224,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 29286,
+                "width": 45875,
+                "height": 18022
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.uv-tile",
+            "parent_id": "weather.details-row-bottom",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 143,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 29286,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "container": "tertiary",
+                "shape": "metric_c"
+            }
+        },
+        {
+            "id": "weather.uv",
+            "parent_id": "weather.uv-tile",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 143,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 29286,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.uv-icon",
+            "parent_id": "weather.uv",
+            "role": "image",
+            "label": "UV index",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 12,
+                "y": 151,
+                "width": 38,
+                "height": 38
+            },
+            "bounds_dp_q8_8": {
+                "x": 2478,
+                "y": 30945,
+                "width": 7741,
+                "height": 7741
+            },
+            "token_roles": {
+                "asset": "weather_icon_registry",
+                "content": "tertiary"
+            }
+        },
+        {
+            "id": "weather.uv-label",
+            "parent_id": "weather.uv",
+            "role": "text",
+            "label": "UV",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 49,
+                "y": 156,
+                "width": 60,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 10035,
+                "y": 31949,
+                "width": 12288,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.uv-value",
+            "parent_id": "weather.uv",
+            "role": "text",
+            "label": "UV index 3, Moderate",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 23,
+                "y": 183,
+                "width": 30,
+                "height": 35
+            },
+            "bounds_dp_q8_8": {
+                "x": 4710,
+                "y": 37478,
+                "width": 6144,
+                "height": 7168
+            },
+            "token_roles": {
+                "typography": "numeral"
+            }
+        },
+        {
+            "id": "weather.uv-unit",
+            "parent_id": "weather.uv",
+            "role": "text",
+            "label": "Moderate",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 33,
+                "y": 213,
+                "width": 75,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 6758,
+                "y": 43622,
+                "width": 15360,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.sunrise-tile",
+            "parent_id": "weather.details-row-bottom",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 124,
+                "y": 143,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 25395,
+                "y": 29286,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "container": "neutral",
+                "shape": "metric_b"
+            }
+        },
+        {
+            "id": "weather.sunrise",
+            "parent_id": "weather.sunrise-tile",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 124,
+                "y": 143,
+                "width": 108,
+                "height": 88
+            },
+            "bounds_dp_q8_8": {
+                "x": 25395,
+                "y": 29286,
+                "width": 22118,
+                "height": 18022
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.sunrise-icon",
+            "parent_id": "weather.sunrise",
+            "role": "image",
+            "label": "Sunrise",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 128,
+                "y": 151,
+                "width": 38,
+                "height": 38
+            },
+            "bounds_dp_q8_8": {
+                "x": 26235,
+                "y": 30945,
+                "width": 7741,
+                "height": 7741
+            },
+            "token_roles": {
+                "asset": "weather_icon_registry",
+                "content": "tertiary"
+            }
+        },
+        {
+            "id": "weather.sunrise-label",
+            "parent_id": "weather.sunrise",
+            "role": "text",
+            "label": "SUNRISE",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 165,
+                "y": 156,
+                "width": 60,
+                "height": 16
+            },
+            "bounds_dp_q8_8": {
+                "x": 33792,
+                "y": 31949,
+                "width": 12288,
+                "height": 3277
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.sunrise-value",
+            "parent_id": "weather.sunrise",
+            "role": "text",
+            "label": "Sunrise at 6:12",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 163,
+                "y": 187,
+                "width": 64,
+                "height": 35
+            },
+            "bounds_dp_q8_8": {
+                "x": 33382,
+                "y": 38298,
+                "width": 13107,
+                "height": 7168
+            },
+            "token_roles": {
+                "typography": "numeral"
+            }
+        },
+        {
+            "id": "weather.details-dots",
+            "parent_id": "weather.details-page",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 98,
+                "y": 230,
+                "width": 44,
+                "height": 6
+            },
+            "bounds_dp_q8_8": {
+                "x": 20070,
+                "y": 47104,
+                "width": 9011,
+                "height": 1229
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.details-dot-current",
+            "parent_id": "weather.details-dots",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 98,
+                "y": 231,
+                "width": 4,
+                "height": 4
+            },
+            "bounds_dp_q8_8": {
+                "x": 20070,
+                "y": 47309,
+                "width": 819,
+                "height": 819
+            },
+            "token_roles": {
+                "container": "neutral",
+                "shape": "pill"
+            }
+        },
+        {
+            "id": "weather.details-dot-hourly",
+            "parent_id": "weather.details-dots",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 106,
+                "y": 231,
+                "width": 4,
+                "height": 4
+            },
+            "bounds_dp_q8_8": {
+                "x": 21709,
+                "y": 47309,
+                "width": 819,
+                "height": 819
+            },
+            "token_roles": {
+                "container": "neutral",
+                "shape": "pill"
+            }
+        },
+        {
+            "id": "weather.details-dot-daily",
+            "parent_id": "weather.details-dots",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 114,
+                "y": 231,
+                "width": 4,
+                "height": 4
+            },
+            "bounds_dp_q8_8": {
+                "x": 23347,
+                "y": 47309,
+                "width": 819,
+                "height": 819
+            },
+            "token_roles": {
+                "container": "neutral",
+                "shape": "pill"
+            }
+        },
+        {
+            "id": "weather.details-dot-selected",
+            "parent_id": "weather.details-dots",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 122,
+                "y": 231,
+                "width": 8,
+                "height": 4
+            },
+            "bounds_dp_q8_8": {
+                "x": 24986,
+                "y": 47309,
+                "width": 1638,
+                "height": 819
+            },
+            "token_roles": {
+                "container": "primary",
+                "shape": "pill"
+            }
+        },
+        {
+            "id": "weather.rain-preview-action",
+            "parent_id": "weather.details-page",
+            "role": "button",
+            "label": "Show imminent rain state",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [
+                {
+                    "kind": "tap",
+                    "action_id": "weather.rain-preview"
+                }
+            ],
+            "bounds_px": {
+                "x": 0,
+                "y": 180,
+                "width": 240,
+                "height": 60
+            },
+            "bounds_dp_q8_8": {
+                "x": 0,
+                "y": 36864,
+                "width": 49152,
+                "height": 12288
+            },
+            "token_roles": {
+                "container": "transparent",
+                "content": "on_surface"
+            }
+        }
+    ]
+}

@@ -7,6 +7,10 @@
 #include <new>
 
 #include "lvgl.h"
+#include "m3e/appspec/canvas_display_list.hpp"
+#include "m3e/assets/weather_icon_assets.hpp"
+#include "m3e/generated/weather_icons.hpp"
+#include "m3e/generated/weather_tokens.hpp"
 
 namespace m3e::appspec {
 namespace {
@@ -261,7 +265,9 @@ bool parse_command(Reader& reader, CommandBatch& batch, Command& command) {
                 break;
             case 2: {
                 std::uint64_t value = 0;
-                if (!reader.unsigned_integer(value) || value > 4) {
+                if (!reader.unsigned_integer(value) || value > 8 ||
+                    (has_kind && command.kind == CommandKind::state_put &&
+                     value > 3)) {
                     return reader.fail(CommandError::invalid_command);
                 }
                 if (has_kind && command.kind == CommandKind::state_put) {
@@ -288,8 +294,31 @@ bool parse_command(Reader& reader, CommandBatch& batch, Command& command) {
                 } else if (
                     command.kind == CommandKind::set_property &&
                     (command.property == PropertyKind::primary_text ||
-                     command.property == PropertyKind::secondary_text)) {
+                     command.property == PropertyKind::secondary_text ||
+                     command.property == PropertyKind::icon ||
+                     command.property == PropertyKind::semantic_label ||
+                     command.property == PropertyKind::semantic_value)) {
                     if (!reader.text(command.text_offset, 128)) return false;
+                } else if (
+                    command.kind == CommandKind::set_property &&
+                    command.property == PropertyKind::samples) {
+                    std::size_t sample_count = 0;
+                    if (!reader.array(sample_count) || sample_count < 1 ||
+                        sample_count > command.samples.size()) {
+                        return reader.fail(CommandError::value_out_of_range);
+                    }
+                    command.sample_count =
+                        static_cast<std::uint8_t>(sample_count);
+                    for (std::size_t sample = 0;
+                         sample < sample_count; ++sample) {
+                        std::uint64_t value = 0;
+                        if (!reader.unsigned_integer(value) ||
+                            value > std::numeric_limits<std::uint16_t>::max()) {
+                            return reader.fail(CommandError::value_out_of_range);
+                        }
+                        command.samples[sample] =
+                            static_cast<std::uint16_t>(value);
+                    }
                 } else if (
                     command.kind == CommandKind::state_put &&
                     command.value_type == state::ValueType::string) {
@@ -338,6 +367,54 @@ WireNode* find_node(WireDocument& document, const char* id) {
     return nullptr;
 }
 
+bool weather_icon(
+    const char* name,
+    generated::WeatherIcon& output) {
+    if (name == nullptr) return false;
+    for (std::size_t index = 0;
+         index < generated::kWeatherIconWireNames.size(); ++index) {
+        if (generated::kWeatherIconWireNames[index] == name) {
+            output = static_cast<generated::WeatherIcon>(index);
+            return true;
+        }
+    }
+    return false;
+}
+
+lv_color_t weather_color(generated::WeatherColorRole role) {
+    const auto& color = generated::kWeatherColors[
+        static_cast<std::size_t>(role)].rgb888;
+    return lv_color_make(color.red, color.green, color.blue);
+}
+
+bool apply_weather_icon(
+    lv_obj_t* object,
+    const WireNode& node,
+    const char* name) {
+    generated::WeatherIcon icon{};
+    if (object == nullptr || !weather_icon(name, icon)) return false;
+    const auto* current = static_cast<const lv_image_dsc_t*>(
+        lv_image_get_src(object));
+    const auto logical_size = node.size == 0 ? 18 : node.size == 2 ? 32 :
+        node.size == 3 ? 64 : 24;
+    const auto source_size = current != nullptr && current->header.w > 0
+        ? static_cast<std::int32_t>(current->header.w)
+        : logical_size;
+    const auto* asset = weather_icon_asset(icon, source_size);
+    if (asset == nullptr) return false;
+    lv_image_set_src(object, asset);
+    const auto& spec = generated::kWeatherIcons[
+        static_cast<std::size_t>(icon)];
+    if (spec.render == generated::WeatherIconRender::mask) {
+        lv_obj_set_style_image_recolor(
+            object, weather_color(spec.tint_role), 0);
+        lv_obj_set_style_image_recolor_opa(object, LV_OPA_COVER, 0);
+    } else {
+        lv_obj_set_style_image_recolor_opa(object, LV_OPA_TRANSP, 0);
+    }
+    return true;
+}
+
 bool supports_text_property(const WireNode& node, PropertyKind property) {
     if (property == PropertyKind::primary_text) {
         return node.kind == ComponentKind::text ||
@@ -345,7 +422,8 @@ bool supports_text_property(const WireNode& node, PropertyKind property) {
                node.kind == ComponentKind::card ||
                node.kind == ComponentKind::live_card ||
                node.kind == ComponentKind::toggle ||
-               node.kind == ComponentKind::voice_orb;
+               node.kind == ComponentKind::voice_orb ||
+               node.kind == ComponentKind::canvas;
     }
     return property == PropertyKind::secondary_text &&
            (node.kind == ComponentKind::card ||
@@ -359,7 +437,15 @@ lv_obj_t* label_for(WireNode& node, PropertyKind property) {
     if (node.kind == ComponentKind::button ||
         node.kind == ComponentKind::toggle ||
         node.kind == ComponentKind::voice_orb) {
-        return lv_obj_get_child(object, 0);
+        const auto count = lv_obj_get_child_count(object);
+        for (std::uint32_t index = 0; index < count; ++index) {
+            auto* child = lv_obj_get_child(object, index);
+            if (child != nullptr &&
+                lv_obj_check_type(child, &lv_label_class)) {
+                return child;
+            }
+        }
+        return nullptr;
     }
     if (node.kind == ComponentKind::card ||
         node.kind == ComponentKind::live_card) {
@@ -487,18 +573,33 @@ CommandResult apply_ui_command_batch(
         primary_replacements{};
     std::array<std::uint16_t, Reconciler::kCapacity>
         secondary_replacements{};
+    std::array<std::uint16_t, Reconciler::kCapacity>
+        icon_replacements{};
+    std::array<std::uint16_t, Reconciler::kCapacity>
+        semantic_label_replacements{};
+    std::array<std::uint16_t, Reconciler::kCapacity>
+        semantic_value_replacements{};
     primary_replacements.fill(kNoReplacement);
     secondary_replacements.fill(kNoReplacement);
-    bool has_text_replacement = false;
+    icon_replacements.fill(kNoReplacement);
+    semantic_label_replacements.fill(kNoReplacement);
+    semantic_value_replacements.fill(kNoReplacement);
+    bool has_string_replacement = false;
     std::array<std::int32_t, Reconciler::kCapacity> staged_values{};
     std::array<std::int32_t, Reconciler::kCapacity> staged_maxima{};
     std::array<bool, Reconciler::kCapacity> numeric_touched{};
     std::array<bool, Reconciler::kCapacity> staged_checked{};
     std::array<bool, Reconciler::kCapacity> checked_touched{};
+    std::array<std::array<std::uint16_t, 13>, Reconciler::kCapacity>
+        staged_samples{};
+    std::array<std::uint8_t, Reconciler::kCapacity> staged_sample_counts{};
+    std::array<bool, Reconciler::kCapacity> samples_touched{};
     for (std::size_t index = 0; index < document.node_count; ++index) {
         staged_values[index] = document.nodes[index].value;
         staged_maxima[index] = document.nodes[index].maximum;
         staged_checked[index] = document.nodes[index].value != 0;
+        staged_samples[index] = document.nodes[index].samples;
+        staged_sample_counts[index] = document.nodes[index].sample_count;
     }
     for (std::size_t index = 0; index < batch.command_count; ++index) {
         const auto& command = batch.commands[index];
@@ -510,8 +611,18 @@ CommandResult apply_ui_command_batch(
         if (command.kind == CommandKind::set_property) {
             if (command.property == PropertyKind::primary_text ||
                 command.property == PropertyKind::secondary_text) {
+                const auto canvas_display_list =
+                    node->kind == ComponentKind::canvas &&
+                    command.property == PropertyKind::primary_text;
                 if (!supports_text_property(*node, command.property) ||
-                    label_for(*node, command.property) == nullptr) {
+                    (!canvas_display_list &&
+                     label_for(*node, command.property) == nullptr) ||
+                    (canvas_display_list &&
+                     !validate_canvas_display_list(
+                         batch.string_at(command.text_offset),
+                         document.string_at(node->secondary_text_offset),
+                         node->value,
+                         node->maximum))) {
                     return result(CommandError::unsupported_property, index);
                 }
                 const auto node_index =
@@ -537,11 +648,50 @@ CommandResult apply_ui_command_batch(
                 } else {
                     secondary_replacements[node_index] = kNoReplacement;
                 }
+            } else if (command.property == PropertyKind::icon) {
+                generated::WeatherIcon icon{};
+                if (node->kind != ComponentKind::icon ||
+                    !weather_icon(batch.string_at(command.text_offset), icon)) {
+                    return result(CommandError::unsupported_property, index);
+                }
+                const auto node_index = static_cast<std::size_t>(
+                    node - document.nodes.data());
+                if (std::strcmp(
+                        document.string_at(node->icon_offset),
+                        batch.string_at(command.text_offset)) != 0) {
+                    icon_replacements[node_index] = command.text_offset;
+                } else {
+                    icon_replacements[node_index] = kNoReplacement;
+                }
+            } else if (
+                command.property == PropertyKind::semantic_label ||
+                command.property == PropertyKind::semantic_value) {
+                const auto node_index = static_cast<std::size_t>(
+                    node - document.nodes.data());
+                const auto current_offset =
+                    command.property == PropertyKind::semantic_label
+                        ? node->semantic_label_offset
+                        : node->semantic_value_offset;
+                auto& replacement =
+                    command.property == PropertyKind::semantic_label
+                        ? semantic_label_replacements[node_index]
+                        : semantic_value_replacements[node_index];
+                if (std::strcmp(
+                        document.string_at(current_offset),
+                        batch.string_at(command.text_offset)) != 0) {
+                    replacement = command.text_offset;
+                } else {
+                    replacement = kNoReplacement;
+                }
             } else if (
                 command.property == PropertyKind::value ||
                 command.property == PropertyKind::maximum) {
                 if ((node->kind != ComponentKind::progress &&
-                     node->kind != ComponentKind::stepper) ||
+                     node->kind != ComponentKind::stepper &&
+                     node->kind != ComponentKind::chart &&
+                     node->kind != ComponentKind::pager) ||
+                    (node->kind == ComponentKind::pager &&
+                     command.property != PropertyKind::value) ||
                     command.integer_value <
                         std::numeric_limits<std::int32_t>::min() ||
                     command.integer_value >
@@ -568,7 +718,9 @@ CommandResult apply_ui_command_batch(
                      ((command.property == PropertyKind::maximum &&
                        value < node->minimum) ||
                       (command.property == PropertyKind::value &&
-                       value < node->minimum)))) {
+                       value < node->minimum))) ||
+                    (node->kind == ComponentKind::pager &&
+                     (value < 0 || value >= node->maximum))) {
                     return result(CommandError::value_out_of_range, index);
                 }
                 const auto node_index =
@@ -580,6 +732,16 @@ CommandResult apply_ui_command_batch(
                 } else {
                     staged_values[node_index] = value;
                 }
+            } else if (command.property == PropertyKind::samples) {
+                if (node->kind != ComponentKind::chart ||
+                    command.sample_count < 1 || command.sample_count > 13) {
+                    return result(CommandError::unsupported_property, index);
+                }
+                const auto node_index = static_cast<std::size_t>(
+                    node - document.nodes.data());
+                staged_samples[node_index] = command.samples;
+                staged_sample_counts[node_index] = command.sample_count;
+                samples_touched[node_index] = true;
             } else if (command.property == PropertyKind::checked) {
                 if (node->kind != ComponentKind::toggle) {
                     return result(CommandError::unsupported_property, index);
@@ -604,16 +766,28 @@ CommandResult apply_ui_command_batch(
              staged_values[index] > staged_maxima[index] ||
              (document.nodes[index].kind == ComponentKind::stepper &&
               staged_values[index] <
-                  document.nodes[index].minimum))) {
+              document.nodes[index].minimum))) {
             return result(CommandError::value_out_of_range, index);
         }
-        has_text_replacement =
-            has_text_replacement ||
+        if (samples_touched[index]) {
+            for (std::size_t sample = 0;
+                 sample < staged_sample_counts[index]; ++sample) {
+                if (staged_samples[index][sample] >
+                    static_cast<std::uint32_t>(staged_maxima[index])) {
+                    return result(CommandError::value_out_of_range, index);
+                }
+            }
+        }
+        has_string_replacement =
+            has_string_replacement ||
             primary_replacements[index] != kNoReplacement ||
-            secondary_replacements[index] != kNoReplacement;
+            secondary_replacements[index] != kNoReplacement ||
+            icon_replacements[index] != kNoReplacement ||
+            semantic_label_replacements[index] != kNoReplacement ||
+            semantic_value_replacements[index] != kNoReplacement;
     }
     std::array<char, kMaximumWireStrings>* old_strings = nullptr;
-    if (has_text_replacement) {
+    if (has_string_replacement) {
         auto required_string_bytes = std::size_t{1};
         auto add_required = [&](const char* value) {
             if (value != nullptr && value[0] != '\0') {
@@ -635,12 +809,19 @@ CommandResult apply_ui_command_batch(
                     ? batch.string_at(secondary_replacements[index])
                     : document.string_at(node.secondary_text_offset));
             add_required(
-                document.string_at(node.semantic_label_offset));
+                semantic_label_replacements[index] != kNoReplacement
+                    ? batch.string_at(semantic_label_replacements[index])
+                    : document.string_at(node.semantic_label_offset));
             add_required(
-                document.string_at(node.semantic_value_offset));
+                semantic_value_replacements[index] != kNoReplacement
+                    ? batch.string_at(semantic_value_replacements[index])
+                    : document.string_at(node.semantic_value_offset));
             add_required(
                 document.string_at(node.semantic_hint_offset));
-            add_required(document.string_at(node.icon_offset));
+            add_required(
+                icon_replacements[index] != kNoReplacement
+                    ? batch.string_at(icon_replacements[index])
+                    : document.string_at(node.icon_offset));
         }
         for (std::size_t index = 0;
              index < document.key_count;
@@ -710,12 +891,19 @@ CommandResult apply_ui_command_batch(
                     ? batch.string_at(secondary_replacements[index])
                     : old_string_at(old_secondary));
             node.semantic_label_offset = compact_copy(
-                old_string_at(old_semantic));
+                semantic_label_replacements[index] != kNoReplacement
+                    ? batch.string_at(semantic_label_replacements[index])
+                    : old_string_at(old_semantic));
             node.semantic_value_offset = compact_copy(
-                old_string_at(old_semantic_value));
+                semantic_value_replacements[index] != kNoReplacement
+                    ? batch.string_at(semantic_value_replacements[index])
+                    : old_string_at(old_semantic_value));
             node.semantic_hint_offset = compact_copy(
                 old_string_at(old_semantic_hint));
-            node.icon_offset = compact_copy(old_string_at(old_icon));
+            node.icon_offset = compact_copy(
+                icon_replacements[index] != kNoReplacement
+                    ? batch.string_at(icon_replacements[index])
+                    : old_string_at(old_icon));
         }
         for (std::size_t index = 0;
              index < document.key_count;
@@ -769,20 +957,45 @@ CommandResult apply_ui_command_batch(
             }
         }
     }
-    if (has_text_replacement) {
+    if (has_string_replacement) {
         for (std::size_t index = 0;
              index < document.node_count;
              ++index) {
             auto& node = document.nodes[index];
             if (primary_replacements[index] != kNoReplacement) {
-                lv_label_set_text(
-                    label_for(node, PropertyKind::primary_text),
-                    document.string_at(node.primary_text_offset));
+                if (node.kind == ComponentKind::canvas) {
+                    if (!render_canvas_display_list(
+                            static_cast<lv_obj_t*>(
+                                node.mounted_object),
+                            document.string_at(
+                                node.primary_text_offset),
+                            document.string_at(
+                                node.secondary_text_offset),
+                            node.value,
+                            node.maximum)) {
+                        return result(
+                            CommandError::unsupported_property,
+                            index);
+                    }
+                } else {
+                    lv_label_set_text(
+                        label_for(node, PropertyKind::primary_text),
+                        document.string_at(node.primary_text_offset));
+                }
             }
             if (secondary_replacements[index] != kNoReplacement) {
                 lv_label_set_text(
                     label_for(node, PropertyKind::secondary_text),
                     document.string_at(node.secondary_text_offset));
+            }
+            if (icon_replacements[index] != kNoReplacement &&
+                !apply_weather_icon(
+                    static_cast<lv_obj_t*>(node.mounted_object),
+                    node,
+                    document.string_at(node.icon_offset))) {
+                return result(
+                    CommandError::unsupported_property,
+                    index);
             }
         }
     }
@@ -817,6 +1030,57 @@ CommandResult apply_ui_command_batch(
                     static_cast<long>(node.value));
                 lv_label_set_text(value_label, number);
             }
+        } else if (node.kind == ComponentKind::chart) {
+            lv_chart_set_range(
+                object, LV_CHART_AXIS_PRIMARY_Y, 0, node.maximum);
+        } else if (node.kind == ComponentKind::pager) {
+            for (std::size_t page_index = index + 1;
+                 page_index < document.node_count; ++page_index) {
+                auto& page = document.nodes[page_index];
+                if (page.parent_index != index ||
+                    page.mounted_object == nullptr) {
+                    continue;
+                }
+                std::size_t ordinal = 0;
+                for (std::size_t previous = index + 1;
+                     previous < page_index; ++previous) {
+                    if (document.nodes[previous].parent_index == index) {
+                        ++ordinal;
+                    }
+                }
+                auto* page_object =
+                    static_cast<lv_obj_t*>(page.mounted_object);
+                if (ordinal == static_cast<std::size_t>(node.value)) {
+                    lv_obj_remove_flag(page_object, LV_OBJ_FLAG_HIDDEN);
+                } else {
+                    lv_obj_add_flag(page_object, LV_OBJ_FLAG_HIDDEN);
+                }
+            }
+            if (node.checked && lv_obj_get_child_count(object) > 0) {
+                auto* indicator = lv_obj_get_child(object, 0);
+                if (indicator != nullptr &&
+                    lv_obj_get_child_count(indicator) ==
+                        static_cast<std::uint32_t>(node.maximum)) {
+                    using generated::WeatherColorRole;
+                    for (std::int32_t page = 0;
+                         page < node.maximum; ++page) {
+                        auto* dot = lv_obj_get_child(indicator, page);
+                        const auto active = page == node.value;
+                        const auto dot_size = active ? 6 : 4;
+                        lv_obj_set_size(dot, dot_size, dot_size);
+                        const auto role = active
+                            ? WeatherColorRole::primary
+                            : WeatherColorRole::outline_variant;
+                        const auto& color = generated::kWeatherColors[
+                            static_cast<std::size_t>(role)].rgb888;
+                        lv_obj_set_style_bg_color(
+                            dot,
+                            lv_color_make(
+                                color.red, color.green, color.blue),
+                            0);
+                    }
+                }
+            }
         } else if (node.variant == 1) {
             lv_arc_set_range(object, 0, node.maximum);
             lv_arc_set_value(object, node.value);
@@ -824,6 +1088,39 @@ CommandResult apply_ui_command_batch(
             lv_bar_set_range(object, 0, node.maximum);
             lv_bar_set_value(object, node.value, LV_ANIM_OFF);
         }
+    }
+    for (std::size_t index = 0; index < document.node_count; ++index) {
+        if (!samples_touched[index]) continue;
+        auto& node = document.nodes[index];
+        auto* object = static_cast<lv_obj_t*>(node.mounted_object);
+        node.samples = staged_samples[index];
+        node.sample_count = staged_sample_counts[index];
+        lv_chart_set_point_count(object, node.sample_count);
+        auto* series = lv_chart_get_series_next(object, nullptr);
+        if (series == nullptr) {
+            return result(CommandError::unsupported_property, index);
+        }
+        lv_chart_set_all_values(object, series, LV_CHART_POINT_NONE);
+        for (std::size_t sample = 0; sample < node.sample_count; ++sample) {
+            lv_chart_set_next_value(object, series, node.samples[sample]);
+        }
+        if (std::strcmp(
+                document.string_at(node.id_offset),
+                "weather.rain-bars") == 0 &&
+            lv_obj_get_child_count(object) >= node.sample_count) {
+            for (std::size_t sample = 0; sample < node.sample_count; ++sample) {
+                auto* bar = lv_obj_get_child(object, sample);
+                const auto height_dp = std::max<std::int32_t>(
+                    2,
+                    static_cast<std::int32_t>(node.samples[sample]) * 35 /
+                        std::max<std::int32_t>(1, node.maximum));
+                const auto height_px = (height_dp * 5 + 2) / 4;
+                const auto y_px = ((35 - height_dp) * 5 + 2) / 4;
+                lv_obj_set_height(bar, height_px);
+                lv_obj_set_y(bar, y_px);
+            }
+        }
+        lv_chart_refresh(object);
     }
     for (std::size_t index = 0; index < document.node_count; ++index) {
         if (!checked_touched[index]) continue;

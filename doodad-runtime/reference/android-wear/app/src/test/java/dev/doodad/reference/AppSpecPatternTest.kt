@@ -14,7 +14,7 @@ import org.junit.Test
 
 class AppSpecPatternTest {
     @Test
-    fun selectorReproducesTheFrozenEightyThreeDocumentCorpus() {
+    fun selectorReproducesTheFrozenEightySevenDocumentCorpus() {
         val root = findDoodadRuntimeRoot()
         val inventory =
             Json.parseToJsonElement(
@@ -37,7 +37,7 @@ class AppSpecPatternTest {
                 )
             }
 
-        assertEquals(83, selected.size)
+        assertEquals(87, selected.size)
         assertEquals(
             AppSpecPatternSelector.authoredCorpusExpectation,
             selected.groupingBy { it }.eachCount(),
@@ -47,12 +47,15 @@ class AppSpecPatternTest {
                 "countdown" to 1,
                 "calendar_agenda" to 5,
                 "camera_remote" to 5,
+                "canvas_game" to 2,
+                "action_list" to 1,
                 "empty" to 1,
-                "keypad" to 2,
+                "keypad" to 1,
                 "notification_stack" to 6,
                 "nutrition_dashboard" to 1,
                 "nutrition_quick_add" to 1,
                 "nutrition_review" to 1,
+                "status_detail" to 4,
                 "task_list" to 4,
                 "live_action_detail" to 43,
                 "media_player" to 5,
@@ -61,8 +64,6 @@ class AppSpecPatternTest {
                 "workout_rest" to 1,
                 "workout_set" to 2,
                 "workout_summary" to 1,
-                "status_detail" to 1,
-                "weather_hero" to 1,
             ),
             inventory
                 .getValue("authored")
@@ -79,6 +80,16 @@ class AppSpecPatternTest {
             mapOf(
                 AppSpecPattern.Keypad to
                     AppSpecStructuralFacts(mapOf("keypad" to 1), 1, 1),
+                AppSpecPattern.CanvasGame to
+                    AppSpecStructuralFacts(
+                        mapOf(
+                            "canvas" to 1,
+                            "keypad" to 1,
+                            "text" to 2,
+                        ),
+                        2,
+                        2,
+                    ),
                 AppSpecPattern.Countdown to
                     AppSpecStructuralFacts(
                         mapOf("progress" to 1, "stepper" to 1),
@@ -265,7 +276,11 @@ class AppSpecPatternTest {
                 }.eachCount(),
             actionCount =
                 nodes.sumOf {
-                    it["events"]?.jsonObject?.size ?: 0
+                    it["events"]
+                        ?.jsonObject
+                        ?.keys
+                        ?.count { kind -> kind != "pageChanged" }
+                        ?: 0
                 },
             interactiveCount =
                 nodes.count {

@@ -19,6 +19,7 @@ import dev.doodad.reference.model.SceneSnapshotRepository
 import dev.doodad.reference.ui.AppSpecReferenceRenderer
 import dev.doodad.reference.ui.ComposeNodeEvidenceCollector
 import dev.doodad.reference.ui.DefaultComposeRendererBuildSha256
+import dev.doodad.reference.ui.EvidenceCapturePhase
 import dev.doodad.reference.ui.ReferenceGeometryProfile
 import java.io.BufferedOutputStream
 import java.io.File
@@ -59,6 +60,9 @@ class SceneSnapshotBatchCaptureTest {
             )
         val targets =
             requests.map { request ->
+                require(request.fontScaleMilli == 1000 || request.fontScaleMilli == 1300) {
+                    "Font scale must be 1000 or 1300"
+                }
                 val snapshotFile = File(request.snapshot).canonicalFile
                 val outputFile = File(request.output).canonicalFile
                 require(snapshotFile.isFile) {
@@ -73,6 +77,9 @@ class SceneSnapshotBatchCaptureTest {
                     sha256 = snapshotFile.readBytes().sha256(),
                     snapshot = repository.decode(snapshotFile.readText()),
                     collector = ComposeNodeEvidenceCollector(),
+                    capturePhase = request.capturePhase,
+                    captureState = request.captureState,
+                    fontScale = request.fontScaleMilli / 1000f,
                 )
             }
         val profile = ReferenceGeometryProfile.WatchSquare240
@@ -81,9 +88,9 @@ class SceneSnapshotBatchCaptureTest {
         var activeTarget by mutableStateOf(targets.first())
         composeRule.setContent {
             CompositionLocalProvider(
-                LocalDensity provides Density(1.25f, 1f),
+                LocalDensity provides Density(1.25f, activeTarget.fontScale),
             ) {
-                key(activeTarget.sha256) {
+                key(activeTarget.sha256, activeTarget.fontScale) {
                     AppSpecReferenceRenderer(
                         snapshot = activeTarget.snapshot,
                         profile = profile,
@@ -130,6 +137,11 @@ class SceneSnapshotBatchCaptureTest {
                     snapshotSha256 = target.sha256,
                     profile = profile,
                     density = 1.25f,
+                    capturePhase =
+                        EvidenceCapturePhase(
+                            id = target.capturePhase,
+                            state = target.captureState,
+                        ),
                     rendererBuildSha256 = rendererBuildSha256,
                 )
             target.outputFile
@@ -175,6 +187,12 @@ private inline fun withDeterministicJvmDefaults(block: () -> Unit) {
 private data class BatchCaptureRequest(
     val snapshot: String,
     val output: String,
+    @kotlinx.serialization.SerialName("capture_phase")
+    val capturePhase: String = "resting",
+    @kotlinx.serialization.SerialName("capture_state")
+    val captureState: String = "resting",
+    @kotlinx.serialization.SerialName("font_scale_milli")
+    val fontScaleMilli: Int = 1000,
 )
 
 private data class CaptureTarget(
@@ -182,6 +200,9 @@ private data class CaptureTarget(
     val sha256: String,
     val snapshot: dev.doodad.reference.model.SceneSnapshot,
     val collector: ComposeNodeEvidenceCollector,
+    val capturePhase: String,
+    val captureState: String,
+    val fontScale: Float,
 )
 
 @Serializable

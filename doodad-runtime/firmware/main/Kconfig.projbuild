@@ -1,0 +1,54 @@
+menu "Doodad Weather provider"
+
+config DOODAD_WEATHER_NETWORK_PROVIDER
+    bool "Enable the host-owned Open-Meteo provider"
+    default n
+    help
+        Keeps networking outside Wasm and asynchronously normalizes one
+        Open-Meteo forecast into weather.snapshot.v2. Disabled conformance
+        builds continue to use deterministic fixtures.
+
+if DOODAD_WEATHER_NETWORK_PROVIDER
+
+config DOODAD_WEATHER_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+
+config DOODAD_WEATHER_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+
+config DOODAD_WEATHER_LOCATION_NAME
+    string "Display location"
+    default "San Francisco"
+
+config DOODAD_WEATHER_LATITUDE
+    string "Latitude"
+    default "37.774900"
+
+config DOODAD_WEATHER_LONGITUDE
+    string "Longitude"
+    default "-122.419400"
+
+config DOODAD_WEATHER_TIMEZONE
+    string "Open-Meteo timezone"
+    default "auto"
+    help
+        Use "auto" to resolve local forecast timestamps from the configured
+        coordinates, or provide an IANA timezone such as America/Los_Angeles.
+
+choice DOODAD_WEATHER_UNITS
+    prompt "Weather units"
+    default DOODAD_WEATHER_UNITS_IMPERIAL
+
+config DOODAD_WEATHER_UNITS_METRIC
+    bool "Metric"
+
+config DOODAD_WEATHER_UNITS_IMPERIAL
+    bool "Imperial"
+
+endchoice
+
+endif
+
+endmenu

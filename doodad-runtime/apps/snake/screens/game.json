@@ -5,24 +5,42 @@
     "id": "snake.game",
     "type": "screen",
     "props": {
-      "gap": "xs",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "snake.game.heading",
+          "id": "snake.game.canvas",
+          "type": "canvas",
+          "props": {
+            "display_list": "v1|C0|R1,4,4,120,120,18|T2,8,8,14,14,8,8,0000000000000000000000000223040000000000000000000000000000000000",
+            "palette": "07110d,10271c,52d88b,a8f279,ffcf66",
+            "width": 184,
+            "height": 128
+          },
+          "events": {
+            "tap": "snake.step"
+          },
+          "semantics": {
+            "label": "Snake game board",
+            "hint": "Tap the board to move forward"
+          }
+        },
+        {
+          "id": "snake.game.score-label",
           "type": "text",
           "props": {
-            "text": "SNAKE · MOCK CLOCK",
+            "text": "SCORE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "snake.game.score",
           "type": "text",
           "props": {
-            "text": "SCORE 0",
-            "style": "title",
+            "text": "0",
+            "style": "numeral",
             "max_lines": 1,
             "align": "center"
           },
@@ -32,49 +50,21 @@
           }
         },
         {
-          "id": "snake.game.board-top",
-          "type": "text",
-          "props": {
-            "text": "........\n........\n........\n.oo@.*..",
-            "style": "body",
-            "max_lines": 4,
-            "align": "center"
-          },
-          "semantics": {
-            "label": "Top half of eight by eight Snake board"
-          }
-        },
-        {
-          "id": "snake.game.board-bottom",
-          "type": "text",
-          "props": {
-            "text": "........\n........\n........\n........",
-            "style": "body",
-            "max_lines": 4,
-            "align": "center"
-          },
-          "semantics": {
-            "label": "Bottom half of eight by eight Snake board"
-          }
-        },
-        {
           "id": "snake.game.controls",
           "type": "keypad",
           "props": {
             "columns": 3,
             "keys": [
               "L",
-              "Go",
-              "R",
-              "New",
-              "Quit"
+              "GO",
+              "R"
             ]
           },
           "events": {
             "tap": "snake.control"
           },
           "semantics": {
-            "label": "Snake controls"
+            "label": "Snake direction controls"
           }
         }
       ]

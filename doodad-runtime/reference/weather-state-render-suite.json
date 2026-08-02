@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "id": "weather-state-goldens",
+  "entries": [
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/states/baseline/trace.json",
+      "sequence": 1,
+      "snapshot_sha256": "49ca96f2cafe09f0ef874822342351b5092790cb6231df4178facd2fdfabb255",
+      "capture_phase": "baseline_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 5",
+        "reviewed_at": "2026-08-01",
+        "notes": "Provider-v2 baseline fixture rendered through the real Weather Wasm guest and shared semantic snapshot."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/states/extreme/trace.json",
+      "sequence": 1,
+      "snapshot_sha256": "5fd0006b097b93a28a98ca159ba995f2c1431f3a24dc6d0920606264daecfc15",
+      "capture_phase": "extreme_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 5",
+        "reviewed_at": "2026-08-01",
+        "notes": "Provider-v2 extreme fixture rendered through the real Weather Wasm guest and shared semantic snapshot."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/states/rain/trace.json",
+      "sequence": 2,
+      "snapshot_sha256": "7df1200933596ea132f4f288ead3edd175dbbdbc95dfb8740c9597c3b7c10356",
+      "capture_phase": "rain_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 5",
+        "reviewed_at": "2026-08-01",
+        "notes": "Provider-v2 rain fixture rendered through the real Weather Wasm guest and shared semantic snapshot."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/states/stale/trace.json",
+      "sequence": 1,
+      "snapshot_sha256": "8a2753225dd5abfd222640bb9537833a7829760b69af889f7ee4c504860c1e86",
+      "capture_phase": "stale_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 5",
+        "reviewed_at": "2026-08-01",
+        "notes": "Provider-v2 stale fixture rendered through the real Weather Wasm guest and shared semantic snapshot."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/states/error/trace.json",
+      "sequence": 1,
+      "snapshot_sha256": "23197a3ff0eb59c3ada84284202f7dde28aa209ca51c8068a5b0cb9fd22680fe",
+      "capture_phase": "error_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 5",
+        "reviewed_at": "2026-08-01",
+        "notes": "Provider-v2 error fixture rendered through the real Weather Wasm guest and shared semantic snapshot."
+      }
+    }
+  ]
+}

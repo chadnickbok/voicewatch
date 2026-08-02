@@ -41,19 +41,36 @@ class PerfectRenderSuiteTests(unittest.TestCase):
         cls.suite = json.loads(SUITE_PATH.read_text())
         cls.selections = resolve_suite_entries(SUITE_PATH)
 
-    def test_suite_selects_exactly_twenty_shared_initial_snapshots(self) -> None:
+    def test_suite_selects_twenty_initial_snapshots_and_weather_route_oracles(self) -> None:
         expected_slugs = [app["slug"] for app in self.catalog]
-        self.assertEqual(len(self.suite["entries"]), 20)
+        initial_entries = [
+            entry for entry in self.suite["entries"] if entry["sequence"] == 0
+        ]
+        initial_selections = [
+            selection
+            for selection in self.selections
+            if selection.entry["sequence"] == 0
+        ]
+        weather_routes = [
+            entry
+            for entry in self.suite["entries"]
+            if entry["app_slug"] == "weather" and entry["sequence"] != 0
+        ]
+        self.assertEqual(len(self.suite["entries"]), 24)
         self.assertEqual(
-            [entry["app_slug"] for entry in self.suite["entries"]],
+            [entry["app_slug"] for entry in initial_entries],
             expected_slugs,
         )
         self.assertEqual(
-            [selection.entry["app_slug"] for selection in self.selections],
+            [selection.entry["app_slug"] for selection in initial_selections],
             expected_slugs,
+        )
+        self.assertEqual(
+            [entry["sequence"] for entry in weather_routes],
+            [3, 5, 7, 8],
         )
 
-        for selection in self.selections:
+        for selection in initial_selections:
             with self.subTest(app=selection.entry["app_slug"]):
                 entry = selection.entry
                 target = selection.target_entry
@@ -66,7 +83,6 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                 self.assertEqual(entry["lvgl"]["mode"], "simulator")
                 if entry["app_slug"] in {
                     "timer",
-                    "weather",
                     "notifications",
                     "tasks",
                     "calendar",
@@ -90,7 +106,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                         "2026-07-30",
                     )
                 else:
-                    self.assertEqual(entry["review"], {"status": "pending"})
+                    self.assertEqual(entry["review"]["status"], "pending")
                 self.assertEqual(
                     target["after_snapshot_sha256"],
                     entry["snapshot_sha256"],
@@ -168,7 +184,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                     artifact["sha256"],
                 )
 
-    def test_all_twenty_initial_scenes_capture_through_lvgl_replay(
+    def test_all_suite_scenes_capture_through_lvgl_replay(
         self,
     ) -> None:
         with tempfile.TemporaryDirectory(
@@ -185,13 +201,13 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                 SUITE_PATH,
                 output_root,
             )
-            self.assertEqual(len(manifests), 20)
+            self.assertEqual(len(manifests), 24)
             self.assertEqual(
                 [
                     manifest["selection"]["app_slug"]
                     for manifest in manifests
                 ],
-                [app["slug"] for app in self.catalog],
+                [entry["app_slug"] for entry in self.suite["entries"]],
             )
 
             for selection, manifest in zip(

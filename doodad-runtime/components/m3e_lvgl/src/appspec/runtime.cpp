@@ -231,13 +231,13 @@ std::uint32_t Reconciler::generation() const {
 CapabilityManifest capabilities() {
     return CapabilityManifest{
         "1.0",
-        "1.2",
+        "1.4",
         "watch_square_192",
         "rgb565",
         250,
         12,
         12,
-        0xd030c312U,
+        0x2a68c009U,
     };
 }
 

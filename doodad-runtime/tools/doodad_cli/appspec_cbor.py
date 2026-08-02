@@ -23,6 +23,11 @@ COMPONENT = {
     "voice_orb": 11,
     "live_card": 12,
     "image": 13,
+    "canvas": 14,
+    "icon": 15,
+    "surface": 16,
+    "chart": 17,
+    "pager": 18,
 }
 EVENT = {
     "tap": 0,
@@ -44,7 +49,7 @@ TONE = {
     "neutral": 3,
     "error": 4,
 }
-SIZE = {"compact": 0, "default": 1, "large": 2}
+SIZE = {"compact": 0, "default": 1, "large": 2, "hero": 3}
 GAP = {"none": 0, "xs": 1, "sm": 2, "md": 3, "lg": 4}
 ALIGN = {"start": 0, "center": 1, "end": 2, "stretch": 3}
 TEXT_STYLE = {
@@ -58,6 +63,11 @@ TEXT_STYLE = {
 BUTTON_VARIANT = {"filled": 0, "tonal": 1, "outlined": 2, "text": 3}
 PROGRESS_STYLE = {"linear": 0, "circular": 1, "segmented": 2}
 IMAGE_FIT = {"cover": 0, "contain": 1}
+SURFACE_SHAPE = {
+    "standard": 0, "hero": 1, "metric_a": 2, "metric_b": 3,
+    "metric_c": 4, "pill": 5,
+}
+CHART_STYLE = {"line": 0, "bars": 1}
 
 
 def _literal(value: Any, field: str) -> Any:
@@ -71,11 +81,19 @@ def _literal(value: Any, field: str) -> Any:
 def _properties(node: dict[str, Any]) -> dict[int, Any]:
     kind = node["type"]
     props = node["props"]
-    if kind in {"screen", "column", "row", "scroll"}:
-        return {
+    if kind in {"screen", "column", "row", "scroll", "surface", "pager"}:
+        result = {
             8: GAP[props.get("gap", "md")],
             9: ALIGN[props.get("align", "center")],
         }
+        if kind == "surface":
+            result[4] = SURFACE_SHAPE[props.get("shape", "standard")]
+            result[5] = TONE[props.get("tone", "neutral")]
+        elif kind == "pager":
+            result[2] = props.get("selected", 0)
+            result[3] = len(props["children"])
+            result[7] = props.get("show_indicator", True)
+        return result
     if kind == "text":
         result = {
             0: _literal(props["text"], f"{node['id']}.text"),
@@ -164,6 +182,26 @@ def _properties(node: dict[str, Any]) -> dict[int, Any]:
         return {
             0: props["asset"],
             4: IMAGE_FIT[props.get("fit", "cover")],
+        }
+    if kind == "canvas":
+        return {
+            0: props["display_list"],
+            1: props["palette"],
+            2: props["width"],
+            3: props["height"],
+        }
+    if kind == "icon":
+        return {
+            14: props["name"],
+            5: TONE[props.get("tone", "neutral")],
+            6: SIZE[props.get("size", "default")],
+        }
+    if kind == "chart":
+        return {
+            17: props["samples"],
+            3: props["maximum"],
+            4: CHART_STYLE[props.get("style", "line")],
+            5: TONE[props.get("tone", "primary")],
         }
     raise DoodadError(f"cannot lower AppSpec component {kind!r}")
 

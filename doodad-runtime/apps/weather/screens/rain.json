@@ -1,0 +1,252 @@
+{
+  "schema_version": 1,
+  "app_id": "weather",
+  "screen": {
+    "id": "weather.rain-screen",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "weather.rain-page",
+          "type": "column",
+          "props": {
+            "gap": "none",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "weather.rain-hero",
+                "type": "icon",
+                "props": {
+                  "name": "condition_rain",
+                  "tone": "primary",
+                  "size": "hero"
+                },
+                "semantics": {
+                  "label": "Rain"
+                }
+              },
+              {
+                "id": "weather.rain-headline",
+                "type": "column",
+                "props": {
+                  "gap": "none",
+                  "align": "start",
+                  "children": [
+                    {
+                      "id": "weather.rain-title",
+                      "type": "text",
+                      "props": {
+                        "text": "Rain in\n20 min",
+                        "style": "title",
+                        "max_lines": 2
+                      },
+                      "semantics": {
+                        "label": "Rain in 20 minutes"
+                      }
+                    },
+                    {
+                      "id": "weather.rain-duration",
+                      "type": "text",
+                      "props": {
+                        "text": "Light rain for 35 min",
+                        "style": "caption",
+                        "max_lines": 1
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.rain-chart-card",
+                "type": "surface",
+                "props": {
+                  "tone": "secondary",
+                  "shape": "standard",
+                  "gap": "none",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.rain-probability",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.rain-probability-icon",
+                            "type": "icon",
+                            "props": {
+                              "name": "utility_humidity",
+                              "tone": "primary",
+                              "size": "large"
+                            },
+                            "semantics": {
+                              "label": "Chance of rain"
+                            }
+                          },
+                          {
+                            "id": "weather.rain-probability-value",
+                            "type": "text",
+                            "props": {
+                              "text": "32%",
+                              "style": "numeral",
+                              "max_lines": 1
+                            },
+                            "semantics": {
+                              "label": "32 percent"
+                            }
+                          },
+                          {
+                            "id": "weather.rain-probability-label",
+                            "type": "text",
+                            "props": {
+                              "text": "Chance\nof rain",
+                              "style": "caption",
+                              "max_lines": 2
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.rain-bars",
+                      "type": "chart",
+                      "props": {
+                        "style": "bars",
+                        "samples": [
+                          8,
+                          16,
+                          25,
+                          38,
+                          50,
+                          63,
+                          72,
+                          70,
+                          58,
+                          44,
+                          30,
+                          18,
+                          10
+                        ],
+                        "maximum": 100,
+                        "tone": "primary"
+                      },
+                      "semantics": {
+                        "label": "Rain chance peaks near 72 percent in 30 minutes"
+                      }
+                    },
+                    {
+                      "id": "weather.rain-times",
+                      "type": "row",
+                      "props": {
+                        "gap": "none",
+                        "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.rain-time-now",
+                            "type": "text",
+                            "props": {
+                              "text": "NOW",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "start"
+                            }
+                          },
+                          {
+                            "id": "weather.rain-time-20",
+                            "type": "text",
+                            "props": {
+                              "text": "20m",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "id": "weather.rain-time-40",
+                            "type": "text",
+                            "props": {
+                              "text": "40m",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "id": "weather.rain-time-60",
+                            "type": "text",
+                            "props": {
+                              "text": "60m",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "end"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.rain-actions",
+                "type": "row",
+                "props": {
+                  "gap": "none",
+                  "align": "start",
+                  "children": [
+                    {
+                      "id": "weather.rain-details",
+                      "type": "button",
+                      "props": {
+                        "label": "Details",
+                        "icon": "utility_details",
+                        "tone": "primary",
+                        "variant": "filled",
+                        "size": "compact"
+                      },
+                      "events": {
+                        "tap": "weather.rain-details"
+                      },
+                      "semantics": {
+                        "label": "Show weather details"
+                      }
+                    },
+                    {
+                      "id": "weather.rain-status",
+                      "type": "button",
+                      "props": {
+                        "label": "Now",
+                        "icon": "utility_clock",
+                        "tone": "neutral",
+                        "variant": "text",
+                        "size": "compact"
+                      },
+                      "events": {
+                        "tap": "weather.retry"
+                      },
+                      "semantics": {
+                        "label": "Weather updated now"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          },
+          "semantics": {
+            "label": "Imminent rain"
+          }
+        }
+      ]
+    },
+    "events": {
+      "pageChanged": "weather.page-changed"
+    },
+    "semantics": {
+      "label": "Imminent rain"
+    }
+  }
+}

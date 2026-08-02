@@ -91,6 +91,8 @@ void doodad_host_set_scene_operation_callback(
     void* context);
 uint64_t doodad_host_scene_revision(void);
 uint64_t doodad_host_route_generation(void);
+int doodad_host_set_font_scale_milli(uint16_t scale_milli);
+uint16_t doodad_host_font_scale_milli(void);
 int doodad_host_replay_mount(
     const uint8_t* bytes,
     size_t size,
@@ -111,6 +113,10 @@ int doodad_host_display_awake(void);
 int doodad_host_advance_time(uint64_t milliseconds);
 uint64_t doodad_host_scenario_time(void);
 int doodad_host_deliver_provider(void);
+int doodad_host_deliver_weather_payload(
+    const uint8_t* payload,
+    size_t payload_size,
+    uint8_t freshness);
 
 void* doodad_host_ui_begin_document(int direction, int align, int gap);
 void* doodad_host_ui_add_stack(

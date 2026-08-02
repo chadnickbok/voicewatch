@@ -83,6 +83,62 @@ class AppSpecReferenceRendererTest {
         assertEquals(before, snapshot)
         assertEquals("Run", snapshot.nodes[1].props.primaryText)
     }
+
+    @Test
+    fun weatherPrimitivesRenderAndHourlyActionPreservesIdentity() {
+        RuntimeEnvironment.setQualifiers(
+            ReferenceGeometryProfile.WatchSquare240.qualifier(),
+        )
+        val repository =
+            SceneSnapshotRepository(
+                RuntimeEnvironment.getApplication().assets,
+            )
+        val snapshot =
+            repository.loadAll()
+                .first { loaded ->
+                    loaded.snapshot.appId == "weather" &&
+                        loaded.snapshot.nodes.any { it.id == "weather.condition-icon" }
+                }.snapshot
+        val actions = mutableListOf<ReferenceActionEnvelope>()
+
+        composeRule.setContent {
+            CompositionLocalProvider(
+                LocalDensity provides Density(1.25f, 1f),
+            ) {
+                AppSpecReferenceRenderer(
+                    snapshot = snapshot,
+                    profile = ReferenceGeometryProfile.WatchSquare240,
+                    onAction = actions::add,
+                )
+            }
+        }
+        composeRule.waitForIdle()
+
+        listOf(
+            "weather.current",
+            "weather.condition-icon",
+            "weather.primary",
+        ).forEach { id ->
+            composeRule
+                .onNodeWithTag(id, useUnmergedTree = true)
+                .assertExists()
+        }
+
+        composeRule
+            .onNodeWithTag("weather.primary", useUnmergedTree = true)
+            .performClick()
+        composeRule.waitForIdle()
+
+        assertEquals(
+            ReferenceActionEnvelope(
+                nodeId = "weather.primary",
+                actionId = "weather.hourly",
+                eventKind = "tap",
+                payload = ReferenceActionPayload.None,
+            ),
+            actions.last(),
+        )
+    }
 }
 
 internal fun ReferenceGeometryProfile.qualifier(): String {

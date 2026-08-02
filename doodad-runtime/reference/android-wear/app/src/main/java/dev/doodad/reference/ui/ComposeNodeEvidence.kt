@@ -191,6 +191,31 @@ private fun SceneNode.tokenRoles(): Map<String, String> =
                 "asset" to "package_image",
                 "fit" to "content_scale",
             )
+        "canvas" ->
+            mapOf(
+                "display" to "canvas_display_list_v1",
+                "colors" to "canvas_palette",
+            )
+        "icon" ->
+            mapOf(
+                "asset" to "weather_icon_registry",
+                "content" to requireNotNull(props.tone),
+            )
+        "surface" ->
+            mapOf(
+                "container" to requireNotNull(props.tone),
+                "shape" to requireNotNull(props.variant),
+            )
+        "chart" ->
+            mapOf(
+                "series" to requireNotNull(props.tone),
+                "style" to requireNotNull(props.variant),
+            )
+        "pager" ->
+            mapOf(
+                "layout" to "horizontal_pager",
+                "indicator" to if (props.checked == true) "visible" else "hidden",
+            )
         else -> error("No normalized token-role mapping for $kind")
     }
 

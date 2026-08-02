@@ -1,0 +1,41 @@
+{
+  "freshness": 0,
+  "location": "San Francisco",
+  "local_weekday": 6,
+  "local_minute": 1010,
+  "current": {
+    "temperature_tenths": 580,
+    "feels_like_tenths": 570,
+    "condition": 8,
+    "high_tenths": 620,
+    "low_tenths": 510,
+    "precipitation_percent": 32,
+    "humidity_percent": 78,
+    "wind_speed_tenths": 110,
+    "wind_direction_degrees": 245,
+    "uv_index_tenths": 10,
+    "sunrise_local_minute": 374,
+    "sunset_local_minute": 1202
+  },
+  "hours": [
+    {"local_minute": 1010, "temperature_tenths": 580, "precipitation_percent": 32, "condition": 8},
+    {"local_minute": 1020, "temperature_tenths": 580, "precipitation_percent": 48, "condition": 8},
+    {"local_minute": 1080, "temperature_tenths": 570, "precipitation_percent": 72, "condition": 9},
+    {"local_minute": 1140, "temperature_tenths": 560, "precipitation_percent": 52, "condition": 8},
+    {"local_minute": 1200, "temperature_tenths": 550, "precipitation_percent": 24, "condition": 7},
+    {"local_minute": 1260, "temperature_tenths": 540, "precipitation_percent": 10, "condition": 5},
+    {"local_minute": 1320, "temperature_tenths": 530, "precipitation_percent": 5, "condition": 5}
+  ],
+  "days": [
+    {"weekday": 6, "low_tenths": 510, "high_tenths": 620, "precipitation_percent": 72, "condition": 8},
+    {"weekday": 0, "low_tenths": 500, "high_tenths": 610, "precipitation_percent": 45, "condition": 7},
+    {"weekday": 1, "low_tenths": 490, "high_tenths": 630, "precipitation_percent": 10, "condition": 4},
+    {"weekday": 2, "low_tenths": 510, "high_tenths": 650, "precipitation_percent": 5, "condition": 2}
+  ],
+  "precipitation": [4, 8, 15, 24, 35, 48, 62, 72, 68, 55, 39, 22, 9],
+  "minutes_until_rain": 20,
+  "rain_duration_minutes": 35,
+  "units": 1,
+  "data_revision": 43,
+  "cache_age_minutes": 0
+}

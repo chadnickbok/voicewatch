@@ -168,6 +168,22 @@ def component_fixture() -> dict:
                             "label": "Fixture image",
                         },
                     },
+                    {
+                        "id": "fixture.canvas",
+                        "type": "canvas",
+                        "props": {
+                            "display_list": (
+                                "v1|C0|R1,4,4,24,24,4"
+                            ),
+                            "palette": "07110d,a8f279",
+                            "width": 32,
+                            "height": 32,
+                        },
+                        "events": {"tap": "advance_game"},
+                        "semantics": {
+                            "label": "Fixture game canvas",
+                        },
+                    },
                 ],
             },
         },
@@ -175,6 +191,16 @@ def component_fixture() -> dict:
 
 
 class SceneSnapshotTests(unittest.TestCase):
+    def test_font_scale_is_bounded_and_locked_before_replay(self) -> None:
+        payload = compile_canonical_cbor(component_fixture())
+        with NativeHost(ROOT) as host:
+            self.assertEqual(host.font_scale_milli(), 1000)
+            host.set_font_scale_milli(1300)
+            self.assertEqual(host.font_scale_milli(), 1300)
+            host.replay_mount(payload, 0)
+            with self.assertRaises(DoodadError):
+                host.set_font_scale_milli(1000)
+
     def test_snapshot_preserves_every_component_kind_and_resolved_field(
         self,
     ) -> None:
@@ -214,6 +240,7 @@ class SceneSnapshotTests(unittest.TestCase):
                 "voice_orb",
                 "live_card",
                 "image",
+                "canvas",
             },
         )
         self.assertEqual(by_id["fixture.text"]["props"]["max_lines"], 3)
@@ -246,6 +273,19 @@ class SceneSnapshotTests(unittest.TestCase):
         self.assertEqual(
             by_id["fixture.image"]["semantics"]["role"],
             "image",
+        )
+        self.assertEqual(
+            by_id["fixture.canvas"]["props"],
+            {
+                "display_list": "v1|C0|R1,4,4,24,24,4",
+                "palette": "07110d,a8f279",
+                "width": 32,
+                "height": 32,
+            },
+        )
+        self.assertEqual(
+            by_id["fixture.canvas"]["semantics"]["role"],
+            "canvas",
         )
 
     def test_replay_command_and_rejection_have_atomic_revisions(self) -> None:

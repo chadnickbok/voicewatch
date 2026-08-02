@@ -5,7 +5,9 @@
 
 #include "lvgl.h"
 #include "m3e/assets/image_assets.hpp"
+#include "m3e/assets/weather_icon_assets.hpp"
 #include "m3e/appspec/command_batch.hpp"
+#include "m3e/appspec/canvas_display_list.hpp"
 #include "m3e/appspec/renderer.hpp"
 #include "m3e/appspec/runtime.hpp"
 #include "m3e/appspec/wire.hpp"
@@ -13,6 +15,7 @@
 #include "m3e/components/transforming_list.hpp"
 #include "m3e/foundation/geometry.hpp"
 #include "m3e/foundation/semantic_tokens.hpp"
+#include "m3e/generated/weather_icons.hpp"
 #include "m3e/semantics/semantic_tree.hpp"
 #include "m3e/navigation/route_stack.hpp"
 #include "m3e/state/binding_hub.hpp"
@@ -24,6 +27,27 @@ LV_FONT_DECLARE(m3e_live_action_font_32);
 
 int main() {
     using namespace m3e;
+
+    {
+        assert(appspec::validate_canvas_display_list(
+            "v1|C0|R1,4,4,120,120,18|"
+            "T2,8,8,14,14,8,8,"
+            "00000000000000000000000002230400"
+            "00000000000000000000000000000000",
+            "07110d,10271c,52d88b,a8f279,ffcf66",
+            184,
+            128));
+        assert(!appspec::validate_canvas_display_list(
+            "v1|R1,4,4,120,120,18",
+            "07110d,10271c",
+            184,
+            128));
+        assert(!appspec::validate_canvas_display_list(
+            "v1|C0|T2,8,8,14,14,8,8,2",
+            "07110d,10271c,52d88b",
+            184,
+            128));
+    }
 
     {
         ImageAssetView media_art{};
@@ -415,7 +439,7 @@ int main() {
         const auto manifest = capabilities();
         assert(manifest.nodes_per_screen == 250);
         assert(manifest.tree_depth == 12);
-        assert(manifest.component_set_hash == 0xd030c312U);
+        assert(manifest.component_set_hash == 0x2a68c009U);
         constexpr UiEvent event{
             1, "calories", "today", "quick_add", "open_quick_add",
             EventKind::tap, 100};
@@ -945,6 +969,156 @@ int main() {
             m3e::appspec::CommandError::value_out_of_range);
         assert(progress_document.nodes[0].maximum == 200);
         assert(lv_bar_get_max_value(patched_progress) == 200);
+
+        auto* patched_chart = lv_chart_create(component_root);
+        lv_chart_set_point_count(patched_chart, 3);
+        lv_chart_set_range(
+            patched_chart, LV_CHART_AXIS_PRIMARY_Y, 0, 100);
+        lv_chart_add_series(
+            patched_chart,
+            lv_color_make(0x80, 0xC0, 0xFF),
+            LV_CHART_AXIS_PRIMARY_Y);
+        m3e::appspec::WireDocument chart_document;
+        std::memcpy(chart_document.strings.data() + 1, "chart", 6);
+        chart_document.string_bytes = 7;
+        chart_document.node_count = 1;
+        chart_document.nodes[0].id_offset = 1;
+        chart_document.nodes[0].kind =
+            m3e::appspec::ComponentKind::chart;
+        chart_document.nodes[0].maximum = 100;
+        chart_document.nodes[0].sample_count = 3;
+        chart_document.nodes[0].samples = {10, 20, 30};
+        chart_document.nodes[0].mounted_object = patched_chart;
+        m3e::appspec::CommandBatch chart_batch;
+        std::memcpy(chart_batch.strings.data() + 1, "chart", 6);
+        chart_batch.string_bytes = 7;
+        chart_batch.schema_version = 1;
+        chart_batch.domain = m3e::appspec::CommandDomain::ui;
+        chart_batch.command_count = 1;
+        chart_batch.commands[0].kind =
+            m3e::appspec::CommandKind::set_property;
+        chart_batch.commands[0].property =
+            m3e::appspec::PropertyKind::samples;
+        chart_batch.commands[0].target_offset = 1;
+        chart_batch.commands[0].samples = {15, 35, 70, 45};
+        chart_batch.commands[0].sample_count = 4;
+        assert(m3e::appspec::apply_ui_command_batch(
+                   chart_batch, chart_document).ok());
+        assert(chart_document.nodes[0].sample_count == 4);
+        assert(chart_document.nodes[0].samples[2] == 70);
+        assert(lv_chart_get_point_count(patched_chart) == 4);
+        chart_batch.commands[0].samples[2] = 101;
+        assert(
+            m3e::appspec::apply_ui_command_batch(
+                chart_batch, chart_document).error ==
+            m3e::appspec::CommandError::value_out_of_range);
+        assert(chart_document.nodes[0].samples[2] == 70);
+        assert(lv_chart_get_point_count(patched_chart) == 4);
+
+        auto* patched_icon = lv_image_create(component_root);
+        lv_image_set_src(
+            patched_icon,
+            weather_icon_asset(
+                generated::WeatherIcon::condition_clear_day,
+                30));
+        m3e::appspec::WireDocument icon_document;
+        std::memcpy(
+            icon_document.strings.data() + 1,
+            "icon\0condition_clear_day",
+            25);
+        icon_document.string_bytes = 26;
+        icon_document.node_count = 1;
+        icon_document.nodes[0].id_offset = 1;
+        icon_document.nodes[0].icon_offset = 6;
+        icon_document.nodes[0].kind =
+            m3e::appspec::ComponentKind::icon;
+        icon_document.nodes[0].size = 1;
+        icon_document.nodes[0].mounted_object = patched_icon;
+        m3e::appspec::CommandBatch icon_batch;
+        std::memcpy(
+            icon_batch.strings.data() + 1,
+            "icon\0condition_rain\0Rain\0rainy",
+            31);
+        icon_batch.string_bytes = 32;
+        icon_batch.schema_version = 1;
+        icon_batch.domain = m3e::appspec::CommandDomain::ui;
+        icon_batch.command_count = 3;
+        icon_batch.commands[0].kind =
+            m3e::appspec::CommandKind::set_property;
+        icon_batch.commands[0].property =
+            m3e::appspec::PropertyKind::icon;
+        icon_batch.commands[0].target_offset = 1;
+        icon_batch.commands[0].text_offset = 6;
+        icon_batch.commands[1].kind =
+            m3e::appspec::CommandKind::set_property;
+        icon_batch.commands[1].property =
+            m3e::appspec::PropertyKind::semantic_label;
+        icon_batch.commands[1].target_offset = 1;
+        icon_batch.commands[1].text_offset = 21;
+        icon_batch.commands[2].kind =
+            m3e::appspec::CommandKind::set_property;
+        icon_batch.commands[2].property =
+            m3e::appspec::PropertyKind::semantic_value;
+        icon_batch.commands[2].target_offset = 1;
+        icon_batch.commands[2].text_offset = 26;
+        assert(m3e::appspec::apply_ui_command_batch(
+                   icon_batch, icon_document).ok());
+        assert(std::strcmp(
+                   icon_document.string_at(
+                       icon_document.nodes[0].icon_offset),
+                   "condition_rain") == 0);
+        assert(std::strcmp(
+                   icon_document.string_at(
+                       icon_document.nodes[0].semantic_label_offset),
+                   "Rain") == 0);
+        assert(std::strcmp(
+                   icon_document.string_at(
+                       icon_document.nodes[0].semantic_value_offset),
+                   "rainy") == 0);
+        assert(lv_image_get_src(patched_icon) == weather_icon_asset(
+            generated::WeatherIcon::condition_rain,
+            30));
+
+        auto* patched_pager = lv_obj_create(component_root);
+        auto* first_page = lv_obj_create(patched_pager);
+        auto* second_page = lv_obj_create(patched_pager);
+        lv_obj_add_flag(second_page, LV_OBJ_FLAG_HIDDEN);
+        m3e::appspec::WireDocument pager_document;
+        std::memcpy(
+            pager_document.strings.data() + 1,
+            "pager\0page0\0page1",
+            18);
+        pager_document.string_bytes = 19;
+        pager_document.node_count = 3;
+        pager_document.nodes[0].id_offset = 1;
+        pager_document.nodes[0].kind =
+            m3e::appspec::ComponentKind::pager;
+        pager_document.nodes[0].value = 0;
+        pager_document.nodes[0].maximum = 2;
+        pager_document.nodes[0].mounted_object = patched_pager;
+        pager_document.nodes[1].id_offset = 7;
+        pager_document.nodes[1].parent_index = 0;
+        pager_document.nodes[1].mounted_object = first_page;
+        pager_document.nodes[2].id_offset = 13;
+        pager_document.nodes[2].parent_index = 0;
+        pager_document.nodes[2].mounted_object = second_page;
+        m3e::appspec::CommandBatch pager_batch;
+        std::memcpy(pager_batch.strings.data() + 1, "pager", 6);
+        pager_batch.string_bytes = 7;
+        pager_batch.schema_version = 1;
+        pager_batch.domain = m3e::appspec::CommandDomain::ui;
+        pager_batch.command_count = 1;
+        pager_batch.commands[0].kind =
+            m3e::appspec::CommandKind::set_property;
+        pager_batch.commands[0].property =
+            m3e::appspec::PropertyKind::value;
+        pager_batch.commands[0].target_offset = 1;
+        pager_batch.commands[0].integer_value = 1;
+        assert(m3e::appspec::apply_ui_command_batch(
+                   pager_batch, pager_document).ok());
+        assert(pager_document.nodes[0].value == 1);
+        assert(lv_obj_has_flag(first_page, LV_OBJ_FLAG_HIDDEN));
+        assert(!lv_obj_has_flag(second_page, LV_OBJ_FLAG_HIDDEN));
         lv_obj_clean(component_root);
 
         m3e::appspec::WireDocument mounted_document;

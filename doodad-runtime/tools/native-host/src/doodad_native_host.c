@@ -656,6 +656,7 @@ int doodad_host_create(void) {
     g_scene_revision = 0;
     g_route_generation = 0;
     g_wasm_call_count = 0;
+    m3e_appspec_set_font_scale_milli(1000);
     set_current_cause(DOODAD_SCENE_CAUSE_START, NULL, 0);
     g_scheduler = m3e_exact_scheduler_create();
     if (g_scheduler == NULL) {
@@ -909,35 +910,83 @@ int doodad_host_deliver_provider(void) {
     g_weather_request_pending = false;
     g_weather_cycle = (uint8_t)((g_weather_cycle + 1) % 3);
 
-    int32_t temperature = 720;
-    const char* condition = "Clear";
-    const char* detail = "High 76 - Low 59 - Rain 10%";
-    uint64_t data_revision = 1;
-    uint64_t age_minutes = 12;
+    m3e_weather_snapshot_v2 snapshot = {0};
+    snapshot.location = "San Francisco";
+    snapshot.local_weekday = 6;
+    snapshot.local_minute = 609;
+    snapshot.current.temperature_tenths = 620;
+    snapshot.current.feels_like_tenths = 590;
+    snapshot.current.high_tenths = 670;
+    snapshot.current.low_tenths = 540;
+    snapshot.current.condition = 2;
+    snapshot.current.precipitation_percent = 0;
+    snapshot.current.humidity_percent = 49;
+    snapshot.current.wind_speed_tenths = 80;
+    snapshot.current.wind_direction_degrees = 270;
+    snapshot.current.uv_index_tenths = 30;
+    snapshot.current.sunrise_local_minute = 372;
+    snapshot.current.sunset_local_minute = 1205;
+    snapshot.current.has_feels_like = 1;
+    snapshot.current.has_high = 1;
+    snapshot.current.has_low = 1;
+    snapshot.current.has_precipitation = 1;
+    snapshot.current.has_humidity = 1;
+    snapshot.current.has_wind_speed = 1;
+    snapshot.current.has_wind_direction = 1;
+    snapshot.current.has_uv_index = 1;
+    snapshot.current.has_sunrise = 1;
+    snapshot.current.has_sunset = 1;
+    snapshot.hour_count = 7;
+    static const int32_t temperatures[7] = {
+        620, 630, 650, 660, 670, 660, 640};
+    static const uint8_t conditions[7] = {2, 2, 0, 0, 0, 2, 2};
+    for (uint8_t index = 0; index < snapshot.hour_count; ++index) {
+        snapshot.hours[index].local_minute =
+            (uint16_t)(609 + index * 60);
+        snapshot.hours[index].temperature_tenths = temperatures[index];
+        snapshot.hours[index].precipitation_percent = 0;
+        snapshot.hours[index].condition = conditions[index];
+        snapshot.hours[index].has_precipitation = 1;
+    }
+    snapshot.day_count = 4;
+    static const uint8_t day_conditions[4] = {2, 2, 8, 2};
+    static const uint8_t day_precipitation[4] = {0, 5, 30, 10};
+    static const int32_t day_lows[4] = {540, 530, 510, 520};
+    static const int32_t day_highs[4] = {670, 650, 630, 640};
+    for (uint8_t index = 0; index < snapshot.day_count; ++index) {
+        snapshot.days[index].weekday = (uint8_t)((6 + index) % 7);
+        snapshot.days[index].low_tenths = day_lows[index];
+        snapshot.days[index].high_tenths = day_highs[index];
+        snapshot.days[index].precipitation_percent =
+            day_precipitation[index];
+        snapshot.days[index].condition = day_conditions[index];
+        snapshot.days[index].has_precipitation = 1;
+    }
+    snapshot.minutes_until_rain = -1;
+    snapshot.rain_duration_minutes = 0;
+    snapshot.units = 1;
+    snapshot.data_revision = 1;
+    snapshot.cache_age_minutes = 12;
     uint8_t freshness = 1;
     if (g_weather_cycle == 2) {
-        condition = "Offline";
-        detail = "No live forecast - cached data";
-        age_minutes = 18;
+        snapshot.cache_age_minutes = 18;
         freshness = 2;
     } else if (g_weather_cycle == 0) {
-        temperature = 710;
-        condition = "Clear";
-        detail = "High 75 - Low 58 - Rain 5%";
-        data_revision = 2;
-        age_minutes = 0;
+        snapshot.current.temperature_tenths = 610;
+        snapshot.current.high_tenths = 660;
+        snapshot.current.low_tenths = 530;
+        snapshot.hours[0].temperature_tenths = 610;
+        snapshot.days[0].low_tenths = 530;
+        snapshot.days[0].high_tenths = 660;
+        snapshot.data_revision = 2;
+        snapshot.cache_age_minutes = 0;
         freshness = 0;
     }
 
-    uint8_t envelope[512];
+    uint8_t envelope[768];
     const size_t envelope_length =
-        m3e_encode_weather_provider_event(
-            temperature,
-            condition,
-            detail,
-            "San Francisco",
-            data_revision,
-            age_minutes,
+        m3e_encode_weather_provider_event_v2(
+            &snapshot,
             ++g_provider_revision,
             freshness,
             g_scenario_ms,
@@ -953,6 +1002,48 @@ int doodad_host_deliver_provider(void) {
         return 0;
     }
     return 1;
+}
+
+int doodad_host_deliver_weather_payload(
+    const uint8_t* payload,
+    size_t payload_size,
+    uint8_t freshness) {
+    if (!g_weather_request_pending) {
+        set_error("no provider request is pending");
+        return 0;
+    }
+    if (g_handle_provider_event == NULL ||
+        g_provider_revision == UINT64_MAX) {
+        set_error("guest provider handler unavailable");
+        return 0;
+    }
+    if (payload == NULL || payload_size == 0 || payload_size > 512 ||
+        freshness > 3) {
+        set_error("invalid weather fixture payload");
+        return 0;
+    }
+    uint8_t envelope[768];
+    const size_t envelope_length = m3e_encode_provider_event(
+        "weather",
+        "weather.snapshot.v2",
+        ++g_provider_revision,
+        freshness,
+        g_scenario_ms,
+        payload,
+        payload_size,
+        envelope,
+        sizeof(envelope));
+    if (envelope_length == 0) {
+        set_error("weather fixture envelope encoding failed");
+        return 0;
+    }
+    g_weather_request_pending = false;
+    return dispatch_guest_handler(
+        g_handle_provider_event,
+        "handle_provider_event trapped",
+        envelope,
+        envelope_length,
+        DOODAD_SCENE_CAUSE_PROVIDER_EVENT);
 }
 
 const uint16_t* doodad_host_framebuffer(void) {
@@ -1190,6 +1281,23 @@ uint64_t doodad_host_scene_revision(void) {
 
 uint64_t doodad_host_route_generation(void) {
     return g_route_generation;
+}
+
+int doodad_host_set_font_scale_milli(uint16_t scale_milli) {
+    if (scale_milli != 1000 && scale_milli != 1300) {
+        set_error("font scale must be 1000 or 1300");
+        return 0;
+    }
+    if (g_scene_revision != 0) {
+        set_error("font scale must be set before scene replay");
+        return 0;
+    }
+    m3e_appspec_set_font_scale_milli(scale_milli);
+    return 1;
+}
+
+uint16_t doodad_host_font_scale_milli(void) {
+    return m3e_appspec_font_scale_milli();
 }
 
 int doodad_host_replay_mount(

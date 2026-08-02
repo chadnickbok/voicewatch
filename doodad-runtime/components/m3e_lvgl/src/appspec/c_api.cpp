@@ -4,6 +4,7 @@
 #include <cstring>
 #include <new>
 
+#include "m3e/assets/weather_fonts.hpp"
 #include "m3e/appspec/command_batch.hpp"
 #include "m3e/appspec/renderer.hpp"
 #include "m3e/appspec/scene_snapshot.hpp"
@@ -109,6 +110,8 @@ const char* semantic_role_name(m3e::SemanticRole role) {
         case m3e::SemanticRole::dialog: return "dialog";
         case m3e::SemanticRole::timer: return "timer";
         case m3e::SemanticRole::image: return "image";
+        case m3e::SemanticRole::canvas: return "canvas";
+        case m3e::SemanticRole::group: return "group";
     }
     return "unknown";
 }
@@ -401,10 +404,17 @@ extern "C" const char* m3e_appspec_mounted_text(
             node.kind == m3e::appspec::ComponentKind::button ||
             node.kind == m3e::appspec::ComponentKind::toggle ||
             node.kind == m3e::appspec::ComponentKind::voice_orb) {
-            label = secondary == 0 &&
-                            lv_obj_get_child_count(object) > 0
-                        ? lv_obj_get_child(object, 0)
-                        : nullptr;
+            if (secondary == 0) {
+                const auto count = lv_obj_get_child_count(object);
+                for (std::uint32_t child = 0; child < count; ++child) {
+                    auto* candidate = lv_obj_get_child(object, child);
+                    if (candidate != nullptr &&
+                        lv_obj_check_type(candidate, &lv_label_class)) {
+                        label = candidate;
+                        break;
+                    }
+                }
+            }
         } else if (
             node.kind == m3e::appspec::ComponentKind::card ||
             node.kind == m3e::appspec::ComponentKind::live_card) {
@@ -512,6 +522,15 @@ extern "C" std::size_t m3e_appspec_node_layout_evidence_json(
         *g_event_document,
         output,
         output_size);
+}
+
+extern "C" void m3e_appspec_set_font_scale_milli(
+    std::uint16_t scale_milli) {
+    m3e::set_weather_font_scale_milli(scale_milli);
+}
+
+extern "C" std::uint16_t m3e_appspec_font_scale_milli(void) {
+    return m3e::weather_font_scale_milli();
 }
 
 extern "C" void m3e_appspec_reset_mounted_document(void) {

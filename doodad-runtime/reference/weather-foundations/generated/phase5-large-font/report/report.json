@@ -1,0 +1,5586 @@
+{
+  "artifacts": {
+    "contact_sheet": "contact-sheet.png"
+  },
+  "cases": [
+    {
+      "app_slug": "weather",
+      "artifacts": {
+        "candidate": "cases/weather-large_font-0000/candidate.png",
+        "candidate_boundaries": "cases/weather-large_font-0000/candidate_boundaries.png",
+        "candidate_evidence": "cases/weather-large_font-0000/candidate_evidence.json",
+        "candidate_manifest": "cases/weather-large_font-0000/candidate_manifest.json",
+        "candidate_rgb565le": "cases/weather-large_font-0000/candidate_rgb565le.rgb565le",
+        "difference": "cases/weather-large_font-0000/difference.png",
+        "metrics": "cases/weather-large_font-0000/metrics.json",
+        "overlay": "cases/weather-large_font-0000/overlay.png",
+        "reference": "cases/weather-large_font-0000/reference.png",
+        "reference_boundaries": "cases/weather-large_font-0000/reference_boundaries.png",
+        "reference_evidence": "cases/weather-large_font-0000/reference_evidence.node-evidence.json",
+        "reference_manifest": "cases/weather-large_font-0000/reference_manifest.json",
+        "reference_rgb565_image": "cases/weather-large_font-0000/reference_rgb565.png",
+        "reference_rgb565le": "cases/weather-large_font-0000/reference.rgb565le",
+        "reference_rgb888": "cases/weather-large_font-0000/reference_rgb888.rgb888",
+        "reference_rgb888_metadata": "cases/weather-large_font-0000/reference_rgb888_metadata.rgb888.json",
+        "review": "cases/weather-large_font-0000/review.json",
+        "scene_snapshot": "cases/weather-large_font-0000/scene_snapshot.json",
+        "side_by_side": "cases/weather-large_font-0000/side_by_side.png"
+      },
+      "capture_phase": "large_font",
+      "case_id": "weather.large_font.watch_square_240.sequence-0000",
+      "comparison_policy": "square-app-baseline",
+      "pixel": {
+        "absolute_error_sum": 3677786,
+        "changed_pixel_fraction": 0.1672048611111111,
+        "changed_pixels": 9631,
+        "channel_samples": 172800,
+        "exact": false,
+        "height": 240,
+        "mae": 21.283483796296295,
+        "max_channel_error": 247,
+        "mse": 3986.7903587962965,
+        "pixel_count": 57600,
+        "rmse": 63.141035458695924,
+        "squared_error_sum": 688917374,
+        "width": 240
+      },
+      "profile_id": "watch_square_240",
+      "quality": {
+        "lvgl_product": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 27,
+          "passed": true,
+          "visible_node_count": 27
+        },
+        "wear_compose_reference": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 27,
+          "passed": true,
+          "visible_node_count": 27
+        }
+      },
+      "quality_passed": true,
+      "result": "different",
+      "review_status": "pending",
+      "sequence": 0,
+      "snapshot_sha256": "49ca96f2cafe09f0ef874822342351b5092790cb6231df4178facd2fdfabb255",
+      "structured": {
+        "candidate_node_count": 27,
+        "compared_node_count": 27,
+        "exact": false,
+        "mismatch_count": 119,
+        "mismatch_counts": {
+          "bounds": 114,
+          "tokens": 5
+        },
+        "mismatches": [
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 5530,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 6349,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 39526,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 38707,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 32973,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 32768,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 28877,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 14950,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 9011,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 8806,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 33587,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 32768,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 45056,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 40960,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.feels-pill",
+            "source": "pair"
+          },
+          {
+            "actual": 2048,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.feels-pill",
+            "source": "pair"
+          },
+          {
+            "actual": 4915,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 45056,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 2048,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 32563,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 25600,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hero-row",
+            "source": "pair"
+          },
+          {
+            "actual": 49152,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hero-row",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 9216,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10035,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 10650,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10240,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 26829,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 26624,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 6144,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5734,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.high-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 6144,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 45056,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 2048,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 25805,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 6144,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 21914,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 2048,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 25805,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 23347,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29082,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.location",
+            "source": "pair"
+          },
+          {
+            "actual": 2253,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2458,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.location-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 32768,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 2048,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 8602,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 33997,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 33587,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 26829,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 26624,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 29491,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29082,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.low-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 6144,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 21914,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 25190,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 25805,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 5325,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5939,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 41370,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 41165,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 2458,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2048,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 4710,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4506,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1434,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 4710,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 9830,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 205,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 38093,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 5734,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5530,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.summary",
+            "source": "pair"
+          },
+          {
+            "actual": 4710,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4506,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.symbol",
+            "source": "pair"
+          },
+          {
+            "actual": 2662,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2458,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.symbol",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 27,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 31,
+            "field": "bounds_px.width",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 193,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 189,
+            "field": "bounds_px.x",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 161,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 160,
+            "field": "bounds_px.y",
+            "node_id": "weather.feels",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 141,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 73,
+            "field": "bounds_px.width",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 44,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 43,
+            "field": "bounds_px.x",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 164,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 160,
+            "field": "bounds_px.y",
+            "node_id": "weather.feels-label",
+            "source": "pair"
+          },
+          {
+            "actual": 220,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 200,
+            "field": "bounds_px.width",
+            "node_id": "weather.feels-pill",
+            "source": "pair"
+          },
+          {
+            "actual": 10,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.feels-pill",
+            "source": "pair"
+          },
+          {
+            "actual": 24,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.height",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 220,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.width",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 10,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.x",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 159,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.y",
+            "node_id": "weather.feels-row",
+            "source": "pair"
+          },
+          {
+            "actual": 125,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.height",
+            "node_id": "weather.hero-row",
+            "source": "pair"
+          },
+          {
+            "actual": 240,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.width",
+            "node_id": "weather.hero-row",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 45,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 49,
+            "field": "bounds_px.width",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 52,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 50,
+            "field": "bounds_px.x",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 131,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 130,
+            "field": "bounds_px.y",
+            "node_id": "weather.high",
+            "source": "pair"
+          },
+          {
+            "actual": 30,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 28,
+            "field": "bounds_px.x",
+            "node_id": "weather.high-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 30,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.height",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 220,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.width",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 10,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.x",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 126,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.y",
+            "node_id": "weather.high-low",
+            "source": "pair"
+          },
+          {
+            "actual": 30,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.height",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 107,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.width",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 10,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.x",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 126,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.y",
+            "node_id": "weather.high-row",
+            "source": "pair"
+          },
+          {
+            "actual": 114,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 142,
+            "field": "bounds_px.width",
+            "node_id": "weather.location",
+            "source": "pair"
+          },
+          {
+            "actual": 11,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 12,
+            "field": "bounds_px.y",
+            "node_id": "weather.location-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.height",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 160,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.width",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 10,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.x",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.y",
+            "node_id": "weather.location-row",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 42,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.width",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 166,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 164,
+            "field": "bounds_px.x",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 131,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 130,
+            "field": "bounds_px.y",
+            "node_id": "weather.low",
+            "source": "pair"
+          },
+          {
+            "actual": 144,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 142,
+            "field": "bounds_px.x",
+            "node_id": "weather.low-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 30,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.height",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 107,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.width",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 123,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.x",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 126,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.y",
+            "node_id": "weather.low-row",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 26,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 29,
+            "field": "bounds_px.width",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 202,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 201,
+            "field": "bounds_px.x",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 12,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 10,
+            "field": "bounds_px.y",
+            "node_id": "weather.status",
+            "source": "pair"
+          },
+          {
+            "actual": 23,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 22,
+            "field": "bounds_px.height",
+            "node_id": "weather.status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 7,
+            "field": "bounds_px.y",
+            "node_id": "weather.status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 23,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.height",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 48,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 1,
+            "field": "bounds_px.width",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 186,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.x",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.y",
+            "node_id": "weather.status-row",
+            "source": "pair"
+          },
+          {
+            "actual": 28,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 27,
+            "field": "bounds_px.y",
+            "node_id": "weather.summary",
+            "source": "pair"
+          },
+          {
+            "actual": 23,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 22,
+            "field": "bounds_px.height",
+            "node_id": "weather.symbol",
+            "source": "pair"
+          },
+          {
+            "actual": 13,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 12,
+            "field": "bounds_px.x",
+            "node_id": "weather.symbol",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "neutral",
+            "field": "token_roles.content",
+            "node_id": "weather.feels-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.high-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "neutral",
+            "field": "token_roles.content",
+            "node_id": "weather.location-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "primary",
+            "field": "token_roles.content",
+            "node_id": "weather.low-icon",
+            "source": "pair"
+          }
+        ],
+        "reference_node_count": 27
+      },
+      "title": "Weather + Rain"
+    },
+    {
+      "app_slug": "weather",
+      "artifacts": {
+        "candidate": "cases/weather-large_font-0003/candidate.png",
+        "candidate_boundaries": "cases/weather-large_font-0003/candidate_boundaries.png",
+        "candidate_evidence": "cases/weather-large_font-0003/candidate_evidence.json",
+        "candidate_manifest": "cases/weather-large_font-0003/candidate_manifest.json",
+        "candidate_rgb565le": "cases/weather-large_font-0003/candidate_rgb565le.rgb565le",
+        "difference": "cases/weather-large_font-0003/difference.png",
+        "metrics": "cases/weather-large_font-0003/metrics.json",
+        "overlay": "cases/weather-large_font-0003/overlay.png",
+        "reference": "cases/weather-large_font-0003/reference.png",
+        "reference_boundaries": "cases/weather-large_font-0003/reference_boundaries.png",
+        "reference_evidence": "cases/weather-large_font-0003/reference_evidence.node-evidence.json",
+        "reference_manifest": "cases/weather-large_font-0003/reference_manifest.json",
+        "reference_rgb565_image": "cases/weather-large_font-0003/reference_rgb565.png",
+        "reference_rgb565le": "cases/weather-large_font-0003/reference.rgb565le",
+        "reference_rgb888": "cases/weather-large_font-0003/reference_rgb888.rgb888",
+        "reference_rgb888_metadata": "cases/weather-large_font-0003/reference_rgb888_metadata.rgb888.json",
+        "review": "cases/weather-large_font-0003/review.json",
+        "scene_snapshot": "cases/weather-large_font-0003/scene_snapshot.json",
+        "side_by_side": "cases/weather-large_font-0003/side_by_side.png"
+      },
+      "capture_phase": "large_font",
+      "case_id": "weather.large_font.watch_square_240.sequence-0003",
+      "comparison_policy": "square-app-baseline",
+      "pixel": {
+        "absolute_error_sum": 2854592,
+        "changed_pixel_fraction": 0.1776388888888889,
+        "changed_pixels": 10232,
+        "channel_samples": 172800,
+        "exact": false,
+        "height": 240,
+        "mae": 16.51962962962963,
+        "max_channel_error": 255,
+        "mse": 2610.454537037037,
+        "pixel_count": 57600,
+        "rmse": 51.09260745975916,
+        "squared_error_sum": 451086544,
+        "width": 240
+      },
+      "profile_id": "watch_square_240",
+      "quality": {
+        "lvgl_product": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 42,
+          "passed": true,
+          "visible_node_count": 42
+        },
+        "wear_compose_reference": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 42,
+          "passed": true,
+          "visible_node_count": 42
+        }
+      },
+      "quality_passed": true,
+      "result": "different",
+      "review_status": "pending",
+      "sequence": 3,
+      "snapshot_sha256": "dbf8ecbffb372f8b1391d25a28418f65942b34a97f8d6edea79a7ab0abc1a2b5",
+      "structured": {
+        "candidate_node_count": 42,
+        "compared_node_count": 42,
+        "exact": false,
+        "mismatch_count": 193,
+        "mismatch_counts": {
+          "bounds": 186,
+          "tokens": 7
+        },
+        "mismatches": [
+          {
+            "actual": 13517,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 13312,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-10",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7977,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 4915,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10076,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 16384,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 13599,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 26419,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 24991,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-10-label",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2662,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-10-label",
+            "source": "pair"
+          },
+          {
+            "actual": 17408,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 17203,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-10-label",
+            "source": "pair"
+          },
+          {
+            "actual": 5325,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 7168,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7782,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 15155,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 14746,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 30720,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 30925,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 13517,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 13312,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-10-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 25190,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 24986,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-11",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7977,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 4915,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10076,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 28058,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 25272,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 26419,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 24991,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-11-label",
+            "source": "pair"
+          },
+          {
+            "actual": 29082,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 28877,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-11-label",
+            "source": "pair"
+          },
+          {
+            "actual": 5325,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 7168,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7782,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 26829,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 26419,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 30720,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 30925,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 25190,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 24986,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-11-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 10445,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10650,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-12",
+            "source": "pair"
+          },
+          {
+            "actual": 37069,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 36864,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-12",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7977,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 4915,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10076,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 39936,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 37151,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 26419,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 24991,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-12-label",
+            "source": "pair"
+          },
+          {
+            "actual": 5325,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 7168,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7782,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 38707,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 38298,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 30720,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 30925,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 10445,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10650,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-12-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 37069,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 36864,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-12-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 10650,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10445,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-now",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7977,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 4915,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10076,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 4506,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1925,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 26419,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 24991,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-now-label",
+            "source": "pair"
+          },
+          {
+            "actual": 5325,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4710,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 7168,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7782,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 3277,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3072,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 30720,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 30925,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 10650,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10445,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hour-now-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 10854,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 10650,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-chart-card",
+            "source": "pair"
+          },
+          {
+            "actual": 3686,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3482,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-chart-heading",
+            "source": "pair"
+          },
+          {
+            "actual": 11674,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11469,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-chart-heading",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2662,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 14950,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 16794,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 11469,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11264,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 6758,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7168,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 7168,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9748,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 8192,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11469,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 0,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 1843,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 655,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 5325,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 6144,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 17818,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 21504,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 11469,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11264,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 1843,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1024,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 12083,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11878,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-rain-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-rain-label",
+            "source": "pair"
+          },
+          {
+            "actual": 33382,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5939,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-rain-label",
+            "source": "pair"
+          },
+          {
+            "actual": 12083,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11674,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-rain-label",
+            "source": "pair"
+          },
+          {
+            "actual": 4096,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3482,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-rain-value",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-status",
+            "source": "pair"
+          },
+          {
+            "actual": 5120,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5530,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-status",
+            "source": "pair"
+          },
+          {
+            "actual": 2458,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2048,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-status",
+            "source": "pair"
+          },
+          {
+            "actual": 4710,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4506,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1434,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 21709,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 21914,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-summary-copy",
+            "source": "pair"
+          },
+          {
+            "actual": 11469,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11264,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hourly-summary-copy",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1638,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 10650,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4915,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 13926,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 16179,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 19866,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 20275,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1638,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 10650,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4915,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 24576,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 28467,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 19866,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 20275,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1638,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 10650,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4915,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 35226,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 40960,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 19866,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 20275,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1638,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-time-now",
+            "source": "pair"
+          },
+          {
+            "actual": 10650,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5325,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.hourly-time-now",
+            "source": "pair"
+          },
+          {
+            "actual": 19866,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 20275,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.hourly-time-now",
+            "source": "pair"
+          },
+          {
+            "actual": 2048,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1638,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.hourly-times",
+            "source": "pair"
+          },
+          {
+            "actual": 15155,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 14950,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.rain-chart",
+            "source": "pair"
+          },
+          {
+            "actual": 66,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 65,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-10",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 39,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 24,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 49,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 80,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 66,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 129,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 122,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-10-label",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 13,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-10-label",
+            "source": "pair"
+          },
+          {
+            "actual": 85,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 84,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-10-label",
+            "source": "pair"
+          },
+          {
+            "actual": 26,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 35,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 38,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 74,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 72,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 150,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 151,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-10-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 66,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 65,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-10-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 123,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 122,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-11",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 39,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 24,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 49,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 137,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 123,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 129,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 122,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-11-label",
+            "source": "pair"
+          },
+          {
+            "actual": 142,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 141,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-11-label",
+            "source": "pair"
+          },
+          {
+            "actual": 26,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 35,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 38,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 131,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 129,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 150,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 151,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-11-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 123,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 122,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-11-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 51,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 52,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-12",
+            "source": "pair"
+          },
+          {
+            "actual": 181,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 180,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-12",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 39,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 24,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 49,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 195,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 181,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 129,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 122,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-12-label",
+            "source": "pair"
+          },
+          {
+            "actual": 26,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 35,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 38,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 189,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 187,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 150,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 151,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-12-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 51,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 52,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-12-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 181,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 180,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-12-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 52,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 51,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-now",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 39,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 24,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 49,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 22,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 9,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 129,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 122,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-now-label",
+            "source": "pair"
+          },
+          {
+            "actual": 26,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 23,
+            "field": "bounds_px.height",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 35,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 38,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 16,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 15,
+            "field": "bounds_px.x",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 150,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 151,
+            "field": "bounds_px.y",
+            "node_id": "weather.hour-now-temp",
+            "source": "pair"
+          },
+          {
+            "actual": 52,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 51,
+            "field": "bounds_px.width",
+            "node_id": "weather.hour-now-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 53,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 52,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-chart-card",
+            "source": "pair"
+          },
+          {
+            "actual": 18,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 17,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-chart-heading",
+            "source": "pair"
+          },
+          {
+            "actual": 57,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 56,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-chart-heading",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 13,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 73,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 82,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 56,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 55,
+            "field": "bounds_px.x",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 33,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 35,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 35,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 48,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 40,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 56,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 0,
+            "field": "bounds_px.x",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 9,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 3,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 26,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 30,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 87,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 105,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 56,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 55,
+            "field": "bounds_px.x",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 9,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 5,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-now",
+            "source": "pair"
+          },
+          {
+            "actual": 59,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 58,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-rain-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-rain-label",
+            "source": "pair"
+          },
+          {
+            "actual": 163,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 29,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-rain-label",
+            "source": "pair"
+          },
+          {
+            "actual": 59,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 57,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-rain-label",
+            "source": "pair"
+          },
+          {
+            "actual": 20,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 17,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-rain-value",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-status",
+            "source": "pair"
+          },
+          {
+            "actual": 25,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 27,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-status",
+            "source": "pair"
+          },
+          {
+            "actual": 12,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 10,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-status",
+            "source": "pair"
+          },
+          {
+            "actual": 23,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 22,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 7,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 106,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 107,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-summary-copy",
+            "source": "pair"
+          },
+          {
+            "actual": 56,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 55,
+            "field": "bounds_px.x",
+            "node_id": "weather.hourly-summary-copy",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 8,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 52,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 24,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 68,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 79,
+            "field": "bounds_px.x",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 97,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 99,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-time-20",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 8,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 52,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 24,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 120,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 139,
+            "field": "bounds_px.x",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 97,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 99,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-time-40",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 8,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 52,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 24,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 172,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 200,
+            "field": "bounds_px.x",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 97,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 99,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-time-60",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 8,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-time-now",
+            "source": "pair"
+          },
+          {
+            "actual": 52,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 26,
+            "field": "bounds_px.width",
+            "node_id": "weather.hourly-time-now",
+            "source": "pair"
+          },
+          {
+            "actual": 97,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 99,
+            "field": "bounds_px.y",
+            "node_id": "weather.hourly-time-now",
+            "source": "pair"
+          },
+          {
+            "actual": 10,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 8,
+            "field": "bounds_px.height",
+            "node_id": "weather.hourly-times",
+            "source": "pair"
+          },
+          {
+            "actual": 74,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 73,
+            "field": "bounds_px.y",
+            "node_id": "weather.rain-chart",
+            "source": "pair"
+          },
+          {
+            "actual": null,
+            "category": "tokens",
+            "code": "token_missing",
+            "expected": "line",
+            "field": "token_roles.style",
+            "node_id": "weather.rain-chart",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.hour-10-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.hour-11-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.hour-12-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.hour-now-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.hourly-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "primary",
+            "field": "token_roles.content",
+            "node_id": "weather.hourly-rain-icon",
+            "source": "pair"
+          }
+        ],
+        "reference_node_count": 42
+      },
+      "title": "Weather + Rain"
+    },
+    {
+      "app_slug": "weather",
+      "artifacts": {
+        "candidate": "cases/weather-large_font-0005/candidate.png",
+        "candidate_boundaries": "cases/weather-large_font-0005/candidate_boundaries.png",
+        "candidate_evidence": "cases/weather-large_font-0005/candidate_evidence.json",
+        "candidate_manifest": "cases/weather-large_font-0005/candidate_manifest.json",
+        "candidate_rgb565le": "cases/weather-large_font-0005/candidate_rgb565le.rgb565le",
+        "difference": "cases/weather-large_font-0005/difference.png",
+        "metrics": "cases/weather-large_font-0005/metrics.json",
+        "overlay": "cases/weather-large_font-0005/overlay.png",
+        "reference": "cases/weather-large_font-0005/reference.png",
+        "reference_boundaries": "cases/weather-large_font-0005/reference_boundaries.png",
+        "reference_evidence": "cases/weather-large_font-0005/reference_evidence.node-evidence.json",
+        "reference_manifest": "cases/weather-large_font-0005/reference_manifest.json",
+        "reference_rgb565_image": "cases/weather-large_font-0005/reference_rgb565.png",
+        "reference_rgb565le": "cases/weather-large_font-0005/reference.rgb565le",
+        "reference_rgb888": "cases/weather-large_font-0005/reference_rgb888.rgb888",
+        "reference_rgb888_metadata": "cases/weather-large_font-0005/reference_rgb888_metadata.rgb888.json",
+        "review": "cases/weather-large_font-0005/review.json",
+        "scene_snapshot": "cases/weather-large_font-0005/scene_snapshot.json",
+        "side_by_side": "cases/weather-large_font-0005/side_by_side.png"
+      },
+      "capture_phase": "large_font",
+      "case_id": "weather.large_font.watch_square_240.sequence-0005",
+      "comparison_policy": "square-app-baseline",
+      "pixel": {
+        "absolute_error_sum": 3553162,
+        "changed_pixel_fraction": 0.16927083333333334,
+        "changed_pixels": 9750,
+        "channel_samples": 172800,
+        "exact": false,
+        "height": 240,
+        "mae": 20.56228009259259,
+        "max_channel_error": 247,
+        "mse": 3505.3488773148147,
+        "pixel_count": 57600,
+        "rmse": 59.205986836761824,
+        "squared_error_sum": 605724286,
+        "width": 240
+      },
+      "profile_id": "watch_square_240",
+      "quality": {
+        "lvgl_product": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 38,
+          "passed": true,
+          "visible_node_count": 38
+        },
+        "wear_compose_reference": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 38,
+          "passed": true,
+          "visible_node_count": 38
+        }
+      },
+      "quality_passed": true,
+      "result": "different",
+      "review_status": "pending",
+      "sequence": 5,
+      "snapshot_sha256": "2384a928a47b6e90124d6ecdcf83ea26d6ffab56144ec9fe0256f9410f26df94",
+      "structured": {
+        "candidate_node_count": 38,
+        "compared_node_count": 38,
+        "exact": false,
+        "mismatch_count": 111,
+        "mismatch_counts": {
+          "bounds": 106,
+          "tokens": 5
+        },
+        "mismatches": [
+          {
+            "actual": 21299,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 20070,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.daily-dot-current",
+            "source": "pair"
+          },
+          {
+            "actual": 27034,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 25805,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.daily-dot-details",
+            "source": "pair"
+          },
+          {
+            "actual": 22938,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 21709,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.daily-dot-hourly",
+            "source": "pair"
+          },
+          {
+            "actual": 24576,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 23347,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.daily-dot-selected",
+            "source": "pair"
+          },
+          {
+            "actual": 38502,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 38298,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.daily-list",
+            "source": "pair"
+          },
+          {
+            "actual": 23347,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29082,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.daily-location",
+            "source": "pair"
+          },
+          {
+            "actual": 1843,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1638,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.daily-location",
+            "source": "pair"
+          },
+          {
+            "actual": 2253,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2458,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.daily-location-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.daily-status",
+            "source": "pair"
+          },
+          {
+            "actual": 5120,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5530,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.daily-status",
+            "source": "pair"
+          },
+          {
+            "actual": 2458,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2048,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.daily-status",
+            "source": "pair"
+          },
+          {
+            "actual": 4710,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4506,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.daily-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1434,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.daily-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 45875,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 40960,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.day-mon",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-mon",
+            "source": "pair"
+          },
+          {
+            "actual": 38912,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 36250,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-mon-high",
+            "source": "pair"
+          },
+          {
+            "actual": 19456,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 19046,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-mon-high",
+            "source": "pair"
+          },
+          {
+            "actual": 8806,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 8704,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.day-mon-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 20275,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 17510,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-mon-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 17613,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 17664,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-mon-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 6963,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-mon-label",
+            "source": "pair"
+          },
+          {
+            "actual": 19866,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 19661,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-mon-label",
+            "source": "pair"
+          },
+          {
+            "actual": 30106,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 27443,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-mon-low",
+            "source": "pair"
+          },
+          {
+            "actual": 19866,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 19661,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-mon-low",
+            "source": "pair"
+          },
+          {
+            "actual": 45875,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 40960,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.day-today",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-today",
+            "source": "pair"
+          },
+          {
+            "actual": 38912,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 36250,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-today-high",
+            "source": "pair"
+          },
+          {
+            "actual": 9626,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9216,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-today-high",
+            "source": "pair"
+          },
+          {
+            "actual": 8806,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 8704,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.day-today-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 20275,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 17510,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-today-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7834,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-today-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 6963,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-today-label",
+            "source": "pair"
+          },
+          {
+            "actual": 10035,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9830,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-today-label",
+            "source": "pair"
+          },
+          {
+            "actual": 30106,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 27443,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-today-low",
+            "source": "pair"
+          },
+          {
+            "actual": 10035,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9830,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-today-low",
+            "source": "pair"
+          },
+          {
+            "actual": 45875,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 40960,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.day-tue",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-tue",
+            "source": "pair"
+          },
+          {
+            "actual": 38912,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 36250,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-tue-high",
+            "source": "pair"
+          },
+          {
+            "actual": 29286,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 28877,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-tue-high",
+            "source": "pair"
+          },
+          {
+            "actual": 8806,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 8704,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.day-tue-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 20275,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 17510,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-tue-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 27443,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 27494,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-tue-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 6963,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-tue-label",
+            "source": "pair"
+          },
+          {
+            "actual": 29696,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29491,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-tue-label",
+            "source": "pair"
+          },
+          {
+            "actual": 30106,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 27443,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-tue-low",
+            "source": "pair"
+          },
+          {
+            "actual": 29696,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29491,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-tue-low",
+            "source": "pair"
+          },
+          {
+            "actual": 45875,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 40960,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.day-wed",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-wed",
+            "source": "pair"
+          },
+          {
+            "actual": 38912,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 36250,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-wed-high",
+            "source": "pair"
+          },
+          {
+            "actual": 39117,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 38707,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-wed-high",
+            "source": "pair"
+          },
+          {
+            "actual": 8806,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 8704,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.day-wed-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 20275,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 17510,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-wed-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 37274,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 37325,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-wed-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 6963,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4096,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-wed-label",
+            "source": "pair"
+          },
+          {
+            "actual": 39526,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 39322,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-wed-label",
+            "source": "pair"
+          },
+          {
+            "actual": 30106,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 27443,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.day-wed-low",
+            "source": "pair"
+          },
+          {
+            "actual": 39526,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 39322,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.day-wed-low",
+            "source": "pair"
+          },
+          {
+            "actual": 104,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 98,
+            "field": "bounds_px.x",
+            "node_id": "weather.daily-dot-current",
+            "source": "pair"
+          },
+          {
+            "actual": 132,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 126,
+            "field": "bounds_px.x",
+            "node_id": "weather.daily-dot-details",
+            "source": "pair"
+          },
+          {
+            "actual": 112,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 106,
+            "field": "bounds_px.x",
+            "node_id": "weather.daily-dot-hourly",
+            "source": "pair"
+          },
+          {
+            "actual": 120,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 114,
+            "field": "bounds_px.x",
+            "node_id": "weather.daily-dot-selected",
+            "source": "pair"
+          },
+          {
+            "actual": 188,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 187,
+            "field": "bounds_px.height",
+            "node_id": "weather.daily-list",
+            "source": "pair"
+          },
+          {
+            "actual": 114,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 142,
+            "field": "bounds_px.width",
+            "node_id": "weather.daily-location",
+            "source": "pair"
+          },
+          {
+            "actual": 9,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 8,
+            "field": "bounds_px.y",
+            "node_id": "weather.daily-location",
+            "source": "pair"
+          },
+          {
+            "actual": 11,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 12,
+            "field": "bounds_px.y",
+            "node_id": "weather.daily-location-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.daily-status",
+            "source": "pair"
+          },
+          {
+            "actual": 25,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 27,
+            "field": "bounds_px.width",
+            "node_id": "weather.daily-status",
+            "source": "pair"
+          },
+          {
+            "actual": 12,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 10,
+            "field": "bounds_px.y",
+            "node_id": "weather.daily-status",
+            "source": "pair"
+          },
+          {
+            "actual": 23,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 22,
+            "field": "bounds_px.height",
+            "node_id": "weather.daily-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 7,
+            "field": "bounds_px.y",
+            "node_id": "weather.daily-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 224,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 200,
+            "field": "bounds_px.width",
+            "node_id": "weather.day-mon",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-mon",
+            "source": "pair"
+          },
+          {
+            "actual": 190,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 177,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-mon-high",
+            "source": "pair"
+          },
+          {
+            "actual": 95,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 93,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-mon-high",
+            "source": "pair"
+          },
+          {
+            "actual": 99,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 86,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-mon-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 34,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-mon-label",
+            "source": "pair"
+          },
+          {
+            "actual": 97,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 96,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-mon-label",
+            "source": "pair"
+          },
+          {
+            "actual": 147,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 134,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-mon-low",
+            "source": "pair"
+          },
+          {
+            "actual": 97,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 96,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-mon-low",
+            "source": "pair"
+          },
+          {
+            "actual": 224,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 200,
+            "field": "bounds_px.width",
+            "node_id": "weather.day-today",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-today",
+            "source": "pair"
+          },
+          {
+            "actual": 190,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 177,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-today-high",
+            "source": "pair"
+          },
+          {
+            "actual": 47,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 45,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-today-high",
+            "source": "pair"
+          },
+          {
+            "actual": 99,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 86,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-today-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 34,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-today-label",
+            "source": "pair"
+          },
+          {
+            "actual": 49,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 48,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-today-label",
+            "source": "pair"
+          },
+          {
+            "actual": 147,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 134,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-today-low",
+            "source": "pair"
+          },
+          {
+            "actual": 49,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 48,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-today-low",
+            "source": "pair"
+          },
+          {
+            "actual": 224,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 200,
+            "field": "bounds_px.width",
+            "node_id": "weather.day-tue",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-tue",
+            "source": "pair"
+          },
+          {
+            "actual": 190,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 177,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-tue-high",
+            "source": "pair"
+          },
+          {
+            "actual": 143,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 141,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-tue-high",
+            "source": "pair"
+          },
+          {
+            "actual": 99,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 86,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-tue-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 34,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-tue-label",
+            "source": "pair"
+          },
+          {
+            "actual": 145,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 144,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-tue-label",
+            "source": "pair"
+          },
+          {
+            "actual": 147,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 134,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-tue-low",
+            "source": "pair"
+          },
+          {
+            "actual": 145,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 144,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-tue-low",
+            "source": "pair"
+          },
+          {
+            "actual": 224,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 200,
+            "field": "bounds_px.width",
+            "node_id": "weather.day-wed",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-wed",
+            "source": "pair"
+          },
+          {
+            "actual": 190,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 177,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-wed-high",
+            "source": "pair"
+          },
+          {
+            "actual": 191,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 189,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-wed-high",
+            "source": "pair"
+          },
+          {
+            "actual": 99,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 86,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-wed-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 34,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 20,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-wed-label",
+            "source": "pair"
+          },
+          {
+            "actual": 193,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 192,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-wed-label",
+            "source": "pair"
+          },
+          {
+            "actual": 147,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 134,
+            "field": "bounds_px.x",
+            "node_id": "weather.day-wed-low",
+            "source": "pair"
+          },
+          {
+            "actual": 193,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 192,
+            "field": "bounds_px.y",
+            "node_id": "weather.day-wed-low",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "neutral",
+            "field": "token_roles.content",
+            "node_id": "weather.daily-location-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.day-mon-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.day-today-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "primary",
+            "field": "token_roles.content",
+            "node_id": "weather.day-tue-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.day-wed-icon",
+            "source": "pair"
+          }
+        ],
+        "reference_node_count": 38
+      },
+      "title": "Weather + Rain"
+    },
+    {
+      "app_slug": "weather",
+      "artifacts": {
+        "candidate": "cases/weather-large_font-0007/candidate.png",
+        "candidate_boundaries": "cases/weather-large_font-0007/candidate_boundaries.png",
+        "candidate_evidence": "cases/weather-large_font-0007/candidate_evidence.json",
+        "candidate_manifest": "cases/weather-large_font-0007/candidate_manifest.json",
+        "candidate_rgb565le": "cases/weather-large_font-0007/candidate_rgb565le.rgb565le",
+        "difference": "cases/weather-large_font-0007/difference.png",
+        "metrics": "cases/weather-large_font-0007/metrics.json",
+        "overlay": "cases/weather-large_font-0007/overlay.png",
+        "reference": "cases/weather-large_font-0007/reference.png",
+        "reference_boundaries": "cases/weather-large_font-0007/reference_boundaries.png",
+        "reference_evidence": "cases/weather-large_font-0007/reference_evidence.node-evidence.json",
+        "reference_manifest": "cases/weather-large_font-0007/reference_manifest.json",
+        "reference_rgb565_image": "cases/weather-large_font-0007/reference_rgb565.png",
+        "reference_rgb565le": "cases/weather-large_font-0007/reference.rgb565le",
+        "reference_rgb888": "cases/weather-large_font-0007/reference_rgb888.rgb888",
+        "reference_rgb888_metadata": "cases/weather-large_font-0007/reference_rgb888_metadata.rgb888.json",
+        "review": "cases/weather-large_font-0007/review.json",
+        "scene_snapshot": "cases/weather-large_font-0007/scene_snapshot.json",
+        "side_by_side": "cases/weather-large_font-0007/side_by_side.png"
+      },
+      "capture_phase": "large_font",
+      "case_id": "weather.large_font.watch_square_240.sequence-0007",
+      "comparison_policy": "square-app-baseline",
+      "pixel": {
+        "absolute_error_sum": 2449929,
+        "changed_pixel_fraction": 0.16506944444444444,
+        "changed_pixels": 9508,
+        "channel_samples": 172800,
+        "exact": false,
+        "height": 240,
+        "mae": 14.17782986111111,
+        "max_channel_error": 247,
+        "mse": 1974.034403935185,
+        "pixel_count": 57600,
+        "rmse": 44.43010695390216,
+        "squared_error_sum": 341113145,
+        "width": 240
+      },
+      "profile_id": "watch_square_240",
+      "quality": {
+        "lvgl_product": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 39,
+          "passed": true,
+          "visible_node_count": 39
+        },
+        "wear_compose_reference": {
+          "interactive_node_count": 2,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 39,
+          "passed": true,
+          "visible_node_count": 39
+        }
+      },
+      "quality_passed": true,
+      "result": "different",
+      "review_status": "pending",
+      "sequence": 7,
+      "snapshot_sha256": "deb9d9cf6f5d0d1f9f9eed9b3e91d840e5d72370696656beb0d9a72da373b8a5",
+      "structured": {
+        "candidate_node_count": 39,
+        "compared_node_count": 39,
+        "exact": false,
+        "mismatch_count": 121,
+        "mismatch_counts": {
+          "bounds": 116,
+          "tokens": 5
+        },
+        "mismatches": [
+          {
+            "actual": 3686,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.details-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 14950,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 14746,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.details-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 21299,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 20070,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.details-dot-current",
+            "source": "pair"
+          },
+          {
+            "actual": 24576,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 23347,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.details-dot-daily",
+            "source": "pair"
+          },
+          {
+            "actual": 22938,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 21709,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.details-dot-hourly",
+            "source": "pair"
+          },
+          {
+            "actual": 26214,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 24986,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.details-dot-selected",
+            "source": "pair"
+          },
+          {
+            "actual": 9830,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.details-grid",
+            "source": "pair"
+          },
+          {
+            "actual": 29491,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29286,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.details-row-bottom",
+            "source": "pair"
+          },
+          {
+            "actual": 9830,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.details-row-top",
+            "source": "pair"
+          },
+          {
+            "actual": 2867,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.details-status",
+            "source": "pair"
+          },
+          {
+            "actual": 5120,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5530,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.details-status",
+            "source": "pair"
+          },
+          {
+            "actual": 2458,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2048,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.details-status",
+            "source": "pair"
+          },
+          {
+            "actual": 4710,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 4506,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.details-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 1638,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1434,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.details-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 7373,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7578,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.details-temperature",
+            "source": "pair"
+          },
+          {
+            "actual": 11059,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.details-temperature",
+            "source": "pair"
+          },
+          {
+            "actual": 1843,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 1229,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.details-temperature",
+            "source": "pair"
+          },
+          {
+            "actual": 9830,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.humidity",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.humidity-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.humidity-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2458,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2478,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.humidity-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 11469,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11284,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.humidity-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 3072,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.humidity-label",
+            "source": "pair"
+          },
+          {
+            "actual": 12493,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 12288,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.humidity-label",
+            "source": "pair"
+          },
+          {
+            "actual": 9830,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.humidity-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 15360,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 13107,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.humidity-value",
+            "source": "pair"
+          },
+          {
+            "actual": 7373,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.humidity-value",
+            "source": "pair"
+          },
+          {
+            "actual": 18842,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 18637,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.humidity-value",
+            "source": "pair"
+          },
+          {
+            "actual": 29491,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29286,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.sunrise",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.sunrise-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.sunrise-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 26214,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 26235,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.sunrise-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 31130,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 30945,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.sunrise-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 3072,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.sunrise-label",
+            "source": "pair"
+          },
+          {
+            "actual": 32154,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 31949,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.sunrise-label",
+            "source": "pair"
+          },
+          {
+            "actual": 29491,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29286,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.sunrise-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 16384,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 13107,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.sunrise-value",
+            "source": "pair"
+          },
+          {
+            "actual": 31130,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 33382,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.sunrise-value",
+            "source": "pair"
+          },
+          {
+            "actual": 38502,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 38298,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.sunrise-value",
+            "source": "pair"
+          },
+          {
+            "actual": 29491,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29286,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.uv",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.uv-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.uv-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 2458,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2478,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.uv-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 31130,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 30945,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.uv-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 3072,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.uv-label",
+            "source": "pair"
+          },
+          {
+            "actual": 32154,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 31949,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.uv-label",
+            "source": "pair"
+          },
+          {
+            "actual": 29491,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 29286,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.uv-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 3072,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.uv-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 43827,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 43622,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.uv-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 37683,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 37478,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.uv-value",
+            "source": "pair"
+          },
+          {
+            "actual": 9830,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.wind",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.wind-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 7782,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7741,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.wind-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 26214,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 26235,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.wind-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 11469,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11284,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.wind-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 3072,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.wind-label",
+            "source": "pair"
+          },
+          {
+            "actual": 12493,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 12288,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.wind-label",
+            "source": "pair"
+          },
+          {
+            "actual": 9830,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 9626,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.wind-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 3072,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 3277,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.wind-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 38298,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 38093,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.wind-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 21094,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 21709,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.wind-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 9216,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 13107,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.wind-value",
+            "source": "pair"
+          },
+          {
+            "actual": 30515,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 33382,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.wind-value",
+            "source": "pair"
+          },
+          {
+            "actual": 18842,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 18637,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.wind-value",
+            "source": "pair"
+          },
+          {
+            "actual": 18,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.details-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 73,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 72,
+            "field": "bounds_px.width",
+            "node_id": "weather.details-condition",
+            "source": "pair"
+          },
+          {
+            "actual": 104,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 98,
+            "field": "bounds_px.x",
+            "node_id": "weather.details-dot-current",
+            "source": "pair"
+          },
+          {
+            "actual": 120,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 114,
+            "field": "bounds_px.x",
+            "node_id": "weather.details-dot-daily",
+            "source": "pair"
+          },
+          {
+            "actual": 112,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 106,
+            "field": "bounds_px.x",
+            "node_id": "weather.details-dot-hourly",
+            "source": "pair"
+          },
+          {
+            "actual": 128,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 122,
+            "field": "bounds_px.x",
+            "node_id": "weather.details-dot-selected",
+            "source": "pair"
+          },
+          {
+            "actual": 48,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.y",
+            "node_id": "weather.details-grid",
+            "source": "pair"
+          },
+          {
+            "actual": 144,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 143,
+            "field": "bounds_px.y",
+            "node_id": "weather.details-row-bottom",
+            "source": "pair"
+          },
+          {
+            "actual": 48,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.y",
+            "node_id": "weather.details-row-top",
+            "source": "pair"
+          },
+          {
+            "actual": 14,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.details-status",
+            "source": "pair"
+          },
+          {
+            "actual": 25,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 27,
+            "field": "bounds_px.width",
+            "node_id": "weather.details-status",
+            "source": "pair"
+          },
+          {
+            "actual": 12,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 10,
+            "field": "bounds_px.y",
+            "node_id": "weather.details-status",
+            "source": "pair"
+          },
+          {
+            "actual": 23,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 22,
+            "field": "bounds_px.height",
+            "node_id": "weather.details-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 8,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 7,
+            "field": "bounds_px.y",
+            "node_id": "weather.details-status-chip",
+            "source": "pair"
+          },
+          {
+            "actual": 36,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 37,
+            "field": "bounds_px.height",
+            "node_id": "weather.details-temperature",
+            "source": "pair"
+          },
+          {
+            "actual": 54,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.width",
+            "node_id": "weather.details-temperature",
+            "source": "pair"
+          },
+          {
+            "actual": 9,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 6,
+            "field": "bounds_px.y",
+            "node_id": "weather.details-temperature",
+            "source": "pair"
+          },
+          {
+            "actual": 48,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.y",
+            "node_id": "weather.humidity",
+            "source": "pair"
+          },
+          {
+            "actual": 56,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 55,
+            "field": "bounds_px.y",
+            "node_id": "weather.humidity-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 15,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.humidity-label",
+            "source": "pair"
+          },
+          {
+            "actual": 61,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 60,
+            "field": "bounds_px.y",
+            "node_id": "weather.humidity-label",
+            "source": "pair"
+          },
+          {
+            "actual": 48,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.y",
+            "node_id": "weather.humidity-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 75,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 64,
+            "field": "bounds_px.width",
+            "node_id": "weather.humidity-value",
+            "source": "pair"
+          },
+          {
+            "actual": 36,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.x",
+            "node_id": "weather.humidity-value",
+            "source": "pair"
+          },
+          {
+            "actual": 92,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 91,
+            "field": "bounds_px.y",
+            "node_id": "weather.humidity-value",
+            "source": "pair"
+          },
+          {
+            "actual": 144,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 143,
+            "field": "bounds_px.y",
+            "node_id": "weather.sunrise",
+            "source": "pair"
+          },
+          {
+            "actual": 152,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 151,
+            "field": "bounds_px.y",
+            "node_id": "weather.sunrise-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 15,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.sunrise-label",
+            "source": "pair"
+          },
+          {
+            "actual": 157,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 156,
+            "field": "bounds_px.y",
+            "node_id": "weather.sunrise-label",
+            "source": "pair"
+          },
+          {
+            "actual": 144,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 143,
+            "field": "bounds_px.y",
+            "node_id": "weather.sunrise-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 80,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 64,
+            "field": "bounds_px.width",
+            "node_id": "weather.sunrise-value",
+            "source": "pair"
+          },
+          {
+            "actual": 152,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 163,
+            "field": "bounds_px.x",
+            "node_id": "weather.sunrise-value",
+            "source": "pair"
+          },
+          {
+            "actual": 188,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 187,
+            "field": "bounds_px.y",
+            "node_id": "weather.sunrise-value",
+            "source": "pair"
+          },
+          {
+            "actual": 144,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 143,
+            "field": "bounds_px.y",
+            "node_id": "weather.uv",
+            "source": "pair"
+          },
+          {
+            "actual": 152,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 151,
+            "field": "bounds_px.y",
+            "node_id": "weather.uv-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 15,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.uv-label",
+            "source": "pair"
+          },
+          {
+            "actual": 157,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 156,
+            "field": "bounds_px.y",
+            "node_id": "weather.uv-label",
+            "source": "pair"
+          },
+          {
+            "actual": 144,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 143,
+            "field": "bounds_px.y",
+            "node_id": "weather.uv-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 15,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.uv-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 214,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 213,
+            "field": "bounds_px.y",
+            "node_id": "weather.uv-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 184,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 183,
+            "field": "bounds_px.y",
+            "node_id": "weather.uv-value",
+            "source": "pair"
+          },
+          {
+            "actual": 48,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.y",
+            "node_id": "weather.wind",
+            "source": "pair"
+          },
+          {
+            "actual": 56,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 55,
+            "field": "bounds_px.y",
+            "node_id": "weather.wind-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 15,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.wind-label",
+            "source": "pair"
+          },
+          {
+            "actual": 61,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 60,
+            "field": "bounds_px.y",
+            "node_id": "weather.wind-label",
+            "source": "pair"
+          },
+          {
+            "actual": 48,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 47,
+            "field": "bounds_px.y",
+            "node_id": "weather.wind-tile",
+            "source": "pair"
+          },
+          {
+            "actual": 15,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 16,
+            "field": "bounds_px.height",
+            "node_id": "weather.wind-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 187,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 186,
+            "field": "bounds_px.x",
+            "node_id": "weather.wind-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 103,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 106,
+            "field": "bounds_px.y",
+            "node_id": "weather.wind-unit",
+            "source": "pair"
+          },
+          {
+            "actual": 45,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 64,
+            "field": "bounds_px.width",
+            "node_id": "weather.wind-value",
+            "source": "pair"
+          },
+          {
+            "actual": 149,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 163,
+            "field": "bounds_px.x",
+            "node_id": "weather.wind-value",
+            "source": "pair"
+          },
+          {
+            "actual": 92,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 91,
+            "field": "bounds_px.y",
+            "node_id": "weather.wind-value",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.details-condition-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "primary",
+            "field": "token_roles.content",
+            "node_id": "weather.humidity-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.sunrise-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "tertiary",
+            "field": "token_roles.content",
+            "node_id": "weather.uv-icon",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "secondary",
+            "field": "token_roles.content",
+            "node_id": "weather.wind-icon",
+            "source": "pair"
+          }
+        ],
+        "reference_node_count": 39
+      },
+      "title": "Weather + Rain"
+    },
+    {
+      "app_slug": "weather",
+      "artifacts": {
+        "candidate": "cases/weather-large_font-0008/candidate.png",
+        "candidate_boundaries": "cases/weather-large_font-0008/candidate_boundaries.png",
+        "candidate_evidence": "cases/weather-large_font-0008/candidate_evidence.json",
+        "candidate_manifest": "cases/weather-large_font-0008/candidate_manifest.json",
+        "candidate_rgb565le": "cases/weather-large_font-0008/candidate_rgb565le.rgb565le",
+        "difference": "cases/weather-large_font-0008/difference.png",
+        "metrics": "cases/weather-large_font-0008/metrics.json",
+        "overlay": "cases/weather-large_font-0008/overlay.png",
+        "reference": "cases/weather-large_font-0008/reference.png",
+        "reference_boundaries": "cases/weather-large_font-0008/reference_boundaries.png",
+        "reference_evidence": "cases/weather-large_font-0008/reference_evidence.node-evidence.json",
+        "reference_manifest": "cases/weather-large_font-0008/reference_manifest.json",
+        "reference_rgb565_image": "cases/weather-large_font-0008/reference_rgb565.png",
+        "reference_rgb565le": "cases/weather-large_font-0008/reference.rgb565le",
+        "reference_rgb888": "cases/weather-large_font-0008/reference_rgb888.rgb888",
+        "reference_rgb888_metadata": "cases/weather-large_font-0008/reference_rgb888_metadata.rgb888.json",
+        "review": "cases/weather-large_font-0008/review.json",
+        "scene_snapshot": "cases/weather-large_font-0008/scene_snapshot.json",
+        "side_by_side": "cases/weather-large_font-0008/side_by_side.png"
+      },
+      "capture_phase": "large_font",
+      "case_id": "weather.large_font.watch_square_240.sequence-0008",
+      "comparison_policy": "square-app-baseline",
+      "pixel": {
+        "absolute_error_sum": 2725748,
+        "changed_pixel_fraction": 0.14894097222222222,
+        "changed_pixels": 8579,
+        "channel_samples": 172800,
+        "exact": false,
+        "height": 240,
+        "mae": 15.77400462962963,
+        "max_channel_error": 247,
+        "mse": 2574.4939930555556,
+        "pixel_count": 57600,
+        "rmse": 50.739471745925336,
+        "squared_error_sum": 444872562,
+        "width": 240
+      },
+      "profile_id": "watch_square_240",
+      "quality": {
+        "lvgl_product": {
+          "interactive_node_count": 3,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 20,
+          "passed": true,
+          "visible_node_count": 20
+        },
+        "wear_compose_reference": {
+          "interactive_node_count": 3,
+          "issue_code_counts": {},
+          "issue_count": 0,
+          "issue_counts": {},
+          "issues": [],
+          "minimum_touch_target_dp": 48,
+          "node_count": 20,
+          "passed": true,
+          "visible_node_count": 20
+        }
+      },
+      "quality_passed": true,
+      "result": "different",
+      "review_status": "pending",
+      "sequence": 8,
+      "snapshot_sha256": "291cac7cae17c3c45be2c2d5ffce86dda792840ade291874e117e5004ae2b97c",
+      "structured": {
+        "candidate_node_count": 20,
+        "compared_node_count": 20,
+        "exact": false,
+        "mismatch_count": 27,
+        "mismatch_counts": {
+          "bounds": 24,
+          "tokens": 3
+        },
+        "mismatches": [
+          {
+            "actual": 2048,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 2867,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.rain-duration",
+            "source": "pair"
+          },
+          {
+            "actual": 23142,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 25805,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.rain-duration",
+            "source": "pair"
+          },
+          {
+            "actual": 13926,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 13107,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.rain-duration",
+            "source": "pair"
+          },
+          {
+            "actual": 20070,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 19866,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.rain-probability-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 5734,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 5120,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.rain-probability-label",
+            "source": "pair"
+          },
+          {
+            "actual": 9011,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 7782,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.rain-probability-label",
+            "source": "pair"
+          },
+          {
+            "actual": 24166,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 22938,
+            "field": "bounds_dp_q8_8.x",
+            "node_id": "weather.rain-probability-label",
+            "source": "pair"
+          },
+          {
+            "actual": 7987,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 6963,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.rain-probability-value",
+            "source": "pair"
+          },
+          {
+            "actual": 13517,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 12288,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.rain-probability-value",
+            "source": "pair"
+          },
+          {
+            "actual": 18637,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 18842,
+            "field": "bounds_dp_q8_8.y",
+            "node_id": "weather.rain-probability-value",
+            "source": "pair"
+          },
+          {
+            "actual": 12288,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 11469,
+            "field": "bounds_dp_q8_8.height",
+            "node_id": "weather.rain-title",
+            "source": "pair"
+          },
+          {
+            "actual": 17613,
+            "category": "bounds",
+            "code": "bounds_dp_q8_8",
+            "expected": 16794,
+            "field": "bounds_dp_q8_8.width",
+            "node_id": "weather.rain-title",
+            "source": "pair"
+          },
+          {
+            "actual": 10,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 14,
+            "field": "bounds_px.height",
+            "node_id": "weather.rain-duration",
+            "source": "pair"
+          },
+          {
+            "actual": 113,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 126,
+            "field": "bounds_px.width",
+            "node_id": "weather.rain-duration",
+            "source": "pair"
+          },
+          {
+            "actual": 68,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 64,
+            "field": "bounds_px.y",
+            "node_id": "weather.rain-duration",
+            "source": "pair"
+          },
+          {
+            "actual": 98,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 97,
+            "field": "bounds_px.y",
+            "node_id": "weather.rain-probability-icon",
+            "source": "pair"
+          },
+          {
+            "actual": 28,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 25,
+            "field": "bounds_px.height",
+            "node_id": "weather.rain-probability-label",
+            "source": "pair"
+          },
+          {
+            "actual": 44,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 38,
+            "field": "bounds_px.width",
+            "node_id": "weather.rain-probability-label",
+            "source": "pair"
+          },
+          {
+            "actual": 118,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 112,
+            "field": "bounds_px.x",
+            "node_id": "weather.rain-probability-label",
+            "source": "pair"
+          },
+          {
+            "actual": 39,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 34,
+            "field": "bounds_px.height",
+            "node_id": "weather.rain-probability-value",
+            "source": "pair"
+          },
+          {
+            "actual": 66,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 60,
+            "field": "bounds_px.width",
+            "node_id": "weather.rain-probability-value",
+            "source": "pair"
+          },
+          {
+            "actual": 91,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 92,
+            "field": "bounds_px.y",
+            "node_id": "weather.rain-probability-value",
+            "source": "pair"
+          },
+          {
+            "actual": 60,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 56,
+            "field": "bounds_px.height",
+            "node_id": "weather.rain-title",
+            "source": "pair"
+          },
+          {
+            "actual": 86,
+            "category": "bounds",
+            "code": "bounds_px",
+            "expected": 82,
+            "field": "bounds_px.width",
+            "node_id": "weather.rain-title",
+            "source": "pair"
+          },
+          {
+            "actual": null,
+            "category": "tokens",
+            "code": "token_missing",
+            "expected": "bars",
+            "field": "token_roles.style",
+            "node_id": "weather.rain-bars",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "primary",
+            "field": "token_roles.content",
+            "node_id": "weather.rain-hero",
+            "source": "pair"
+          },
+          {
+            "actual": "semantic_tone",
+            "category": "tokens",
+            "code": "token_value",
+            "expected": "primary",
+            "field": "token_roles.content",
+            "node_id": "weather.rain-probability-icon",
+            "source": "pair"
+          }
+        ],
+        "reference_node_count": 20
+      },
+      "title": "Weather + Rain"
+    }
+  ],
+  "report_id": "parallax.perfect-render-20",
+  "schema_version": 1,
+  "summary": {
+    "case_count": 5,
+    "different_count": 5,
+    "exact_count": 0,
+    "quality_issue_count": 0,
+    "quality_passed_count": 5
+  },
+  "title": "Project Parallax — Wear Compose Material 3 reference versus LVGL"
+}

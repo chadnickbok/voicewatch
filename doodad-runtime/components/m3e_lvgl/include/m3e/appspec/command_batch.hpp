@@ -27,6 +27,10 @@ enum class PropertyKind : std::uint8_t {
     value,
     maximum,
     checked,
+    samples,
+    icon,
+    semantic_label,
+    semantic_value,
 };
 
 enum class CommandDomain : std::uint8_t {
@@ -43,6 +47,8 @@ struct Command {
     std::uint16_t text_offset;
     std::int64_t integer_value;
     bool boolean_value;
+    std::array<std::uint16_t, 13> samples{};
+    std::uint8_t sample_count = 0;
 };
 
 struct CommandBatch {

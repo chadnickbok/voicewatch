@@ -7,6 +7,7 @@
 #include "M5Unified.h"
 #include "app_runner.hpp"
 #include "doodad_lvgl_ui.h"
+#include "esp_heap_caps.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
@@ -25,6 +26,8 @@ namespace {
 
 constexpr char kTag[] = "doodad";
 constexpr std::int32_t kDrawRows = 40;
+constexpr std::size_t kDrawBufferPixels = DOODAD_SURFACE_WIDTH * kDrawRows;
+constexpr std::size_t kDrawBufferBytes = kDrawBufferPixels * sizeof(std::uint16_t);
 constexpr std::uint16_t kPhysicalBackground = 0x0841;
 constexpr std::uint32_t kDisplaySpiFrequencyHz = 40 * 1000 * 1000;
 constexpr std::int64_t kTelemetryIntervalMicroseconds = 2 * 1000 * 1000;
@@ -59,10 +62,8 @@ lv_indev_t* g_touch_input = nullptr;
 doodad_lvgl_ui_t g_ui{};
 m3e::StyleRegistry g_appspec_styles{};
 m3e::appspec::WireDocument* g_active_document = nullptr;
-std::uint16_t g_draw_buffer_a[DOODAD_SURFACE_WIDTH * kDrawRows]
-    __attribute__((aligned(4)));
-std::uint16_t g_draw_buffer_b[DOODAD_SURFACE_WIDTH * kDrawRows]
-    __attribute__((aligned(4)));
+std::uint16_t* g_draw_buffer_a = nullptr;
+std::uint16_t* g_draw_buffer_b = nullptr;
 std::uint32_t g_window_frames = 0;
 std::uint32_t g_window_renders = 0;
 std::uint32_t g_window_flushes = 0;
@@ -71,6 +72,14 @@ std::uint64_t g_window_flush_us = 0;
 std::uint32_t g_window_max_flush_us = 0;
 std::uint64_t g_window_render_us = 0;
 std::uint32_t g_window_max_render_us = 0;
+std::uint32_t g_lifetime_frames = 0;
+std::uint32_t g_lifetime_renders = 0;
+std::uint32_t g_lifetime_flushes = 0;
+std::uint64_t g_lifetime_pixels = 0;
+std::uint64_t g_lifetime_flush_us = 0;
+std::uint32_t g_lifetime_max_flush_us = 0;
+std::uint64_t g_lifetime_render_us = 0;
+std::uint32_t g_lifetime_max_render_us = 0;
 std::int64_t g_render_started_us = 0;
 std::int64_t g_window_started_us = 0;
 std::uint32_t g_window_touch_presses = 0;
@@ -84,6 +93,18 @@ std::uint32_t tick_milliseconds() {
     return static_cast<std::uint32_t>(esp_timer_get_time() / 1000);
 }
 
+std::uint32_t object_count(lv_obj_t* root) {
+    if (root == nullptr) {
+        return 0;
+    }
+    std::uint32_t count = 1;
+    const auto child_count = lv_obj_get_child_count(root);
+    for (std::uint32_t index = 0; index < child_count; ++index) {
+        count += object_count(lv_obj_get_child(root, index));
+    }
+    return count;
+}
+
 void flush_display(
     lv_display_t* display, const lv_area_t* area, std::uint8_t* pixel_map) {
     const auto width = area->x2 - area->x1 + 1;
@@ -92,6 +113,9 @@ void flush_display(
         (M5.Display.width() - DOODAD_SURFACE_WIDTH) / 2;
     const auto started_us = esp_timer_get_time();
     g_window_pixels +=
+        static_cast<std::uint64_t>(width)
+        * static_cast<std::uint64_t>(height);
+    g_lifetime_pixels +=
         static_cast<std::uint64_t>(width)
         * static_cast<std::uint64_t>(height);
     // LVGL owns pixel_map and may reuse it as soon as flush_ready is called.
@@ -111,6 +135,10 @@ void flush_display(
     g_window_flush_us += duration;
     g_window_max_flush_us =
         std::max(g_window_max_flush_us, duration);
+    ++g_lifetime_flushes;
+    g_lifetime_flush_us += duration;
+    g_lifetime_max_flush_us =
+        std::max(g_lifetime_max_flush_us, duration);
     lv_display_flush_ready(display);
 }
 
@@ -126,10 +154,15 @@ void display_event(lv_event_t* event) {
             g_window_render_us += duration;
             g_window_max_render_us =
                 std::max(g_window_max_render_us, duration);
+            ++g_lifetime_renders;
+            g_lifetime_render_us += duration;
+            g_lifetime_max_render_us =
+                std::max(g_lifetime_max_render_us, duration);
             break;
         }
         case LV_EVENT_REFR_READY:
             ++g_window_frames;
+            ++g_lifetime_frames;
             break;
         default:
             break;
@@ -469,12 +502,32 @@ bool display_init() {
         ESP_LOGE(kTag, "[host] LVGL display creation failed");
         return false;
     }
+    const auto draw_buffer_caps = MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT;
+    g_draw_buffer_a = static_cast<std::uint16_t*>(
+        heap_caps_aligned_alloc(4, kDrawBufferBytes, draw_buffer_caps));
+    g_draw_buffer_b = static_cast<std::uint16_t*>(
+        heap_caps_aligned_alloc(4, kDrawBufferBytes, draw_buffer_caps));
+    if (g_draw_buffer_a == nullptr || g_draw_buffer_b == nullptr) {
+        ESP_LOGE(
+            kTag,
+            "[host] PSRAM draw-buffer allocation failed (%u bytes each)",
+            static_cast<unsigned>(kDrawBufferBytes));
+        heap_caps_free(g_draw_buffer_a);
+        heap_caps_free(g_draw_buffer_b);
+        g_draw_buffer_a = nullptr;
+        g_draw_buffer_b = nullptr;
+        return false;
+    }
+    ESP_LOGI(
+        kTag,
+        "[display] LVGL draw buffers in PSRAM (%u bytes each)",
+        static_cast<unsigned>(kDrawBufferBytes));
     lv_display_set_color_format(g_lvgl_display, LV_COLOR_FORMAT_RGB565);
     lv_display_set_buffers(
         g_lvgl_display,
         g_draw_buffer_a,
         g_draw_buffer_b,
-        sizeof(g_draw_buffer_a),
+        kDrawBufferBytes,
         LV_DISPLAY_RENDER_MODE_PARTIAL);
     lv_display_set_flush_cb(g_lvgl_display, flush_display);
     lv_display_add_event_cb(
@@ -685,11 +738,28 @@ void display_update() {
             ? 0
             : static_cast<std::uint32_t>(
                 g_window_render_us / g_window_renders);
+        const auto internal_caps = MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT;
+        const auto psram_caps = MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT;
+        const auto lifetime_average_render_us =
+            g_lifetime_renders == 0
+            ? 0
+            : static_cast<std::uint32_t>(
+                g_lifetime_render_us / g_lifetime_renders);
+        const auto lifetime_average_flush_us =
+            g_lifetime_flushes == 0
+            ? 0
+            : static_cast<std::uint32_t>(
+                g_lifetime_flush_us / g_lifetime_flushes);
         ESP_LOGI(
             kTag,
             "[display] fps=%.1f frames=%u flushes=%u "
             "pixels=%llu avg_render_us=%u max_render_us=%u "
-            "avg_flush_us=%u max_flush_us=%u touch_presses=%u transfer=%s",
+            "avg_flush_us=%u max_flush_us=%u touch_presses=%u "
+            "objects=%u internal_free=%u internal_min=%u internal_largest=%u "
+            "psram_free=%u psram_min=%u psram_largest=%u "
+            "total_frames=%u total_flushes=%u total_pixels=%llu "
+            "total_avg_render_us=%u total_max_render_us=%u "
+            "total_avg_flush_us=%u total_max_flush_us=%u transfer=%s",
             fps,
             static_cast<unsigned>(g_window_frames),
             static_cast<unsigned>(g_window_flushes),
@@ -699,6 +769,20 @@ void display_update() {
             static_cast<unsigned>(average_flush_us),
             static_cast<unsigned>(g_window_max_flush_us),
             static_cast<unsigned>(g_window_touch_presses),
+            static_cast<unsigned>(object_count(lv_screen_active())),
+            static_cast<unsigned>(heap_caps_get_free_size(internal_caps)),
+            static_cast<unsigned>(heap_caps_get_minimum_free_size(internal_caps)),
+            static_cast<unsigned>(heap_caps_get_largest_free_block(internal_caps)),
+            static_cast<unsigned>(heap_caps_get_free_size(psram_caps)),
+            static_cast<unsigned>(heap_caps_get_minimum_free_size(psram_caps)),
+            static_cast<unsigned>(heap_caps_get_largest_free_block(psram_caps)),
+            static_cast<unsigned>(g_lifetime_frames),
+            static_cast<unsigned>(g_lifetime_flushes),
+            static_cast<unsigned long long>(g_lifetime_pixels),
+            static_cast<unsigned>(lifetime_average_render_us),
+            static_cast<unsigned>(g_lifetime_max_render_us),
+            static_cast<unsigned>(lifetime_average_flush_us),
+            static_cast<unsigned>(g_lifetime_max_flush_us),
             "synchronous");
         g_window_frames = 0;
         g_window_renders = 0;

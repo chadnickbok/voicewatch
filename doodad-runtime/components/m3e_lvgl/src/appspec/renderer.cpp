@@ -7,8 +7,13 @@
 
 #include "m3e/components/components.hpp"
 #include "m3e/assets/image_assets.hpp"
+#include "m3e/assets/weather_fonts.hpp"
+#include "m3e/assets/weather_icon_assets.hpp"
+#include "m3e/appspec/canvas_display_list.hpp"
 #include "m3e/foundation/display_profile.hpp"
 #include "m3e/foundation/semantic_tokens.hpp"
+#include "m3e/generated/weather_icons.hpp"
+#include "m3e/generated/weather_tokens.hpp"
 
 LV_FONT_DECLARE(m3e_calculator_font_20);
 LV_FONT_DECLARE(m3e_calculator_result_font_40);
@@ -17,6 +22,20 @@ LV_FONT_DECLARE(m3e_timer_value_font_28);
 LV_FONT_DECLARE(m3e_weather_font_55);
 LV_FONT_DECLARE(m3e_nutrition_font_32);
 LV_FONT_DECLARE(m3e_live_action_font_32);
+
+namespace m3e {
+namespace {
+std::uint16_t g_weather_font_scale_milli = 1000;
+}
+
+void set_weather_font_scale_milli(std::uint16_t scale_milli) {
+    g_weather_font_scale_milli = scale_milli == 1300 ? 1300 : 1000;
+}
+
+std::uint16_t weather_font_scale_milli() {
+    return g_weather_font_scale_milli;
+}
+}  // namespace m3e
 
 namespace m3e::appspec {
 namespace {
@@ -28,6 +47,19 @@ struct CalculatorKeyColors {
 
 std::int32_t px(std::int32_t dp) {
     return dp_edge_to_px(dp, watch_square_192.density_q8_8);
+}
+
+std::int32_t px_tenths(std::int32_t dp_tenths) {
+    constexpr std::int64_t kDenominator = 10 * 256;
+    const auto scaled =
+        static_cast<std::int64_t>(dp_tenths) *
+        static_cast<std::int64_t>(watch_square_192.density_q8_8);
+    return static_cast<std::int32_t>(
+        (scaled + kDenominator / 2) / kDenominator);
+}
+
+bool large_weather_text() {
+    return weather_font_scale_milli() == 1300;
 }
 
 std::int32_t gap_px(std::uint8_t gap) {
@@ -606,6 +638,66 @@ bool is_wallet_qr_document(const WireDocument& document) {
         rows == 1 && buttons == 2;
 }
 
+bool is_canvas_game_document(const WireDocument& document) {
+    if (document.node_count != 5 ||
+        document.nodes[0].child_count != 4) {
+        return false;
+    }
+    std::size_t canvases = 0;
+    std::size_t texts = 0;
+    std::size_t keypads = 0;
+    for (std::size_t index = 1; index < document.node_count; ++index) {
+        const auto& node = document.nodes[index];
+        if (node.parent_index != 0) return false;
+        if (node.kind == ComponentKind::canvas) {
+            ++canvases;
+        } else if (node.kind == ComponentKind::text) {
+            ++texts;
+        } else if (node.kind == ComponentKind::keypad) {
+            ++keypads;
+            if (node.key_count != 3 || node.key_columns != 3) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+    return canvases == 1 && texts == 2 && keypads == 1;
+}
+
+bool uses_weather_components(const WireDocument& document) {
+    return std::any_of(
+        document.nodes.begin() + 1,
+        document.nodes.begin() + document.node_count,
+        [](const WireNode& node) {
+            return node.kind == ComponentKind::icon ||
+                node.kind == ComponentKind::surface ||
+                node.kind == ComponentKind::chart ||
+                node.kind == ComponentKind::pager;
+        });
+}
+
+bool has_node_id(
+    const WireDocument& document,
+    const char* expected) {
+    return std::any_of(
+        document.nodes.begin() + 1,
+        document.nodes.begin() + document.node_count,
+        [&document, expected](const WireNode& node) {
+            return std::strcmp(
+                       document.string_at(node.id_offset), expected) == 0;
+        });
+}
+
+bool is_weather_current_document(const WireDocument& document) {
+    return std::strcmp(document.string_at(document.app_id_offset), "weather") == 0 &&
+        (has_node_id(document, "weather.current") ||
+         has_node_id(document, "weather.hourly") ||
+         has_node_id(document, "weather.daily-page") ||
+         has_node_id(document, "weather.details-page") ||
+         has_node_id(document, "weather.rain-page"));
+}
+
 std::size_t count_kind(
     const WireDocument& document,
     ComponentKind kind) {
@@ -674,6 +766,1344 @@ ComponentSize component_size(std::uint8_t value) {
     }
 }
 
+bool weather_icon(const char* name, generated::WeatherIcon& output) {
+    if (name == nullptr) return false;
+    for (std::size_t index = 0;
+         index < generated::kWeatherIconWireNames.size(); ++index) {
+        if (generated::kWeatherIconWireNames[index] == name) {
+            output = static_cast<generated::WeatherIcon>(index);
+            return true;
+        }
+    }
+    return false;
+}
+
+lv_color_t weather_color(generated::WeatherColorRole role) {
+    const auto& color = generated::kWeatherColors[
+        static_cast<std::size_t>(role)].rgb888;
+    return lv_color_make(color.red, color.green, color.blue);
+}
+
+lv_obj_t* create_weather_icon(
+    lv_obj_t* parent,
+    generated::WeatherIcon icon,
+    std::int32_t size,
+    bool button_content = false) {
+    const auto* asset = weather_icon_asset(icon, size);
+    if (asset == nullptr) return nullptr;
+    auto* object = lv_image_create(parent);
+    ComponentFactory::reset(object);
+    lv_image_set_src(object, asset);
+    lv_obj_set_size(object, size, size);
+    const auto source_width = static_cast<std::int32_t>(asset->header.w);
+    if (source_width > 0 && source_width != size) {
+        lv_image_set_scale(
+            object,
+            static_cast<std::uint32_t>(
+                (size * 256 + source_width / 2) / source_width));
+    }
+    const auto& spec = generated::kWeatherIcons[
+        static_cast<std::size_t>(icon)];
+    if (spec.render == generated::WeatherIconRender::mask) {
+        lv_obj_set_style_image_recolor(
+            object,
+            button_content
+                ? weather_color(generated::WeatherColorRole::on_primary)
+                : weather_color(spec.tint_role),
+            0);
+        lv_obj_set_style_image_recolor_opa(object, LV_OPA_COVER, 0);
+    }
+    return object;
+}
+
+void floating_box(
+    lv_obj_t* object,
+    std::int32_t x,
+    std::int32_t y,
+    std::int32_t width,
+    std::int32_t height) {
+    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+    lv_obj_set_pos(object, px(x), px(y));
+    lv_obj_set_size(object, px(width), px(height));
+}
+
+
+void floating_box_tenths(
+    lv_obj_t* object,
+    std::int32_t x_dp_tenths,
+    std::int32_t y_dp_tenths,
+    std::int32_t width_dp_tenths,
+    std::int32_t height_dp_tenths) {
+    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+    lv_obj_set_pos(
+        object,
+        px_tenths(x_dp_tenths),
+        px_tenths(y_dp_tenths));
+    lv_obj_set_size(
+        object,
+        px_tenths(width_dp_tenths),
+        px_tenths(height_dp_tenths));
+}
+
+void draw_weather_cut_corner_surface(lv_event_t* event) {
+    auto* object = static_cast<lv_obj_t*>(
+        lv_event_get_current_target(event));
+    auto* layer = lv_event_get_layer(event);
+    if (object == nullptr || layer == nullptr) return;
+
+    lv_area_t bounds{};
+    lv_obj_get_coords(object, &bounds);
+    const auto cut = px(10);
+    const auto color =
+        weather_color(generated::WeatherColorRole::rain);
+
+    lv_draw_fill_dsc_t fill{};
+    lv_draw_fill_dsc_init(&fill);
+    fill.color = color;
+    fill.opa = LV_OPA_COVER;
+    lv_area_t vertical{
+        bounds.x1 + cut, bounds.y1,
+        bounds.x2 - cut, bounds.y2,
+    };
+    lv_area_t horizontal{
+        bounds.x1, bounds.y1 + cut,
+        bounds.x2, bounds.y2 - cut,
+    };
+    lv_draw_fill(layer, &fill, &vertical);
+    lv_draw_fill(layer, &fill, &horizontal);
+
+    lv_draw_triangle_dsc_t triangle{};
+    lv_draw_triangle_dsc_init(&triangle);
+    triangle.color = color;
+    triangle.opa = LV_OPA_COVER;
+    const auto draw_triangle =
+        [layer, &triangle](
+            lv_point_precise_t first,
+            lv_point_precise_t second,
+            lv_point_precise_t third) {
+            triangle.p[0] = first;
+            triangle.p[1] = second;
+            triangle.p[2] = third;
+            lv_draw_triangle(layer, &triangle);
+        };
+    draw_triangle(
+        {bounds.x1 + cut, bounds.y1},
+        {bounds.x1 + cut, bounds.y1 + cut},
+        {bounds.x1, bounds.y1 + cut});
+    draw_triangle(
+        {bounds.x2 - cut, bounds.y1},
+        {bounds.x2, bounds.y1 + cut},
+        {bounds.x2 - cut, bounds.y1 + cut});
+    draw_triangle(
+        {bounds.x1, bounds.y2 - cut},
+        {bounds.x1 + cut, bounds.y2 - cut},
+        {bounds.x1 + cut, bounds.y2});
+    draw_triangle(
+        {bounds.x2 - cut, bounds.y2 - cut},
+        {bounds.x2, bounds.y2 - cut},
+        {bounds.x2 - cut, bounds.y2});
+}
+
+void configure_weather_current_node(
+    const WireDocument& document,
+    const WireNode& node,
+    lv_obj_t* object,
+    lv_obj_t* parent) {
+    const auto* id = document.string_at(node.id_offset);
+    using generated::WeatherColorRole;
+    using generated::WeatherTypographyRole;
+    if (std::strcmp(id, "weather.pages") == 0 ||
+        std::strcmp(id, "weather.current") == 0) {
+        floating_box(object, 0, 0, 192, 192);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+        return;
+    }
+    if (std::strcmp(id, "weather.location-row") == 0) {
+        floating_box(object, 8, 6, 128, 16);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(4), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.location-icon") == 0) {
+        lv_obj_set_size(object, px(10), px(10));
+        lv_image_set_scale(object, 139);
+        return;
+    }
+    if (std::strcmp(id, "weather.location") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::label), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_LEFT, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.status-chip") == 0) {
+        floating_box(object, 149, 6, 38, 18);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_bg_color(
+            object, weather_color(WeatherColorRole::secondary_container), 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.status-row") == 0) {
+        lv_obj_set_size(object, LV_PCT(100), LV_PCT(100));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.status") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        auto* dot = lv_obj_create(parent);
+        ComponentFactory::reset(dot);
+        lv_obj_set_size(dot, px(5), px(5));
+        lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            dot, weather_color(WeatherColorRole::fresh), 0);
+        lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+        lv_obj_move_to_index(dot, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hero-row") == 0) {
+        floating_box(object, 0, 0, 192, 100);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.summary") == 0) {
+        floating_box(object, 8, 22, 107, 61);
+        lv_label_set_long_mode(object, LV_LABEL_LONG_CLIP);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::hero), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_LEFT, 0);
+        // Compose centers the 68 px face inside its 73 px line box and the
+        // Android font metrics add further top leading. LVGL otherwise draws
+        // the numeral almost against the box edge.
+        lv_obj_set_style_pad_top(object, px(9), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.condition-icon") == 0) {
+        floating_box(object, 110, 22, 72, 60);
+        lv_image_set_scale(object, 440);
+        return;
+    }
+    if (std::strcmp(id, "weather.symbol") == 0) {
+        floating_box(object, 10, 81, 173, 18);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::row), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_LEFT, 0);
+        lv_obj_set_style_pad_top(object, px(2), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.high-low") == 0) {
+        floating_box(object, 8, 101, 176, 24);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(5), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.high-pill") == 0 ||
+        std::strcmp(id, "weather.low-pill") == 0) {
+        lv_obj_set_height(object, LV_PCT(100));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.high-row") == 0 ||
+        std::strcmp(id, "weather.low-row") == 0) {
+        lv_obj_set_size(object, LV_PCT(100), LV_PCT(100));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.high-icon") == 0 ||
+        std::strcmp(id, "weather.low-icon") == 0) {
+        lv_obj_set_size(object, px(14), px(14));
+        lv_image_set_scale(object, 192);
+        return;
+    }
+    if (std::strcmp(id, "weather.high") == 0 ||
+        std::strcmp(id, "weather.low") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::label), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_background), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.feels-pill") == 0) {
+        floating_box(object, 8, 127, 176, 19);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            object, weather_color(WeatherColorRole::surface_low), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.feels-row") == 0) {
+        lv_obj_set_size(object, LV_PCT(100), LV_PCT(100));
+        lv_obj_set_style_pad_hor(object, px(8), 0);
+        lv_obj_set_style_pad_ver(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(6), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.feels-icon") == 0) {
+        lv_obj_set_size(object, px(13), px(13));
+        lv_image_set_scale(object, 171);
+        return;
+    }
+    if (std::strcmp(id, "weather.feels-label") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_flex_grow(object, 1);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.feels") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::label), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_background), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.primary") == 0) {
+        floating_box(object, 0, 144, 192, 48);
+        lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        if (lv_obj_get_child_count(object) > 1) {
+            auto* image = lv_obj_get_child(object, 0);
+            auto* label = lv_obj_get_child(object, 0);
+            if (lv_obj_check_type(image, &lv_image_class) &&
+                lv_obj_get_child_count(object) > 1) {
+                label = lv_obj_get_child(object, 1);
+            }
+            auto* visual = lv_obj_create(object);
+            ComponentFactory::reset(visual);
+            lv_obj_add_flag(visual, LV_OBJ_FLAG_FLOATING);
+            lv_obj_set_size(visual, px(179), px(29));
+            lv_obj_align(visual, LV_ALIGN_CENTER, 0, px(6));
+            lv_obj_set_style_radius(visual, LV_RADIUS_CIRCLE, 0);
+            lv_obj_set_style_bg_color(
+                visual, weather_color(WeatherColorRole::primary), 0);
+            lv_obj_set_style_bg_opa(visual, LV_OPA_COVER, 0);
+            lv_obj_set_style_pad_hor(visual, px(14), 0);
+            lv_obj_set_style_pad_ver(visual, 0, 0);
+            lv_obj_set_flex_flow(visual, LV_FLEX_FLOW_ROW);
+            lv_obj_set_flex_align(
+                visual,
+                LV_FLEX_ALIGN_SPACE_BETWEEN,
+                LV_FLEX_ALIGN_CENTER,
+                LV_FLEX_ALIGN_CENTER);
+            if (label != nullptr &&
+                lv_obj_check_type(label, &lv_label_class)) {
+                lv_obj_set_parent(label, visual);
+                lv_obj_set_width(label, LV_SIZE_CONTENT);
+                lv_obj_set_style_text_font(
+                    label, weather_font(WeatherTypographyRole::row), 0);
+            }
+            if (image != nullptr &&
+                lv_obj_check_type(image, &lv_image_class)) {
+                lv_obj_set_parent(image, visual);
+                lv_obj_set_size(image, px(16), px(16));
+                lv_image_set_scale(image, 213);
+            }
+        }
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly") == 0 ||
+        std::strcmp(id, "weather.daily-page") == 0) {
+        floating_box(object, 0, 0, 192, 192);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-summary") == 0) {
+        floating_box(object, 6, 4, 123, 34);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(6), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-condition-icon") == 0) {
+        lv_obj_set_size(object, px(32), px(28));
+        lv_image_set_scale(object, 205);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-summary-copy") == 0) {
+        lv_obj_set_height(object, LV_PCT(100));
+        lv_obj_set_flex_grow(object, 1);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_START);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-now") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::row), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_background), 0);
+        lv_obj_set_style_translate_y(object, px(2), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-condition") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-status-chip") == 0) {
+        floating_box(object, 149, 6, 38, 18);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            object, weather_color(WeatherColorRole::secondary_container), 0);
+        lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        auto* dot = lv_obj_create(object);
+        ComponentFactory::reset(dot);
+        lv_obj_set_size(dot, px(5), px(5));
+        lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            dot, weather_color(WeatherColorRole::fresh), 0);
+        lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+        lv_obj_move_to_index(dot, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-status") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-chart-card") == 0) {
+        floating_box(object, 6, 42, 179, 46);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, px(14), 0);
+        lv_obj_set_style_bg_color(
+            object, weather_color(WeatherColorRole::surface), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-chart-heading") == 0) {
+        floating_box(object, 6, 3, 166, 14);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-rain-icon") == 0) {
+        lv_obj_set_size(object, px(11), px(11));
+        lv_image_set_scale(object, 149);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-rain-label") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_flex_grow(object, 1);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-rain-value") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::label), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-chart") == 0) {
+        floating_box(object, 6, 17, 166, 19);
+        lv_chart_set_range(object, LV_CHART_AXIS_PRIMARY_Y, -60, 100);
+        lv_obj_set_style_line_width(object, px(2), LV_PART_ITEMS);
+        lv_obj_set_style_width(object, px(4), LV_PART_INDICATOR);
+        lv_obj_set_style_height(object, px(4), LV_PART_INDICATOR);
+        lv_chart_refresh(object);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-times") == 0) {
+        floating_box(object, 6, 37, 166, 8);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_SPACE_BETWEEN,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strncmp(id, "weather.hourly-time-", 20) == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::outline_variant), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.hourly-tiles") == 0) {
+        floating_box(object, 6, 93, 179, 46);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(5), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    const bool hourly_tile =
+        std::strcmp(id, "weather.hour-now-tile") == 0 ||
+        std::strcmp(id, "weather.hour-10-tile") == 0 ||
+        std::strcmp(id, "weather.hour-11-tile") == 0 ||
+        std::strcmp(id, "weather.hour-12-tile") == 0;
+    if (hourly_tile) {
+        lv_obj_set_height(object, LV_PCT(100));
+        lv_obj_set_flex_grow(object, 1);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, px(14), 0);
+        lv_obj_set_style_bg_color(
+            object,
+            std::strcmp(id, "weather.hour-now-tile") == 0
+                ? weather_color(WeatherColorRole::primary_container)
+                : weather_color(WeatherColorRole::surface_low),
+            0);
+        return;
+    }
+    const bool hourly_tile_column =
+        std::strcmp(id, "weather.hour-now") == 0 ||
+        std::strcmp(id, "weather.hour-10") == 0 ||
+        std::strcmp(id, "weather.hour-11") == 0 ||
+        std::strcmp(id, "weather.hour-12") == 0;
+    if (hourly_tile_column) {
+        lv_obj_set_size(object, LV_PCT(100), LV_PCT(100));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strstr(id, "weather.hour-") == id &&
+        std::strstr(id, "-label") != nullptr) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strstr(id, "weather.hour-") == id &&
+        std::strstr(id, "-icon") != nullptr) {
+        lv_obj_set_size(object, px(19), px(16));
+        // Compose applies a 2.05x optical transform to the Meteocons glyph
+        // while retaining the compact layout box. LVGL needs the equivalent
+        // draw scale because the source artwork contains generous whitespace.
+        lv_image_set_scale(object, 350);
+        return;
+    }
+    if (std::strstr(id, "weather.hour-") == id &&
+        std::strstr(id, "-temp") != nullptr) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::row), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-action") == 0) {
+        floating_box(object, 0, 144, 192, 48);
+        lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        if (lv_obj_get_child_count(object) > 1) {
+            auto* image = lv_obj_get_child(object, 0);
+            auto* label = lv_obj_get_child(object, 0);
+            if (lv_obj_check_type(image, &lv_image_class)) {
+                label = lv_obj_get_child(object, 1);
+            }
+            auto* visual = lv_obj_create(object);
+            ComponentFactory::reset(visual);
+            lv_obj_add_flag(visual, LV_OBJ_FLAG_FLOATING);
+            lv_obj_set_size(visual, px(179), px(29));
+            lv_obj_align(visual, LV_ALIGN_CENTER, 0, px(6));
+            lv_obj_set_style_radius(visual, LV_RADIUS_CIRCLE, 0);
+            lv_obj_set_style_bg_color(
+                visual, weather_color(WeatherColorRole::secondary_container), 0);
+            lv_obj_set_style_bg_opa(visual, LV_OPA_COVER, 0);
+            lv_obj_set_style_pad_hor(visual, px(14), 0);
+            lv_obj_set_style_pad_ver(visual, 0, 0);
+            lv_obj_set_flex_flow(visual, LV_FLEX_FLOW_ROW);
+            lv_obj_set_flex_align(
+                visual,
+                LV_FLEX_ALIGN_SPACE_BETWEEN,
+                LV_FLEX_ALIGN_CENTER,
+                LV_FLEX_ALIGN_CENTER);
+            if (label != nullptr && lv_obj_check_type(label, &lv_label_class)) {
+                lv_obj_set_parent(label, visual);
+                lv_obj_set_width(label, LV_SIZE_CONTENT);
+                lv_obj_set_style_text_font(
+                    label, weather_font(WeatherTypographyRole::row), 0);
+                lv_obj_set_style_text_color(
+                    label, weather_color(WeatherColorRole::on_secondary_container), 0);
+            }
+            if (image != nullptr && lv_obj_check_type(image, &lv_image_class)) {
+                lv_obj_set_parent(image, visual);
+                lv_obj_set_size(image, px(16), px(16));
+                lv_image_set_scale(image, 213);
+                lv_obj_set_style_image_recolor(
+                    image, weather_color(WeatherColorRole::on_secondary_container), 0);
+                lv_obj_set_style_image_recolor_opa(image, LV_OPA_COVER, 0);
+            }
+        }
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-title") == 0) {
+        floating_box(object, 8, 8, 176, 32);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::headline), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_CENTER, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-location-row") == 0) {
+        floating_box(object, 8, 6, 128, 16);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(4), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-location-icon") == 0) {
+        lv_obj_set_size(object, px(10), px(10));
+        lv_image_set_scale(object, 139);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-location") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::label), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-status-chip") == 0) {
+        floating_box(object, 149, 6, 38, 18);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            object, weather_color(WeatherColorRole::secondary_container), 0);
+        lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        auto* dot = lv_obj_create(object);
+        ComponentFactory::reset(dot);
+        lv_obj_set_size(dot, px(5), px(5));
+        lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            dot, weather_color(WeatherColorRole::fresh), 0);
+        lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+        lv_obj_move_to_index(dot, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-status") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-list") == 0) {
+        floating_box(object, 6, 30, 179, 150);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(4), 0);
+        return;
+    }
+    const bool daily_tile =
+        std::strcmp(id, "weather.day-today-tile") == 0 ||
+        std::strcmp(id, "weather.day-mon-tile") == 0 ||
+        std::strcmp(id, "weather.day-tue-tile") == 0 ||
+        std::strcmp(id, "weather.day-wed-tile") == 0;
+    if (daily_tile) {
+        lv_obj_set_size(object, LV_PCT(100), px(34));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, px(14), 0);
+        lv_obj_set_style_bg_color(
+            object,
+            std::strcmp(id, "weather.day-today-tile") == 0
+                ? weather_color(WeatherColorRole::primary_container)
+                : weather_color(WeatherColorRole::surface_low),
+            0);
+        return;
+    }
+    const bool daily_row =
+        std::strcmp(id, "weather.day-today") == 0 ||
+        std::strcmp(id, "weather.day-mon") == 0 ||
+        std::strcmp(id, "weather.day-tue") == 0 ||
+        std::strcmp(id, "weather.day-wed") == 0;
+    if (daily_row) {
+        lv_obj_set_size(object, LV_PCT(100), LV_PCT(100));
+        lv_obj_set_style_pad_hor(object, px(10), 0);
+        lv_obj_set_style_pad_ver(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strstr(id, "weather.day-") == id &&
+        std::strstr(id, "-label") != nullptr) {
+        if (large_weather_text()) {
+            floating_box(object, 10, 8, 54, 18);
+        } else {
+            lv_obj_set_width(object, px(54));
+        }
+        lv_label_set_long_mode(object, LV_LABEL_LONG_CLIP);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::label), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strstr(id, "weather.day-") == id &&
+        std::strstr(id, "-icon") != nullptr) {
+        if (large_weather_text()) {
+            floating_box(object, 62, 0, 41, 34);
+        } else {
+            lv_obj_set_size(object, px(37), px(24));
+        }
+        lv_image_set_scale(object, 190);
+        if (!large_weather_text()) {
+            lv_obj_set_style_translate_x(object, px(16), 0);
+        }
+        return;
+    }
+    if (std::strstr(id, "weather.day-") == id &&
+        std::strstr(id, "-low") != nullptr) {
+        if (large_weather_text()) {
+            floating_box(object, 101, 8, 34, 18);
+        } else {
+            lv_obj_set_width(object, px(34));
+        }
+        lv_label_set_long_mode(object, LV_LABEL_LONG_CLIP);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::label), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_RIGHT, 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface_variant), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strstr(id, "weather.day-") == id &&
+        std::strstr(id, "-high") != nullptr) {
+        if (large_weather_text()) {
+            floating_box(object, 135, 6, 34, 24);
+        } else {
+            lv_obj_set_width(object, px(34));
+        }
+        lv_label_set_long_mode(object, LV_LABEL_LONG_CLIP);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::row), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_RIGHT, 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.daily-dots") == 0) {
+        floating_box(object, 78, 184, 35, 5);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strncmp(id, "weather.daily-dot-", 18) == 0) {
+        const auto selected =
+            std::strcmp(id, "weather.daily-dot-selected") == 0;
+        lv_obj_set_size(object, px(selected ? 6 : 3), px(3));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            object,
+            selected
+                ? weather_color(WeatherColorRole::primary)
+                : weather_color(WeatherColorRole::outline_variant),
+            0);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-action") == 0) {
+        floating_box(object, 0, 144, 192, 48);
+        lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_border_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_opa(object, LV_OPA_TRANSP, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-page") == 0) {
+        floating_box(object, 0, 0, 192, 192);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-summary") == 0) {
+        floating_box(object, 6, 3, 128, 32);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(4), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-condition-icon") == 0) {
+        lv_obj_set_size(object, px(29), px(24));
+        lv_image_set_scale(object, 214);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-temperature") == 0) {
+        lv_obj_set_width(object, px(38));
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::metric), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface), 0);
+        lv_obj_set_style_translate_y(object, px(2), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-condition") == 0) {
+        if (large_weather_text()) {
+            floating_box(object, 70, 9, 58, 14);
+        } else {
+            lv_obj_set_flex_grow(object, 1);
+        }
+        lv_label_set_long_mode(object, LV_LABEL_LONG_CLIP);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface_variant), 0);
+        lv_obj_set_style_translate_y(object, px(1), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-status-chip") == 0) {
+        floating_box(object, 149, 6, 38, 18);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            object, weather_color(WeatherColorRole::secondary_container), 0);
+        lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        auto* dot = lv_obj_create(object);
+        ComponentFactory::reset(dot);
+        lv_obj_set_size(dot, px(5), px(5));
+        lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            dot, weather_color(WeatherColorRole::fresh), 0);
+        lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+        lv_obj_move_to_index(dot, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-status") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-grid") == 0) {
+        floating_box(object, 6, 38, 179, 147);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(6), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.details-row-top") == 0 ||
+        std::strcmp(id, "weather.details-row-bottom") == 0) {
+        lv_obj_set_size(object, LV_PCT(100), px(70));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(6), 0);
+        return;
+    }
+    const bool details_tile =
+        std::strcmp(id, "weather.humidity-tile") == 0 ||
+        std::strcmp(id, "weather.wind-tile") == 0 ||
+        std::strcmp(id, "weather.uv-tile") == 0 ||
+        std::strcmp(id, "weather.sunrise-tile") == 0;
+    if (details_tile) {
+        lv_obj_set_height(object, LV_PCT(100));
+        lv_obj_set_flex_grow(object, 1);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        const auto humidity = std::strcmp(id, "weather.humidity-tile") == 0;
+        const auto wind = std::strcmp(id, "weather.wind-tile") == 0;
+        const auto uv = std::strcmp(id, "weather.uv-tile") == 0;
+        lv_obj_set_style_radius(
+            object,
+            px(uv ? 2 : (humidity ? 18 : (wind ? 22 : 18))),
+            0);
+        if (uv) {
+            lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+            lv_obj_add_event_cb(
+                object,
+                draw_weather_cut_corner_surface,
+                LV_EVENT_DRAW_MAIN,
+                nullptr);
+        } else {
+            lv_obj_set_style_bg_color(
+                object,
+                wind
+                    ? weather_color(WeatherColorRole::primary_container)
+                    : weather_color(WeatherColorRole::surface_high),
+                0);
+        }
+        return;
+    }
+    if (std::strcmp(id, "weather.humidity") == 0 ||
+        std::strcmp(id, "weather.wind") == 0 ||
+        std::strcmp(id, "weather.uv") == 0 ||
+        std::strcmp(id, "weather.sunrise") == 0) {
+        lv_obj_set_size(object, LV_PCT(100), LV_PCT(100));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        return;
+    }
+    if (std::strstr(id, "weather.") == id &&
+        std::strstr(id, "-icon") != nullptr &&
+        (std::strstr(id, "humidity") != nullptr ||
+         std::strstr(id, "wind") != nullptr ||
+         std::strstr(id, "uv") != nullptr ||
+         std::strstr(id, "sunrise") != nullptr)) {
+        // The requested 32dp glyph resolves to the 64px source raster. Give
+        // it the same 30dp optical box as Compose's 22.4dp + 1.35x transform,
+        // then scale the source once to that box.
+        floating_box(object, 3, 6, 30, 30);
+        lv_image_set_scale(object, 152);
+        return;
+    }
+    if (std::strstr(id, "weather.") == id &&
+        std::strstr(id, "-label") != nullptr &&
+        (std::strstr(id, "humidity") != nullptr ||
+         std::strstr(id, "wind") != nullptr ||
+         std::strstr(id, "uv") != nullptr ||
+         std::strstr(id, "sunrise") != nullptr)) {
+        floating_box(object, 33, 10, 48, 12);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_LEFT, 0);
+        lv_obj_set_style_pad_top(object, px(1), 0);
+        if (std::strstr(id, "weather.uv") == id) {
+            lv_obj_set_style_text_color(
+                object, weather_color(WeatherColorRole::on_primary), 0);
+        }
+        return;
+    }
+    if (std::strstr(id, "weather.") == id &&
+        std::strstr(id, "-value") != nullptr &&
+        (std::strstr(id, "humidity") != nullptr ||
+         std::strstr(id, "wind") != nullptr ||
+         std::strstr(id, "uv") != nullptr ||
+         std::strstr(id, "sunrise") != nullptr)) {
+        const auto uv = std::strstr(id, "weather.uv") == id;
+        const auto wind = std::strstr(id, "weather.wind") == id;
+        const auto humidity = std::strstr(id, "weather.humidity") == id;
+        const auto large = large_weather_text();
+        const auto x =
+            uv ? (large ? 12 : 20) : wind ? 20 : large ? 22 : 31;
+        const auto width =
+            uv ? (large ? 24 : 36) : wind ? 36 : large ? (humidity ? 60 : 64) : 51;
+        floating_box(object, x, uv && large ? 32 : 35, width, 28);
+        lv_label_set_long_mode(object, LV_LABEL_LONG_CLIP);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::metric), 0);
+        lv_obj_set_style_text_color(
+            object,
+            uv
+                ? weather_color(WeatherColorRole::on_primary)
+                : weather_color(WeatherColorRole::on_surface),
+            0);
+        lv_obj_set_style_pad_top(object, px(2), 0);
+        return;
+    }
+    if (std::strstr(id, "weather.") == id &&
+        std::strstr(id, "-unit") != nullptr &&
+        (std::strstr(id, "wind") != nullptr ||
+         std::strstr(id, "uv") != nullptr)) {
+        const auto uv = std::strstr(id, "weather.uv") == id;
+        if (uv && large_weather_text()) {
+            floating_box(object, 20, 56, 60, 12);
+        } else {
+            floating_box(
+                object,
+                50,
+                uv ? 39 : 44,
+                uv ? 34 : 29,
+                12);
+        }
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_text_align(
+            object,
+            uv && large_weather_text()
+                ? LV_TEXT_ALIGN_RIGHT
+                : LV_TEXT_ALIGN_LEFT,
+            0);
+        lv_obj_set_style_text_color(
+            object,
+            uv
+                ? weather_color(WeatherColorRole::on_primary)
+                : weather_color(WeatherColorRole::on_surface_variant),
+            0);
+        if (!(uv && large_weather_text())) {
+            lv_obj_set_style_pad_top(object, px(2), 0);
+        }
+        return;
+    }
+    if (std::strcmp(id, "weather.details-dots") == 0) {
+        floating_box(object, 78, 184, 35, 5);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strncmp(id, "weather.details-dot-", 20) == 0) {
+        const auto selected =
+            std::strcmp(id, "weather.details-dot-selected") == 0;
+        lv_obj_set_size(object, px(selected ? 6 : 3), px(3));
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            object,
+            selected
+                ? weather_color(WeatherColorRole::primary)
+                : weather_color(WeatherColorRole::outline_variant),
+            0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-preview-action") == 0) {
+        floating_box(object, 0, 144, 192, 48);
+        lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_border_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_opa(object, LV_OPA_TRANSP, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-page") == 0) {
+        floating_box(object, 0, 0, 192, 192);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        lv_obj_remove_flag(object, LV_OBJ_FLAG_SCROLLABLE);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-hero") == 0) {
+        floating_box(object, 12, 4, 60, 56);
+        lv_image_set_scale(object, 380);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-headline") == 0) {
+        floating_box_tenths(object, 824, 64, 1024, 560);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-title") == 0) {
+        lv_obj_set_size(object, LV_SIZE_CONTENT, px_tenths(480));
+        lv_obj_set_style_text_font(
+            object,
+            large_weather_text()
+                ? &m3e_weather_metric_28
+                : weather_font(WeatherTypographyRole::metric),
+            0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface), 0);
+        lv_obj_set_style_text_line_space(object, px(-2), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_LEFT, 0);
+        lv_obj_set_style_pad_top(object, px(5), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-duration") == 0) {
+        lv_obj_set_size(object, LV_SIZE_CONTENT, px_tenths(80));
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface_variant), 0);
+        lv_obj_set_style_text_align(object, LV_TEXT_ALIGN_LEFT, 0);
+        lv_obj_set_style_pad_top(object, 0, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-chart-card") == 0) {
+        floating_box_tenths(object, 64, 688, 1792, 896);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_radius(object, px(14), 0);
+        lv_obj_set_style_bg_color(
+            object, weather_color(WeatherColorRole::secondary_container), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-probability") == 0) {
+        floating_box_tenths(object, 64, 48, 1664, 272);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px_tenths(32), 0);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-probability-icon") == 0) {
+        lv_obj_set_size(object, px(20), px(20));
+        lv_image_set_scale(object, 100);
+        lv_obj_set_style_translate_y(object, 1, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-probability-value") == 0) {
+        lv_obj_set_width(object, LV_SIZE_CONTENT);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::metric), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface), 0);
+        lv_obj_set_style_pad_top(object, px(2), 0);
+        lv_obj_set_style_translate_y(object, 1, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-probability-label") == 0) {
+        lv_obj_set_width(object, px(45));
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface_variant), 0);
+        lv_obj_set_style_text_line_space(object, px(-2), 0);
+        lv_obj_set_style_pad_top(object, px(2), 0);
+        lv_obj_set_style_translate_x(object, 3, 0);
+        lv_obj_set_style_translate_y(object, 1, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-bars") == 0) {
+        floating_box_tenths(object, 64, 336, 1664, 440);
+        lv_chart_set_type(object, LV_CHART_TYPE_LINE);
+        lv_obj_set_style_line_opa(object, LV_OPA_TRANSP, LV_PART_ITEMS);
+        lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, LV_PART_INDICATOR);
+
+        // Compose draws this chart directly in the physical Canvas: thirteen
+        // equal cells, a 55%-cell bar centered in each one, and a one-pixel
+        // baseline.  Repeating the arithmetic in logical dp makes rounding
+        // drift across the row at 1.25x density, so keep the drawing geometry
+        // in the already-scaled LVGL coordinate space.
+        const auto chart_width = px_tenths(1664);
+        const auto chart_height = px_tenths(440);
+        const auto sample_count = static_cast<std::int32_t>(node.sample_count);
+        const auto cell_width =
+            sample_count > 0 ? chart_width / sample_count : chart_width;
+        const auto bar_width = std::max<std::int32_t>(
+            1,
+            (cell_width * 55 + 50) / 100);
+
+        auto* baseline = lv_obj_create(object);
+        ComponentFactory::reset(baseline);
+        lv_obj_add_flag(baseline, LV_OBJ_FLAG_FLOATING);
+        lv_obj_set_size(baseline, chart_width, 1);
+        lv_obj_set_pos(baseline, 0, chart_height - 1);
+        lv_obj_set_style_bg_color(
+            baseline,
+            weather_color(WeatherColorRole::outline_variant),
+            0);
+        lv_obj_set_style_bg_opa(baseline, LV_OPA_COVER, 0);
+
+        for (std::size_t index = 0; index < node.sample_count; ++index) {
+            auto* bar = lv_obj_create(object);
+            ComponentFactory::reset(bar);
+            lv_obj_add_flag(bar, LV_OBJ_FLAG_FLOATING);
+            const auto bar_height =
+                std::max<std::int32_t>(
+                    2,
+                    (static_cast<std::int32_t>(node.samples[index]) *
+                         (chart_height - 3) +
+                     std::max<std::int32_t>(1, node.maximum) / 2) /
+                        std::max<std::int32_t>(1, node.maximum));
+            lv_obj_set_size(bar, bar_width, bar_height);
+            lv_obj_set_pos(
+                bar,
+                static_cast<std::int32_t>(index) * cell_width +
+                    (cell_width - bar_width) / 2,
+                chart_height - bar_height);
+            lv_obj_set_style_radius(bar, LV_RADIUS_CIRCLE, 0);
+            lv_obj_set_style_bg_color(
+                bar, weather_color(WeatherColorRole::rain), 0);
+            lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
+        }
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-times") == 0) {
+        floating_box_tenths(object, 64, 808, 1664, 80);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        return;
+    }
+    if (std::strncmp(id, "weather.rain-time-", 18) == 0) {
+        lv_obj_set_height(object, LV_PCT(100));
+        lv_obj_set_flex_grow(object, 1);
+        lv_obj_set_style_text_font(
+            object, weather_font(WeatherTypographyRole::micro), 0);
+        lv_obj_set_style_text_color(
+            object, weather_color(WeatherColorRole::on_surface_variant), 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-actions") == 0) {
+        floating_box(object, 0, 144, 192, 48);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, 0, 0);
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-details") == 0) {
+        lv_obj_set_size(object, px(133), LV_PCT(100));
+        lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        if (lv_obj_get_child_count(object) > 1) {
+            auto* image = lv_obj_get_child(object, 0);
+            auto* label = lv_obj_get_child(object, 0);
+            if (lv_obj_check_type(image, &lv_image_class)) {
+                label = lv_obj_get_child(object, 1);
+            }
+            auto* visual = lv_obj_create(object);
+            ComponentFactory::reset(visual);
+            // The semantic button keeps a full 48dp hit target while the
+            // compact visual is positioned optically inside it.  This child
+            // must opt out of the button's flex layout or LVGL silently drops
+            // the same 6dp downward offset used by the Compose oracle.
+            lv_obj_add_flag(visual, LV_OBJ_FLAG_FLOATING);
+            lv_obj_set_size(visual, px(120), px(29));
+            lv_obj_align(visual, LV_ALIGN_CENTER, 0, px(6));
+            lv_obj_set_style_radius(visual, LV_RADIUS_CIRCLE, 0);
+            lv_obj_set_style_bg_color(
+                visual, weather_color(WeatherColorRole::primary_container), 0);
+            lv_obj_set_style_bg_opa(visual, LV_OPA_COVER, 0);
+            lv_obj_set_style_pad_hor(visual, px(10), 0);
+            lv_obj_set_flex_flow(visual, LV_FLEX_FLOW_ROW);
+            lv_obj_set_flex_align(
+                visual,
+                LV_FLEX_ALIGN_START,
+                LV_FLEX_ALIGN_CENTER,
+                LV_FLEX_ALIGN_CENTER);
+            if (image != nullptr && lv_obj_check_type(image, &lv_image_class)) {
+                lv_obj_set_parent(image, visual);
+                lv_obj_set_size(image, px(15), px(15));
+                lv_image_set_scale(image, 160);
+                lv_obj_set_style_image_recolor(
+                    image,
+                    weather_color(WeatherColorRole::on_primary_container),
+                    0);
+                lv_obj_set_style_image_recolor_opa(
+                    image, LV_OPA_COVER, 0);
+            }
+            if (label != nullptr && lv_obj_check_type(label, &lv_label_class)) {
+                lv_obj_set_parent(label, visual);
+                lv_obj_set_flex_grow(label, 1);
+                lv_obj_set_style_text_font(
+                    label, weather_font(WeatherTypographyRole::row), 0);
+                lv_obj_set_style_text_color(
+                    label, weather_color(WeatherColorRole::on_primary_container), 0);
+            }
+            auto* chevron = create_weather_icon(
+                visual,
+                generated::WeatherIcon::utility_chevron_right,
+                px(15),
+                false);
+            if (chevron != nullptr) {
+                lv_obj_set_style_image_recolor(
+                    chevron,
+                    weather_color(WeatherColorRole::on_primary_container),
+                    0);
+                lv_obj_set_style_image_recolor_opa(
+                    chevron, LV_OPA_COVER, 0);
+            }
+        }
+        return;
+    }
+    if (std::strcmp(id, "weather.rain-status") == 0) {
+        lv_obj_set_size(object, px(59), LV_PCT(100));
+        lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_pad_all(object, 0, 0);
+        lv_obj_set_style_pad_gap(object, px(3), 0);
+        lv_obj_set_flex_flow(object, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_flex_align(
+            object,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+        if (lv_obj_get_child_count(object) > 1) {
+            auto* first = lv_obj_get_child(object, 0);
+            auto* second = lv_obj_get_child(object, 1);
+            auto* image = lv_obj_check_type(first, &lv_image_class) ? first : second;
+            auto* label = lv_obj_check_type(first, &lv_label_class) ? first : second;
+            if (image != nullptr && lv_obj_check_type(image, &lv_image_class)) {
+                lv_obj_set_size(image, px(15), px(15));
+                lv_image_set_scale(image, 160);
+                lv_obj_set_style_image_recolor(
+                    image,
+                    weather_color(WeatherColorRole::on_surface_variant),
+                    0);
+                lv_obj_set_style_image_recolor_opa(
+                    image, LV_OPA_COVER, 0);
+            }
+            if (label != nullptr && lv_obj_check_type(label, &lv_label_class)) {
+                lv_obj_set_width(label, LV_SIZE_CONTENT);
+                lv_obj_set_style_text_font(
+                    label, weather_font(WeatherTypographyRole::micro), 0);
+                lv_obj_set_style_text_color(
+                    label, weather_color(WeatherColorRole::on_surface_variant), 0);
+            }
+        }
+        return;
+    }
+}
+
 lv_obj_t* layout(
     ComponentFactory& factory,
     lv_obj_t* parent,
@@ -723,9 +2153,9 @@ lv_event_code_t lvgl_event_code(EventKind kind) {
     return LV_EVENT_CLICKED;
 }
 
-void dispatch_event(lv_event_t* lv_event) {
-    auto* binding = static_cast<MountedEventBinding*>(
-        lv_event_get_user_data(lv_event));
+void dispatch_bound_event(
+    MountedEventBinding* binding,
+    EventValue value) {
     auto* event = binding == nullptr ? nullptr : binding->event;
     if (event == nullptr || event->document == nullptr ||
         event->sink == nullptr ||
@@ -734,12 +2164,37 @@ void dispatch_event(lv_event_t* lv_event) {
     }
     const auto& document = *event->document;
     const auto& node = document.nodes[event->node_index];
+    const UiEvent envelope{
+        1,
+        document.string_at(document.app_id_offset),
+        document.string_at(document.nodes[0].id_offset),
+        document.string_at(node.id_offset),
+        document.string_at(event->action_id_offset),
+        event->kind,
+        lv_tick_get(),
+        value,
+    };
+    event->sink(envelope, event->sink_context);
+}
+
+void dispatch_event(lv_event_t* lv_event) {
+    auto* binding = static_cast<MountedEventBinding*>(
+        lv_event_get_user_data(lv_event));
+    auto* event = binding == nullptr ? nullptr : binding->event;
+    if (event == nullptr || event->document == nullptr ||
+        event->node_index >= event->document->node_count) {
+        return;
+    }
+    const auto& node = event->document->nodes[event->node_index];
     EventValue value{};
     switch (binding->value_kind) {
         case MountedEventValue::none:
             break;
         case MountedEventValue::integer:
             value = EventValue::integer(binding->integer_value);
+            break;
+        case MountedEventValue::node_value:
+            value = EventValue::integer(node.value);
             break;
         case MountedEventValue::stepper_decrement:
             value = EventValue::integer(std::max(
@@ -757,22 +2212,12 @@ void dispatch_event(lv_event_t* lv_event) {
                     LV_STATE_CHECKED));
             break;
         case MountedEventValue::keypad_key:
-            if (binding->key_index >= document.key_count) return;
-            value = EventValue::text(document.string_at(
-                document.key_offsets[binding->key_index]));
+            if (binding->key_index >= event->document->key_count) return;
+            value = EventValue::text(event->document->string_at(
+                event->document->key_offsets[binding->key_index]));
             break;
     }
-    const UiEvent envelope{
-        1,
-        document.string_at(document.app_id_offset),
-        document.string_at(document.nodes[0].id_offset),
-        document.string_at(node.id_offset),
-        document.string_at(event->action_id_offset),
-        event->kind,
-        lv_tick_get(),
-        value,
-    };
-    event->sink(envelope, event->sink_context);
+    dispatch_bound_event(binding, value);
 }
 
 bool bind_event(
@@ -799,6 +2244,166 @@ bool bind_event(
     return true;
 }
 
+void pager_gesture(lv_event_t* lv_event) {
+    auto* binding = static_cast<MountedEventBinding*>(
+        lv_event_get_user_data(lv_event));
+    auto* event = binding == nullptr ? nullptr : binding->event;
+    if (event == nullptr || event->document == nullptr ||
+        event->node_index >= event->document->node_count) {
+        return;
+    }
+    auto& document = *event->document;
+    auto& node = document.nodes[event->node_index];
+    auto* indev = lv_indev_active();
+    if (indev == nullptr) return;
+    const auto direction = lv_indev_get_gesture_dir(indev);
+    auto selected = node.value;
+    if (direction == LV_DIR_LEFT && selected + 1 < node.maximum) {
+        ++selected;
+    } else if (direction == LV_DIR_RIGHT && selected > 0) {
+        --selected;
+    } else {
+        return;
+    }
+    node.value = selected;
+    for (std::size_t index = event->node_index + 1;
+         index < document.node_count; ++index) {
+        auto& page = document.nodes[index];
+        if (page.parent_index != event->node_index ||
+            page.mounted_object == nullptr) {
+            continue;
+        }
+        std::size_t ordinal = 0;
+        for (std::size_t previous = event->node_index + 1;
+             previous < index; ++previous) {
+            if (document.nodes[previous].parent_index == event->node_index) {
+                ++ordinal;
+            }
+        }
+        auto* page_object = static_cast<lv_obj_t*>(page.mounted_object);
+        if (ordinal == static_cast<std::size_t>(selected)) {
+            lv_obj_remove_flag(page_object, LV_OBJ_FLAG_HIDDEN);
+        } else {
+            lv_obj_add_flag(page_object, LV_OBJ_FLAG_HIDDEN);
+        }
+    }
+    auto* object = static_cast<lv_obj_t*>(node.mounted_object);
+    if (object != nullptr && node.checked &&
+        lv_obj_get_child_count(object) > 0) {
+        auto* indicator = lv_obj_get_child(object, 0);
+        if (indicator != nullptr &&
+            lv_obj_get_child_count(indicator) ==
+                static_cast<std::uint32_t>(node.maximum)) {
+            for (std::int32_t page = 0; page < node.maximum; ++page) {
+                auto* dot = lv_obj_get_child(indicator, page);
+                const auto active = page == selected;
+                const auto dot_size = px(active ? 5 : 3);
+                lv_obj_set_size(dot, dot_size, dot_size);
+                lv_obj_set_style_bg_color(
+                    dot,
+                    active
+                        ? weather_color(generated::WeatherColorRole::primary)
+                        : weather_color(
+                              generated::WeatherColorRole::outline_variant),
+                    0);
+            }
+        }
+        lv_obj_send_event(object, LV_EVENT_VALUE_CHANGED, nullptr);
+    }
+}
+
+bool bind_pager_gesture(
+    WireDocument& document,
+    WireEvent& event,
+    lv_obj_t* object) {
+    if (object == nullptr ||
+        document.mounted_event_binding_count >=
+            document.mounted_event_bindings.size()) {
+        return false;
+    }
+    auto& binding = document.mounted_event_bindings[
+        document.mounted_event_binding_count++];
+    binding = {&event, MountedEventValue::node_value, 0, 0};
+    lv_obj_add_event_cb(
+        object, pager_gesture, LV_EVENT_GESTURE, &binding);
+    return true;
+}
+
+void screen_gesture(lv_event_t* lv_event) {
+    auto* binding = static_cast<MountedEventBinding*>(
+        lv_event_get_user_data(lv_event));
+    auto* indev = lv_indev_active();
+    if (binding == nullptr || indev == nullptr) return;
+    const auto direction = lv_indev_get_gesture_dir(indev);
+    const auto delta =
+        direction == LV_DIR_LEFT ? 1 :
+        direction == LV_DIR_RIGHT ? -1 : 0;
+    if (delta == 0) return;
+
+    auto* root = static_cast<lv_obj_t*>(
+        lv_event_get_current_target(lv_event));
+    dispatch_bound_event(binding, EventValue::integer(delta));
+
+    // The guest synchronously mounts the selected bounded route. Give that
+    // incoming page the same compact directional response as the Material
+    // reference without retaining a second full AppSpec tree in RAM.
+    if (root == nullptr || !lv_obj_is_valid(root) ||
+        lv_obj_get_child_count(root) == 0) {
+        return;
+    }
+    auto* incoming = lv_obj_get_child(root, 0);
+    if (incoming == nullptr) return;
+    lv_anim_delete(incoming, nullptr);
+    const auto animate_translate = [](void* object, std::int32_t value) {
+        lv_obj_set_style_translate_x(
+            static_cast<lv_obj_t*>(object), value, 0);
+    };
+    const auto animate_opacity = [](void* object, std::int32_t value) {
+        lv_obj_set_style_opa(
+            static_cast<lv_obj_t*>(object),
+            static_cast<lv_opa_t>(value),
+            0);
+    };
+    const auto offset = delta > 0 ? px(18) : -px(18);
+    lv_obj_set_style_translate_x(incoming, offset, 0);
+    lv_obj_set_style_opa(incoming, LV_OPA_60, 0);
+
+    lv_anim_t movement{};
+    lv_anim_init(&movement);
+    lv_anim_set_var(&movement, incoming);
+    lv_anim_set_exec_cb(&movement, animate_translate);
+    lv_anim_set_values(&movement, offset, 0);
+    lv_anim_set_duration(&movement, 220);
+    lv_anim_set_path_cb(&movement, lv_anim_path_ease_out);
+    lv_anim_start(&movement);
+
+    lv_anim_t fade{};
+    lv_anim_init(&fade);
+    lv_anim_set_var(&fade, incoming);
+    lv_anim_set_exec_cb(&fade, animate_opacity);
+    lv_anim_set_values(&fade, LV_OPA_60, LV_OPA_COVER);
+    lv_anim_set_duration(&fade, 160);
+    lv_anim_set_path_cb(&fade, lv_anim_path_ease_out);
+    lv_anim_start(&fade);
+}
+
+bool bind_screen_gesture(
+    WireDocument& document,
+    WireEvent& event,
+    lv_obj_t* object) {
+    if (object == nullptr ||
+        document.mounted_event_binding_count >=
+            document.mounted_event_bindings.size()) {
+        return false;
+    }
+    auto& binding = document.mounted_event_bindings[
+        document.mounted_event_binding_count++];
+    binding = {&event, MountedEventValue::none, 0, 0};
+    lv_obj_add_event_cb(
+        object, screen_gesture, LV_EVENT_GESTURE, &binding);
+    return true;
+}
+
 }  // namespace
 
 Renderer::Renderer(StyleRegistry& styles) : styles_(styles) {}
@@ -814,14 +2419,15 @@ bool Renderer::mount(
     }
     std::size_t required_bindings = 0;
     if (event_sink != nullptr) {
-        for (std::size_t index = 1;
+        for (std::size_t index = 0;
              index < document.node_count;
              ++index) {
             const auto& node = document.nodes[index];
             const auto multiplier =
                 node.kind == ComponentKind::keypad
                     ? static_cast<std::size_t>(node.key_count)
-                    : node.kind == ComponentKind::stepper ? 2U : 1U;
+                    : node.kind == ComponentKind::stepper ? 2U
+                    : node.kind == ComponentKind::pager ? 2U : 1U;
             required_bindings +=
                 static_cast<std::size_t>(node.event_count) *
                 multiplier;
@@ -866,6 +2472,12 @@ bool Renderer::mount(
         is_camera_remote_document(document);
     const auto wallet_qr_document =
         is_wallet_qr_document(document);
+    const auto canvas_game_document =
+        is_canvas_game_document(document);
+    const auto weather_component_document =
+        uses_weather_components(document);
+    const auto weather_current_document =
+        is_weather_current_document(document);
     const auto task_toggle_count =
         task_list_document
             ? count_kind(document, ComponentKind::toggle)
@@ -887,16 +2499,26 @@ bool Renderer::mount(
             ? count_kind(document, ComponentKind::button)
             : 0U;
     objects[0] = factory.screen(root);
+    if (weather_component_document) {
+        lv_obj_set_style_bg_color(
+            root,
+            weather_color(generated::WeatherColorRole::background),
+            0);
+        lv_obj_set_style_bg_opa(root, LV_OPA_COVER, 0);
+    }
     document.nodes[0].mounted_object = root;
     if (voice_ready_document || live_action_detail_document ||
         media_player_document || camera_remote_document ||
-        wallet_qr_document) {
+        wallet_qr_document || canvas_game_document ||
+        weather_current_document) {
         lv_obj_remove_flag(root, LV_OBJ_FLAG_SCROLLABLE);
         lv_obj_set_scrollbar_mode(root, LV_SCROLLBAR_MODE_OFF);
     }
     lv_obj_set_style_pad_all(
         root,
-        keypad_document
+        canvas_game_document
+            ? 0
+            : keypad_document
             ? 5
             : countdown_document || weather_hero_document ||
                     notification_stack_document ||
@@ -909,12 +2531,17 @@ bool Renderer::mount(
                     voice_ready_document ||
                     live_action_detail_document
                     || media_player_document || camera_remote_document ||
-                    wallet_qr_document
+                    wallet_qr_document || canvas_game_document ||
+                    weather_component_document
                 ? 0
                 : px(12),
         0);
     lv_obj_set_style_pad_gap(
-        root, keypad_document ? 4 : gap_px(document.nodes[0].gap), 0);
+        root,
+        canvas_game_document
+            ? 0
+            : keypad_document ? 4 : gap_px(document.nodes[0].gap),
+        0);
     lv_obj_set_flex_flow(root, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(
         root,
@@ -927,6 +2554,22 @@ bool Renderer::mount(
         keypad_document
             ? LV_FLEX_ALIGN_CENTER
             : align(document.nodes[0].alignment));
+
+    if (event_sink != nullptr) {
+        for (std::size_t event_index = 0;
+             event_index < document.event_count;
+             ++event_index) {
+            auto& event = document.events[event_index];
+            if (event.node_index != 0) continue;
+            if (event.kind != EventKind::page_changed) return false;
+            event.document = &document;
+            event.sink = event_sink;
+            event.sink_context = event_context;
+            if (!bind_screen_gesture(document, event, root)) {
+                return false;
+            }
+        }
+    }
 
     for (std::size_t index = 1; index < document.node_count; ++index) {
         auto& node = document.nodes[index];
@@ -1008,6 +2651,43 @@ bool Renderer::mount(
                 object = factory.text(
                     parent, primary, typography(node.variant));
                 lv_obj_set_width(object, LV_PCT(100));
+                if (weather_component_document) {
+                    using generated::WeatherTypographyRole;
+                    const auto role =
+                        node.variant == 2 ? WeatherTypographyRole::label :
+                        node.variant == 3 ? WeatherTypographyRole::row :
+                        node.variant == 4 ? WeatherTypographyRole::headline :
+                        node.variant == 5 ? WeatherTypographyRole::micro :
+                        node.variant == 1 ? WeatherTypographyRole::metric :
+                        WeatherTypographyRole::headline;
+                    lv_obj_set_style_text_font(
+                        object, weather_font(role), 0);
+                    lv_obj_set_style_text_color(
+                        object,
+                        node.variant == 2 || node.variant == 5
+                            ? weather_color(
+                                  generated::WeatherColorRole::on_surface_variant)
+                            : weather_color(
+                                  generated::WeatherColorRole::on_background),
+                        0);
+                }
+                if (node.icon_offset != 0) {
+                    generated::WeatherIcon icon{};
+                    if (weather_icon(
+                            document.string_at(node.icon_offset), icon)) {
+                        lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
+                        lv_obj_set_flex_align(
+                            object,
+                            LV_FLEX_ALIGN_CENTER,
+                            LV_FLEX_ALIGN_CENTER,
+                            LV_FLEX_ALIGN_CENTER);
+                        lv_obj_set_style_pad_gap(object, px(6), 0);
+                        auto* image = create_weather_icon(
+                            object, icon, px(18), true);
+                        if (image == nullptr) return false;
+                        lv_obj_move_to_index(image, 0);
+                    }
+                }
                 lv_label_set_long_mode(
                     object,
                     keypad_document && node.variant == 4
@@ -1021,7 +2701,32 @@ bool Renderer::mount(
                             ? LV_TEXT_ALIGN_RIGHT
                             : LV_TEXT_ALIGN_CENTER,
                     0);
-                if (keypad_document && node.variant == 4) {
+                if (canvas_game_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    if (node.variant == 4) {
+                        lv_obj_set_size(object, px(52), px(52));
+                        lv_obj_set_pos(object, px(132), px(40));
+                        lv_obj_set_style_text_font(
+                            object, &m3e_live_action_font_32, 0);
+                        lv_obj_set_style_text_color(
+                            object,
+                            lv_color_make(0xA8, 0xF2, 0x79),
+                            0);
+                        lv_obj_set_style_pad_top(object, px(8), 0);
+                    } else {
+                        lv_obj_set_size(object, px(52), px(20));
+                        lv_obj_set_pos(object, px(132), px(18));
+                        lv_obj_set_style_text_font(
+                            object, &lv_font_montserrat_14, 0);
+                        lv_obj_set_style_text_color(
+                            object,
+                            lv_color_make(0x9C, 0xE8, 0xC2),
+                            0);
+                        lv_obj_set_style_pad_top(object, px(2), 0);
+                    }
+                    lv_obj_set_style_text_align(
+                        object, LV_TEXT_ALIGN_CENTER, 0);
+                } else if (keypad_document && node.variant == 4) {
                     lv_obj_set_height(object, 50);
                     lv_obj_set_style_text_font(
                         object, &m3e_calculator_result_font_40, 0);
@@ -1408,6 +3113,49 @@ bool Renderer::mount(
                         false,
                     });
                 lv_obj_set_width(object, LV_PCT(100));
+                if (node.icon_offset != 0 && !weather_hero_document) {
+                    generated::WeatherIcon icon{};
+                    if (weather_icon(
+                            document.string_at(node.icon_offset), icon)) {
+                        lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
+                        lv_obj_set_flex_align(
+                            object,
+                            LV_FLEX_ALIGN_CENTER,
+                            LV_FLEX_ALIGN_CENTER,
+                            LV_FLEX_ALIGN_CENTER);
+                        lv_obj_set_style_pad_gap(object, px(6), 0);
+                        auto* image = create_weather_icon(
+                            object, icon, px(18), true);
+                        if (image == nullptr) return false;
+                        lv_obj_move_to_index(image, 0);
+                    }
+                }
+                if (weather_component_document) {
+                    lv_obj_set_style_bg_color(
+                        object,
+                        weather_color(generated::WeatherColorRole::primary),
+                        0);
+                    lv_obj_set_style_radius(object, LV_RADIUS_CIRCLE, 0);
+                    auto* label = lv_obj_get_child(object, 0);
+                    if (label != nullptr &&
+                        lv_obj_check_type(label, &lv_image_class) &&
+                        lv_obj_get_child_count(object) > 1) {
+                        label = lv_obj_get_child(object, 1);
+                    }
+                    if (label != nullptr &&
+                        lv_obj_check_type(label, &lv_label_class)) {
+                        lv_obj_set_style_text_font(
+                            label,
+                            weather_font(
+                                generated::WeatherTypographyRole::label),
+                            0);
+                        lv_obj_set_style_text_color(
+                            label,
+                            weather_color(
+                                generated::WeatherColorRole::on_primary),
+                            0);
+                    }
+                }
                 if (countdown_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     lv_obj_set_size(object, px(120), px(40));
@@ -2595,8 +4343,16 @@ bool Renderer::mount(
                 break;
             case ComponentKind::keypad: {
                 object = layout(factory, parent, node, false);
-                lv_obj_set_height(object, 176);
-                lv_obj_set_style_pad_row(object, 4, 0);
+                if (canvas_game_document) {
+                    lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(object, px(184), px(48));
+                    lv_obj_set_pos(object, px(4), px(136));
+                    lv_obj_set_style_pad_all(object, 0, 0);
+                    lv_obj_set_style_pad_gap(object, 0, 0);
+                } else {
+                    lv_obj_set_height(object, 176);
+                    lv_obj_set_style_pad_row(object, 4, 0);
+                }
                 for (std::uint8_t key_index = 0;
                      key_index < node.key_count;) {
                     WireNode row_node{};
@@ -2605,8 +4361,11 @@ bool Renderer::mount(
                     row_node.alignment = 0;
                     auto* row =
                         layout(factory, object, row_node, false);
-                    lv_obj_set_height(row, 32);
-                    lv_obj_set_style_pad_column(row, 4, 0);
+                    lv_obj_set_height(
+                        row, canvas_game_document ? px(48) : 32);
+                    lv_obj_set_style_pad_all(row, 0, 0);
+                    lv_obj_set_style_pad_column(
+                        row, canvas_game_document ? px(4) : 4, 0);
                     lv_obj_set_flex_align(
                         row,
                         LV_FLEX_ALIGN_START,
@@ -2626,8 +4385,21 @@ bool Renderer::mount(
                         const auto is_utility =
                             key_index < node.key_columns ||
                             std::strcmp(key_text, "<-") == 0;
-                        const auto colors = calculator_key_colors(
-                            is_operator, is_utility);
+                        const auto colors =
+                            canvas_game_document
+                                ? CalculatorKeyColors{
+                                      column == 1
+                                          ? lv_color_make(
+                                                0xA8, 0xF2, 0x79)
+                                          : lv_color_make(
+                                                0x16, 0x30, 0x26),
+                                      column == 1
+                                          ? lv_color_make(
+                                                0x07, 0x11, 0x0D)
+                                          : lv_color_make(
+                                                0xD5, 0xF5, 0xE4)}
+                                : calculator_key_colors(
+                                      is_operator, is_utility);
                         auto* key = factory.button(
                             row,
                             {
@@ -2643,9 +4415,13 @@ bool Renderer::mount(
                                 node.enabled,
                                 false,
                             });
-                        lv_obj_set_height(key, 32);
+                        lv_obj_set_height(
+                            key, canvas_game_document ? px(48) : 32);
                         lv_obj_set_style_pad_all(key, 0, 0);
-                        lv_obj_set_style_radius(key, 15, 0);
+                        lv_obj_set_style_radius(
+                            key,
+                            canvas_game_document ? px(24) : 15,
+                            0);
                         lv_obj_set_style_bg_color(
                             key, colors.container, 0);
                         lv_obj_set_style_transform_scale(
@@ -2667,7 +4443,9 @@ bool Renderer::mount(
                             auto* label = lv_obj_get_child(key, 0);
                             lv_obj_set_style_text_font(
                                 label,
-                                &m3e_calculator_font_20,
+                                canvas_game_document
+                                    ? &lv_font_montserrat_18
+                                    : &m3e_calculator_font_20,
                                 0);
                             lv_obj_set_style_text_color(
                                 label, colors.content, 0);
@@ -2695,6 +4473,21 @@ bool Renderer::mount(
                             }
                         }
                     }
+                }
+                break;
+            }
+            case ComponentKind::canvas: {
+                object = lv_canvas_create(parent);
+                lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
+                lv_obj_add_flag(object, LV_OBJ_FLAG_CLICKABLE);
+                lv_obj_set_pos(object, px(4), px(4));
+                if (!render_canvas_display_list(
+                        object,
+                        primary,
+                        secondary,
+                        node.value,
+                        node.maximum)) {
+                    return false;
                 }
                 break;
             }
@@ -2783,6 +4576,128 @@ bool Renderer::mount(
                 }
                 break;
             }
+            case ComponentKind::icon: {
+                generated::WeatherIcon icon{};
+                if (!weather_icon(
+                        document.string_at(node.icon_offset), icon)) {
+                    return false;
+                }
+                const auto logical_size =
+                    node.size == 0 ? 18 :
+                    node.size == 2 ? 32 :
+                    node.size == 3 ? 64 : 24;
+                object = create_weather_icon(
+                    parent, icon, px(logical_size));
+                break;
+            }
+            case ComponentKind::surface: {
+                object = layout(factory, parent, node, false);
+                lv_obj_set_style_pad_all(
+                    object,
+                    px(node.variant == 1 || node.variant == 5 ? 4 : 8),
+                    0);
+                lv_obj_set_style_bg_color(
+                    object,
+                    node.tone == 0
+                        ? weather_color(
+                              generated::WeatherColorRole::primary_container)
+                        : node.tone == 1
+                            ? weather_color(
+                                  generated::WeatherColorRole::secondary_container)
+                            : node.tone == 2
+                                ? weather_color(
+                                      generated::WeatherColorRole::surface_high)
+                                : node.tone == 4
+                                    ? weather_color(
+                                          generated::WeatherColorRole::error_container)
+                                    : weather_color(
+                                          generated::WeatherColorRole::surface),
+                    0);
+                lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
+                const auto radius =
+                    node.variant == 1 ? px(28) :
+                    node.variant == 2 ? px(22) :
+                    node.variant == 3 ? px(24) :
+                    node.variant == 5 ? LV_RADIUS_CIRCLE : px(18);
+                lv_obj_set_style_radius(object, radius, 0);
+                if (node.variant == 4) {
+                    lv_obj_set_style_radius(object, px(10), 0);
+                }
+                break;
+            }
+            case ComponentKind::chart: {
+                object = lv_chart_create(parent);
+                ComponentFactory::reset(object);
+                lv_obj_set_size(object, LV_PCT(100), px(32));
+                lv_chart_set_type(
+                    object,
+                    node.variant == 1
+                        ? LV_CHART_TYPE_BAR
+                        : LV_CHART_TYPE_LINE);
+                lv_chart_set_point_count(object, node.sample_count);
+                lv_chart_set_range(
+                    object,
+                    LV_CHART_AXIS_PRIMARY_Y,
+                    0,
+                    node.maximum);
+                lv_chart_set_div_line_count(object, 0, 0);
+                lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
+                lv_obj_set_style_line_width(object, px(2), LV_PART_ITEMS);
+                lv_obj_set_style_width(object, px(4), LV_PART_INDICATOR);
+                lv_obj_set_style_height(object, px(4), LV_PART_INDICATOR);
+                auto* series = lv_chart_add_series(
+                    object,
+                    node.tone == 2
+                        ? weather_color(generated::WeatherColorRole::tertiary)
+                        : node.tone == 4
+                            ? weather_color(generated::WeatherColorRole::error)
+                            : weather_color(generated::WeatherColorRole::rain),
+                    LV_CHART_AXIS_PRIMARY_Y);
+                for (std::size_t sample = 0;
+                     sample < node.sample_count; ++sample) {
+                    lv_chart_set_next_value(
+                        object, series, node.samples[sample]);
+                }
+                break;
+            }
+            case ComponentKind::pager: {
+                object = layout(factory, parent, node, false);
+                lv_obj_set_style_pad_bottom(
+                    object, node.checked ? px(8) : 0, 0);
+                if (node.checked && node.maximum > 1) {
+                    auto* indicator = lv_obj_create(object);
+                    ComponentFactory::reset(indicator);
+                    lv_obj_add_flag(indicator, LV_OBJ_FLAG_FLOATING);
+                    lv_obj_set_size(
+                        indicator,
+                        px(node.maximum * 8),
+                        px(6));
+                    lv_obj_align(indicator, LV_ALIGN_BOTTOM_MID, 0, 0);
+                    lv_obj_set_flex_flow(indicator, LV_FLEX_FLOW_ROW);
+                    lv_obj_set_flex_align(
+                        indicator,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_CENTER,
+                        LV_FLEX_ALIGN_CENTER);
+                    lv_obj_set_style_pad_gap(indicator, px(3), 0);
+                    for (std::int32_t page = 0;
+                         page < node.maximum; ++page) {
+                        auto* dot = lv_obj_create(indicator);
+                        ComponentFactory::reset(dot);
+                        const auto dot_size = px(page == node.value ? 5 : 3);
+                        lv_obj_set_size(dot, dot_size, dot_size);
+                        lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
+                        lv_obj_set_style_bg_color(
+                            dot,
+                            page == node.value
+                                ? weather_color(generated::WeatherColorRole::primary)
+                                : weather_color(generated::WeatherColorRole::outline_variant),
+                            0);
+                        lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
+                    }
+                }
+                break;
+            }
             case ComponentKind::screen:
                 return false;
         }
@@ -2791,7 +4706,33 @@ bool Renderer::mount(
             object,
             const_cast<char*>(
                 document.string_at(node.id_offset)));
+        if (weather_current_document) {
+            configure_weather_current_node(
+                document, node, object, parent);
+        }
         if (!node.visible) lv_obj_add_flag(object, LV_OBJ_FLAG_HIDDEN);
+        const auto& parent_node = document.nodes[node.parent_index];
+        if (parent_node.kind == ComponentKind::pager) {
+            std::size_t page = 0;
+            for (std::size_t previous = node.parent_index + 1;
+                 previous < index; ++previous) {
+                if (document.nodes[previous].parent_index == node.parent_index) {
+                    ++page;
+                }
+            }
+            if (page != static_cast<std::size_t>(parent_node.value)) {
+                lv_obj_add_flag(object, LV_OBJ_FLAG_HIDDEN);
+            }
+        }
+        if (parent_node.kind == ComponentKind::row &&
+            parent_node.alignment == 3) {
+            lv_obj_set_flex_grow(object, 1);
+        } else if (
+            parent_node.kind == ComponentKind::row &&
+            node.kind == ComponentKind::text &&
+            weather_component_document) {
+            lv_obj_set_width(object, LV_SIZE_CONTENT);
+        }
         if (!node.enabled) lv_obj_add_state(object, LV_STATE_DISABLED);
         if (event_sink != nullptr) {
             for (std::size_t event_index = 0;
@@ -2817,6 +4758,18 @@ bool Renderer::mount(
                             event,
                             lv_obj_get_child(object, 2),
                             MountedEventValue::stepper_increment)) {
+                        return false;
+                    }
+                    continue;
+                }
+                if (node.kind == ComponentKind::pager) {
+                    if (!bind_event(
+                            document,
+                            event,
+                            object,
+                            MountedEventValue::node_value) ||
+                        !bind_pager_gesture(
+                            document, event, object)) {
                         return false;
                     }
                     continue;

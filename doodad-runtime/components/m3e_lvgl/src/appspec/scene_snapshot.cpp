@@ -103,6 +103,11 @@ const char* component_name(ComponentKind kind) {
         case ComponentKind::voice_orb: return "voice_orb";
         case ComponentKind::live_card: return "live_card";
         case ComponentKind::image: return "image";
+        case ComponentKind::canvas: return "canvas";
+        case ComponentKind::icon: return "icon";
+        case ComponentKind::surface: return "surface";
+        case ComponentKind::chart: return "chart";
+        case ComponentKind::pager: return "pager";
     }
     return "text";
 }
@@ -124,6 +129,11 @@ const char* semantic_role_name(const WireNode& node) {
         case ComponentKind::stepper: return "slider";
         case ComponentKind::toggle: return "toggle";
         case ComponentKind::image: return "image";
+        case ComponentKind::canvas: return "canvas";
+        case ComponentKind::icon: return "image";
+        case ComponentKind::surface: return "group";
+        case ComponentKind::chart: return "image";
+        case ComponentKind::pager: return "group";
     }
     return "text";
 }
@@ -153,8 +163,8 @@ const char* tone_name(std::uint8_t value) {
 
 const char* size_name(std::uint8_t value) {
     static constexpr const char* kNames[] = {
-        "compact", "default", "large"};
-    return value < 3 ? kNames[value] : "default";
+        "compact", "default", "large", "hero"};
+    return value < 4 ? kNames[value] : "default";
 }
 
 const char* gap_name(std::uint8_t value) {
@@ -185,6 +195,12 @@ const char* progress_style_name(std::uint8_t value) {
     static constexpr const char* kNames[] = {
         "linear", "circular", "segmented"};
     return value < 3 ? kNames[value] : "linear";
+}
+
+const char* surface_shape_name(std::uint8_t value) {
+    static constexpr const char* kNames[] = {
+        "standard", "hero", "metric_a", "metric_b", "metric_c", "pill"};
+    return value < 6 ? kNames[value] : "standard";
 }
 
 const char* voice_state_name(std::uint8_t value) {
@@ -349,6 +365,53 @@ void write_props(
                 "variant",
                 node.variant == 1 ? "contain" : "cover");
             break;
+        case ComponentKind::canvas:
+            property_string(writer, first, "display_list", primary);
+            property_string(writer, first, "palette", secondary);
+            property_integer(writer, first, "width", node.value);
+            property_integer(writer, first, "height", node.maximum);
+            break;
+        case ComponentKind::icon:
+            property_string(
+                writer, first, "icon", document.string_at(node.icon_offset));
+            property_string(writer, first, "tone", tone_name(node.tone));
+            property_string(writer, first, "size", size_name(node.size));
+            break;
+        case ComponentKind::surface:
+            property_string(writer, first, "tone", tone_name(node.tone));
+            property_string(
+                writer, first, "variant", surface_shape_name(node.variant));
+            property_string(writer, first, "gap", gap_name(node.gap));
+            property_string(
+                writer, first, "alignment", alignment_name(node.alignment));
+            break;
+        case ComponentKind::chart:
+            if (!first) writer.text(",");
+            first = false;
+            writer.string("samples");
+            writer.text(":[");
+            for (std::size_t index = 0; index < node.sample_count; ++index) {
+                if (index != 0) writer.text(",");
+                writer.integer(node.samples[index]);
+            }
+            writer.text("]");
+            property_integer(writer, first, "maximum", node.maximum);
+            property_string(
+                writer, first, "variant", node.variant == 1 ? "bars" : "line");
+            property_string(writer, first, "tone", tone_name(node.tone));
+            break;
+        case ComponentKind::pager:
+            property_integer(writer, first, "value", node.value);
+            property_integer(writer, first, "maximum", node.maximum);
+            if (!first) writer.text(",");
+            first = false;
+            writer.string("checked");
+            writer.text(":");
+            writer.text(node.checked ? "true" : "false");
+            property_string(writer, first, "gap", gap_name(node.gap));
+            property_string(
+                writer, first, "alignment", alignment_name(node.alignment));
+            break;
     }
     writer.text("}");
 }
@@ -485,6 +548,31 @@ void write_token_roles(JsonWriter& writer, const WireNode& node) {
             writer.text(
                 "\"asset\":\"package_image\","
                 "\"fit\":\"content_scale\"");
+            break;
+        case ComponentKind::canvas:
+            writer.text(
+                "\"display\":\"canvas_display_list_v1\","
+                "\"colors\":\"canvas_palette\"");
+            break;
+        case ComponentKind::icon:
+            writer.text(
+                "\"asset\":\"weather_icon_registry\","
+                "\"content\":\"semantic_tone\"");
+            break;
+        case ComponentKind::surface:
+            writer.text("\"container\":");
+            writer.string(tone_name(node.tone));
+            writer.text(",\"shape\":");
+            writer.string(surface_shape_name(node.variant));
+            break;
+        case ComponentKind::chart:
+            writer.text("\"series\":");
+            writer.string(tone_name(node.tone));
+            break;
+        case ComponentKind::pager:
+            writer.text(
+                "\"layout\":\"horizontal_pager\","
+                "\"indicator\":\"primary\"");
             break;
     }
     writer.text("}");

@@ -1,0 +1,479 @@
+{
+  "schema_version": 1,
+  "app_id": "weather",
+  "screen": {
+    "id": "weather.hourly-screen",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "weather.hourly",
+          "type": "column",
+          "props": {
+            "gap": "none",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "weather.hourly-summary",
+                "type": "row",
+                "props": {
+                  "gap": "xs",
+                  "align": "start",
+                  "children": [
+                    {
+                      "id": "weather.hourly-condition-icon",
+                      "type": "icon",
+                      "props": {
+                        "name": "condition_partly_cloudy_day",
+                        "tone": "tertiary",
+                        "size": "large"
+                      },
+                      "semantics": {
+                        "label": "Partly cloudy"
+                      }
+                    },
+                    {
+                      "id": "weather.hourly-summary-copy",
+                      "type": "column",
+                      "props": {
+                        "gap": "none",
+                        "align": "start",
+                        "children": [
+                          {
+                            "id": "weather.hourly-now",
+                            "type": "text",
+                            "props": {
+                              "text": "Now 62°",
+                              "style": "body",
+                              "max_lines": 1,
+                              "align": "start"
+                            },
+                            "semantics": {
+                              "label": "Current temperature",
+                              "value": "62 degrees"
+                            }
+                          },
+                          {
+                            "id": "weather.hourly-condition",
+                            "type": "text",
+                            "props": {
+                              "text": "Partly cloudy",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "start"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.hourly-status-chip",
+                "type": "surface",
+                "props": {
+                  "tone": "secondary",
+                  "shape": "pill",
+                  "gap": "none",
+                  "align": "center",
+                  "children": [
+                    {
+                      "id": "weather.hourly-status",
+                      "type": "text",
+                      "props": {
+                        "text": "Now",
+                        "style": "caption",
+                        "max_lines": 1,
+                        "align": "center"
+                      },
+                      "semantics": {
+                        "label": "Weather updated now"
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.hourly-chart-card",
+                "type": "surface",
+                "props": {
+                  "tone": "secondary",
+                  "shape": "standard",
+                  "gap": "none",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.hourly-chart-heading",
+                      "type": "row",
+                      "props": {
+                        "gap": "xs",
+                        "align": "start",
+                        "children": [
+                          {
+                            "id": "weather.hourly-rain-icon",
+                            "type": "icon",
+                            "props": {
+                              "name": "utility_humidity",
+                              "tone": "primary",
+                              "size": "compact"
+                            },
+                            "semantics": {
+                              "label": "Precipitation"
+                            }
+                          },
+                          {
+                            "id": "weather.hourly-rain-label",
+                            "type": "text",
+                            "props": {
+                              "text": "Rain",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "start"
+                            }
+                          },
+                          {
+                            "id": "weather.hourly-rain-value",
+                            "type": "text",
+                            "props": {
+                              "text": "0%",
+                              "style": "label",
+                              "max_lines": 1,
+                              "align": "end"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.rain-chart",
+                      "type": "chart",
+                      "props": {
+                        "samples": [
+                          0,
+                          0,
+                          0,
+                          0
+                        ],
+                        "maximum": 100,
+                        "style": "line",
+                        "tone": "primary"
+                      },
+                      "semantics": {
+                        "label": "Rain chance remains at zero percent for the next hour"
+                      }
+                    },
+                    {
+                      "id": "weather.hourly-times",
+                      "type": "row",
+                      "props": {
+                        "gap": "none",
+                        "align": "stretch",
+                        "children": [
+                          {
+                            "id": "weather.hourly-time-now",
+                            "type": "text",
+                            "props": {
+                              "text": "NOW",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "start"
+                            }
+                          },
+                          {
+                            "id": "weather.hourly-time-20",
+                            "type": "text",
+                            "props": {
+                              "text": "20m",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "id": "weather.hourly-time-40",
+                            "type": "text",
+                            "props": {
+                              "text": "40m",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "id": "weather.hourly-time-60",
+                            "type": "text",
+                            "props": {
+                              "text": "60m",
+                              "style": "caption",
+                              "max_lines": 1,
+                              "align": "end"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "id": "weather.hourly-tiles",
+                "type": "row",
+                "props": {
+                  "gap": "xs",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "weather.hour-now-tile",
+                      "type": "surface",
+                      "props": {
+                        "tone": "primary",
+                        "shape": "standard",
+                        "gap": "none",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.hour-now",
+                            "type": "column",
+                            "props": {
+                              "gap": "none",
+                              "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.hour-now-label",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "NOW",
+                                    "style": "caption",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-now-icon",
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "condition_partly_cloudy_day",
+                                    "tone": "tertiary",
+                                    "size": "compact"
+                                  },
+                                  "semantics": {
+                                    "label": "Partly cloudy"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-now-temp",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "62°",
+                                    "style": "body",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.hour-10-tile",
+                      "type": "surface",
+                      "props": {
+                        "tone": "neutral",
+                        "shape": "standard",
+                        "gap": "none",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.hour-10",
+                            "type": "column",
+                            "props": {
+                              "gap": "none",
+                              "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.hour-10-label",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "10",
+                                    "style": "caption",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-10-icon",
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "condition_partly_cloudy_day",
+                                    "tone": "tertiary",
+                                    "size": "compact"
+                                  },
+                                  "semantics": {
+                                    "label": "Partly cloudy"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-10-temp",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "63°",
+                                    "style": "body",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.hour-11-tile",
+                      "type": "surface",
+                      "props": {
+                        "tone": "neutral",
+                        "shape": "standard",
+                        "gap": "none",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.hour-11",
+                            "type": "column",
+                            "props": {
+                              "gap": "none",
+                              "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.hour-11-label",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "11",
+                                    "style": "caption",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-11-icon",
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "condition_clear_day",
+                                    "tone": "tertiary",
+                                    "size": "compact"
+                                  },
+                                  "semantics": {
+                                    "label": "Sunny"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-11-temp",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "65°",
+                                    "style": "body",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "id": "weather.hour-12-tile",
+                      "type": "surface",
+                      "props": {
+                        "tone": "neutral",
+                        "shape": "standard",
+                        "gap": "none",
+                        "align": "center",
+                        "children": [
+                          {
+                            "id": "weather.hour-12",
+                            "type": "column",
+                            "props": {
+                              "gap": "none",
+                              "align": "center",
+                              "children": [
+                                {
+                                  "id": "weather.hour-12-label",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "12",
+                                    "style": "caption",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-12-icon",
+                                  "type": "icon",
+                                  "props": {
+                                    "name": "condition_clear_day",
+                                    "tone": "tertiary",
+                                    "size": "compact"
+                                  },
+                                  "semantics": {
+                                    "label": "Sunny"
+                                  }
+                                },
+                                {
+                                  "id": "weather.hour-12-temp",
+                                  "type": "text",
+                                  "props": {
+                                    "text": "66°",
+                                    "style": "body",
+                                    "max_lines": 1,
+                                    "align": "center"
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                },
+                "semantics": {
+                  "label": "Hourly forecast"
+                }
+              },
+              {
+                "id": "weather.daily-action",
+                "type": "button",
+                "props": {
+                  "label": "Daily",
+                  "icon": "utility_chevron_right",
+                  "tone": "secondary",
+                  "variant": "filled",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "weather.daily"
+                },
+                "semantics": {
+                  "label": "Show daily forecast"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "events": {
+      "pageChanged": "weather.page-changed"
+    },
+    "semantics": {
+      "label": "Hourly forecast"
+    }
+  }
+}

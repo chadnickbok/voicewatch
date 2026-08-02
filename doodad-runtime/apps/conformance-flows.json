@@ -22,31 +22,31 @@
     ],
     "weather": [
       {
-        "kind": "semantic",
-        "node_id": "weather.primary",
-        "action_id": "weather.refresh",
-        "event_kind": "tap"
-      },
-      {
         "kind": "deliver"
       },
       {
         "kind": "semantic",
         "node_id": "weather.primary",
-        "action_id": "weather.refresh",
+        "action_id": "weather.hourly",
         "event_kind": "tap"
-      },
-      {
-        "kind": "deliver"
       },
       {
         "kind": "semantic",
-        "node_id": "weather.primary",
-        "action_id": "weather.refresh",
+        "node_id": "weather.daily-action",
+        "action_id": "weather.daily",
         "event_kind": "tap"
       },
       {
-        "kind": "deliver"
+        "kind": "semantic",
+        "node_id": "weather.details-action",
+        "action_id": "weather.details",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "weather.rain-preview-action",
+        "action_id": "weather.rain-preview",
+        "event_kind": "tap"
       }
     ],
     "notifications": [
@@ -531,23 +531,17 @@
     "snake": [
       {
         "kind": "semantic",
-        "node_id": "snake.primary",
-        "action_id": "snake.primary",
-        "event_kind": "tap"
+        "node_id": "snake.game.controls",
+        "action_id": "snake.control",
+        "event_kind": "tap",
+        "typed_value": "GO"
       },
       {
         "kind": "semantic",
         "node_id": "snake.game.controls",
         "action_id": "snake.control",
         "event_kind": "tap",
-        "typed_value": "Go"
-      },
-      {
-        "kind": "semantic",
-        "node_id": "snake.game.controls",
-        "action_id": "snake.control",
-        "event_kind": "tap",
-        "typed_value": "Go"
+        "typed_value": "GO"
       }
     ]
   }
