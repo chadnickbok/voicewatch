@@ -2,6 +2,10 @@
 __pycache__/
 *.py[cod]
 
+# Local API credentials
+/elevenlabs.env
+/openai.env
+
 # Swift / CleanCam
 .build/
 /cores3-webcam-capture*.png
@@ -32,3 +36,8 @@ doodad-runtime/firmware/main/embedded/hello.wasm
 doodad-runtime/tools/voice-uplink/.venv/
 doodad-runtime/tools/voice-uplink/models/
 doodad-runtime/tools/voice-uplink/artifacts/
+
+# Local live-agent environment and runtime state
+doodad-runtime/services/live-agent/.venv/
+doodad-runtime/services/live-agent/.pytest_cache/
+doodad-runtime/services/live-agent/*.sqlite3*

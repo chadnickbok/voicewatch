@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "doodad://schemas/workout-action-v1",
+  "title": "Workout agent action payloads v1",
+  "$defs": {
+    "record_missed_set": {
+      "type": "object", "additionalProperties": false,
+      "required": ["workout_id", "set_id", "expected_revision", "idempotency_key"],
+      "properties": {
+        "workout_id": {"type": "string"}, "set_id": {"type": "string"},
+        "expected_revision": {"type": "integer", "minimum": 0},
+        "idempotency_key": {"type": "string", "minLength": 8, "maxLength": 128}
+      }
+    },
+    "result": {
+      "type": "object", "additionalProperties": false,
+      "required": ["committed", "duplicate", "revision", "set_id", "status"],
+      "properties": {
+        "committed": {"type": "boolean"}, "duplicate": {"type": "boolean"},
+        "revision": {"type": "integer", "minimum": 0}, "set_id": {"type": "string"},
+        "status": {"enum": ["pending", "completed", "missed"]}
+      }
+    }
+  }
+}

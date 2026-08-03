@@ -41,7 +41,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
         cls.suite = json.loads(SUITE_PATH.read_text())
         cls.selections = resolve_suite_entries(SUITE_PATH)
 
-    def test_suite_selects_twenty_initial_snapshots_and_weather_route_oracles(self) -> None:
+    def test_suite_selects_initial_snapshots_and_route_oracles(self) -> None:
         expected_slugs = [app["slug"] for app in self.catalog]
         initial_entries = [
             entry for entry in self.suite["entries"] if entry["sequence"] == 0
@@ -56,7 +56,12 @@ class PerfectRenderSuiteTests(unittest.TestCase):
             for entry in self.suite["entries"]
             if entry["app_slug"] == "weather" and entry["sequence"] != 0
         ]
-        self.assertEqual(len(self.suite["entries"]), 24)
+        workout_routes = [
+            entry
+            for entry in self.suite["entries"]
+            if entry["app_slug"] == "workout" and entry["sequence"] != 0
+        ]
+        self.assertEqual(len(self.suite["entries"]), 35)
         self.assertEqual(
             [entry["app_slug"] for entry in initial_entries],
             expected_slugs,
@@ -68,6 +73,10 @@ class PerfectRenderSuiteTests(unittest.TestCase):
         self.assertEqual(
             [entry["sequence"] for entry in weather_routes],
             [3, 5, 7, 8],
+        )
+        self.assertEqual(
+            [entry["sequence"] for entry in workout_routes],
+            [1, 2, 4, 5, 8, 10, 11, 12, 14, 15, 17],
         )
 
         for selection in initial_selections:
@@ -86,7 +95,6 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                     "notifications",
                     "tasks",
                     "calendar",
-                    "workout",
                     "calories",
                     "voice-notes",
                     "medication",
@@ -201,7 +209,7 @@ class PerfectRenderSuiteTests(unittest.TestCase):
                 SUITE_PATH,
                 output_root,
             )
-            self.assertEqual(len(manifests), 24)
+            self.assertEqual(len(manifests), 35)
             self.assertEqual(
                 [
                     manifest["selection"]["app_slug"]

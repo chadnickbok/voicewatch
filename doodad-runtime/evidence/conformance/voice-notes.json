@@ -22,8 +22,8 @@
     "maximum_decisive_actions": 12
   },
   "summary": {
-    "module_bytes": 5847,
-    "package_bytes": 6054,
+    "module_bytes": 8020,
+    "package_bytes": 8227,
     "authored_json_documents": 12,
     "canonical_cbor_documents": 6,
     "maximum_appspec_bytes": 526,

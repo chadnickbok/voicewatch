@@ -32,12 +32,26 @@ enum class Overlay : std::uint8_t {
 enum class VoicePhase : std::uint8_t {
     idle,
     listening,
-    transcribing,
+    thinking,
+    speaking,
     clarifying,
-    reviewing,
-    building,
-    completed,
     error,
+};
+
+enum class BackgroundInstallState : std::uint8_t {
+    none,
+    downloading,
+    installing,
+    staged,
+    failed,
+};
+
+struct BackgroundActivity {
+    std::uint8_t running_count = 0;
+    bool focused_question = false;
+    bool review_ready = false;
+    bool completion_pending = false;
+    BackgroundInstallState install_state = BackgroundInstallState::none;
 };
 
 enum class Input : std::uint8_t {
@@ -121,6 +135,7 @@ struct ShellSnapshot {
     std::uint8_t live_card_count;
     std::uint8_t notification_count;
     std::uint8_t ongoing_count;
+    BackgroundActivity background;
     std::uint32_t generation;
 };
 
@@ -140,6 +155,12 @@ public:
     [[nodiscard]] bool show_overlay(Overlay overlay);
     [[nodiscard]] bool dismiss_overlay();
     [[nodiscard]] bool set_voice_phase(VoicePhase phase);
+    void publish_background_activity(
+        std::uint8_t running_count,
+        bool focused_question,
+        bool review_ready,
+        bool completion_pending,
+        BackgroundInstallState install_state);
     void publish_surface_counts(
         std::uint8_t live_cards,
         std::uint8_t notifications,
@@ -170,6 +191,7 @@ private:
         0,
         0,
         0,
+        {},
         0,
     };
 };

@@ -20,7 +20,7 @@ EXPECTED = {
     "tasks": "c11f8816d430395f679697543835bb9b0ec5e3494bdf3e43820c7b7d2918df3a",
     "calculator": "900b2b845c8451e333a0c6ef6f0c005006e8f3f888cdcebbf12c37919d3b73de",
     "calendar": "605afaf378547668bc3849febd6a8c8c88233d340cce60e3cc4347c0b7424882",
-    "workout": "1db39fbc0ce7fc3844ca729a30d13eae9d9fe5887d79d82620afac7d9b7070e3",
+    "workout": "3334911ccd2605c9cd5602e64aaec75f54ddb9d8e8e9fa02c656eef276dcd760",
     "calories": "30a1f14478bb443f23ec058f6dba90ad36c9607678d4bc86ebfe8bf9c4de0985",
     "voice-notes": "199a140cc7035a6ab959ce2cabc3408e75101b7a89b2e7ffe626006c3db6f0a5",
     "medication": "d0f30705bc9bafdfb9e931ba4a36001972dab4d6c96628b24ec39775ff32a255",

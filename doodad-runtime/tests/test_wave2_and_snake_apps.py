@@ -46,22 +46,78 @@ class WaveTwoAndSnakeTests(unittest.TestCase):
 
     def test_workout_set_commit_rest_and_session_summary(self) -> None:
         def flow(native: NativeHost) -> None:
-            self.assertEqual(native.node_text("active_set.weight"), "135 lb")
-            native.click_button("+")
-            native.click_button("+")
-            self.assertEqual(native.node_text("active_set.weight"), "145 lb")
-            native.click_button("Log set")
-            self.assertEqual(native.node_text("workout.rest.time"), "1:00")
-            native.click_button("Next set")
             self.assertEqual(
-                native.node_text("workout.next.weight"), "145 lb"
+                native.node_text("powerlifting.today.hero"), "HEAVY\nDAY"
             )
-            native.click_button("Log set")
+            native.click_button("START WORKOUT")
             self.assertEqual(
-                native.node_text("workout.summary.sets"), "4 sets"
+                native.node_text("powerlifting.session.count"), "0 OF 14"
             )
-            native.click_button("Again")
-            self.assertEqual(native.node_text("active_set.weight"), "145 lb")
+            native.dispatch_semantic_action(
+                "powerlifting.session.squat",
+                "workout.choose.exercise",
+                "tap",
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.exercise-picker.back-squat",
+                "workout.exercise.back-squat",
+                "tap",
+            )
+            native.click_button("BEGIN SQUAT")
+            self.assertTrue(
+                native.node_text("powerlifting.active-set.target").startswith(
+                    "140"
+                )
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.active-set.target",
+                "workout.edit.weight",
+                "tap",
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.weight-editor.value",
+                "workout.weight",
+                "value_committed",
+                145,
+            )
+            self.assertEqual(
+                native.node_text("powerlifting.weight-editor.value"),
+                "145 KG",
+            )
+            native.click_button("DONE")
+            native.click_button("COMPLETE SET")
+            native.dispatch_semantic_action(
+                "powerlifting.set-result.reps",
+                "workout.reps",
+                "value_committed",
+                3,
+            )
+            native.click_button("SAVE SET")
+            self.assertEqual(
+                native.node_text("powerlifting.missed-set.label"),
+                "SET MISSED",
+            )
+            native.click_button("135 NEXT")
+            self.assertEqual(
+                native.node_text("powerlifting.rest.time"), "2:41"
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.rest.next", "workout.plates", "tap"
+            )
+            native.click_button("READY")
+            native.dispatch_semantic_action(
+                "powerlifting.active-set.complete",
+                "workout.switch.preview",
+                "long_press",
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.exercise-switcher.bench",
+                "workout.finish",
+                "long_press",
+            )
+            self.assertEqual(
+                native.node_text("powerlifting.summary.sets"), "14 SETS"
+            )
 
         self.run_app("workout", flow)
 

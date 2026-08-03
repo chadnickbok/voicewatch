@@ -1,6 +1,7 @@
 #include "display.hpp"
 
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <new>
 
@@ -41,6 +42,7 @@ enum class UiCommandType : std::uint8_t {
     catalog,
     system_home,
     surface_publish,
+    agent_state,
 };
 
 struct UiCommand {
@@ -52,6 +54,12 @@ struct UiCommand {
     m3e::appspec::WireDocument* document;
     m3e::appspec::CommandBatch* batch;
     m3e::os::DomainSurfaceSnapshot* surfaces;
+    std::uint8_t voice_phase;
+    std::uint8_t running_count;
+    bool focused_question;
+    bool review_ready;
+    bool completion_pending;
+    std::uint8_t install_state;
 };
 
 bool g_display_ready = false;
@@ -282,6 +290,37 @@ void catalog_now(int story) {
     m3e_catalog_show(lv_screen_active(), story);
 }
 
+void render_background_badge() {
+    const auto& activity = g_shell.snapshot().background;
+    if (activity.running_count == 0 && !activity.focused_question &&
+        !activity.review_ready && !activity.completion_pending &&
+        activity.install_state == m3e::os::BackgroundInstallState::none) {
+        return;
+    }
+    auto* badge = lv_obj_create(lv_screen_active());
+    lv_obj_remove_style_all(badge);
+    lv_obj_set_size(badge, 58, 30);
+    lv_obj_align(badge, LV_ALIGN_TOP_RIGHT, -12, 10);
+    lv_obj_set_style_radius(badge, 15, 0);
+    lv_obj_set_style_bg_opa(badge, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_color(badge, lv_color_hex(0x2D2648), 0);
+    lv_obj_set_style_border_width(badge, 1, 0);
+    lv_obj_set_style_border_color(badge, lv_color_hex(0xC8B6FF), 0);
+    lv_obj_clear_flag(badge, LV_OBJ_FLAG_SCROLLABLE);
+    auto* label = lv_label_create(badge);
+    char text[12]{};
+    if (activity.focused_question) {
+        std::snprintf(text, sizeof(text), "?  %u", activity.running_count);
+    } else if (activity.completion_pending || activity.review_ready) {
+        std::snprintf(text, sizeof(text), "!  %u", activity.running_count);
+    } else {
+        std::snprintf(text, sizeof(text), "\xE2\x80\xA2  %u", activity.running_count);
+    }
+    lv_label_set_text(label, text);
+    lv_obj_set_style_text_color(label, lv_color_hex(0xF3EDFF), 0);
+    lv_obj_center(label);
+}
+
 int shell_story() {
     const auto& snapshot = g_shell.snapshot();
     switch (snapshot.overlay) {
@@ -289,14 +328,10 @@ int shell_story() {
             switch (snapshot.voice_phase) {
                 case m3e::os::VoicePhase::listening:
                     return M3E_CATALOG_STORY_OS_VOICE;
-                case m3e::os::VoicePhase::transcribing:
+                case m3e::os::VoicePhase::thinking:
                 case m3e::os::VoicePhase::clarifying:
                     return M3E_CATALOG_STORY_OS_VOICE_THINKING;
-                case m3e::os::VoicePhase::reviewing:
-                    return M3E_CATALOG_STORY_OS_VOICE_REVIEW;
-                case m3e::os::VoicePhase::building:
-                    return M3E_CATALOG_STORY_OS_VOICE_BUILD;
-                case m3e::os::VoicePhase::completed:
+                case m3e::os::VoicePhase::speaking:
                     return M3E_CATALOG_STORY_OS_VOICE_RESULT;
                 case m3e::os::VoicePhase::error:
                     return M3E_CATALOG_STORY_OS_ERROR;
@@ -340,6 +375,7 @@ int shell_story() {
 
 void render_shell_now() {
     catalog_now(shell_story());
+    render_background_badge();
 }
 
 void system_home_now() {
@@ -366,6 +402,51 @@ bool surface_publish_now(
         render_shell_now();
     }
     return true;
+}
+
+void agent_state_now(const UiCommand& command) {
+    if (!g_shell_active) {
+        if (!g_shell.initialize()) {
+            ESP_LOGE(kTag, "[system] agent state could not initialize shell");
+            return;
+        }
+        g_surface_registry.sync_shell_counts(g_shell);
+        g_shell_active = true;
+    }
+    const auto requested = command.voice_phase <=
+            static_cast<std::uint8_t>(m3e::os::VoicePhase::error)
+        ? static_cast<m3e::os::VoicePhase>(command.voice_phase)
+        : m3e::os::VoicePhase::error;
+    if (requested == m3e::os::VoicePhase::idle) {
+        if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+            g_shell.dismiss_overlay();
+        }
+    } else {
+        if (g_shell.snapshot().overlay != m3e::os::Overlay::voice) {
+            g_shell.show_overlay(m3e::os::Overlay::voice);
+        }
+        if (!g_shell.set_voice_phase(requested)) {
+            g_shell.set_voice_phase(m3e::os::VoicePhase::idle);
+            g_shell.set_voice_phase(m3e::os::VoicePhase::listening);
+            if (requested != m3e::os::VoicePhase::listening) {
+                g_shell.set_voice_phase(requested);
+            }
+        }
+    }
+    const auto install_state = command.install_state <=
+            static_cast<std::uint8_t>(
+                m3e::os::BackgroundInstallState::failed)
+        ? static_cast<m3e::os::BackgroundInstallState>(command.install_state)
+        : m3e::os::BackgroundInstallState::failed;
+    g_shell.publish_background_activity(
+        command.running_count,
+        command.focused_question,
+        command.review_ready,
+        command.completion_pending,
+        install_state);
+    if (g_shell_active && g_shell.snapshot().display_awake) {
+        render_shell_now();
+    }
 }
 
 void dispatch_system_input(m3e::os::Input input) {
@@ -432,6 +513,9 @@ void drain_ui_commands() {
             case UiCommandType::surface_publish:
                 surface_publish_now(command.surfaces);
                 break;
+            case UiCommandType::agent_state:
+                agent_state_now(command);
+                break;
         }
     }
 }
@@ -450,7 +534,10 @@ bool display_init() {
     config.internal_imu = false;
     config.internal_rtc = false;
     config.internal_mic = true;
-    config.internal_spk = false;
+    // Voice owns the CoreS3 codec as a half-duplex resource: microphone while
+    // listening, speaker while remote audio is playing. Both endpoints must
+    // be registered during M5 initialization so Voice can switch at runtime.
+    config.internal_spk = true;
     config.external_display_value = 0;
     config.fallback_board = m5::board_t::board_M5StackCoreS3SE;
 
@@ -706,6 +793,29 @@ bool display_publish_surfaces(
         return false;
     }
     return true;
+}
+
+bool display_publish_agent_state(
+    std::uint8_t voice_phase,
+    std::uint8_t running_count,
+    bool focused_question,
+    bool review_ready,
+    bool completion_pending,
+    std::uint8_t install_state) {
+    UiCommand command{};
+    command.type = UiCommandType::agent_state;
+    command.voice_phase = voice_phase;
+    command.running_count = running_count;
+    command.focused_question = focused_question;
+    command.review_ready = review_ready;
+    command.completion_pending = completion_pending;
+    command.install_state = install_state;
+    if (!g_display_ready) return false;
+    if (on_ui_task()) {
+        agent_state_now(command);
+        return true;
+    }
+    return enqueue(command);
 }
 
 void display_update() {

@@ -29,6 +29,13 @@ BUDGETS = {
     "maximum_decisive_actions": 12,
 }
 
+APP_BUDGET_OVERRIDES = {
+    # The powerlifting oracle deliberately exercises the full workout
+    # lifecycle: planning, editing, a missed set, rest, plate loading,
+    # exercise switching, completion, and resume recovery.
+    "workout": {"maximum_decisive_actions": 20},
+}
+
 
 def canonical(value: Any) -> bytes:
     return json.dumps(
@@ -92,11 +99,16 @@ def app_evidence(
     actions: list[dict[str, Any]],
 ) -> dict[str, Any]:
     slug = entry["slug"]
+    budgets = BUDGETS | APP_BUDGET_OVERRIDES.get(slug, {})
     app_dir = ROOT / "apps" / slug
     package = build_and_stage(ROOT, app_dir)
     manifest = read_json(app_dir / "manifest.json")
     appspec_files = sorted(app_dir.glob("**/*.cbor"))
-    authored_screens = sorted(app_dir.glob("**/*.json"))
+    authored_screens = sorted(
+        path
+        for path in app_dir.glob("**/*.json")
+        if path.name != "agent.json"
+    )
     package_bytes = sum(
         path.stat().st_size
         for path in package.staging.iterdir()
@@ -149,7 +161,7 @@ def app_evidence(
         "provider_requests": stages[-1]["provider_requests"],
     }
     failures = []
-    for metric, limit in BUDGETS.items():
+    for metric, limit in budgets.items():
         measured_key = {
             "maximum_module_bytes": "module_bytes",
             "maximum_decisive_actions": "decisive_actions",
@@ -174,7 +186,7 @@ def app_evidence(
             "mode": entry["mode"],
             "surfaces": entry["surfaces"],
         },
-        "budgets": BUDGETS,
+        "budgets": budgets,
         "summary": summary,
         "stages": stages,
     }

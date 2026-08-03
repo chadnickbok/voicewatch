@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "doodad://contracts/job-event-v1",
+  "title": "Doodad durable job event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["event_id", "job_id", "sequence", "kind", "created_at", "summary", "payload", "producer"],
+  "properties": {
+    "event_id": {"type": "string", "minLength": 8, "maxLength": 96},
+    "job_id": {"type": "string", "minLength": 8, "maxLength": 96},
+    "sequence": {"type": "integer", "minimum": 1},
+    "kind": {"enum": ["accepted", "started", "progress", "needs_input", "input_received", "ready_for_review", "completed", "failed", "cancel_requested", "cancelled"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "summary": {"type": "string", "minLength": 1, "maxLength": 240},
+    "payload": {"type": "object", "maxProperties": 32},
+    "producer": {"type": "string", "minLength": 1, "maxLength": 96}
+  }
+}

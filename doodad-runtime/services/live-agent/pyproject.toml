@@ -1,0 +1,36 @@
+[build-system]
+requires = ["hatchling==1.27.0"]
+build-backend = "hatchling.build"
+
+[project]
+name = "doodad-live-agent"
+version = "0.1.0"
+description = "Persistent Pipecat foreground agent and durable Doodad job manager"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "aiohttp==3.12.15",
+  "aiortc==1.15.0",
+  "jsonschema==4.26.0",
+  "nltk==3.10.0",
+  "numpy==2.4.6",
+  "openai==2.52.0",
+  "pipecat-ai[elevenlabs,openai,silero]==1.7.0",
+  "soxr==1.0.0",
+  "zeroconf==0.147.0"
+]
+
+[project.scripts]
+doodad-live-agent = "doodad_agent.main:cli"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/doodad_agent"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[dependency-groups]
+dev = [
+  "pytest==8.4.2",
+  "pytest-asyncio==1.1.0"
+]

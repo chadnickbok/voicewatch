@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "doodad://contracts/agent-control-event-v1",
+  "title": "Doodad agent control event v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["v", "event_id", "kind", "created_at", "payload"],
+  "properties": {
+    "v": {"const": 1},
+    "event_id": {"type": "string", "minLength": 8, "maxLength": 96},
+    "kind": {"enum": ["conversation.phase", "watch.state", "capability.result", "job.event", "attention.delivery", "focus.changed"]},
+    "created_at": {"type": "string", "format": "date-time"},
+    "session_id": {"type": ["string", "null"], "maxLength": 96},
+    "job_id": {"type": ["string", "null"], "maxLength": 96},
+    "payload": {"type": "object", "maxProperties": 32}
+  }
+}

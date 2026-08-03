@@ -2,6 +2,11 @@
 
 Voice is a system capability, not an app-owned screen.
 
+The next implementation slice—persistent foreground conversation, typed watch
+actions, durable background jobs, attention policy, and a Codex app-builder
+worker—is specified in the
+[live foreground agent vertical-slice plan](live-agent-vertical-slice.md).
+
 ## Layer and task ownership
 
 The native host owns a voice overlay above the active route. A hardware gesture,

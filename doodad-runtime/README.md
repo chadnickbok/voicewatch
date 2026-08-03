@@ -25,6 +25,8 @@ It now also contains a substantial Material 3 Expressive framework slice:
 
 The active UI/runtime milestone is specified in the
 [20-app and OS conformance-suite plan](docs/20-app-conformance-suite.md).
+The next voice/agent milestone is specified in the
+[live foreground agent and durable jobs vertical-slice plan](docs/live-agent-vertical-slice.md).
 The suite now includes 20 separate interactive Wasm packages, deterministic
 scenario and cross-surface contracts, a trusted Home/Voice/App Manager shell,
 CoreS3 system-shortcut wiring, dual 3 MiB firmware slots, and 9.94 MiB of

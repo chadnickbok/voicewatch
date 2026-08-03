@@ -5,6 +5,8 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import array
+import math
 import json
 import logging
 import re
@@ -18,7 +20,7 @@ from pathlib import Path
 from typing import Any
 
 from aiohttp import WSMsgType, web
-from aiortc import RTCPeerConnection, RTCSessionDescription
+from aiortc import AudioStreamTrack, RTCPeerConnection, RTCSessionDescription
 from av.audio.resampler import AudioResampler
 from zeroconf import IPVersion, ServiceInfo, Zeroconf
 
@@ -175,6 +177,49 @@ class SegmentRecorder:
             print(f"audio recorder failed: {error!r}", flush=True)
 
 
+class DownlinkAudioTrack(AudioStreamTrack):
+    """Paced 8 kHz mono downlink used by both conformance and Pipecat adapters."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self._samples: asyncio.Queue[int] = asyncio.Queue(maxsize=16_000)
+        self.frames_sent = 0
+        self.audible_frames_sent = 0
+
+    def enqueue_tone(
+        self,
+        frequency_hz: float = 660.0,
+        duration_ms: int = 900,
+        amplitude: int = 8_000,
+    ) -> None:
+        sample_count = 8_000 * duration_ms // 1_000
+        ramp_samples = 8_000 * 20 // 1_000
+        for index in range(sample_count):
+            ramp = min(1.0, index / ramp_samples, (sample_count - index) / ramp_samples)
+            sample = int(amplitude * ramp * math.sin(2 * math.pi * frequency_hz * index / 8_000))
+            try:
+                self._samples.put_nowait(sample)
+            except asyncio.QueueFull:
+                break
+
+    async def recv(self):  # type: ignore[no-untyped-def]
+        frame = await super().recv()
+        pcm = array.array("h")
+        audible = False
+        for _ in range(frame.samples):
+            try:
+                sample = self._samples.get_nowait()
+                audible = audible or sample != 0
+            except asyncio.QueueEmpty:
+                sample = 0
+            pcm.append(sample)
+        frame.planes[0].update(pcm.tobytes())
+        self.frames_sent += 1
+        if audible:
+            self.audible_frames_sent += 1
+        return frame
+
+
 @dataclass
 class RunResult:
     run: int
@@ -196,6 +241,8 @@ class LabSession:
         self.messages: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
         self.connected = asyncio.Event()
         self.recorder = SegmentRecorder()
+        self.downlink = DownlinkAudioTrack()
+        self.downlink_attached = False
         self.results: list[RunResult] = []
         self.runner: asyncio.Task[None] | None = None
         self.sdp_chunks: list[str | None] | None = None
@@ -222,7 +269,7 @@ class LabSession:
         message_type = message["type"]
         print(f"signal <- {message_type}", flush=True)
         if message_type == "hello":
-            await self.send("welcome", {"mode": "sendonly-audio"})
+            await self.send("welcome", {"mode": "duplex-audio"})
         elif message_type == "sdp":
             payload = message.get("payload") or {}
             if payload.get("kind") != "offer" or not isinstance(payload.get("sdp"), str):
@@ -263,6 +310,9 @@ class LabSession:
         await self.peer.setRemoteDescription(
             RTCSessionDescription(sdp=sdp, type="offer")
         )
+        if not self.downlink_attached:
+            self.peer.addTrack(self.downlink)
+            self.downlink_attached = True
         answer = await self.peer.createAnswer()
         await self.peer.setLocalDescription(answer)
         assert self.peer.localDescription is not None
@@ -319,6 +369,19 @@ class LabSession:
                 await self.print_peer_stats()
                 raise RuntimeError("WebRTC connected but no decoded audio frames arrived")
             transcript = await transcribe(wav_path, self.arguments.model, directory)
+            self.downlink.enqueue_tone()
+            downlink_started = self.downlink.audible_frames_sent
+            deadline = asyncio.get_running_loop().time() + 2.0
+            while (
+                self.downlink.audible_frames_sent == downlink_started
+                and asyncio.get_running_loop().time() < deadline
+            ):
+                await asyncio.sleep(0.02)
+            await asyncio.sleep(1.0)
+            print(
+                f"downlink sent {self.downlink.audible_frames_sent - downlink_started} audible PCMU-source frames",
+                flush=True,
+            )
             received_frames = self.recorder.samples_written // 960
             capture = stopped.get("payload") or {}
             result = RunResult(

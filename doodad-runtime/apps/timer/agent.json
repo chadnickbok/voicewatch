@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.timer",
+  "app_version": "0.1.0",
+  "host_abi": 1,
+  "display_name": "Timer Suite",
+  "purpose": "Create and manage exact host-owned timers.",
+  "examples": ["Start a two minute rest timer", "How long is left?"],
+  "aliases": ["timer", "rest", "countdown"],
+  "views": [{"id": "current_timer", "description": "Return the active timer projection.", "result_schema": {"$ref": "doodad://schemas/current-timer-v1"}, "permissions": ["timer.schedule"], "foreground_required": false}],
+  "actions": [{"id": "start_timer", "description": "Schedule an exact host-owned timer.", "input_schema": {"$ref": "doodad://schemas/start-timer-v1"}, "result_schema": {"$ref": "doodad://schemas/timer-result-v1"}, "effect": "reversible_write", "confirmation": "when_ambiguous", "idempotency": "required", "permissions": ["timer.schedule"], "foreground_required": false}]
+}
