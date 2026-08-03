@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "doodad://contracts/watch-state-v1",
+  "title": "Doodad current watch state v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "device_id", "revision", "foreground_app", "route", "selected_entity", "active_workout_id", "screen_semantics", "pending_jobs"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "device_id": {"type": "string", "minLength": 1, "maxLength": 96},
+    "revision": {"type": "integer", "minimum": 0},
+    "foreground_app": {"type": ["string", "null"], "maxLength": 96},
+    "route": {"type": ["string", "null"], "maxLength": 96},
+    "selected_entity": {"type": ["string", "null"], "maxLength": 128},
+    "active_workout_id": {"type": ["string", "null"], "maxLength": 128},
+    "screen_semantics": {"type": "array", "maxItems": 96, "items": {"type": "object"}},
+    "pending_jobs": {"type": "array", "maxItems": 32, "items": {"type": "string", "maxLength": 96}},
+    "domain_state": {"type": "object", "maxProperties": 16}
+  }
+}

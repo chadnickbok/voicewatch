@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "device_id": "cores3-se",
+  "revision": 12,
+  "foreground_app": "dev.doodad.workout",
+  "route": "active_session",
+  "selected_entity": "squat_set_3",
+  "active_workout_id": "workout_819",
+  "screen_semantics": [{"id": "squat_set_3", "role": "row", "label": "Squat set 3", "state": "selected"}],
+  "pending_jobs": []
+}

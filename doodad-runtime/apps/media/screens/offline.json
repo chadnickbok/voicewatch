@@ -5,16 +5,18 @@
     "id": "media.offline",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "media.offline.heading",
-          "type": "text",
+          "id": "media.offline.artwork",
+          "type": "image",
           "props": {
-            "text": "CONNECTION LOST",
-            "style": "label",
-            "max_lines": 1
+            "asset": "0000000000000000000000000000000000000000000000000000000000000000",
+            "fit": "cover"
+          },
+          "semantics": {
+            "label": "Album artwork unavailable"
           }
         },
         {
@@ -22,54 +24,83 @@
           "type": "text",
           "props": {
             "text": "Last at 1:42",
-            "style": "numeral",
+            "style": "title",
             "max_lines": 2,
-            "align": "center"
+            "align": "start"
           },
           "semantics": {
-            "label": "CONNECTION LOST",
+            "label": "Connection lost",
             "value": "Last at 1:42"
           }
         },
         {
           "id": "media.offline.detail",
-          "type": "card",
+          "type": "text",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Play request queued once",
-            "tone": "neutral"
+            "text": "Phone lost / cached",
+            "style": "caption",
+            "max_lines": 2,
+            "align": "start"
           }
         },
         {
-          "id": "media.offline.primary",
-          "type": "button",
+          "id": "media.offline.progress",
+          "type": "progress",
           "props": {
-            "label": "Reconnect",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "media.reconnect"
+            "label": "Cached track progress",
+            "value": 102,
+            "maximum": 243,
+            "style": "linear",
+            "tone": "error"
           },
           "semantics": {
-            "label": "Reconnect"
+            "label": "Cached track progress",
+            "value": "Last known at 1 minute 42 seconds"
           }
         },
         {
-          "id": "media.offline.secondary",
-          "type": "button",
+          "id": "media.offline.actions",
+          "type": "row",
           "props": {
-            "label": "Keep cached",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "media.cached"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "media.offline.primary",
+                "type": "button",
+                "props": {
+                  "label": "Retry",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.reconnect"
+                },
+                "semantics": {
+                  "label": "Reconnect to phone"
+                }
+              },
+              {
+                "id": "media.offline.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Cached",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.cached"
+                },
+                "semantics": {
+                  "label": "Keep cached playback state"
+                }
+              }
+            ]
           },
           "semantics": {
-            "label": "Keep cached"
+            "label": "Recovery actions"
           }
         }
       ]

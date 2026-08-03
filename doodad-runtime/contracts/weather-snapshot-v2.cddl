@@ -1,0 +1,50 @@
+; Canonical, bounded provider payload for the Weather app. This document is
+; carried inside provider-event-v1 field 6 when event_id is
+; "weather.snapshot.v2". Temperatures and scalar measurements use integer
+; tenths so the guest never needs floating point.
+
+weather-snapshot-v2 = {
+  0 => 2,                              ; payload schema version
+  1 => tstr .size (1..48),             ; display location
+  2 => 0..6,                           ; local weekday, Sunday = 0
+  3 => 0..1439,                        ; local minute of day
+  4 => weather-current-v2,
+  5 => [1*7 weather-hour-v2],
+  6 => [1*4 weather-day-v2],
+  7 => [13*13 0..100],                 ; five-minute rain probability buckets
+  8 => -1..1439,                       ; minutes until rain, -1 when absent
+  9 => 0..1440,                        ; expected rain duration minutes
+  10 => 0..1,                          ; 0 metric, 1 imperial
+  11 => uint,                          ; authoritative data revision
+  12 => uint,                          ; cache age minutes
+}
+
+weather-current-v2 = [
+  int,                                 ; temperature tenths
+  int / null,                          ; feels-like tenths
+  0..15,                               ; condition code
+  int / null,                          ; high tenths
+  int / null,                          ; low tenths
+  0..100 / null,                       ; precipitation probability
+  0..100 / null,                       ; humidity
+  uint / null,                         ; wind speed tenths
+  0..359 / null,                       ; wind direction degrees
+  uint / null,                         ; UV index tenths
+  0..1439 / null,                      ; sunrise local minute
+  0..1439 / null                       ; sunset local minute
+]
+
+weather-hour-v2 = [
+  0..1439,                             ; local minute of day
+  int,                                 ; temperature tenths
+  0..100 / null,                       ; precipitation probability
+  0..15                                ; condition code
+]
+
+weather-day-v2 = [
+  0..6,                                ; local weekday
+  int,                                 ; low tenths
+  int,                                 ; high tenths
+  0..100 / null,                       ; precipitation probability
+  0..15                                ; condition code
+]

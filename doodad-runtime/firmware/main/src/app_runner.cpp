@@ -11,10 +11,12 @@
 
 #include "bh_platform.h"
 #include "display.hpp"
+#include "esp_heap_caps.h"
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
+#include "sdkconfig.h"
 #include "m3e/appspec/command_batch.hpp"
 #include "m3e/appspec/wire.hpp"
 #include "m3e/services/exact_scheduler_c.h"
@@ -22,6 +24,8 @@
 #include "m3e/os/surface_registry.hpp"
 #include "m3e/state/store.hpp"
 #include "wasm_export.h"
+#include "weather_provider.hpp"
+#include "voice_service.hpp"
 
 namespace {
 
@@ -428,6 +432,26 @@ bool dispatch_event(const GuestEvent& event) {
 }
 
 bool deliver_weather_provider() {
+#if defined(CONFIG_DOODAD_WEATHER_NETWORK_PROVIDER) && \
+    CONFIG_DOODAD_WEATHER_NETWORK_PROVIDER
+    if (g_weather_request_pending) {
+        g_weather_request_pending = false;
+        if (!weather_provider_request()) return false;
+    }
+    WeatherProviderResult delivery{};
+    if (!weather_provider_poll(delivery)) return true;
+    if (g_handle_provider_event == nullptr ||
+        g_provider_revision ==
+            std::numeric_limits<std::uint64_t>::max()) {
+        return false;
+    }
+    auto snapshot = delivery.snapshot;
+    snapshot.location = delivery.location;
+    const auto freshness = delivery.freshness;
+    const auto temperature = snapshot.current.temperature_tenths;
+    const auto* condition = delivery.condition;
+    const auto* detail = delivery.detail;
+#else
     if (!g_weather_request_pending) return true;
     if (g_handle_provider_event == nullptr ||
         g_provider_revision ==
@@ -438,34 +462,87 @@ bool deliver_weather_provider() {
     g_weather_cycle =
         static_cast<std::uint8_t>((g_weather_cycle + 1) % 3);
 
-    std::int32_t temperature = 720;
-    const char* condition = "Clear";
-    const char* detail = "High 76 - Low 59 - Rain 10%";
-    std::uint64_t data_revision = 1;
-    std::uint64_t age_minutes = 12;
+    m3e_weather_snapshot_v2 snapshot{};
+    snapshot.location = "San Francisco";
+    snapshot.local_weekday = 6;
+    snapshot.local_minute = 609;
+    snapshot.current.temperature_tenths = 620;
+    snapshot.current.feels_like_tenths = 590;
+    snapshot.current.high_tenths = 670;
+    snapshot.current.low_tenths = 540;
+    snapshot.current.condition = 2;
+    snapshot.current.precipitation_percent = 0;
+    snapshot.current.humidity_percent = 49;
+    snapshot.current.wind_speed_tenths = 80;
+    snapshot.current.wind_direction_degrees = 270;
+    snapshot.current.uv_index_tenths = 30;
+    snapshot.current.sunrise_local_minute = 372;
+    snapshot.current.sunset_local_minute = 1205;
+    snapshot.current.has_feels_like = 1;
+    snapshot.current.has_high = 1;
+    snapshot.current.has_low = 1;
+    snapshot.current.has_precipitation = 1;
+    snapshot.current.has_humidity = 1;
+    snapshot.current.has_wind_speed = 1;
+    snapshot.current.has_wind_direction = 1;
+    snapshot.current.has_uv_index = 1;
+    snapshot.current.has_sunrise = 1;
+    snapshot.current.has_sunset = 1;
+    snapshot.hour_count = 7;
+    constexpr std::array<std::int32_t, 7> temperatures{
+        620, 630, 650, 660, 670, 660, 640};
+    constexpr std::array<std::uint8_t, 7> conditions{2, 2, 0, 0, 0, 2, 2};
+    for (std::size_t index = 0; index < snapshot.hour_count; ++index) {
+        snapshot.hours[index].local_minute =
+            static_cast<std::uint16_t>(609 + index * 60);
+        snapshot.hours[index].temperature_tenths = temperatures[index];
+        snapshot.hours[index].precipitation_percent = 0;
+        snapshot.hours[index].condition = conditions[index];
+        snapshot.hours[index].has_precipitation = 1;
+    }
+    snapshot.day_count = 4;
+    constexpr std::array<std::uint8_t, 4> day_conditions{2, 2, 8, 2};
+    constexpr std::array<std::uint8_t, 4> day_precipitation{0, 5, 30, 10};
+    constexpr std::array<std::int32_t, 4> day_lows{540, 530, 510, 520};
+    constexpr std::array<std::int32_t, 4> day_highs{670, 650, 630, 640};
+    for (std::size_t index = 0; index < snapshot.day_count; ++index) {
+        snapshot.days[index].weekday =
+            static_cast<std::uint8_t>((6 + index) % 7);
+        snapshot.days[index].low_tenths = day_lows[index];
+        snapshot.days[index].high_tenths = day_highs[index];
+        snapshot.days[index].precipitation_percent = day_precipitation[index];
+        snapshot.days[index].condition = day_conditions[index];
+        snapshot.days[index].has_precipitation = 1;
+    }
+    snapshot.minutes_until_rain = -1;
+    snapshot.rain_duration_minutes = 0;
+    snapshot.units = 1;
+    snapshot.data_revision = 1;
+    snapshot.cache_age_minutes = 12;
     std::uint8_t freshness = 1;
     if (g_weather_cycle == 2) {
-        condition = "Offline";
-        detail = "Forecast unavailable - cached data";
-        age_minutes = 18;
+        snapshot.cache_age_minutes = 18;
         freshness = 2;
     } else if (g_weather_cycle == 0) {
-        temperature = 710;
-        detail = "High 75 - Low 58 - Rain 5%";
-        data_revision = 2;
-        age_minutes = 0;
+        snapshot.current.temperature_tenths = 610;
+        snapshot.current.high_tenths = 660;
+        snapshot.current.low_tenths = 530;
+        snapshot.hours[0].temperature_tenths = 610;
+        snapshot.days[0].low_tenths = 530;
+        snapshot.days[0].high_tenths = 660;
+        snapshot.data_revision = 2;
+        snapshot.cache_age_minutes = 0;
         freshness = 0;
     }
+    const auto temperature = snapshot.current.temperature_tenths;
+    const char* condition = "Partly cloudy";
+    const char* detail = "High 67 - Low 54 - Feels 59";
+#endif
     const auto now = scenario_now_ms();
     std::array<std::uint8_t, 512> encoded{};
     const auto encoded_size =
-        m3e_encode_weather_provider_event(
-            temperature,
-            condition,
-            detail,
-            "San Francisco",
-            data_revision,
-            age_minutes,
+        m3e_encode_weather_provider_event_v2(
+            &snapshot,
             ++g_provider_revision,
             freshness,
             now,
@@ -483,6 +560,38 @@ bool deliver_weather_provider() {
                detail,
                freshness,
                now);
+}
+
+bool deliver_voice_provider() {
+    VoiceEvent delivery{};
+    while (voice_service_poll(delivery)) {
+        if (g_handle_provider_event == nullptr) continue;
+        if (g_provider_revision ==
+            std::numeric_limits<std::uint64_t>::max()) {
+            return false;
+        }
+        std::array<std::uint8_t, 512> encoded{};
+        const auto encoded_size = m3e_encode_voice_provider_event(
+            static_cast<std::uint8_t>(delivery.kind),
+            delivery.request_id,
+            delivery.elapsed_ms,
+            delivery.encoded_frames,
+            delivery.dropped_frames,
+            delivery.text.data(),
+            ++g_provider_revision,
+            scenario_now_ms(),
+            encoded.data(),
+            encoded.size());
+        if (encoded_size == 0 ||
+            !invoke_guest_handler(
+                g_handle_provider_event,
+                encoded.data(),
+                encoded_size,
+                "handle_provider_event")) {
+            return false;
+        }
+    }
+    return true;
 }
 
 std::int32_t reject_guest_appspec(
@@ -677,7 +786,8 @@ std::uint64_t host_provider_request(
     const auto fixture =
         std::strcmp(provider.data(), "fixture") == 0;
     if ((!weather && !fixture) ||
-        (weather && g_weather_request_pending)) {
+        (weather &&
+         (g_weather_request_pending || weather_provider_busy()))) {
         return 0;
     }
     if (weather) g_weather_request_pending = true;
@@ -721,8 +831,34 @@ std::uint64_t host_provider_request(
 
 DEFINE_BOUND_PROVIDER_REQUEST(
     host_calendar_request, "calendar.", "")
-DEFINE_BOUND_PROVIDER_REQUEST(
-    host_audio_request, "voice-notes.", "")
+
+std::uint64_t host_audio_request(
+    wasm_exec_env_t execution_environment,
+    std::uint32_t operation_pointer,
+    std::uint32_t operation_length,
+    std::uint32_t payload_pointer,
+    std::uint32_t payload_length) {
+    std::array<char, 49> operation{};
+    auto instance = wasm_runtime_get_module_inst(execution_environment);
+    if (g_weather_request_id ==
+            std::numeric_limits<std::uint64_t>::max() ||
+        !copy_guest_service_id(
+            execution_environment,
+            operation_pointer,
+            operation_length,
+            operation) ||
+        payload_length > 512 ||
+        (payload_length != 0 &&
+         !wasm_runtime_validate_app_addr(
+             instance, payload_pointer, payload_length)) ||
+        std::strncmp(operation.data(), "voice-notes.", 12) != 0) {
+        return 0;
+    }
+    const auto request_id = ++g_weather_request_id;
+    return voice_service_request(operation.data(), request_id)
+        ? request_id : 0;
+}
+
 DEFINE_BOUND_PROVIDER_REQUEST(
     host_medication_request, "medication.", "")
 DEFINE_BOUND_PROVIDER_REQUEST(
@@ -881,6 +1017,24 @@ void log_exception(wasm_module_inst_t module_instance) {
     }
 }
 
+void* wamr_psram_malloc(unsigned int size) {
+    auto* allocation = heap_caps_aligned_alloc(
+        8,
+        size,
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    if (allocation == nullptr) {
+        allocation = heap_caps_aligned_alloc(
+            8,
+            size,
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT);
+    }
+    return allocation;
+}
+
+void wamr_psram_free(void* allocation) {
+    heap_caps_free(allocation);
+}
+
 }  // namespace
 
 bool app_runtime_init() {
@@ -896,16 +1050,26 @@ bool app_runtime_init() {
         display_error("SCHEDULER INIT FAILED");
         return false;
     }
+    if (!weather_provider_init()) {
+        ESP_LOGE(kTag, "[host] weather provider initialization failed");
+        display_error("PROVIDER INIT FAILED");
+        return false;
+    }
+    if (!voice_service_init()) {
+        ESP_LOGE(kTag, "[host] voice service initialization failed");
+        display_error("VOICE INIT FAILED");
+        return false;
+    }
     RuntimeInitArgs arguments{};
     arguments.mem_alloc_type = Alloc_With_Allocator;
     arguments.mem_alloc_option.allocator.malloc_func =
-        reinterpret_cast<void*>(os_malloc);
+        reinterpret_cast<void*>(wamr_psram_malloc);
     // ESP-IDF's aligned os_realloc corrupts WAMR's loader control stack when
     // it grows. A null realloc makes WAMR use its safe allocate/copy/free
     // fallback while retaining the aligned platform allocator.
     arguments.mem_alloc_option.allocator.realloc_func = nullptr;
     arguments.mem_alloc_option.allocator.free_func =
-        reinterpret_cast<void*>(os_free);
+        reinterpret_cast<void*>(wamr_psram_free);
 
     if (!wasm_runtime_full_init(&arguments)) {
         ESP_LOGE(kTag, "[host] WAMR init failed");
@@ -1076,6 +1240,9 @@ void app_runtime_update(std::uint32_t maximum_wait_ms) {
     }
     if (!deliver_weather_provider()) {
         ESP_LOGE(kTag, "[host] weather provider delivery failed");
+    }
+    if (!deliver_voice_provider()) {
+        ESP_LOGE(kTag, "[host] voice provider delivery failed");
     }
 
     if (g_scheduler == nullptr) return;

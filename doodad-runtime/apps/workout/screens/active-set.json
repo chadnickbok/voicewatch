@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.active-set",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.active-set.exercise",
+          "type": "text",
+          "props": {
+            "text": "BACK SQUAT",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.active-set.set",
+          "type": "text",
+          "props": {
+            "text": "SET 3 OF 5",
+            "style": "caption",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.active-set.progress",
+          "type": "progress",
+          "props": {
+            "label": "Workout progress",
+            "value": 3,
+            "maximum": 5,
+            "style": "linear",
+            "tone": "primary"
+          },
+          "semantics": {
+            "label": "Workout progress",
+            "value": "3 of 5"
+          }
+        },
+        {
+          "id": "powerlifting.active-set.target",
+          "type": "card",
+          "props": {
+            "title": "140 KG  X  5",
+            "body": "TARGET SET",
+            "tone": "primary"
+          },
+          "events": {
+            "tap": "workout.edit.weight"
+          },
+          "semantics": {
+            "label": "140 KG  X  5"
+          }
+        },
+        {
+          "id": "powerlifting.active-set.previous",
+          "type": "card",
+          "props": {
+            "title": "LAST  /  137.5 KG X 5 @8",
+            "body": "PREVIOUS PERFORMANCE",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "powerlifting.active-set.complete",
+          "type": "button",
+          "props": {
+            "label": "COMPLETE SET",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.complete",
+            "longPress": "workout.switch.preview"
+          },
+          "semantics": {
+            "label": "COMPLETE SET"
+          }
+        }
+      ]
+    }
+  }
+}

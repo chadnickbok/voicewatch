@@ -34,15 +34,33 @@ notices.
 
 ## Material Symbols
 
+- Package: `@material-symbols/svg-400` 0.45.10 (Rounded, weight 400)
 - License: Apache License 2.0
-- Planned use: curated generated icon subset
-- Source: `https://github.com/google/material-design-icons`
+- Use: curated Weather utility/status icon subset and generated raster assets
+- Product source: `https://fonts.google.com/icons`
+- Package source: `https://github.com/marella/material-symbols`
+
+## Meteocons
+
+- Package: `@meteocons/svg-static` 0.1.0 (Flat style)
+- Copyright: Copyright (c) 2020-present Bas Milius
+- License: MIT
+- Use: curated Weather condition, sunrise, and sunset icon subset
+- Source: `https://github.com/basmilius/meteocons`
 
 ## Roboto Flex
 
 - License: SIL Open Font License 1.1
 - Planned use: static, subsetted LVGL bitmap-font instances
 - Source: `https://github.com/googlefonts/roboto-flex`
+
+## Roboto
+
+- Source asset: `reference/weather-foundations/vendor/roboto/Roboto-Medium.ttf`
+- Upstream: `googlefonts/roboto-2`, hinted Roboto Medium
+- License: Apache License 2.0
+- Use: bounded, generated 4bpp LVGL Weather font subsets and the Wear Compose
+  Weather typography family
 
 ## LVGL
 

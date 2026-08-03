@@ -3,12 +3,11 @@
 use core::cell::UnsafeCell;
 use core::panic::PanicInfo;
 use doodad_sdk::{
-    EventValue, UiCommandBuffer, decode_ui_event, mount_appspec, pack_result,
-    request_game,
+    CanvasDisplayListBuffer, EventValue, UiCommandBuffer, decode_ui_event,
+    mount_appspec, pack_result, request_game,
 };
 
-const HOME: &[u8] = include_bytes!("../appspec.cbor");
-const GAME: &[u8] = include_bytes!("../screens/game.cbor");
+const GAME: &[u8] = include_bytes!("../appspec.cbor");
 
 struct Runtime {
     x: [i8; 32],
@@ -19,8 +18,9 @@ struct Runtime {
     food_y: i8,
     score: u8,
     game_over: bool,
-    board: [u8; 96],
-    score_text: [u8; 24],
+    cells: [u8; 64],
+    score_text: [u8; 3],
+    canvas: CanvasDisplayListBuffer<128>,
     commands: UiCommandBuffer<256>,
 }
 
@@ -43,8 +43,9 @@ impl Runtime {
             food_y: 3,
             score: 0,
             game_over: false,
-            board: [0; 96],
-            score_text: [0; 24],
+            cells: [0; 64],
+            score_text: [0; 3],
+            canvas: CanvasDisplayListBuffer::new(),
             commands: UiCommandBuffer::new(),
         }
     }
@@ -63,6 +64,7 @@ impl Runtime {
 
     fn step(&mut self) {
         if self.game_over {
+            self.reset();
             return;
         }
         let (dx, dy) = match self.direction {
@@ -107,35 +109,35 @@ impl Runtime {
     }
 
     fn render(&mut self) -> u64 {
-        let mut cursor = 0;
-        for row in 0..8 {
-            for column in 0..8 {
-                let mut value = if column == self.food_x && row == self.food_y {
-                    b'*'
-                } else {
-                    b'.'
-                };
-                for index in 0..self.length {
-                    if self.x[index] == column && self.y[index] == row {
-                        value = if index == 0 { b'@' } else { b'o' };
-                        break;
-                    }
-                }
-                self.board[cursor] = value;
-                cursor += 1;
-            }
-            if row != 7 {
-                self.board[cursor] = b'\n';
-                cursor += 1;
-            }
+        self.cells.fill(0);
+        self.cells[
+            self.food_y as usize * 8 + self.food_x as usize
+        ] = 4;
+        for index in (0..self.length).rev() {
+            let offset =
+                self.y[index] as usize * 8 + self.x[index] as usize;
+            self.cells[offset] = if index == 0 { 3 } else { 2 };
         }
-        let prefix = if self.game_over {
-            b"GAME OVER " as &[u8]
-        } else {
-            b"SCORE " as &[u8]
+
+        if self.canvas.begin().is_err()
+            || self.canvas.clear(0).is_err()
+            || self
+                .canvas
+                .rounded_rect(1, 4, 4, 120, 120, 18)
+                .is_err()
+            || self
+                .canvas
+                .tile_map(2, 8, 8, 14, 14, 8, 8, &self.cells)
+                .is_err()
+        {
+            return 0;
+        }
+        let display_list = match self.canvas.finish() {
+            Ok(value) => value,
+            Err(_) => return 0,
         };
-        self.score_text[..prefix.len()].copy_from_slice(prefix);
-        let mut score_length = prefix.len();
+
+        let mut score_length = 0;
         if self.score >= 10 {
             self.score_text[score_length] = b'0' + self.score / 10;
             score_length += 1;
@@ -147,23 +149,24 @@ impl Runtime {
                 &self.score_text[..score_length],
             )
         };
-        let top =
-            unsafe { core::str::from_utf8_unchecked(&self.board[..35]) };
-        let bottom = unsafe {
-            core::str::from_utf8_unchecked(&self.board[36..cursor])
-        };
         if self.commands.begin(3).is_err()
             || self
                 .commands
-                .set_primary_text("snake.game.board-top", top)
-                .is_err()
-            || self
-                .commands
-                .set_primary_text("snake.game.board-bottom", bottom)
+                .set_canvas_display_list(
+                    "snake.game.canvas",
+                    display_list,
+                )
                 .is_err()
             || self
                 .commands
                 .set_primary_text("snake.game.score", score)
+                .is_err()
+            || self
+                .commands
+                .set_primary_text(
+                    "snake.game.score-label",
+                    if self.game_over { "OVER" } else { "SCORE" },
+                )
                 .is_err()
         {
             return 0;
@@ -182,7 +185,7 @@ static RUNTIME: SharedRuntime =
 
 #[unsafe(no_mangle)]
 pub extern "C" fn app_start() {
-    let _ = mount_appspec(HOME);
+    let _ = mount_appspec(GAME);
 }
 
 #[unsafe(no_mangle)]
@@ -199,13 +202,12 @@ pub unsafe extern "C" fn handle_event(
         Ok(value) => value,
         Err(_) => return 0,
     };
+    if request_game("snake.tick", &[]).is_err() {
+        return 0;
+    }
     let runtime = unsafe { &mut *RUNTIME.0.get() };
-    if event.action_id == "snake.primary" {
-        if request_game("snake.start", &[]).is_err() {
-            return 0;
-        }
-        runtime.reset();
-        let _ = mount_appspec(GAME);
+    if event.action_id == "snake.step" {
+        runtime.step();
         return runtime.render();
     }
     if event.action_id != "snake.control" {
@@ -215,23 +217,15 @@ pub unsafe extern "C" fn handle_event(
         EventValue::Text(value) => value,
         _ => return 0,
     };
-    if request_game("snake.tick", &[]).is_err() {
-        return 0;
-    }
     match control {
         "L" => {
             runtime.turn_left();
             runtime.step();
         }
-        "Go" => runtime.step(),
+        "GO" => runtime.step(),
         "R" => {
             runtime.turn_right();
             runtime.step();
-        }
-        "New" => runtime.reset(),
-        "Quit" => {
-            let _ = mount_appspec(HOME);
-            return 0;
         }
         _ => return 0,
     }

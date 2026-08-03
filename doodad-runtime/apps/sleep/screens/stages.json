@@ -5,71 +5,83 @@
     "id": "sleep.stages",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "sleep.stages.heading",
+          "id": "sleep.stages.context",
           "type": "text",
           "props": {
-            "text": "SLEEP STAGES",
+            "text": "STAGES / NIGHT",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sleep.stages.summary",
           "type": "text",
           "props": {
-            "text": "▂▅▃▇▆▂▅",
+            "text": "1:36",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "SLEEP STAGES",
-            "value": "▂▅▃▇▆▂▅"
+            "label": "Deep sleep duration",
+            "value": "1 hour 36 minutes"
           }
         },
         {
           "id": "sleep.stages.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Smart alarm fired once at 7:18",
-            "tone": "neutral"
+            "title": "DEEP / 24%",
+            "body": "Light 4:18 / REM 1:24",
+            "progress": 0.24,
+            "tone": "primary"
           }
         },
         {
-          "id": "sleep.stages.primary",
-          "type": "button",
+          "id": "sleep.stages.actions",
+          "type": "row",
           "props": {
-            "label": "History",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.history"
-          },
-          "semantics": {
-            "label": "History"
-          }
-        },
-        {
-          "id": "sleep.stages.secondary",
-          "type": "button",
-          "props": {
-            "label": "Summary",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.summary"
-          },
-          "semantics": {
-            "label": "Summary"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sleep.stages.primary",
+                "type": "button",
+                "props": {
+                  "label": "History",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.history"
+                },
+                "semantics": {
+                  "label": "View seven-night history"
+                }
+              },
+              {
+                "id": "sleep.stages.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Back",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.summary"
+                },
+                "semantics": {
+                  "label": "Return to sleep summary"
+                }
+              }
+            ]
           }
         }
       ]

@@ -1,0 +1,11 @@
+{
+  "package": "@material-symbols/svg-400",
+  "version": "0.45.10",
+  "style": "rounded",
+  "weight": 400,
+  "upstream": "https://fonts.google.com/icons",
+  "package_repository": "https://github.com/marella/material-symbols",
+  "registry": "https://www.npmjs.com/package/@material-symbols/svg-400",
+  "archive_sha256": "2d5897ae8b4106261aa70ab0060e82be5b74cd55c5cbc521646b004f48d91bba",
+  "license": "Apache-2.0"
+}

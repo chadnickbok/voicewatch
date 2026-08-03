@@ -559,6 +559,9 @@ Mock services: phone/BLE media session, artwork cache, command acknowledgements.
 
 Decisive scenario: issue optimistic play/pause/seek commands through a
 disconnect and reconcile to authoritative state without double application.
+The initial implementation must also load deterministic checked-in album art
+through the content-addressed package asset path so Compose and LVGL validate
+the same decode, crop, fallback, memory, and RGB565 behavior.
 
 ### 14. Navigation, Compass, and Breadcrumbs — Hybrid — A G C N O V
 
@@ -949,10 +952,14 @@ not a gate for this UI conformance phase.
 
 ### F. Microgame rendering boundary
 
-Decision: the first microgame is Snake. The current first pass uses two bounded
-four-line semantic board regions plus a semantic keypad, not a general canvas.
-A reusable sprite-grid component should only be added after a second app proves
-the need and supplies fixed asset, update-rate, and dirty-region limits.
+Decision: the first microgame is Snake. Its game field uses a bounded
+renderer-neutral `canvas` node whose draw-command stream is emitted by the
+Wasm app. Wear Compose consumes the stream with native `Canvas`; LVGL consumes
+the same stream through its canvas facilities. Material components remain
+appropriate for system-owned score, pause, and game-over overlays, but the
+board is not decomposed into faux cards. The command vocabulary, buffer,
+assets, update rate, dirty regions, and memory are fixed and measured; normal
+form-based apps do not receive a general rendering escape hatch.
 
 ## 14. Implementation policies already recommended
 

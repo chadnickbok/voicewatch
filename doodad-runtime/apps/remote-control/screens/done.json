@@ -5,71 +5,84 @@
     "id": "remote-control.done",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "remote-control.done.heading",
+          "id": "remote-control.done.viewfinder",
+          "type": "image",
+          "props": {
+            "asset": "777d468ea847318acd22e2eb79f108e75e2674448e8b53fa8fba0bc08fd7b522",
+            "fit": "cover"
+          },
+          "semantics": {
+            "label": "Captured desert camera preview"
+          }
+        },
+        {
+          "id": "remote-control.done.context",
           "type": "text",
           "props": {
-            "text": "CAMERA",
+            "text": "PHOTO SAVED",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "remote-control.done.summary",
           "type": "text",
           "props": {
-            "text": "Captured ✓",
+            "text": "CAPTURED",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "CAMERA",
-            "value": "Captured ✓"
+            "label": "Camera result",
+            "value": "CAPTURED"
           }
         },
         {
-          "id": "remote-control.done.detail",
-          "type": "card",
+          "id": "remote-control.done.actions",
+          "type": "row",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Command #73 applied exactly once",
-            "tone": "neutral"
-          }
-        },
-        {
-          "id": "remote-control.done.primary",
-          "type": "button",
-          "props": {
-            "label": "Capture again",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "remote.camera"
-          },
-          "semantics": {
-            "label": "Capture again"
-          }
-        },
-        {
-          "id": "remote-control.done.secondary",
-          "type": "button",
-          "props": {
-            "label": "Targets",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "remote.targets"
-          },
-          "semantics": {
-            "label": "Targets"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "remote-control.done.primary",
+                "type": "button",
+                "props": {
+                  "label": "Again",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "remote.camera"
+                },
+                "semantics": {
+                  "label": "Take another photo"
+                }
+              },
+              {
+                "id": "remote-control.done.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Controls",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "remote.targets"
+                },
+                "semantics": {
+                  "label": "Return to camera controls"
+                }
+              }
+            ]
           }
         }
       ]

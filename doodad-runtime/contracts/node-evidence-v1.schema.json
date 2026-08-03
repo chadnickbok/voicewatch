@@ -1,0 +1,311 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doodad.dev/schemas/node-evidence-v1.schema.json",
+  "title": "Doodad normalized renderer node evidence v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "snapshot_sha256",
+    "capture_phase",
+    "renderer",
+    "profile_id",
+    "physical_width_px",
+    "physical_height_px",
+    "nodes"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "snapshot_sha256": {
+      "$ref": "#/$defs/sha256"
+    },
+    "capture_phase": {
+      "$ref": "#/$defs/capture_phase"
+    },
+    "renderer": {
+      "$ref": "#/$defs/renderer"
+    },
+    "profile_id": {
+      "$ref": "#/$defs/id"
+    },
+    "physical_width_px": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096
+    },
+    "physical_height_px": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4096
+    },
+    "nodes": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 250,
+      "items": {
+        "$ref": "#/$defs/node"
+      }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_.-]{0,95}$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "action_id"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "tap",
+            "long_press",
+            "repeat",
+            "value_changing",
+            "value_committed",
+            "checked_changed",
+            "page_changed",
+            "dismissed",
+            "submit",
+            "retry",
+            "cancel"
+          ]
+        },
+        "action_id": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "capture_phase": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "state",
+        "animation_fraction_milli"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "state": {
+          "enum": [
+            "resting",
+            "pressed",
+            "selected",
+            "disabled",
+            "loading",
+            "error",
+            "mid_animation",
+            "end_state"
+          ]
+        },
+        "animation_fraction_milli": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 1000
+        },
+        "target": {
+          "$ref": "#/$defs/id"
+        },
+        "scroll_anchor": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "renderer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "mode",
+        "version",
+        "build_sha256"
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "compose",
+            "lvgl"
+          ]
+        },
+        "mode": {
+          "enum": [
+            "host",
+            "emulator",
+            "simulator",
+            "hardware"
+          ]
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "build_sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "bounds": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "x",
+        "y",
+        "width",
+        "height"
+      ],
+      "properties": {
+        "x": {
+          "type": "integer"
+        },
+        "y": {
+          "type": "integer"
+        },
+        "width": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "height": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "text": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "line_count",
+        "truncated",
+        "baselines_px"
+      ],
+      "properties": {
+        "line_count": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 16
+        },
+        "truncated": {
+          "type": "boolean"
+        },
+        "baselines_px": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "node": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "parent_id",
+        "role",
+        "label",
+        "value",
+        "state_description",
+        "visible",
+        "enabled",
+        "actions",
+        "bounds_px",
+        "bounds_dp_q8_8",
+        "token_roles"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "parent_id": {
+          "oneOf": [
+            {
+              "$ref": "#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "role": {
+          "enum": [
+            "screen",
+            "heading",
+            "text",
+            "button",
+            "toggle",
+            "progress",
+            "list",
+            "list_item",
+            "dialog",
+            "slider",
+            "group",
+            "image"
+          ]
+        },
+        "label": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "value": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "state_description": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "visible": {
+          "type": "boolean"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "selected": {
+          "type": "boolean"
+        },
+        "checked": {
+          "type": "boolean"
+        },
+        "actions": {
+          "type": "array",
+          "maxItems": 16,
+          "items": {
+            "$ref": "#/$defs/action"
+          }
+        },
+        "bounds_px": {
+          "$ref": "#/$defs/bounds"
+        },
+        "bounds_dp_q8_8": {
+          "$ref": "#/$defs/bounds"
+        },
+        "token_roles": {
+          "type": "object",
+          "propertyNames": {
+            "$ref": "#/$defs/id"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/id"
+          }
+        },
+        "text": {
+          "$ref": "#/$defs/text"
+        }
+      }
+    }
+  }
+}

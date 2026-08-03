@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import importlib.util
 import re
 import shutil
+import struct
 import subprocess
 import sys
 import tomllib
@@ -29,6 +31,17 @@ class ProjectPaths:
 ID_PATTERN = re.compile(r"^[a-z][a-z0-9]*(\.[a-z0-9][a-z0-9-]*)+$")
 VERSION_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
 CAPABILITY_PATTERN = re.compile(r"^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$")
+SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+ASSET_MEDIA_TYPE = "image/vnd.doodad.rgb565le"
+ASSET_FIELDS = {
+    "sha256",
+    "path",
+    "media_type",
+    "width",
+    "height",
+    "encoded_bytes",
+    "decoded_bytes",
+}
 
 
 def read_json(path: Path) -> dict[str, Any]:
@@ -82,12 +95,13 @@ def validate_manifest(
         "capabilities",
         "wasm",
         "ui",
+        "assets",
     }
     unknown = set(manifest) - allowed
     if unknown:
         raise DoodadError(f"{path} contains unknown fields: {sorted(unknown)}")
 
-    required = allowed - {"ui"}
+    required = allowed - {"ui", "assets"}
     missing = required - set(manifest)
     if missing:
         raise DoodadError(f"{path} is missing fields: {sorted(missing)}")
@@ -129,6 +143,86 @@ def validate_manifest(
             raise DoodadError(f"invalid capability identifier: {capability!r}")
         if capability not in known:
             raise DoodadError(f"host ABI v1 does not define capability {capability!r}")
+
+    assets = manifest.get("assets", [])
+    if (
+        not isinstance(assets, list)
+        or len(assets) > 16
+        or any(not isinstance(asset, dict) for asset in assets)
+    ):
+        raise DoodadError("manifest assets must contain at most 16 objects")
+    asset_hashes: set[str] = set()
+    for index, asset in enumerate(assets):
+        if set(asset) != ASSET_FIELDS:
+            raise DoodadError(
+                f"manifest assets[{index}] must contain exactly "
+                f"{sorted(ASSET_FIELDS)}"
+            )
+        digest = asset["sha256"]
+        if not isinstance(digest, str) or SHA256_PATTERN.fullmatch(digest) is None:
+            raise DoodadError(
+                f"manifest assets[{index}].sha256 must be a lowercase SHA-256 digest"
+            )
+        if digest in asset_hashes:
+            raise DoodadError("manifest asset hashes must be unique")
+        asset_hashes.add(digest)
+        expected_path = f"assets/{digest}.dimg"
+        if asset["path"] != expected_path:
+            raise DoodadError(
+                f"manifest assets[{index}].path must be {expected_path}"
+            )
+        if asset["media_type"] != ASSET_MEDIA_TYPE:
+            raise DoodadError(
+                f"manifest assets[{index}].media_type is unsupported"
+            )
+        width = asset["width"]
+        height = asset["height"]
+        encoded_bytes = asset["encoded_bytes"]
+        decoded_bytes = asset["decoded_bytes"]
+        if (
+            any(
+                isinstance(value, bool) or not isinstance(value, int)
+                for value in (width, height, encoded_bytes, decoded_bytes)
+            )
+            or not 1 <= width <= 512
+            or not 1 <= height <= 512
+            or decoded_bytes != width * height * 2
+            or encoded_bytes != decoded_bytes + 12
+            or encoded_bytes > 512 * 1024
+        ):
+            raise DoodadError(f"manifest assets[{index}] has invalid dimensions")
+
+
+def _validated_asset_payload(app_dir: Path, asset: dict[str, Any]) -> Path:
+    relative_path = Path(asset["path"])
+    source = (app_dir / relative_path).resolve()
+    app_root = app_dir.resolve()
+    if source.parent.parent != app_root or source.parent.name != "assets":
+        raise DoodadError(f"unsafe package asset path {relative_path}")
+    try:
+        payload = source.read_bytes()
+    except OSError as error:
+        raise DoodadError(f"cannot read package asset {source}: {error}") from error
+    if len(payload) != asset["encoded_bytes"]:
+        raise DoodadError(f"package asset {source} has an unexpected size")
+    if hashlib.sha256(payload).hexdigest() != asset["sha256"]:
+        raise DoodadError(f"package asset {source} does not match its content hash")
+    try:
+        magic, width, height, pixel_format, flags, reserved = struct.unpack(
+            "<4sHHBBH", payload[:12]
+        )
+    except struct.error as error:
+        raise DoodadError(f"package asset {source} has a truncated header") from error
+    if (
+        magic != b"DIMG"
+        or width != asset["width"]
+        or height != asset["height"]
+        or pixel_format != 1
+        or flags != 0
+        or reserved != 0
+    ):
+        raise DoodadError(f"package asset {source} has an invalid DIMG header")
+    return source
 
 
 def cargo_package_name(app_dir: Path) -> str:
@@ -268,6 +362,10 @@ def build_and_stage(project_root: Path, app_dir: Path) -> ProjectPaths:
     source_manifest_path = app_dir / "manifest.json"
     manifest = read_json(source_manifest_path)
     validate_manifest(manifest, abi, source_manifest_path)
+    source_assets = [
+        _validated_asset_payload(app_dir, asset)
+        for asset in manifest.get("assets", [])
+    ]
 
     source_ui: Path | None = None
     if "ui" in manifest:
@@ -322,6 +420,12 @@ def build_and_stage(project_root: Path, app_dir: Path) -> ProjectPaths:
     if source_ui is not None:
         staged_ui = staging / "ui.json"
         shutil.copy2(source_ui, staged_ui)
+
+    if source_assets:
+        staged_assets = staging / "assets"
+        staged_assets.mkdir()
+        for source_asset in source_assets:
+            shutil.copy2(source_asset, staged_assets / source_asset.name)
 
     return ProjectPaths(
         root=project_root,

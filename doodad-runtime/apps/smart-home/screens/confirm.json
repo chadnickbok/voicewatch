@@ -5,71 +5,83 @@
     "id": "smart-home.confirm",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "smart-home.confirm.heading",
+          "id": "smart-home.confirm.context",
           "type": "text",
           "props": {
-            "text": "TRUSTED REVIEW",
+            "text": "DOOR / REVIEW",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "smart-home.confirm.summary",
           "type": "text",
           "props": {
-            "text": "Unlock front door?",
+            "text": "UNLOCK",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "TRUSTED REVIEW",
+            "label": "Confirm front door unlock",
             "value": "Unlock front door?"
           }
         },
         {
           "id": "smart-home.confirm.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Hazardous action · identity required",
-            "tone": "neutral"
+            "title": "SECURE / IDENTITY",
+            "body": "Confirm once / audit logged",
+            "progress": 0.5,
+            "tone": "primary"
           }
         },
         {
-          "id": "smart-home.confirm.primary",
-          "type": "button",
+          "id": "smart-home.confirm.actions",
+          "type": "row",
           "props": {
-            "label": "Confirm unlock",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.confirm"
-          },
-          "semantics": {
-            "label": "Confirm unlock"
-          }
-        },
-        {
-          "id": "smart-home.confirm.secondary",
-          "type": "button",
-          "props": {
-            "label": "Cancel",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.cancel"
-          },
-          "semantics": {
-            "label": "Cancel"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "smart-home.confirm.primary",
+                "type": "button",
+                "props": {
+                  "label": "Unlock",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.confirm"
+                },
+                "semantics": {
+                  "label": "Confirm unlock front door"
+                }
+              },
+              {
+                "id": "smart-home.confirm.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Cancel",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.cancel"
+                },
+                "semantics": {
+                  "label": "Cancel front door unlock"
+                }
+              }
+            ]
           }
         }
       ]

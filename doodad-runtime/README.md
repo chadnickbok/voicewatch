@@ -25,6 +25,8 @@ It now also contains a substantial Material 3 Expressive framework slice:
 
 The active UI/runtime milestone is specified in the
 [20-app and OS conformance-suite plan](docs/20-app-conformance-suite.md).
+The next voice/agent milestone is specified in the
+[live foreground agent and durable jobs vertical-slice plan](docs/live-agent-vertical-slice.md).
 The suite now includes 20 separate interactive Wasm packages, deterministic
 scenario and cross-surface contracts, a trusted Home/Voice/App Manager shell,
 CoreS3 system-shortcut wiring, dual 3 MiB firmware slots, and 9.94 MiB of
@@ -53,7 +55,26 @@ with:
 
 See
 [`docs/dual-renderer-conformance.md`](docs/dual-renderer-conformance.md)
-for the evidence and geometry policy.
+for the evidence and geometry policy. The execute-once, render-twice roadmap
+and tracked implementation checklist live in
+[`Project Parallax`](docs/project-parallax.md).
+
+Generate the aligned initial-state comparison for all twenty applications
+with:
+
+```bash
+./doodad perfect-render \
+  --suite all-20 \
+  --profile watch_square_240 \
+  --output target/parallax/perfect-render-20
+```
+
+This executes the real package corpus once, replays accepted scenes through
+the production LVGL renderer, renders the same `SceneSnapshot` through Wear
+Compose Material 3, and writes raw captures, normalized evidence, overlays,
+metrics, a contact sheet, and static HTML. The first measured result and
+remediation order are in the
+[Project Parallax comparison report](docs/project-parallax-comparison-report.md).
 
 All 20 decisive flows are executable and emit checked-in semantic/resource
 evidence. Cross-app replacement stress, display-sleep service behavior,

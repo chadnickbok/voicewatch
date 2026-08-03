@@ -1,0 +1,16 @@
+Project Parallax — Sleep resting comparison
+Reviewed: 2026-07-30
+Profile: watch_square_240
+SceneSnapshot: c840b1ba2bbaaf640a81d3da8bb82848233c62bd2c7962bbfcecaefb78ab4361
+LVGL RGB565: c0804fd47ad77d92aa73d04e8a6ec2dd857c35c0308569f16e8718564e2c6888
+Reference nodes: 7
+Product nodes: 7
+Compared nodes: 7
+Structured mismatches: 0
+Quality findings: 0
+Minimum touch target: 48dp
+Changed pixels: 7381 / 57600
+Changed fraction: 0.1281423611111111
+MAE: 13.82289351851852
+RMSE: 46.302167400873564
+Disposition: Equivalent

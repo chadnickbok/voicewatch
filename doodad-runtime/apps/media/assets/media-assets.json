@@ -1,0 +1,14 @@
+{
+  "assets": [
+    {
+      "decoded_bytes": 12288,
+      "encoded_bytes": 12300,
+      "height": 64,
+      "media_type": "image/vnd.doodad.rgb565le",
+      "path": "assets/2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028.dimg",
+      "sha256": "2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028",
+      "width": 96
+    }
+  ],
+  "schema_version": 1
+}

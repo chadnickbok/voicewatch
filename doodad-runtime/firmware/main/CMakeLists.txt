@@ -4,17 +4,31 @@ idf_component_register(
         "src/app_sources.cpp"
         "src/display.cpp"
         "src/main.cpp"
+        "src/network_service.cpp"
+        "src/voice_service.cpp"
+        "src/weather_provider.cpp"
         "../../ui/doodad_lvgl_ui.c"
     INCLUDE_DIRS
         "include"
         "../../ui"
     REQUIRES
         driver
+        esp_event
+        esp_audio_codec
+        esp_http_client
+        esp_peer
         esp_driver_sdspi
+        esp_netif
+        esp_websocket_client
+        esp_wifi
         fatfs
+        json
         lvgl
         m3e_lvgl
         m5unified
+        mbedtls
+        mdns
+        nvs_flash
         wasm-micro-runtime
     EMBED_FILES
         "embedded/hello.wasm"

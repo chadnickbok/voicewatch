@@ -5,71 +5,83 @@
     "id": "smart-home.unlocked",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "smart-home.unlocked.heading",
+          "id": "smart-home.unlocked.context",
           "type": "text",
           "props": {
-            "text": "FRONT DOOR",
+            "text": "DOOR / OPEN",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "smart-home.unlocked.summary",
           "type": "text",
           "props": {
-            "text": "Unlocked ✓",
+            "text": "UNLOCKED",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "FRONT DOOR",
-            "value": "Unlocked ✓"
+            "label": "Front door lock state",
+            "value": "Unlocked"
           }
         },
         {
           "id": "smart-home.unlocked.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Acknowledged once · audit #204",
-            "tone": "neutral"
+            "title": "ACCESS / CONFIRMED",
+            "body": "Audit 204 / lock when done",
+            "progress": 1.0,
+            "tone": "primary"
           }
         },
         {
-          "id": "smart-home.unlocked.primary",
-          "type": "button",
+          "id": "smart-home.unlocked.actions",
+          "type": "row",
           "props": {
-            "label": "Lock again",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.relock"
-          },
-          "semantics": {
-            "label": "Lock again"
-          }
-        },
-        {
-          "id": "smart-home.unlocked.secondary",
-          "type": "button",
-          "props": {
-            "label": "Home",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "home.home"
-          },
-          "semantics": {
-            "label": "Home"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "smart-home.unlocked.primary",
+                "type": "button",
+                "props": {
+                  "label": "Lock",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.relock"
+                },
+                "semantics": {
+                  "label": "Lock front door again"
+                }
+              },
+              {
+                "id": "smart-home.unlocked.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Home",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.home"
+                },
+                "semantics": {
+                  "label": "Return to home favorites"
+                }
+              }
+            ]
           }
         }
       ]

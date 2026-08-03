@@ -75,11 +75,56 @@ IDs and accessible labels. Actual Compose semantics trees are emitted under
 Host-side goldens use Robolectric Native Graphics for deterministic regression
 coverage. They do not replace captures from the API 37 Wear runtime.
 
+## Render resolved Doodad scenes
+
+`AppSpecReferenceRenderer` accepts the renderer-neutral `SceneSnapshot v1`
+produced by Project Parallax. It validates the complete scene, selects one of
+six generic structural patterns, dispatches all public AppSpec kinds through
+an explicit registry, and never branches on app ID.
+
+The normal entry point is the repository-level command, which captures all
+twenty aligned Compose/LVGL pairs in one Compose test process:
+
+```bash
+cd ../..
+./doodad perfect-render \
+  --suite all-20 \
+  --profile watch_square_240 \
+  --output target/parallax/perfect-render-20
+```
+
+For a direct batch capture, pass a strict JSON array of absolute snapshot and
+PNG output paths:
+
+```json
+[
+  {
+    "snapshot": "/absolute/scene-snapshot.json",
+    "output": "/absolute/captures/timer.png"
+  }
+]
+```
+
+```bash
+./gradlew :app:testDebugUnitTest \
+  --tests dev.doodad.reference.SceneSnapshotBatchCaptureTest \
+  -Pparallax.manifest=/absolute/batch.json \
+  -Pparallax.rendererBuildSha256=<64-lowercase-hex>
+```
+
+For `timer.png`, the task also emits `timer.rgb888`,
+`timer.rgb888.json`, and `timer.node-evidence.json`. Captures are exactly
+240×240, use packed top-to-bottom RGB888, pin `en-US`, UTC, density 1.25,
+font scale 1.0, and restore process locale/time-zone state after the run.
+
 ## Create the reference emulators
 
 The setup script installs the official arm64 image on Apple Silicon (x86_64 on
 Intel) and creates:
 
+- `Wear_OS_Square` — primary API 37 runtime oracle, configured to the product
+  contract at 240×240, 200 dpi / density 1.25, and 192×192dp after applying
+  the runtime display override;
 - `doodad_wear7_small_round`
 - `doodad_wear7_large_round`
 - `doodad_wear61_small_round`
@@ -88,13 +133,26 @@ It never overwrites an existing AVD:
 
 ```bash
 ./scripts/setup-reference-avds.sh
-emulator -avd doodad_wear7_small_round
+emulator -avd Wear_OS_Square
+./scripts/configure-square-runtime.sh --serial emulator-5554
 ```
 
 The system images are large and are therefore not downloaded by ordinary build
 or test commands. The API 36.1 emulator is a compatibility lane. Its renderer
 has a documented issue with some dashed arcs and Tile circular progress
 indicators, so those differences must not become LVGL requirements.
+
+The square API 37 AVD is the primary runtime authority for Parallax app-screen
+comparisons. The round AVDs remain adaptive-design and system-surface
+references. The host lane and the square AVD deliberately share the
+`watch_square_240` geometry, so runtime images are never stretched to compare
+with the product framebuffer.
+
+The API 37 `wearos_square` skin currently starts with a 360×360 physical
+framebuffer even when its AVD configuration requests 240×240. The configuration
+script applies Android's supported `wm size 240x240` and `wm density 200`
+overrides. The Parallax suite capture command applies and verifies those
+overrides automatically after every boot.
 
 ## Capture the real runtime
 
@@ -120,6 +178,33 @@ Capture every indexed scene:
     --serial emulator-5554 \
     --output captures/wear7-small
 ```
+
+Capture the exact twenty AppSpec snapshots used by Project Parallax on the
+240×240 square API 37 runtime:
+
+```bash
+./scripts/capture-parallax-suite.sh \
+    --serial emulator-5554 \
+    --output ../../target/parallax/runtime-wear-square-240
+```
+
+The command establishes and then fails closed unless the device reports API 37,
+a 240×240 display override, and Android density 200. It installs the reference
+app, selects each content-addressed `SceneSnapshot` asset, and preserves a
+native screenshot, accessibility XML, device fingerprint, SDK package
+revisions, installed APK hash, snapshot hash, and capture manifest.
+
+Compare those runtime captures with the exact same host-rendered snapshots:
+
+```bash
+python3 ./scripts/compare-parallax-runtime.py \
+    --runtime ../../target/parallax/runtime-wear-square-240 \
+    --host ../../target/parallax/perfect-render-20 \
+    --output ../../target/parallax/runtime-wear-square-240/host-runtime-comparison.json
+```
+
+The comparator rejects different snapshot hashes and compares native 240×240
+frames after the same canonical RGB565 quantization used by the LVGL report.
 
 Record a normal-speed interaction session:
 

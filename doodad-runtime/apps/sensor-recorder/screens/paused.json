@@ -5,71 +5,83 @@
     "id": "sensor-recorder.paused",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "sensor-recorder.paused.heading",
           "type": "text",
           "props": {
-            "text": "PAUSED",
+            "text": "PAUSED / SAFE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sensor-recorder.paused.summary",
           "type": "text",
           "props": {
-            "text": "20.5 seconds",
+            "text": "00:20",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "PAUSED",
-            "value": "20.5 seconds"
+            "label": "Paused sensor recording elapsed time",
+            "value": "20 seconds"
           }
         },
         {
           "id": "sensor-recorder.paused.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Samples committed · UI idle",
+            "title": "1024 SAMPLES",
+            "body": "48 KiB / no gaps / committed",
+            "progress": 0.64,
             "tone": "neutral"
           }
         },
         {
-          "id": "sensor-recorder.paused.primary",
-          "type": "button",
+          "id": "sensor-recorder.paused.actions",
+          "type": "row",
           "props": {
-            "label": "Resume",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sensor.resume"
-          },
-          "semantics": {
-            "label": "Resume"
-          }
-        },
-        {
-          "id": "sensor-recorder.paused.secondary",
-          "type": "button",
-          "props": {
-            "label": "Export",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sensor.export"
-          },
-          "semantics": {
-            "label": "Export"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sensor-recorder.paused.primary",
+                "type": "button",
+                "props": {
+                  "label": "Resume",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor.resume"
+                },
+                "semantics": {
+                  "label": "Resume sensor recording"
+                }
+              },
+              {
+                "id": "sensor-recorder.paused.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Export",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor.export"
+                },
+                "semantics": {
+                  "label": "Open sensor export"
+                }
+              }
+            ]
           }
         }
       ]

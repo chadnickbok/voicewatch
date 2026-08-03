@@ -1,0 +1,10 @@
+{
+  "package": "@meteocons/svg-static",
+  "version": "0.1.0",
+  "style": "flat",
+  "upstream": "https://github.com/basmilius/meteocons",
+  "registry": "https://www.npmjs.com/package/@meteocons/svg-static",
+  "archive_sha256": "7aead065bfd18127392dd39a67f18c30580e45ddb2facef893839caebf0d029b",
+  "license": "MIT",
+  "copyright": "Copyright (c) 2020-present Bas Milius"
+}

@@ -5,71 +5,82 @@
     "id": "calendar.detail",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "calendar.detail.heading",
-          "type": "text",
+          "id": "calendar.detail.stack",
+          "type": "scroll",
           "props": {
-            "text": "DESIGN REVIEW",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "calendar.detail.summary",
-          "type": "text",
-          "props": {
-            "text": "2:00–2:45",
-            "style": "numeral",
-            "max_lines": 2,
-            "align": "center"
-          },
-          "semantics": {
-            "label": "DESIGN REVIEW",
-            "value": "2:00–2:45"
-          }
-        },
-        {
-          "id": "calendar.detail.detail",
-          "type": "card",
-          "props": {
-            "title": "Deterministic fixture",
-            "body": "Studio · 4 guests · cached",
-            "tone": "neutral"
-          }
-        },
-        {
-          "id": "calendar.detail.primary",
-          "type": "button",
-          "props": {
-            "label": "RSVP yes",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calendar.rsvp.yes"
-          },
-          "semantics": {
-            "label": "RSVP yes"
-          }
-        },
-        {
-          "id": "calendar.detail.secondary",
-          "type": "button",
-          "props": {
-            "label": "Back to agenda",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calendar.back"
-          },
-          "semantics": {
-            "label": "Back to agenda"
+            "gap": "none",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "calendar.detail.content",
+                "type": "column",
+                "props": {
+                  "gap": "none",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "calendar.detail.heading",
+                      "type": "text",
+                      "props": {
+                        "text": "DESIGN REVIEW",
+                        "style": "label",
+                        "max_lines": 1,
+                        "align": "center"
+                      }
+                    },
+                    {
+                      "id": "calendar.detail.event",
+                      "type": "card",
+                      "props": {
+                        "title": "2:00 - 2:45",
+                        "body": "Studio  /  4 guests\nProduct design review",
+                        "tone": "primary"
+                      },
+                      "semantics": {
+                        "label": "Design review details",
+                        "value": "2 to 2:45, Studio, 4 guests"
+                      }
+                    },
+                    {
+                      "id": "calendar.detail.rsvp",
+                      "type": "button",
+                      "props": {
+                        "label": "I'm going",
+                        "tone": "primary",
+                        "variant": "filled",
+                        "size": "default"
+                      },
+                      "events": {
+                        "tap": "calendar.rsvp.yes"
+                      },
+                      "semantics": {
+                        "label": "Accept invitation"
+                      }
+                    },
+                    {
+                      "id": "calendar.detail.back",
+                      "type": "button",
+                      "props": {
+                        "label": "Agenda",
+                        "tone": "neutral",
+                        "variant": "tonal",
+                        "size": "default"
+                      },
+                      "events": {
+                        "tap": "calendar.back"
+                      },
+                      "semantics": {
+                        "label": "Back to agenda"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         }
       ]

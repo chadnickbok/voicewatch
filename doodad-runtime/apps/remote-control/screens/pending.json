@@ -5,71 +5,84 @@
     "id": "remote-control.pending",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "remote-control.pending.heading",
+          "id": "remote-control.pending.viewfinder",
+          "type": "image",
+          "props": {
+            "asset": "777d468ea847318acd22e2eb79f108e75e2674448e8b53fa8fba0bc08fd7b522",
+            "fit": "cover"
+          },
+          "semantics": {
+            "label": "Live desert camera preview"
+          }
+        },
+        {
+          "id": "remote-control.pending.context",
           "type": "text",
           "props": {
-            "text": "CAMERA",
+            "text": "TAKING PHOTO",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "remote-control.pending.summary",
           "type": "text",
           "props": {
-            "text": "Sending #73",
+            "text": "3",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "CAMERA",
-            "value": "Sending #73"
+            "label": "Camera countdown",
+            "value": "3"
           }
         },
         {
-          "id": "remote-control.pending.detail",
-          "type": "card",
+          "id": "remote-control.pending.actions",
+          "type": "row",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Tap locked until acknowledgement",
-            "tone": "neutral"
-          }
-        },
-        {
-          "id": "remote-control.pending.primary",
-          "type": "button",
-          "props": {
-            "label": "Deliver ack",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "remote.ack"
-          },
-          "semantics": {
-            "label": "Deliver ack"
-          }
-        },
-        {
-          "id": "remote-control.pending.secondary",
-          "type": "button",
-          "props": {
-            "label": "Lose link",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "remote.disconnect"
-          },
-          "semantics": {
-            "label": "Lose link"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "remote-control.pending.primary",
+                "type": "button",
+                "props": {
+                  "label": "Now",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "remote.ack"
+                },
+                "semantics": {
+                  "label": "Take photo now"
+                }
+              },
+              {
+                "id": "remote-control.pending.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Offline",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "remote.disconnect"
+                },
+                "semantics": {
+                  "label": "Simulate lost phone link"
+                }
+              }
+            ]
           }
         }
       ]

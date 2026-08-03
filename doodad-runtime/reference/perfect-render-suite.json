@@ -1,0 +1,682 @@
+{
+  "schema_version": 1,
+  "id": "perfect-render-20",
+  "entries": [
+    {
+      "app_slug": "timer",
+      "trace": "traces/timer/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "e2d1fb677f4c73193b11ec3f53eef6f048b25c0d4938ba4b1830edced9bfb089",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across five nodes; both renderers pass 48dp target and quality checks. Remaining 14.1667% raster delta is font and edge antialiasing. See reference/reviews/timer.md."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "49ca96f2cafe09f0ef874822342351b5092790cb6231df4178facd2fdfabb255",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Current Conditions oracle mounted from its bounded weather AppSpec."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 3,
+      "snapshot_sha256": "dbf8ecbffb372f8b1391d25a28418f65942b34a97f8d6edea79a7ab0abc1a2b5",
+      "capture_phase": "selected",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Hourly oracle selected through the real weather.hourly Wasm action."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 5,
+      "snapshot_sha256": "2384a928a47b6e90124d6ecdcf83ea26d6ffab56144ec9fe0256f9410f26df94",
+      "capture_phase": "end_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Daily oracle mounted through the real weather.daily Wasm action."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 7,
+      "snapshot_sha256": "deb9d9cf6f5d0d1f9f9eed9b3e91d840e5d72370696656beb0d9a72da373b8a5",
+      "capture_phase": "end_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the exact-grid Details metric oracle mounted through the real weather.details Wasm action."
+      }
+    },
+    {
+      "app_slug": "weather",
+      "trace": "traces/weather/decisive/trace.json",
+      "sequence": 8,
+      "snapshot_sha256": "291cac7cae17c3c45be2c2d5ffce86dda792840ade291874e117e5004ae2b97c",
+      "capture_phase": "end_state",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "reviewer": "Project Nimbus Phase 4",
+        "reviewed_at": "2026-08-01",
+        "notes": "Pending parity review for the imminent-rain oracle mounted through the provider-equivalent weather.rain-preview route."
+      }
+    },
+    {
+      "app_slug": "notifications",
+      "trace": "traces/notifications/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "bb62eb1fffa23a6c0fde09a955534f98a3e9b0083e755f43bcd8b2ee12503324",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across six nodes; both renderers pass 48dp target and quality checks. Remaining 14.7743% raster delta is text, card padding, and edge antialiasing. See reference/reviews/notifications.md."
+      }
+    },
+    {
+      "app_slug": "tasks",
+      "trace": "traces/tasks/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "7b9caf9e61d25246a3988d5e95f0f3dd9c76855d4f3e62e68779641897dbe3c7",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across six nodes; all task rows pass 48dp target and quality checks. Added and checked states also align exactly. Remaining raster delta is color quantization, text rasterization, and edge antialiasing. See reference/reviews/tasks.md."
+      }
+    },
+    {
+      "app_slug": "calculator",
+      "trace": "traces/calculator/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "b8dd2ad3c03eb177fffbe4974ca9d3d79e14d3eb4873539e7e82f38c49dbdb65",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    },
+    {
+      "app_slug": "calendar",
+      "trace": "traces/calendar/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "72186e74fd41362d5698f668881f03e9358a7c8221354ccdcb87f8b8318e5e8e",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across seven nodes; both renderers pass 48dp target and quality checks. Detail, RSVP, and travel states also align exactly. Remaining raster delta is font rendering, RGB565 quantization, and edge antialiasing. See reference/reviews/calendar.md."
+      }
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "b58975b9395e07abe9ac5cb64886d00d926954580e195d9a8febc049a6b9c6cc",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending",
+        "notes": "Powerlifting Today screen; pending regenerated Parallax review."
+      }
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 1,
+      "snapshot_sha256": "027dc32fa5fc7da16ea6402ed69f3946f32b9eb1318f6ed6b26b5498749a2130",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting session overview."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 2,
+      "snapshot_sha256": "2a4df6a1800b78ca02339dab22dc5afc15475e129482dbaf6dad36323e5705af",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting exercise picker."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 4,
+      "snapshot_sha256": "edae1da1c342fe97f4eb2dfe0cfc7ae71eeff9d50df6e5da7cfb0ed1bd65ae4b",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting active set target."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 5,
+      "snapshot_sha256": "99b5fd91d9b7df5ac9d8268768cd2af0dc0352e181dd7fe50d2c2083f2e32552",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting weight editor."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 8,
+      "snapshot_sha256": "49bab0e9d2255e8b7121dd7d69fa1642b6aa43638a72256693b92baedfa81436",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting set result and RPE."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 10,
+      "snapshot_sha256": "307a3837dd9451d4ea8035911c72c75f537fc4ad27b89256a5185bf19ec5dc8e",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting missed-set recovery."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 11,
+      "snapshot_sha256": "031621c06cafc37c46784c80851185bcf39ee220b3f28f382c870257a23908e5",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting rest and next set."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 12,
+      "snapshot_sha256": "77fc2a7c6959695ac3c05c529b36d972b42a98f6ca3788bdbab1bb92ef4b072a",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting plate loading."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 14,
+      "snapshot_sha256": "9683e499fa9bd13f54b248b6a34c18e4a688eefe2fc81e80d12c583d58310685",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting exercise switcher."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 15,
+      "snapshot_sha256": "8702547977d10f0025273e37541d460476ac87cadc62b94fd82bcacaa65a5873",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting summary and PR."}
+    },
+    {
+      "app_slug": "workout",
+      "trace": "traces/workout/decisive/trace.json",
+      "sequence": 17,
+      "snapshot_sha256": "74cb1447920c543dcc69fd3c76ffdc7e5042cb3a9a6ebeae7d5c88a0232f884c",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {"mode": "host", "version": "wear-compose-1.6.2"},
+      "lvgl": {"mode": "simulator", "version": "9.5.0"},
+      "comparison_policy": "square-app-baseline",
+      "review": {"status": "pending", "notes": "Powerlifting durable resume state."}
+    },
+    {
+      "app_slug": "calories",
+      "trace": "traces/calories/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "f514ef0b481d622187a7f8c5e1438e63e721f5b70292887e5714dc0540f9b3d1",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across dashboard, quick-add, committed total, voice review, and over-goal states; both renderers pass 48dp target and quality checks. Remaining raster delta is font rendering, RGB565 quantization, and edge antialiasing. See reference/reviews/calories.md."
+      }
+    },
+    {
+      "app_slug": "voice-notes",
+      "trace": "traces/voice-notes/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "9de3a57ee982b657fdd125f317c0173a0fc17f0f96f9ac22bbfad6bb59b0ff44",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across ready, recording, captured, transcript, and saved states; both renderers pass 48dp target and quality checks. The launch screen uses a real Material voice action without generic app-title chrome. See reference/reviews/voice-notes.md."
+      }
+    },
+    {
+      "app_slug": "medication",
+      "trace": "traces/medication/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "43f65e5e02a253ea2607378c279c228a0bb462d44ac1c3f672c4c10dbe5326dd",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared snapshot structure and normalized bounds across due, logged, reminder editing, due-after-save, and snoozed states; both renderers pass 48dp target and quality checks. The title-free launch surface keeps dose, timing, taken, and ten-minute reminder actions visible together. See reference/reviews/medication.md."
+      }
+    },
+    {
+      "app_slug": "sensor-recorder",
+      "trace": "traces/sensor-recorder/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "6a9f7a3a97f609dc6b29016b83e839201a4b71f309c0a96824a89f28b1bff709",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. The title-free session follows Google's live-metric, decisive-control, and completed-summary hierarchy. See reference/reviews/sensor-recorder.md."
+      }
+    },
+    {
+      "app_slug": "sleep",
+      "trace": "traces/sleep/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "c840b1ba2bbaaf640a81d3da8bb82848233c62bd2c7962bbfcecaefb78ab4361",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. The title-free sleep flow follows first-party score, stage, quiet-tracking, and history hierarchy without reproducing round-watch geometry. See reference/reviews/sleep.md."
+      }
+    },
+    {
+      "app_slug": "media",
+      "trace": "traces/media/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "08f48335e3be249a50a43edb376e38a264080adcb619b3f3df6b3dd526a61ec3",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all four accepted states; both renderers pass 48dp target and quality checks. Media also proves independently decoded content-addressed package artwork and a deterministic missing-image fallback. See reference/reviews/media.md."
+      }
+    },
+    {
+      "app_slug": "navigation",
+      "trace": "traces/navigation/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "0c092e2f64b5f6ec2fe2f44d93664118c1194f59ce72d117cc5750a37ba4bff0",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all four accepted states; both renderers pass 48dp target and quality checks. The comparison also repaired and regression-tested the shared LVGL live-action decimal glyph. See reference/reviews/navigation.md."
+      }
+    },
+    {
+      "app_slug": "transit",
+      "trace": "traces/transit/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "d119f671845d75a33d4c9fa3bd9a2254cd72e041ef5996a82e6218ced187bdee",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. Stale-state labels were shortened after direct comparison to eliminate truncation. See reference/reviews/transit.md."
+      }
+    },
+    {
+      "app_slug": "smart-home",
+      "trace": "traces/smart-home/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "db6958f2834d872b998aea93a51ad33078d058a4ccbfa4b0b160bc0f18259270",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all six accepted states; both renderers pass 48dp target and quality checks. Direct comparison repaired long-label truncation and added a regression-tested LVGL percent glyph. See reference/reviews/smart-home.md."
+      }
+    },
+    {
+      "app_slug": "sports",
+      "trace": "traces/sports/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "0bf81869a12e7f7d1780e4f63f46c463f3fa9d1eab35a103ca3d9ed2de84df6d",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all five accepted states; both renderers pass 48dp target and quality checks. Direct comparison removed a missing separator glyph and long-label truncation. See reference/reviews/sports.md."
+      }
+    },
+    {
+      "app_slug": "wallet",
+      "trace": "traces/wallet/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "2a5225da6cd8c20cad745349d728c35c9827ec6ef98ed6d9dcc94a6842d127a7",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all six accepted states; both renderers pass 48dp target and quality checks. The real package QR has a 5.4045% raster delta. See reference/reviews/wallet.md."
+      }
+    },
+    {
+      "app_slug": "remote-control",
+      "trace": "traces/remote-control/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "24fbfc8e6e9f7aa996bf90cc373c78c5c83f86b184ae495f1f53b01e06a99667",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "approved",
+        "reviewer": "Project Parallax engineering review",
+        "reviewed_at": "2026-07-30",
+        "notes": "Equivalent: exact shared structure and normalized bounds across all seven accepted states; both renderers pass 48dp target and quality checks. The same 230x150 package photo is rendered one-to-one in both lanes. See reference/reviews/remote-control.md."
+      }
+    },
+    {
+      "app_slug": "snake",
+      "trace": "traces/snake/decisive/trace.json",
+      "sequence": 0,
+      "snapshot_sha256": "63eeff44bec6a2171b2339ade7c8aca9783202a94785e28adcbc2560f041d624",
+      "capture_phase": "resting",
+      "profile_id": "watch_square_240",
+      "compose": {
+        "mode": "host",
+        "version": "wear-compose-1.6.2"
+      },
+      "lvgl": {
+        "mode": "simulator",
+        "version": "9.5.0"
+      },
+      "comparison_policy": "square-app-baseline",
+      "review": {
+        "status": "pending"
+      }
+    }
+  ]
+}

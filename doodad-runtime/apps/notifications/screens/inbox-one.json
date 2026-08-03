@@ -5,57 +5,58 @@
     "id": "notifications.inbox",
     "type": "screen",
     "props": {
-      "gap": "md",
+      "gap": "sm",
       "align": "stretch",
       "children": [
         {
-          "id": "notifications.heading",
-          "type": "text",
+          "id": "notifications.stack",
+          "type": "scroll",
           "props": {
-            "text": "INBOX",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "notifications.summary",
-          "type": "text",
-          "props": {
-            "text": "1 unread",
-            "style": "title",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "notifications.build",
-          "type": "button",
-          "props": {
-            "label": "CI · Build finished",
-            "tone": "neutral",
-            "variant": "tonal",
-            "size": "default"
-          },
-          "events": {
-            "tap": "notification.open.build"
-          },
-          "semantics": {
-            "label": "Open build notification"
-          }
-        },
-        {
-          "id": "notifications.clear",
-          "type": "button",
-          "props": {
-            "label": "Clear all",
-            "tone": "neutral",
-            "variant": "text",
-            "size": "compact"
-          },
-          "events": {
-            "tap": "notification.clear"
-          },
-          "semantics": {
-            "label": "Clear all notifications"
+            "gap": "sm",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "notifications.summary",
+                "type": "text",
+                "props": {
+                  "text": "1 unread",
+                  "style": "label",
+                  "max_lines": 1,
+                  "align": "center"
+                }
+              },
+              {
+                "id": "notifications.build",
+                "type": "card",
+                "props": {
+                  "title": "Buildbot  4 MIN",
+                  "body": "Release build passed.",
+                  "tone": "neutral"
+                },
+                "events": {
+                  "tap": "notification.open.build"
+                },
+                "semantics": {
+                  "label": "Open build notification"
+                }
+              },
+              {
+                "id": "notifications.clear",
+                "type": "button",
+                "props": {
+                  "label": "Clear all",
+                  "tone": "neutral",
+                  "variant": "text",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "notification.clear"
+                },
+                "semantics": {
+                  "label": "Clear all notifications"
+                }
+              }
+            ]
           }
         }
       ]

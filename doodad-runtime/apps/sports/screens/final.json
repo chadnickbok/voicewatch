@@ -5,71 +5,83 @@
     "id": "sports.final",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "sports.final.heading",
+          "id": "sports.final.context",
           "type": "text",
           "props": {
-            "text": "FINAL",
+            "text": "FINAL / SF",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sports.final.summary",
           "type": "text",
           "props": {
-            "text": "SF 5 · LA 3",
+            "text": "5:3",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "FINAL",
-            "value": "SF 5 · LA 3"
+            "label": "Final score",
+            "value": "San Francisco 5, Los Angeles 3"
           }
         },
         {
           "id": "sports.final.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Ongoing card ended · one haptic",
-            "tone": "neutral"
+            "title": "SF WINS / FINAL",
+            "body": "One alert / follow ended",
+            "progress": 1.0,
+            "tone": "primary"
           }
         },
         {
-          "id": "sports.final.primary",
-          "type": "button",
+          "id": "sports.final.actions",
+          "type": "row",
           "props": {
-            "label": "Scoring plays",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sports.plays"
-          },
-          "semantics": {
-            "label": "Scoring plays"
-          }
-        },
-        {
-          "id": "sports.final.secondary",
-          "type": "button",
-          "props": {
-            "label": "Follow rematch",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sports.follow"
-          },
-          "semantics": {
-            "label": "Follow rematch"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sports.final.primary",
+                "type": "button",
+                "props": {
+                  "label": "Plays",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sports.plays"
+                },
+                "semantics": {
+                  "label": "Show scoring plays"
+                }
+              },
+              {
+                "id": "sports.final.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Again",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sports.follow"
+                },
+                "semantics": {
+                  "label": "Follow rematch"
+                }
+              }
+            ]
           }
         }
       ]

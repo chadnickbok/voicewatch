@@ -6,21 +6,14 @@ from pathlib import Path
 
 from tools.doodad_cli.contract import build_and_stage
 from tools.doodad_cli.native import NativeHost
+from tools.doodad_cli.scene_trace import run_flow_action
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def perform(host: NativeHost, action: dict[str, object]) -> None:
-    kind = action["kind"]
-    if kind == "click":
-        host.click_button(str(action["value"]))
-    elif kind == "advance":
-        host.advance_time(int(action["value"]))
-    elif kind == "deliver":
-        host.deliver_provider()
-    else:
-        raise AssertionError(f"unknown action {kind!r}")
+    run_flow_action(host, action)
 
 
 class CrossAppStressTests(unittest.TestCase):

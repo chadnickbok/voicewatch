@@ -1,0 +1,556 @@
+{
+    "schema_version": 1,
+    "snapshot_sha256": "0941d7987e291558061e4513c4a9d88bb1d754bc05266c5d78e5e11837660eee",
+    "capture_phase": {
+        "id": "end_state",
+        "state": "end_state",
+        "animation_fraction_milli": 0
+    },
+    "renderer": {
+        "kind": "compose",
+        "mode": "host",
+        "version": "wear-compose-1.6.2",
+        "build_sha256": "f76e2eeaf20d258a5b61cc4875b922c27d14a761ac15c96b62538a8446f59faa"
+    },
+    "profile_id": "watch_square_240",
+    "physical_width_px": 240,
+    "physical_height_px": 240,
+    "nodes": [
+        {
+            "id": "weather.rain-screen",
+            "parent_id": null,
+            "role": "screen",
+            "label": "weather",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 0,
+                "y": 0,
+                "width": 240,
+                "height": 240
+            },
+            "bounds_dp_q8_8": {
+                "x": 0,
+                "y": 0,
+                "width": 49152,
+                "height": 49152
+            },
+            "token_roles": {
+                "background": "background"
+            }
+        },
+        {
+            "id": "weather.rain-page",
+            "parent_id": "weather.rain-screen",
+            "role": "list",
+            "label": "Imminent rain",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 0,
+                "y": 0,
+                "width": 240,
+                "height": 240
+            },
+            "bounds_dp_q8_8": {
+                "x": 0,
+                "y": 0,
+                "width": 49152,
+                "height": 49152
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.rain-hero",
+            "parent_id": "weather.rain-page",
+            "role": "image",
+            "label": "Rain",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 1,
+                "y": 1,
+                "width": 85,
+                "height": 78
+            },
+            "bounds_dp_q8_8": {
+                "x": 102,
+                "y": 256,
+                "width": 17408,
+                "height": 15872
+            },
+            "token_roles": {
+                "asset": "weather_icon_registry",
+                "content": "primary"
+            }
+        },
+        {
+            "id": "weather.rain-headline",
+            "parent_id": "weather.rain-page",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 84,
+                "y": 8,
+                "width": 146,
+                "height": 70
+            },
+            "bounds_dp_q8_8": {
+                "x": 17203,
+                "y": 1638,
+                "width": 29901,
+                "height": 14336
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.rain-title",
+            "parent_id": "weather.rain-headline",
+            "role": "heading",
+            "label": "Rain in 20 minutes",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 84,
+                "y": 8,
+                "width": 87,
+                "height": 60
+            },
+            "bounds_dp_q8_8": {
+                "x": 17203,
+                "y": 1638,
+                "width": 17818,
+                "height": 12288
+            },
+            "token_roles": {
+                "typography": "title"
+            }
+        },
+        {
+            "id": "weather.rain-duration",
+            "parent_id": "weather.rain-headline",
+            "role": "text",
+            "label": "Light rain for 35 min",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 84,
+                "y": 68,
+                "width": 97,
+                "height": 10
+            },
+            "bounds_dp_q8_8": {
+                "x": 17203,
+                "y": 13926,
+                "width": 19866,
+                "height": 2048
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.rain-chart-card",
+            "parent_id": "weather.rain-page",
+            "role": "group",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 8,
+                "y": 78,
+                "width": 224,
+                "height": 96
+            },
+            "bounds_dp_q8_8": {
+                "x": 1638,
+                "y": 15974,
+                "width": 45875,
+                "height": 19661
+            },
+            "token_roles": {
+                "container": "secondary",
+                "shape": "standard"
+            }
+        },
+        {
+            "id": "weather.rain-probability",
+            "parent_id": "weather.rain-chart-card",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 16,
+                "y": 84,
+                "width": 208,
+                "height": 34
+            },
+            "bounds_dp_q8_8": {
+                "x": 3277,
+                "y": 17203,
+                "width": 42598,
+                "height": 6963
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.rain-probability-icon",
+            "parent_id": "weather.rain-probability",
+            "role": "image",
+            "label": "Chance of rain",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 16,
+                "y": 89,
+                "width": 25,
+                "height": 25
+            },
+            "bounds_dp_q8_8": {
+                "x": 3277,
+                "y": 18227,
+                "width": 5120,
+                "height": 5120
+            },
+            "token_roles": {
+                "asset": "weather_icon_registry",
+                "content": "primary"
+            }
+        },
+        {
+            "id": "weather.rain-probability-value",
+            "parent_id": "weather.rain-probability",
+            "role": "text",
+            "label": "32 percent",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 45,
+                "y": 85,
+                "width": 53,
+                "height": 33
+            },
+            "bounds_dp_q8_8": {
+                "x": 9216,
+                "y": 17408,
+                "width": 10854,
+                "height": 6758
+            },
+            "token_roles": {
+                "typography": "numeral"
+            }
+        },
+        {
+            "id": "weather.rain-probability-label",
+            "parent_id": "weather.rain-probability",
+            "role": "text",
+            "label": "Chance\nof rain",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 105,
+                "y": 92,
+                "width": 30,
+                "height": 18
+            },
+            "bounds_dp_q8_8": {
+                "x": 21504,
+                "y": 18842,
+                "width": 6144,
+                "height": 3686
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.rain-bars",
+            "parent_id": "weather.rain-chart-card",
+            "role": "image",
+            "label": "Rain chance peaks near 72 percent in 30 minutes",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 16,
+                "y": 118,
+                "width": 208,
+                "height": 44
+            },
+            "bounds_dp_q8_8": {
+                "x": 3277,
+                "y": 24166,
+                "width": 42598,
+                "height": 9011
+            },
+            "token_roles": {
+                "series": "primary",
+                "style": "bars"
+            }
+        },
+        {
+            "id": "weather.rain-times",
+            "parent_id": "weather.rain-chart-card",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 16,
+                "y": 163,
+                "width": 208,
+                "height": 10
+            },
+            "bounds_dp_q8_8": {
+                "x": 3277,
+                "y": 33382,
+                "width": 42598,
+                "height": 2048
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.rain-time-now",
+            "parent_id": "weather.rain-times",
+            "role": "text",
+            "label": "NOW",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 16,
+                "y": 163,
+                "width": 52,
+                "height": 10
+            },
+            "bounds_dp_q8_8": {
+                "x": 3277,
+                "y": 33382,
+                "width": 10650,
+                "height": 2048
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.rain-time-20",
+            "parent_id": "weather.rain-times",
+            "role": "text",
+            "label": "20m",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 68,
+                "y": 163,
+                "width": 52,
+                "height": 10
+            },
+            "bounds_dp_q8_8": {
+                "x": 13926,
+                "y": 33382,
+                "width": 10650,
+                "height": 2048
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.rain-time-40",
+            "parent_id": "weather.rain-times",
+            "role": "text",
+            "label": "40m",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 120,
+                "y": 163,
+                "width": 52,
+                "height": 10
+            },
+            "bounds_dp_q8_8": {
+                "x": 24576,
+                "y": 33382,
+                "width": 10650,
+                "height": 2048
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.rain-time-60",
+            "parent_id": "weather.rain-times",
+            "role": "text",
+            "label": "60m",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 172,
+                "y": 163,
+                "width": 52,
+                "height": 10
+            },
+            "bounds_dp_q8_8": {
+                "x": 35226,
+                "y": 33382,
+                "width": 10650,
+                "height": 2048
+            },
+            "token_roles": {
+                "typography": "caption"
+            }
+        },
+        {
+            "id": "weather.rain-actions",
+            "parent_id": "weather.rain-page",
+            "role": "list",
+            "label": "",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [],
+            "bounds_px": {
+                "x": 0,
+                "y": 180,
+                "width": 240,
+                "height": 60
+            },
+            "bounds_dp_q8_8": {
+                "x": 0,
+                "y": 36864,
+                "width": 49152,
+                "height": 12288
+            },
+            "token_roles": {
+                "layout": "surface"
+            }
+        },
+        {
+            "id": "weather.rain-details",
+            "parent_id": "weather.rain-actions",
+            "role": "button",
+            "label": "Show weather details",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [
+                {
+                    "kind": "tap",
+                    "action_id": "weather.rain-details"
+                }
+            ],
+            "bounds_px": {
+                "x": 0,
+                "y": 180,
+                "width": 166,
+                "height": 60
+            },
+            "bounds_dp_q8_8": {
+                "x": 0,
+                "y": 36864,
+                "width": 33997,
+                "height": 12288
+            },
+            "token_roles": {
+                "container": "primary",
+                "content": "on_surface"
+            }
+        },
+        {
+            "id": "weather.rain-status",
+            "parent_id": "weather.rain-actions",
+            "role": "button",
+            "label": "Weather updated now",
+            "value": "",
+            "state_description": "",
+            "visible": true,
+            "enabled": true,
+            "actions": [
+                {
+                    "kind": "tap",
+                    "action_id": "weather.retry"
+                }
+            ],
+            "bounds_px": {
+                "x": 166,
+                "y": 180,
+                "width": 74,
+                "height": 60
+            },
+            "bounds_dp_q8_8": {
+                "x": 33997,
+                "y": 36864,
+                "width": 15155,
+                "height": 12288
+            },
+            "token_roles": {
+                "container": "transparent",
+                "content": "on_surface"
+            }
+        }
+    ]
+}

@@ -5,71 +5,83 @@
     "id": "transit.departures",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "transit.departures.heading",
+          "id": "transit.departures.context",
           "type": "text",
           "props": {
-            "text": "CASTRO STATION",
+            "text": "CASTRO / NORTH",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "transit.departures.summary",
           "type": "text",
           "props": {
-            "text": "N · 3 min",
+            "text": "3 MIN",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "CASTRO STATION",
-            "value": "N · 3 min"
+            "label": "Next northbound N train",
+            "value": "3 minutes"
           }
         },
         {
           "id": "transit.departures.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "N  3 min\nN  14 min\nL  8 min",
-            "tone": "neutral"
+            "title": "N TRAIN / PLATFORM 2",
+            "body": "Next 14 / L in 8 min",
+            "progress": 0.2,
+            "tone": "primary"
           }
         },
         {
-          "id": "transit.departures.primary",
-          "type": "button",
+          "id": "transit.departures.actions",
+          "type": "row",
           "props": {
-            "label": "Go offline",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "transit.offline"
-          },
-          "semantics": {
-            "label": "Go offline"
-          }
-        },
-        {
-          "id": "transit.departures.secondary",
-          "type": "button",
-          "props": {
-            "label": "Service alert",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "transit.alert"
-          },
-          "semantics": {
-            "label": "Service alert"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "transit.departures.primary",
+                "type": "button",
+                "props": {
+                  "label": "Offline",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.offline"
+                },
+                "semantics": {
+                  "label": "Simulate offline departures"
+                }
+              },
+              {
+                "id": "transit.departures.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Alert",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.alert"
+                },
+                "semantics": {
+                  "label": "View N line service alert"
+                }
+              }
+            ]
           }
         }
       ]

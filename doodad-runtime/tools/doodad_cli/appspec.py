@@ -4,10 +4,11 @@ from dataclasses import dataclass
 import re
 from typing import Any
 
+from .canvas_display_list import validate_canvas
 from .contract import DoodadError
 
 
-LAYOUT_TYPES = {"screen", "column", "row", "scroll"}
+LAYOUT_TYPES = {"screen", "column", "row", "scroll", "surface", "pager"}
 LEAF_TYPES = {
     "text",
     "button",
@@ -18,11 +19,23 @@ LEAF_TYPES = {
     "keypad",
     "voice_orb",
     "live_card",
+    "image",
+    "canvas",
+    "icon",
+    "chart",
 }
 NODE_TYPES = LAYOUT_TYPES | LEAF_TYPES
-INTERACTIVE_TYPES = {"button", "stepper", "toggle", "keypad", "voice_orb"}
+INTERACTIVE_TYPES = {
+    "button",
+    "stepper",
+    "toggle",
+    "keypad",
+    "voice_orb",
+    "canvas",
+    "pager",
+}
 TONES = {"primary", "secondary", "tertiary", "neutral", "error"}
-SIZES = {"compact", "default", "large"}
+SIZES = {"compact", "default", "large", "hero"}
 SPACING = {"none", "xs", "sm", "md", "lg"}
 TEXT_STYLES = {
     "display",
@@ -57,6 +70,19 @@ PREDICATES = {
     "greater_than",
 }
 FORMATS = {"raw", "number", "duration"}
+WEATHER_ICON_NAMES = {
+    "condition_clear_day", "condition_clear_night",
+    "condition_partly_cloudy_day", "condition_partly_cloudy_night",
+    "condition_cloudy", "condition_overcast", "condition_fog",
+    "condition_drizzle", "condition_rain", "condition_heavy_rain",
+    "condition_thunderstorm", "condition_snow", "condition_sleet",
+    "condition_wind", "condition_hot", "condition_unknown",
+    "utility_location", "utility_chevron_right", "utility_arrow_high",
+    "utility_arrow_low", "utility_thermometer", "utility_humidity",
+    "utility_wind", "utility_uv", "utility_sunrise", "utility_sunset",
+    "utility_clock", "utility_precipitation_bars", "utility_details",
+    "utility_warning", "utility_offline", "utility_refresh", "utility_retry",
+}
 
 
 @dataclass(frozen=True)
@@ -235,6 +261,15 @@ def _validate_node(
         raise DoodadError(f"{identifier} props and events must be objects")
     if not isinstance(semantics, dict):
         raise DoodadError(f"{identifier}.semantics must be an object")
+    if set(semantics) - {"label", "value", "hint"}:
+        raise DoodadError(f"{identifier}.semantics has unsupported fields")
+    for field in ("label", "value", "hint"):
+        if field in semantics:
+            _text(
+                semantics[field],
+                f"{identifier} semantics.{field}",
+                128,
+            )
     if set(events) - EVENTS:
         raise DoodadError(f"{identifier} uses an unsupported semantic event")
     for action in events.values():
@@ -243,9 +278,17 @@ def _validate_node(
         _text(semantics.get("label"), f"{identifier} semantics.label", 128)
         if not events:
             raise DoodadError(f"{identifier} is interactive but has no event")
+    if node_type in {"image", "chart"}:
+        _text(semantics.get("label"), f"{identifier} semantics.label", 128)
+    if node_type == "canvas":
+        _text(semantics.get("label"), f"{identifier} semantics.label", 128)
 
     if node_type in LAYOUT_TYPES:
         allowed = {"children", "gap", "align"}
+        if node_type == "surface":
+            allowed |= {"tone", "shape"}
+        elif node_type == "pager":
+            allowed |= {"selected", "show_indicator"}
         if set(props) - allowed:
             raise DoodadError(f"{identifier} layout has unsupported props")
         children = props.get("children")
@@ -255,6 +298,24 @@ def _validate_node(
             raise DoodadError(f"{identifier}.gap must use a spacing token")
         if props.get("align", "center") not in {"start", "center", "end", "stretch"}:
             raise DoodadError(f"{identifier}.align is unsupported")
+        if node_type == "surface":
+            if props.get("tone", "neutral") not in TONES:
+                raise DoodadError(f"{identifier}.tone is unsupported")
+            if props.get("shape", "standard") not in {
+                "standard", "hero", "metric_a", "metric_b", "metric_c", "pill"
+            }:
+                raise DoodadError(f"{identifier}.shape is unsupported")
+        elif node_type == "pager":
+            selected = props.get("selected", 0)
+            if (
+                not isinstance(selected, int)
+                or isinstance(selected, bool)
+                or not children
+                or not 0 <= selected < len(children)
+            ):
+                raise DoodadError(f"{identifier}.selected must name a child page")
+            if not isinstance(props.get("show_indicator", True), bool):
+                raise DoodadError(f"{identifier}.show_indicator must be boolean")
         if node_type == "scroll":
             state["scrolls"] += 1
         for child in children:
@@ -271,6 +332,10 @@ def _validate_node(
         "keypad": _validate_keypad,
         "voice_orb": _validate_voice_orb,
         "live_card": _validate_live_card,
+        "image": _validate_image,
+        "canvas": _validate_canvas,
+        "icon": _validate_icon,
+        "chart": _validate_chart,
     }
     validators[node_type](identifier, props)
 
@@ -411,6 +476,65 @@ def _validate_live_card(identifier: str, props: dict[str, Any]) -> None:
             raise DoodadError(
                 f"{identifier}.progress must be 0..1 or a binding"
             )
+    _tone_size(identifier, props)
+
+
+def _validate_image(identifier: str, props: dict[str, Any]) -> None:
+    _exact_props(identifier, props, {"asset", "fit"})
+    asset = props.get("asset")
+    if (
+        not isinstance(asset, str)
+        or re.fullmatch(r"[0-9a-f]{64}", asset) is None
+    ):
+        raise DoodadError(
+            f"{identifier}.asset must be a lowercase SHA-256 digest"
+        )
+    if props.get("fit", "cover") not in {"cover", "contain"}:
+        raise DoodadError(f"{identifier}.fit is unsupported")
+
+
+def _validate_canvas(identifier: str, props: dict[str, Any]) -> None:
+    _exact_props(
+        identifier,
+        props,
+        {"display_list", "palette", "width", "height"},
+    )
+    validate_canvas(
+        props.get("display_list"),
+        props.get("palette"),
+        props.get("width"),
+        props.get("height"),
+        identifier,
+    )
+
+
+def _validate_icon(identifier: str, props: dict[str, Any]) -> None:
+    _exact_props(identifier, props, {"name", "tone", "size"})
+    if props.get("name") not in WEATHER_ICON_NAMES:
+        raise DoodadError(f"{identifier}.name is not in the Weather icon registry")
+    _tone_size(identifier, props)
+
+
+def _validate_chart(identifier: str, props: dict[str, Any]) -> None:
+    _exact_props(identifier, props, {"samples", "maximum", "style", "tone"})
+    samples = props.get("samples")
+    maximum = props.get("maximum")
+    if (
+        not isinstance(samples, list)
+        or not 1 <= len(samples) <= 13
+        or not isinstance(maximum, int)
+        or isinstance(maximum, bool)
+        or not 1 <= maximum <= 32767
+        or any(
+            not isinstance(value, int)
+            or isinstance(value, bool)
+            or not 0 <= value <= maximum
+            for value in samples
+        )
+    ):
+        raise DoodadError(f"{identifier} chart samples must fit 1..13 values within maximum")
+    if props.get("style", "line") not in {"line", "bars"}:
+        raise DoodadError(f"{identifier}.style is unsupported")
     _tone_size(identifier, props)
 
 
@@ -574,5 +698,17 @@ def _compile_node(node: dict[str, Any]) -> dict[str, Any]:
                 "speaking": "Speaking...",
                 "error": "Try again",
             }[props["state"]],
+        }
+    if kind == "image":
+        return {
+            "type": "text",
+            "text": node.get("semantics", {}).get("label", "Image"),
+            "style": "muted",
+        }
+    if kind == "canvas":
+        return {
+            "type": "text",
+            "text": node.get("semantics", {}).get("label", "Canvas"),
+            "style": "muted",
         }
     raise DoodadError(f"cannot compile AppSpec component {kind!r}")

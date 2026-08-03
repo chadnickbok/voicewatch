@@ -5,71 +5,82 @@
     "id": "calendar.travel",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "calendar.travel.heading",
-          "type": "text",
+          "id": "calendar.travel.stack",
+          "type": "scroll",
           "props": {
-            "text": "TIME ZONE",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "calendar.travel.summary",
-          "type": "text",
-          "props": {
-            "text": "11:00 PDT",
-            "style": "numeral",
-            "max_lines": 2,
-            "align": "center"
-          },
-          "semantics": {
-            "label": "TIME ZONE",
-            "value": "11:00 PDT"
-          }
-        },
-        {
-          "id": "calendar.travel.detail",
-          "type": "card",
-          "props": {
-            "title": "Deterministic fixture",
-            "body": "Same event · DST-safe · offline",
-            "tone": "neutral"
-          }
-        },
-        {
-          "id": "calendar.travel.primary",
-          "type": "button",
-          "props": {
-            "label": "Reconnect",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calendar.reconnect"
-          },
-          "semantics": {
-            "label": "Reconnect"
-          }
-        },
-        {
-          "id": "calendar.travel.secondary",
-          "type": "button",
-          "props": {
-            "label": "Agenda",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calendar.back"
-          },
-          "semantics": {
-            "label": "Agenda"
+            "gap": "none",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "calendar.travel.content",
+                "type": "column",
+                "props": {
+                  "gap": "none",
+                  "align": "stretch",
+                  "children": [
+                    {
+                      "id": "calendar.travel.heading",
+                      "type": "text",
+                      "props": {
+                        "text": "LOCAL  /  LOS ANGELES",
+                        "style": "label",
+                        "max_lines": 1,
+                        "align": "center"
+                      }
+                    },
+                    {
+                      "id": "calendar.travel.event",
+                      "type": "card",
+                      "props": {
+                        "title": "11:00 PDT",
+                        "body": "Same Design review\nDST-safe  /  offline cache",
+                        "tone": "neutral"
+                      },
+                      "semantics": {
+                        "label": "Local event time",
+                        "value": "11 AM Pacific"
+                      }
+                    },
+                    {
+                      "id": "calendar.travel.reconnect",
+                      "type": "button",
+                      "props": {
+                        "label": "Reconnect",
+                        "tone": "primary",
+                        "variant": "filled",
+                        "size": "default"
+                      },
+                      "events": {
+                        "tap": "calendar.reconnect"
+                      },
+                      "semantics": {
+                        "label": "Reconnect"
+                      }
+                    },
+                    {
+                      "id": "calendar.travel.back",
+                      "type": "button",
+                      "props": {
+                        "label": "Agenda",
+                        "tone": "neutral",
+                        "variant": "tonal",
+                        "size": "default"
+                      },
+                      "events": {
+                        "tap": "calendar.back"
+                      },
+                      "semantics": {
+                        "label": "Agenda"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
           }
         }
       ]

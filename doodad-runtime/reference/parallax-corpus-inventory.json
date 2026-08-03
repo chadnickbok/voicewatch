@@ -1,0 +1,949 @@
+{
+  "schema_version": 1,
+  "suite": {
+    "id": "doodad-20",
+    "apps": [
+      {
+        "index": 1,
+        "slug": "timer",
+        "id": "dev.doodad.timer"
+      },
+      {
+        "index": 2,
+        "slug": "weather",
+        "id": "dev.doodad.weather"
+      },
+      {
+        "index": 3,
+        "slug": "notifications",
+        "id": "dev.doodad.notifications"
+      },
+      {
+        "index": 4,
+        "slug": "tasks",
+        "id": "dev.doodad.tasks"
+      },
+      {
+        "index": 5,
+        "slug": "calculator",
+        "id": "dev.doodad.calculator"
+      },
+      {
+        "index": 6,
+        "slug": "calendar",
+        "id": "dev.doodad.calendar"
+      },
+      {
+        "index": 7,
+        "slug": "workout",
+        "id": "dev.doodad.workout"
+      },
+      {
+        "index": 8,
+        "slug": "calories",
+        "id": "dev.doodad.calories"
+      },
+      {
+        "index": 9,
+        "slug": "voice-notes",
+        "id": "dev.doodad.voice-notes"
+      },
+      {
+        "index": 10,
+        "slug": "medication",
+        "id": "dev.doodad.medication"
+      },
+      {
+        "index": 11,
+        "slug": "sensor-recorder",
+        "id": "dev.doodad.sensor-recorder"
+      },
+      {
+        "index": 12,
+        "slug": "sleep",
+        "id": "dev.doodad.sleep"
+      },
+      {
+        "index": 13,
+        "slug": "media",
+        "id": "dev.doodad.media"
+      },
+      {
+        "index": 14,
+        "slug": "navigation",
+        "id": "dev.doodad.navigation"
+      },
+      {
+        "index": 15,
+        "slug": "transit",
+        "id": "dev.doodad.transit"
+      },
+      {
+        "index": 16,
+        "slug": "smart-home",
+        "id": "dev.doodad.smart-home"
+      },
+      {
+        "index": 17,
+        "slug": "sports",
+        "id": "dev.doodad.sports"
+      },
+      {
+        "index": 18,
+        "slug": "wallet",
+        "id": "dev.doodad.wallet"
+      },
+      {
+        "index": 19,
+        "slug": "remote-control",
+        "id": "dev.doodad.remote-control"
+      },
+      {
+        "index": 20,
+        "slug": "snake",
+        "id": "dev.doodad.snake"
+      }
+    ],
+    "app_count": 20,
+    "document_count": 95
+  },
+  "authored": {
+    "documents_by_app": {
+      "timer": 1,
+      "weather": 5,
+      "notifications": 7,
+      "tasks": 4,
+      "calculator": 1,
+      "calendar": 5,
+      "workout": 12,
+      "calories": 3,
+      "voice-notes": 5,
+      "medication": 5,
+      "sensor-recorder": 5,
+      "sleep": 5,
+      "media": 5,
+      "navigation": 5,
+      "transit": 5,
+      "smart-home": 5,
+      "sports": 5,
+      "wallet": 5,
+      "remote-control": 5,
+      "snake": 2
+    },
+    "component_counts": {
+      "button": 160,
+      "canvas": 2,
+      "card": 38,
+      "chart": 2,
+      "column": 22,
+      "icon": 23,
+      "image": 11,
+      "keypad": 3,
+      "live_card": 43,
+      "progress": 10,
+      "row": 84,
+      "screen": 95,
+      "scroll": 15,
+      "stepper": 4,
+      "surface": 29,
+      "text": 214,
+      "toggle": 9,
+      "voice_orb": 1
+    },
+    "property_counts": {
+      "button.icon": 6,
+      "button.label": 160,
+      "button.size": 160,
+      "button.tone": 160,
+      "button.variant": 160,
+      "canvas.display_list": 2,
+      "canvas.height": 2,
+      "canvas.palette": 2,
+      "canvas.width": 2,
+      "card.body": 38,
+      "card.title": 38,
+      "card.tone": 38,
+      "chart.maximum": 2,
+      "chart.samples": 2,
+      "chart.style": 2,
+      "chart.tone": 2,
+      "column.align": 22,
+      "column.gap": 22,
+      "icon.name": 23,
+      "icon.size": 23,
+      "icon.tone": 23,
+      "image.asset": 11,
+      "image.fit": 11,
+      "keypad.columns": 3,
+      "keypad.keys": 3,
+      "live_card.body": 43,
+      "live_card.progress": 40,
+      "live_card.title": 43,
+      "live_card.tone": 43,
+      "progress.label": 10,
+      "progress.maximum": 10,
+      "progress.style": 10,
+      "progress.tone": 10,
+      "progress.value": 10,
+      "row.align": 84,
+      "row.gap": 84,
+      "screen.align": 95,
+      "screen.gap": 95,
+      "scroll.align": 15,
+      "scroll.gap": 15,
+      "stepper.label": 4,
+      "stepper.maximum": 4,
+      "stepper.minimum": 4,
+      "stepper.step": 4,
+      "stepper.unit": 4,
+      "stepper.value": 4,
+      "surface.align": 29,
+      "surface.gap": 29,
+      "surface.shape": 29,
+      "surface.tone": 29,
+      "text.align": 197,
+      "text.max_lines": 214,
+      "text.style": 214,
+      "text.text": 214,
+      "toggle.checked": 9,
+      "toggle.label": 9,
+      "toggle.tone": 9,
+      "voice_orb.state": 1,
+      "voice_orb.transcript": 1
+    },
+    "event_counts": {
+      "checkedChanged": 9,
+      "longPress": 4,
+      "pageChanged": 5,
+      "tap": 180,
+      "valueCommitted": 4
+    },
+    "semantic_field_counts": {
+      "hint": 2,
+      "label": 332,
+      "value": 79
+    },
+    "token_values": {
+      "variant": {
+        "filled": 78,
+        "text": 8,
+        "tonal": 74
+      },
+      "style": {
+        "bars": 1,
+        "body": 11,
+        "caption": 37,
+        "circular": 1,
+        "label": 90,
+        "line": 1,
+        "linear": 9,
+        "numeral": 64,
+        "title": 12
+      },
+      "tone": {
+        "error": 5,
+        "neutral": 114,
+        "primary": 162,
+        "secondary": 17,
+        "tertiary": 16
+      },
+      "size": {
+        "compact": 26,
+        "default": 134,
+        "hero": 2,
+        "large": 21
+      },
+      "gap": {
+        "lg": 1,
+        "none": 147,
+        "sm": 13,
+        "xs": 84
+      },
+      "align": {
+        "center": 189,
+        "end": 13,
+        "start": 38,
+        "stretch": 202
+      },
+      "state": {
+        "idle": 1
+      }
+    },
+    "patterns": {
+      "action_list": 1,
+      "calendar_agenda": 5,
+      "camera_remote": 5,
+      "canvas_game": 2,
+      "countdown": 1,
+      "empty": 1,
+      "keypad": 1,
+      "live_action_detail": 43,
+      "media_player": 5,
+      "notification_stack": 6,
+      "nutrition_dashboard": 1,
+      "nutrition_quick_add": 1,
+      "nutrition_review": 1,
+      "powerlifting": 12,
+      "status_detail": 4,
+      "task_list": 4,
+      "voice_ready": 1,
+      "wallet_qr": 1
+    }
+  },
+  "runtime": {
+    "apps": {
+      "timer": {
+        "accepted_operations": 4,
+        "mounts": 1,
+        "command_batches": 3,
+        "checkpoints": 4,
+        "unique_snapshots": 3,
+        "screen_ids": [
+          "timer.home"
+        ]
+      },
+      "weather": {
+        "accepted_operations": 9,
+        "mounts": 5,
+        "command_batches": 4,
+        "checkpoints": 6,
+        "unique_snapshots": 6,
+        "screen_ids": [
+          "weather.daily-screen",
+          "weather.details-screen",
+          "weather.home",
+          "weather.hourly-screen",
+          "weather.rain-screen"
+        ]
+      },
+      "notifications": {
+        "accepted_operations": 6,
+        "mounts": 6,
+        "command_batches": 0,
+        "checkpoints": 6,
+        "unique_snapshots": 6,
+        "screen_ids": [
+          "notifications.detail",
+          "notifications.empty",
+          "notifications.inbox",
+          "notifications.replied",
+          "notifications.reply"
+        ]
+      },
+      "tasks": {
+        "accepted_operations": 5,
+        "mounts": 2,
+        "command_batches": 3,
+        "checkpoints": 4,
+        "unique_snapshots": 4,
+        "screen_ids": [
+          "tasks.today"
+        ]
+      },
+      "calculator": {
+        "accepted_operations": 5,
+        "mounts": 1,
+        "command_batches": 4,
+        "checkpoints": 5,
+        "unique_snapshots": 4,
+        "screen_ids": [
+          "calculator"
+        ]
+      },
+      "calendar": {
+        "accepted_operations": 5,
+        "mounts": 5,
+        "command_batches": 0,
+        "checkpoints": 5,
+        "unique_snapshots": 4,
+        "screen_ids": [
+          "calendar.agenda",
+          "calendar.confirmed",
+          "calendar.detail",
+          "calendar.travel"
+        ]
+      },
+      "workout": {
+        "accepted_operations": 19,
+        "mounts": 17,
+        "command_batches": 2,
+        "checkpoints": 20,
+        "unique_snapshots": 14,
+        "screen_ids": [
+          "powerlifting.active-set",
+          "powerlifting.exercise-picker",
+          "powerlifting.exercise-switcher",
+          "powerlifting.missed-set",
+          "powerlifting.plate-loading",
+          "powerlifting.rest",
+          "powerlifting.resume",
+          "powerlifting.session",
+          "powerlifting.set-result",
+          "powerlifting.summary",
+          "powerlifting.today",
+          "powerlifting.weight-editor"
+        ]
+      },
+      "calories": {
+        "accepted_operations": 11,
+        "mounts": 6,
+        "command_batches": 5,
+        "checkpoints": 7,
+        "unique_snapshots": 6,
+        "screen_ids": [
+          "calories.quick-add",
+          "calories.voice-review",
+          "today"
+        ]
+      },
+      "voice-notes": {
+        "accepted_operations": 5,
+        "mounts": 5,
+        "command_batches": 0,
+        "checkpoints": 5,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "voice-notes.buffered",
+          "voice-notes.home",
+          "voice-notes.recording",
+          "voice-notes.saved",
+          "voice-notes.transcript"
+        ]
+      },
+      "medication": {
+        "accepted_operations": 5,
+        "mounts": 5,
+        "command_batches": 0,
+        "checkpoints": 5,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "medication.due",
+          "medication.editor",
+          "medication.home",
+          "medication.snoozed",
+          "medication.taken"
+        ]
+      },
+      "sensor-recorder": {
+        "accepted_operations": 5,
+        "mounts": 5,
+        "command_batches": 0,
+        "checkpoints": 5,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "sensor-recorder.export",
+          "sensor-recorder.exported",
+          "sensor-recorder.home",
+          "sensor-recorder.paused",
+          "sensor-recorder.recording"
+        ]
+      },
+      "sleep": {
+        "accepted_operations": 5,
+        "mounts": 5,
+        "command_batches": 0,
+        "checkpoints": 5,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "sleep.history",
+          "sleep.home",
+          "sleep.overnight",
+          "sleep.stages",
+          "sleep.summary"
+        ]
+      },
+      "media": {
+        "accepted_operations": 4,
+        "mounts": 4,
+        "command_batches": 0,
+        "checkpoints": 4,
+        "unique_snapshots": 4,
+        "screen_ids": [
+          "media.home",
+          "media.offline",
+          "media.playing",
+          "media.reconciled"
+        ]
+      },
+      "navigation": {
+        "accepted_operations": 4,
+        "mounts": 4,
+        "command_batches": 0,
+        "checkpoints": 4,
+        "unique_snapshots": 4,
+        "screen_ids": [
+          "navigation.cached",
+          "navigation.home",
+          "navigation.maneuver",
+          "navigation.recovered"
+        ]
+      },
+      "transit": {
+        "accepted_operations": 5,
+        "mounts": 5,
+        "command_batches": 0,
+        "checkpoints": 5,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "transit.alert",
+          "transit.departures",
+          "transit.home",
+          "transit.recovered",
+          "transit.stale"
+        ]
+      },
+      "smart-home": {
+        "accepted_operations": 6,
+        "mounts": 6,
+        "command_batches": 0,
+        "checkpoints": 6,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "smart-home.confirm",
+          "smart-home.home",
+          "smart-home.light",
+          "smart-home.rollback",
+          "smart-home.unlocked"
+        ]
+      },
+      "sports": {
+        "accepted_operations": 5,
+        "mounts": 5,
+        "command_batches": 0,
+        "checkpoints": 5,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "sports.burst",
+          "sports.final",
+          "sports.home",
+          "sports.live",
+          "sports.timeline"
+        ]
+      },
+      "wallet": {
+        "accepted_operations": 6,
+        "mounts": 6,
+        "command_batches": 0,
+        "checkpoints": 6,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "wallet.home",
+          "wallet.pass",
+          "wallet.qr",
+          "wallet.rejected",
+          "wallet.review"
+        ]
+      },
+      "remote-control": {
+        "accepted_operations": 7,
+        "mounts": 7,
+        "command_batches": 0,
+        "checkpoints": 7,
+        "unique_snapshots": 5,
+        "screen_ids": [
+          "remote-control.done",
+          "remote-control.home",
+          "remote-control.offline",
+          "remote-control.pending",
+          "remote-control.targets"
+        ]
+      },
+      "snake": {
+        "accepted_operations": 3,
+        "mounts": 1,
+        "command_batches": 2,
+        "checkpoints": 3,
+        "unique_snapshots": 3,
+        "screen_ids": [
+          "snake.game"
+        ]
+      }
+    },
+    "accepted_operations": 124,
+    "checkpoints": 117,
+    "unique_snapshot_hashes": 103
+  },
+  "sources": [
+    {
+      "path": "apps/timer/appspec.json",
+      "sha256": "930bb5f4fc159b5457d402a562830e28b2075269a5cfc8d96d57bd2b10d65c90"
+    },
+    {
+      "path": "apps/weather/appspec.json",
+      "sha256": "116517cb66a13c1b1211b8df40de9c14127e58b9155520a5067291d8aa441925"
+    },
+    {
+      "path": "apps/weather/screens/daily.json",
+      "sha256": "f5dac739eb15eb9fd1428ebe7a1deb56289a4bcb2ca8a58f756cc2ce1f4354ed"
+    },
+    {
+      "path": "apps/weather/screens/details.json",
+      "sha256": "fa6116fdf176b5ffd81a679e41c5891b7dfbf0f544b701fb96c19baf7479c6b4"
+    },
+    {
+      "path": "apps/weather/screens/hourly.json",
+      "sha256": "d6fbfb8ec0670a836dc8b64e68c566eca065fa4b7a1b44b46977bdaa803a7f69"
+    },
+    {
+      "path": "apps/weather/screens/rain.json",
+      "sha256": "81412f22f3df1d23abc641799780f182c5310fd8aa26a8271faeaef54b5e984e"
+    },
+    {
+      "path": "apps/notifications/appspec.json",
+      "sha256": "dab253ed086fe3bbd1a394b674470f048eba84b9c9dfddc5195414fed451fdb8"
+    },
+    {
+      "path": "apps/notifications/screens/detail.json",
+      "sha256": "7ef3821c2297a5794a438db07d3df15163137074666b4bf371bcf784d6254e12"
+    },
+    {
+      "path": "apps/notifications/screens/inbox-empty.json",
+      "sha256": "e0739a767675ab59d5ccf405382bfb61bf4761a55bbc80dd67acae3a3c8dcc81"
+    },
+    {
+      "path": "apps/notifications/screens/inbox-one.json",
+      "sha256": "5fea651bd22173ba668641ac00987e86869ac384b3d064f44e7d643e70706bad"
+    },
+    {
+      "path": "apps/notifications/screens/replied-sounds.json",
+      "sha256": "b731997b2f3d63743e6d901cfa4ee244378c2c11db9ff4c8ac10f17a89ca170c"
+    },
+    {
+      "path": "apps/notifications/screens/replied.json",
+      "sha256": "1e0e9d7ac69dd4b35f35d65ef4ba0fc1141291bcdfd64614ac54600e68aafcfb"
+    },
+    {
+      "path": "apps/notifications/screens/reply.json",
+      "sha256": "9e1e5a4183fd9a7d83ebdef2f02e7625b733c690250681c94e56342afe26a4a6"
+    },
+    {
+      "path": "apps/tasks/appspec.json",
+      "sha256": "1369c405d2dc421028753a265ad2f639561678c3fd1173ab205a63cd3367e758"
+    },
+    {
+      "path": "apps/tasks/screens/list-milk-done.json",
+      "sha256": "5a0fb0d61c415cd6cc59d7d8d8cee13df6115dd67938b5cdcbb459a2692ffdc2"
+    },
+    {
+      "path": "apps/tasks/screens/list-three.json",
+      "sha256": "060785045c0915b7def0a2a2d6088c465389da1adddf20a34695f809ef78be53"
+    },
+    {
+      "path": "apps/tasks/screens/list.json",
+      "sha256": "1369c405d2dc421028753a265ad2f639561678c3fd1173ab205a63cd3367e758"
+    },
+    {
+      "path": "apps/calculator/appspec.json",
+      "sha256": "01a17efce692db5c2ecc0471f70dee7b625b3cefb08c48c279ef1d34bc041f33"
+    },
+    {
+      "path": "apps/calendar/appspec.json",
+      "sha256": "59a25cbafc57f04031ef6728113dfa7be344e7ee3da1acbcfcdef1a82d6d9cbc"
+    },
+    {
+      "path": "apps/calendar/screens/agenda.json",
+      "sha256": "59a25cbafc57f04031ef6728113dfa7be344e7ee3da1acbcfcdef1a82d6d9cbc"
+    },
+    {
+      "path": "apps/calendar/screens/confirmed.json",
+      "sha256": "5a96db875d1befc503b0b763c89cbb828d37183e997f362b2aaf6fc4bccdf28f"
+    },
+    {
+      "path": "apps/calendar/screens/detail.json",
+      "sha256": "a256589e87e9aba82e2345c8432d58b14e388265763bd580b7ee0a2a10e7e0de"
+    },
+    {
+      "path": "apps/calendar/screens/travel.json",
+      "sha256": "405cef9d3f74c1fcf5164d76c028cf329f5336a18e26731bc925f411121d9a2a"
+    },
+    {
+      "path": "apps/workout/appspec.json",
+      "sha256": "ca3dfddbf89c59da729bea9a55d9592bc18a60e9be2592211f995e89f44aabb8"
+    },
+    {
+      "path": "apps/workout/screens/active-set.json",
+      "sha256": "6e489d2dc7a39a0e67856da0d3c311e7c474a6a3c8f5c5703c2952b77289ebbf"
+    },
+    {
+      "path": "apps/workout/screens/exercise-picker.json",
+      "sha256": "7a84d2e84cbdb709b6dff7311e3bc20cb2726ef91426e8558e96cc591e9d17f6"
+    },
+    {
+      "path": "apps/workout/screens/exercise-switcher.json",
+      "sha256": "a703069425c71ec967c08bbd37b33193bea731165e43da08678bf274d97e6a94"
+    },
+    {
+      "path": "apps/workout/screens/missed-set.json",
+      "sha256": "71dd8cf7d01869ea255a0c0c17952c8982c1ba0c16f99b74c893444dc54a7ce6"
+    },
+    {
+      "path": "apps/workout/screens/plate-loading.json",
+      "sha256": "78f4af0744ac6e04ac6a533360fd111eb9aae4282a7d194f3a6a13129ca9462c"
+    },
+    {
+      "path": "apps/workout/screens/rest.json",
+      "sha256": "3da7aa920b80bc274e1f05b7ba92848c2ba9be1d8055051bbb211ee295a95483"
+    },
+    {
+      "path": "apps/workout/screens/resume.json",
+      "sha256": "599ee4c2a87d6985aa7503d8b0e80cf77a46c579e96bc7459933d250239cc3c2"
+    },
+    {
+      "path": "apps/workout/screens/session.json",
+      "sha256": "dff2cd4b73dbf4cd9901ad1e63768da1996ad77012a7b789f689c755c860e999"
+    },
+    {
+      "path": "apps/workout/screens/set-result.json",
+      "sha256": "9905d0582f56c3e4f97fd0038b54eb307502635f1fe8378175f0f9e065d3fe26"
+    },
+    {
+      "path": "apps/workout/screens/summary.json",
+      "sha256": "1fa7f81cafcd849790d731e488165efea7ffb2323efa3c3b8ba5c6042e730363"
+    },
+    {
+      "path": "apps/workout/screens/weight-editor.json",
+      "sha256": "1ebef2aba0d461c2a3705fe4e0f39fd8e4d999842960743100056da2cb1ad763"
+    },
+    {
+      "path": "apps/calories/appspec.json",
+      "sha256": "c72605d4fce79851856b62d77048bd567d50e02967a4c3a663e9a0cb26dfec19"
+    },
+    {
+      "path": "apps/calories/screens/quick-add.json",
+      "sha256": "a7a366823cada6427028b6af5b3f04dadeaa6b4d9b22d46c6283284a7cca3523"
+    },
+    {
+      "path": "apps/calories/screens/voice-review.json",
+      "sha256": "b8c72ee986a0c8bb4b8e6226a0179a2ad3ff1f8fc3d503cb28dcad3430e477cc"
+    },
+    {
+      "path": "apps/voice-notes/appspec.json",
+      "sha256": "2cd3ad4c67673e7753b7438bdee5446f1accefccb94f333d12120e2aaf8cfb44"
+    },
+    {
+      "path": "apps/voice-notes/screens/buffered.json",
+      "sha256": "1f683571924618032808cff95cb5463b6ad1efd3e6af809e1e8a3059d0c60b75"
+    },
+    {
+      "path": "apps/voice-notes/screens/recording.json",
+      "sha256": "b3f48095665f67a23ae6d50eedfe17d344d06ee480bef7d7c690e83d752d3270"
+    },
+    {
+      "path": "apps/voice-notes/screens/saved.json",
+      "sha256": "21675ea4c3f2112b95432249f016f1d6641ef5ca03acf4bd0758f1a00b622e09"
+    },
+    {
+      "path": "apps/voice-notes/screens/transcript.json",
+      "sha256": "568e7c8f25023d27dfb0316b82fc6e1ec5b6d7cef4c091ca3ba3d18cc0dea0ab"
+    },
+    {
+      "path": "apps/medication/appspec.json",
+      "sha256": "a50552c17d3bda3917111bacd2114d526f10e1f5ca0e3368f029d608b0f48bd0"
+    },
+    {
+      "path": "apps/medication/screens/due.json",
+      "sha256": "5342d8c4e8c9e929138ca59b99fcb9bf8d55dfe051ad5c734982e8819a730726"
+    },
+    {
+      "path": "apps/medication/screens/editor.json",
+      "sha256": "56d47f5245bceac4b4b19427bce2f48899420e4a393fcf445d8ec3998e6d48ac"
+    },
+    {
+      "path": "apps/medication/screens/snoozed.json",
+      "sha256": "3a78d8c4e717a46a9155c8a644d8dcfe4b3aa5bd6b40376bed9f9941805839dc"
+    },
+    {
+      "path": "apps/medication/screens/taken.json",
+      "sha256": "458b053c884c199d0f2da9dacbc18292762559ae396e136e1d649376508c460e"
+    },
+    {
+      "path": "apps/sensor-recorder/appspec.json",
+      "sha256": "a4d8dcd8b92e355704cbe33cbea5b11be1808c595d4949d5d256fb713ba6e88f"
+    },
+    {
+      "path": "apps/sensor-recorder/screens/export.json",
+      "sha256": "614868fe47de72cd7950caedbde14611184e63b0b87f7c6fcab89375029c7dae"
+    },
+    {
+      "path": "apps/sensor-recorder/screens/exported.json",
+      "sha256": "af6e68d76cbe66dfaedc34ffc2a32f0d65b038beb0af0c775bc97c39254ad767"
+    },
+    {
+      "path": "apps/sensor-recorder/screens/paused.json",
+      "sha256": "3cdf1a3e1793132635a891b10980549f81e65398909b4a8b14acb6740c86ecd3"
+    },
+    {
+      "path": "apps/sensor-recorder/screens/recording.json",
+      "sha256": "e125bbc74b8426cf852b6e419d99e43696ec28df9455e86645e423eec90c8ad1"
+    },
+    {
+      "path": "apps/sleep/appspec.json",
+      "sha256": "d94829789fd4a0bcad4217fd4bd6b9a56f15e2231b6dd19f28fb79f40a05e825"
+    },
+    {
+      "path": "apps/sleep/screens/history.json",
+      "sha256": "a6304c01b1cba334bf5ea15c67e0b82f1aceb79eaa2b1d7b62a61634d818afec"
+    },
+    {
+      "path": "apps/sleep/screens/overnight.json",
+      "sha256": "863fc8290675fc3a42ad9fd90e353dc51184da6195da9ab579e02d4325d9d233"
+    },
+    {
+      "path": "apps/sleep/screens/stages.json",
+      "sha256": "a69dfa20569c0bb7b7850eca5b6fef00a744c56734b2de7798a88f2ab8cffbc6"
+    },
+    {
+      "path": "apps/sleep/screens/summary.json",
+      "sha256": "67c6c42d1189cbc09f2ebdcd138690ad64815f90569e421699c2e57569a31ed3"
+    },
+    {
+      "path": "apps/media/appspec.json",
+      "sha256": "dce11a4e8507463b9bed63ed22a83e05776463f1e5ab5e71e0e314dc97bf6fe8"
+    },
+    {
+      "path": "apps/media/screens/offline.json",
+      "sha256": "129c498a0883d406fda8bad4100fa3e2e736a836d1041fc811cd0791d7bd9768"
+    },
+    {
+      "path": "apps/media/screens/paused.json",
+      "sha256": "1d34ca02391e081a8891cceca1c1c28e6045a0acf25101cb5e843c791614ea05"
+    },
+    {
+      "path": "apps/media/screens/playing.json",
+      "sha256": "646816e647b385bdf2e2aedb28dc4d7e895db8373a5df39a494b2092afa2920d"
+    },
+    {
+      "path": "apps/media/screens/reconciled.json",
+      "sha256": "9c3ef80c1ec4fc29eef1e564f7cf831c9ece2fb63f4709824ed44383bc6e2835"
+    },
+    {
+      "path": "apps/navigation/appspec.json",
+      "sha256": "1bfad74f1ea0e115bf7580c0996ffc529d8cd7deb9c3afacc6a3689f0f3782d4"
+    },
+    {
+      "path": "apps/navigation/screens/cached.json",
+      "sha256": "d7dce1929f797da597ddc3ed274e0859612f91aa5946c0b27294a9cafed4c619"
+    },
+    {
+      "path": "apps/navigation/screens/maneuver.json",
+      "sha256": "85081cd8fae44d90f44c9016027c74adf5eb1e360b345ef2b4688ad9275adf2d"
+    },
+    {
+      "path": "apps/navigation/screens/overview.json",
+      "sha256": "df929175824149e36b49a3e7b93080cbf10a81985a9bd0a044f28994d67c235f"
+    },
+    {
+      "path": "apps/navigation/screens/recovered.json",
+      "sha256": "ac2f6a2a6c3cc108b3785cb9bc71eb4c193e68835a686b89628521e70cf28128"
+    },
+    {
+      "path": "apps/transit/appspec.json",
+      "sha256": "4621198fb9113423a4fe262c49cc240f66a5f4506f3bd7616bd750dde0d853f9"
+    },
+    {
+      "path": "apps/transit/screens/alert.json",
+      "sha256": "05c65088426b8f08e7240696556f90d917f9203ee84ed1e310d82544f340d9e1"
+    },
+    {
+      "path": "apps/transit/screens/departures.json",
+      "sha256": "4f4438e82e5419d94622ddd88e3c852f7d42d708f0648572aaf3b9724e8b91ca"
+    },
+    {
+      "path": "apps/transit/screens/recovered.json",
+      "sha256": "1d55c39730ff87269c909091e16842b9813da4e94f463050aaa7b198b54a8979"
+    },
+    {
+      "path": "apps/transit/screens/stale.json",
+      "sha256": "f2d335a968dd88bd0400b9159c79725a2c45fa2bfd59420d2733916e19b33aa4"
+    },
+    {
+      "path": "apps/smart-home/appspec.json",
+      "sha256": "0ef59c70e2e926ac3f6460aead7c8b22ff1b8d72b4a9e23892af84bc05a9e6fa"
+    },
+    {
+      "path": "apps/smart-home/screens/confirm.json",
+      "sha256": "122ab84775a2fb17091717c5d96417cd51a29fc1c8776a1b3e33a8e68b2c45e3"
+    },
+    {
+      "path": "apps/smart-home/screens/light.json",
+      "sha256": "38c2cb72c151f1294c6fb0e7b44987fa90d86b4f7f8be3c3c813dc420fc72883"
+    },
+    {
+      "path": "apps/smart-home/screens/rollback.json",
+      "sha256": "2413e10d63dacbb143fbfeabd1e52e7a51fd16eea4cb99df1787c9d213cbc341"
+    },
+    {
+      "path": "apps/smart-home/screens/unlocked.json",
+      "sha256": "d30d704b7c74f7180e52fa524b9e366b0ca5e05a34617aa2aa458410467442cf"
+    },
+    {
+      "path": "apps/sports/appspec.json",
+      "sha256": "8cc3dd450bfed8ca7846f93965573072b13efbd9a71eb8fe74efccb259b472e3"
+    },
+    {
+      "path": "apps/sports/screens/burst.json",
+      "sha256": "518c3a9f6a10d1e55cf7ffbd97eb2abf1395894c2c313b8292736861a3eab9c9"
+    },
+    {
+      "path": "apps/sports/screens/final.json",
+      "sha256": "2b2343e09fdb23d848a3a14ecbd4d99859a4561595f6cc873f19d1f900c8230c"
+    },
+    {
+      "path": "apps/sports/screens/live.json",
+      "sha256": "ce83497acbe4475d77556c936c7c40595755261ce6333ebcaf3dac1e4c923f2d"
+    },
+    {
+      "path": "apps/sports/screens/timeline.json",
+      "sha256": "94d3e5f5e6b81e6e5f4e0ef43c1001fd834637a9701b3f1f46d47d204a24c3a3"
+    },
+    {
+      "path": "apps/wallet/appspec.json",
+      "sha256": "3c8491a8b309debb9fc7d4c832a855396fa4716c255c00e3e280f9650c80d3e3"
+    },
+    {
+      "path": "apps/wallet/screens/pass.json",
+      "sha256": "8d6741642c5275f22efb1eb059682887a31f96528cc3cf92ebad2da638df6ed3"
+    },
+    {
+      "path": "apps/wallet/screens/qr.json",
+      "sha256": "968dc1e83b548f69fe2c5aec57f53cdec869bebca652a448dcef0e956c2a681b"
+    },
+    {
+      "path": "apps/wallet/screens/rejected.json",
+      "sha256": "fbf8de412a63a8ef716da858b64d8a33018fa66e1764f4c6617bbe672ee65df9"
+    },
+    {
+      "path": "apps/wallet/screens/review.json",
+      "sha256": "c86704a622970ec494933cc6403712a9534ed2a3c9f7442897c4619659222ae4"
+    },
+    {
+      "path": "apps/remote-control/appspec.json",
+      "sha256": "575110ac8c8e43cc5f52043732090ef5a9d56fa44840b6b9d04e6fa6c59fc8d2"
+    },
+    {
+      "path": "apps/remote-control/screens/done.json",
+      "sha256": "26e2b3e77c2db9591fc7de8297eccd5037ae6145b3fd09383c86fe3c457c9e8d"
+    },
+    {
+      "path": "apps/remote-control/screens/offline.json",
+      "sha256": "99590ce5e52b47fb5e6d8f8db7b3b12bebcaa90e98d4cb3f1bc03aa9c9eff1c1"
+    },
+    {
+      "path": "apps/remote-control/screens/pending.json",
+      "sha256": "513d1f3c5ed4184dba29f7e85c1b763975e9e249b81d87a0789c1de8412a7086"
+    },
+    {
+      "path": "apps/remote-control/screens/targets.json",
+      "sha256": "ea46f7f79b82203f00032088bc17302549999f0690f0ab7e3217fc3e37234bcf"
+    },
+    {
+      "path": "apps/snake/appspec.json",
+      "sha256": "b8a5b8ec421b21e34fc3653403289c1a6ad9e89e525db3a420e631708ceddd9a"
+    },
+    {
+      "path": "apps/snake/screens/game.json",
+      "sha256": "b8a5b8ec421b21e34fc3653403289c1a6ad9e89e525db3a420e631708ceddd9a"
+    }
+  ],
+  "sources_sha256": "52bd01a5ce4b0d3eebab470fe4d3c123979373b12c2b1fc11cf38297a174531f"
+}

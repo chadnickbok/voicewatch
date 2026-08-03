@@ -58,6 +58,7 @@ for setting in \
     'CONFIG_LV_COLOR_DEPTH_16=y' \
     'CONFIG_LV_DEF_REFR_PERIOD=8' \
     'CONFIG_LV_FONT_MONTSERRAT_10=y' \
+    'CONFIG_LV_FONT_MONTSERRAT_12=y' \
     'CONFIG_LV_FONT_MONTSERRAT_16=y' \
     'CONFIG_LV_FONT_MONTSERRAT_18=y'; do
     if ! grep -q "^${setting}$" "${SDKCONFIG}" 2>/dev/null; then

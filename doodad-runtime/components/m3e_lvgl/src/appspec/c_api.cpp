@@ -4,8 +4,10 @@
 #include <cstring>
 #include <new>
 
+#include "m3e/assets/weather_fonts.hpp"
 #include "m3e/appspec/command_batch.hpp"
 #include "m3e/appspec/renderer.hpp"
+#include "m3e/appspec/scene_snapshot.hpp"
 #include "m3e/appspec/wire.hpp"
 #include "m3e/semantics/semantic_tree.hpp"
 #include "m3e/theme/resolved_theme.hpp"
@@ -107,6 +109,9 @@ const char* semantic_role_name(m3e::SemanticRole role) {
         case m3e::SemanticRole::list_item: return "list_item";
         case m3e::SemanticRole::dialog: return "dialog";
         case m3e::SemanticRole::timer: return "timer";
+        case m3e::SemanticRole::image: return "image";
+        case m3e::SemanticRole::canvas: return "canvas";
+        case m3e::SemanticRole::group: return "group";
     }
     return "unknown";
 }
@@ -280,6 +285,103 @@ extern "C" int m3e_appspec_apply_command_batch(
     return 1;
 }
 
+extern "C" int m3e_appspec_emit_semantic_event(
+    const char* node_id,
+    const char* action_id,
+    int event_kind,
+    std::uint64_t timestamp_ms,
+    int value_kind,
+    std::int32_t integer_value,
+    int boolean_value,
+    const char* text_value,
+    char* error,
+    std::size_t error_size) {
+    auto fail = [&](const char* message) {
+        if (error != nullptr && error_size != 0) {
+            std::snprintf(error, error_size, "%s", message);
+        }
+        return 0;
+    };
+    if (g_event_document == nullptr) {
+        return fail("no mounted event document");
+    }
+    if (node_id == nullptr || action_id == nullptr ||
+        event_kind < 0 ||
+        event_kind >
+            static_cast<int>(m3e::appspec::EventKind::cancel)) {
+        return fail("invalid semantic action identity");
+    }
+    m3e::appspec::WireEvent* matched = nullptr;
+    for (std::size_t index = 0;
+         index < g_event_document->event_count;
+         ++index) {
+        auto& candidate = g_event_document->events[index];
+        if (candidate.node_index >= g_event_document->node_count) {
+            continue;
+        }
+        const auto& node =
+            g_event_document->nodes[candidate.node_index];
+        if (std::strcmp(
+                g_event_document->string_at(node.id_offset),
+                node_id) == 0 &&
+            std::strcmp(
+                g_event_document->string_at(
+                    candidate.action_id_offset),
+                action_id) == 0 &&
+            static_cast<int>(candidate.kind) == event_kind) {
+            if (matched != nullptr) {
+                return fail("semantic action identity is ambiguous");
+            }
+            matched = &candidate;
+        }
+    }
+    if (matched == nullptr) {
+        return fail("semantic action identity is stale or unsupported");
+    }
+    const auto& node =
+        g_event_document->nodes[matched->node_index];
+    if (!node.visible || !node.enabled || matched->sink == nullptr) {
+        return fail("semantic action target is unavailable");
+    }
+    m3e::appspec::EventValue value{};
+    switch (value_kind) {
+        case M3E_APPSPEC_EVENT_VALUE_NONE:
+            break;
+        case M3E_APPSPEC_EVENT_VALUE_INTEGER:
+            value = m3e::appspec::EventValue::integer(integer_value);
+            break;
+        case M3E_APPSPEC_EVENT_VALUE_BOOLEAN:
+            value = m3e::appspec::EventValue::boolean(boolean_value != 0);
+            break;
+        case M3E_APPSPEC_EVENT_VALUE_TEXT:
+            if (text_value == nullptr || text_value[0] == '\0') {
+                return fail("semantic text value is empty");
+            }
+            value = m3e::appspec::EventValue::text(text_value);
+            break;
+        default:
+            return fail("semantic event value kind is unsupported");
+    }
+    const m3e::appspec::UiEvent event{
+        1,
+        g_event_document->string_at(
+            g_event_document->app_id_offset),
+        g_event_document->string_at(
+            g_event_document->nodes[0].id_offset),
+        g_event_document->string_at(node.id_offset),
+        g_event_document->string_at(matched->action_id_offset),
+        matched->kind,
+        timestamp_ms,
+        value,
+    };
+    if (!m3e::appspec::event_is_valid(event)) {
+        return fail("semantic event envelope is invalid");
+    }
+    matched->sink(event, matched->sink_context);
+    if (error != nullptr && error_size != 0) error[0] = '\0';
+    return 1;
+}
+
 extern "C" const char* m3e_appspec_mounted_text(
     const char* node_id,
     int secondary) {
@@ -302,10 +404,17 @@ extern "C" const char* m3e_appspec_mounted_text(
             node.kind == m3e::appspec::ComponentKind::button ||
             node.kind == m3e::appspec::ComponentKind::toggle ||
             node.kind == m3e::appspec::ComponentKind::voice_orb) {
-            label = secondary == 0 &&
-                            lv_obj_get_child_count(object) > 0
-                        ? lv_obj_get_child(object, 0)
-                        : nullptr;
+            if (secondary == 0) {
+                const auto count = lv_obj_get_child_count(object);
+                for (std::uint32_t child = 0; child < count; ++child) {
+                    auto* candidate = lv_obj_get_child(object, child);
+                    if (candidate != nullptr &&
+                        lv_obj_check_type(candidate, &lv_label_class)) {
+                        label = candidate;
+                        break;
+                    }
+                }
+            }
         } else if (
             node.kind == m3e::appspec::ComponentKind::card ||
             node.kind == m3e::appspec::ComponentKind::live_card) {
@@ -357,6 +466,8 @@ extern "C" std::size_t m3e_appspec_semantic_snapshot(
         writer.json_string(semantic_role_name(node.role));
         writer.text(",\"label\":");
         writer.json_string(node.label);
+        writer.text(",\"value\":");
+        writer.json_string(node.value);
         const auto& wire_node = g_event_document->nodes[index];
         writer.text(",\"text\":");
         writer.json_string(
@@ -384,6 +495,48 @@ extern "C" std::size_t m3e_appspec_semantic_snapshot(
     }
     writer.text("]}");
     return writer.length();
+}
+
+extern "C" std::size_t m3e_appspec_scene_snapshot_json(
+    char* output,
+    std::size_t output_size) {
+    if (g_event_document == nullptr) {
+        if (output != nullptr && output_size != 0) output[0] = '\0';
+        return 0;
+    }
+    return m3e::appspec::scene_snapshot_json(
+        *g_event_document,
+        output,
+        output_size);
+}
+
+extern "C" std::size_t m3e_appspec_node_layout_evidence_json(
+    char* output,
+    std::size_t output_size) {
+    if (g_event_document == nullptr) {
+        if (output != nullptr && output_size != 0) output[0] = '\0';
+        return 0;
+    }
+    lv_obj_update_layout(lv_screen_active());
+    return m3e::appspec::node_layout_evidence_json(
+        *g_event_document,
+        output,
+        output_size);
+}
+
+extern "C" void m3e_appspec_set_font_scale_milli(
+    std::uint16_t scale_milli) {
+    m3e::set_weather_font_scale_milli(scale_milli);
+}
+
+extern "C" std::uint16_t m3e_appspec_font_scale_milli(void) {
+    return m3e::weather_font_scale_milli();
+}
+
+extern "C" void m3e_appspec_reset_mounted_document(void) {
+    delete g_event_document;
+    g_event_document = nullptr;
+    g_event_bridge = {};
 }
 
 extern "C" std::size_t m3e_appspec_mounted_node_count(void) {

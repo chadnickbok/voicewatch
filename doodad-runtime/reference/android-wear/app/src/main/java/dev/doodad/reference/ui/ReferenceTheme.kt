@@ -75,6 +75,7 @@ fun ReferenceTheme(
         when {
             ambient -> AmbientScheme
             dynamicScheme != null -> dynamicScheme
+            spec.colorScheme == "weather-dark" -> WeatherColorScheme
             spec.colorScheme == "violet-dark" -> VioletScheme
             else -> BaselineScheme
         }
@@ -87,8 +88,8 @@ fun ReferenceTheme(
 
     MaterialTheme(
         colorScheme = colorScheme,
-        typography = Typography(),
-        shapes = Shapes(),
+        typography = if (spec.typography == "weather-roboto") WeatherTypography else Typography(),
+        shapes = if (spec.shapes == "weather-square") WeatherShapes else Shapes(),
         motionScheme = motionScheme,
     ) {
         content(ambient)

@@ -3,6 +3,8 @@
 #include <cstring>
 #include <limits>
 
+#include "m3e/appspec/canvas_display_list.hpp"
+
 namespace m3e::appspec {
 namespace {
 
@@ -85,6 +87,12 @@ SemanticRole semantic_role(const WireNode& node) {
         case ComponentKind::progress: return SemanticRole::progress;
         case ComponentKind::stepper: return SemanticRole::slider;
         case ComponentKind::toggle: return SemanticRole::toggle;
+        case ComponentKind::image: return SemanticRole::image;
+        case ComponentKind::canvas: return SemanticRole::canvas;
+        case ComponentKind::icon: return SemanticRole::image;
+        case ComponentKind::surface: return SemanticRole::group;
+        case ComponentKind::chart: return SemanticRole::image;
+        case ComponentKind::pager: return SemanticRole::group;
     }
     return SemanticRole::text;
 }
@@ -287,18 +295,18 @@ bool parse_properties(
     WireNode& node,
     std::uint16_t node_index) {
     std::size_t count = 0;
-    if (!reader.map(count) || count > 14) return false;
+    if (!reader.map(count) || count > 17) return false;
     std::uint64_t previous = 0;
     bool has_previous = false;
     bool has_primary = false;
     bool has_value = false;
     bool has_maximum = false;
-    std::uint16_t property_mask = 0;
+    std::uint32_t property_mask = 0;
     for (std::size_t index = 0; index < count; ++index) {
         std::uint64_t key = 0;
         if (!reader.ordered_key(key, previous, has_previous)) return false;
-        if (key > 13) return false;
-        property_mask |= static_cast<std::uint16_t>(1U << key);
+        if (key > 17) return false;
+        property_mask |= static_cast<std::uint32_t>(1UL << key);
         switch (key) {
             case 0:
                 if (!reader.text(node.primary_text_offset, 256)) return false;
@@ -322,12 +330,15 @@ bool parse_properties(
                 if (!read_small_enum(reader, node.tone, 4)) return false;
                 break;
             case 6:
-                if (!read_small_enum(reader, node.size, 2)) return false;
+                if (!read_small_enum(reader, node.size, 3)) return false;
                 break;
             case 7: {
                 bool checked = false;
                 if (!reader.boolean(checked)) return false;
-                node.value = checked ? 1 : 0;
+                node.checked = checked;
+                if (node.kind == ComponentKind::toggle) {
+                    node.value = checked ? 1 : 0;
+                }
                 has_value = true;
                 break;
             }
@@ -371,12 +382,43 @@ bool parse_properties(
             case 13:
                 if (!reader.signed_integer(node.step)) return false;
                 break;
+            case 14:
+                if (!reader.text(node.icon_offset, 64)) return false;
+                break;
+            case 15:
+                if (!read_small_enum(reader, node.max_lines, 4) ||
+                    node.max_lines < 1) {
+                    return false;
+                }
+                break;
+            case 16:
+                if (!read_small_enum(reader, node.voice_state, 4)) {
+                    return false;
+                }
+                break;
+            case 17: {
+                std::size_t sample_count = 0;
+                if (!reader.array(sample_count) || sample_count == 0 ||
+                    sample_count > node.samples.size()) {
+                    return false;
+                }
+                node.sample_count = static_cast<std::uint8_t>(sample_count);
+                for (std::size_t sample = 0; sample < sample_count; ++sample) {
+                    std::int32_t value = 0;
+                    if (!reader.signed_integer(value) ||
+                        value < 0 || value > 32767) {
+                        return false;
+                    }
+                    node.samples[sample] = static_cast<std::uint16_t>(value);
+                }
+                break;
+            }
             default:
                 return false;
         }
     }
 
-    std::uint16_t allowed = 0;
+    std::uint32_t allowed = 0;
     switch (node.kind) {
         case ComponentKind::screen:
         case ComponentKind::column:
@@ -385,13 +427,15 @@ bool parse_properties(
             allowed = (1U << 8U) | (1U << 9U);
             break;
         case ComponentKind::text:
-            allowed = (1U << 0U) | (1U << 4U) | (1U << 9U);
+            allowed =
+                (1U << 0U) | (1U << 4U) | (1U << 9U) |
+                (1U << 15U);
             if (!has_primary) return false;
             break;
         case ComponentKind::button:
             allowed =
                 (1U << 0U) | (1U << 4U) |
-                (1U << 5U) | (1U << 6U);
+                (1U << 5U) | (1U << 6U) | (1U << 14U);
             if (!has_primary) return false;
             break;
         case ComponentKind::card:
@@ -403,7 +447,9 @@ bool parse_properties(
             if (!has_primary || !has_value) return false;
             break;
         case ComponentKind::voice_orb:
-            allowed = (1U << 0U) | (1U << 1U) | (1U << 5U);
+            allowed =
+                (1U << 0U) | (1U << 1U) | (1U << 5U) |
+                (1U << 16U);
             if (!has_primary) return false;
             break;
         case ComponentKind::live_card:
@@ -411,6 +457,24 @@ bool parse_properties(
                 (1U << 0U) | (1U << 1U) | (1U << 2U) |
                 (1U << 3U) | (1U << 5U);
             if (!has_primary) return false;
+            break;
+        case ComponentKind::image:
+            allowed = (1U << 0U) | (1U << 4U);
+            if (!has_primary || node.variant > 1) return false;
+            break;
+        case ComponentKind::canvas:
+            allowed =
+                (1U << 0U) | (1U << 1U) |
+                (1U << 2U) | (1U << 3U);
+            if (!has_primary || node.secondary_text_offset == 0 ||
+                !has_value || !has_maximum ||
+                !validate_canvas_display_list(
+                    document.string_at(node.primary_text_offset),
+                    document.string_at(node.secondary_text_offset),
+                    node.value,
+                    node.maximum)) {
+                return false;
+            }
             break;
         case ComponentKind::progress:
             allowed =
@@ -441,7 +505,38 @@ bool parse_properties(
             allowed = (1U << 10U) | (1U << 11U);
             if (node.key_count == 0 || node.key_columns < 2) return false;
             break;
+        case ComponentKind::icon:
+            allowed = (1U << 5U) | (1U << 6U) | (1U << 14U);
+            if (node.icon_offset == 0) return false;
+            break;
+        case ComponentKind::surface:
+            allowed =
+                (1U << 4U) | (1U << 5U) |
+                (1U << 8U) | (1U << 9U);
+            break;
+        case ComponentKind::chart:
+            allowed =
+                (1U << 3U) | (1U << 4U) |
+                (1U << 5U) | (1U << 17U);
+            if (!has_maximum || node.maximum <= 0 ||
+                node.variant > 1 || node.sample_count == 0) {
+                return false;
+            }
+            for (std::size_t sample = 0; sample < node.sample_count; ++sample) {
+                if (node.samples[sample] > node.maximum) return false;
+            }
+            break;
+        case ComponentKind::pager:
+            allowed =
+                (1U << 2U) | (1U << 3U) | (1U << 7U) |
+                (1U << 8U) | (1U << 9U);
+            if (!has_value || !has_maximum || node.maximum <= 0 ||
+                node.value < 0 || node.value >= node.maximum) {
+                return false;
+            }
+            break;
     }
+    node.property_mask = property_mask;
     return (property_mask & ~allowed) == 0;
 }
 
@@ -497,7 +592,7 @@ bool parse_node(
     WireDocument& document,
     std::uint16_t node_index) {
     std::size_t fields = 0;
-    if (!reader.map(fields) || fields < 4 || fields > 8) return false;
+    if (!reader.map(fields) || fields < 4 || fields > 10) return false;
     auto& node = document.nodes[node_index];
     node.parent_index = kWireNoParent;
     node.visible = true;
@@ -508,6 +603,7 @@ bool parse_node(
     node.gap = 3;
     node.alignment = 1;
     node.key_columns = 4;
+    node.max_lines = 2;
 
     std::uint64_t previous = 0;
     bool has_previous = false;
@@ -527,7 +623,7 @@ bool parse_node(
                 std::uint64_t kind = 0;
                 if (!reader.unsigned_integer(kind) ||
                     kind > static_cast<std::uint8_t>(
-                        ComponentKind::live_card)) {
+                        ComponentKind::pager)) {
                     return false;
                 }
                 node.kind = static_cast<ComponentKind>(kind);
@@ -568,6 +664,16 @@ bool parse_node(
                 break;
             case 7:
                 if (!parse_events(reader, document, node_index)) return false;
+                break;
+            case 8:
+                if (!reader.text(node.semantic_value_offset, 128)) {
+                    return false;
+                }
+                break;
+            case 9:
+                if (!reader.text(node.semantic_hint_offset, 128)) {
+                    return false;
+                }
                 break;
             default:
                 return false;
@@ -671,6 +777,7 @@ WireResult decode_canonical_cbor(
     }
 
     std::size_t scroll_count = 0;
+    std::size_t canvas_count = 0;
     for (std::size_t index = 0; index < output.node_count; ++index) {
         auto& node = output.nodes[index];
         if (index == 0) {
@@ -694,7 +801,9 @@ WireResult decode_canonical_cbor(
                 parent.kind == ComponentKind::screen ||
                 parent.kind == ComponentKind::column ||
                 parent.kind == ComponentKind::row ||
-                parent.kind == ComponentKind::scroll;
+                parent.kind == ComponentKind::scroll ||
+                parent.kind == ComponentKind::surface ||
+                parent.kind == ComponentKind::pager;
             if (!parent_is_container || node.kind == ComponentKind::screen) {
                 return {
                     WireError::invalid_parent,
@@ -721,12 +830,29 @@ WireResult decode_canonical_cbor(
                 static_cast<std::uint16_t>(index),
                 static_cast<std::uint16_t>(size)};
         }
+        if (node.kind == ComponentKind::canvas && ++canvas_count > 1) {
+            return {
+                WireError::invalid_component,
+                static_cast<std::uint16_t>(index),
+                static_cast<std::uint16_t>(size)};
+        }
         const bool interactive =
             node.kind == ComponentKind::button ||
             node.kind == ComponentKind::stepper ||
             node.kind == ComponentKind::toggle ||
             node.kind == ComponentKind::keypad ||
-            node.kind == ComponentKind::voice_orb;
+            node.kind == ComponentKind::voice_orb ||
+            node.kind == ComponentKind::canvas ||
+            node.kind == ComponentKind::pager;
+        if ((node.kind == ComponentKind::image ||
+             node.kind == ComponentKind::canvas ||
+             node.kind == ComponentKind::chart) &&
+            output.string_at(node.semantic_label_offset)[0] == '\0') {
+            return {
+                WireError::missing_semantics,
+                static_cast<std::uint16_t>(index),
+                static_cast<std::uint16_t>(size)};
+        }
         if (interactive &&
             output.string_at(node.semantic_label_offset)[0] == '\0') {
             return {
@@ -947,7 +1073,7 @@ bool build_semantic_tree(
                     document.string_at(node.id_offset),
                     semantic_role(node),
                     semantic_label,
-                    nullptr,
+                    document.string_at(node.semantic_value_offset),
                     state,
                     node.parent_index == kWireNoParent
                         ? SemanticTree::kNoIndex

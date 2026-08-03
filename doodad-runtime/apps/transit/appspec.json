@@ -5,55 +5,83 @@
     "id": "transit.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "transit.heading",
+          "id": "transit.home.context",
           "type": "text",
           "props": {
-            "text": "TRANSIT DEPARTURES",
+            "text": "CASTRO / NORTH",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "transit.summary",
           "type": "text",
           "props": {
-            "text": "N in 3 min",
+            "text": "3 MIN",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Transit Departures status",
-            "value": "N in 3 min"
+            "label": "Next northbound N train",
+            "value": "3 minutes"
           }
         },
         {
-          "id": "transit.mock",
-          "type": "card",
+          "id": "transit.home.detail",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "title": "N TRAIN / PLATFORM 2",
+            "body": "Next 14 / L in 8 min",
+            "progress": 0.2,
+            "tone": "primary"
           }
         },
         {
-          "id": "transit.primary",
-          "type": "button",
+          "id": "transit.home.actions",
+          "type": "row",
           "props": {
-            "label": "Refresh",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "transit.primary"
-          },
-          "semantics": {
-            "label": "Refresh"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "transit.primary",
+                "type": "button",
+                "props": {
+                  "label": "Times",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.primary"
+                },
+                "semantics": {
+                  "label": "View Castro departures"
+                }
+              },
+              {
+                "id": "transit.home.alert",
+                "type": "button",
+                "props": {
+                  "label": "Alert",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.alert"
+                },
+                "semantics": {
+                  "label": "View N line service alert"
+                }
+              }
+            ]
           }
         }
       ]

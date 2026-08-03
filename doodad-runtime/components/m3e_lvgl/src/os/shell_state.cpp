@@ -164,6 +164,7 @@ bool ShellState::initialize() {
         0,
         0,
         0,
+        {},
         snapshot_.generation + 1,
     };
     return true;
@@ -312,26 +313,23 @@ bool ShellState::can_transition_voice(
         case VoicePhase::idle:
             return to == VoicePhase::listening;
         case VoicePhase::listening:
-            return to == VoicePhase::transcribing ||
+            return to == VoicePhase::thinking ||
+                   to == VoicePhase::speaking ||
                    to == VoicePhase::error;
-        case VoicePhase::transcribing:
+        case VoicePhase::thinking:
             return to == VoicePhase::clarifying ||
-                   to == VoicePhase::reviewing ||
-                   to == VoicePhase::building ||
-                   to == VoicePhase::completed ||
+                   to == VoicePhase::speaking ||
+                   to == VoicePhase::listening ||
+                   to == VoicePhase::error;
+        case VoicePhase::speaking:
+            return to == VoicePhase::listening ||
+                   to == VoicePhase::thinking ||
                    to == VoicePhase::error;
         case VoicePhase::clarifying:
-            return to == VoicePhase::transcribing ||
-                   to == VoicePhase::reviewing ||
+            return to == VoicePhase::thinking ||
+                   to == VoicePhase::speaking ||
+                   to == VoicePhase::listening ||
                    to == VoicePhase::error;
-        case VoicePhase::reviewing:
-            return to == VoicePhase::building ||
-                   to == VoicePhase::completed ||
-                   to == VoicePhase::error;
-        case VoicePhase::building:
-            return to == VoicePhase::completed ||
-                   to == VoicePhase::error;
-        case VoicePhase::completed:
         case VoicePhase::error:
             return to == VoicePhase::listening;
     }
@@ -351,6 +349,30 @@ bool ShellState::set_voice_phase(VoicePhase phase) {
         ++snapshot_.generation;
     }
     return true;
+}
+
+void ShellState::publish_background_activity(
+    std::uint8_t running_count,
+    bool focused_question,
+    bool review_ready,
+    bool completion_pending,
+    BackgroundInstallState install_state) {
+    const BackgroundActivity next{
+        running_count,
+        focused_question,
+        review_ready,
+        completion_pending,
+        install_state,
+    };
+    if (snapshot_.background.running_count == next.running_count &&
+        snapshot_.background.focused_question == next.focused_question &&
+        snapshot_.background.review_ready == next.review_ready &&
+        snapshot_.background.completion_pending == next.completion_pending &&
+        snapshot_.background.install_state == next.install_state) {
+        return;
+    }
+    snapshot_.background = next;
+    ++snapshot_.generation;
 }
 
 void ShellState::publish_surface_counts(

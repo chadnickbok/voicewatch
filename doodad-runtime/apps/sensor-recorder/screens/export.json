@@ -5,71 +5,83 @@
     "id": "sensor-recorder.export",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "sensor-recorder.export.heading",
           "type": "text",
           "props": {
-            "text": "SESSION",
+            "text": "SESSION / DONE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sensor-recorder.export.summary",
           "type": "text",
           "props": {
-            "text": "1,024 samples",
+            "text": "1024",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "SESSION",
-            "value": "1,024 samples"
+            "label": "Sensor session sample count",
+            "value": "1024 samples"
           }
         },
         {
           "id": "sensor-recorder.export.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "No gaps · 48 KiB · checksum OK",
-            "tone": "neutral"
+            "title": "48 KIB / CHECKSUM OK",
+            "body": "20 seconds / ready to export",
+            "progress": 1.0,
+            "tone": "primary"
           }
         },
         {
-          "id": "sensor-recorder.export.primary",
-          "type": "button",
+          "id": "sensor-recorder.export.actions",
+          "type": "row",
           "props": {
-            "label": "Export CSV",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sensor.export.csv"
-          },
-          "semantics": {
-            "label": "Export CSV"
-          }
-        },
-        {
-          "id": "sensor-recorder.export.secondary",
-          "type": "button",
-          "props": {
-            "label": "Record again",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sensor.again"
-          },
-          "semantics": {
-            "label": "Record again"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sensor-recorder.export.primary",
+                "type": "button",
+                "props": {
+                  "label": "Export",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor.export.csv"
+                },
+                "semantics": {
+                  "label": "Export sensor session as CSV"
+                }
+              },
+              {
+                "id": "sensor-recorder.export.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Again",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sensor.again"
+                },
+                "semantics": {
+                  "label": "Record another sensor session"
+                }
+              }
+            ]
           }
         }
       ]

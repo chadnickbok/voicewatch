@@ -2,54 +2,85 @@
   "schema_version": 1,
   "app_id": "workout",
   "screen": {
-    "id": "workout.summary",
+    "id": "powerlifting.summary",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "workout.summary.heading",
+          "id": "powerlifting.summary.title",
           "type": "text",
           "props": {
-            "text": "WORKOUT SAVED",
+            "text": "WORKOUT COMPLETE",
             "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "workout.summary.total",
-          "type": "text",
-          "props": {
-            "text": "4 sets",
-            "style": "numeral",
             "max_lines": 1,
             "align": "center"
           }
         },
         {
-          "id": "workout.summary.detail",
-          "type": "card",
+          "id": "powerlifting.summary.metrics",
+          "type": "row",
           "props": {
-            "title": "Squat · 4 × 8",
-            "body": "4,320 lb volume · 12:08",
-            "tone": "neutral"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "powerlifting.summary.sets",
+                "type": "text",
+                "props": {
+                  "text": "14 SETS",
+                  "style": "title",
+                  "max_lines": 1,
+                  "align": "center"
+                }
+              },
+              {
+                "id": "powerlifting.summary.volume",
+                "type": "text",
+                "props": {
+                  "text": "6,420 KG",
+                  "style": "title",
+                  "max_lines": 1,
+                  "align": "center"
+                }
+              },
+              {
+                "id": "powerlifting.summary.duration",
+                "type": "text",
+                "props": {
+                  "text": "1:07:32",
+                  "style": "title",
+                  "max_lines": 1,
+                  "align": "center"
+                }
+              }
+            ]
           }
         },
         {
-          "id": "workout.summary.again",
+          "id": "powerlifting.summary.pr",
+          "type": "card",
+          "props": {
+            "title": "NEW 5RM  /  142.5 KG",
+            "body": "BACK SQUAT",
+            "tone": "secondary"
+          }
+        },
+        {
+          "id": "powerlifting.summary.done",
           "type": "button",
           "props": {
-            "label": "Start another",
+            "label": "DONE",
             "tone": "primary",
             "variant": "filled",
             "size": "default"
           },
           "events": {
-            "tap": "workout.again"
+            "tap": "workout.summary.done"
           },
           "semantics": {
-            "label": "Start another workout"
+            "label": "DONE"
           }
         }
       ]

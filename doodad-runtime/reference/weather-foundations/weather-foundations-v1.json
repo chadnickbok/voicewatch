@@ -1,0 +1,660 @@
+{
+  "schema_version": 1,
+  "artifact": "doodad-weather-foundations",
+  "display": {
+    "logical_width_dp": 192,
+    "physical_width_px": 240,
+    "pixels_per_dp": 1.25,
+    "grid_dp": 4,
+    "normal_touch_target_dp": 48
+  },
+  "typography": {
+    "family": "Roboto",
+    "fallback_family": "Montserrat",
+    "source": "vendored googlefonts/roboto-2 hinted Roboto-Medium.ttf",
+    "license": "Apache-2.0",
+    "roles": [
+      {
+        "name": "micro",
+        "size_px": 10,
+        "line_height_px": 12,
+        "weight": 500,
+        "repertoire": "weather_ui"
+      },
+      {
+        "name": "label",
+        "size_px": 14,
+        "line_height_px": 17,
+        "weight": 500,
+        "repertoire": "weather_ui"
+      },
+      {
+        "name": "row",
+        "size_px": 18,
+        "line_height_px": 22,
+        "weight": 500,
+        "repertoire": "weather_ui"
+      },
+      {
+        "name": "metric",
+        "size_px": 28,
+        "line_height_px": 31,
+        "weight": 500,
+        "repertoire": "weather_values"
+      },
+      {
+        "name": "headline",
+        "size_px": 32,
+        "line_height_px": 34,
+        "weight": 500,
+        "repertoire": "weather_headline"
+      },
+      {
+      "name": "hero",
+      "size_px": 68,
+      "line_height_px": 73,
+        "weight": 500,
+        "repertoire": "weather_hero"
+      }
+    ],
+    "repertoires": {
+      "weather_ui": " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:;!?%/+-−°·'()",
+      "weather_values": " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:%/+-−°",
+      "weather_headline": " ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789.,:%/+-−°",
+      "weather_hero": "0123456789-−°"
+    },
+    "golden_strings": [
+      "-9°",
+      "0°",
+      "62°",
+      "105°",
+      "100%",
+      "8 mph",
+      "12 km/h",
+      "6:12",
+      "12:00",
+      "Partly cloudy",
+      "Thunderstorms",
+      "San Francisco",
+      "Rancho Santa Margarita",
+      "Updated now",
+      "Cached · 59m",
+      "Weather unavailable"
+    ]
+  },
+  "colors": [
+    {
+      "name": "background",
+      "hex": "#020817",
+      "purpose": "screen background"
+    },
+    {
+      "name": "on_background",
+      "hex": "#F7F8FF",
+      "purpose": "primary content"
+    },
+    {
+      "name": "primary",
+      "hex": "#9CB5FF",
+      "purpose": "primary action and selected emphasis"
+    },
+    {
+      "name": "on_primary",
+      "hex": "#071738",
+      "purpose": "content on primary"
+    },
+    {
+      "name": "primary_container",
+      "hex": "#315F9C",
+      "purpose": "selected row and action container"
+    },
+    {
+      "name": "on_primary_container",
+      "hex": "#F5F8FF",
+      "purpose": "content on primary container"
+    },
+    {
+      "name": "secondary_container",
+      "hex": "#102545",
+      "purpose": "forecast and metric containers"
+    },
+    {
+      "name": "on_secondary_container",
+      "hex": "#D7E4FF",
+      "purpose": "content on secondary container"
+    },
+    {
+      "name": "tertiary",
+      "hex": "#FFD44F",
+      "purpose": "sun and warm accent"
+    },
+    {
+      "name": "on_tertiary",
+      "hex": "#2A2200",
+      "purpose": "content on tertiary"
+    },
+    {
+      "name": "surface_low",
+      "hex": "#0B1C36",
+      "purpose": "quiet inset surface"
+    },
+    {
+      "name": "surface",
+      "hex": "#0D2342",
+      "purpose": "standard content surface"
+    },
+    {
+      "name": "surface_high",
+      "hex": "#164A7D",
+      "purpose": "emphasized metric surface"
+    },
+    {
+      "name": "on_surface",
+      "hex": "#F7F8FF",
+      "purpose": "content on surfaces"
+    },
+    {
+      "name": "on_surface_variant",
+      "hex": "#AEBFE2",
+      "purpose": "supporting content"
+    },
+    {
+      "name": "outline_variant",
+      "hex": "#31527E",
+      "purpose": "charts and separators"
+    },
+    {
+      "name": "error",
+      "hex": "#FFB4AB",
+      "purpose": "error emphasis"
+    },
+    {
+      "name": "on_error",
+      "hex": "#370001",
+      "purpose": "content on error"
+    },
+    {
+      "name": "error_container",
+      "hex": "#8C1D18",
+      "purpose": "error action container"
+    },
+    {
+      "name": "on_error_container",
+      "hex": "#FFDAD6",
+      "purpose": "content on error container"
+    },
+    {
+      "name": "disabled",
+      "hex": "#66738D",
+      "purpose": "disabled content"
+    },
+    {
+      "name": "fresh",
+      "hex": "#7FD88B",
+      "purpose": "fresh data status"
+    },
+    {
+      "name": "stale",
+      "hex": "#FFD166",
+      "purpose": "stale cache status"
+    },
+    {
+      "name": "offline",
+      "hex": "#AEBFE2",
+      "purpose": "offline status"
+    },
+    {
+      "name": "rain",
+      "hex": "#78ADFF",
+      "purpose": "rain glyph and chart"
+    },
+    {
+      "name": "snow",
+      "hex": "#EEF3FF",
+      "purpose": "snow glyph"
+    },
+    {
+      "name": "night",
+      "hex": "#AAB8FF",
+      "purpose": "moon and night accent"
+    },
+    {
+      "name": "cloud",
+      "hex": "#F0F4FF",
+      "purpose": "front cloud layer"
+    },
+    {
+      "name": "cloud_shadow",
+      "hex": "#B8C7E6",
+      "purpose": "rear cloud layer"
+    },
+    {
+      "name": "lightning",
+      "hex": "#FFD44F",
+      "purpose": "lightning glyph"
+    }
+  ],
+  "contrast_pairs": [
+    {
+      "foreground": "on_background",
+      "background": "background",
+      "minimum": 7
+    },
+    {
+      "foreground": "on_primary",
+      "background": "primary",
+      "minimum": 7
+    },
+    {
+      "foreground": "on_primary_container",
+      "background": "primary_container",
+      "minimum": 6
+    },
+    {
+      "foreground": "on_secondary_container",
+      "background": "secondary_container",
+      "minimum": 7
+    },
+    {
+      "foreground": "on_tertiary",
+      "background": "tertiary",
+      "minimum": 7
+    },
+    {
+      "foreground": "on_surface",
+      "background": "surface_high",
+      "minimum": 7
+    },
+    {
+      "foreground": "on_surface_variant",
+      "background": "surface",
+      "minimum": 6
+    },
+    {
+      "foreground": "on_error",
+      "background": "error",
+      "minimum": 7
+    },
+    {
+      "foreground": "on_error_container",
+      "background": "error_container",
+      "minimum": 6
+    }
+  ],
+  "ambient_colors": {
+    "background": "#000000",
+    "content": "#E6E1E5",
+    "secondary_content": "#CAC5C9"
+  },
+  "shapes": [
+    {
+      "name": "compact_pill",
+      "kind": "full",
+      "corners_dp": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "status_chip",
+      "kind": "full",
+      "corners_dp": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "forecast_row",
+      "kind": "rounded",
+      "corners_dp": [
+        18,
+        18,
+        18,
+        18
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "chart_surface",
+      "kind": "rounded",
+      "corners_dp": [
+        14,
+        14,
+        14,
+        14
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "hour_tile",
+      "kind": "rounded",
+      "corners_dp": [
+        14,
+        14,
+        14,
+        14
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "hero_surface",
+      "kind": "rounded",
+      "corners_dp": [
+        28,
+        28,
+        28,
+        28
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "metric_a",
+      "kind": "rounded",
+      "corners_dp": [
+        22,
+        14,
+        22,
+        14
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "metric_b",
+      "kind": "rounded",
+      "corners_dp": [
+        14,
+        24,
+        14,
+        24
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "metric_c",
+      "kind": "cut_corners",
+      "corners_dp": [
+        10,
+        10,
+        10,
+        10
+      ],
+      "inset_dp": 0
+    },
+    {
+      "name": "bottom_action",
+      "kind": "full",
+      "corners_dp": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "inset_dp": 6
+    }
+  ],
+  "icon_sizes_dp": [
+    16,
+    18,
+    24,
+    32,
+    48,
+    64,
+    72
+  ],
+  "icons": [
+    {
+      "name": "condition_clear_day",
+      "condition_code": 0,
+      "source": "meteocons_flat",
+      "asset": "clear-day.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_clear_night",
+      "condition_code": 1,
+      "source": "meteocons_flat",
+      "asset": "clear-night.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_partly_cloudy_day",
+      "condition_code": 2,
+      "source": "meteocons_flat",
+      "asset": "partly-cloudy-day.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_partly_cloudy_night",
+      "condition_code": 3,
+      "source": "meteocons_flat",
+      "asset": "partly-cloudy-night.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_cloudy",
+      "condition_code": 4,
+      "source": "meteocons_flat",
+      "asset": "cloudy.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_overcast",
+      "condition_code": 5,
+      "source": "meteocons_flat",
+      "asset": "overcast.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_fog",
+      "condition_code": 6,
+      "source": "meteocons_flat",
+      "asset": "fog.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_drizzle",
+      "condition_code": 7,
+      "source": "meteocons_flat",
+      "asset": "drizzle.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_rain",
+      "condition_code": 8,
+      "source": "meteocons_flat",
+      "asset": "rain.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_heavy_rain",
+      "condition_code": 9,
+      "source": "meteocons_flat",
+      "asset": "extreme-rain.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_thunderstorm",
+      "condition_code": 10,
+      "source": "meteocons_flat",
+      "asset": "thunderstorms.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_snow",
+      "condition_code": 11,
+      "source": "meteocons_flat",
+      "asset": "snow.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_sleet",
+      "condition_code": 12,
+      "source": "meteocons_flat",
+      "asset": "sleet.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_wind",
+      "condition_code": 13,
+      "source": "meteocons_flat",
+      "asset": "wind.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_hot",
+      "condition_code": 14,
+      "source": "meteocons_flat",
+      "asset": "extreme-day.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "condition_unknown",
+      "condition_code": 15,
+      "source": "material_symbols_rounded",
+      "asset": "help.svg",
+      "render": "mask",
+      "tint_role": "on_surface_variant"
+    },
+    {
+      "name": "utility_location",
+      "source": "material_symbols_rounded",
+      "asset": "location_on.svg",
+      "render": "mask",
+      "tint_role": "on_surface_variant"
+    },
+    {
+      "name": "utility_chevron_right",
+      "source": "material_symbols_rounded",
+      "asset": "chevron_right.svg",
+      "render": "mask",
+      "tint_role": "on_surface"
+    },
+    {
+      "name": "utility_arrow_high",
+      "source": "material_symbols_rounded",
+      "asset": "arrow_upward.svg",
+      "render": "mask",
+      "tint_role": "tertiary"
+    },
+    {
+      "name": "utility_arrow_low",
+      "source": "material_symbols_rounded",
+      "asset": "arrow_downward.svg",
+      "render": "mask",
+      "tint_role": "rain"
+    },
+    {
+      "name": "utility_thermometer",
+      "source": "material_symbols_rounded",
+      "asset": "device_thermostat.svg",
+      "render": "mask",
+      "tint_role": "on_surface_variant"
+    },
+    {
+      "name": "utility_humidity",
+      "source": "material_symbols_rounded",
+      "asset": "humidity_percentage.svg",
+      "render": "mask",
+      "tint_role": "rain"
+    },
+    {
+      "name": "utility_wind",
+      "source": "material_symbols_rounded",
+      "asset": "air.svg",
+      "render": "mask",
+      "tint_role": "on_surface_variant"
+    },
+    {
+      "name": "utility_uv",
+      "source": "material_symbols_rounded",
+      "asset": "sunny.svg",
+      "render": "mask",
+      "tint_role": "tertiary"
+    },
+    {
+      "name": "utility_sunrise",
+      "source": "meteocons_flat",
+      "asset": "sunrise.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "utility_sunset",
+      "source": "meteocons_flat",
+      "asset": "sunset.svg",
+      "render": "multicolor"
+    },
+    {
+      "name": "utility_clock",
+      "source": "material_symbols_rounded",
+      "asset": "schedule.svg",
+      "render": "mask",
+      "tint_role": "on_surface_variant"
+    },
+    {
+      "name": "utility_precipitation_bars",
+      "source": "material_symbols_rounded",
+      "asset": "bar_chart.svg",
+      "render": "mask",
+      "tint_role": "rain"
+    },
+    {
+      "name": "utility_details",
+      "source": "material_symbols_rounded",
+      "asset": "format_list_bulleted.svg",
+      "render": "mask",
+      "tint_role": "on_surface_variant"
+    },
+    {
+      "name": "utility_warning",
+      "source": "material_symbols_rounded",
+      "asset": "warning.svg",
+      "render": "mask",
+      "tint_role": "error"
+    },
+    {
+      "name": "utility_offline",
+      "source": "material_symbols_rounded",
+      "asset": "cloud_off.svg",
+      "render": "mask",
+      "tint_role": "offline"
+    },
+    {
+      "name": "utility_refresh",
+      "source": "material_symbols_rounded",
+      "asset": "refresh.svg",
+      "render": "mask",
+      "tint_role": "on_surface_variant"
+    },
+    {
+      "name": "utility_retry",
+      "source": "material_symbols_rounded",
+      "asset": "replay.svg",
+      "render": "mask",
+      "tint_role": "on_surface"
+    }
+  ],
+  "icon_sources": {
+    "meteocons_flat": {
+      "package": "@meteocons/svg-static",
+      "version": "0.1.0",
+      "license": "MIT",
+      "upstream": "https://github.com/basmilius/meteocons",
+      "archive_sha256": "7aead065bfd18127392dd39a67f18c30580e45ddb2facef893839caebf0d029b",
+      "vendor_path": "reference/weather-foundations/vendor/meteocons-flat"
+    },
+    "material_symbols_rounded": {
+      "package": "@material-symbols/svg-400",
+      "version": "0.45.10",
+      "license": "Apache-2.0",
+      "upstream": "https://fonts.google.com/icons",
+      "archive_sha256": "2d5897ae8b4106261aa70ab0060e82be5b74cd55c5cbc521646b004f48d91bba",
+      "vendor_path": "reference/weather-foundations/vendor/material-symbols-rounded"
+    }
+  }
+}

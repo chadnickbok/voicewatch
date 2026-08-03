@@ -24,14 +24,19 @@ event = {
 }
 
 ; screen, column, row, scroll, text, button, card, progress, stepper,
-; toggle, keypad, voice_orb, live_card
-component-kind = 0..12
+; toggle, keypad, voice_orb, live_card, image, canvas, icon, surface,
+; chart, pager
+component-kind = 0..18
 
 ; Property tags are stable across component kinds. Validators reject tags
 ; that have no meaning for the selected component.
 ; 0 primary text, 1 secondary text, 2 value, 3 maximum, 4 variant/style,
 ; 5 tone, 6 size, 7 checked, 8 gap, 9 alignment, 10 keypad keys,
-; 11 keypad columns, 12 minimum, 13 step.
+; 11 keypad columns, 12 minimum, 13 step, 14 icon, 15 max lines,
+; 16 voice state, 17 chart samples. Image reuses primary text for its content hash and
+; variant/style for cover (0) or contain (1). Canvas reuses primary text for
+; its Canvas Display List v1, secondary text for an RGB888 palette, value for
+; logical width, and maximum for logical height.
 
 identifier = tstr .regexp "[a-z][a-z0-9_.-]{0,63}"
 
@@ -64,8 +69,8 @@ command =
 set-property = {
   0: 0,
   1: identifier,                 ; mounted node id
-  2: 0..3,                       ; primary, secondary, value, maximum
-  3: tstr .size (0..128) / int,
+  2: 0..8,                       ; primary, secondary, value, maximum, checked, samples, icon, semantic label/value
+  3: tstr .size (0..128) / int / bool / [1*13 uint],
 }
 
 set-visibility = { 0: 1, 1: identifier, 3: bool }

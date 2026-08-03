@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "doodad://contracts/job-question-v1",
+  "title": "Doodad durable job question v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["job_id", "question_id", "prompt", "answer_schema", "status", "created_at"],
+  "properties": {
+    "job_id": {"type": "string", "minLength": 8, "maxLength": 96},
+    "question_id": {"type": "string", "minLength": 1, "maxLength": 96},
+    "prompt": {"type": "string", "minLength": 1, "maxLength": 320},
+    "answer_schema": {"type": "object"},
+    "status": {"enum": ["open", "focused", "answered", "cancelled"]},
+    "created_at": {"type": "string", "format": "date-time"}
+  }
+}

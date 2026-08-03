@@ -22,6 +22,12 @@ COMPONENT = {
     "keypad": 10,
     "voice_orb": 11,
     "live_card": 12,
+    "image": 13,
+    "canvas": 14,
+    "icon": 15,
+    "surface": 16,
+    "chart": 17,
+    "pager": 18,
 }
 EVENT = {
     "tap": 0,
@@ -43,7 +49,7 @@ TONE = {
     "neutral": 3,
     "error": 4,
 }
-SIZE = {"compact": 0, "default": 1, "large": 2}
+SIZE = {"compact": 0, "default": 1, "large": 2, "hero": 3}
 GAP = {"none": 0, "xs": 1, "sm": 2, "md": 3, "lg": 4}
 ALIGN = {"start": 0, "center": 1, "end": 2, "stretch": 3}
 TEXT_STYLE = {
@@ -56,6 +62,12 @@ TEXT_STYLE = {
 }
 BUTTON_VARIANT = {"filled": 0, "tonal": 1, "outlined": 2, "text": 3}
 PROGRESS_STYLE = {"linear": 0, "circular": 1, "segmented": 2}
+IMAGE_FIT = {"cover": 0, "contain": 1}
+SURFACE_SHAPE = {
+    "standard": 0, "hero": 1, "metric_a": 2, "metric_b": 3,
+    "metric_c": 4, "pill": 5,
+}
+CHART_STYLE = {"line": 0, "bars": 1}
 
 
 def _literal(value: Any, field: str) -> Any:
@@ -69,24 +81,38 @@ def _literal(value: Any, field: str) -> Any:
 def _properties(node: dict[str, Any]) -> dict[int, Any]:
     kind = node["type"]
     props = node["props"]
-    if kind in {"screen", "column", "row", "scroll"}:
-        return {
+    if kind in {"screen", "column", "row", "scroll", "surface", "pager"}:
+        result = {
             8: GAP[props.get("gap", "md")],
             9: ALIGN[props.get("align", "center")],
         }
+        if kind == "surface":
+            result[4] = SURFACE_SHAPE[props.get("shape", "standard")]
+            result[5] = TONE[props.get("tone", "neutral")]
+        elif kind == "pager":
+            result[2] = props.get("selected", 0)
+            result[3] = len(props["children"])
+            result[7] = props.get("show_indicator", True)
+        return result
     if kind == "text":
-        return {
+        result = {
             0: _literal(props["text"], f"{node['id']}.text"),
             4: TEXT_STYLE[props.get("style", "body")],
             9: ALIGN[props.get("align", "center")],
         }
+        if "max_lines" in props:
+            result[15] = props["max_lines"]
+        return result
     if kind == "button":
-        return {
+        result = {
             0: props["label"],
             4: BUTTON_VARIANT[props.get("variant", "filled")],
             5: TONE[props.get("tone", "primary")],
             6: SIZE[props.get("size", "default")],
         }
+        if "icon" in props:
+            result[14] = props["icon"]
+        return result
     if kind == "card":
         return {
             0: _literal(props["title"], f"{node['id']}.title"),
@@ -127,7 +153,18 @@ def _properties(node: dict[str, Any]) -> dict[int, Any]:
             "speaking": "Speaking",
             "error": "Try again",
         }[state]
-        return {0: label}
+        return {
+            0: label,
+            1: props.get("transcript", ""),
+            5: TONE["primary"],
+            16: {
+                "idle": 0,
+                "listening": 1,
+                "thinking": 2,
+                "speaking": 3,
+                "error": 4,
+            }[state],
+        }
     if kind == "live_card":
         result: dict[int, Any] = {
             0: _literal(props["title"], f"{node['id']}.title"),
@@ -141,6 +178,31 @@ def _properties(node: dict[str, Any]) -> dict[int, Any]:
             result[2] = int(math.floor(progress * 100 + 0.5))
             result[3] = 100
         return result
+    if kind == "image":
+        return {
+            0: props["asset"],
+            4: IMAGE_FIT[props.get("fit", "cover")],
+        }
+    if kind == "canvas":
+        return {
+            0: props["display_list"],
+            1: props["palette"],
+            2: props["width"],
+            3: props["height"],
+        }
+    if kind == "icon":
+        return {
+            14: props["name"],
+            5: TONE[props.get("tone", "neutral")],
+            6: SIZE[props.get("size", "default")],
+        }
+    if kind == "chart":
+        return {
+            17: props["samples"],
+            3: props["maximum"],
+            4: CHART_STYLE[props.get("style", "line")],
+            5: TONE[props.get("tone", "primary")],
+        }
     raise DoodadError(f"cannot lower AppSpec component {kind!r}")
 
 
@@ -177,6 +239,10 @@ def _flatten(
                 events.items(), key=lambda item: EVENT[item[0]]
             )
         ]
+    if semantics.get("value"):
+        wire[8] = semantics["value"]
+    if semantics.get("hint"):
+        wire[9] = semantics["hint"]
     output.append(wire)
     for child in node.get("props", {}).get("children", []):
         _flatten(child, index, output)

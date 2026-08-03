@@ -491,6 +491,44 @@ impl<'a> CborReader<'a> {
         Ok(source)
     }
 
+    fn array_length(&mut self) -> Result<usize, EventDecodeError> {
+        let (major, length) = self.head()?;
+        if major != 4 {
+            return Err(EventDecodeError::WrongType);
+        }
+        usize::try_from(length).map_err(|_| EventDecodeError::WrongShape)
+    }
+
+    fn optional_signed_i32(&mut self) -> Result<Option<i32>, EventDecodeError> {
+        let (major, argument) = self.head()?;
+        let value = match major {
+            0 => i64::try_from(argument).map_err(|_| EventDecodeError::WrongType)?,
+            1 => {
+                let magnitude =
+                    i64::try_from(argument).map_err(|_| EventDecodeError::WrongType)?;
+                -1 - magnitude
+            }
+            7 if argument == 22 => return Ok(None),
+            _ => return Err(EventDecodeError::WrongType),
+        };
+        Ok(Some(
+            i32::try_from(value).map_err(|_| EventDecodeError::WrongType)?,
+        ))
+    }
+
+    fn optional_unsigned(
+        &mut self,
+        maximum: u64,
+    ) -> Result<Option<u64>, EventDecodeError> {
+        let (major, argument) = self.head()?;
+        match major {
+            0 if argument <= maximum => Ok(Some(argument)),
+            0 => Err(EventDecodeError::WrongShape),
+            7 if argument == 22 => Ok(None),
+            _ => Err(EventDecodeError::WrongType),
+        }
+    }
+
     fn event_value(&mut self) -> Result<EventValue<'a>, EventDecodeError> {
         let (major, argument) = self.head()?;
         match major {
@@ -602,6 +640,77 @@ pub fn decode_provider_event(
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u8)]
+pub enum VoiceProviderState {
+    Connecting = 0,
+    Ready = 1,
+    Recording = 2,
+    Stopped = 3,
+    Transcript = 4,
+    Error = 5,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct VoiceProviderPayload<'a> {
+    pub state: VoiceProviderState,
+    pub request_id: u64,
+    pub elapsed_ms: u64,
+    pub encoded_frames: u64,
+    pub dropped_frames: u64,
+    pub text: &'a str,
+}
+
+pub fn decode_voice_provider_payload(
+    bytes: &[u8],
+) -> Result<VoiceProviderPayload<'_>, EventDecodeError> {
+    let mut reader = CborReader { bytes, offset: 0 };
+    let (major, fields) = reader.head()?;
+    if major != 5 || fields != 6 || reader.unsigned()? != 0 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    let state = match reader.unsigned()? {
+        0 => VoiceProviderState::Connecting,
+        1 => VoiceProviderState::Ready,
+        2 => VoiceProviderState::Recording,
+        3 => VoiceProviderState::Stopped,
+        4 => VoiceProviderState::Transcript,
+        5 => VoiceProviderState::Error,
+        _ => return Err(EventDecodeError::WrongShape),
+    };
+    if reader.unsigned()? != 1 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let request_id = reader.unsigned()?;
+    if reader.unsigned()? != 2 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let elapsed_ms = reader.unsigned()?;
+    if reader.unsigned()? != 3 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let encoded_frames = reader.unsigned()?;
+    if reader.unsigned()? != 4 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let dropped_frames = reader.unsigned()?;
+    if reader.unsigned()? != 5 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let text = reader.text()?;
+    if reader.offset != bytes.len() {
+        return Err(EventDecodeError::TrailingData);
+    }
+    Ok(VoiceProviderPayload {
+        state,
+        request_id,
+        elapsed_ms,
+        encoded_frames,
+        dropped_frames,
+        text,
+    })
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
 pub enum TimerProviderState {
     Scheduled = 0,
     Firing = 1,
@@ -674,6 +783,124 @@ pub struct WeatherProviderPayload<'a> {
     pub cache_age_minutes: u64,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
+pub enum WeatherCondition {
+    ClearDay = 0,
+    ClearNight = 1,
+    PartlyCloudyDay = 2,
+    PartlyCloudyNight = 3,
+    Cloudy = 4,
+    Overcast = 5,
+    Fog = 6,
+    Drizzle = 7,
+    Rain = 8,
+    HeavyRain = 9,
+    Thunderstorm = 10,
+    Snow = 11,
+    Sleet = 12,
+    Wind = 13,
+    Hot = 14,
+    Unknown = 15,
+}
+
+impl WeatherCondition {
+    fn decode(value: u64) -> Result<Self, EventDecodeError> {
+        Ok(match value {
+            0 => Self::ClearDay,
+            1 => Self::ClearNight,
+            2 => Self::PartlyCloudyDay,
+            3 => Self::PartlyCloudyNight,
+            4 => Self::Cloudy,
+            5 => Self::Overcast,
+            6 => Self::Fog,
+            7 => Self::Drizzle,
+            8 => Self::Rain,
+            9 => Self::HeavyRain,
+            10 => Self::Thunderstorm,
+            11 => Self::Snow,
+            12 => Self::Sleet,
+            13 => Self::Wind,
+            14 => Self::Hot,
+            15 => Self::Unknown,
+            _ => return Err(EventDecodeError::WrongShape),
+        })
+    }
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
+pub enum WeatherUnits {
+    Metric = 0,
+    Imperial = 1,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct WeatherCurrentV2 {
+    pub temperature_tenths: i32,
+    pub feels_like_tenths: Option<i32>,
+    pub condition: WeatherCondition,
+    pub high_tenths: Option<i32>,
+    pub low_tenths: Option<i32>,
+    pub precipitation_percent: Option<u8>,
+    pub humidity_percent: Option<u8>,
+    pub wind_speed_tenths: Option<u16>,
+    pub wind_direction_degrees: Option<u16>,
+    pub uv_index_tenths: Option<u16>,
+    pub sunrise_local_minute: Option<u16>,
+    pub sunset_local_minute: Option<u16>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct WeatherHourV2 {
+    pub local_minute: u16,
+    pub temperature_tenths: i32,
+    pub precipitation_percent: Option<u8>,
+    pub condition: WeatherCondition,
+}
+
+const EMPTY_WEATHER_HOUR_V2: WeatherHourV2 = WeatherHourV2 {
+    local_minute: 0,
+    temperature_tenths: 0,
+    precipitation_percent: None,
+    condition: WeatherCondition::Unknown,
+};
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct WeatherDayV2 {
+    pub weekday: u8,
+    pub low_tenths: i32,
+    pub high_tenths: i32,
+    pub precipitation_percent: Option<u8>,
+    pub condition: WeatherCondition,
+}
+
+const EMPTY_WEATHER_DAY_V2: WeatherDayV2 = WeatherDayV2 {
+    weekday: 0,
+    low_tenths: 0,
+    high_tenths: 0,
+    precipitation_percent: None,
+    condition: WeatherCondition::Unknown,
+};
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct WeatherProviderPayloadV2<'a> {
+    pub location: &'a str,
+    pub local_weekday: u8,
+    pub local_minute: u16,
+    pub current: WeatherCurrentV2,
+    pub hours: [WeatherHourV2; 7],
+    pub hour_count: u8,
+    pub days: [WeatherDayV2; 4],
+    pub day_count: u8,
+    pub precipitation: [u8; 13],
+    pub minutes_until_rain: Option<u16>,
+    pub rain_duration_minutes: u16,
+    pub units: WeatherUnits,
+    pub data_revision: u64,
+    pub cache_age_minutes: u64,
+}
+
 pub fn decode_weather_provider_payload(
     bytes: &[u8],
 ) -> Result<WeatherProviderPayload<'_>, EventDecodeError> {
@@ -717,6 +944,193 @@ pub fn decode_weather_provider_payload(
         location,
         data_revision,
         cache_age_minutes,
+    })
+}
+
+pub fn decode_weather_provider_payload_v2(
+    bytes: &[u8],
+) -> Result<WeatherProviderPayloadV2<'_>, EventDecodeError> {
+    let mut reader = CborReader { bytes, offset: 0 };
+    let (major, fields) = reader.head()?;
+    if major != 5 || fields != 13 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    expect_key(&mut reader, 0)?;
+    if reader.unsigned()? != 2 {
+        return Err(EventDecodeError::UnsupportedVersion);
+    }
+    expect_key(&mut reader, 1)?;
+    let location = reader.text()?;
+    if location.is_empty() || location.len() > 48 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    expect_key(&mut reader, 2)?;
+    let local_weekday = bounded_u8(reader.unsigned()?, 6)?;
+    expect_key(&mut reader, 3)?;
+    let local_minute = bounded_u16(reader.unsigned()?, 1439)?;
+    expect_key(&mut reader, 4)?;
+    let current = decode_weather_current_v2(&mut reader)?;
+    expect_key(&mut reader, 5)?;
+    let hour_count = reader.array_length()?;
+    if !(1..=7).contains(&hour_count) {
+        return Err(EventDecodeError::WrongShape);
+    }
+    let mut hours = [EMPTY_WEATHER_HOUR_V2; 7];
+    for hour in hours.iter_mut().take(hour_count) {
+        *hour = decode_weather_hour_v2(&mut reader)?;
+    }
+    expect_key(&mut reader, 6)?;
+    let day_count = reader.array_length()?;
+    if !(1..=4).contains(&day_count) {
+        return Err(EventDecodeError::WrongShape);
+    }
+    let mut days = [EMPTY_WEATHER_DAY_V2; 4];
+    for day in days.iter_mut().take(day_count) {
+        *day = decode_weather_day_v2(&mut reader)?;
+    }
+    expect_key(&mut reader, 7)?;
+    if reader.array_length()? != 13 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    let mut precipitation = [0_u8; 13];
+    for sample in &mut precipitation {
+        *sample = bounded_u8(reader.unsigned()?, 100)?;
+    }
+    expect_key(&mut reader, 8)?;
+    let minutes_until_rain = match reader.signed()? {
+        -1 => None,
+        value if (0..=1439).contains(&value) => Some(value as u16),
+        _ => return Err(EventDecodeError::WrongShape),
+    };
+    expect_key(&mut reader, 9)?;
+    let rain_duration_minutes = bounded_u16(reader.unsigned()?, 1440)?;
+    expect_key(&mut reader, 10)?;
+    let units = match reader.unsigned()? {
+        0 => WeatherUnits::Metric,
+        1 => WeatherUnits::Imperial,
+        _ => return Err(EventDecodeError::WrongShape),
+    };
+    expect_key(&mut reader, 11)?;
+    let data_revision = reader.unsigned()?;
+    expect_key(&mut reader, 12)?;
+    let cache_age_minutes = reader.unsigned()?;
+    if reader.offset != bytes.len() {
+        return Err(EventDecodeError::TrailingData);
+    }
+    Ok(WeatherProviderPayloadV2 {
+        location,
+        local_weekday,
+        local_minute,
+        current,
+        hours,
+        hour_count: hour_count as u8,
+        days,
+        day_count: day_count as u8,
+        precipitation,
+        minutes_until_rain,
+        rain_duration_minutes,
+        units,
+        data_revision,
+        cache_age_minutes,
+    })
+}
+
+fn expect_key(
+    reader: &mut CborReader<'_>,
+    expected: u64,
+) -> Result<(), EventDecodeError> {
+    if reader.unsigned()? != expected {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    Ok(())
+}
+
+fn bounded_u8(value: u64, maximum: u8) -> Result<u8, EventDecodeError> {
+    if value > u64::from(maximum) {
+        return Err(EventDecodeError::WrongShape);
+    }
+    Ok(value as u8)
+}
+
+fn bounded_u16(value: u64, maximum: u16) -> Result<u16, EventDecodeError> {
+    if value > u64::from(maximum) {
+        return Err(EventDecodeError::WrongShape);
+    }
+    Ok(value as u16)
+}
+
+fn optional_u8(
+    reader: &mut CborReader<'_>,
+    maximum: u8,
+) -> Result<Option<u8>, EventDecodeError> {
+    reader
+        .optional_unsigned(u64::from(maximum))?
+        .map(|value| bounded_u8(value, maximum))
+        .transpose()
+}
+
+fn optional_u16(
+    reader: &mut CborReader<'_>,
+    maximum: u16,
+) -> Result<Option<u16>, EventDecodeError> {
+    reader
+        .optional_unsigned(u64::from(maximum))?
+        .map(|value| bounded_u16(value, maximum))
+        .transpose()
+}
+
+fn decode_weather_current_v2(
+    reader: &mut CborReader<'_>,
+) -> Result<WeatherCurrentV2, EventDecodeError> {
+    if reader.array_length()? != 12 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    Ok(WeatherCurrentV2 {
+        temperature_tenths: i32::try_from(reader.signed()?)
+            .map_err(|_| EventDecodeError::WrongType)?,
+        feels_like_tenths: reader.optional_signed_i32()?,
+        condition: WeatherCondition::decode(reader.unsigned()?)?,
+        high_tenths: reader.optional_signed_i32()?,
+        low_tenths: reader.optional_signed_i32()?,
+        precipitation_percent: optional_u8(reader, 100)?,
+        humidity_percent: optional_u8(reader, 100)?,
+        wind_speed_tenths: optional_u16(reader, u16::MAX)?,
+        wind_direction_degrees: optional_u16(reader, 359)?,
+        uv_index_tenths: optional_u16(reader, u16::MAX)?,
+        sunrise_local_minute: optional_u16(reader, 1439)?,
+        sunset_local_minute: optional_u16(reader, 1439)?,
+    })
+}
+
+fn decode_weather_hour_v2(
+    reader: &mut CborReader<'_>,
+) -> Result<WeatherHourV2, EventDecodeError> {
+    if reader.array_length()? != 4 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    Ok(WeatherHourV2 {
+        local_minute: bounded_u16(reader.unsigned()?, 1439)?,
+        temperature_tenths: i32::try_from(reader.signed()?)
+            .map_err(|_| EventDecodeError::WrongType)?,
+        precipitation_percent: optional_u8(reader, 100)?,
+        condition: WeatherCondition::decode(reader.unsigned()?)?,
+    })
+}
+
+fn decode_weather_day_v2(
+    reader: &mut CborReader<'_>,
+) -> Result<WeatherDayV2, EventDecodeError> {
+    if reader.array_length()? != 5 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    Ok(WeatherDayV2 {
+        weekday: bounded_u8(reader.unsigned()?, 6)?,
+        low_tenths: i32::try_from(reader.signed()?)
+            .map_err(|_| EventDecodeError::WrongType)?,
+        high_tenths: i32::try_from(reader.signed()?)
+            .map_err(|_| EventDecodeError::WrongType)?,
+        precipitation_percent: optional_u8(reader, 100)?,
+        condition: WeatherCondition::decode(reader.unsigned()?)?,
     })
 }
 
@@ -801,6 +1215,208 @@ pub enum CommandEncodeError {
     WrongCommandCount,
 }
 
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub enum CanvasEncodeError {
+    Capacity,
+    InvalidState,
+    InvalidValue,
+}
+
+/// Bounded Canvas Display List v1 encoder.
+///
+/// The guest writes logical, renderer-neutral primitives. The host validates
+/// the list again before either Wear Compose or LVGL rasterizes it. Palette
+/// index zero is transparent inside tile maps and remains usable by `clear`
+/// and the other drawing primitives.
+pub struct CanvasDisplayListBuffer<const N: usize> {
+    bytes: [u8; N],
+    length: usize,
+    commands: u8,
+}
+
+impl<const N: usize> CanvasDisplayListBuffer<N> {
+    pub const fn new() -> Self {
+        Self {
+            bytes: [0; N],
+            length: 0,
+            commands: 0,
+        }
+    }
+
+    pub fn begin(&mut self) -> Result<(), CanvasEncodeError> {
+        self.length = 0;
+        self.commands = 0;
+        self.copy(b"v1")
+    }
+
+    pub fn clear(
+        &mut self,
+        palette_index: u8,
+    ) -> Result<(), CanvasEncodeError> {
+        if self.length != 2 || self.commands != 0 {
+            return Err(CanvasEncodeError::InvalidState);
+        }
+        self.opcode(b'C')?;
+        self.palette(palette_index)?;
+        self.commands = 1;
+        Ok(())
+    }
+
+    pub fn rounded_rect(
+        &mut self,
+        palette_index: u8,
+        x: u16,
+        y: u16,
+        width: u16,
+        height: u16,
+        radius: u16,
+    ) -> Result<(), CanvasEncodeError> {
+        self.drawable(b'R')?;
+        self.palette(palette_index)?;
+        for value in [x, y, width, height, radius] {
+            self.comma()?;
+            self.decimal(value)?;
+        }
+        Ok(())
+    }
+
+    pub fn circle(
+        &mut self,
+        palette_index: u8,
+        center_x: u16,
+        center_y: u16,
+        radius: u16,
+    ) -> Result<(), CanvasEncodeError> {
+        self.drawable(b'O')?;
+        self.palette(palette_index)?;
+        for value in [center_x, center_y, radius] {
+            self.comma()?;
+            self.decimal(value)?;
+        }
+        Ok(())
+    }
+
+    pub fn line(
+        &mut self,
+        palette_index: u8,
+        x1: u16,
+        y1: u16,
+        x2: u16,
+        y2: u16,
+        stroke: u16,
+    ) -> Result<(), CanvasEncodeError> {
+        self.drawable(b'L')?;
+        self.palette(palette_index)?;
+        for value in [x1, y1, x2, y2, stroke] {
+            self.comma()?;
+            self.decimal(value)?;
+        }
+        Ok(())
+    }
+
+    pub fn tile_map(
+        &mut self,
+        inset: u16,
+        x: u16,
+        y: u16,
+        cell_width: u16,
+        cell_height: u16,
+        columns: u16,
+        rows: u16,
+        cells: &[u8],
+    ) -> Result<(), CanvasEncodeError> {
+        let expected = usize::from(columns)
+            .checked_mul(usize::from(rows))
+            .ok_or(CanvasEncodeError::InvalidValue)?;
+        if expected == 0
+            || expected > 64
+            || cells.len() != expected
+            || cells.iter().any(|value| *value > 7)
+        {
+            return Err(CanvasEncodeError::InvalidValue);
+        }
+        self.drawable(b'T')?;
+        self.decimal(inset)?;
+        for value in [x, y, cell_width, cell_height, columns, rows] {
+            self.comma()?;
+            self.decimal(value)?;
+        }
+        self.comma()?;
+        for value in cells {
+            self.byte(b'0' + *value)?;
+        }
+        Ok(())
+    }
+
+    pub fn finish(&self) -> Result<&str, CanvasEncodeError> {
+        if self.length > 128 || self.commands == 0 {
+            return Err(CanvasEncodeError::InvalidState);
+        }
+        // SAFETY: this encoder writes ASCII opcodes, separators, decimal
+        // digits, and palette digits only.
+        Ok(unsafe {
+            core::str::from_utf8_unchecked(&self.bytes[..self.length])
+        })
+    }
+
+    fn drawable(&mut self, opcode: u8) -> Result<(), CanvasEncodeError> {
+        if self.commands == 0 || self.commands >= 32 {
+            return Err(CanvasEncodeError::InvalidState);
+        }
+        self.opcode(opcode)?;
+        self.commands += 1;
+        Ok(())
+    }
+
+    fn opcode(&mut self, opcode: u8) -> Result<(), CanvasEncodeError> {
+        self.byte(b'|')?;
+        self.byte(opcode)
+    }
+
+    fn comma(&mut self) -> Result<(), CanvasEncodeError> {
+        self.byte(b',')
+    }
+
+    fn palette(&mut self, value: u8) -> Result<(), CanvasEncodeError> {
+        if value > 7 {
+            return Err(CanvasEncodeError::InvalidValue);
+        }
+        self.byte(b'0' + value)
+    }
+
+    fn decimal(&mut self, value: u16) -> Result<(), CanvasEncodeError> {
+        if value > 192 {
+            return Err(CanvasEncodeError::InvalidValue);
+        }
+        let hundreds = value / 100;
+        let tens = (value / 10) % 10;
+        let ones = value % 10;
+        if hundreds != 0 {
+            self.byte(b'0' + hundreds as u8)?;
+            self.byte(b'0' + tens as u8)?;
+        } else if tens != 0 {
+            self.byte(b'0' + tens as u8)?;
+        }
+        self.byte(b'0' + ones as u8)
+    }
+
+    fn byte(&mut self, value: u8) -> Result<(), CanvasEncodeError> {
+        if self.length >= N || self.length >= 128 {
+            return Err(CanvasEncodeError::Capacity);
+        }
+        self.bytes[self.length] = value;
+        self.length += 1;
+        Ok(())
+    }
+
+    fn copy(&mut self, value: &[u8]) -> Result<(), CanvasEncodeError> {
+        for byte in value {
+            self.byte(*byte)?;
+        }
+        Ok(())
+    }
+}
+
 /// Bounded canonical CommandBatch encoder for guest-owned in-place UI updates.
 ///
 /// Call `begin`, append exactly the declared number of commands, then `finish`.
@@ -845,6 +1461,14 @@ impl<const N: usize> UiCommandBuffer<N> {
         self.set_text_property(target, 0, value)
     }
 
+    pub fn set_canvas_display_list(
+        &mut self,
+        target: &str,
+        value: &str,
+    ) -> Result<(), CommandEncodeError> {
+        self.set_text_property(target, 0, value)
+    }
+
     pub fn set_secondary_text(
         &mut self,
         target: &str,
@@ -867,6 +1491,74 @@ impl<const N: usize> UiCommandBuffer<N> {
         value: i64,
     ) -> Result<(), CommandEncodeError> {
         self.set_integer_property(target, 3, value)
+    }
+
+    pub fn set_chart_samples(
+        &mut self,
+        target: &str,
+        samples: &[u16],
+    ) -> Result<(), CommandEncodeError> {
+        if samples.is_empty() || samples.len() > 13 {
+            return Err(CommandEncodeError::InvalidCount);
+        }
+        self.command_slot()?;
+        self.byte(0xa4)?;
+        self.byte(0x00)?;
+        self.byte(0x00)?;
+        self.byte(0x01)?;
+        self.text(target)?;
+        self.byte(0x02)?;
+        self.byte(0x05)?;
+        self.byte(0x03)?;
+        self.byte(0x80 | samples.len() as u8)?;
+        for sample in samples {
+            self.unsigned_integer(0, *sample as u64)?;
+        }
+        self.written += 1;
+        Ok(())
+    }
+
+    pub fn set_icon(
+        &mut self,
+        target: &str,
+        icon: &str,
+    ) -> Result<(), CommandEncodeError> {
+        self.set_text_property(target, 6, icon)
+    }
+
+    pub fn set_semantic_label(
+        &mut self,
+        target: &str,
+        label: &str,
+    ) -> Result<(), CommandEncodeError> {
+        self.set_text_property(target, 7, label)
+    }
+
+    pub fn set_semantic_value(
+        &mut self,
+        target: &str,
+        value: &str,
+    ) -> Result<(), CommandEncodeError> {
+        self.set_text_property(target, 8, value)
+    }
+
+    pub fn set_checked(
+        &mut self,
+        target: &str,
+        checked: bool,
+    ) -> Result<(), CommandEncodeError> {
+        self.command_slot()?;
+        self.byte(0xa4)?;
+        self.byte(0x00)?;
+        self.byte(0x00)?;
+        self.byte(0x01)?;
+        self.text(target)?;
+        self.byte(0x02)?;
+        self.byte(0x04)?;
+        self.byte(0x03)?;
+        self.byte(if checked { 0xf5 } else { 0xf4 })?;
+        self.written += 1;
+        Ok(())
     }
 
     pub fn set_visible(
@@ -1132,13 +1824,56 @@ mod tests {
         assert_ne!(pack_result(bytes), 0);
 
         let mut numeric = UiCommandBuffer::<128>::new();
-        numeric.begin(2).unwrap();
+        numeric.begin(3).unwrap();
         numeric.set_value("timer.duration", 2).unwrap();
         numeric.set_maximum("timer.duration", 60).unwrap();
+        numeric.set_checked("tasks.milk", true).unwrap();
         let bytes = numeric.finish().unwrap();
         assert!(bytes.windows(4).any(|part| part == [0x02, 0x02, 0x03, 0x02]));
         assert!(bytes.windows(5).any(
             |part| part == [0x02, 0x03, 0x03, 0x18, 0x3c],
+        ));
+        assert!(bytes.windows(4).any(
+            |part| part == [0x02, 0x04, 0x03, 0xf5],
+        ));
+
+        let mut chart = UiCommandBuffer::<128>::new();
+        chart.begin(1).unwrap();
+        chart
+            .set_chart_samples("weather.rain-chart", &[10, 30, 54, 24])
+            .unwrap();
+        let bytes = chart.finish().unwrap();
+        assert!(bytes.windows(8).any(
+            |part| part == [0x02, 0x05, 0x03, 0x84, 0x0a, 0x18, 0x1e, 0x18],
+        ));
+        assert_eq!(
+            chart.set_chart_samples("weather.rain-chart", &[]),
+            Err(CommandEncodeError::InvalidCount),
+        );
+
+        let mut icon = UiCommandBuffer::<256>::new();
+        icon.begin(3).unwrap();
+        icon.set_icon(
+            "weather.condition-icon",
+            "condition_heavy_rain",
+        ).unwrap();
+        icon.set_semantic_label(
+            "weather.condition-icon",
+            "Heavy rain",
+        ).unwrap();
+        icon.set_semantic_value(
+            "weather.summary",
+            "58 degrees",
+        ).unwrap();
+        let bytes = icon.finish().unwrap();
+        assert!(bytes.windows(4).any(
+            |part| part == [0x02, 0x06, 0x03, 0x74],
+        ));
+        assert!(bytes.windows(3).any(
+            |part| part == [0x02, 0x07, 0x03],
+        ));
+        assert!(bytes.windows(3).any(
+            |part| part == [0x02, 0x08, 0x03],
         ));
 
         let mut too_small = UiCommandBuffer::<8>::new();
@@ -1147,6 +1882,30 @@ mod tests {
             too_small.set_primary_text("long.target", "value"),
             Err(CommandEncodeError::Capacity)
         );
+    }
+
+    #[test]
+    fn encodes_renderer_neutral_canvas_display_lists() {
+        let mut canvas = CanvasDisplayListBuffer::<128>::new();
+        canvas.begin().unwrap();
+        canvas.clear(0).unwrap();
+        canvas.rounded_rect(1, 4, 4, 120, 120, 18).unwrap();
+        let mut cells = [0_u8; 64];
+        cells[25] = 2;
+        cells[26] = 3;
+        cells[29] = 4;
+        canvas.tile_map(2, 8, 8, 14, 14, 8, 8, &cells).unwrap();
+        let display_list = canvas.finish().unwrap();
+        assert!(display_list.starts_with("v1|C0|R1"));
+        assert!(display_list.contains("|T2,8,8,14,14,8,8,"));
+        assert!(display_list.len() <= 128);
+
+        let mut commands = UiCommandBuffer::<192>::new();
+        commands.begin(1).unwrap();
+        commands
+            .set_canvas_display_list("snake.game.canvas", display_list)
+            .unwrap();
+        assert_ne!(pack_result(commands.finish().unwrap()), 0);
     }
 
     #[test]
@@ -1190,5 +1949,118 @@ mod tests {
         assert_eq!(timer.remaining_ms, 3_000);
         assert_eq!(timer.deadline_scenario_ms, 4_000);
         assert_eq!(timer.firing_ordinal, 0);
+    }
+
+    #[test]
+    fn decodes_bounded_voice_provider_payloads() {
+        let payload: &[u8] = &[
+            0xa6,
+            0x00, 0x04,
+            0x01, 0x11,
+            0x02, 0x19, 0x1f, 0x40,
+            0x03, 0x19, 0x01, 0x8f,
+            0x04, 0x00,
+            0x05, 0x65, b'h', b'e', b'l', b'l', b'o',
+        ];
+        let voice = decode_voice_provider_payload(payload).unwrap();
+        assert_eq!(voice.state, VoiceProviderState::Transcript);
+        assert_eq!(voice.request_id, 17);
+        assert_eq!(voice.elapsed_ms, 8_000);
+        assert_eq!(voice.encoded_frames, 399);
+        assert_eq!(voice.dropped_frames, 0);
+        assert_eq!(voice.text, "hello");
+
+        let mut trailing = payload.to_vec();
+        trailing.push(0);
+        assert_eq!(
+            decode_voice_provider_payload(&trailing),
+            Err(EventDecodeError::TrailingData),
+        );
+        let mut invalid_state = payload.to_vec();
+        invalid_state[2] = 6;
+        assert_eq!(
+            decode_voice_provider_payload(&invalid_state),
+            Err(EventDecodeError::WrongShape),
+        );
+    }
+
+    #[test]
+    fn decodes_bounded_weather_snapshot_v2_fixtures() {
+        let baseline = include_bytes!(
+            "../../../../reference/weather-fixtures/v2/generated/baseline.cbor"
+        );
+        let weather = decode_weather_provider_payload_v2(baseline).unwrap();
+        assert_eq!(weather.location, "San Francisco");
+        assert_eq!(weather.local_weekday, 6);
+        assert_eq!(weather.local_minute, 609);
+        assert_eq!(weather.current.temperature_tenths, 620);
+        assert_eq!(weather.current.feels_like_tenths, Some(590));
+        assert_eq!(weather.current.condition, WeatherCondition::PartlyCloudyDay);
+        assert_eq!(weather.current.high_tenths, Some(670));
+        assert_eq!(weather.current.low_tenths, Some(540));
+        assert_eq!(weather.current.humidity_percent, Some(49));
+        assert_eq!(weather.hour_count, 7);
+        assert_eq!(weather.hours[3].temperature_tenths, 660);
+        assert_eq!(weather.day_count, 4);
+        assert_eq!(weather.days[2].condition, WeatherCondition::Rain);
+        assert_eq!(weather.minutes_until_rain, None);
+        assert_eq!(weather.units, WeatherUnits::Imperial);
+        assert_eq!(weather.data_revision, 42);
+        assert_eq!(weather.cache_age_minutes, 0);
+
+        let rain = include_bytes!(
+            "../../../../reference/weather-fixtures/v2/generated/rain.cbor"
+        );
+        let weather = decode_weather_provider_payload_v2(rain).unwrap();
+        assert_eq!(weather.current.condition, WeatherCondition::Rain);
+        assert_eq!(weather.minutes_until_rain, Some(20));
+        assert_eq!(weather.rain_duration_minutes, 35);
+        assert_eq!(weather.precipitation[7], 72);
+
+        for fixture in [
+            baseline.as_slice(),
+            rain.as_slice(),
+            include_bytes!(
+                "../../../../reference/weather-fixtures/v2/generated/extreme.cbor"
+            )
+            .as_slice(),
+            include_bytes!(
+                "../../../../reference/weather-fixtures/v2/generated/stale.cbor"
+            )
+            .as_slice(),
+            include_bytes!(
+                "../../../../reference/weather-fixtures/v2/generated/error.cbor"
+            )
+            .as_slice(),
+        ] {
+            assert!(fixture.len() <= 512);
+            assert!(decode_weather_provider_payload_v2(fixture).is_ok());
+        }
+    }
+
+    #[test]
+    fn weather_snapshot_v2_rejects_trailing_and_out_of_range_data() {
+        let baseline = include_bytes!(
+            "../../../../reference/weather-fixtures/v2/generated/baseline.cbor"
+        );
+        let mut trailing = baseline.to_vec();
+        trailing.push(0);
+        assert_eq!(
+            decode_weather_provider_payload_v2(&trailing),
+            Err(EventDecodeError::TrailingData),
+        );
+
+        // Map key 2 is the local weekday. The baseline fixture encodes it as
+        // the canonical pair 0x02, 0x06; changing it to 7 must be rejected.
+        let mut invalid_weekday = baseline.to_vec();
+        let offset = invalid_weekday
+            .windows(2)
+            .position(|pair| pair == [0x02, 0x06])
+            .unwrap();
+        invalid_weekday[offset + 1] = 0x07;
+        assert_eq!(
+            decode_weather_provider_payload_v2(&invalid_weekday),
+            Err(EventDecodeError::WrongShape),
+        );
     }
 }

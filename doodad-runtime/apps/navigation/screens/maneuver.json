@@ -5,71 +5,83 @@
     "id": "navigation.maneuver",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "navigation.maneuver.heading",
+          "id": "navigation.maneuver.context",
           "type": "text",
           "props": {
-            "text": "NEXT TURN",
+            "text": "WALK / 8 MIN",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "navigation.maneuver.summary",
           "type": "text",
           "props": {
-            "text": "Right · 200 ft",
+            "text": "200 FT",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "NEXT TURN",
-            "value": "Right · 200 ft"
+            "label": "Distance to the next turn",
+            "value": "200 feet"
           }
         },
         {
           "id": "navigation.maneuver.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Market St · haptic in 8 sec",
-            "tone": "neutral"
+            "title": "TURN RIGHT / MARKET",
+            "body": "Then 3rd / haptic soon",
+            "progress": 0.35,
+            "tone": "primary"
           }
         },
         {
-          "id": "navigation.maneuver.primary",
-          "type": "button",
+          "id": "navigation.maneuver.actions",
+          "type": "row",
           "props": {
-            "label": "Lose location",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.lose"
-          },
-          "semantics": {
-            "label": "Lose location"
-          }
-        },
-        {
-          "id": "navigation.maneuver.secondary",
-          "type": "button",
-          "props": {
-            "label": "Route overview",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.overview"
-          },
-          "semantics": {
-            "label": "Route overview"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "navigation.maneuver.primary",
+                "type": "button",
+                "props": {
+                  "label": "GPS off",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.lose"
+                },
+                "semantics": {
+                  "label": "Simulate losing GPS"
+                }
+              },
+              {
+                "id": "navigation.maneuver.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Route",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.overview"
+                },
+                "semantics": {
+                  "label": "View route overview"
+                }
+              }
+            ]
           }
         }
       ]

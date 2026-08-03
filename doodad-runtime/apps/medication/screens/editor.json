@@ -5,71 +5,83 @@
     "id": "medication.editor",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "medication.editor.heading",
           "type": "text",
           "props": {
-            "text": "NEW REMINDER",
+            "text": "REMINDER",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "medication.editor.summary",
           "type": "text",
           "props": {
-            "text": "8:00 daily",
+            "text": "8:00",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "NEW REMINDER",
+            "label": "Reminder time",
             "value": "8:00 daily"
           }
         },
         {
           "id": "medication.editor.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Schedule survives app replacement",
-            "tone": "neutral"
+            "title": "DAILY / EVERY DAY",
+            "body": "Private / follow-up on",
+            "progress": 1.0,
+            "tone": "primary"
           }
         },
         {
-          "id": "medication.editor.primary",
-          "type": "button",
+          "id": "medication.editor.actions",
+          "type": "row",
           "props": {
-            "label": "Save",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "medication.save"
-          },
-          "semantics": {
-            "label": "Save"
-          }
-        },
-        {
-          "id": "medication.editor.secondary",
-          "type": "button",
-          "props": {
-            "label": "Cancel",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "medication.cancel"
-          },
-          "semantics": {
-            "label": "Cancel"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "medication.editor.primary",
+                "type": "button",
+                "props": {
+                  "label": "Save",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.save"
+                },
+                "semantics": {
+                  "label": "Save reminder"
+                }
+              },
+              {
+                "id": "medication.editor.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Cancel",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.cancel"
+                },
+                "semantics": {
+                  "label": "Cancel reminder changes"
+                }
+              }
+            ]
           }
         }
       ]

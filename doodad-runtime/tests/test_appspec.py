@@ -33,11 +33,30 @@ class AppSpecTests(unittest.TestCase):
             self.assertLessEqual(len(payload), 4096)
             self.assertEqual(payload[0], 0xA3)
 
+    def test_launch_scenes_do_not_repeat_the_app_name_as_a_heading(self) -> None:
+        suite = json.loads(
+            (ROOT / "apps" / "conformance-suite.json").read_text()
+        )
+        contextual_headings = {
+            "weather.heading",
+            "active_set.heading",
+        }
+        for app in suite["apps"]:
+            document = self.load(app["slug"])
+            first = document["screen"]["props"]["children"][0]
+            heading_id = first["id"] if first["type"] == "text" else ""
+            if heading_id.endswith(".heading"):
+                self.assertIn(
+                    heading_id,
+                    contextual_headings,
+                    f"{app['slug']} repeats launch identity instead of content",
+                )
+
     def test_hello_cbor_wire_fixture_is_stable(self) -> None:
         payload = compile_canonical_cbor(self.load("hello"))
         self.assertEqual(
             hashlib.sha256(payload).hexdigest(),
-            "c1954e5406deeaf400e3b8371e8b9e491a318f3dd9e6b989005360a842fd8276",
+            "2c660b904a29e349517202d0022ca0c28add794fddfc97610eb9b1683d3ca79e",
         )
 
     def test_capability_component_hash_is_reproducible(self) -> None:
@@ -60,9 +79,55 @@ class AppSpecTests(unittest.TestCase):
         with self.assertRaisesRegex(DoodadError, "unsupported semantic props"):
             validate_appspec(document)
 
+    def test_canvas_display_lists_are_bounded_and_renderer_neutral(self) -> None:
+        document = {
+            "schema_version": 1,
+            "app_id": "canvas_test",
+            "screen": {
+                "id": "canvas_test.screen",
+                "type": "screen",
+                "props": {
+                    "children": [
+                        {
+                            "id": "canvas_test.game",
+                            "type": "canvas",
+                            "props": {
+                                "display_list": "v1|C0|R1,4,4,24,24,4",
+                                "palette": "07110d,a8f279",
+                                "width": 32,
+                                "height": 32,
+                            },
+                            "events": {"tap": "canvas_test.advance"},
+                            "semantics": {"label": "Game canvas"},
+                        }
+                    ]
+                },
+            },
+        }
+        validate_appspec(document)
+        self.assertLessEqual(len(compile_canonical_cbor(document)), 4096)
+
+        document["screen"]["props"]["children"][0]["props"][
+            "display_list"
+        ] = "v1|R1,4,4,24,24,4"
+        with self.assertRaisesRegex(DoodadError, "clear"):
+            validate_appspec(document)
+
     def test_interactive_nodes_require_useful_semantics(self) -> None:
         document = self.load("workout")
-        del document["screen"]["props"]["children"][1]["semantics"]
+
+        def first_interactive(node: dict) -> dict:
+            if node.get("events"):
+                return node
+            for child in node.get("props", {}).get("children", []):
+                found = first_interactive(child)
+                if found:
+                    return found
+            return {}
+
+        interactive = first_interactive(document["screen"])
+        self.assertTrue(interactive)
+        del interactive["semantics"]
         with self.assertRaisesRegex(DoodadError, "semantics.label"):
             validate_appspec(document)
 

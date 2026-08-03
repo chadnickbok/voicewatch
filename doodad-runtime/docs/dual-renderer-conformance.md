@@ -5,6 +5,9 @@ Status: initial Compose oracle lane implemented
 Stable oracle: Wear Compose Material 3 `1.6.2`
 Product renderer: LVGL `9.5.0`, RGB565, 240×240 square
 
+The complete implementation roadmap and progress tracker is
+[`Project Parallax`](project-parallax.md).
+
 ## Contract
 
 One renderer-neutral reference scenario supplies deterministic data, UI state,
@@ -38,17 +41,18 @@ authoritative domain state.
 
 | Profile | Purpose | Geometry family |
 |---|---|---|
-| `wear_round_small` | Primary Wear OS 7 oracle | `wear_round` |
+| `watch_square_240` | Primary API 37 runtime and product comparison | `watch_square_240` |
+| `wear_round_small` | Compact circular adaptation oracle | `wear_round` |
 | `wear_round_large` | Adaptive breakpoint oracle | `wear_round` |
-| `watch_square_240` | Product comparison | `watch_square_240` |
 
 The profiles share semantic state, color, typography, shape and motion roles.
 They do not share safe-area calculation, edge geometry, list transformation,
 curved text, arc placement, outer margins or corner behavior.
 
-The round screenshots answer “what did Material intend?” The square Compose
-screenshots expose assumptions and provide a comparison aid. Approved LVGL
-square adaptations remain product geometry truth.
+The exact-geometry square API 37 screenshots are the primary app-screen
+runtime oracle. Round screenshots answer how upstream Material adapts to
+circular Wear displays. Approved square composition decisions remain product
+geometry truth.
 
 ## Evidence levels
 

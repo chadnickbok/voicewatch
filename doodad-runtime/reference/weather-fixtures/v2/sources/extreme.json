@@ -1,0 +1,41 @@
+{
+  "freshness": 0,
+  "location": "Palm Springs",
+  "local_weekday": 2,
+  "local_minute": 870,
+  "current": {
+    "temperature_tenths": 1080,
+    "feels_like_tenths": 1120,
+    "condition": 14,
+    "high_tenths": 1120,
+    "low_tenths": 820,
+    "precipitation_percent": 0,
+    "humidity_percent": 12,
+    "wind_speed_tenths": 60,
+    "wind_direction_degrees": 190,
+    "uv_index_tenths": 110,
+    "sunrise_local_minute": 347,
+    "sunset_local_minute": 1218
+  },
+  "hours": [
+    {"local_minute": 870, "temperature_tenths": 1080, "precipitation_percent": 0, "condition": 14},
+    {"local_minute": 900, "temperature_tenths": 1100, "precipitation_percent": 0, "condition": 14},
+    {"local_minute": 960, "temperature_tenths": 1120, "precipitation_percent": 0, "condition": 14},
+    {"local_minute": 1020, "temperature_tenths": 1100, "precipitation_percent": 0, "condition": 14},
+    {"local_minute": 1080, "temperature_tenths": 1060, "precipitation_percent": 0, "condition": 0},
+    {"local_minute": 1140, "temperature_tenths": 1010, "precipitation_percent": 0, "condition": 0},
+    {"local_minute": 1200, "temperature_tenths": 960, "precipitation_percent": 0, "condition": 0}
+  ],
+  "days": [
+    {"weekday": 2, "low_tenths": 820, "high_tenths": 1120, "precipitation_percent": 0, "condition": 14},
+    {"weekday": 3, "low_tenths": 830, "high_tenths": 1130, "precipitation_percent": 0, "condition": 14},
+    {"weekday": 4, "low_tenths": 810, "high_tenths": 1090, "precipitation_percent": 0, "condition": 14},
+    {"weekday": 5, "low_tenths": 790, "high_tenths": 1050, "precipitation_percent": 0, "condition": 0}
+  ],
+  "precipitation": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  "minutes_until_rain": -1,
+  "rain_duration_minutes": 0,
+  "units": 1,
+  "data_revision": 44,
+  "cache_age_minutes": 0
+}

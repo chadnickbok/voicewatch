@@ -29,9 +29,11 @@ AppSpec storage. Numeric key ordering, minimal integer encoding, definite
 lengths, UTF-8, identifiers, component properties, semantics, parents, depth,
 children, events, and quotas are checked before anything reaches LVGL.
 
-The guest exports `app_start() -> ()`. It has no WASI imports. Native title,
-status, footer, source label, and error screens remain outside guest control.
-Interactive guests also export
+The guest exports `app_start() -> ()`. It has no WASI imports. Native loading
+status and error screens remain outside guest control, but they are transient:
+a successful AppSpec mount replaces the shell chrome and owns the complete
+240×240 app surface. AppSpecs do not receive a synthesized title bar and
+initial scenes do not repeat the launcher/app name. Interactive guests also export
 `handle_event(i32 pointer, i32 length) -> i64`. LVGL callbacks copy semantic
 events into a 16-entry UI-to-runtime queue. The runtime actor serializes each
 event as canonical CBOR, allocates a bounded guest range, invokes the export

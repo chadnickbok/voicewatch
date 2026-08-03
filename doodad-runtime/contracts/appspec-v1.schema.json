@@ -27,7 +27,8 @@
           "enum": [
             "screen", "column", "row", "scroll", "text", "button",
             "card", "progress", "stepper", "toggle", "keypad",
-            "voice_orb", "live_card"
+            "voice_orb", "live_card", "image", "canvas", "icon",
+            "surface", "chart", "pager"
           ]
         },
         "visible": {

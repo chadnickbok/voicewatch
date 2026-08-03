@@ -5,71 +5,83 @@
     "id": "sleep.summary",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "sleep.summary.heading",
+          "id": "sleep.summary.context",
           "type": "text",
           "props": {
-            "text": "GOOD MORNING",
+            "text": "MORNING / HIGH",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "sleep.summary.summary",
           "type": "text",
           "props": {
-            "text": "7h 42m",
+            "text": "7:42",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "GOOD MORNING",
-            "value": "7h 42m"
+            "label": "Completed sleep duration",
+            "value": "7 hours 42 minutes"
           }
         },
         {
           "id": "sleep.summary.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Deep 1h 36 · Restful 82%",
-            "tone": "neutral"
+            "title": "SLEEP SCORE / 82",
+            "body": "Deep 1:36 / Restful night",
+            "progress": 0.82,
+            "tone": "primary"
           }
         },
         {
-          "id": "sleep.summary.primary",
-          "type": "button",
+          "id": "sleep.summary.actions",
+          "type": "row",
           "props": {
-            "label": "View stages",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.stages"
-          },
-          "semantics": {
-            "label": "View stages"
-          }
-        },
-        {
-          "id": "sleep.summary.secondary",
-          "type": "button",
-          "props": {
-            "label": "Start again",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "sleep.again"
-          },
-          "semantics": {
-            "label": "Start again"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "sleep.summary.primary",
+                "type": "button",
+                "props": {
+                  "label": "Stages",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.stages"
+                },
+                "semantics": {
+                  "label": "View sleep stages"
+                }
+              },
+              {
+                "id": "sleep.summary.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Again",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "sleep.again"
+                },
+                "semantics": {
+                  "label": "Start sleep tracking again"
+                }
+              }
+            ]
           }
         }
       ]

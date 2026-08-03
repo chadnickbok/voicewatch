@@ -5,41 +5,52 @@
     "id": "notifications.replied",
     "type": "screen",
     "props": {
-      "gap": "md",
+      "gap": "sm",
       "align": "stretch",
       "children": [
         {
-          "id": "notification.replied.heading",
-          "type": "text",
+          "id": "notification.replied.stack",
+          "type": "scroll",
           "props": {
-            "text": "REPLY SENT",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "notification.replied.message",
-          "type": "card",
-          "props": {
-            "title": "On my way",
-            "body": "Delivered to Maya · exactly once",
-            "tone": "tertiary"
-          }
-        },
-        {
-          "id": "notification.replied.done",
-          "type": "button",
-          "props": {
-            "label": "Done",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "notification.reply.done"
-          },
-          "semantics": {
-            "label": "Return to inbox"
+            "gap": "sm",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "notification.replied.heading",
+                "type": "text",
+                "props": {
+                  "text": "Sent to Maya",
+                  "style": "label",
+                  "max_lines": 1,
+                  "align": "center"
+                }
+              },
+              {
+                "id": "notification.replied.message",
+                "type": "card",
+                "props": {
+                  "title": "Coming",
+                  "body": "Delivered just now.",
+                  "tone": "tertiary"
+                }
+              },
+              {
+                "id": "notification.replied.done",
+                "type": "button",
+                "props": {
+                  "label": "Done",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "notification.reply.done"
+                },
+                "semantics": {
+                  "label": "Return to inbox"
+                }
+              }
+            ]
           }
         }
       ]

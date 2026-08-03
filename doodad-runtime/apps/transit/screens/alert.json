@@ -5,71 +5,83 @@
     "id": "transit.alert",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "transit.alert.heading",
+          "id": "transit.alert.context",
           "type": "text",
           "props": {
-            "text": "SERVICE ALERT",
+            "text": "SERVICE / N LINE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "transit.alert.summary",
           "type": "text",
           "props": {
-            "text": "N delayed 6 min",
+            "text": "6 MIN",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "SERVICE ALERT",
-            "value": "N delayed 6 min"
+            "label": "N line service delay",
+            "value": "6 minute delay"
           }
         },
         {
           "id": "transit.alert.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Track work near Duboce",
-            "tone": "neutral"
+            "title": "DELAY / TRACK WORK",
+            "body": "Near Duboce / add 6 min",
+            "progress": 0.65,
+            "tone": "primary"
           }
         },
         {
-          "id": "transit.alert.primary",
-          "type": "button",
+          "id": "transit.alert.actions",
+          "type": "row",
           "props": {
-            "label": "Departures",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "transit.departures"
-          },
-          "semantics": {
-            "label": "Departures"
-          }
-        },
-        {
-          "id": "transit.alert.secondary",
-          "type": "button",
-          "props": {
-            "label": "Go offline",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "transit.offline"
-          },
-          "semantics": {
-            "label": "Go offline"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "transit.alert.primary",
+                "type": "button",
+                "props": {
+                  "label": "Times",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.departures"
+                },
+                "semantics": {
+                  "label": "Return to departures"
+                }
+              },
+              {
+                "id": "transit.alert.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Offline",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.offline"
+                },
+                "semantics": {
+                  "label": "Use cached departures"
+                }
+              }
+            ]
           }
         }
       ]

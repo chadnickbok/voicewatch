@@ -5,71 +5,83 @@
     "id": "transit.stale",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "transit.stale.heading",
+          "id": "transit.stale.context",
           "type": "text",
           "props": {
-            "text": "CACHED DEPARTURES",
+            "text": "CACHE / 18 MIN",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "transit.stale.summary",
           "type": "text",
           "props": {
-            "text": "N · 2 min",
+            "text": "2 MIN",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "CACHED DEPARTURES",
-            "value": "N · 2 min"
+            "label": "Cached northbound N train",
+            "value": "2 minutes in cached schedule"
           }
         },
         {
           "id": "transit.stale.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "18 minutes old · refreshing…",
-            "tone": "neutral"
+            "title": "CACHE / N TRAIN",
+            "body": "Schedule only / reconnect",
+            "progress": 0.35,
+            "tone": "primary"
           }
         },
         {
-          "id": "transit.stale.primary",
-          "type": "button",
+          "id": "transit.stale.actions",
+          "type": "row",
           "props": {
-            "label": "Reconnect",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "transit.reconnect"
-          },
-          "semantics": {
-            "label": "Reconnect"
-          }
-        },
-        {
-          "id": "transit.stale.secondary",
-          "type": "button",
-          "props": {
-            "label": "Keep cache",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "transit.cache"
-          },
-          "semantics": {
-            "label": "Keep cache"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "transit.stale.primary",
+                "type": "button",
+                "props": {
+                  "label": "Retry",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.reconnect"
+                },
+                "semantics": {
+                  "label": "Reconnect live departures"
+                }
+              },
+              {
+                "id": "transit.stale.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Keep",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "transit.cache"
+                },
+                "semantics": {
+                  "label": "Keep cached departures"
+                }
+              }
+            ]
           }
         }
       ]

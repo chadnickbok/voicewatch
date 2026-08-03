@@ -12,79 +12,88 @@ ROOT = Path(__file__).resolve().parents[1]
 
 FLOWS = {
     "calendar": [
-        ("Open event", "calendar.agenda.summary", "2 events"),
-        ("Travel mode", "calendar.travel.summary", "11:00 PDT"),
-        ("Reconnect", "calendar.confirmed.summary", "Going ✓"),
+        (
+            ("calendar.agenda.review", "calendar.open.detail"),
+            "calendar.detail.event",
+            "2:00 - 2:45",
+        ),
+        ("I'm going", "calendar.confirmed.event", "You're going"),
+        ("Travel view", "calendar.travel.event", "11:00 PDT"),
+        ("Reconnect", "calendar.confirmed.event", "You're going"),
     ],
     "voice-notes": [
-        ("Record note", "voice-notes.recording.summary", "00:18"),
-        ("Lose network", "voice-notes.buffered.summary", "Offline · 00:31"),
-        ("Reconnect", "voice-notes.transcript.summary", "1 note"),
-        ("Save note", "voice-notes.saved.summary", "Saved ✓"),
+        (
+            ("voice-notes.record", "voice-notes.record"),
+            "voice-notes.recording.summary",
+            "00:18",
+        ),
+        ("Finish", "voice-notes.buffered.summary", "00:31"),
+        ("Text", "voice-notes.transcript.summary", "1 NOTE"),
+        ("Save", "voice-notes.saved.summary", "00:31"),
     ],
     "medication": [
-        ("Mark taken", "medication.taken.summary", "Taken · 9:02"),
-        ("Add reminder", "medication.editor.summary", "8:00 daily"),
-        ("Save", "medication.due.summary", "Vitamin D"),
-        ("Snooze 10m", "medication.snoozed.summary", "Due at 9:12"),
+        ("Taken", "medication.taken.summary", "TAKEN"),
+        ("Edit", "medication.editor.summary", "8:00"),
+        ("Save", "medication.due.summary", "VITAMIN D"),
+        ("10 min", "medication.snoozed.summary", "10 MIN"),
     ],
     "sensor-recorder": [
-        ("Start recording", "sensor-recorder.recording.summary", "50 Hz · 1,024"),
-        ("Pause", "sensor-recorder.paused.summary", "20.5 seconds"),
-        ("Export", "sensor-recorder.export.summary", "1,024 samples"),
-        ("Export CSV", "sensor-recorder.exported.summary", "session-001.csv"),
+        ("Record", "sensor-recorder.recording.summary", "00:20"),
+        ("Pause", "sensor-recorder.paused.summary", "00:20"),
+        ("Export", "sensor-recorder.export.summary", "1024"),
+        ("Export", "sensor-recorder.exported.summary", "CSV"),
     ],
     "sleep": [
-        ("Start sleep", "sleep.overnight.summary", "6h 18m"),
-        ("Simulate morning", "sleep.summary.summary", "7h 42m"),
-        ("View stages", "sleep.stages.summary", "▂▅▃▇▆▂▅"),
-        ("History", "sleep.history.summary", "7h 28m avg"),
+        ("Start", "sleep.overnight.summary", "6:18"),
+        ("Morning", "sleep.summary.summary", "7:42"),
+        ("Stages", "sleep.stages.summary", "1:36"),
+        ("History", "sleep.history.summary", "7:28"),
     ],
     "media": [
         ("Play", "media.playing.summary", "Midnight City"),
-        ("Disconnect", "media.offline.summary", "Last at 1:42"),
-        ("Reconnect", "media.reconciled.summary", "Playing · 1:45"),
+        ("Offline", "media.offline.summary", "Last at 1:42"),
+        ("Retry", "media.reconciled.summary", "Playing / 1:45"),
         ("Controls", "media.playing.summary", "Midnight City"),
     ],
     "navigation": [
-        ("Start route", "navigation.maneuver.summary", "Right · 200 ft"),
-        ("Lose location", "navigation.cached.summary", "Continue 0.3 mi"),
-        ("Recover GPS", "navigation.recovered.summary", "Right · 120 ft"),
-        ("Next turn", "navigation.maneuver.summary", "Right · 200 ft"),
+        ("Start", "navigation.maneuver.summary", "200 FT"),
+        ("GPS off", "navigation.cached.summary", "0.3 MI"),
+        ("Recover", "navigation.recovered.summary", "120 FT"),
+        ("Next", "navigation.maneuver.summary", "200 FT"),
     ],
     "transit": [
-        ("Refresh", "transit.departures.summary", "N · 3 min"),
-        ("Go offline", "transit.stale.summary", "N · 2 min"),
-        ("Reconnect", "transit.recovered.summary", "N · 4 min"),
-        ("Alert", "transit.alert.summary", "N delayed 6 min"),
+        ("Times", "transit.departures.summary", "3 MIN"),
+        ("Offline", "transit.stale.summary", "2 MIN"),
+        ("Retry", "transit.recovered.summary", "4 MIN"),
+        ("Alert", "transit.alert.summary", "6 MIN"),
     ],
     "smart-home": [
-        ("Toggle light", "smart-home.light.summary", "Light on · 72%"),
-        ("Fail next command", "smart-home.rollback.summary", "Light restored"),
-        ("Retry", "smart-home.light.summary", "Light on · 72%"),
-        ("Front door", "smart-home.confirm.summary", "Unlock front door?"),
-        ("Confirm unlock", "smart-home.unlocked.summary", "Unlocked ✓"),
+        ("Light", "smart-home.light.summary", "72%"),
+        ("Turn off", "smart-home.rollback.summary", "72%"),
+        ("Retry", "smart-home.light.summary", "72%"),
+        ("Door", "smart-home.confirm.summary", "UNLOCK"),
+        ("Unlock", "smart-home.unlocked.summary", "UNLOCKED"),
     ],
     "sports": [
-        ("Follow game", "sports.live.summary", "SF 3 · LA 2"),
-        ("Replay burst", "sports.burst.summary", "SF 5 · LA 2"),
-        ("End game", "sports.final.summary", "SF 5 · LA 3"),
-        ("Scoring plays", "sports.timeline.summary", "5 runs · 4 plays"),
+        ("Follow", "sports.live.summary", "3:2"),
+        ("Update", "sports.burst.summary", "5:2"),
+        ("End", "sports.final.summary", "5:3"),
+        ("Plays", "sports.timeline.summary", "5 RUNS"),
     ],
     "wallet": [
-        ("Show pass", "wallet.pass.summary", "BOARDING 8:10"),
-        ("Test bad update", "wallet.rejected.summary", "Signature invalid"),
-        ("Review details", "wallet.review.summary", "Issuer mismatch"),
-        ("Reject", "wallet.rejected.summary", "Signature invalid"),
-        ("Use safe pass", "wallet.pass.summary", "BOARDING 8:10"),
+        ("Code", "wallet.qr.context", "SFO / JFK / B12"),
+        ("Test", "wallet.rejected.summary", "SAFE"),
+        ("Safe", "wallet.pass.summary", "8:10"),
+        ("Test", "wallet.rejected.summary", "SAFE"),
+        ("Review", "wallet.review.summary", "MISMATCH"),
     ],
     "remote-control": [
-        ("Trigger", "remote-control.targets.summary", "3 controls"),
-        ("Camera shutter", "remote-control.pending.summary", "Sending #73"),
-        ("Lose link", "remote-control.offline.summary", "No action sent"),
-        ("Reconnect", "remote-control.targets.summary", "3 controls"),
-        ("Camera shutter", "remote-control.pending.summary", "Sending #73"),
-        ("Deliver ack", "remote-control.done.summary", "Captured ✓"),
+        ("Camera", "remote-control.targets.summary", "1.0X"),
+        ("Shutter", "remote-control.pending.summary", "3"),
+        ("Offline", "remote-control.offline.summary", "OFFLINE"),
+        ("Retry", "remote-control.targets.summary", "1.0X"),
+        ("Shutter", "remote-control.pending.summary", "3"),
+        ("Now", "remote-control.done.summary", "CAPTURED"),
     ],
 }
 
@@ -97,8 +106,15 @@ class InteractiveMockFlowTests(unittest.TestCase):
                 native = NativeHost(ROOT)
                 try:
                     native.start_wasm(package.wasm)
-                    for button, node_id, expected in steps:
-                        native.click_button(button)
+                    for action, node_id, expected in steps:
+                        if isinstance(action, tuple):
+                            native.dispatch_semantic_action(
+                                action[0],
+                                action[1],
+                                "tap",
+                            )
+                        else:
+                            native.click_button(action)
                         self.assertEqual(native.node_text(node_id), expected)
                 finally:
                     native.close()

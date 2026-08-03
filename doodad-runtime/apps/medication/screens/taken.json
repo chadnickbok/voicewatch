@@ -5,71 +5,83 @@
     "id": "medication.taken",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "medication.taken.heading",
           "type": "text",
           "props": {
-            "text": "VITAMIN D",
+            "text": "LOGGED / 9:02",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "medication.taken.summary",
           "type": "text",
           "props": {
-            "text": "Taken · 9:02",
+            "text": "TAKEN",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "VITAMIN D",
-            "value": "Taken · 9:02"
+            "label": "Vitamin D status",
+            "value": "Taken at 9:02"
           }
         },
         {
           "id": "medication.taken.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Recorded once · 12 day streak",
-            "tone": "neutral"
+            "title": "VITAMIN D / 1 TABLET",
+            "body": "Today / 12 day streak",
+            "progress": 1.0,
+            "tone": "primary"
           }
         },
         {
-          "id": "medication.taken.primary",
-          "type": "button",
+          "id": "medication.taken.actions",
+          "type": "row",
           "props": {
-            "label": "Add reminder",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "medication.add"
-          },
-          "semantics": {
-            "label": "Add reminder"
-          }
-        },
-        {
-          "id": "medication.taken.secondary",
-          "type": "button",
-          "props": {
-            "label": "Undo",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "medication.undo"
-          },
-          "semantics": {
-            "label": "Undo"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "medication.taken.primary",
+                "type": "button",
+                "props": {
+                  "label": "Edit",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.add"
+                },
+                "semantics": {
+                  "label": "Edit medication reminder"
+                }
+              },
+              {
+                "id": "medication.taken.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Undo",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.undo"
+                },
+                "semantics": {
+                  "label": "Undo medication log"
+                }
+              }
+            ]
           }
         }
       ]

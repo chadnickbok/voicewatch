@@ -1,0 +1,21 @@
+Remote Control resting comparison
+
+SceneSnapshot SHA-256:
+24fbfc8e6e9f7aa996bf90cc373c78c5c83f86b184ae495f1f53b01e06a99667
+
+LVGL RGB565 SHA-256:
+ea9d7bc5e5ece9009b805a0b49c9af25be76f84f6c157003359e23c6b381ce8a
+
+Reference nodes: 7
+Product nodes: 7
+Compared nodes: 7
+Structured mismatches: 0
+Quality findings: 0
+Minimum touch target: 48dp
+
+Changed pixels: 9004 / 57600 (15.6319%)
+MAE: 9.9606
+RMSE: 40.5745
+
+All seven decisive checkpoints have exact shared structure and normalized
+bounds, zero quality findings, and 48dp minimum touch targets.

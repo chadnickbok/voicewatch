@@ -2,60 +2,76 @@
   "schema_version": 1,
   "app_id": "tasks",
   "screen": {
-    "id": "tasks.home",
+    "id": "tasks.today",
     "type": "screen",
     "props": {
-      "gap": "md",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "tasks.heading",
-          "type": "text",
+          "id": "tasks.list",
+          "type": "scroll",
           "props": {
-            "text": "TASKS",
-            "style": "label",
-            "max_lines": 1
-          }
-        },
-        {
-          "id": "tasks.summary",
-          "type": "card",
-          "props": {
-            "title": "Groceries · 2 left",
-            "body": "Milk, coffee · synced locally",
-            "tone": "primary"
-          }
-        },
-        {
-          "id": "tasks.open",
-          "type": "button",
-          "props": {
-            "label": "Open groceries",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "tasks.open"
-          },
-          "semantics": {
-            "label": "Open groceries list"
-          }
-        },
-        {
-          "id": "tasks.voice_add",
-          "type": "button",
-          "props": {
-            "label": "Voice · add bananas",
-            "tone": "tertiary",
-            "variant": "tonal",
-            "size": "default"
-          },
-          "events": {
-            "tap": "tasks.add.bananas"
-          },
-          "semantics": {
-            "label": "Add bananas by voice"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "tasks.list.heading",
+                "type": "text",
+                "props": {
+                  "text": "TODAY  /  2 LEFT",
+                  "style": "label",
+                  "max_lines": 1,
+                  "align": "center"
+                }
+              },
+              {
+                "id": "tasks.milk",
+                "type": "toggle",
+                "props": {
+                  "label": "Milk",
+                  "checked": false,
+                  "tone": "primary"
+                },
+                "events": {
+                  "checkedChanged": "tasks.toggle.milk"
+                },
+                "semantics": {
+                  "label": "Milk, incomplete"
+                }
+              },
+              {
+                "id": "tasks.coffee",
+                "type": "toggle",
+                "props": {
+                  "label": "Coffee",
+                  "checked": false,
+                  "tone": "primary"
+                },
+                "events": {
+                  "checkedChanged": "tasks.toggle.coffee"
+                },
+                "semantics": {
+                  "label": "Coffee, incomplete"
+                }
+              },
+              {
+                "id": "tasks.add",
+                "type": "button",
+                "props": {
+                  "label": "+ Add by voice",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "tasks.add.bananas"
+                },
+                "semantics": {
+                  "label": "Add a task by voice"
+                }
+              }
+            ]
           }
         }
       ]

@@ -1,0 +1,8 @@
+{
+  "job_id": "job_app_build_42",
+  "question_id": "layout",
+  "prompt": "Should the timer use a ring or a horizontal bar?",
+  "answer_schema": {"type": "string", "enum": ["ring", "bar"]},
+  "status": "focused",
+  "created_at": "2026-08-02T19:12:00Z"
+}

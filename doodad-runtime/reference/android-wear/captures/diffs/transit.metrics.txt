@@ -1,0 +1,18 @@
+Transit resting comparison
+
+SceneSnapshot SHA-256:
+d119f671845d75a33d4c9fa3bd9a2254cd72e041ef5996a82e6218ced187bdee
+
+LVGL RGB565 SHA-256:
+3b0e1c680babe375bea79cbe41a09c27167aa153cf8332d80c37ad6eadd1d684
+
+Reference nodes: 7
+Product nodes: 7
+Compared nodes: 7
+Structured mismatches: 0
+Quality findings: 0
+Minimum touch target: 48dp
+
+Changed pixels: 7900 / 57600 (13.7153%)
+MAE: 15.5162
+RMSE: 49.7651

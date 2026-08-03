@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.exercise-switcher",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.exercise-switcher.count",
+          "type": "text",
+          "props": {
+            "text": "3 / 14 SETS",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-switcher.squat",
+          "type": "card",
+          "props": {
+            "title": "BACK SQUAT  /  3 OF 5",
+            "body": "CURRENT",
+            "tone": "neutral"
+          },
+          "events": {
+            "tap": "workout.jump.squat"
+          },
+          "semantics": {
+            "label": "BACK SQUAT  /  3 OF 5"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-switcher.bench",
+          "type": "card",
+          "props": {
+            "title": "BENCH PRESS  /  0 OF 5",
+            "body": "JUMP / HOLD TO FINISH",
+            "tone": "primary"
+          },
+          "events": {
+            "tap": "workout.jump.bench",
+            "longPress": "workout.finish"
+          },
+          "semantics": {
+            "label": "BENCH PRESS  /  0 OF 5"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-switcher.deadlift",
+          "type": "card",
+          "props": {
+            "title": "DEADLIFT  /  0 OF 4",
+            "body": "JUMP HERE",
+            "tone": "neutral"
+          },
+          "events": {
+            "tap": "workout.jump.deadlift"
+          },
+          "semantics": {
+            "label": "DEADLIFT  /  0 OF 4"
+          }
+        }
+      ]
+    }
+  }
+}

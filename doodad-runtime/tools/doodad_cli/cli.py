@@ -22,6 +22,7 @@ from .contract import (
     resolve_app,
 )
 from .native import NativeHost
+from .parallax_pipeline import run_perfect_render_suite
 from .server import PreviewState, start_server
 from .ui import render_ui, validate_ui
 
@@ -115,6 +116,33 @@ def parser() -> argparse.ArgumentParser:
     )
     conformance_parser.add_argument("file", type=Path)
     conformance_parser.add_argument("--trace", action="store_true")
+    perfect_render_parser = subcommands.add_parser(
+        "perfect-render",
+        help=(
+            "render shared accepted scenes through Wear Compose and LVGL, "
+            "then build a comparison report"
+        ),
+    )
+    perfect_render_parser.add_argument(
+        "app",
+        nargs="?",
+        help="optional app slug from the selected suite",
+    )
+    perfect_render_parser.add_argument(
+        "--suite",
+        choices=("all-20",),
+        default="all-20",
+    )
+    perfect_render_parser.add_argument(
+        "--profile",
+        choices=("watch_square_240",),
+        default="watch_square_240",
+    )
+    perfect_render_parser.add_argument(
+        "--output",
+        type=Path,
+        default=Path("target/parallax/perfect-render-20"),
+    )
     return result
 
 
@@ -205,6 +233,26 @@ def main(arguments: list[str] | None = None) -> int:
                 f"steps: {result.steps_executed}; "
                 f"scenario time: {result.state['clock']['scenario_ms']}ms; "
                 f"boots: {result.state['clock']['boot_generation']}"
+            )
+            return 0
+        if options.command == "perfect-render":
+            suite_path = root / "reference" / "perfect-render-suite.json"
+            run = run_perfect_render_suite(
+                root,
+                suite_path,
+                options.output.resolve(),
+                app_slug=options.app,
+            )
+            report = read_json(run.report.json)
+            summary = report["summary"]
+            print(
+                "perfect render passed: "
+                f"{summary['case_count']} aligned case(s)\n"
+                f"quality issues: {summary['quality_issue_count']}; "
+                f"structured/pixel differences: "
+                f"{summary['different_count']}\n"
+                f"contact sheet: {run.contact_sheet}\n"
+                f"report: {run.report.html}"
             )
             return 0
         app = resolve_app(root, options.app)

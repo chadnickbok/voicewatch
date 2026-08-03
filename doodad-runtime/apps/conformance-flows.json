@@ -1,130 +1,632 @@
 {
-  "schema": 1,
+  "schema": 2,
+  "action_identity": "node_action_event",
   "flows": {
     "timer": [
-      {"kind": "click", "value": "Start"},
-      {"kind": "advance", "value": 60000},
-      {"kind": "click", "value": "Dismiss"}
+      {
+        "kind": "semantic",
+        "node_id": "timer.primary",
+        "action_id": "timer.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "advance",
+        "value": 60000
+      },
+      {
+        "kind": "semantic",
+        "node_id": "timer.primary",
+        "action_id": "timer.primary",
+        "event_kind": "tap"
+      }
     ],
     "weather": [
-      {"kind": "click", "value": "Refresh"},
-      {"kind": "deliver"},
-      {"kind": "click", "value": "Refresh"},
-      {"kind": "deliver"},
-      {"kind": "click", "value": "Refresh"},
-      {"kind": "deliver"}
+      {
+        "kind": "deliver"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "weather.primary",
+        "action_id": "weather.hourly",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "weather.daily-action",
+        "action_id": "weather.daily",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "weather.details-action",
+        "action_id": "weather.details",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "weather.rain-preview-action",
+        "action_id": "weather.rain-preview",
+        "event_kind": "tap"
+      }
     ],
     "notifications": [
-      {"kind": "click", "value": "Maya · Dinner at 7?"},
-      {"kind": "click", "value": "Quick reply"},
-      {"kind": "click", "value": "On my way"},
-      {"kind": "click", "value": "Done"},
-      {"kind": "click", "value": "Clear all"}
+      {
+        "kind": "semantic",
+        "node_id": "notifications.maya",
+        "action_id": "notification.open.maya",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "notification.detail.reply",
+        "action_id": "notification.reply",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "notification.reply.one",
+        "action_id": "notification.reply.on_my_way",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "notification.replied.done",
+        "action_id": "notification.reply.done",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "notifications.clear",
+        "action_id": "notification.clear",
+        "event_kind": "tap"
+      }
     ],
     "tasks": [
-      {"kind": "click", "value": "Open groceries"},
-      {"kind": "click", "value": "+ Bananas"},
-      {"kind": "click", "value": "○  Bananas"},
-      {"kind": "click", "value": "Back"}
+      {
+        "kind": "semantic",
+        "node_id": "tasks.add",
+        "action_id": "tasks.add.bananas",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "tasks.bananas",
+        "action_id": "tasks.toggle.bananas",
+        "event_kind": "checked_changed"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "tasks.milk",
+        "action_id": "tasks.toggle.milk",
+        "event_kind": "checked_changed"
+      }
     ],
     "calculator": [
-      {"kind": "click", "value": "7"},
-      {"kind": "click", "value": "*"},
-      {"kind": "click", "value": "8"},
-      {"kind": "click", "value": "="}
+      {
+        "kind": "semantic",
+        "node_id": "calculator.keys",
+        "action_id": "key_pressed",
+        "event_kind": "tap",
+        "typed_value": "7"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calculator.keys",
+        "action_id": "key_pressed",
+        "event_kind": "tap",
+        "typed_value": "*"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calculator.keys",
+        "action_id": "key_pressed",
+        "event_kind": "tap",
+        "typed_value": "8"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calculator.keys",
+        "action_id": "key_pressed",
+        "event_kind": "tap",
+        "typed_value": "="
+      }
     ],
     "calendar": [
-      {"kind": "click", "value": "Open event"},
-      {"kind": "click", "value": "Travel mode"},
-      {"kind": "click", "value": "Reconnect"}
+      {
+        "kind": "semantic",
+        "node_id": "calendar.agenda.review",
+        "action_id": "calendar.open.detail",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calendar.detail.rsvp",
+        "action_id": "calendar.rsvp.yes",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calendar.confirmed.travel",
+        "action_id": "calendar.travel",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calendar.travel.reconnect",
+        "action_id": "calendar.reconnect",
+        "event_kind": "tap"
+      }
     ],
     "workout": [
-      {"kind": "click", "value": "+"},
-      {"kind": "click", "value": "+"},
-      {"kind": "click", "value": "Complete set"},
-      {"kind": "click", "value": "Finish rest"},
-      {"kind": "click", "value": "Complete next set"}
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.today.start",
+        "action_id": "workout.start",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.session.squat",
+        "action_id": "workout.choose.exercise",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.exercise-picker.back-squat",
+        "action_id": "workout.exercise.back-squat",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.session.begin",
+        "action_id": "workout.begin",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.active-set.target",
+        "action_id": "workout.edit.weight",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.weight-editor.value",
+        "action_id": "workout.weight",
+        "event_kind": "value_committed",
+        "typed_value": 145
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.weight-editor.done",
+        "action_id": "workout.weight.done",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.active-set.complete",
+        "action_id": "workout.complete",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.set-result.reps",
+        "action_id": "workout.reps",
+        "event_kind": "value_committed",
+        "typed_value": 3
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.set-result.rpe-8",
+        "action_id": "workout.rpe.8",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.set-result.save",
+        "action_id": "workout.save",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.missed-set.next",
+        "action_id": "workout.missed.next",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.rest.next",
+        "action_id": "workout.plates",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.plate-loading.ready",
+        "action_id": "workout.plates.ready",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.active-set.complete",
+        "action_id": "workout.switch.preview",
+        "event_kind": "long_press"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.exercise-switcher.bench",
+        "action_id": "workout.finish",
+        "event_kind": "long_press"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.summary.done",
+        "action_id": "workout.summary.done",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.today.start",
+        "action_id": "workout.resume.preview",
+        "event_kind": "long_press"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "powerlifting.resume.action",
+        "action_id": "workout.resume",
+        "event_kind": "tap"
+      }
     ],
     "calories": [
-      {"kind": "click", "value": "Quick add"},
-      {"kind": "click", "value": "+"},
-      {"kind": "click", "value": "Add calories"},
-      {"kind": "click", "value": "Quick add"},
-      {"kind": "click", "value": "Voice input"},
-      {"kind": "click", "value": "Confirm record"}
+      {
+        "kind": "semantic",
+        "node_id": "today.quick_add",
+        "action_id": "open_quick_add",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calories.quick.amount",
+        "action_id": "calories.amount.changed",
+        "event_kind": "value_committed",
+        "typed_value": 150
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calories.quick.add",
+        "action_id": "calories.add",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "today.quick_add",
+        "action_id": "open_quick_add",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calories.quick.voice",
+        "action_id": "calories.voice",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "calories.review.confirm",
+        "action_id": "calories.confirm.voice",
+        "event_kind": "tap"
+      }
     ],
     "voice-notes": [
-      {"kind": "click", "value": "Record note"},
-      {"kind": "click", "value": "Lose network"},
-      {"kind": "click", "value": "Reconnect"},
-      {"kind": "click", "value": "Save note"}
+      {
+        "kind": "semantic",
+        "node_id": "voice-notes.record",
+        "action_id": "voice-notes.record",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "voice-notes.recording.finish",
+        "action_id": "voice-notes.finish-capture",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "voice-notes.buffered.transcribe",
+        "action_id": "voice-notes.transcribe",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "voice-notes.transcript.save",
+        "action_id": "voice-notes.save",
+        "event_kind": "tap"
+      }
     ],
     "medication": [
-      {"kind": "click", "value": "Mark taken"},
-      {"kind": "click", "value": "Add reminder"},
-      {"kind": "click", "value": "Save"},
-      {"kind": "click", "value": "Snooze 10m"}
+      {
+        "kind": "semantic",
+        "node_id": "medication.primary",
+        "action_id": "medication.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "medication.taken.primary",
+        "action_id": "medication.add",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "medication.editor.primary",
+        "action_id": "medication.save",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "medication.due.secondary",
+        "action_id": "medication.snooze",
+        "event_kind": "tap"
+      }
     ],
     "sensor-recorder": [
-      {"kind": "click", "value": "Start recording"},
-      {"kind": "click", "value": "Pause"},
-      {"kind": "click", "value": "Export"},
-      {"kind": "click", "value": "Export CSV"}
+      {
+        "kind": "semantic",
+        "node_id": "sensor-recorder.primary",
+        "action_id": "sensor-recorder.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sensor-recorder.recording.primary",
+        "action_id": "sensor.pause",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sensor-recorder.paused.secondary",
+        "action_id": "sensor.export",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sensor-recorder.export.primary",
+        "action_id": "sensor.export.csv",
+        "event_kind": "tap"
+      }
     ],
     "sleep": [
-      {"kind": "click", "value": "Start sleep"},
-      {"kind": "click", "value": "Simulate morning"},
-      {"kind": "click", "value": "View stages"},
-      {"kind": "click", "value": "History"}
+      {
+        "kind": "semantic",
+        "node_id": "sleep.primary",
+        "action_id": "sleep.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sleep.overnight.primary",
+        "action_id": "sleep.morning",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sleep.summary.primary",
+        "action_id": "sleep.stages",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sleep.stages.primary",
+        "action_id": "sleep.history",
+        "event_kind": "tap"
+      }
     ],
     "media": [
-      {"kind": "click", "value": "Play"},
-      {"kind": "click", "value": "Disconnect"},
-      {"kind": "click", "value": "Reconnect"}
+      {
+        "kind": "semantic",
+        "node_id": "media.primary",
+        "action_id": "media.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "media.playing.secondary",
+        "action_id": "media.disconnect",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "media.offline.primary",
+        "action_id": "media.reconnect",
+        "event_kind": "tap"
+      }
     ],
     "navigation": [
-      {"kind": "click", "value": "Start route"},
-      {"kind": "click", "value": "Lose location"},
-      {"kind": "click", "value": "Recover GPS"}
+      {
+        "kind": "semantic",
+        "node_id": "navigation.primary",
+        "action_id": "navigation.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "navigation.maneuver.primary",
+        "action_id": "navigation.lose",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "navigation.cached.primary",
+        "action_id": "navigation.recover",
+        "event_kind": "tap"
+      }
     ],
     "transit": [
-      {"kind": "click", "value": "Refresh"},
-      {"kind": "click", "value": "Go offline"},
-      {"kind": "click", "value": "Reconnect"},
-      {"kind": "click", "value": "Alert"}
+      {
+        "kind": "semantic",
+        "node_id": "transit.primary",
+        "action_id": "transit.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "transit.departures.primary",
+        "action_id": "transit.offline",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "transit.stale.primary",
+        "action_id": "transit.reconnect",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "transit.recovered.primary",
+        "action_id": "transit.alert",
+        "event_kind": "tap"
+      }
     ],
     "smart-home": [
-      {"kind": "click", "value": "Toggle light"},
-      {"kind": "click", "value": "Fail next command"},
-      {"kind": "click", "value": "Retry"},
-      {"kind": "click", "value": "Front door"},
-      {"kind": "click", "value": "Confirm unlock"}
+      {
+        "kind": "semantic",
+        "node_id": "smart-home.primary",
+        "action_id": "smart-home.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "smart-home.light.primary",
+        "action_id": "home.fail",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "smart-home.rollback.primary",
+        "action_id": "home.retry",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "smart-home.light.secondary",
+        "action_id": "home.lock",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "smart-home.confirm.primary",
+        "action_id": "home.confirm",
+        "event_kind": "tap"
+      }
     ],
     "sports": [
-      {"kind": "click", "value": "Follow game"},
-      {"kind": "click", "value": "Replay burst"},
-      {"kind": "click", "value": "End game"},
-      {"kind": "click", "value": "Scoring plays"}
+      {
+        "kind": "semantic",
+        "node_id": "sports.primary",
+        "action_id": "sports.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sports.live.primary",
+        "action_id": "sports.burst",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sports.burst.primary",
+        "action_id": "sports.end",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "sports.final.primary",
+        "action_id": "sports.plays",
+        "event_kind": "tap"
+      }
     ],
     "wallet": [
-      {"kind": "click", "value": "Show pass"},
-      {"kind": "click", "value": "Test bad update"},
-      {"kind": "click", "value": "Review details"},
-      {"kind": "click", "value": "Reject"},
-      {"kind": "click", "value": "Use safe pass"}
+      {
+        "kind": "semantic",
+        "node_id": "wallet.home.qr",
+        "action_id": "wallet.qr",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "wallet.qr.secondary",
+        "action_id": "wallet.bad",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "wallet.rejected.primary",
+        "action_id": "wallet.safe",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "wallet.pass.secondary",
+        "action_id": "wallet.bad",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "wallet.rejected.secondary",
+        "action_id": "wallet.review",
+        "event_kind": "tap"
+      }
     ],
     "remote-control": [
-      {"kind": "click", "value": "Trigger"},
-      {"kind": "click", "value": "Camera shutter"},
-      {"kind": "click", "value": "Lose link"},
-      {"kind": "click", "value": "Reconnect"},
-      {"kind": "click", "value": "Camera shutter"},
-      {"kind": "click", "value": "Deliver ack"}
+      {
+        "kind": "semantic",
+        "node_id": "remote-control.primary",
+        "action_id": "remote-control.primary",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "remote-control.targets.primary",
+        "action_id": "remote.camera",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "remote-control.pending.secondary",
+        "action_id": "remote.disconnect",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "remote-control.offline.primary",
+        "action_id": "remote.reconnect",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "remote-control.targets.primary",
+        "action_id": "remote.camera",
+        "event_kind": "tap"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "remote-control.pending.primary",
+        "action_id": "remote.ack",
+        "event_kind": "tap"
+      }
     ],
     "snake": [
-      {"kind": "click", "value": "Play Snake"},
-      {"kind": "click", "value": "Go"},
-      {"kind": "click", "value": "Go"}
+      {
+        "kind": "semantic",
+        "node_id": "snake.game.controls",
+        "action_id": "snake.control",
+        "event_kind": "tap",
+        "typed_value": "GO"
+      },
+      {
+        "kind": "semantic",
+        "node_id": "snake.game.controls",
+        "action_id": "snake.control",
+        "event_kind": "tap",
+        "typed_value": "GO"
+      }
     ]
   }
 }

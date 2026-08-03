@@ -1,0 +1,10 @@
+{
+  "event_id": "evt_app_build_42_complete",
+  "job_id": "job_app_build_42",
+  "sequence": 6,
+  "kind": "completed",
+  "created_at": "2026-08-02T19:13:00Z",
+  "summary": "Your rest-timer design is ready.",
+  "payload": {"layout": "ring"},
+  "producer": "fake-builder"
+}

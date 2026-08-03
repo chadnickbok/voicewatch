@@ -1,0 +1,103 @@
+menu "Doodad networking"
+
+config DOODAD_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+    help
+        Shared native Wi-Fi credentials. These remain outside Wasm guest
+        memory. The legacy weather-specific values are used as a fallback.
+
+config DOODAD_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+
+endmenu
+
+menu "Doodad voice uplink"
+
+config DOODAD_VOICE_UPLINK
+    bool "Enable the WebRTC microphone uplink"
+    default n
+    help
+        Connects to a local doodad-voice signaling service over WebSocket and
+        sends 8 kHz mono G.711 mu-law audio through an Espressif PeerConnection.
+
+if DOODAD_VOICE_UPLINK
+
+config DOODAD_VOICE_SIGNALING_URL
+    string "Static signaling WebSocket URL (optional)"
+    default ""
+    help
+        Diagnostic override such as ws://192.168.1.10:8765/ws. When empty,
+        firmware discovers _doodad-voice._tcp over mDNS.
+
+config DOODAD_VOICE_SIGNALING_PORT
+    int "Fallback signaling port"
+    range 1 65535
+    default 8765
+
+config DOODAD_VOICE_AUTOCONNECT
+    bool "Connect the voice transport at boot"
+    default y
+    help
+        Useful for the unattended Echo Bridge hardware test. Capture still
+        requires an explicit app or server command.
+
+endif
+
+endmenu
+
+menu "Doodad Weather provider"
+
+config DOODAD_WEATHER_NETWORK_PROVIDER
+    bool "Enable the host-owned Open-Meteo provider"
+    default n
+    help
+        Keeps networking outside Wasm and asynchronously normalizes one
+        Open-Meteo forecast into weather.snapshot.v2. Disabled conformance
+        builds continue to use deterministic fixtures.
+
+if DOODAD_WEATHER_NETWORK_PROVIDER
+
+config DOODAD_WEATHER_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+
+config DOODAD_WEATHER_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+
+config DOODAD_WEATHER_LOCATION_NAME
+    string "Display location"
+    default "San Francisco"
+
+config DOODAD_WEATHER_LATITUDE
+    string "Latitude"
+    default "37.774900"
+
+config DOODAD_WEATHER_LONGITUDE
+    string "Longitude"
+    default "-122.419400"
+
+config DOODAD_WEATHER_TIMEZONE
+    string "Open-Meteo timezone"
+    default "auto"
+    help
+        Use "auto" to resolve local forecast timestamps from the configured
+        coordinates, or provide an IANA timezone such as America/Los_Angeles.
+
+choice DOODAD_WEATHER_UNITS
+    prompt "Weather units"
+    default DOODAD_WEATHER_UNITS_IMPERIAL
+
+config DOODAD_WEATHER_UNITS_METRIC
+    bool "Metric"
+
+config DOODAD_WEATHER_UNITS_IMPERIAL
+    bool "Imperial"
+
+endchoice
+
+endif
+
+endmenu

@@ -1,0 +1,18 @@
+Smart Home resting comparison
+
+SceneSnapshot SHA-256:
+db6958f2834d872b998aea93a51ad33078d058a4ccbfa4b0b160bc0f18259270
+
+LVGL RGB565 SHA-256:
+f8f25f699686fc7b95cd362d0a66cb2235fe9e31296b804c34982f09591116f8
+
+Reference nodes: 7
+Product nodes: 7
+Compared nodes: 7
+Structured mismatches: 0
+Quality findings: 0
+Minimum touch target: 48dp
+
+Changed pixels: 7885 / 57600 (13.6892%)
+MAE: 15.3346
+RMSE: 49.0817

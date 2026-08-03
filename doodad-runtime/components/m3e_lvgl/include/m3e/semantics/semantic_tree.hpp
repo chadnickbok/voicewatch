@@ -18,6 +18,9 @@ enum class SemanticRole : std::uint8_t {
     list_item,
     dialog,
     timer,
+    image,
+    canvas,
+    group,
 };
 
 enum SemanticState : std::uint16_t {

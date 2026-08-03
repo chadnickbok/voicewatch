@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "doodad://schemas/nutrition-action-v1",
+  "title": "Nutrition agent action payloads v1",
+  "$defs": {
+    "log_food": {
+      "type": "object", "additionalProperties": false,
+      "required": ["description", "quantity", "idempotency_key"],
+      "properties": {
+        "description": {"type": "string", "minLength": 1, "maxLength": 160},
+        "quantity": {"type": "number", "exclusiveMinimum": 0},
+        "unit": {"type": "string", "default": "serving"},
+        "idempotency_key": {"type": "string", "minLength": 8, "maxLength": 128}
+      }
+    }
+  }
+}

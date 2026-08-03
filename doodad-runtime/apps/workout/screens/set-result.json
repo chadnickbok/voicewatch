@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.set-result",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.set-result.summary",
+          "type": "card",
+          "props": {
+            "title": "SET 3  /  140 KG",
+            "body": "RECORD ACTUAL RESULT",
+            "tone": "primary"
+          }
+        },
+        {
+          "id": "powerlifting.set-result.reps",
+          "type": "stepper",
+          "props": {
+            "label": "Reps",
+            "value": 5,
+            "unit": "REPS",
+            "minimum": 0,
+            "maximum": 20,
+            "step": 1
+          },
+          "events": {
+            "valueCommitted": "workout.reps"
+          },
+          "semantics": {
+            "label": "Reps",
+            "value": "5 REPS"
+          }
+        },
+        {
+          "id": "powerlifting.set-result.rpe",
+          "type": "row",
+          "props": {
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "powerlifting.set-result.rpe-7",
+                "type": "button",
+                "props": {
+                  "label": "7",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.rpe.7"
+                },
+                "semantics": {
+                  "label": "7"
+                }
+              },
+              {
+                "id": "powerlifting.set-result.rpe-8",
+                "type": "button",
+                "props": {
+                  "label": "8",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.rpe.8"
+                },
+                "semantics": {
+                  "label": "8"
+                }
+              },
+              {
+                "id": "powerlifting.set-result.rpe-9",
+                "type": "button",
+                "props": {
+                  "label": "9",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.rpe.9"
+                },
+                "semantics": {
+                  "label": "9"
+                }
+              },
+              {
+                "id": "powerlifting.set-result.rpe-10",
+                "type": "button",
+                "props": {
+                  "label": "10",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "compact"
+                },
+                "events": {
+                  "tap": "workout.rpe.10"
+                },
+                "semantics": {
+                  "label": "10"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "id": "powerlifting.set-result.save",
+          "type": "button",
+          "props": {
+            "label": "SAVE SET",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.save"
+          },
+          "semantics": {
+            "label": "SAVE SET"
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstddef>
+#include <cstdint>
 
 namespace m3e::appspec {
 struct CommandBatch;
@@ -20,4 +21,11 @@ void display_show_catalog(int story);
 void display_show_system_home();
 bool display_publish_surfaces(
     const m3e::os::DomainSurfaceSnapshot& snapshot);
+bool display_publish_agent_state(
+    std::uint8_t voice_phase,
+    std::uint8_t running_count,
+    bool focused_question,
+    bool review_ready,
+    bool completion_pending,
+    std::uint8_t install_state);
 void display_update();

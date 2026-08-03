@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.plate-loading",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.plate-loading.total",
+          "type": "text",
+          "props": {
+            "text": "142.5 KG",
+            "style": "numeral",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.plate-loading.side",
+          "type": "text",
+          "props": {
+            "text": "61.25 PER SIDE",
+            "style": "caption",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.plate-loading.diagram",
+          "type": "card",
+          "props": {
+            "title": "20  20  10  10  1.25",
+            "body": "EACH SIDE / 20 KG BAR",
+            "tone": "primary"
+          }
+        },
+        {
+          "id": "powerlifting.plate-loading.ready",
+          "type": "button",
+          "props": {
+            "label": "READY",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.plates.ready"
+          },
+          "semantics": {
+            "label": "READY"
+          }
+        }
+      ]
+    }
+  }
+}

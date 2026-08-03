@@ -1,0 +1,15 @@
+{
+  "freshness": 1,
+  "location": "San Francisco",
+  "local_weekday": 6,
+  "local_minute": 644,
+  "current": {"temperature_tenths": 620, "feels_like_tenths": 590, "condition": 2, "high_tenths": 670, "low_tenths": 540, "precipitation_percent": 0, "humidity_percent": 49, "wind_speed_tenths": 80, "wind_direction_degrees": 270, "uv_index_tenths": 30, "sunrise_local_minute": 372, "sunset_local_minute": 1205},
+  "hours": [{"local_minute": 644, "temperature_tenths": 620, "precipitation_percent": 0, "condition": 2}],
+  "days": [{"weekday": 6, "low_tenths": 540, "high_tenths": 670, "precipitation_percent": 0, "condition": 2}],
+  "precipitation": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  "minutes_until_rain": -1,
+  "rain_duration_minutes": 0,
+  "units": 1,
+  "data_revision": 42,
+  "cache_age_minutes": 35
+}

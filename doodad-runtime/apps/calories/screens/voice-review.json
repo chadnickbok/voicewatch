@@ -5,16 +5,17 @@
     "id": "calories.voice-review",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "calories.review.heading",
           "type": "text",
           "props": {
-            "text": "VOICE REVIEW",
+            "text": "VOICE RESULT",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
@@ -31,41 +32,51 @@
           "id": "calories.review.detail",
           "type": "card",
           "props": {
-            "title": "Lunch",
-            "body": "45g protein · structured locally",
+            "title": "LUNCH  /  45G PROTEIN",
+            "body": "Chicken bowl  /  ready to save",
             "tone": "neutral"
           }
         },
         {
-          "id": "calories.review.confirm",
-          "type": "button",
+          "id": "calories.review.actions",
+          "type": "row",
           "props": {
-            "label": "Confirm record",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calories.confirm.voice"
-          },
-          "semantics": {
-            "label": "Confirm voice nutrition record"
-          }
-        },
-        {
-          "id": "calories.review.correct",
-          "type": "button",
-          "props": {
-            "label": "Correct amount",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "calories.correct"
-          },
-          "semantics": {
-            "label": "Correct voice nutrition record"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "calories.review.confirm",
+                "type": "button",
+                "props": {
+                  "label": "Save",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "calories.confirm.voice"
+                },
+                "semantics": {
+                  "label": "Confirm voice nutrition record"
+                }
+              },
+              {
+                "id": "calories.review.correct",
+                "type": "button",
+                "props": {
+                  "label": "Edit",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "calories.correct"
+                },
+                "semantics": {
+                  "label": "Correct voice nutrition record"
+                }
+              }
+            ]
           }
         }
       ]

@@ -5,71 +5,102 @@
     "id": "media.paused",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "media.paused.heading",
-          "type": "text",
+          "id": "media.paused.artwork",
+          "type": "image",
           "props": {
-            "text": "PAUSED",
-            "style": "label",
-            "max_lines": 1
+            "asset": "2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028",
+            "fit": "cover"
+          },
+          "semantics": {
+            "label": "Synthwave city album artwork"
           }
         },
         {
           "id": "media.paused.summary",
           "type": "text",
           "props": {
-            "text": "1:42",
-            "style": "numeral",
+            "text": "Paused / 1:42",
+            "style": "title",
             "max_lines": 2,
-            "align": "center"
+            "align": "start"
           },
           "semantics": {
-            "label": "PAUSED",
-            "value": "1:42"
+            "label": "Paused",
+            "value": "1 minute 42 seconds"
           }
         },
         {
           "id": "media.paused.detail",
-          "type": "card",
+          "type": "text",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Optimistic command acknowledged #41",
-            "tone": "neutral"
+            "text": "M83 / Midnight City",
+            "style": "caption",
+            "max_lines": 2,
+            "align": "start"
           }
         },
         {
-          "id": "media.paused.primary",
-          "type": "button",
+          "id": "media.paused.progress",
+          "type": "progress",
           "props": {
-            "label": "Play",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "media.play"
+            "label": "Track progress",
+            "value": 102,
+            "maximum": 243,
+            "style": "linear",
+            "tone": "primary"
           },
           "semantics": {
-            "label": "Play"
+            "label": "Track progress",
+            "value": "Paused at 1 minute 42 seconds"
           }
         },
         {
-          "id": "media.paused.secondary",
-          "type": "button",
+          "id": "media.paused.actions",
+          "type": "row",
           "props": {
-            "label": "Disconnect",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "media.disconnect"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "media.paused.primary",
+                "type": "button",
+                "props": {
+                  "label": "Play",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.play"
+                },
+                "semantics": {
+                  "label": "Resume Midnight City"
+                }
+              },
+              {
+                "id": "media.paused.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Offline",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.disconnect"
+                },
+                "semantics": {
+                  "label": "Simulate phone disconnect"
+                }
+              }
+            ]
           },
           "semantics": {
-            "label": "Disconnect"
+            "label": "Playback actions"
           }
         }
       ]

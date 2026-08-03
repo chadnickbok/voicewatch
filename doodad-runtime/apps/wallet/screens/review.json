@@ -5,71 +5,83 @@
     "id": "wallet.review",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "wallet.review.heading",
+          "id": "wallet.review.context",
           "type": "text",
           "props": {
-            "text": "UPDATE REVIEW",
+            "text": "ISSUER / REVIEW",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "wallet.review.summary",
           "type": "text",
           "props": {
-            "text": "Issuer mismatch",
+            "text": "MISMATCH",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "UPDATE REVIEW",
-            "value": "Issuer mismatch"
+            "label": "Issuer mismatch",
+            "value": "Untrusted update"
           }
         },
         {
           "id": "wallet.review.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Mock Air ≠ signed Doodad Air",
-            "tone": "neutral"
+            "title": "ISSUER / MISMATCH",
+            "body": "Mock Air / Doodad Air",
+            "progress": 0.5,
+            "tone": "error"
           }
         },
         {
-          "id": "wallet.review.primary",
-          "type": "button",
+          "id": "wallet.review.actions",
+          "type": "row",
           "props": {
-            "label": "Reject",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "wallet.reject"
-          },
-          "semantics": {
-            "label": "Reject"
-          }
-        },
-        {
-          "id": "wallet.review.secondary",
-          "type": "button",
-          "props": {
-            "label": "Home",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "wallet.home"
-          },
-          "semantics": {
-            "label": "Home"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "wallet.review.primary",
+                "type": "button",
+                "props": {
+                  "label": "Reject",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "wallet.reject"
+                },
+                "semantics": {
+                  "label": "Reject untrusted update"
+                }
+              },
+              {
+                "id": "wallet.review.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Home",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "wallet.home"
+                },
+                "semantics": {
+                  "label": "Return to wallet home"
+                }
+              }
+            ]
           }
         }
       ]

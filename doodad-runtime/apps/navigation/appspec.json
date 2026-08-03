@@ -5,55 +5,83 @@
     "id": "navigation.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "navigation.heading",
+          "id": "navigation.home.context",
           "type": "text",
           "props": {
-            "text": "NAVIGATION",
+            "text": "WALK / MARKET",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "navigation.summary",
           "type": "text",
           "props": {
-            "text": "Turn in 200 ft",
+            "text": "8 MIN",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Navigation status",
-            "value": "Turn in 200 ft"
+            "label": "Estimated walking time",
+            "value": "8 minutes"
           }
         },
         {
-          "id": "navigation.mock",
-          "type": "card",
+          "id": "navigation.home.detail",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "title": "1.4 MI / ARRIVE 10:18",
+            "body": "3 turns / route saved offline",
+            "progress": 0.08,
+            "tone": "primary"
           }
         },
         {
-          "id": "navigation.primary",
-          "type": "button",
+          "id": "navigation.home.actions",
+          "type": "row",
           "props": {
-            "label": "Start route",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "navigation.primary"
-          },
-          "semantics": {
-            "label": "Start route"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "navigation.primary",
+                "type": "button",
+                "props": {
+                  "label": "Start",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.primary"
+                },
+                "semantics": {
+                  "label": "Start walking directions"
+                }
+              },
+              {
+                "id": "navigation.home.overview",
+                "type": "button",
+                "props": {
+                  "label": "Route",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "navigation.overview"
+                },
+                "semantics": {
+                  "label": "View route overview"
+                }
+              }
+            ]
           }
         }
       ]

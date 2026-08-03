@@ -12,6 +12,7 @@ from typing import Any
 
 from doodad_cli.contract import build_and_stage, read_json
 from doodad_cli.native import NativeHost
+from doodad_cli.scene_trace import run_flow_action
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -26,6 +27,13 @@ BUDGETS = {
     "maximum_lvgl_objects": 96,
     "maximum_lvgl_depth": 10,
     "maximum_decisive_actions": 12,
+}
+
+APP_BUDGET_OVERRIDES = {
+    # The powerlifting oracle deliberately exercises the full workout
+    # lifecycle: planning, editing, a missed set, rest, plate loading,
+    # exercise switching, completion, and resume recovery.
+    "workout": {"maximum_decisive_actions": 20},
 }
 
 
@@ -51,18 +59,6 @@ def changed_pixels(before: bytes | None, after: bytes) -> int:
         before[offset : offset + 2] != after[offset : offset + 2]
         for offset in range(0, len(after), 2)
     )
-
-
-def run_action(host: NativeHost, action: dict[str, Any]) -> None:
-    kind = action["kind"]
-    if kind == "click":
-        host.click_button(str(action["value"]))
-    elif kind == "advance":
-        host.advance_time(int(action["value"]))
-    elif kind == "deliver":
-        host.deliver_provider()
-    else:
-        raise RuntimeError(f"unknown conformance action {kind!r}")
 
 
 def stage_evidence(
@@ -103,11 +99,16 @@ def app_evidence(
     actions: list[dict[str, Any]],
 ) -> dict[str, Any]:
     slug = entry["slug"]
+    budgets = BUDGETS | APP_BUDGET_OVERRIDES.get(slug, {})
     app_dir = ROOT / "apps" / slug
     package = build_and_stage(ROOT, app_dir)
     manifest = read_json(app_dir / "manifest.json")
     appspec_files = sorted(app_dir.glob("**/*.cbor"))
-    authored_screens = sorted(app_dir.glob("**/*.json"))
+    authored_screens = sorted(
+        path
+        for path in app_dir.glob("**/*.json")
+        if path.name != "agent.json"
+    )
     package_bytes = sum(
         path.stat().st_size
         for path in package.staging.iterdir()
@@ -122,7 +123,7 @@ def app_evidence(
         stage, prior_frame = stage_evidence(host, 0, None, prior_frame)
         stages.append(stage)
         for index, action in enumerate(actions, start=1):
-            run_action(host, action)
+            run_flow_action(host, action)
             stage, prior_frame = stage_evidence(
                 host, index, action, prior_frame
             )
@@ -160,7 +161,7 @@ def app_evidence(
         "provider_requests": stages[-1]["provider_requests"],
     }
     failures = []
-    for metric, limit in BUDGETS.items():
+    for metric, limit in budgets.items():
         measured_key = {
             "maximum_module_bytes": "module_bytes",
             "maximum_decisive_actions": "decisive_actions",
@@ -185,7 +186,7 @@ def app_evidence(
             "mode": entry["mode"],
             "surfaces": entry["surfaces"],
         },
-        "budgets": BUDGETS,
+        "budgets": budgets,
         "summary": summary,
         "stages": stages,
     }

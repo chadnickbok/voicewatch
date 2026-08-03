@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.resume",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.resume.label",
+          "type": "text",
+          "props": {
+            "text": "WORKOUT PAUSED",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.resume.state",
+          "type": "card",
+          "props": {
+            "title": "142.5 KG  X  5",
+            "body": "BACK SQUAT / SET 4 OF 5 / SAVED 24 SEC AGO",
+            "tone": "primary"
+          }
+        },
+        {
+          "id": "powerlifting.resume.action",
+          "type": "button",
+          "props": {
+            "label": "RESUME",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.resume"
+          },
+          "semantics": {
+            "label": "RESUME"
+          }
+        },
+        {
+          "id": "powerlifting.resume.discard",
+          "type": "button",
+          "props": {
+            "label": "DISCARD",
+            "tone": "error",
+            "variant": "text",
+            "size": "compact"
+          },
+          "events": {
+            "tap": "workout.discard"
+          },
+          "semantics": {
+            "label": "DISCARD"
+          }
+        }
+      ]
+    }
+  }
+}

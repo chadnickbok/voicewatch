@@ -1,0 +1,48 @@
+{
+  "artifacts": {
+    "accessibility_xml": {
+      "bytes": 8316,
+      "path": "smart-home.resting.watch_square_240.semantics.xml",
+      "sha256": "11970be431c0b91e22966c6daa95d2f8902b027ea223f35fec1800f6b85c1ad4"
+    },
+    "screenshot": {
+      "bytes": 17492,
+      "path": "smart-home.resting.watch_square_240.png",
+      "sha256": "9e8de4b1b60c7fb3e3ff172e41de973daaeddcd4b8d6fd44d2ca0e50b6ec11ef"
+    }
+  },
+  "device": {
+    "api": 37,
+    "avd_name": "Wear_OS_Square",
+    "build_fingerprint": "google/sdk_gwear_arm64/emu64a:17/CP2A.260330.028.E2/15706224:user/release-keys",
+    "emulator_revision": "37.1.11",
+    "product_abi": "arm64-v8a",
+    "serial": "emulator-5554",
+    "system_image_package": "system-images;android-37.0;android-wear-signed;arm64-v8a",
+    "system_image_revision": "1",
+    "wm_density": "Physical density: 200",
+    "wm_size": "Physical size: 360x360\nOverride size: 240x240"
+  },
+  "framebuffer": {
+    "density": 1.25,
+    "format": "png",
+    "logical_height_dp": 192,
+    "logical_width_dp": 192,
+    "physical_height_px": 240,
+    "physical_width_px": 240
+  },
+  "kind": "parallax-compose-runtime-capture",
+  "renderer": {
+    "build_sha256": "02d483049638afa16a23f7df23f7328cd28a4b8b08b19300192f6a3b459250fd",
+    "kind": "compose",
+    "mode": "emulator",
+    "version": "wear-compose-1.6.2"
+  },
+  "schema_version": 1,
+  "selection": {
+    "app_slug": "smart-home",
+    "capture_phase": "resting",
+    "profile_id": "watch_square_240",
+    "snapshot_sha256": "db6958f2834d872b998aea93a51ad33078d058a4ccbfa4b0b160bc0f18259270"
+  }
+}

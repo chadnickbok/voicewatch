@@ -5,16 +5,17 @@
     "id": "today",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "today.heading",
+          "id": "today.context",
           "type": "text",
           "props": {
-            "text": "Today / Calories",
+            "text": "TODAY / 580 LEFT",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
@@ -46,8 +47,8 @@
           "id": "today.lunch",
           "type": "card",
           "props": {
-            "title": "Lunch",
-            "body": "Chicken bowl | 560 kcal",
+            "title": "LUNCH  /  560 KCAL",
+            "body": "Chicken bowl  /  45g protein",
             "tone": "neutral"
           }
         },
@@ -55,7 +56,7 @@
           "id": "today.quick_add",
           "type": "button",
           "props": {
-            "label": "Quick add",
+            "label": "Add food",
             "tone": "primary",
             "variant": "filled",
             "size": "default",
@@ -65,7 +66,7 @@
             "tap": "open_quick_add"
           },
           "semantics": {
-            "label": "Quick add calories"
+            "label": "Add food calories"
           }
         }
       ]

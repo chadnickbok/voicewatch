@@ -5,71 +5,102 @@
     "id": "media.reconciled",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "media.reconciled.heading",
-          "type": "text",
+          "id": "media.reconciled.artwork",
+          "type": "image",
           "props": {
-            "text": "RECONCILED",
-            "style": "label",
-            "max_lines": 1
+            "asset": "2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028",
+            "fit": "cover"
+          },
+          "semantics": {
+            "label": "Synthwave city album artwork"
           }
         },
         {
           "id": "media.reconciled.summary",
           "type": "text",
           "props": {
-            "text": "Playing · 1:45",
-            "style": "numeral",
+            "text": "Playing / 1:45",
+            "style": "title",
             "max_lines": 2,
-            "align": "center"
+            "align": "start"
           },
           "semantics": {
-            "label": "RECONCILED",
-            "value": "Playing · 1:45"
+            "label": "Back online",
+            "value": "Playing / 1:45"
           }
         },
         {
           "id": "media.reconciled.detail",
-          "type": "card",
+          "type": "text",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Phone state wins · no double action",
-            "tone": "neutral"
+            "text": "Phone state restored",
+            "style": "caption",
+            "max_lines": 2,
+            "align": "start"
           }
         },
         {
-          "id": "media.reconciled.primary",
-          "type": "button",
+          "id": "media.reconciled.progress",
+          "type": "progress",
           "props": {
-            "label": "Controls",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "media.controls"
+            "label": "Track progress",
+            "value": 105,
+            "maximum": 243,
+            "style": "linear",
+            "tone": "primary"
           },
           "semantics": {
-            "label": "Controls"
+            "label": "Track progress",
+            "value": "1 minute 45 seconds of 4 minutes 3 seconds"
           }
         },
         {
-          "id": "media.reconciled.secondary",
-          "type": "button",
+          "id": "media.reconciled.actions",
+          "type": "row",
           "props": {
-            "label": "Home",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "media.home"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "media.reconciled.primary",
+                "type": "button",
+                "props": {
+                  "label": "Controls",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.controls"
+                },
+                "semantics": {
+                  "label": "Return to playback controls"
+                }
+              },
+              {
+                "id": "media.reconciled.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Home",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "large"
+                },
+                "events": {
+                  "tap": "media.home"
+                },
+                "semantics": {
+                  "label": "Return to media home"
+                }
+              }
+            ]
           },
           "semantics": {
-            "label": "Home"
+            "label": "Playback actions"
           }
         }
       ]

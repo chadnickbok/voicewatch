@@ -20,6 +20,12 @@ enum class ComponentKind : std::uint8_t {
     keypad,
     voice_orb,
     live_card,
+    image,
+    canvas,
+    icon,
+    surface,
+    chart,
+    pager,
 };
 
 enum class EventKind : std::uint8_t {

@@ -5,71 +5,83 @@
     "id": "medication.snoozed",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
           "id": "medication.snoozed.heading",
           "type": "text",
           "props": {
-            "text": "SNOOZED",
+            "text": "REMIND / 9:12",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "medication.snoozed.summary",
           "type": "text",
           "props": {
-            "text": "Due at 9:12",
+            "text": "10 MIN",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "SNOOZED",
+            "label": "Reminder snoozed",
             "value": "Due at 9:12"
           }
         },
         {
           "id": "medication.snoozed.detail",
-          "type": "card",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic fixture",
-            "body": "Journaled once · haptic armed",
+            "title": "VITAMIN D / SNOOZED",
+            "body": "Haptic armed / log safe",
+            "progress": 0.5,
             "tone": "neutral"
           }
         },
         {
-          "id": "medication.snoozed.primary",
-          "type": "button",
+          "id": "medication.snoozed.actions",
+          "type": "row",
           "props": {
-            "label": "Take now",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "medication.take"
-          },
-          "semantics": {
-            "label": "Take now"
-          }
-        },
-        {
-          "id": "medication.snoozed.secondary",
-          "type": "button",
-          "props": {
-            "label": "Schedule",
-            "tone": "neutral",
-            "variant": "outlined",
-            "size": "default"
-          },
-          "events": {
-            "tap": "medication.schedule"
-          },
-          "semantics": {
-            "label": "Schedule"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "medication.snoozed.primary",
+                "type": "button",
+                "props": {
+                  "label": "Taken",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.take"
+                },
+                "semantics": {
+                  "label": "Log Vitamin D as taken"
+                }
+              },
+              {
+                "id": "medication.snoozed.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Edit",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "medication.schedule"
+                },
+                "semantics": {
+                  "label": "Edit medication schedule"
+                }
+              }
+            ]
           }
         }
       ]

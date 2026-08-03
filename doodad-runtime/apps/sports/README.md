@@ -1,13 +1,19 @@
-# Live Sports
+# Sports
 
-Deterministic interactive conformance package.
+Deterministic interactive conformance package with five title-free,
+full-screen baseball states:
 
-Screens:
+- a glanceable live game
+- a followed game with inning, outs, and runners
+- a coalesced two-run score update
+- a final score and ended follow activity
+- the decisive scoring play
 
-- package launch screen
-- TOP 8TH: SF 3 · LA 2
-- SCORE UPDATE: SF 5 · LA 2
-- FINAL: SF 5 · LA 3
-- SCORING PLAYS: 5 runs · 4 plays
+The app uses the shared `live_action_detail` structure: game context, one
+dominant score, one compact live card, and two 48dp actions. The structure is
+selected independently by real Wear Compose and production LVGL; neither
+renderer consults the Sports app ID.
 
-Every transition crosses the domain-scoped mocked sports capability before mounting the next bounded AppSpec.
+Every transition is emitted by the real Rust/Wasm guest and crosses the
+domain-scoped mocked sports capability before mounting the next bounded
+AppSpec.

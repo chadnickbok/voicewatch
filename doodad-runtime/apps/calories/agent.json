@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.calories",
+  "app_version": "0.1.0",
+  "host_abi": 1,
+  "display_name": "Nutrition + Hydration",
+  "purpose": "Record provisional food and hydration facts for later enrichment.",
+  "examples": ["Log that I ate a bagel", "Add a glass of water"],
+  "aliases": ["food", "calories", "nutrition", "hydration"],
+  "views": [{"id": "today_food", "description": "Return today's provisional food entries.", "result_schema": {"$ref": "doodad://schemas/today-food-v1"}, "permissions": [], "foreground_required": false}],
+  "actions": [{"id": "log_food", "description": "Commit a provisional food fact exactly once.", "input_schema": {"$ref": "doodad://schemas/nutrition-action-v1#/$defs/log_food"}, "result_schema": {"$ref": "doodad://schemas/food-log-result-v1"}, "effect": "reversible_write", "confirmation": "never", "idempotency": "required", "permissions": [], "foreground_required": false}]
+}

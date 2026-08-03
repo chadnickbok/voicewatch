@@ -5,55 +5,83 @@
     "id": "smart-home.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "smart-home.heading",
+          "id": "smart-home.home.context",
           "type": "text",
           "props": {
-            "text": "SMART HOME",
+            "text": "HOME / FAVORITE",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "smart-home.summary",
           "type": "text",
           "props": {
-            "text": "Living room on",
+            "text": "72%",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Smart Home status",
-            "value": "Living room on"
+            "label": "Living room light brightness",
+            "value": "72 percent and on"
           }
         },
         {
-          "id": "smart-home.mock",
-          "type": "card",
+          "id": "smart-home.home.detail",
+          "type": "live_card",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
+            "title": "LIVING / LIGHT ON",
+            "body": "Warm white / synced now",
+            "progress": 0.72,
+            "tone": "primary"
           }
         },
         {
-          "id": "smart-home.primary",
-          "type": "button",
+          "id": "smart-home.home.actions",
+          "type": "row",
           "props": {
-            "label": "Toggle light",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "smart-home.primary"
-          },
-          "semantics": {
-            "label": "Toggle light"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "smart-home.primary",
+                "type": "button",
+                "props": {
+                  "label": "Light",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "smart-home.primary"
+                },
+                "semantics": {
+                  "label": "Open living room light"
+                }
+              },
+              {
+                "id": "smart-home.home.door",
+                "type": "button",
+                "props": {
+                  "label": "Door",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "home.lock"
+                },
+                "semantics": {
+                  "label": "Review front door lock"
+                }
+              }
+            ]
           }
         }
       ]

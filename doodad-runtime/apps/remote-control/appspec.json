@@ -5,55 +5,84 @@
     "id": "remote-control.home",
     "type": "screen",
     "props": {
-      "gap": "sm",
+      "gap": "none",
       "align": "stretch",
       "children": [
         {
-          "id": "remote-control.heading",
+          "id": "remote-control.viewfinder",
+          "type": "image",
+          "props": {
+            "asset": "777d468ea847318acd22e2eb79f108e75e2674448e8b53fa8fba0bc08fd7b522",
+            "fit": "cover"
+          },
+          "semantics": {
+            "label": "Live desert camera preview"
+          }
+        },
+        {
+          "id": "remote-control.context",
           "type": "text",
           "props": {
-            "text": "REMOTE CONTROL LAB",
+            "text": "PHONE READY",
             "style": "label",
-            "max_lines": 1
+            "max_lines": 1,
+            "align": "center"
           }
         },
         {
           "id": "remote-control.summary",
           "type": "text",
           "props": {
-            "text": "Phone connected",
+            "text": "1.0X",
             "style": "numeral",
-            "max_lines": 2,
+            "max_lines": 1,
             "align": "center"
           },
           "semantics": {
-            "label": "Remote Control Lab status",
-            "value": "Phone connected"
+            "label": "Camera zoom",
+            "value": "1.0X"
           }
         },
         {
-          "id": "remote-control.mock",
-          "type": "card",
+          "id": "remote-control.actions",
+          "type": "row",
           "props": {
-            "title": "Deterministic provider",
-            "body": "Interactive mock data · revision 1",
-            "tone": "neutral"
-          }
-        },
-        {
-          "id": "remote-control.primary",
-          "type": "button",
-          "props": {
-            "label": "Trigger",
-            "tone": "primary",
-            "variant": "filled",
-            "size": "default"
-          },
-          "events": {
-            "tap": "remote-control.primary"
-          },
-          "semantics": {
-            "label": "Trigger"
+            "gap": "xs",
+            "align": "stretch",
+            "children": [
+              {
+                "id": "remote-control.primary",
+                "type": "button",
+                "props": {
+                  "label": "Camera",
+                  "tone": "primary",
+                  "variant": "filled",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "remote-control.primary"
+                },
+                "semantics": {
+                  "label": "Open camera remote"
+                }
+              },
+              {
+                "id": "remote-control.secondary",
+                "type": "button",
+                "props": {
+                  "label": "Offline",
+                  "tone": "neutral",
+                  "variant": "tonal",
+                  "size": "default"
+                },
+                "events": {
+                  "tap": "remote.disconnect"
+                },
+                "semantics": {
+                  "label": "Disconnect phone"
+                }
+              }
+            ]
           }
         }
       ]

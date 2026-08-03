@@ -1,0 +1,48 @@
+{
+  "artifacts": {
+    "accessibility_xml": {
+      "bytes": 8294,
+      "path": "sports.resting.watch_square_240.semantics.xml",
+      "sha256": "a9eeaf4d8b0074355edc0966d7c7d3e56dc036d52be8d4e614b47f4d0042b1ff"
+    },
+    "screenshot": {
+      "bytes": 16811,
+      "path": "sports.resting.watch_square_240.png",
+      "sha256": "e34e25010ee4f82d98ce08ded285dd6139a86ef131876fa5affe256ca2522443"
+    }
+  },
+  "device": {
+    "api": 37,
+    "avd_name": "Wear_OS_Square",
+    "build_fingerprint": "google/sdk_gwear_arm64/emu64a:17/CP2A.260330.028.E2/15706224:user/release-keys",
+    "emulator_revision": "37.1.11",
+    "product_abi": "arm64-v8a",
+    "serial": "emulator-5554",
+    "system_image_package": "system-images;android-37.0;android-wear-signed;arm64-v8a",
+    "system_image_revision": "1",
+    "wm_density": "Physical density: 200",
+    "wm_size": "Physical size: 360x360\nOverride size: 240x240"
+  },
+  "framebuffer": {
+    "density": 1.25,
+    "format": "png",
+    "logical_height_dp": 192,
+    "logical_width_dp": 192,
+    "physical_height_px": 240,
+    "physical_width_px": 240
+  },
+  "kind": "parallax-compose-runtime-capture",
+  "renderer": {
+    "build_sha256": "3d544fdbfa2c7ec27bebf8a3d04f0ecafda12a54d5d3f7000e554c09d8adae62",
+    "kind": "compose",
+    "mode": "emulator",
+    "version": "wear-compose-1.6.2"
+  },
+  "schema_version": 1,
+  "selection": {
+    "app_slug": "sports",
+    "capture_phase": "resting",
+    "profile_id": "watch_square_240",
+    "snapshot_sha256": "0bf81869a12e7f7d1780e4f63f46c463f3fa9d1eab35a103ca3d9ed2de84df6d"
+  }
+}

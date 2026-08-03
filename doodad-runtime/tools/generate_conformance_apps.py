@@ -352,18 +352,24 @@ def main() -> None:
             capabilities.append("workout.store")
         elif slug == "snake":
             capabilities.append("game.clock")
-        write_json(
-            directory / "manifest.json",
-            {
-                "schema_version": 1,
-                "id": f"dev.doodad.{slug}",
-                "name": title,
-                "version": "0.1.0",
-                "host_abi": 1,
-                "capabilities": capabilities,
-                "wasm": "app.wasm",
-            },
-        )
+        manifest_path = directory / "manifest.json"
+        existing_assets = []
+        if manifest_path.is_file():
+            existing_assets = json.loads(
+                manifest_path.read_text(encoding="utf-8")
+            ).get("assets", [])
+        manifest = {
+            "schema_version": 1,
+            "id": f"dev.doodad.{slug}",
+            "name": title,
+            "version": "0.1.0",
+            "host_abi": 1,
+            "capabilities": capabilities,
+            "wasm": "app.wasm",
+        }
+        if existing_assets:
+            manifest["assets"] = existing_assets
+        write_json(manifest_path, manifest)
         write_json(
             directory / "package.json",
             {

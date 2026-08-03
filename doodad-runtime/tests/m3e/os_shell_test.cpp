@@ -37,15 +37,24 @@ int main() {
     assert(shell.dispatch(map_input(Input::button_b_hold)));
     assert(shell.snapshot().overlay == Overlay::voice);
     assert(shell.snapshot().voice_phase == VoicePhase::listening);
-    assert(shell.set_voice_phase(VoicePhase::transcribing));
+    shell.publish_background_activity(
+        2, false, false, false, BackgroundInstallState::none);
+    assert(shell.snapshot().voice_phase == VoicePhase::listening);
+    assert(shell.snapshot().background.running_count == 2);
+    assert(shell.set_voice_phase(VoicePhase::thinking));
+    assert(shell.snapshot().background.running_count == 2);
+    assert(shell.set_voice_phase(VoicePhase::speaking));
+    assert(shell.set_voice_phase(VoicePhase::listening));
+    assert(shell.set_voice_phase(VoicePhase::thinking));
     assert(shell.set_voice_phase(VoicePhase::clarifying));
-    assert(shell.set_voice_phase(VoicePhase::reviewing));
-    assert(shell.set_voice_phase(VoicePhase::building));
-    assert(shell.set_voice_phase(VoicePhase::completed));
-    assert(!shell.set_voice_phase(VoicePhase::building));
+    shell.publish_background_activity(
+        2, true, false, false, BackgroundInstallState::none);
+    assert(shell.snapshot().voice_phase == VoicePhase::clarifying);
+    assert(shell.snapshot().background.focused_question);
     assert(shell.dispatch(Intent::back));
     assert(shell.snapshot().overlay == Overlay::none);
     assert(shell.snapshot().surface == Surface::live_cards);
+    assert(shell.snapshot().background.running_count == 2);
 
     assert(shell.dispatch(map_input(Input::power_button)));
     assert(!shell.snapshot().display_awake);

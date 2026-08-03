@@ -9,12 +9,18 @@
       "align": "stretch",
       "children": [
         {
-          "id": "timer.heading",
-          "type": "text",
+          "id": "timer.progress",
+          "type": "progress",
           "props": {
-            "text": "TIMER SUITE",
-            "style": "label",
-            "max_lines": 1
+            "label": "Timer progress",
+            "value": 60,
+            "maximum": 60,
+            "style": "circular",
+            "tone": "primary"
+          },
+          "semantics": {
+            "label": "Timer progress",
+            "value": "1 minute remaining"
           }
         },
         {
@@ -51,16 +57,6 @@
           }
         },
         {
-          "id": "timer.status",
-          "type": "text",
-          "props": {
-            "text": "Ready · exact scheduler",
-            "style": "caption",
-            "max_lines": 1,
-            "align": "center"
-          }
-        },
-        {
           "id": "timer.primary",
           "type": "button",
           "props": {
@@ -73,7 +69,7 @@
             "tap": "timer.primary"
           },
           "semantics": {
-            "label": "Start one minute timer"
+            "label": "Timer action"
           }
         }
       ]

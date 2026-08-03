@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.exercise-picker",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.exercise-picker.title",
+          "type": "text",
+          "props": {
+            "text": "CHOOSE EXERCISE",
+            "style": "label",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-picker.back-squat",
+          "type": "card",
+          "props": {
+            "title": "BACK SQUAT",
+            "body": "RECENT / SELECTED",
+            "tone": "primary"
+          },
+          "events": {
+            "tap": "workout.exercise.back-squat"
+          },
+          "semantics": {
+            "label": "BACK SQUAT"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-picker.front-squat",
+          "type": "card",
+          "props": {
+            "title": "FRONT SQUAT",
+            "body": "QUADS / UPRIGHT",
+            "tone": "neutral"
+          },
+          "events": {
+            "tap": "workout.exercise.front-squat"
+          },
+          "semantics": {
+            "label": "FRONT SQUAT"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-picker.paused-squat",
+          "type": "card",
+          "props": {
+            "title": "PAUSED SQUAT",
+            "body": "2 SECOND PAUSE",
+            "tone": "neutral"
+          },
+          "events": {
+            "tap": "workout.exercise.paused-squat"
+          },
+          "semantics": {
+            "label": "PAUSED SQUAT"
+          }
+        }
+      ]
+    }
+  }
+}

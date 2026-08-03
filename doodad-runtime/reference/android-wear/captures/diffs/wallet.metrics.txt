@@ -1,0 +1,25 @@
+Wallet resting comparison
+
+SceneSnapshot SHA-256:
+2a5225da6cd8c20cad745349d728c35c9827ec6ef98ed6d9dcc94a6842d127a7
+
+LVGL RGB565 SHA-256:
+0e622c0412d162b11eeefbcc6b5bb42066295c787bee19dfdcad32baf81edc54
+
+Reference nodes: 7
+Product nodes: 7
+Compared nodes: 7
+Structured mismatches: 0
+Quality findings: 0
+Minimum touch target: 48dp
+
+Changed pixels: 7517 / 57600 (13.0503%)
+MAE: 14.9467
+RMSE: 49.1486
+
+QR comparison:
+Reference nodes: 6
+Product nodes: 6
+Structured mismatches: 0
+Quality findings: 0
+Changed pixels: 3113 / 57600 (5.4045%)

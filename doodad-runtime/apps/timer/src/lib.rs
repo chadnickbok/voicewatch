@@ -40,7 +40,7 @@ impl Runtime {
         remaining_ms: u64,
     ) -> u64 {
         let text = match self.mode {
-            Mode::Firing => "TIME'S UP",
+            Mode::Firing => "0:00",
             Mode::Ready => format_duration(
                 u64::from(self.minutes) * 60_000,
                 &mut self.text,
@@ -49,28 +49,37 @@ impl Runtime {
                 format_duration(remaining_ms, &mut self.text)
             }
         };
-        let status = match self.mode {
-            Mode::Ready => "Ready · exact scheduler",
-            Mode::Scheduled => "Running in background",
-            Mode::Firing => "Timer complete · fired once",
-        };
         let action = match self.mode {
             Mode::Ready => "Start",
             Mode::Scheduled => "Cancel",
             Mode::Firing => "Dismiss",
         };
-        if self.commands.begin(5).is_err()
+        let remaining_seconds =
+            remaining_ms.saturating_add(999) / 1_000;
+        let duration_seconds =
+            u64::from(self.minutes) * 60;
+        if self.commands.begin(7).is_err()
             || self
                 .commands
                 .set_primary_text("timer.summary", text)
                 .is_err()
             || self
                 .commands
-                .set_value("timer.duration", i64::from(self.minutes))
+                .set_maximum(
+                    "timer.progress",
+                    duration_seconds.min(i64::MAX as u64) as i64,
+                )
                 .is_err()
             || self
                 .commands
-                .set_primary_text("timer.status", status)
+                .set_value(
+                    "timer.progress",
+                    remaining_seconds.min(i64::MAX as u64) as i64,
+                )
+                .is_err()
+            || self
+                .commands
+                .set_value("timer.duration", i64::from(self.minutes))
                 .is_err()
             || self
                 .commands
@@ -79,6 +88,13 @@ impl Runtime {
             || self
                 .commands
                 .set_enabled(
+                    "timer.duration",
+                    self.mode == Mode::Ready,
+                )
+                .is_err()
+            || self
+                .commands
+                .set_visible(
                     "timer.duration",
                     self.mode == Mode::Ready,
                 )

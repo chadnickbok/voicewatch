@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "app_id": "dev.doodad.workout",
+  "app_version": "0.1.0",
+  "host_abi": 1,
+  "display_name": "Workout Tracker",
+  "purpose": "Plan, perform, and record strength workouts.",
+  "examples": ["I missed that set", "What is next?"],
+  "aliases": ["workout", "lifting", "set", "exercise"],
+  "views": [{"id": "current_workout", "description": "Return the active workout and selected set.", "result_schema": {"$ref": "doodad://schemas/current-workout-v1"}, "permissions": ["workout.store"], "foreground_required": false}],
+  "actions": [{"id": "record_missed_set", "description": "Mark the selected active set as missed exactly once.", "input_schema": {"$ref": "doodad://schemas/workout-action-v1#/$defs/record_missed_set"}, "result_schema": {"$ref": "doodad://schemas/workout-action-v1#/$defs/result"}, "effect": "reversible_write", "confirmation": "when_ambiguous", "idempotency": "required", "permissions": ["workout.store"], "foreground_required": true}]
+}
