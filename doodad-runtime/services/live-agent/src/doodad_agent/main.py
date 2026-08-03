@@ -76,15 +76,31 @@ async def serve(arguments: argparse.Namespace) -> None:
         nonlocal last_agent_state
         if kind == "connected" and transport.session is not None:
             last_agent_state = None
-            await transport.session.start_capture()
             if conversation is not None:
+                await conversation.ready()
+        elif kind == "listen.requested" and transport.session is not None:
+            if conversation is not None:
+                if conversation.voice_phase == "speaking":
+                    transport.session.clear_downlink()
+                    await conversation.interrupt()
                 await conversation.begin_listening()
-        elif kind == "capture.started" and conversation is not None:
-            await conversation.interrupt()
+            await transport.session.start_capture()
+        elif kind == "listen.finished" and transport.session is not None:
+            await transport.session.stop_capture()
+            if conversation is not None:
+                # Feed a short bounded silence tail so VAD can close a turn
+                # when the user taps Done before natural endpointing fires.
+                for _ in range(25):
+                    await conversation.feed_audio(b"\0\0" * 160)
+        elif kind == "listen.cancelled" and transport.session is not None:
+            await transport.session.stop_capture()
+            transport.session.clear_downlink()
+            if conversation is not None:
+                await conversation.cancel()
         elif kind == "capture.stopped" and transport.session is not None:
             trace.mark("capture.stopped", reason=payload.get("reason", "unknown"))
-            if conversation is not None and conversation.voice_phase == "listening":
-                await transport.session.start_capture()
+        elif kind == "disconnected" and conversation is not None:
+            conversation.disconnected()
         elif kind == "watch.state":
             controller.kernel.replace_snapshot(payload, int(time.time() * 1000))
 
@@ -97,7 +113,7 @@ async def serve(arguments: argparse.Namespace) -> None:
         if transport.session is not None:
             await transport.session.stop_capture()
 
-    async def resume_capture() -> None:
+    async def wait_for_playback() -> None:
         if transport.session is not None:
             await transport.session.resume_after_downlink()
 
@@ -111,11 +127,17 @@ async def serve(arguments: argparse.Namespace) -> None:
         )
 
     async def publish_state(
-        voice_phase: str, background: dict[str, object]
+        voice_phase: str,
+        background: dict[str, object],
+        display: dict[str, str],
     ) -> None:
         nonlocal last_agent_state
         document = {
             "voice_phase": voice_phase,
+            "display": {
+                "transcript": str(display.get("transcript", ""))[:160],
+                "response": str(display.get("response", ""))[:160],
+            },
             "background": {
                 "running_count": int(background.get("running_count", 0)),
                 "focused_question": background.get("focused_question") is not None,
@@ -132,7 +154,7 @@ async def serve(arguments: argparse.Namespace) -> None:
 
     conversation = LiveConversation(
         controller, builder, attention, trace, audio_sink, stop_capture,
-        resume_capture, invoke_action, publish_state
+        wait_for_playback, invoke_action, publish_state
     )
     await conversation.start()
     await transport.start()

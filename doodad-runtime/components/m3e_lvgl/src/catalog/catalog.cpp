@@ -2,6 +2,7 @@
 
 #include <cstddef>
 #include <cstdint>
+#include <cstring>
 
 #include "m3e/components/components.hpp"
 #include "m3e/foundation/display_profile.hpp"
@@ -969,6 +970,19 @@ void os_voice_result_story(lv_obj_t* screen) {
         m3e::Tone::primary);
 }
 
+lv_obj_t* find_action(lv_obj_t* root, const char* id) {
+    if (root == nullptr || id == nullptr) return nullptr;
+    const auto* object_id = static_cast<const char*>(lv_obj_get_user_data(root));
+    if (object_id != nullptr && std::strcmp(object_id, id) == 0) return root;
+    const auto child_count = lv_obj_get_child_count(root);
+    for (std::uint32_t index = 0; index < child_count; ++index) {
+        if (auto* found = find_action(lv_obj_get_child(root, index), id)) {
+            return found;
+        }
+    }
+    return nullptr;
+}
+
 void transforming_list_story(lv_obj_t* screen) {
     auto& factory = component_factory();
     factory.screen(screen);
@@ -1452,5 +1466,73 @@ extern "C" void m3e_catalog_show(lv_obj_t* screen, int story) {
         default:
             foundation_story(screen);
             break;
+    }
+}
+
+extern "C" void m3e_catalog_show_voice_runtime(
+    lv_obj_t* screen,
+    int phase,
+    const char* transcript,
+    const char* response,
+    m3e_voice_runtime_view_t* view) {
+    if (view != nullptr) *view = {};
+    if (screen == nullptr) return;
+
+    const char* status = "READY";
+    const char* detail = "Tap to talk";
+    m3e::Tone tone = m3e::Tone::neutral;
+    auto orb_state = m3e::VoiceOrbState::idle;
+    bool primary_enabled = true;
+    switch (phase) {
+        case 1:
+            status = "LISTENING";
+            detail = transcript != nullptr && transcript[0] != '\0'
+                ? transcript : "Speak now...";
+            tone = m3e::Tone::primary;
+            orb_state = m3e::VoiceOrbState::listening;
+            break;
+        case 2:
+        case 4:
+            status = "THINKING";
+            detail = transcript != nullptr && transcript[0] != '\0'
+                ? transcript : "Working on it...";
+            tone = m3e::Tone::secondary;
+            orb_state = m3e::VoiceOrbState::thinking;
+            primary_enabled = false;
+            break;
+        case 3:
+            status = "SPEAKING";
+            detail = response != nullptr && response[0] != '\0'
+                ? response : "Replying...";
+            tone = m3e::Tone::primary;
+            orb_state = m3e::VoiceOrbState::speaking;
+            break;
+        case 5:
+            status = "UNAVAILABLE";
+            detail = response != nullptr && response[0] != '\0'
+                ? response : "Voice connection lost";
+            tone = m3e::Tone::error;
+            orb_state = m3e::VoiceOrbState::error;
+            primary_enabled = false;
+            break;
+        case 0:
+        case 6:
+        default:
+            break;
+    }
+
+    os_home_story(screen);
+    auto& factory = component_factory();
+    auto* overlay = factory.voice_overlay(
+        screen, status, detail, tone, orb_state);
+    auto* primary = find_action(overlay, "voice.primary");
+    auto* cancel = find_action(overlay, "voice.cancel");
+    if (!primary_enabled && primary != nullptr) {
+        lv_obj_add_state(primary, LV_STATE_DISABLED);
+    }
+    if (view != nullptr) {
+        view->primary_action = primary_enabled ? primary : nullptr;
+        view->cancel_action = cancel;
+        view->level_ring = primary;
     }
 }

@@ -57,12 +57,14 @@ enum class CommandKind : std::uint8_t {
     local_candidate,
     remote_description,
     remote_candidate,
-    prepare_microphone,
     start,
     stop,
     transcript,
     action,
     agent_state,
+    activate,
+    finish,
+    cancel,
 };
 
 struct Command {
@@ -108,6 +110,7 @@ std::uint32_t g_received_frames = 0;
 std::uint32_t g_played_frames = 0;
 std::uint32_t g_dropped_playback_frames = 0;
 std::uint32_t g_last_playback_ms = 0;
+std::uint32_t g_last_level_publish_ms = 0;
 std::uint16_t g_peak_pcm = 0;
 std::int16_t g_pcm[kSamplesPerFrame];
 std::uint8_t* g_encoded_audio = nullptr;
@@ -624,6 +627,7 @@ std::uint8_t voice_phase_value(const char* phase) {
     if (std::strcmp(phase, "thinking") == 0) return 2;
     if (std::strcmp(phase, "speaking") == 0) return 3;
     if (std::strcmp(phase, "clarifying") == 0) return 4;
+    if (std::strcmp(phase, "ready") == 0) return 6;
     return 5;
 }
 
@@ -631,6 +635,9 @@ void handle_agent_state(const char* bytes, std::size_t size) {
     auto* payload = cJSON_ParseWithLength(bytes, size);
     if (payload == nullptr) return;
     const auto* phase = cJSON_GetObjectItemCaseSensitive(payload, "voice_phase");
+    const auto* display = cJSON_GetObjectItemCaseSensitive(payload, "display");
+    const auto* transcript = cJSON_GetObjectItemCaseSensitive(display, "transcript");
+    const auto* response = cJSON_GetObjectItemCaseSensitive(display, "response");
     const auto* background = cJSON_GetObjectItemCaseSensitive(payload, "background");
     const auto* running = cJSON_GetObjectItemCaseSensitive(background, "running_count");
     const auto* focused = cJSON_GetObjectItemCaseSensitive(background, "focused_question");
@@ -641,7 +648,9 @@ void handle_agent_state(const char* bytes, std::size_t size) {
         voice_phase_value(cJSON_IsString(phase) ? phase->valuestring : "error"),
         cJSON_IsNumber(running) ? std::clamp(running->valueint, 0, 255) : 0,
         cJSON_IsTrue(focused), cJSON_IsTrue(review), cJSON_IsTrue(completion),
-        cJSON_IsNumber(install) ? std::clamp(install->valueint, 0, 4) : 0);
+        cJSON_IsNumber(install) ? std::clamp(install->valueint, 0, 4) : 0,
+        cJSON_IsString(transcript) ? transcript->valuestring : "",
+        cJSON_IsString(response) ? response->valuestring : "");
     cJSON_Delete(payload);
 }
 
@@ -651,12 +660,12 @@ int peer_state(esp_peer_state_t state, void*) {
         g_peer_connected = true;
         send_simple("peer.ready");
         publish(VoiceEventKind::ready, "Voice link ready");
-        enqueue(CommandKind::prepare_microphone);
     } else if (state == ESP_PEER_STATE_DISCONNECTED ||
                state == ESP_PEER_STATE_CONNECT_FAILED ||
                state == ESP_PEER_STATE_CLOSED) {
         g_peer_connected = false;
         g_recording = false;
+        display_publish_agent_state(0, 0, false, false, false, 0, "", "");
     }
     return 0;
 }
@@ -814,7 +823,6 @@ void finish_playback_if_idle() {
         static_cast<unsigned>(g_received_frames),
         static_cast<unsigned>(g_played_frames),
         static_cast<unsigned>(g_dropped_playback_frames));
-    start_microphone();
 }
 
 void send_local_peer_message(const Command& command) {
@@ -969,7 +977,7 @@ bool start_microphone() {
     if (!g_microphone_ready) {
         ESP_LOGE(kTag, "microphone initialization failed");
     } else {
-        ESP_LOGI(kTag, "microphone reserved after SDP exchange");
+        ESP_LOGI(kTag, "microphone started for push-to-talk turn");
     }
     return g_microphone_ready;
 }
@@ -1006,6 +1014,8 @@ void stop_capture() {
     if (!g_recording) return;
     g_recording = false;
     while (M5.Mic.isRecording()) vTaskDelay(1);
+    if (M5.Mic.isRunning()) M5.Mic.end();
+    g_microphone_ready = false;
     const auto elapsed = now_ms() - g_capture_started_ms;
     ESP_LOGI(kTag,
              "capture complete elapsed=%u frames=%u dropped=%u bytes=%u peak=%u",
@@ -1016,6 +1026,7 @@ void stop_capture() {
              static_cast<unsigned>(g_peak_pcm));
     publish(VoiceEventKind::stopped, "Processing", elapsed);
     send_capture_status("capture.stopped", elapsed);
+    display_publish_voice_level(0);
 }
 
 void capture_frame() {
@@ -1039,6 +1050,12 @@ void capture_frame() {
         pcm_peak = std::max(pcm_peak, magnitude);
     }
     g_peak_pcm = std::max(g_peak_pcm, pcm_peak);
+    const auto level_now = now_ms();
+    if (level_now - g_last_level_publish_ms >= 100) {
+        g_last_level_publish_ms = level_now;
+        display_publish_voice_level(static_cast<std::uint8_t>(
+            std::min<std::uint32_t>(100, pcm_peak * 100U / 12'000U)));
+    }
     esp_audio_enc_out_frame_t output{
         g_encoded_audio, kMaximumEncodedBytes, 0, 0};
     if (esp_g711_enc_process(g_encoder, &input, &output) != ESP_AUDIO_ERR_OK ||
@@ -1116,12 +1133,6 @@ void handle_command(Command& command) {
                     result);
             }
             break;
-        case CommandKind::prepare_microphone:
-            if (!start_microphone()) {
-                publish(VoiceEventKind::error, "Microphone failed to start");
-                send_simple("capture.failed");
-            }
-            break;
         case CommandKind::start:
             start_capture(command.request_id, command.duration_ms);
             break;
@@ -1146,6 +1157,21 @@ void handle_command(Command& command) {
                 handle_agent_state(
                     reinterpret_cast<const char*>(command.data), command.size);
             }
+            break;
+        case CommandKind::activate:
+            send_simple("listen.requested");
+            break;
+        case CommandKind::finish:
+            send_simple("listen.finished");
+            break;
+        case CommandKind::cancel:
+            stop_capture();
+            xQueueReset(g_playback_frames);
+            if (g_playing) {
+                M5.Speaker.end();
+                g_playing = false;
+            }
+            send_simple("listen.cancelled");
             break;
     }
 }
@@ -1211,6 +1237,7 @@ void websocket_event(
         g_websocket_connected = false;
         g_peer_connected = false;
         g_recording = false;
+        display_publish_agent_state(0, 0, false, false, false, 0, "", "");
     } else if (event_id == WEBSOCKET_EVENT_DATA) {
         const auto* event = static_cast<esp_websocket_event_data_t*>(event_data);
         if (event == nullptr || event->payload_len <= 0 ||
@@ -1332,9 +1359,9 @@ bool voice_service_init() {
     return true;
 #else
     if (g_task != nullptr) return true;
-    // Configure a compact I2S ring now, but start it only after our SDP offer
-    // has reached the receiver. Starting it before signaling leaves too little
-    // contiguous internal RAM for the WebSocket TCP path on ESP32-S3.
+    // Configure a compact I2S ring now, but allocate and start it only for an
+    // explicit push-to-talk turn. This keeps the physical microphone off while
+    // the voice link is merely connected and preserves DMA memory for DTLS.
     auto microphone = M5.Mic.config();
     microphone.sample_rate = kCaptureSampleRate;
     // CoreS3's codec defaults to a conservative 2x software gain. A voice
@@ -1369,8 +1396,14 @@ bool voice_service_init() {
         return false;
     }
     g_agent_persist_ready = true;
-    g_commands = xQueueCreate(kCommandQueueDepth, sizeof(Command));
-    g_events = xQueueCreate(kEventQueueDepth, sizeof(VoiceEvent));
+    g_commands = xQueueCreateWithCaps(
+        kCommandQueueDepth,
+        sizeof(Command),
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    g_events = xQueueCreateWithCaps(
+        kEventQueueDepth,
+        sizeof(VoiceEvent),
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     g_playback_frames = xQueueCreateWithCaps(
         kPlaybackQueueDepth,
         sizeof(PlaybackFrame),
@@ -1420,6 +1453,19 @@ bool voice_service_request(
     return false;
 #else
     if (operation == nullptr || g_commands == nullptr) return false;
+    if (std::strcmp(operation, "system.voice.activate") == 0 ||
+        std::strcmp(operation, "system.voice.interrupt") == 0) {
+        return g_peer_connected &&
+            enqueue(CommandKind::activate, nullptr, 0, 0, request_id);
+    }
+    if (std::strcmp(operation, "system.voice.finish") == 0) {
+        return g_peer_connected &&
+            enqueue(CommandKind::finish, nullptr, 0, 0, request_id);
+    }
+    if (std::strcmp(operation, "system.voice.cancel") == 0) {
+        return g_websocket_connected &&
+            enqueue(CommandKind::cancel, nullptr, 0, 0, request_id);
+    }
     if (std::strcmp(operation, "voice-notes.record") == 0 ||
         std::strcmp(operation, "voice-notes.again") == 0) {
         return enqueue(CommandKind::start, nullptr, 0, duration_ms, request_id);
@@ -1438,4 +1484,8 @@ bool voice_service_poll(VoiceEvent& event) {
 
 bool voice_service_busy() {
     return g_recording;
+}
+
+bool voice_service_ready() {
+    return g_peer_connected && g_websocket_connected;
 }

@@ -311,27 +311,36 @@ bool ShellState::can_transition_voice(
     if (to == VoicePhase::idle) return true;
     switch (from) {
         case VoicePhase::idle:
-            return to == VoicePhase::listening;
+            return to == VoicePhase::ready ||
+                   to == VoicePhase::listening;
+        case VoicePhase::ready:
+            return to == VoicePhase::listening ||
+                   to == VoicePhase::error;
         case VoicePhase::listening:
             return to == VoicePhase::thinking ||
                    to == VoicePhase::speaking ||
+                   to == VoicePhase::ready ||
                    to == VoicePhase::error;
         case VoicePhase::thinking:
             return to == VoicePhase::clarifying ||
                    to == VoicePhase::speaking ||
                    to == VoicePhase::listening ||
+                   to == VoicePhase::ready ||
                    to == VoicePhase::error;
         case VoicePhase::speaking:
             return to == VoicePhase::listening ||
                    to == VoicePhase::thinking ||
+                   to == VoicePhase::ready ||
                    to == VoicePhase::error;
         case VoicePhase::clarifying:
             return to == VoicePhase::thinking ||
                    to == VoicePhase::speaking ||
                    to == VoicePhase::listening ||
+                   to == VoicePhase::ready ||
                    to == VoicePhase::error;
         case VoicePhase::error:
-            return to == VoicePhase::listening;
+            return to == VoicePhase::ready ||
+                   to == VoicePhase::listening;
     }
     return false;
 }

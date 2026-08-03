@@ -29,27 +29,14 @@ class StubAttention:
 async def test_final_before_user_stopped_does_not_arm_missing_transcript_watchdog() -> None:
     phases: list[str] = []
 
-    async def state_sink(phase: str, _background: dict[str, object]) -> None:
+    async def state_sink(
+        phase: str,
+        _background: dict[str, object],
+        _display: dict[str, str],
+    ) -> None:
         phases.append(phase)
 
-    conversation = object.__new__(LiveConversation)
-    conversation.voice_phase = "listening"
-    conversation.attention = StubAttention()
-    conversation.state_sink = state_sink
-    conversation._transcript_watchdog_task = None
-    conversation._current_turn_has_final = False
-
-    await conversation._begin_user_turn()
-    await conversation._on_final_transcript()
-    await conversation._finish_user_turn()
-
-    assert phases == ["thinking", "thinking"]
-    assert conversation._transcript_watchdog_task is None
-
-
-@pytest.mark.asyncio
-async def test_missing_final_still_arms_recovery_watchdog() -> None:
-    async def state_sink(_phase: str, _background: dict[str, object]) -> None:
+    async def stop_capture() -> None:
         return None
 
     conversation = object.__new__(LiveConversation)
@@ -58,6 +45,39 @@ async def test_missing_final_still_arms_recovery_watchdog() -> None:
     conversation.state_sink = state_sink
     conversation._transcript_watchdog_task = None
     conversation._current_turn_has_final = False
+    conversation.user_text = ""
+    conversation.assistant_text = ""
+    conversation.stop_capture = stop_capture
+
+    await conversation._begin_user_turn()
+    await conversation._on_transcript("hello", True)
+    await conversation._finish_user_turn()
+
+    assert phases == ["thinking", "thinking"]
+    assert conversation._transcript_watchdog_task is None
+
+
+@pytest.mark.asyncio
+async def test_missing_final_still_arms_recovery_watchdog() -> None:
+    async def state_sink(
+        _phase: str,
+        _background: dict[str, object],
+        _display: dict[str, str],
+    ) -> None:
+        return None
+
+    async def stop_capture() -> None:
+        return None
+
+    conversation = object.__new__(LiveConversation)
+    conversation.voice_phase = "listening"
+    conversation.attention = StubAttention()
+    conversation.state_sink = state_sink
+    conversation._transcript_watchdog_task = None
+    conversation._current_turn_has_final = False
+    conversation.user_text = ""
+    conversation.assistant_text = ""
+    conversation.stop_capture = stop_capture
 
     await conversation._begin_user_turn()
     await conversation._finish_user_turn()
@@ -68,16 +88,17 @@ async def test_missing_final_still_arms_recovery_watchdog() -> None:
 
 
 @pytest.mark.asyncio
-async def test_missing_final_recovery_rearms_capture(monkeypatch) -> None:
+async def test_missing_final_recovery_returns_to_ready_without_capture(monkeypatch) -> None:
     order: list[str] = []
 
     async def no_wait(_seconds: float) -> None:
         return None
 
-    async def resume_capture() -> None:
-        order.append("capture")
-
-    async def state_sink(phase: str, _background: dict[str, object]) -> None:
+    async def state_sink(
+        phase: str,
+        _background: dict[str, object],
+        _display: dict[str, str],
+    ) -> None:
         order.append(phase)
 
     monkeypatch.setattr(asyncio, "sleep", no_wait)
@@ -85,13 +106,101 @@ async def test_missing_final_recovery_rearms_capture(monkeypatch) -> None:
     conversation.voice_phase = "thinking"
     conversation.attention = StubAttention()
     conversation.state_sink = state_sink
-    conversation.resume_capture = resume_capture
     conversation.trace = LatencyTrace()
     conversation._transcript_watchdog_task = None
+    conversation.user_text = ""
+    conversation.assistant_text = ""
 
     await conversation._recover_missing_transcript()
 
-    assert order == ["capture", "listening"]
+    assert order == ["ready"]
+
+
+@pytest.mark.asyncio
+async def test_push_to_talk_turn_stays_off_until_explicit_activation() -> None:
+    published: list[tuple[str, dict[str, str]]] = []
+    stops = 0
+
+    async def state_sink(
+        phase: str,
+        _background: dict[str, object],
+        display: dict[str, str],
+    ) -> None:
+        published.append((phase, display.copy()))
+
+    async def stop_capture() -> None:
+        nonlocal stops
+        stops += 1
+
+    conversation = object.__new__(LiveConversation)
+    conversation.voice_phase = "idle"
+    conversation.attention = StubAttention()
+    conversation.state_sink = state_sink
+    conversation.stop_capture = stop_capture
+    conversation._transcript_watchdog_task = None
+    conversation._current_turn_has_final = False
+    conversation.user_text = "old transcript"
+    conversation.assistant_text = "old response"
+
+    await conversation.ready()
+    assert stops == 0
+    assert published[-1] == (
+        "ready",
+        {"transcript": "old transcript", "response": "old response"},
+    )
+
+    await conversation.begin_listening()
+    assert stops == 0
+    assert published[-1] == (
+        "listening",
+        {"transcript": "", "response": ""},
+    )
+
+    await conversation._on_transcript("Can you hear me?", False)
+    assert stops == 0
+    assert published[-1] == (
+        "listening",
+        {"transcript": "Can you hear me?", "response": ""},
+    )
+
+    await conversation._on_transcript("Can you hear me?", True)
+    assert stops == 1
+    assert published[-1] == (
+        "thinking",
+        {"transcript": "Can you hear me?", "response": ""},
+    )
+
+
+@pytest.mark.asyncio
+async def test_playback_completion_returns_to_ready_without_rearming_capture() -> None:
+    order: list[str] = []
+
+    async def state_sink(
+        phase: str,
+        _background: dict[str, object],
+        _display: dict[str, str],
+    ) -> None:
+        order.append(phase)
+
+    async def wait_for_playback() -> None:
+        order.append("drained")
+
+    class Attention(StubAttention):
+        def natural_pause(self, _now_ms: int):
+            return None
+
+    conversation = object.__new__(LiveConversation)
+    conversation.voice_phase = "speaking"
+    conversation.attention = Attention()
+    conversation.state_sink = state_sink
+    conversation.wait_for_playback = wait_for_playback
+    conversation.worker = None
+    conversation.user_text = "Hello"
+    conversation.assistant_text = "Hi there"
+
+    await conversation._at_natural_pause()
+
+    assert order == ["drained", "ready"]
 
 
 @pytest.mark.asyncio
@@ -161,11 +270,15 @@ async def test_focused_answer_bypasses_llm_and_becomes_typed_tts() -> None:
 
     thinking = False
 
-    async def on_thinking() -> None:
+    transcript: tuple[str, bool] | None = None
+
+    async def on_transcript(text: str, final: bool) -> None:
+        nonlocal transcript
         nonlocal thinking
         thinking = True
+        transcript = (text, final)
 
-    router = FocusRouter(Controller(), LatencyTrace(), on_thinking)  # type: ignore[arg-type]
+    router = FocusRouter(Controller(), LatencyTrace(), on_transcript)  # type: ignore[arg-type]
     pushed: list[object] = []
 
     async def push(frame, _direction=FrameDirection.DOWNSTREAM) -> None:
@@ -184,6 +297,7 @@ async def test_focused_answer_bypasses_llm_and_becomes_typed_tts() -> None:
     )
 
     assert thinking
+    assert transcript == ("the horizontal bar", True)
     assert len(pushed) == 1
     assert isinstance(pushed[0], TTSSpeakFrame)
     assert pushed[0].text == "Got it—bar selected for that build."

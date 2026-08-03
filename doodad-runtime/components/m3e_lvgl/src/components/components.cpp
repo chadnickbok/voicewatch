@@ -2003,29 +2003,68 @@ lv_obj_t* ComponentFactory::confirmation_dialog(
 lv_obj_t* ComponentFactory::voice_orb(
     lv_obj_t* parent,
     const char* state_label,
-    Tone tone) {
+    Tone tone,
+    VoiceOrbState voice_state) {
     auto* orb = lv_button_create(parent);
     reset(orb);
     lv_obj_set_size(orb, 88, 88);
     lv_obj_set_style_radius(orb, LV_RADIUS_CIRCLE, 0);
     lv_obj_add_style(orb, styles_.get(fill_style(tone)), 0);
+    lv_obj_set_style_border_width(
+        orb, voice_state == VoiceOrbState::listening ? 4 : 2, 0);
+    lv_obj_set_style_border_opa(
+        orb, voice_state == VoiceOrbState::listening ? LV_OPA_70 : LV_OPA_30, 0);
+    lv_obj_add_style(orb, styles_.get(content_style(tone)), LV_PART_MAIN);
     lv_obj_add_style(
         orb,
         styles_.get(StyleRole::pressed),
         static_cast<lv_style_selector_t>(LV_PART_MAIN) |
             static_cast<lv_style_selector_t>(LV_STATE_PRESSED));
-    auto* symbol = lv_label_create(orb);
-    reset(symbol);
-    lv_label_set_text(symbol, LV_SYMBOL_AUDIO);
-    lv_obj_set_style_text_font(symbol, &lv_font_montserrat_18, 0);
-    lv_obj_add_style(symbol, styles_.get(content_style(tone)), 0);
-    lv_obj_align(symbol, LV_ALIGN_CENTER, 0, -8);
+    lv_obj_set_user_data(orb, const_cast<char*>("voice.primary"));
+    if (voice_state == VoiceOrbState::idle ||
+        voice_state == VoiceOrbState::listening) {
+        // LVGL's built-in AUDIO symbol is a music note. Draw a compact mic
+        // from styled primitives so voice capture cannot be mistaken for
+        // media playback and no additional icon font is required.
+        auto* capsule = lv_obj_create(orb);
+        reset(capsule);
+        lv_obj_set_size(capsule, 15, 24);
+        lv_obj_set_style_radius(capsule, 8, 0);
+        lv_obj_set_style_bg_opa(capsule, LV_OPA_TRANSP, 0);
+        lv_obj_set_style_border_width(capsule, 3, 0);
+        lv_obj_add_style(capsule, styles_.get(content_style(tone)), 0);
+        lv_obj_align(capsule, LV_ALIGN_CENTER, 0, -12);
+        auto* stem = lv_obj_create(orb);
+        reset(stem);
+        lv_obj_set_size(stem, 3, 8);
+        lv_obj_add_style(stem, styles_.get(content_style(tone)), 0);
+        lv_obj_align(stem, LV_ALIGN_CENTER, 0, 5);
+        auto* base = lv_obj_create(orb);
+        reset(base);
+        lv_obj_set_size(base, 19, 3);
+        lv_obj_set_style_radius(base, 2, 0);
+        lv_obj_add_style(base, styles_.get(content_style(tone)), 0);
+        lv_obj_align(base, LV_ALIGN_CENTER, 0, 10);
+    } else {
+        auto* symbol = lv_label_create(orb);
+        reset(symbol);
+        const char* glyph = LV_SYMBOL_REFRESH;
+        if (voice_state == VoiceOrbState::speaking) {
+            glyph = LV_SYMBOL_VOLUME_MAX;
+        } else if (voice_state == VoiceOrbState::error) {
+            glyph = LV_SYMBOL_WARNING;
+        }
+        lv_label_set_text(symbol, glyph);
+        lv_obj_set_style_text_font(symbol, &lv_font_montserrat_18, 0);
+        lv_obj_add_style(symbol, styles_.get(content_style(tone)), 0);
+        lv_obj_align(symbol, LV_ALIGN_CENTER, 0, -9);
+    }
     auto* state = lv_label_create(orb);
     reset(state);
     lv_label_set_text(state, state_label == nullptr ? "" : state_label);
     lv_obj_set_style_text_font(state, &lv_font_montserrat_10, 0);
     lv_obj_add_style(state, styles_.get(content_style(tone)), 0);
-    lv_obj_align(state, LV_ALIGN_CENTER, 0, 16);
+    lv_obj_align(state, LV_ALIGN_CENTER, 0, 24);
     return orb;
 }
 
@@ -2283,7 +2322,8 @@ lv_obj_t* ComponentFactory::voice_overlay(
     lv_obj_t* root,
     const char* status,
     const char* transcript_text,
-    Tone orb_tone) {
+    Tone orb_tone,
+    VoiceOrbState voice_state) {
     auto* scrim = lv_obj_create(root);
     reset(scrim);
     lv_obj_set_size(scrim, LV_PCT(100), LV_PCT(100));
@@ -2292,9 +2332,9 @@ lv_obj_t* ComponentFactory::voice_overlay(
     lv_obj_add_flag(scrim, LV_OBJ_FLAG_CLICKABLE);
     auto* panel = lv_obj_create(scrim);
     reset(panel);
-    lv_obj_set_size(panel, 216, 216);
-    lv_obj_set_style_pad_all(panel, 12, 0);
-    lv_obj_set_style_pad_row(panel, 8, 0);
+    lv_obj_set_size(panel, 224, 224);
+    lv_obj_set_style_pad_all(panel, 8, 0);
+    lv_obj_set_style_pad_row(panel, 4, 0);
     lv_obj_set_flex_flow(panel, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(
         panel,
@@ -2303,7 +2343,7 @@ lv_obj_t* ComponentFactory::voice_overlay(
         LV_FLEX_ALIGN_CENTER);
     lv_obj_add_style(panel, styles_.get(StyleRole::surface_low), 0);
     lv_obj_center(panel);
-    voice_orb(panel, status, orb_tone);
+    voice_orb(panel, status, orb_tone, voice_state);
     transcript(panel, transcript_text, nullptr);
     auto* cancel = icon_button(
         panel,
@@ -2312,6 +2352,7 @@ lv_obj_t* ComponentFactory::voice_overlay(
         ButtonVariant::text,
         ComponentSize::compact);
     lv_obj_set_user_data(cancel, const_cast<char*>("voice.cancel"));
+    lv_obj_set_size(cancel, 60, 48);
     return scrim;
 }
 

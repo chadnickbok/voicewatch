@@ -28,3 +28,4 @@ bool voice_service_request(
     std::uint32_t duration_ms = 8'000);
 bool voice_service_poll(VoiceEvent& event);
 bool voice_service_busy();
+bool voice_service_ready();

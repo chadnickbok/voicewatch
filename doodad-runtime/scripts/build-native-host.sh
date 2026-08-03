@@ -29,6 +29,7 @@ if [[ "${DOODAD_BUILD_TESTS:-1}" == "1" ]]; then
         m3e_weather_foundations_test \
         m3e_weather_provider_v2_test \
         m3e_voice_provider_event_test \
+        m3e_voice_runtime_ui_test \
         m3e_weather_provider_model_test \
         m3e_deterministic_system_test \
         m3e_exact_scheduler_test \

@@ -44,6 +44,7 @@ int main() {
     assert(shell.set_voice_phase(VoicePhase::thinking));
     assert(shell.snapshot().background.running_count == 2);
     assert(shell.set_voice_phase(VoicePhase::speaking));
+    assert(shell.set_voice_phase(VoicePhase::ready));
     assert(shell.set_voice_phase(VoicePhase::listening));
     assert(shell.set_voice_phase(VoicePhase::thinking));
     assert(shell.set_voice_phase(VoicePhase::clarifying));

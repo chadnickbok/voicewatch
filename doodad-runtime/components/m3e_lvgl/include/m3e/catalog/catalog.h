@@ -43,7 +43,19 @@ enum {
     M3E_CATALOG_STORY_COLOR_BARS = 33,
 };
 
+typedef struct {
+    lv_obj_t* primary_action;
+    lv_obj_t* cancel_action;
+    lv_obj_t* level_ring;
+} m3e_voice_runtime_view_t;
+
 void m3e_catalog_show(lv_obj_t* screen, int story);
+void m3e_catalog_show_voice_runtime(
+    lv_obj_t* screen,
+    int phase,
+    const char* transcript,
+    const char* response,
+    m3e_voice_runtime_view_t* view);
 
 #ifdef __cplusplus
 }

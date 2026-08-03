@@ -51,6 +51,14 @@ enum class IconName : std::uint8_t {
     settings,
 };
 
+enum class VoiceOrbState : std::uint8_t {
+    idle,
+    listening,
+    thinking,
+    speaking,
+    error,
+};
+
 struct ButtonProps {
     const char* id;
     const char* label;
@@ -313,7 +321,8 @@ class ComponentFactory {
     lv_obj_t* voice_orb(
         lv_obj_t* parent,
         const char* state_label,
-        Tone tone = Tone::primary);
+        Tone tone = Tone::primary,
+        VoiceOrbState state = VoiceOrbState::idle);
     lv_obj_t* transcript(
         lv_obj_t* parent,
         const char* final_text,
@@ -345,7 +354,8 @@ class ComponentFactory {
         lv_obj_t* root,
         const char* status,
         const char* transcript_text,
-        Tone tone = Tone::primary);
+        Tone tone = Tone::primary,
+        VoiceOrbState state = VoiceOrbState::idle);
 
     static void reset(lv_obj_t* object);
 

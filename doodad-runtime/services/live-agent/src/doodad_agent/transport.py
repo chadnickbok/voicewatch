@@ -287,7 +287,9 @@ class WatchSession:
 
     async def resume_after_downlink(self) -> None:
         await self.downlink.wait_drained()
-        await self.start_capture()
+
+    def clear_downlink(self) -> None:
+        self.downlink.clear()
 
     async def close(self) -> None:
         for future in self._pending_actions.values():
@@ -447,6 +449,7 @@ class WatchTransportServer:
                 elif raw.type == WSMsgType.ERROR:
                     break
         finally:
+            await self.on_event("disconnected", {})
             await session.close()
             if self.session is session:
                 self.session = None

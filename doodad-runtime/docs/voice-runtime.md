@@ -34,21 +34,32 @@ permission decisions, and app actions are never silently dropped.
 ## Session state machine
 
 ```text
-idle -> opening -> listening -> thinking
-                    |             |
-                    v             v
-                 cancelled     clarify/review
-                                  |
-                                  v
-                         executing -> speaking -> closing
-                                  |
-                                  v
-                                error
+disconnected -> ready -- explicit press --> listening -> thinking
+                  ^            |                |
+                  |            v                v
+                  +-------- cancelled       clarify/review
+                  |                             |
+                  |                             v
+                  +--------- speaking <---- executing
+                                |
+                                +-- press --> listening
+
+any active phase -- cancel --> ready
+any transport failure -------> disconnected/error
 ```
 
 Every transition has a timeout, cancellation path, reduced-motion visual, and
-semantic announcement. Microphone capture stops before the overlay reports
-that listening has stopped.
+semantic announcement. A WebRTC connection alone never starts or reserves the
+microphone. Capture begins only after an explicit trusted-system action and the
+microphone is shut down before the overlay reports that listening has stopped.
+Completing assistant playback returns to `ready`, not `listening`.
+
+The runtime overlay is data-driven rather than a catalog fixture: the server's
+bounded interim/final transcript and assistant response are carried in
+`agent.state`, while local PCM peaks drive the listening ring without a network
+round trip. AppSpec mounts and command batches are suppressed while the trusted
+overlay owns the display, preventing an app from replacing or invalidating the
+system voice surface.
 
 ## Action boundary
 

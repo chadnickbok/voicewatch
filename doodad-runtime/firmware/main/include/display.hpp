@@ -27,5 +27,8 @@ bool display_publish_agent_state(
     bool focused_question,
     bool review_ready,
     bool completion_pending,
-    std::uint8_t install_state);
+    std::uint8_t install_state,
+    const char* transcript,
+    const char* response);
+bool display_publish_voice_level(std::uint8_t level);
 void display_update();

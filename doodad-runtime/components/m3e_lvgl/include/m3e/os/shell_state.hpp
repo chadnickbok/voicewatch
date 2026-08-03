@@ -36,6 +36,7 @@ enum class VoicePhase : std::uint8_t {
     speaking,
     clarifying,
     error,
+    ready,
 };
 
 enum class BackgroundInstallState : std::uint8_t {

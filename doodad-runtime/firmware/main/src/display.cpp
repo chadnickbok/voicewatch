@@ -12,6 +12,7 @@
 #include "esp_log.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/idf_additions.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
 #include "lvgl.h"
@@ -22,6 +23,7 @@
 #include "m3e/os/shell_state.hpp"
 #include "m3e/os/surface_registry.hpp"
 #include "m3e/theme/resolved_theme.hpp"
+#include "voice_service.hpp"
 
 namespace {
 
@@ -32,7 +34,7 @@ constexpr std::size_t kDrawBufferBytes = kDrawBufferPixels * sizeof(std::uint16_
 constexpr std::uint16_t kPhysicalBackground = 0x0841;
 constexpr std::uint32_t kDisplaySpiFrequencyHz = 40 * 1000 * 1000;
 constexpr std::int64_t kTelemetryIntervalMicroseconds = 2 * 1000 * 1000;
-constexpr std::size_t kUiQueueDepth = 16;
+constexpr std::size_t kUiQueueDepth = 8;
 
 enum class UiCommandType : std::uint8_t {
     shell,
@@ -43,12 +45,13 @@ enum class UiCommandType : std::uint8_t {
     system_home,
     surface_publish,
     agent_state,
+    voice_level,
 };
 
 struct UiCommand {
     UiCommandType type;
-    char primary[129];
-    char secondary[32];
+    char primary[161];
+    char secondary[161];
     std::size_t length;
     int story;
     m3e::appspec::WireDocument* document;
@@ -60,6 +63,13 @@ struct UiCommand {
     bool review_ready;
     bool completion_pending;
     std::uint8_t install_state;
+    std::uint8_t voice_level;
+};
+
+enum class PendingVoiceAction : std::uint8_t {
+    none,
+    primary,
+    cancel,
 };
 
 bool g_display_ready = false;
@@ -96,6 +106,10 @@ lv_point_t g_last_touch_point{0, 0};
 m3e::os::ShellState g_shell{};
 m3e::os::SurfaceRegistry g_surface_registry{};
 bool g_shell_active = false;
+m3e_voice_runtime_view_t g_voice_view{};
+char g_voice_transcript[161]{};
+char g_voice_response[161]{};
+PendingVoiceAction g_pending_voice_action = PendingVoiceAction::none;
 
 std::uint32_t tick_milliseconds() {
     return static_cast<std::uint32_t>(esp_timer_get_time() / 1000);
@@ -235,6 +249,14 @@ void forward_app_event(
 
 bool appspec_now(m3e::appspec::WireDocument* document) {
     if (document == nullptr) return false;
+    if (g_shell_active &&
+        g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+        // The trusted system voice surface owns the display while it is open.
+        // A voice-aware guest may still receive provider events, but it must
+        // not replace or invalidate native overlay objects.
+        delete document;
+        return true;
+    }
     if (!g_appspec_styles.initialized() &&
         !g_appspec_styles.initialize(m3e::baseline_dark_theme())) {
         delete document;
@@ -258,6 +280,11 @@ bool appspec_now(m3e::appspec::WireDocument* document) {
 
 bool command_batch_now(m3e::appspec::CommandBatch* batch) {
     if (batch == nullptr) return false;
+    if (g_shell_active &&
+        g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+        delete batch;
+        return true;
+    }
     if (g_active_document == nullptr) {
         delete batch;
         ESP_LOGE(kTag, "[display] no mounted AppSpec for CommandBatch");
@@ -336,6 +363,7 @@ int shell_story() {
                 case m3e::os::VoicePhase::error:
                     return M3E_CATALOG_STORY_OS_ERROR;
                 case m3e::os::VoicePhase::idle:
+                case m3e::os::VoicePhase::ready:
                     return M3E_CATALOG_STORY_OS_VOICE;
             }
             break;
@@ -374,8 +402,125 @@ int shell_story() {
 }
 
 void render_shell_now() {
-    catalog_now(shell_story());
+    if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+        m3e_catalog_show_voice_runtime(
+            lv_screen_active(),
+            static_cast<int>(g_shell.snapshot().voice_phase),
+            g_voice_transcript,
+            g_voice_response,
+            &g_voice_view);
+        // Rendering the trusted surface replaces the mounted guest tree.
+        // Its document must no longer be eligible for later command batches.
+        delete g_active_document;
+        g_active_document = nullptr;
+        if (g_voice_view.primary_action != nullptr) {
+            lv_obj_add_event_cb(
+                g_voice_view.primary_action,
+                [](lv_event_t* event) {
+                    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+                        g_pending_voice_action = PendingVoiceAction::primary;
+                    }
+                },
+                LV_EVENT_CLICKED,
+                nullptr);
+        }
+        if (g_voice_view.cancel_action != nullptr) {
+            lv_obj_add_event_cb(
+                g_voice_view.cancel_action,
+                [](lv_event_t* event) {
+                    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+                        g_pending_voice_action = PendingVoiceAction::cancel;
+                    }
+                },
+                LV_EVENT_CLICKED,
+                nullptr);
+        }
+    } else {
+        g_voice_view = {};
+        catalog_now(shell_story());
+    }
     render_background_badge();
+}
+
+bool force_voice_phase(m3e::os::VoicePhase phase) {
+    if (g_shell.set_voice_phase(phase)) return true;
+    if (!g_shell.set_voice_phase(m3e::os::VoicePhase::idle)) return false;
+    if (phase == m3e::os::VoicePhase::idle) return true;
+    if (phase == m3e::os::VoicePhase::ready) {
+        return g_shell.set_voice_phase(phase);
+    }
+    if (!g_shell.set_voice_phase(m3e::os::VoicePhase::listening)) return false;
+    return phase == m3e::os::VoicePhase::listening ||
+        g_shell.set_voice_phase(phase);
+}
+
+void show_voice_error(const char* message) {
+    if (g_shell.snapshot().overlay != m3e::os::Overlay::voice) {
+        g_shell.show_overlay(m3e::os::Overlay::voice);
+    }
+    std::strncpy(
+        g_voice_response,
+        message == nullptr ? "Voice unavailable" : message,
+        sizeof(g_voice_response) - 1);
+    force_voice_phase(m3e::os::VoicePhase::error);
+    render_shell_now();
+}
+
+void perform_voice_action(PendingVoiceAction action) {
+    if (!g_shell_active || action == PendingVoiceAction::none) return;
+    if (action == PendingVoiceAction::cancel) {
+        voice_service_request("system.voice.cancel", 0);
+        if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+            g_shell.dismiss_overlay();
+            render_shell_now();
+        }
+        return;
+    }
+
+    const auto phase = g_shell.snapshot().voice_phase;
+    const char* operation = "system.voice.activate";
+    auto next = m3e::os::VoicePhase::listening;
+    if (phase == m3e::os::VoicePhase::listening) {
+        operation = "system.voice.finish";
+        next = m3e::os::VoicePhase::thinking;
+    } else if (phase == m3e::os::VoicePhase::speaking) {
+        operation = "system.voice.interrupt";
+    } else if (phase != m3e::os::VoicePhase::ready &&
+               phase != m3e::os::VoicePhase::idle &&
+               g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+        return;
+    }
+
+    if (!voice_service_request(operation, 0, 30'000)) {
+        show_voice_error("Voice service unavailable");
+        return;
+    }
+    if (g_shell.snapshot().overlay != m3e::os::Overlay::voice) {
+        g_shell.show_overlay(m3e::os::Overlay::voice);
+    }
+    if (next == m3e::os::VoicePhase::listening) {
+        g_voice_transcript[0] = '\0';
+        g_voice_response[0] = '\0';
+    }
+    force_voice_phase(next);
+    render_shell_now();
+}
+
+void voice_level_now(std::uint8_t level) {
+    if (g_shell.snapshot().overlay != m3e::os::Overlay::voice ||
+        g_shell.snapshot().voice_phase != m3e::os::VoicePhase::listening ||
+        g_voice_view.level_ring == nullptr ||
+        !lv_obj_is_valid(g_voice_view.level_ring)) {
+        return;
+    }
+    const auto bounded = std::min<std::uint8_t>(level, 100);
+    lv_obj_set_style_border_width(
+        g_voice_view.level_ring, 3 + bounded / 25, 0);
+    lv_obj_set_style_border_opa(
+        g_voice_view.level_ring,
+        static_cast<lv_opa_t>(LV_OPA_30 + bounded * 150 / 100),
+        0);
+    lv_obj_invalidate(g_voice_view.level_ring);
 }
 
 void system_home_now() {
@@ -405,6 +550,7 @@ bool surface_publish_now(
 }
 
 void agent_state_now(const UiCommand& command) {
+    bool initialized_now = false;
     if (!g_shell_active) {
         if (!g_shell.initialize()) {
             ESP_LOGE(kTag, "[system] agent state could not initialize shell");
@@ -412,26 +558,30 @@ void agent_state_now(const UiCommand& command) {
         }
         g_surface_registry.sync_shell_counts(g_shell);
         g_shell_active = true;
+        initialized_now = true;
     }
+    const auto generation_before = g_shell.snapshot().generation;
+    const bool text_changed =
+        std::strcmp(g_voice_transcript, command.primary) != 0 ||
+        std::strcmp(g_voice_response, command.secondary) != 0;
+    std::strncpy(
+        g_voice_transcript, command.primary, sizeof(g_voice_transcript) - 1);
+    std::strncpy(
+        g_voice_response, command.secondary, sizeof(g_voice_response) - 1);
     const auto requested = command.voice_phase <=
-            static_cast<std::uint8_t>(m3e::os::VoicePhase::error)
+            static_cast<std::uint8_t>(m3e::os::VoicePhase::ready)
         ? static_cast<m3e::os::VoicePhase>(command.voice_phase)
         : m3e::os::VoicePhase::error;
     if (requested == m3e::os::VoicePhase::idle) {
         if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
             g_shell.dismiss_overlay();
         }
-    } else {
+    } else if (requested != m3e::os::VoicePhase::ready ||
+               g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
         if (g_shell.snapshot().overlay != m3e::os::Overlay::voice) {
             g_shell.show_overlay(m3e::os::Overlay::voice);
         }
-        if (!g_shell.set_voice_phase(requested)) {
-            g_shell.set_voice_phase(m3e::os::VoicePhase::idle);
-            g_shell.set_voice_phase(m3e::os::VoicePhase::listening);
-            if (requested != m3e::os::VoicePhase::listening) {
-                g_shell.set_voice_phase(requested);
-            }
-        }
+        force_voice_phase(requested);
     }
     const auto install_state = command.install_state <=
             static_cast<std::uint8_t>(
@@ -444,7 +594,9 @@ void agent_state_now(const UiCommand& command) {
         command.review_ready,
         command.completion_pending,
         install_state);
-    if (g_shell_active && g_shell.snapshot().display_awake) {
+    if (g_shell_active && g_shell.snapshot().display_awake &&
+        (initialized_now || text_changed ||
+         g_shell.snapshot().generation != generation_before)) {
         render_shell_now();
     }
 }
@@ -473,12 +625,20 @@ void dispatch_system_input(m3e::os::Input input) {
 
 void handle_system_inputs() {
     if (M5.BtnB.wasHold()) {
-        dispatch_system_input(m3e::os::Input::button_b_hold);
+        perform_voice_action(PendingVoiceAction::primary);
     } else if (M5.BtnB.wasClicked()) {
-        dispatch_system_input(m3e::os::Input::button_b);
+        if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+            perform_voice_action(PendingVoiceAction::primary);
+        } else {
+            dispatch_system_input(m3e::os::Input::button_b);
+        }
     }
     if (M5.BtnA.wasClicked()) {
-        dispatch_system_input(m3e::os::Input::button_a);
+        if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+            perform_voice_action(PendingVoiceAction::cancel);
+        } else {
+            dispatch_system_input(m3e::os::Input::button_a);
+        }
     }
     if (M5.BtnC.wasClicked()) {
         dispatch_system_input(m3e::os::Input::button_c);
@@ -516,6 +676,9 @@ void drain_ui_commands() {
             case UiCommandType::agent_state:
                 agent_state_now(command);
                 break;
+            case UiCommandType::voice_level:
+                voice_level_now(command.voice_level);
+                break;
         }
     }
 }
@@ -524,7 +687,10 @@ void drain_ui_commands() {
 
 bool display_init() {
     g_ui_task = xTaskGetCurrentTaskHandle();
-    g_ui_queue = xQueueCreate(kUiQueueDepth, sizeof(UiCommand));
+    g_ui_queue = xQueueCreateWithCaps(
+        kUiQueueDepth,
+        sizeof(UiCommand),
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     if (g_ui_queue == nullptr) {
         ESP_LOGE(kTag, "[display] UI command queue allocation failed");
         return false;
@@ -801,7 +967,9 @@ bool display_publish_agent_state(
     bool focused_question,
     bool review_ready,
     bool completion_pending,
-    std::uint8_t install_state) {
+    std::uint8_t install_state,
+    const char* transcript,
+    const char* response) {
     UiCommand command{};
     command.type = UiCommandType::agent_state;
     command.voice_phase = voice_phase;
@@ -810,9 +978,27 @@ bool display_publish_agent_state(
     command.review_ready = review_ready;
     command.completion_pending = completion_pending;
     command.install_state = install_state;
+    std::strncpy(
+        command.primary, transcript == nullptr ? "" : transcript,
+        sizeof(command.primary) - 1);
+    std::strncpy(
+        command.secondary, response == nullptr ? "" : response,
+        sizeof(command.secondary) - 1);
     if (!g_display_ready) return false;
     if (on_ui_task()) {
         agent_state_now(command);
+        return true;
+    }
+    return enqueue(command);
+}
+
+bool display_publish_voice_level(std::uint8_t level) {
+    if (!g_display_ready) return false;
+    UiCommand command{};
+    command.type = UiCommandType::voice_level;
+    command.voice_level = std::min<std::uint8_t>(level, 100);
+    if (on_ui_task()) {
+        voice_level_now(command.voice_level);
         return true;
     }
     return enqueue(command);
@@ -830,6 +1016,11 @@ void display_update() {
     M5.update();
     handle_system_inputs();
     lv_timer_handler();
+    if (g_pending_voice_action != PendingVoiceAction::none) {
+        const auto action = g_pending_voice_action;
+        g_pending_voice_action = PendingVoiceAction::none;
+        perform_voice_action(action);
+    }
 
     const auto now = esp_timer_get_time();
     const auto elapsed = now - g_window_started_us;

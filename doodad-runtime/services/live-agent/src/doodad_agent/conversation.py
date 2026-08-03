@@ -18,7 +18,9 @@ from pipecat.frames.frames import (
     EndFrame,
     InputAudioRawFrame,
     InterruptionFrame,
+    InterimTranscriptionFrame,
     LLMFullResponseStartFrame,
+    LLMTextFrame,
     StartFrame,
     TranscriptionFrame,
     TTSAudioRawFrame,
@@ -55,7 +57,10 @@ from .metrics import LatencyTrace
 AudioSink = Callable[[bytes, int], int]
 AsyncCallback = Callable[[], Awaitable[None]]
 ActionInvoker = Callable[[str, dict[str, Any], str], Awaitable[dict[str, Any]]]
-StateSink = Callable[[str, dict[str, object]], Awaitable[None]]
+StateSink = Callable[
+    [str, dict[str, object], dict[str, str]], Awaitable[None]
+]
+TranscriptCallback = Callable[[str, bool], Awaitable[None]]
 
 
 SYSTEM_INSTRUCTION = """You are Doodad, the fast foreground voice companion on a watch.
@@ -115,12 +120,12 @@ class FocusRouter(FrameProcessor):
         self,
         controller: ForegroundController,
         trace: LatencyTrace,
-        on_thinking: AsyncCallback,
+        on_transcript: TranscriptCallback,
     ) -> None:
         super().__init__()
         self.controller = controller
         self.trace = trace
-        self.on_thinking = on_thinking
+        self.on_transcript = on_transcript
 
     async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
         await super().process_frame(frame, direction)
@@ -128,9 +133,11 @@ class FocusRouter(FrameProcessor):
         # completed transcription event, but Pipecat 1.7.0 leaves the generic
         # `finalized` dataclass field at its False default. The frame type is
         # therefore the authoritative finality signal for this pinned stack.
-        if isinstance(frame, TranscriptionFrame):
+        if isinstance(frame, InterimTranscriptionFrame):
+            await self.on_transcript(frame.text, False)
+        elif isinstance(frame, TranscriptionFrame):
             self.trace.mark("stt.final", characters=len(frame.text))
-            await self.on_thinking()
+            await self.on_transcript(frame.text, True)
             utterance_id = f"utt_{uuid.uuid4().hex}"
             routed = self.controller.route_focused(frame.text, utterance_id)
             if routed.handled:
@@ -150,6 +157,30 @@ class FocusRouter(FrameProcessor):
                     direction,
                 )
                 return
+        await self.push_frame(frame, direction)
+
+
+class AssistantTextTap(FrameProcessor):
+    """Collect bounded assistant text without changing the TTS frame stream."""
+
+    def __init__(
+        self,
+        on_reset: AsyncCallback,
+        on_text: Callable[[str], Awaitable[None]],
+    ) -> None:
+        super().__init__()
+        self.on_reset = on_reset
+        self.on_text = on_text
+
+    async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
+        await super().process_frame(frame, direction)
+        if isinstance(frame, LLMFullResponseStartFrame):
+            await self.on_reset()
+        elif isinstance(frame, LLMTextFrame):
+            await self.on_text(frame.text)
+        elif isinstance(frame, TTSSpeakFrame):
+            await self.on_reset()
+            await self.on_text(frame.text)
         await self.push_frame(frame, direction)
 
 
@@ -233,7 +264,7 @@ class LiveConversation:
         trace: LatencyTrace,
         audio_sink: AudioSink,
         stop_capture: AsyncCallback,
-        resume_capture: AsyncCallback,
+        wait_for_playback: AsyncCallback,
         action_invoker: ActionInvoker,
         state_sink: StateSink,
     ) -> None:
@@ -243,7 +274,7 @@ class LiveConversation:
         self.trace = trace
         self.audio_sink = audio_sink
         self.stop_capture = stop_capture
-        self.resume_capture = resume_capture
+        self.wait_for_playback = wait_for_playback
         self.action_invoker = action_invoker
         self.state_sink = state_sink
         self.voice_phase = "idle"
@@ -254,6 +285,8 @@ class LiveConversation:
         self._transcript_watchdog_task: asyncio.Task[None] | None = None
         self._current_turn_has_final = False
         self._seen_events: set[str] = set()
+        self.user_text = ""
+        self.assistant_text = ""
 
     async def start(self) -> None:
         missing = [
@@ -315,7 +348,11 @@ class LiveConversation:
         )
 
         router = FocusRouter(
-            self.controller, self.trace, self._on_final_transcript,
+            self.controller, self.trace, self._on_transcript,
+        )
+        assistant_text = AssistantTextTap(
+            self._clear_assistant_text,
+            self._append_assistant_text,
         )
         sink = ConversationSink(
             self.audio_sink,
@@ -335,6 +372,7 @@ class LiveConversation:
                 aggregators.user(),
                 llm,
                 PipelineProbe(self.trace, "after_llm"),
+                assistant_text,
                 tts,
                 PipelineProbe(self.trace, "after_tts"),
                 aggregators.assistant(),
@@ -365,13 +403,32 @@ class LiveConversation:
 
     async def begin_listening(self) -> None:
         self._cancel_transcript_watchdog()
+        self.user_text = ""
+        self.assistant_text = ""
         await self._set_voice_phase("listening")
+
+    async def ready(self) -> None:
+        self._cancel_transcript_watchdog()
+        await self._set_voice_phase("ready")
+
+    async def cancel(self) -> None:
+        self._cancel_transcript_watchdog()
+        if self.worker is not None:
+            await self.worker.queue_frame(InterruptionFrame())
+        self.user_text = ""
+        self.assistant_text = ""
+        await self._set_voice_phase("ready")
+
+    def disconnected(self) -> None:
+        self._cancel_transcript_watchdog()
+        self.voice_phase = "idle"
 
     async def _begin_user_turn(self) -> None:
         self._current_turn_has_final = False
         self._cancel_transcript_watchdog()
 
     async def _finish_user_turn(self) -> None:
+        await self.stop_capture()
         await self._set_voice_phase("thinking")
         self._cancel_transcript_watchdog()
         if not self._current_turn_has_final:
@@ -379,10 +436,21 @@ class LiveConversation:
                 self._recover_missing_transcript()
             )
 
-    async def _on_final_transcript(self) -> None:
-        self._current_turn_has_final = True
-        self._cancel_transcript_watchdog()
-        await self._set_voice_phase("thinking")
+    async def _on_transcript(self, text: str, final: bool) -> None:
+        self.user_text = text[:160]
+        if final:
+            self._current_turn_has_final = True
+            self._cancel_transcript_watchdog()
+            await self.stop_capture()
+            await self._set_voice_phase("thinking")
+        elif self.voice_phase == "listening":
+            await self._publish_state()
+
+    async def _clear_assistant_text(self) -> None:
+        self.assistant_text = ""
+
+    async def _append_assistant_text(self, text: str) -> None:
+        self.assistant_text = (self.assistant_text + text)[:160]
 
     async def _begin_speaking(self) -> None:
         await self.stop_capture()
@@ -399,12 +467,7 @@ class LiveConversation:
             await asyncio.sleep(4)
             if self.voice_phase == "thinking":
                 self.trace.mark("stt.missing_final")
-                # The watch's bounded capture lease can expire while a false
-                # VAD turn is waiting for a transcript. Returning the UI to
-                # listening must also re-arm media capture, even when no bot
-                # speech lifecycle exists to do it for us.
-                await self.resume_capture()
-                await self._set_voice_phase("listening")
+                await self._set_voice_phase("ready")
         finally:
             if self._transcript_watchdog_task is task:
                 self._transcript_watchdog_task = None
@@ -440,8 +503,8 @@ class LiveConversation:
             )
             await self.worker.queue_frame(TTSSpeakFrame(action.text))
         else:
-            await self.resume_capture()
-            await self._set_voice_phase("listening")
+            await self.wait_for_playback()
+            await self._set_voice_phase("ready")
 
     async def _control_loop(self) -> None:
         while True:
@@ -459,13 +522,28 @@ class LiveConversation:
                             "job.event", job_id=event.job_id, event_kind=event.kind
                         )
             await self.state_sink(
-                self.voice_phase, self.attention.background_snapshot()
+                self.voice_phase,
+                self.attention.background_snapshot(),
+                self._display_state(),
             )
             await asyncio.sleep(0.1)
 
     async def _set_voice_phase(self, phase: str) -> None:
         self.voice_phase = phase
-        await self.state_sink(phase, self.attention.background_snapshot())
+        await self._publish_state()
+
+    def _display_state(self) -> dict[str, str]:
+        return {
+            "transcript": self.user_text,
+            "response": self.assistant_text,
+        }
+
+    async def _publish_state(self) -> None:
+        await self.state_sink(
+            self.voice_phase,
+            self.attention.background_snapshot(),
+            self._display_state(),
+        )
 
     def _tools(self) -> list[FunctionSchema]:
         async def record(params: FunctionCallParams) -> None:
