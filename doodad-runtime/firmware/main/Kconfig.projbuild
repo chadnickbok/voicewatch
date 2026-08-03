@@ -1,3 +1,52 @@
+menu "Doodad networking"
+
+config DOODAD_WIFI_SSID
+    string "Wi-Fi SSID"
+    default ""
+    help
+        Shared native Wi-Fi credentials. These remain outside Wasm guest
+        memory. The legacy weather-specific values are used as a fallback.
+
+config DOODAD_WIFI_PASSWORD
+    string "Wi-Fi password"
+    default ""
+
+endmenu
+
+menu "Doodad voice uplink"
+
+config DOODAD_VOICE_UPLINK
+    bool "Enable the WebRTC microphone uplink"
+    default n
+    help
+        Connects to a local doodad-voice signaling service over WebSocket and
+        sends 8 kHz mono G.711 mu-law audio through an Espressif PeerConnection.
+
+if DOODAD_VOICE_UPLINK
+
+config DOODAD_VOICE_SIGNALING_URL
+    string "Static signaling WebSocket URL (optional)"
+    default ""
+    help
+        Diagnostic override such as ws://192.168.1.10:8765/ws. When empty,
+        firmware discovers _doodad-voice._tcp over mDNS.
+
+config DOODAD_VOICE_SIGNALING_PORT
+    int "Fallback signaling port"
+    range 1 65535
+    default 8765
+
+config DOODAD_VOICE_AUTOCONNECT
+    bool "Connect the voice transport at boot"
+    default y
+    help
+        Useful for the unattended Echo Bridge hardware test. Capture still
+        requires an explicit app or server command.
+
+endif
+
+endmenu
+
 menu "Doodad Weather provider"
 
 config DOODAD_WEATHER_NETWORK_PROVIDER

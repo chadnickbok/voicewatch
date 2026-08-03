@@ -332,6 +332,50 @@ extern "C" size_t m3e_encode_timer_provider_event(
         output_capacity);
 }
 
+extern "C" size_t m3e_encode_voice_provider_event(
+    uint8_t kind,
+    uint64_t request_id,
+    uint32_t elapsed_ms,
+    uint32_t encoded_frames,
+    uint32_t dropped_frames,
+    const char* text,
+    uint64_t provider_revision,
+    uint64_t observed_scenario_ms,
+    uint8_t* output,
+    size_t output_capacity) {
+    if (kind > 5 || text == nullptr || std::strlen(text) > 192 ||
+        provider_revision == 0 || output == nullptr) {
+        return 0;
+    }
+    std::uint8_t payload[256]{};
+    Writer writer(payload, sizeof(payload));
+    if (!writer.unsigned_integer(5, 6) ||
+        !writer.unsigned_integer(0, 0) ||
+        !writer.unsigned_integer(0, kind) ||
+        !writer.unsigned_integer(0, 1) ||
+        !writer.unsigned_integer(0, request_id) ||
+        !writer.unsigned_integer(0, 2) ||
+        !writer.unsigned_integer(0, elapsed_ms) ||
+        !writer.unsigned_integer(0, 3) ||
+        !writer.unsigned_integer(0, encoded_frames) ||
+        !writer.unsigned_integer(0, 4) ||
+        !writer.unsigned_integer(0, dropped_frames) ||
+        !writer.unsigned_integer(0, 5) ||
+        !writer.text(text)) {
+        return 0;
+    }
+    return m3e_encode_provider_event(
+        "audio",
+        "voice.changed",
+        provider_revision,
+        kind == 5 ? 3 : 0,
+        observed_scenario_ms,
+        payload,
+        writer.size(),
+        output,
+        output_capacity);
+}
+
 extern "C" size_t m3e_encode_provider_event(
     const char* provider_id,
     const char* event_id,

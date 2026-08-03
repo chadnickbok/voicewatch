@@ -38,7 +38,8 @@
     "maximum_result_bytes": 4096,
     "required_when_capability_prefixes": [
       "timer.",
-      "weather."
+      "weather.",
+      "audio."
     ]
   },
   "wasm_profile": {

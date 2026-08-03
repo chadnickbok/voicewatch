@@ -1,7 +1,10 @@
 #![no_std]
 
 use core::panic::PanicInfo;
-use doodad_sdk::{decode_ui_event, mount_appspec, request_audio};
+use doodad_sdk::{
+    UiCommandBuffer, VoiceProviderState, decode_provider_event, decode_ui_event,
+    decode_voice_provider_payload, mount_appspec, pack_result, request_audio,
+};
 
 const HOME: &[u8] = include_bytes!("../appspec.cbor");
 const RECORDING: &[u8] = include_bytes!("../screens/recording.cbor");
@@ -54,6 +57,55 @@ pub unsafe extern "C" fn handle_event(
     }
     let _ = mount_appspec(target);
     0
+}
+
+#[unsafe(no_mangle)]
+pub unsafe extern "C" fn handle_provider_event(pointer: *const u8, length: u32) -> u64 {
+    if pointer.is_null() || length == 0 || length > 1024 {
+        return 0;
+    }
+    let bytes = unsafe { core::slice::from_raw_parts(pointer, length as usize) };
+    let event = match decode_provider_event(bytes) {
+        Ok(value) if value.provider_id == "audio" && value.event_id == "voice.changed" => value,
+        _ => return 0,
+    };
+    let voice = match decode_voice_provider_payload(event.payload) {
+        Ok(value) => value,
+        Err(_) => return 0,
+    };
+    match voice.state {
+        VoiceProviderState::Recording => {
+            let _ = mount_appspec(RECORDING);
+            0
+        }
+        VoiceProviderState::Stopped => {
+            let _ = mount_appspec(BUFFERED);
+            0
+        }
+        VoiceProviderState::Transcript => {
+            let _ = mount_appspec(TRANSCRIPT);
+            let mut commands = UiCommandBuffer::<512>::new();
+            if commands.begin(2).is_err()
+                || commands
+                    .set_secondary_text("voice-notes.transcript.detail", voice.text)
+                    .is_err()
+                || commands
+                    .set_semantic_label("voice-notes.transcript.detail", voice.text)
+                    .is_err()
+            {
+                return 0;
+            }
+            match commands.finish() {
+                Ok(value) => pack_result(value),
+                Err(_) => 0,
+            }
+        }
+        VoiceProviderState::Error => {
+            let _ = mount_appspec(HOME);
+            0
+        }
+        VoiceProviderState::Connecting | VoiceProviderState::Ready => 0,
+    }
 }
 
 #[panic_handler]

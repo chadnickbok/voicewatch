@@ -27,3 +27,8 @@ doodad-runtime/tools/native-host/build/
 
 # Generated embedded guest (created by scripts/build-guest.sh)
 doodad-runtime/firmware/main/embedded/hello.wasm
+
+# Local voice-uplink lab dependencies and evidence
+doodad-runtime/tools/voice-uplink/.venv/
+doodad-runtime/tools/voice-uplink/models/
+doodad-runtime/tools/voice-uplink/artifacts/

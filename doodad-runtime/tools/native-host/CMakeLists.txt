@@ -89,6 +89,11 @@ if(BUILD_TESTING)
   target_link_libraries(m3e_weather_provider_v2_test PRIVATE m3e::lvgl)
   add_test(NAME m3e_weather_provider_v2 COMMAND m3e_weather_provider_v2_test)
 
+  add_executable(m3e_voice_provider_event_test
+    "${DOODAD_ROOT}/tests/m3e/voice_provider_event_test.cpp")
+  target_link_libraries(m3e_voice_provider_event_test PRIVATE m3e::lvgl)
+  add_test(NAME m3e_voice_provider_event COMMAND m3e_voice_provider_event_test)
+
   add_executable(m3e_weather_provider_model_test
     "${DOODAD_ROOT}/tests/m3e/weather_provider_model_test.cpp")
   target_include_directories(m3e_weather_provider_model_test PRIVATE

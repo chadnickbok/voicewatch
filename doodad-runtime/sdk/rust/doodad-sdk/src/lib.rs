@@ -640,6 +640,77 @@ pub fn decode_provider_event(
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 #[repr(u8)]
+pub enum VoiceProviderState {
+    Connecting = 0,
+    Ready = 1,
+    Recording = 2,
+    Stopped = 3,
+    Transcript = 4,
+    Error = 5,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct VoiceProviderPayload<'a> {
+    pub state: VoiceProviderState,
+    pub request_id: u64,
+    pub elapsed_ms: u64,
+    pub encoded_frames: u64,
+    pub dropped_frames: u64,
+    pub text: &'a str,
+}
+
+pub fn decode_voice_provider_payload(
+    bytes: &[u8],
+) -> Result<VoiceProviderPayload<'_>, EventDecodeError> {
+    let mut reader = CborReader { bytes, offset: 0 };
+    let (major, fields) = reader.head()?;
+    if major != 5 || fields != 6 || reader.unsigned()? != 0 {
+        return Err(EventDecodeError::WrongShape);
+    }
+    let state = match reader.unsigned()? {
+        0 => VoiceProviderState::Connecting,
+        1 => VoiceProviderState::Ready,
+        2 => VoiceProviderState::Recording,
+        3 => VoiceProviderState::Stopped,
+        4 => VoiceProviderState::Transcript,
+        5 => VoiceProviderState::Error,
+        _ => return Err(EventDecodeError::WrongShape),
+    };
+    if reader.unsigned()? != 1 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let request_id = reader.unsigned()?;
+    if reader.unsigned()? != 2 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let elapsed_ms = reader.unsigned()?;
+    if reader.unsigned()? != 3 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let encoded_frames = reader.unsigned()?;
+    if reader.unsigned()? != 4 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let dropped_frames = reader.unsigned()?;
+    if reader.unsigned()? != 5 {
+        return Err(EventDecodeError::NonCanonical);
+    }
+    let text = reader.text()?;
+    if reader.offset != bytes.len() {
+        return Err(EventDecodeError::TrailingData);
+    }
+    Ok(VoiceProviderPayload {
+        state,
+        request_id,
+        elapsed_ms,
+        encoded_frames,
+        dropped_frames,
+        text,
+    })
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+#[repr(u8)]
 pub enum TimerProviderState {
     Scheduled = 0,
     Firing = 1,
@@ -1878,6 +1949,39 @@ mod tests {
         assert_eq!(timer.remaining_ms, 3_000);
         assert_eq!(timer.deadline_scenario_ms, 4_000);
         assert_eq!(timer.firing_ordinal, 0);
+    }
+
+    #[test]
+    fn decodes_bounded_voice_provider_payloads() {
+        let payload: &[u8] = &[
+            0xa6,
+            0x00, 0x04,
+            0x01, 0x11,
+            0x02, 0x19, 0x1f, 0x40,
+            0x03, 0x19, 0x01, 0x8f,
+            0x04, 0x00,
+            0x05, 0x65, b'h', b'e', b'l', b'l', b'o',
+        ];
+        let voice = decode_voice_provider_payload(payload).unwrap();
+        assert_eq!(voice.state, VoiceProviderState::Transcript);
+        assert_eq!(voice.request_id, 17);
+        assert_eq!(voice.elapsed_ms, 8_000);
+        assert_eq!(voice.encoded_frames, 399);
+        assert_eq!(voice.dropped_frames, 0);
+        assert_eq!(voice.text, "hello");
+
+        let mut trailing = payload.to_vec();
+        trailing.push(0);
+        assert_eq!(
+            decode_voice_provider_payload(&trailing),
+            Err(EventDecodeError::TrailingData),
+        );
+        let mut invalid_state = payload.to_vec();
+        invalid_state[2] = 6;
+        assert_eq!(
+            decode_voice_provider_payload(&invalid_state),
+            Err(EventDecodeError::WrongShape),
+        );
     }
 
     #[test]

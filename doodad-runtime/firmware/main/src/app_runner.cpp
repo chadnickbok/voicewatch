@@ -25,6 +25,7 @@
 #include "m3e/state/store.hpp"
 #include "wasm_export.h"
 #include "weather_provider.hpp"
+#include "voice_service.hpp"
 
 namespace {
 
@@ -561,6 +562,38 @@ bool deliver_weather_provider() {
                now);
 }
 
+bool deliver_voice_provider() {
+    VoiceEvent delivery{};
+    while (voice_service_poll(delivery)) {
+        if (g_handle_provider_event == nullptr) continue;
+        if (g_provider_revision ==
+            std::numeric_limits<std::uint64_t>::max()) {
+            return false;
+        }
+        std::array<std::uint8_t, 512> encoded{};
+        const auto encoded_size = m3e_encode_voice_provider_event(
+            static_cast<std::uint8_t>(delivery.kind),
+            delivery.request_id,
+            delivery.elapsed_ms,
+            delivery.encoded_frames,
+            delivery.dropped_frames,
+            delivery.text.data(),
+            ++g_provider_revision,
+            scenario_now_ms(),
+            encoded.data(),
+            encoded.size());
+        if (encoded_size == 0 ||
+            !invoke_guest_handler(
+                g_handle_provider_event,
+                encoded.data(),
+                encoded_size,
+                "handle_provider_event")) {
+            return false;
+        }
+    }
+    return true;
+}
+
 std::int32_t reject_guest_appspec(
     wasm_module_inst_t module_instance,
     const char* reason) {
@@ -798,8 +831,34 @@ std::uint64_t host_provider_request(
 
 DEFINE_BOUND_PROVIDER_REQUEST(
     host_calendar_request, "calendar.", "")
-DEFINE_BOUND_PROVIDER_REQUEST(
-    host_audio_request, "voice-notes.", "")
+
+std::uint64_t host_audio_request(
+    wasm_exec_env_t execution_environment,
+    std::uint32_t operation_pointer,
+    std::uint32_t operation_length,
+    std::uint32_t payload_pointer,
+    std::uint32_t payload_length) {
+    std::array<char, 49> operation{};
+    auto instance = wasm_runtime_get_module_inst(execution_environment);
+    if (g_weather_request_id ==
+            std::numeric_limits<std::uint64_t>::max() ||
+        !copy_guest_service_id(
+            execution_environment,
+            operation_pointer,
+            operation_length,
+            operation) ||
+        payload_length > 512 ||
+        (payload_length != 0 &&
+         !wasm_runtime_validate_app_addr(
+             instance, payload_pointer, payload_length)) ||
+        std::strncmp(operation.data(), "voice-notes.", 12) != 0) {
+        return 0;
+    }
+    const auto request_id = ++g_weather_request_id;
+    return voice_service_request(operation.data(), request_id)
+        ? request_id : 0;
+}
+
 DEFINE_BOUND_PROVIDER_REQUEST(
     host_medication_request, "medication.", "")
 DEFINE_BOUND_PROVIDER_REQUEST(
@@ -996,6 +1055,11 @@ bool app_runtime_init() {
         display_error("PROVIDER INIT FAILED");
         return false;
     }
+    if (!voice_service_init()) {
+        ESP_LOGE(kTag, "[host] voice service initialization failed");
+        display_error("VOICE INIT FAILED");
+        return false;
+    }
     RuntimeInitArgs arguments{};
     arguments.mem_alloc_type = Alloc_With_Allocator;
     arguments.mem_alloc_option.allocator.malloc_func =
@@ -1176,6 +1240,9 @@ void app_runtime_update(std::uint32_t maximum_wait_ms) {
     }
     if (!deliver_weather_provider()) {
         ESP_LOGE(kTag, "[host] weather provider delivery failed");
+    }
+    if (!deliver_voice_provider()) {
+        ESP_LOGE(kTag, "[host] voice provider delivery failed");
     }
 
     if (g_scheduler == nullptr) return;

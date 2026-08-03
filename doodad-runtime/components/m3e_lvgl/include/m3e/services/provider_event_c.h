@@ -28,6 +28,20 @@ size_t m3e_encode_timer_provider_event(
     uint8_t* output,
     size_t output_capacity);
 
+// Encodes provider-event-v1 with a voice-state-v1 payload. Voice kind values
+// match the native VoiceEventKind enum (connecting through error).
+size_t m3e_encode_voice_provider_event(
+    uint8_t kind,
+    uint64_t request_id,
+    uint32_t elapsed_ms,
+    uint32_t encoded_frames,
+    uint32_t dropped_frames,
+    const char* text,
+    uint64_t provider_revision,
+    uint64_t observed_scenario_ms,
+    uint8_t* output,
+    size_t output_capacity);
+
 size_t m3e_encode_weather_provider_event(
     int32_t temperature_tenths_f,
     const char* condition,

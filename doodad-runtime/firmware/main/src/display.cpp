@@ -449,7 +449,7 @@ bool display_init() {
     config.clear_display = true;
     config.internal_imu = false;
     config.internal_rtc = false;
-    config.internal_mic = false;
+    config.internal_mic = true;
     config.internal_spk = false;
     config.external_display_value = 0;
     config.fallback_board = m5::board_t::board_M5StackCoreS3SE;

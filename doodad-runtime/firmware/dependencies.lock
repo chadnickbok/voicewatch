@@ -1,4 +1,21 @@
 dependencies:
+  espressif/esp_audio_codec:
+    component_hash: af4663830bc73eca58febcc34a976d003465e78ed57458aa00a14b231e392ca1
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=4.4'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 2.4.1
+  espressif/esp_libsrtp:
+    component_hash: 131560184c73ec09f77d8904a2db709307803f0f9f111898921b6966776eac15
+    dependencies: []
+    source:
+      registry_url: https://components.espressif.com
+      type: service
+    version: 1.0.0
   espressif/esp_lvgl_port:
     component_hash: fb6c1fdfe70d4ca39a035d63ca394a35f17ec84ce16ff98ecb13a54155d75da4
     dependencies:
@@ -13,6 +30,37 @@ dependencies:
       registry_url: https://components.espressif.com/
       type: service
     version: 2.8.0~1
+  espressif/esp_peer:
+    component_hash: 338746a4102dde1b6894c926e0413eae5e5b31b34847a4bd10197c934fecc00a
+    dependencies:
+    - name: espressif/esp_libsrtp
+      registry_url: https://components.espressif.com
+      require: private
+      version: ^1.0.0
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.5.3
+  espressif/esp_websocket_client:
+    component_hash: 3fb288702517ef4d75bf933a115f1056ee0c2540d964f9e1d856e0bb67e1dfeb
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.7.0
+  espressif/mdns:
+    component_hash: 29e47564b1a7ee778135e17fbbf2a2773f71c97ebabfe626c8eda7c958a7ad16
+    dependencies:
+    - name: idf
+      require: private
+      version: '>=5.0'
+    source:
+      registry_url: https://components.espressif.com/
+      type: service
+    version: 1.9.1
   espressif/wasm-micro-runtime:
     component_hash: 04f25aad2896b5e906397a061d35cce560609bebd3913a4be7e365ecbf2dd9d6
     dependencies:
@@ -60,11 +108,15 @@ dependencies:
       type: service
     version: 0.2.19
 direct_dependencies:
+- espressif/esp_audio_codec
 - espressif/esp_lvgl_port
+- espressif/esp_peer
+- espressif/esp_websocket_client
+- espressif/mdns
 - espressif/wasm-micro-runtime
 - idf
 - lvgl/lvgl
 - m5stack/m5unified
-manifest_hash: 75b22397f66e3f94a3181bb08ccd90c3cf97de2b532e317b7c6ee98460333212
+manifest_hash: 4b24fab6e5d18c4e86e16eca8d77da8eae3f71eee4ce2891d8662e445e1f9275
 target: esp32s3
 version: 2.0.0

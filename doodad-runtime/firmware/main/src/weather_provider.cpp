@@ -18,17 +18,13 @@
 #include "cJSON.h"
 #include "esp_crt_bundle.h"
 #include "esp_err.h"
-#include "esp_event.h"
 #include "esp_heap_caps.h"
 #include "esp_http_client.h"
 #include "esp_log.h"
-#include "esp_netif.h"
-#include "esp_netif_sntp.h"
-#include "esp_wifi.h"
 #include "freertos/FreeRTOS.h"
-#include "freertos/event_groups.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
+#include "network_service.hpp"
 #include "nvs.h"
 #include "nvs_flash.h"
 #include "weather_provider_model.hpp"
@@ -42,9 +38,7 @@ constexpr char kCacheKey[] = "snapshot";
 constexpr std::uint32_t kCacheMagic = 0x44575448;  // DWTH
 constexpr std::uint16_t kCacheVersion = 1;
 constexpr std::size_t kMaximumResponseBytes = 16 * 1024;
-constexpr std::uint32_t kWorkerStackBytes = 16 * 1024;
-constexpr EventBits_t kWifiConnected = BIT0;
-constexpr EventBits_t kWifiFailed = BIT1;
+constexpr std::uint32_t kWorkerStackBytes = 8 * 1024;
 
 struct CacheEnvelope {
     std::uint32_t magic = kCacheMagic;
@@ -70,13 +64,9 @@ struct LocalDateTime {
 };
 
 QueueHandle_t g_result_queue = nullptr;
-EventGroupHandle_t g_wifi_events = nullptr;
 portMUX_TYPE g_state_lock = portMUX_INITIALIZER_UNLOCKED;
 bool g_busy = false;
 bool g_nvs_ready = false;
-bool g_wifi_initialized = false;
-bool g_sntp_initialized = false;
-unsigned g_wifi_retry_count = 0;
 
 template <std::size_t Size>
 void copy_text(char (&destination)[Size], const char* source) {
@@ -123,103 +113,6 @@ bool ensure_nvs() {
         return false;
     }
     g_nvs_ready = true;
-    return true;
-}
-
-void wifi_event_handler(
-    void*,
-    esp_event_base_t base,
-    std::int32_t event_id,
-    void*) {
-    if (g_wifi_events == nullptr) return;
-    if (base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP) {
-        g_wifi_retry_count = 0;
-        xEventGroupSetBits(g_wifi_events, kWifiConnected);
-        return;
-    }
-    if (base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED) {
-        xEventGroupClearBits(g_wifi_events, kWifiConnected);
-        if (g_wifi_retry_count < 5) {
-            ++g_wifi_retry_count;
-            esp_wifi_connect();
-        } else {
-            xEventGroupSetBits(g_wifi_events, kWifiFailed);
-        }
-    }
-}
-
-bool initialize_wifi() {
-    if (g_wifi_initialized) return true;
-    if (CONFIG_DOODAD_WEATHER_WIFI_SSID[0] == '\0') {
-        ESP_LOGW(kTag, "network provider enabled without a Wi-Fi SSID");
-        return false;
-    }
-    auto status = esp_netif_init();
-    if (status != ESP_OK && status != ESP_ERR_INVALID_STATE) return false;
-    status = esp_event_loop_create_default();
-    if (status != ESP_OK && status != ESP_ERR_INVALID_STATE) return false;
-    if (esp_netif_create_default_wifi_sta() == nullptr) return false;
-
-    wifi_init_config_t initialization = WIFI_INIT_CONFIG_DEFAULT();
-    if (esp_wifi_init(&initialization) != ESP_OK) return false;
-    if (esp_wifi_set_storage(WIFI_STORAGE_RAM) != ESP_OK) return false;
-    g_wifi_events = xEventGroupCreate();
-    if (g_wifi_events == nullptr) return false;
-    if (esp_event_handler_register(
-            WIFI_EVENT, ESP_EVENT_ANY_ID, wifi_event_handler, nullptr) != ESP_OK ||
-        esp_event_handler_register(
-            IP_EVENT, IP_EVENT_STA_GOT_IP, wifi_event_handler, nullptr) != ESP_OK) {
-        return false;
-    }
-
-    wifi_config_t configuration{};
-    copy_text(
-        reinterpret_cast<char(&)[sizeof(configuration.sta.ssid)]>(
-            configuration.sta.ssid),
-        CONFIG_DOODAD_WEATHER_WIFI_SSID);
-    copy_text(
-        reinterpret_cast<char(&)[sizeof(configuration.sta.password)]>(
-            configuration.sta.password),
-        CONFIG_DOODAD_WEATHER_WIFI_PASSWORD);
-    configuration.sta.threshold.authmode = WIFI_AUTH_OPEN;
-    configuration.sta.pmf_cfg.capable = true;
-    configuration.sta.pmf_cfg.required = false;
-    if (esp_wifi_set_mode(WIFI_MODE_STA) != ESP_OK ||
-        esp_wifi_set_config(WIFI_IF_STA, &configuration) != ESP_OK ||
-        esp_wifi_start() != ESP_OK) {
-        return false;
-    }
-    g_wifi_initialized = true;
-    return true;
-}
-
-bool ensure_wifi_connected() {
-    if (!initialize_wifi()) return false;
-    const auto existing = xEventGroupGetBits(g_wifi_events);
-    if ((existing & kWifiConnected) != 0) return true;
-    g_wifi_retry_count = 0;
-    xEventGroupClearBits(g_wifi_events, kWifiFailed);
-    if (esp_wifi_connect() != ESP_OK) return false;
-    const auto bits = xEventGroupWaitBits(
-        g_wifi_events,
-        kWifiConnected | kWifiFailed,
-        pdFALSE,
-        pdFALSE,
-        pdMS_TO_TICKS(20'000));
-    if ((bits & kWifiConnected) == 0) return false;
-
-    if (!g_sntp_initialized) {
-        esp_sntp_config_t configuration =
-            ESP_NETIF_SNTP_DEFAULT_CONFIG("pool.ntp.org");
-        if (esp_netif_sntp_init(&configuration) == ESP_OK) {
-            g_sntp_initialized = true;
-        }
-    }
-    if (g_sntp_initialized) {
-        // Forecast display does not depend on wall-clock synchronization, but
-        // a bounded wait gives persisted cache entries a trustworthy age.
-        esp_netif_sntp_sync_wait(pdMS_TO_TICKS(5'000));
-    }
     return true;
 }
 
@@ -283,6 +176,9 @@ bool fetch_json(HttpBuffer& buffer) {
     configuration.event_handler = http_event;
     configuration.user_data = &buffer;
     configuration.timeout_ms = 12'000;
+    // The generated request line is about 600 bytes. Leave enough room for
+    // ESP-IDF to append its first header batch in the same transmit buffer.
+    configuration.buffer_size_tx = 1024;
     configuration.crt_bundle_attach = esp_crt_bundle_attach;
     configuration.user_agent = "DoodadWeather/1.0";
     auto client = esp_http_client_init(&configuration);
@@ -736,7 +632,8 @@ void build_error_result(WeatherProviderResult& result) {
 void provider_worker(void*) {
     WeatherProviderResult result{};
     bool fresh = false;
-    if (ensure_nvs() && ensure_wifi_connected()) {
+    if (ensure_nvs() && network_service_connect()) {
+        network_service_sync_time();
         HttpBuffer buffer{};
         buffer.capacity = kMaximumResponseBytes;
         buffer.bytes = static_cast<char*>(heap_caps_malloc(
