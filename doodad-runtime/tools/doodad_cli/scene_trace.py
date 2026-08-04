@@ -574,6 +574,15 @@ def _capture_replay_checkpoint(host: NativeHost) -> dict[str, Any]:
 
 def replay_trace_bundle(directory: Path) -> dict[str, Any]:
     bundle = load_trace_bundle(directory)
+    project_root = find_project_root(bundle.directory)
+    recorded_simulator_build = bundle.trace["environment"]["hashes"][
+        "simulator_build"
+    ]
+    current_simulator_build = trace_environment(project_root)["hashes"][
+        "simulator_build"
+    ]
+    if recorded_simulator_build != current_simulator_build:
+        raise DoodadError("trace simulator build attestation is stale")
     checkpoints_by_revision: dict[int, list[dict[str, Any]]] = {}
     for checkpoint in bundle.checkpoints["checkpoints"]:
         checkpoints_by_revision.setdefault(
@@ -582,7 +591,7 @@ def replay_trace_bundle(directory: Path) -> dict[str, Any]:
         ).append(checkpoint)
     verified_checkpoints: set[int] = set()
 
-    host = NativeHost(find_project_root(bundle.directory))
+    host = NativeHost(project_root)
     try:
         for entry in bundle.trace["entries"]:
             operation_field = (

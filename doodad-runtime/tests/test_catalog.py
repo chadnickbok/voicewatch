@@ -17,7 +17,7 @@ EXPECTED = {
     "calculator": "e86f9439c39d302744e6c8f7e095c7481457c3c506fa05207a0954ba0c8cd451",
     "workout": "9b741419cc4f72db7b70f3e640ee854a0678188c0a98f2e20740d329ec252f65",
     "inputs": "d42bf589296a20ef7d4f256217cd6dc4ae74f4f92bf0d159549046fdbf443cc5",
-    "voice": "92ad177dc740e384fd9089ac9b05de675f852c6fe9b9b48c71ba494427ca2bb9",
+    "voice": "dc650e2c7a07aa93eb0846de99a9795dcb04f39bfd207f40ecf830cca55098a4",
     "navigation": "cdbdbd38d6b4d73d375fd37dfc991767e19579d2018c2eb518e5f50837ea6a0f",
     "system": "6388e86082ce390d9329075eb6823df50293f545aea528011c10b39687bc95c2",
     "transforming-list": "a6efdbdcfb6e1780696893056b2c09b3a7fa53fcb28f1df63ffde3dde03cd079",
@@ -31,7 +31,7 @@ EXPECTED = {
     "os-launcher": "706f0c86c6bcbd3a6a32697e6eed654ecf5b5efe79ce4f635f6b559554b88e0e",
     "os-control-center": "56bf7a1d016cc0910e759e303fbe86651fc3de2691d5fa8cb0790e59abad31b6",
     "os-app-manager": "34272ca9a3949b0a5e80ba601cc3a4aa6693b79f7eeb6445987c76f716350a84",
-    "os-voice": "9014735c7eee3c53eb2bfa570bfb84443512feaa7a51ac46e290e089dd9bfa2e",
+    "os-voice": "64b011bb6a87a8bf2fdc029d9ffe93be9f3b044e08c7f907d3380a67f2cee4ad",
     "os-app-detail": "e4023a67bc3f4229a5cbdcebe8a5c4e4a60b19f5917170ebe89168ed496ce1bc",
     "os-install-progress": "9ed6e671b55c9a3578011e97568bb2a182633e1ca71dd743e3a5d39e647240b4",
     "os-crash-recovery": "2525fe81d9625ce7699ebe660e5c21913529d281f13bed74cb126473c26c9632",
@@ -39,10 +39,10 @@ EXPECTED = {
     "os-permission-review": "34674e4191ed02ee551c2918d5f983b8cb19edeca8691e04ad2c75577d6acaba",
     "os-action-review": "e5afa0a56d6665fe68ef2c814199075ea354eb286aea363e9149576b980ecf3a",
     "os-error": "0a06f9bc9a6804103a16270c7d41031ef616f45fdcae602603da96568ba9bcc1",
-    "os-voice-thinking": "000c91ff5ff4234531cc7f59f6274d719a58b7544dc2ce7b20c1c7dd44dfafcd",
-    "os-voice-review": "b3acc3e18fae01ab0cc79e1c512135ccc8a70d7aa3d50438305b20d67778c47e",
-    "os-voice-build": "6a3b93f18353bc4a9e7ffc06b5f21338df9cc1271d9b741a4c8ed9c4851a4a90",
-    "os-voice-result": "b71c340c5d8d2294d78d0fbd4163fa532f1097118fc7a5f63737ebe41cb38a7a",
+    "os-voice-thinking": "72038345f0a3e06a494623e4bff60ef4d5284d55bacf86145dc39d5fd5266927",
+    "os-voice-review": "de61acd9f6afd0dd1933636d74bb13ca8d7197c8c6f93de6871477a1d9aa6dcd",
+    "os-voice-build": "92eaecbc4ecc03e62c89fc33a73828f67da4ec4331d659e473086adfef9e376b",
+    "os-voice-result": "3171c5fb823f53bcfaf5e7fba758b1444e69a450a115514ef845833e028b21f3",
     "color-bars": "8a2bff2346fb9e431b7b3fa5e8cff19f703a1385d69f9b6f02ade958da637943",
 }
 
@@ -51,26 +51,31 @@ class CatalogGoldenTests(unittest.TestCase):
     def test_rgb565_catalog_goldens_are_deterministic(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
             for story, expected_hash in EXPECTED.items():
-                output = Path(temporary) / f"{story}.bmp"
-                subprocess.run(
-                    [
-                        str(ROOT / "doodad"),
-                        "catalog",
-                        "--story",
-                        story,
-                        "--output",
-                        str(output),
-                    ],
-                    cwd=ROOT,
-                    check=True,
-                    capture_output=True,
-                    text=True,
-                )
-                data = output.read_bytes()
-                self.assertEqual(hashlib.sha256(data).hexdigest(), expected_hash)
-                self.assertEqual(data[:2], b"BM")
-                self.assertEqual(struct.unpack_from("<ii", data, 18), (240, 240))
-                self.assertEqual(struct.unpack_from("<H", data, 28)[0], 24)
+                with self.subTest(story=story):
+                    output = Path(temporary) / f"{story}.bmp"
+                    subprocess.run(
+                        [
+                            str(ROOT / "doodad"),
+                            "catalog",
+                            "--story",
+                            story,
+                            "--output",
+                            str(output),
+                        ],
+                        cwd=ROOT,
+                        check=True,
+                        capture_output=True,
+                        text=True,
+                    )
+                    data = output.read_bytes()
+                    self.assertEqual(
+                        hashlib.sha256(data).hexdigest(), expected_hash
+                    )
+                    self.assertEqual(data[:2], b"BM")
+                    self.assertEqual(
+                        struct.unpack_from("<ii", data, 18), (240, 240)
+                    )
+                    self.assertEqual(struct.unpack_from("<H", data, 28)[0], 24)
 
 
 if __name__ == "__main__":

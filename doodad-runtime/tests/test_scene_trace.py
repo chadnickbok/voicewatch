@@ -1,14 +1,20 @@
 from __future__ import annotations
 
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
 
-from tools.doodad_cli.parallax_contract import canonical_json_bytes
+from tools.doodad_cli.contract import DoodadError
+from tools.doodad_cli.parallax_contract import (
+    canonical_json_bytes,
+    document_sha256,
+)
 from tools.doodad_cli.scene_trace import (
     load_trace_bundle,
     record_flow_trace,
+    replay_trace_bundle,
     verify_trace_bundle_fresh,
 )
 
@@ -75,6 +81,28 @@ class SceneTraceTests(unittest.TestCase):
                 )
                 self.assertTrue(result["passed"])
                 self.assertEqual(result["wasm_calls"], 0)
+
+    def test_replay_rejects_stale_simulator_build_attestation(self) -> None:
+        with tempfile.TemporaryDirectory(
+            prefix="parallax-stale-trace-",
+            dir=ROOT / "target",
+        ) as temporary:
+            stale = Path(temporary) / "timer" / "decisive"
+            shutil.copytree(TRACES / "timer" / "decisive", stale)
+            trace_path = stale / "trace.json"
+            trace = json.loads(trace_path.read_text())
+            trace["environment"]["hashes"]["simulator_build"] = "0" * 64
+            trace_path.write_bytes(canonical_json_bytes(trace))
+            checkpoints_path = stale / "checkpoints.json"
+            checkpoints = json.loads(checkpoints_path.read_text())
+            checkpoints["trace_sha256"] = document_sha256(trace)
+            checkpoints_path.write_bytes(canonical_json_bytes(checkpoints))
+
+            with self.assertRaisesRegex(
+                DoodadError,
+                "trace simulator build attestation is stale",
+            ):
+                replay_trace_bundle(stale)
 
     def test_ten_timer_recordings_are_byte_identical(self) -> None:
         documents: list[tuple[bytes, bytes]] = []

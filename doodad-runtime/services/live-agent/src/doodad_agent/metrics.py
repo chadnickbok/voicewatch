@@ -30,3 +30,14 @@ class LatencyTrace:
             with self._lock, self.path.open("a", encoding="utf-8") as stream:
                 stream.write(line)
         return event
+
+
+class DeviceLatencyTrace:
+    """Attach a stable device identity to every child-runtime event."""
+
+    def __init__(self, parent: LatencyTrace, device_id: str) -> None:
+        self.parent = parent
+        self.device_id = device_id
+
+    def mark(self, kind: str, **fields: Any) -> dict[str, Any]:
+        return self.parent.mark(kind, device_id=self.device_id, **fields)

@@ -599,7 +599,9 @@ class LiveConversation:
             now_ms = int(time.time() * 1000)
             self.builder.tick(now_ms)
             rows = self.attention.store.connection.execute(
-                "SELECT job_id FROM jobs ORDER BY created_at_ms,job_id"
+                "SELECT job_id FROM jobs WHERE device_id=? "
+                "ORDER BY created_at_ms,job_id",
+                (self.attention.device_id,),
             ).fetchall()
             for row in rows:
                 for event in self.attention.jobs.events(row["job_id"]):

@@ -1,0 +1,4 @@
+# Diagnostic fragment only. Use scripts/probe-twatch-psram.sh after the
+# factory image has been backed up if an OCTAL build fails its boot memtest.
+CONFIG_SPIRAM_MODE_QUAD=y
+# CONFIG_SPIRAM_MODE_OCT is not set

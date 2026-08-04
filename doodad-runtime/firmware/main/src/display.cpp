@@ -5,8 +5,8 @@
 #include <cstring>
 #include <new>
 
-#include "M5Unified.h"
 #include "app_runner.hpp"
+#include "board.hpp"
 #include "doodad_lvgl_ui.h"
 #include "esp_heap_caps.h"
 #include "esp_log.h"
@@ -32,7 +32,6 @@ constexpr std::int32_t kDrawRows = 40;
 constexpr std::size_t kDrawBufferPixels = DOODAD_SURFACE_WIDTH * kDrawRows;
 constexpr std::size_t kDrawBufferBytes = kDrawBufferPixels * sizeof(std::uint16_t);
 constexpr std::uint16_t kPhysicalBackground = 0x0841;
-constexpr std::uint32_t kDisplaySpiFrequencyHz = 40 * 1000 * 1000;
 constexpr std::int64_t kTelemetryIntervalMicroseconds = 2 * 1000 * 1000;
 constexpr std::size_t kUiQueueDepth = 8;
 
@@ -104,12 +103,26 @@ std::uint32_t g_window_touch_presses = 0;
 bool g_touch_pressed = false;
 lv_point_t g_last_touch_point{0, 0};
 m3e::os::ShellState g_shell{};
-m3e::os::SurfaceRegistry g_surface_registry{};
+m3e::os::SurfaceRegistry* g_surface_registry = nullptr;
 bool g_shell_active = false;
 m3e_voice_runtime_view_t g_voice_view{};
 char g_voice_transcript[161]{};
 char g_voice_response[161]{};
 PendingVoiceAction g_pending_voice_action = PendingVoiceAction::none;
+char g_visual_scene[49]{};
+std::uint32_t g_visual_revision = 0;
+std::uint32_t g_visual_frame_hash = 2166136261U;
+bool g_visual_pending = false;
+
+void stage_visual_scene(const char* scene) {
+    std::strncpy(
+        g_visual_scene,
+        scene == nullptr ? "unknown" : scene,
+        sizeof(g_visual_scene) - 1);
+    g_visual_scene[sizeof(g_visual_scene) - 1] = '\0';
+    ++g_visual_revision;
+    g_visual_pending = true;
+}
 
 std::uint32_t tick_milliseconds() {
     return static_cast<std::uint32_t>(esp_timer_get_time() / 1000);
@@ -131,8 +144,6 @@ void flush_display(
     lv_display_t* display, const lv_area_t* area, std::uint8_t* pixel_map) {
     const auto width = area->x2 - area->x1 + 1;
     const auto height = area->y2 - area->y1 + 1;
-    const auto x_offset =
-        (M5.Display.width() - DOODAD_SURFACE_WIDTH) / 2;
     const auto started_us = esp_timer_get_time();
     g_window_pixels +=
         static_cast<std::uint64_t>(width)
@@ -140,17 +151,23 @@ void flush_display(
     g_lifetime_pixels +=
         static_cast<std::uint64_t>(width)
         * static_cast<std::uint64_t>(height);
+    const auto* hash_bytes = reinterpret_cast<const std::uint8_t*>(pixel_map);
+    const auto hash_size = static_cast<std::size_t>(width) * height * 2;
+    for (std::size_t index = 0; index < hash_size; ++index) {
+        g_visual_frame_hash ^= hash_bytes[index];
+        g_visual_frame_hash *= 16777619U;
+    }
     // LVGL owns pixel_map and may reuse it as soon as flush_ready is called.
-    // Keep the transfer synchronous so M5GFX has consumed the complete strip
-    // before returning the buffer to LVGL. The previous pushImageDMA path
-    // could observe dmaBusy() as idle immediately after submission, release
-    // the strip early, and let subsequent rendering overwrite glyph pixels.
-    M5.Display.pushImage(
-        x_offset + area->x1,
+    // The adapter does not return until the board-specific transfer has
+    // consumed the complete LVGL strip.
+    if (!doodad::board::display_flush(
+        doodad::board::viewport_x() + area->x1,
         area->y1,
         width,
         height,
-        reinterpret_cast<const std::uint16_t*>(pixel_map));
+        reinterpret_cast<const std::uint16_t*>(pixel_map))) {
+        ESP_LOGE(kTag, "[display] board flush failed");
+    }
     const auto duration =
         static_cast<std::uint32_t>(esp_timer_get_time() - started_us);
     ++g_window_flushes;
@@ -168,6 +185,7 @@ void display_event(lv_event_t* event) {
     switch (lv_event_get_code(event)) {
         case LV_EVENT_RENDER_START:
             g_render_started_us = esp_timer_get_time();
+            g_visual_frame_hash = 2166136261U;
             break;
         case LV_EVENT_RENDER_READY: {
             const auto duration = static_cast<std::uint32_t>(
@@ -185,6 +203,16 @@ void display_event(lv_event_t* event) {
         case LV_EVENT_REFR_READY:
             ++g_window_frames;
             ++g_lifetime_frames;
+            if (g_visual_pending) {
+                ESP_LOGI(
+                    kTag,
+                    "[visual] device_id=%s scene=%s revision=%u frame_hash=%08lx",
+                    doodad::board::identity().device_id,
+                    g_visual_scene,
+                    static_cast<unsigned>(g_visual_revision),
+                    static_cast<unsigned long>(g_visual_frame_hash));
+                g_visual_pending = false;
+            }
             break;
         default:
             break;
@@ -192,19 +220,11 @@ void display_event(lv_event_t* event) {
 }
 
 void read_touch(lv_indev_t*, lv_indev_data_t* data) {
-    bool pressed = false;
-    if (M5.Touch.getCount() > 0) {
-        const auto detail = M5.Touch.getDetail(0);
-        const auto x_offset =
-            (M5.Display.width() - DOODAD_SURFACE_WIDTH) / 2;
-        const auto logical_x = detail.x - x_offset;
-        const auto logical_y = detail.y;
-        if (logical_x >= 0 && logical_x < DOODAD_SURFACE_WIDTH &&
-            logical_y >= 0 && logical_y < DOODAD_SURFACE_HEIGHT) {
-            g_last_touch_point.x = logical_x;
-            g_last_touch_point.y = logical_y;
-            pressed = true;
-        }
+    doodad::board::TouchPoint point{};
+    const bool pressed = doodad::board::touch_read(point);
+    if (pressed) {
+        g_last_touch_point.x = point.x;
+        g_last_touch_point.y = point.y;
     }
     if (pressed && !g_touch_pressed) {
         ++g_window_touch_presses;
@@ -234,6 +254,7 @@ bool enqueue(const UiCommand& command) {
 }
 
 void shell_now(const char* status, const char* source) {
+    stage_visual_scene("boot-shell");
     doodad_lvgl_ui_show_shell(&g_ui, status, source);
 }
 
@@ -263,6 +284,7 @@ bool appspec_now(m3e::appspec::WireDocument* document) {
         error_now("THEME INIT FAILED");
         return false;
     }
+    stage_visual_scene("appspec");
     m3e::appspec::Renderer renderer(g_appspec_styles);
     if (!renderer.mount(
             lv_screen_active(),
@@ -290,6 +312,7 @@ bool command_batch_now(m3e::appspec::CommandBatch* batch) {
         ESP_LOGE(kTag, "[display] no mounted AppSpec for CommandBatch");
         return false;
     }
+    stage_visual_scene("appspec-update");
     const auto applied = m3e::appspec::apply_ui_command_batch(
         *batch, *g_active_document);
     delete batch;
@@ -310,11 +333,32 @@ bool command_batch_now(m3e::appspec::CommandBatch* batch) {
 }
 
 void error_now(const char* stage) {
+    stage_visual_scene("error");
+    doodad::board::haptic(8);
     doodad_lvgl_ui_show_error(&g_ui, stage);
 }
 
 void catalog_now(int story) {
+    char scene[49]{};
+    std::snprintf(scene, sizeof(scene), "catalog-%d", story);
+    stage_visual_scene(scene);
     m3e_catalog_show(lv_screen_active(), story);
+    if (story == M3E_CATALOG_STORY_COLOR_BARS) {
+        // Board marker in the unused edge of the black calibration patch:
+        // CoreS3 has one white cell and T-Watch has two. This lets the camera
+        // label panels by content even if their physical positions are swapped.
+        const auto marker_count =
+            std::strcmp(doodad::board::identity().board, "cores3") == 0 ? 1 : 2;
+        for (int index = 0; index < marker_count; ++index) {
+            auto* marker = lv_obj_create(lv_screen_active());
+            lv_obj_remove_style_all(marker);
+            lv_obj_set_pos(marker, 207 + index * 7, 12);
+            lv_obj_set_size(marker, 4, 4);
+            lv_obj_set_style_bg_color(marker, lv_color_white(), 0);
+            lv_obj_set_style_bg_opa(marker, LV_OPA_COVER, 0);
+            lv_obj_clear_flag(marker, LV_OBJ_FLAG_SCROLLABLE);
+        }
+    }
 }
 
 void render_background_badge() {
@@ -402,6 +446,19 @@ int shell_story() {
 }
 
 void render_shell_now() {
+    const char* visual_scene = "system-shell";
+    if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+        switch (g_shell.snapshot().voice_phase) {
+            case m3e::os::VoicePhase::listening: visual_scene = "voice-listening"; break;
+            case m3e::os::VoicePhase::thinking: visual_scene = "voice-thinking"; break;
+            case m3e::os::VoicePhase::speaking: visual_scene = "voice-speaking"; break;
+            case m3e::os::VoicePhase::error: visual_scene = "voice-error"; break;
+            default: visual_scene = "voice-ready"; break;
+        }
+    } else if (g_shell.snapshot().surface == m3e::os::Surface::watch_face) {
+        visual_scene = "home";
+    }
+    stage_visual_scene(visual_scene);
     if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
         m3e_catalog_show_voice_runtime(
             lv_screen_active(),
@@ -524,11 +581,12 @@ void voice_level_now(std::uint8_t level) {
 }
 
 void system_home_now() {
+    stage_visual_scene("home");
     if (!g_shell.initialize()) {
         error_now("SYSTEM SHELL FAILED");
         return;
     }
-    g_surface_registry.sync_shell_counts(g_shell);
+    g_surface_registry->sync_shell_counts(g_shell);
     g_shell_active = true;
     render_shell_now();
 }
@@ -536,13 +594,13 @@ void system_home_now() {
 bool surface_publish_now(
     m3e::os::DomainSurfaceSnapshot* snapshot) {
     if (snapshot == nullptr) return false;
-    const auto published = g_surface_registry.publish(*snapshot);
+    const auto published = g_surface_registry->publish(*snapshot);
     delete snapshot;
     if (!published) {
         ESP_LOGW(kTag, "[system] rejected surface publication");
         return false;
     }
-    g_surface_registry.sync_shell_counts(g_shell);
+    g_surface_registry->sync_shell_counts(g_shell);
     if (g_shell_active && g_shell.snapshot().display_awake) {
         render_shell_now();
     }
@@ -556,7 +614,7 @@ void agent_state_now(const UiCommand& command) {
             ESP_LOGE(kTag, "[system] agent state could not initialize shell");
             return;
         }
-        g_surface_registry.sync_shell_counts(g_shell);
+        g_surface_registry->sync_shell_counts(g_shell);
         g_shell_active = true;
         initialized_now = true;
     }
@@ -588,12 +646,19 @@ void agent_state_now(const UiCommand& command) {
                 m3e::os::BackgroundInstallState::failed)
         ? static_cast<m3e::os::BackgroundInstallState>(command.install_state)
         : m3e::os::BackgroundInstallState::failed;
+    const auto previous_question = g_shell.snapshot().background.focused_question;
+    const auto previous_completion = g_shell.snapshot().background.completion_pending;
     g_shell.publish_background_activity(
         command.running_count,
         command.focused_question,
         command.review_ready,
         command.completion_pending,
         install_state);
+    if (command.focused_question && !previous_question) {
+        doodad::board::haptic(10);
+    } else if (command.completion_pending && !previous_completion) {
+        doodad::board::haptic(47);
+    }
     if (g_shell_active && g_shell.snapshot().display_awake &&
         (initialized_now || text_changed ||
          g_shell.snapshot().generation != generation_before)) {
@@ -608,8 +673,12 @@ void dispatch_system_input(m3e::os::Input input) {
         !g_shell.dispatch(intent)) {
         return;
     }
+    doodad::board::haptic(1);
     const auto& snapshot = g_shell.snapshot();
-    M5.Display.setBrightness(snapshot.display_awake ? 96 : 0);
+    doodad::board::display_set_brightness(
+        snapshot.display_awake
+            ? doodad::board::display_default_brightness()
+            : 0);
     if (snapshot.display_awake) {
         render_shell_now();
     }
@@ -624,26 +693,27 @@ void dispatch_system_input(m3e::os::Input input) {
 }
 
 void handle_system_inputs() {
-    if (M5.BtnB.wasHold()) {
+    const auto inputs = doodad::board::take_input();
+    if (inputs.button_b_held) {
         perform_voice_action(PendingVoiceAction::primary);
-    } else if (M5.BtnB.wasClicked()) {
+    } else if (inputs.button_b_clicked) {
         if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
             perform_voice_action(PendingVoiceAction::primary);
         } else {
             dispatch_system_input(m3e::os::Input::button_b);
         }
     }
-    if (M5.BtnA.wasClicked()) {
+    if (inputs.button_a_clicked) {
         if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
             perform_voice_action(PendingVoiceAction::cancel);
         } else {
             dispatch_system_input(m3e::os::Input::button_a);
         }
     }
-    if (M5.BtnC.wasClicked()) {
+    if (inputs.button_c_clicked) {
         dispatch_system_input(m3e::os::Input::button_c);
     }
-    if (M5.BtnPWR.wasClicked()) {
+    if (inputs.power_clicked) {
         dispatch_system_input(m3e::os::Input::power_button);
     }
 }
@@ -687,6 +757,16 @@ void drain_ui_commands() {
 
 bool display_init() {
     g_ui_task = xTaskGetCurrentTaskHandle();
+    auto* surface_storage = heap_caps_calloc(
+        1,
+        sizeof(m3e::os::SurfaceRegistry),
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    if (surface_storage == nullptr) {
+        ESP_LOGE(kTag, "[display] surface registry allocation failed");
+        return false;
+    }
+    g_surface_registry =
+        new (surface_storage) m3e::os::SurfaceRegistry{};
     g_ui_queue = xQueueCreateWithCaps(
         kUiQueueDepth,
         sizeof(UiCommand),
@@ -695,57 +775,26 @@ bool display_init() {
         ESP_LOGE(kTag, "[display] UI command queue allocation failed");
         return false;
     }
-    auto config = M5.config();
-    config.clear_display = true;
-    config.internal_imu = false;
-    config.internal_rtc = false;
-    config.internal_mic = true;
-    // Voice owns the CoreS3 codec as a half-duplex resource: microphone while
-    // listening, speaker while remote audio is playing. Both endpoints must
-    // be registered during M5 initialization so Voice can switch at runtime.
-    config.internal_spk = true;
-    config.external_display_value = 0;
-    config.fallback_board = m5::board_t::board_M5StackCoreS3SE;
-
-    M5.begin(config);
-    M5.Display.setRotation(1);
-    M5.Display.setBrightness(96);
-    // LVGL's RGB565 draw buffers contain host-endian uint16_t pixels.
-    // M5GFX otherwise treats uint16_t image data as already bus-swapped.
-    M5.Display.setSwapBytes(true);
-    auto* display_bus = M5.Display.getPanel()->getBus();
-    if (display_bus == nullptr) {
-        ESP_LOGE(kTag, "[display] panel bus unavailable");
+    if (!doodad::board::init()) {
+        ESP_LOGE(kTag, "[host] board init failed");
         return false;
     }
-    display_bus->setClock(kDisplaySpiFrequencyHz);
-    ESP_LOGI(
-        kTag,
-        "[display] SPI write clock requested=%u actual=%u",
-        static_cast<unsigned>(kDisplaySpiFrequencyHz),
-        static_cast<unsigned>(display_bus->getClock()));
-    M5.Display.initDMA();
-
-    const auto board = M5.getBoard();
-    const bool supported_board =
-        board == m5::board_t::board_M5StackCoreS3
-        || board == m5::board_t::board_M5StackCoreS3SE;
     const bool supported_size =
-        M5.Display.width() >= DOODAD_SURFACE_WIDTH
-        && M5.Display.height() >= DOODAD_SURFACE_HEIGHT;
-    if (!supported_board || !supported_size) {
+        doodad::board::display_width() >= DOODAD_SURFACE_WIDTH
+        && doodad::board::display_height() >= DOODAD_SURFACE_HEIGHT;
+    if (!supported_size) {
         ESP_LOGE(
             kTag,
-            "[host] display init failed (board=%d, size=%dx%d)",
-            static_cast<int>(board),
-            M5.Display.width(),
-            M5.Display.height());
+            "[host] display init failed (board=%s, size=%ldx%ld)",
+            doodad::board::identity().board,
+            static_cast<long>(doodad::board::display_width()),
+            static_cast<long>(doodad::board::display_height()));
         return false;
     }
 
     // The portable app surface is always 240x240. CoreS3's extra horizontal
     // pixels are host-owned gutters, never additional app layout space.
-    M5.Display.fillScreen(kPhysicalBackground);
+    doodad::board::display_fill(kPhysicalBackground);
 
     lv_init();
     lv_tick_set_cb(tick_milliseconds);
@@ -755,7 +804,7 @@ bool display_init() {
         ESP_LOGE(kTag, "[host] LVGL display creation failed");
         return false;
     }
-    const auto draw_buffer_caps = MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT;
+    const auto draw_buffer_caps = doodad::board::draw_buffer_caps();
     g_draw_buffer_a = static_cast<std::uint16_t*>(
         heap_caps_aligned_alloc(4, kDrawBufferBytes, draw_buffer_caps));
     g_draw_buffer_b = static_cast<std::uint16_t*>(
@@ -763,7 +812,7 @@ bool display_init() {
     if (g_draw_buffer_a == nullptr || g_draw_buffer_b == nullptr) {
         ESP_LOGE(
             kTag,
-            "[host] PSRAM draw-buffer allocation failed (%u bytes each)",
+            "[host] draw-buffer allocation failed (%u bytes each)",
             static_cast<unsigned>(kDrawBufferBytes));
         heap_caps_free(g_draw_buffer_a);
         heap_caps_free(g_draw_buffer_b);
@@ -773,7 +822,8 @@ bool display_init() {
     }
     ESP_LOGI(
         kTag,
-        "[display] LVGL draw buffers in PSRAM (%u bytes each)",
+        "[display] LVGL draw buffers caps=0x%lx (%u bytes each)",
+        static_cast<unsigned long>(draw_buffer_caps),
         static_cast<unsigned>(kDrawBufferBytes));
     lv_display_set_color_format(g_lvgl_display, LV_COLOR_FORMAT_RGB565);
     lv_display_set_buffers(
@@ -1013,7 +1063,7 @@ void display_update() {
         return;
     }
     drain_ui_commands();
-    M5.update();
+    doodad::board::update();
     handle_system_inputs();
     lv_timer_handler();
     if (g_pending_voice_action != PendingVoiceAction::none) {

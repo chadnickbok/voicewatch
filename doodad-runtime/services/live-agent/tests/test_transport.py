@@ -381,19 +381,23 @@ async def test_interruption_releases_an_unbounded_playout_wait() -> None:
 
 @pytest.mark.asyncio
 async def test_stale_websocket_teardown_does_not_disconnect_replacement() -> None:
-    events: list[str] = []
+    events: list[tuple[str, str]] = []
 
-    async def on_audio(_pcm: bytes) -> None:
+    async def on_audio(_device_id: str, _pcm: bytes) -> None:
         return None
 
-    async def on_event(kind: str, _payload: dict[str, object]) -> None:
-        events.append(kind)
+    async def on_event(
+        device_id: str, kind: str, _payload: dict[str, object]
+    ) -> None:
+        events.append((device_id, kind))
 
     class Session:
-        def __init__(self) -> None:
+        def __init__(self, device_id: str) -> None:
+            self.device_id = device_id
+            self.board = "cores3-se"
             self.closed = False
 
-        async def close(self) -> None:
+        async def close(self, **_kwargs: object) -> None:
             self.closed = True
 
     from doodad_agent.transport import WatchTransportServer
@@ -401,19 +405,64 @@ async def test_stale_websocket_teardown_does_not_disconnect_replacement() -> Non
     server = WatchTransportServer(
         LatencyTrace(), on_audio, on_event, port=0  # type: ignore[arg-type]
     )
-    original = Session()
-    replacement = Session()
-    server.session = replacement  # type: ignore[assignment]
+    original = Session("cores3-se-a")
+    replacement = Session("cores3-se-a")
+    server.sessions[replacement.device_id] = replacement  # type: ignore[assignment]
 
     await server._finish_session(original)  # type: ignore[arg-type]
 
     assert original.closed
     assert not replacement.closed
-    assert server.session is replacement
+    assert server.sessions[replacement.device_id] is replacement
     assert events == []
 
     await server._finish_session(replacement)  # type: ignore[arg-type]
 
     assert replacement.closed
-    assert server.session is None
-    assert events == ["disconnected"]
+    assert replacement.device_id not in server.sessions
+    assert events == [(replacement.device_id, "disconnected")]
+
+
+@pytest.mark.asyncio
+async def test_two_identities_coexist_and_reconnect_replaces_only_matching_device() -> None:
+    events: list[tuple[str, str]] = []
+
+    async def on_audio(_device_id: str, _pcm: bytes) -> None:
+        return None
+
+    async def on_event(
+        device_id: str, kind: str, _payload: dict[str, object]
+    ) -> None:
+        events.append((device_id, kind))
+
+    class Session:
+        def __init__(self, device_id: str, board: str) -> None:
+            self.device_id = device_id
+            self.board = board
+            self.closed = False
+
+        async def close(self, **_kwargs: object) -> None:
+            self.closed = True
+
+    from doodad_agent.transport import WatchTransportServer
+
+    server = WatchTransportServer(
+        LatencyTrace(), on_audio, on_event, port=0
+    )
+    core = Session("cores3-se-a", "cores3-se")
+    watch = Session("t-watch-s3-b", "t-watch-s3")
+    await server._identify(core, core.device_id, {})  # type: ignore[arg-type]
+    await server._identify(watch, watch.device_id, {})  # type: ignore[arg-type]
+
+    assert set(server.sessions) == {core.device_id, watch.device_id}
+    assert not core.closed and not watch.closed
+
+    replacement = Session(core.device_id, "cores3-se")
+    await server._identify(  # type: ignore[arg-type]
+        replacement, replacement.device_id, {}
+    )
+
+    assert core.closed
+    assert not watch.closed
+    assert server.sessions[core.device_id] is replacement
+    assert server.sessions[watch.device_id] is watch

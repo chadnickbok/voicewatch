@@ -51,8 +51,15 @@ class FirmwareStorageTests(unittest.TestCase):
         defaults = (
             ROOT / "firmware" / "sdkconfig.defaults"
         ).read_text()
+        cores3_defaults = (
+            ROOT / "firmware" / "boards" / "cores3" / "sdkconfig.defaults"
+        ).read_text()
+        watch_defaults = (
+            ROOT / "firmware" / "boards" / "t-watch-s3" / "sdkconfig.defaults"
+        ).read_text()
         self.assertIn("CONFIG_SPIRAM=y", defaults)
-        self.assertIn("CONFIG_SPIRAM_MODE_QUAD=y", defaults)
+        self.assertIn("CONFIG_SPIRAM_MODE_QUAD=y", cores3_defaults)
+        self.assertIn("CONFIG_SPIRAM_MODE_OCT=y", watch_defaults)
         self.assertIn("CONFIG_SPIRAM_USE_MALLOC=y", defaults)
         self.assertIn("CONFIG_SPIRAM_MEMTEST=y", defaults)
         self.assertIn(

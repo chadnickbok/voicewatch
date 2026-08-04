@@ -2,6 +2,7 @@
 
 #include <cstdio>
 
+#include "board.hpp"
 #include "driver/sdspi_host.h"
 #include "esp_err.h"
 #include "esp_log.h"
@@ -117,6 +118,10 @@ bool load_onboard_app(
 }
 
 bool load_microsd_app(std::vector<std::uint8_t>& storage, AppImage& image) {
+    if (!doodad::board::has_microsd()) {
+        ESP_LOGI(kTag, "[host] board has no microSD fallback");
+        return false;
+    }
     sdmmc_host_t host = SDSPI_HOST_DEFAULT();
     host.slot = SPI2_HOST;
     host.max_freq_khz = SDMMC_FREQ_DEFAULT;
