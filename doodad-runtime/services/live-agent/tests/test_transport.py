@@ -210,16 +210,30 @@ async def test_clear_discards_in_flight_frame_and_preserves_monotonic_pts() -> N
         track.stop()
 
 
-def test_downlink_queue_remains_bounded_and_reports_accepted_output() -> None:
+def test_downlink_spools_five_minute_response_without_dropping_tail() -> None:
     track = DownlinkAudioTrack(LatencyTrace())
-    source = np.arange(129_000, dtype=np.int16)
+    source = np.arange(5 * 60 * 16_000, dtype=np.int16)
     try:
         track.begin_utterance()
-        assert track.enqueue_pcm(source.tobytes(), 16_000) == 128_000
-        assert track.dropped_samples == 1_000
-        assert track.pending_ms == 8_000
-        assert track._frames.qsize() == 400
+        assert track.enqueue_pcm(source.tobytes(), 16_000) == source.size
+        assert track.spooled_samples == source.size
+        assert track.pending_ms == 5 * 60 * 1_000
+        assert track._frames.qsize() == 5 * 60 * 50
         track.end_utterance()
+    finally:
+        track.stop()
+
+
+def test_downlink_capacity_failure_is_explicit_and_never_partially_accepts() -> None:
+    track = DownlinkAudioTrack(LatencyTrace(), max_spool_seconds=1)
+    source = np.arange(16_001, dtype=np.int16)
+    try:
+        track.begin_utterance()
+        with pytest.raises(BufferError, match="spool capacity"):
+            track.enqueue_pcm(source.tobytes(), 16_000)
+        assert track.spooled_samples == 0
+        assert track.pending_ms == 0
+        assert track._frames.empty()
     finally:
         track.stop()
 
@@ -228,10 +242,11 @@ def test_end_utterance_is_safe_after_interruption_clear() -> None:
     track = DownlinkAudioTrack(LatencyTrace())
     try:
         track.begin_utterance()
-        track.enqueue_pcm(b"\0\0" * 480, 24_000)
+        track.enqueue_pcm(b"\0\0" * 480, 16_000)
         track.clear()
         assert track.end_utterance() == 0
         assert track.pending_ms == 0
+        assert track.interrupted_samples > 0
     finally:
         track.stop()
 
@@ -305,6 +320,63 @@ def test_utterance_binding_drops_audio_after_session_replacement() -> None:
     assert binding.end(replacement) == 0  # type: ignore[arg-type]
     assert original.cleared == 1
     assert replacement.cleared == 0
+
+
+def test_finalized_utterance_remains_interruptible_until_playout_release() -> None:
+    class Session:
+        def __init__(self) -> None:
+            self.active = False
+            self.cleared = 0
+
+        def begin_downlink(self) -> None:
+            self.active = True
+
+        def enqueue_downlink(self, pcm: bytes, _sample_rate: int) -> int:
+            assert self.active
+            return len(pcm) // 2
+
+        def end_downlink(self) -> int:
+            self.active = False
+            return 0
+
+        def clear_downlink(self) -> None:
+            self.active = False
+            self.cleared += 1
+
+    session = Session()
+    binding = DownlinkUtteranceBinding()
+
+    binding.begin(session)  # type: ignore[arg-type]
+    binding.enqueue(session, b"\0\0" * 320, 16_000)  # type: ignore[arg-type]
+    binding.end(session)  # type: ignore[arg-type]
+    binding.cancel()
+
+    assert session.cleared == 1
+
+    binding.begin(session)  # type: ignore[arg-type]
+    binding.end(session)  # type: ignore[arg-type]
+    binding.release(session)  # type: ignore[arg-type]
+    binding.cancel()
+
+    assert session.cleared == 1
+
+
+@pytest.mark.asyncio
+async def test_interruption_releases_an_unbounded_playout_wait() -> None:
+    track = DownlinkAudioTrack(LatencyTrace())
+    try:
+        track.begin_utterance()
+        track.enqueue_pcm(b"\0\0" * 320, 16_000)
+        track.end_utterance()
+
+        waiting = asyncio.create_task(track.wait_drained())
+        await asyncio.sleep(0)
+        assert not waiting.done()
+
+        track.clear()
+        await asyncio.wait_for(waiting, 1)
+    finally:
+        track.stop()
 
 
 @pytest.mark.asyncio

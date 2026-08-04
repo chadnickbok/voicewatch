@@ -19,6 +19,22 @@ Touching the orb while the assistant is speaking clears queued speech,
 interrupts the Pipecat turn, and begins a new capture. Simultaneous acoustic
 barge-in is not supported by this board.
 
+Long answers are retained in a server-side response journal and a lossless
+per-utterance audio spool. ElevenLabs may synthesize faster than realtime, but
+the WebRTC track paces every frame to the watch instead of dropping the tail.
+Starting a new capture interrupts the Pipecat turn, closes the active TTS
+context, and discards all unplayed audio and uncommitted assistant text.
+
+Optional capacity overrides are:
+
+- `DOODAD_MAX_COMPLETION_TOKENS` (default `4096`)
+- `DOODAD_MAX_RESPONSE_TEXT_BYTES` (default `262144`)
+- `DOODAD_DOWNLINK_MAX_SPOOL_SECONDS` (default `600`)
+
+The watch still receives only a 160-character display projection. Capacity
+violations are explicit service errors and telemetry events; ordinary long
+responses are never silently truncated.
+
 From the repository root:
 
 ```sh

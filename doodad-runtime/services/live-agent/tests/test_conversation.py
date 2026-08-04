@@ -7,10 +7,12 @@ import pytest
 from pipecat.frames.frames import (
     BotStartedSpeakingFrame,
     BotStoppedSpeakingFrame,
+    InterruptionFrame,
     TTSAudioRawFrame,
     TTSStartedFrame,
     TTSStoppedFrame,
     TTSSpeakFrame,
+    TTSTextFrame,
     TranscriptionFrame,
 )
 from pipecat.processors.frame_processor import FrameDirection
@@ -202,6 +204,7 @@ async def test_playback_completion_returns_to_ready_without_rearming_capture() -
     conversation.user_text = "Hello"
     conversation.assistant_text = "Hi there"
 
+    await conversation._drain_downlink()
     await conversation._at_natural_pause()
 
     assert order == ["ended", "drained", "ready"]
@@ -223,9 +226,10 @@ async def test_interrupted_tts_stop_does_not_override_listening_state() -> None:
     conversation.wait_for_playback = wait_for_playback
     conversation.trace = LatencyTrace()
 
+    await conversation._drain_downlink()
     await conversation._at_natural_pause()
 
-    assert order == ["ended"]
+    assert order == ["ended", "drained"]
     assert conversation.voice_phase == "listening"
 
 
@@ -243,6 +247,7 @@ async def test_sink_pairs_bot_speaking_lifecycle_before_playout_drain() -> None:
         lambda: callback("user-stopped"),
         lambda: callback("tts-started"),
         lambda: callback("playout-drained"),
+        lambda: callback("natural-pause"),
     )
 
     async def push(frame, _direction=FrameDirection.DOWNSTREAM) -> None:
@@ -261,7 +266,92 @@ async def test_sink_pairs_bot_speaking_lifecycle_before_playout_drain() -> None:
 
     assert order.count("bot-started") == 2
     assert order.count("bot-stopped") == 2
-    assert order.index("bot-stopped") < order.index("playout-drained")
+    assert order.index("playout-drained") < order.index("bot-stopped")
+    assert order.index("bot-stopped") < order.index("natural-pause")
+
+
+@pytest.mark.asyncio
+async def test_sink_commits_tts_text_only_after_playout_drains() -> None:
+    order: list[str] = []
+
+    async def callback(name: str) -> None:
+        order.append(name)
+
+    sink = ConversationSink(
+        lambda _audio, _rate: 1,
+        LatencyTrace(),
+        lambda: callback("user-started"),
+        lambda: callback("user-stopped"),
+        lambda: callback("tts-started"),
+        lambda: callback("drained"),
+        lambda: callback("natural-pause"),
+    )
+
+    async def push(frame, _direction=FrameDirection.DOWNSTREAM) -> None:
+        if isinstance(frame, TTSTextFrame):
+            order.append(f"text:{frame.text}")
+        elif isinstance(frame, TTSStoppedFrame):
+            order.append("tts-stop-frame")
+
+    sink.push_frame = push  # type: ignore[method-assign]
+    await sink.process_frame(TTSStartedFrame(), FrameDirection.DOWNSTREAM)
+    await sink.process_frame(
+        TTSTextFrame("a long answer", aggregated_by="sentence"),
+        FrameDirection.DOWNSTREAM,
+    )
+
+    assert "text:a long answer" not in order
+
+    await sink.process_frame(TTSStoppedFrame(), FrameDirection.DOWNSTREAM)
+
+    assert order.index("drained") < order.index("text:a long answer")
+    assert order.index("text:a long answer") < order.index("tts-stop-frame")
+
+
+@pytest.mark.asyncio
+async def test_sink_discards_uncommitted_text_on_interruption() -> None:
+    pushed: list[object] = []
+
+    async def callback() -> None:
+        return None
+
+    sink = ConversationSink(
+        lambda _audio, _rate: 1,
+        LatencyTrace(),
+        callback,
+        callback,
+        callback,
+        callback,
+        callback,
+    )
+
+    async def push(frame, _direction=FrameDirection.DOWNSTREAM) -> None:
+        pushed.append(frame)
+
+    sink.push_frame = push  # type: ignore[method-assign]
+    await sink.process_frame(TTSStartedFrame(), FrameDirection.DOWNSTREAM)
+    await sink.process_frame(
+        TTSTextFrame("discard me", aggregated_by="sentence"),
+        FrameDirection.DOWNSTREAM,
+    )
+    await sink.process_frame(InterruptionFrame(), FrameDirection.DOWNSTREAM)
+    await sink.process_frame(TTSStoppedFrame(), FrameDirection.DOWNSTREAM)
+
+    assert not any(isinstance(frame, TTSTextFrame) for frame in pushed)
+
+
+@pytest.mark.asyncio
+async def test_assistant_response_journal_is_larger_than_watch_projection() -> None:
+    conversation = object.__new__(LiveConversation)
+    conversation.user_text = ""
+    conversation.assistant_text = ""
+    conversation._max_response_text_bytes = 262_144
+
+    response = "0123456789" * 1_000
+    await conversation._append_assistant_text(response)
+
+    assert conversation.assistant_text == response
+    assert conversation._display_state()["response"] == response[-160:]
 
 
 @pytest.mark.asyncio

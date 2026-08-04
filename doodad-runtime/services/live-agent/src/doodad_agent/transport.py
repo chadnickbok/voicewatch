@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 import hashlib
 import json
+import os
 import re
 import socket
 import sys
@@ -154,13 +155,23 @@ class DownlinkAudioTrack(AudioStreamTrack):
 
     _SAMPLE_RATE = 16_000
     _FRAME_SAMPLES = 320
-    _MAX_QUEUED_SAMPLES = 128_000
+    _DEFAULT_MAX_SPOOL_SECONDS = 600
 
-    def __init__(self, trace: LatencyTrace) -> None:
+    def __init__(
+        self,
+        trace: LatencyTrace,
+        *,
+        max_spool_seconds: int = _DEFAULT_MAX_SPOOL_SECONDS,
+    ) -> None:
         super().__init__()
-        self._frames: asyncio.Queue[tuple[int, bytes]] = asyncio.Queue(
-            maxsize=self._MAX_QUEUED_SAMPLES // self._FRAME_SAMPLES
-        )
+        if max_spool_seconds <= 0:
+            raise ValueError("max_spool_seconds must be positive")
+        self._max_spool_samples = max_spool_seconds * self._SAMPLE_RATE
+        # This is a server-side utterance spool, not the watch jitter buffer.
+        # TTS providers commonly return audio much faster than realtime, so a
+        # short bounded asyncio queue silently truncates otherwise valid long
+        # answers. Keep complete frames here and pace them only in recv().
+        self._frames: asyncio.Queue[tuple[int, bytes]] = asyncio.Queue()
         self._trace = trace
         self._pacer = _PacketPacer(
             sample_rate=self._SAMPLE_RATE,
@@ -174,7 +185,10 @@ class DownlinkAudioTrack(AudioStreamTrack):
         self._frame_in_progress = False
         self._first_audible = True
         self.audible_frames = 0
-        self.dropped_samples = 0
+        self.spooled_samples = 0
+        self.interrupted_samples = 0
+        self._utterance_spooled_samples = 0
+        self._spool_high_water_samples = 0
 
     def begin_utterance(self) -> None:
         if self._utterance_active:
@@ -185,6 +199,8 @@ class DownlinkAudioTrack(AudioStreamTrack):
         self._input_sample_rate = None
         self._resampler = None
         self._first_audible = True
+        self._utterance_spooled_samples = 0
+        self._spool_high_water_samples = 0
 
     def enqueue_pcm(self, pcm: bytes, sample_rate: int) -> int:
         if not self._utterance_active:
@@ -237,6 +253,14 @@ class DownlinkAudioTrack(AudioStreamTrack):
                 )
             )
         self._queue_final_frame()
+        self._trace.mark(
+            "downlink.utterance_spooled",
+            samples=self._utterance_spooled_samples,
+            duration_ms=self._utterance_spooled_samples
+            // (self._SAMPLE_RATE // 1_000),
+            high_water_ms=self._spool_high_water_samples
+            // (self._SAMPLE_RATE // 1_000),
+        )
         self._utterance_active = False
         self._input_sample_rate = None
         self._resampler = None
@@ -244,6 +268,7 @@ class DownlinkAudioTrack(AudioStreamTrack):
 
     def clear(self) -> None:
         self._generation += 1
+        discarded = self._frames.qsize() * self._FRAME_SAMPLES + len(self._pending_pcm) // 2
         while True:
             try:
                 self._frames.get_nowait()
@@ -254,18 +279,32 @@ class DownlinkAudioTrack(AudioStreamTrack):
         self._input_sample_rate = None
         self._resampler = None
         self._first_audible = True
+        if discarded:
+            self.interrupted_samples += discarded
+            self._trace.mark(
+                "downlink.spool_cleared",
+                discarded_samples=discarded,
+                total_interrupted_samples=self.interrupted_samples,
+            )
 
     @property
     def pending_ms(self) -> int:
         samples = self._frames.qsize() * self._FRAME_SAMPLES + len(self._pending_pcm) // 2
         return samples // (self._SAMPLE_RATE // 1_000)
 
-    async def wait_drained(self, timeout: float = 20.0) -> None:
-        deadline = asyncio.get_running_loop().time() + timeout
-        while (
-            (not self._frames.empty() or self._frame_in_progress or self._pending_pcm)
-            and asyncio.get_running_loop().time() < deadline
-        ):
+    async def wait_drained(self, timeout: float | None = None) -> None:
+        deadline = (
+            asyncio.get_running_loop().time() + timeout
+            if timeout is not None
+            else None
+        )
+        while not self._frames.empty() or self._frame_in_progress or self._pending_pcm:
+            if deadline is not None and asyncio.get_running_loop().time() >= deadline:
+                self._trace.mark("downlink.drain_timeout", pending_ms=self.pending_ms)
+                raise TimeoutError(
+                    f"downlink did not drain within {timeout:.3f}s "
+                    f"({self.pending_ms}ms remains)"
+                )
             await asyncio.sleep(0.02)
         # `recv()` removing the final sample means aiortc has accepted it, not
         # that the packet has cleared its encoder, socket, the ESP32 jitter
@@ -313,21 +352,29 @@ class DownlinkAudioTrack(AudioStreamTrack):
             return 0
         queued_samples = self._frames.qsize() * self._FRAME_SAMPLES
         pending_samples = len(self._pending_pcm) // 2
-        available = self._MAX_QUEUED_SAMPLES - queued_samples - pending_samples
-        accepted = min(int(output.size), available)
-        if accepted:
-            encoded = output[:accepted].astype("<i2", copy=False).tobytes()
-            self._pending_pcm.extend(encoded)
-            self._queue_complete_frames()
-        rejected = int(output.size) - accepted
-        if rejected:
-            self.dropped_samples += rejected
+        requested = int(output.size)
+        projected = queued_samples + pending_samples + requested
+        if projected > self._max_spool_samples:
             self._trace.mark(
-                "downlink.queue_overflow",
-                dropped_samples=rejected,
-                total_dropped_samples=self.dropped_samples,
+                "downlink.spool_capacity_exceeded",
+                requested_samples=requested,
+                queued_samples=queued_samples + pending_samples,
+                capacity_samples=self._max_spool_samples,
             )
-        return accepted
+            raise BufferError(
+                "downlink utterance exceeds configured server spool capacity "
+                f"({projected}/{self._max_spool_samples} samples)"
+            )
+        encoded = output.astype("<i2", copy=False).tobytes()
+        self._pending_pcm.extend(encoded)
+        self._queue_complete_frames()
+        self.spooled_samples += requested
+        self._utterance_spooled_samples += requested
+        self._spool_high_water_samples = max(
+            self._spool_high_water_samples,
+            self._frames.qsize() * self._FRAME_SAMPLES + len(self._pending_pcm) // 2,
+        )
+        return requested
 
     def _queue_complete_frames(self) -> None:
         frame_bytes = self._FRAME_SAMPLES * 2
@@ -360,7 +407,12 @@ class WatchSession:
         self.on_audio = on_audio
         self.on_event = on_event
         self.peer = RTCPeerConnection()
-        self.downlink = DownlinkAudioTrack(trace)
+        self.downlink = DownlinkAudioTrack(
+            trace,
+            max_spool_seconds=int(
+                os.getenv("DOODAD_DOWNLINK_MAX_SPOOL_SECONDS", "600")
+            ),
+        )
         self.sequence = 0
         self.connected = asyncio.Event()
         self.sdp_chunks: list[str | None] | None = None
@@ -621,6 +673,7 @@ class DownlinkUtteranceBinding:
 
     def __init__(self) -> None:
         self._session: WatchSession | None = None
+        self._finalized = False
 
     def begin(self, session: WatchSession | None) -> None:
         self.cancel()
@@ -628,6 +681,7 @@ class DownlinkUtteranceBinding:
             return
         session.begin_downlink()
         self._session = session
+        self._finalized = False
 
     def enqueue(
         self,
@@ -640,21 +694,36 @@ class DownlinkUtteranceBinding:
         if self._session is not current_session:
             self.cancel()
             return 0
+        if self._finalized:
+            return 0
         return self._session.enqueue_downlink(pcm, sample_rate)
 
     def end(self, current_session: WatchSession | None) -> int:
         session = self._session
-        self._session = None
         if session is None:
             return 0
-        if session is not current_session:
-            session.clear_downlink()
+        if self._finalized:
             return 0
-        return session.end_downlink()
+        if session is not current_session:
+            self.cancel()
+            return 0
+        accepted = session.end_downlink()
+        self._finalized = True
+        return accepted
+
+    def release(self, current_session: WatchSession | None) -> None:
+        """Detach a normally drained utterance without clearing its track."""
+
+        session = self._session
+        self._session = None
+        self._finalized = False
+        if session is not None and session is not current_session:
+            session.clear_downlink()
 
     def cancel(self) -> None:
         session = self._session
         self._session = None
+        self._finalized = False
         if session is not None:
             session.clear_downlink()
 

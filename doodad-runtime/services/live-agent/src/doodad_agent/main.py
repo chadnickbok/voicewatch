@@ -126,8 +126,12 @@ async def serve(arguments: argparse.Namespace) -> None:
         downlink_binding.end(transport.session)
 
     async def wait_for_playback() -> None:
-        if transport.session is not None:
-            await transport.session.resume_after_downlink()
+        session = transport.session
+        try:
+            if session is not None:
+                await session.resume_after_downlink()
+        finally:
+            downlink_binding.release(transport.session)
 
     async def invoke_action(
         capability: str, arguments: dict[str, Any], idempotency_key: str
@@ -214,6 +218,9 @@ def check_config() -> int:
         "OPENAI_FOREGROUND_MODEL",
         "OPENAI_STT_MODEL",
         "DOODAD_ELEVENLABS_MODEL_ID",
+        "DOODAD_MAX_COMPLETION_TOKENS",
+        "DOODAD_MAX_RESPONSE_TEXT_BYTES",
+        "DOODAD_DOWNLINK_MAX_SPOOL_SECONDS",
     )
     result = {
         "ready": all(bool(os.getenv(name)) for name in required),

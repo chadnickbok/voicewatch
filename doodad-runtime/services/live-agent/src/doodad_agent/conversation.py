@@ -27,6 +27,7 @@ from pipecat.frames.frames import (
     TTSSpeakFrame,
     TTSStartedFrame,
     TTSStoppedFrame,
+    TTSTextFrame,
     UserStartedSpeakingFrame,
     UserStoppedSpeakingFrame,
 )
@@ -63,8 +64,16 @@ StateSink = Callable[
 TranscriptCallback = Callable[[str, bool], Awaitable[None]]
 
 
+def _positive_env_int(name: str, default: int) -> int:
+    value = int(os.getenv(name, str(default)))
+    if value <= 0:
+        raise ValueError(f"{name} must be positive")
+    return value
+
+
 SYSTEM_INSTRUCTION = """You are Doodad, the fast foreground voice companion on a watch.
-Keep spoken replies brief and natural. You may operate only through the supplied typed
+Default to brief, natural spoken replies, but give a complete longer answer when the user
+requests one or the subject genuinely requires it. You may operate only through the supplied typed
 tools. Never pretend a mutation succeeded before its tool result. Start durable jobs and
 keep conversing; do not wait for them. A system policy, not you, schedules background
 questions and completions. The current selected entity is resolved by deterministic host
@@ -185,6 +194,15 @@ class AssistantTextTap(FrameProcessor):
 
 
 class ConversationSink(FrameProcessor):
+    """Bridge TTS to the watch while preserving playout semantics.
+
+    Pipecat's ElevenLabs service emits word-aligned ``TTSTextFrame`` objects as
+    soon as synthesis produces them. Our custom watch transport must not commit
+    those words to conversation history before the corresponding utterance has
+    actually played. We therefore retain them until playout drains and discard
+    them if a high-priority interruption overtakes the utterance.
+    """
+
     def __init__(
         self,
         audio_sink: AudioSink,
@@ -192,6 +210,7 @@ class ConversationSink(FrameProcessor):
         on_user_started: AsyncCallback,
         on_user_stopped: AsyncCallback,
         on_tts_started: AsyncCallback,
+        on_playout_drain: AsyncCallback,
         on_tts_stopped: AsyncCallback,
     ) -> None:
         super().__init__()
@@ -200,9 +219,13 @@ class ConversationSink(FrameProcessor):
         self.on_user_started = on_user_started
         self.on_user_stopped = on_user_stopped
         self.on_tts_started = on_tts_started
+        self.on_playout_drain = on_playout_drain
         self.on_tts_stopped = on_tts_stopped
         self._first_tts_audio = True
         self._bot_speaking = False
+        self._utterance_generation = 0
+        self._utterance_interrupted = False
+        self._pending_tts_text: list[tuple[TTSTextFrame, FrameDirection]] = []
 
     async def _broadcast_bot_started(self) -> None:
         if self._bot_speaking:
@@ -228,6 +251,12 @@ class ConversationSink(FrameProcessor):
 
     async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
         await super().process_frame(frame, direction)
+        if isinstance(frame, InterruptionFrame):
+            self._utterance_interrupted = True
+            self._pending_tts_text.clear()
+            await self.push_frame(frame, direction)
+            await self._broadcast_bot_stopped()
+            return
         if isinstance(frame, UserStartedSpeakingFrame):
             self.trace.mark("vad.user_started")
             await self.on_user_started()
@@ -238,6 +267,9 @@ class ConversationSink(FrameProcessor):
             self.trace.mark("llm.first_response")
         elif isinstance(frame, TTSStartedFrame):
             self.trace.mark("tts.started")
+            self._utterance_generation += 1
+            self._utterance_interrupted = False
+            self._pending_tts_text.clear()
             self._first_tts_audio = True
             await self.on_tts_started()
         elif isinstance(frame, TTSAudioRawFrame):
@@ -246,10 +278,24 @@ class ConversationSink(FrameProcessor):
                 self._first_tts_audio = False
                 await self._broadcast_bot_started()
             self.audio_sink(frame.audio, frame.sample_rate)
+        elif isinstance(frame, TTSTextFrame):
+            self._pending_tts_text.append((frame, direction))
+            return
         elif isinstance(frame, TTSStoppedFrame):
             self.trace.mark("tts.stopped")
+            generation = self._utterance_generation
+            await self.on_playout_drain()
+            if self._utterance_interrupted or generation != self._utterance_generation:
+                self._pending_tts_text.clear()
+                return
+            pending_text = self._pending_tts_text
+            self._pending_tts_text = []
+            for text_frame, text_direction in pending_text:
+                await self.push_frame(text_frame, text_direction)
+            await self.push_frame(frame, direction)
             await self._broadcast_bot_stopped()
             await self.on_tts_stopped()
+            return
         await self.push_frame(frame, direction)
 
 
@@ -291,6 +337,10 @@ class LiveConversation:
         self._seen_events: set[str] = set()
         self.user_text = ""
         self.assistant_text = ""
+        self._max_response_text_bytes = _positive_env_int(
+            "DOODAD_MAX_RESPONSE_TEXT_BYTES", 262_144
+        )
+        self._response_journal_full = False
 
     async def start(self) -> None:
         missing = [
@@ -336,7 +386,9 @@ class LiveConversation:
             settings=OpenAIResponsesLLMService.Settings(
                 model=os.getenv("OPENAI_FOREGROUND_MODEL", "gpt-5.6-luna"),
                 system_instruction=SYSTEM_INSTRUCTION,
-                max_completion_tokens=160,
+                max_completion_tokens=_positive_env_int(
+                    "DOODAD_MAX_COMPLETION_TOKENS", 4096
+                ),
                 reasoning=OpenAIResponsesReasoningConfig(effort="none"),
             ),
         )
@@ -363,6 +415,7 @@ class LiveConversation:
             self._begin_user_turn,
             self._finish_user_turn,
             self._begin_speaking,
+            self._drain_downlink,
             self._at_natural_pause,
         )
         pipeline = Pipeline(
@@ -378,8 +431,8 @@ class LiveConversation:
                 assistant_text,
                 tts,
                 PipelineProbe(self.trace, "after_tts"),
-                aggregators.assistant(),
                 sink,
+                aggregators.assistant(),
             ]
         )
         self.worker = PipelineWorker(
@@ -451,9 +504,28 @@ class LiveConversation:
 
     async def _clear_assistant_text(self) -> None:
         self.assistant_text = ""
+        self._response_journal_full = False
 
     async def _append_assistant_text(self, text: str) -> None:
-        self.assistant_text = (self.assistant_text + text)[:160]
+        current_bytes = len(self.assistant_text.encode("utf-8"))
+        remaining = self._max_response_text_bytes - current_bytes
+        if remaining <= 0:
+            if not self._response_journal_full:
+                self.trace.mark(
+                    "response.journal_capacity_exceeded",
+                    capacity_bytes=self._max_response_text_bytes,
+                )
+                self._response_journal_full = True
+            return
+        encoded = text.encode("utf-8")
+        addition = encoded[:remaining].decode("utf-8", errors="ignore")
+        self.assistant_text += addition
+        if len(encoded) > remaining and not self._response_journal_full:
+            self.trace.mark(
+                "response.journal_capacity_exceeded",
+                capacity_bytes=self._max_response_text_bytes,
+            )
+            self._response_journal_full = True
 
     async def _begin_speaking(self) -> None:
         await self.stop_capture()
@@ -499,10 +571,15 @@ class LiveConversation:
             except TimeoutError:
                 self.trace.mark("pipeline.cleanup_timeout")
 
-    async def _at_natural_pause(self) -> None:
-        # Flush the utterance's stateful resampler before deciding whether to
-        # enqueue another announcement or wait for the physical playout tail.
+    async def _drain_downlink(self) -> None:
+        # Flush the stateful resampler, then wait for RTP, the ESP32 jitter
+        # cache, and the physical speaker tail. There is deliberately no fixed
+        # response-length timeout here; interruption clears the generation and
+        # releases this wait.
         await self.end_downlink()
+        await self.wait_for_playback()
+
+    async def _at_natural_pause(self) -> None:
         if self.voice_phase != "speaking":
             self.trace.mark(
                 "downlink.stale_stop", voice_phase=self.voice_phase
@@ -515,7 +592,6 @@ class LiveConversation:
             )
             await self.worker.queue_frame(TTSSpeakFrame(action.text))
         else:
-            await self.wait_for_playback()
             await self._set_voice_phase("ready")
 
     async def _control_loop(self) -> None:
@@ -547,7 +623,9 @@ class LiveConversation:
     def _display_state(self) -> dict[str, str]:
         return {
             "transcript": self.user_text,
-            "response": self.assistant_text,
+            # The server retains the complete response journal. The square
+            # watch gets only a compact live projection of its tail.
+            "response": self.assistant_text[-160:],
         }
 
     async def _publish_state(self) -> None:
