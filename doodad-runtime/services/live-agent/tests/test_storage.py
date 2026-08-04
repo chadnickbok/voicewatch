@@ -39,4 +39,7 @@ def test_v2_schema_and_first_cores3_connection_relink_legacy_rows(
         "SELECT device_id,revision FROM watch_replicas"
     ).fetchone()
     assert tuple(replica) == (stable_id, 7)
+    assert store.connection.execute(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='codex_sessions'"
+    ).fetchone() is not None
     store.close()

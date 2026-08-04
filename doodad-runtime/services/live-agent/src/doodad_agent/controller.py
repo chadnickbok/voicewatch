@@ -9,8 +9,8 @@ from dataclasses import dataclass
 from typing import Any
 
 from .attention import AttentionBroker
+from .builder import AppBuilder
 from .capabilities import CapabilityKernel
-from .fake_worker import FakeAppBuilder
 
 
 def normalize_choice(text: str, choices: list[object]) -> object | None:
@@ -34,7 +34,7 @@ class ForegroundController:
     def __init__(
         self,
         kernel: CapabilityKernel,
-        builder: FakeAppBuilder,
+        builder: AppBuilder,
         attention: AttentionBroker,
         now_ms: callable | None = None,
     ) -> None:
@@ -88,7 +88,11 @@ class ForegroundController:
 
     def start_app_build(self, brief: str) -> dict[str, Any]:
         job_id = self.builder.start(brief, self._now_ms())
-        return {"accepted": True, "job_id": job_id, "state": "running"}
+        return {
+            "accepted": True,
+            "job_id": job_id,
+            "state": self.attention.jobs.job(job_id)["state"],
+        }
 
     def fake_reply(self, utterance: str, utterance_id: str | None = None) -> str:
         """Offline CI lane proving foreground work continues during jobs."""

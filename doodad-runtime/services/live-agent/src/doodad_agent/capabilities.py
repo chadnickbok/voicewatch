@@ -33,9 +33,9 @@ class CapabilityKernel:
     ) -> None:
         self.store = store
         self.device_id = device_id
-        if self.store.connection.execute(
+        if self.store.fetch_one(
             "SELECT 1 FROM watch_replicas WHERE device_id=?", (self.device_id,)
-        ).fetchone() is None:
+        ) is None:
             self.replace_snapshot(self.default_snapshot(self.device_id), now_ms)
 
     @staticmethod
@@ -63,9 +63,9 @@ class CapabilityKernel:
         }
 
     def snapshot(self) -> dict[str, Any]:
-        row = self.store.connection.execute(
+        row = self.store.fetch_one(
             "SELECT snapshot_json FROM watch_replicas WHERE device_id=?", (self.device_id,)
-        ).fetchone()
+        )
         return json.loads(row["snapshot_json"])
 
     def replace_snapshot(self, snapshot: dict[str, Any], now_ms: int) -> None:
@@ -203,10 +203,10 @@ class CapabilityKernel:
         return result
 
     def _prior(self, key: str, capability: str) -> dict[str, Any] | None:
-        row = self.store.connection.execute(
+        row = self.store.fetch_one(
             "SELECT capability_id,result_json FROM capability_invocations "
             "WHERE device_id=? AND idempotency_key=?", (self.device_id, key)
-        ).fetchone()
+        )
         if row is None:
             return None
         if row["capability_id"] != capability:

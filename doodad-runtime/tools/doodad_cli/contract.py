@@ -377,24 +377,30 @@ def build_and_stage(project_root: Path, app_dir: Path) -> ProjectPaths:
         validate_ui(read_json(source_ui))
 
     package_name = cargo_package_name(app_dir)
-    command = [
-        "cargo",
-        "build",
-        "--locked",
-        "--release",
-        "--target",
-        "wasm32-unknown-unknown",
-        "--package",
-        package_name,
-    ]
-    result = subprocess.run(command, cwd=project_root, check=False)
+    external_app = not app_dir.resolve().is_relative_to(project_root.resolve())
+    target_root = app_dir / "target" if external_app else project_root / "target"
+    command = ["cargo", "build", "--locked", "--release"]
+    if external_app:
+        command.extend(
+            [
+                "--manifest-path",
+                str(app_dir / "Cargo.toml"),
+                "--target-dir",
+                str(target_root),
+            ]
+        )
+    else:
+        command.extend(["--package", package_name])
+    command.extend(["--target", "wasm32-unknown-unknown"])
+    result = subprocess.run(
+        command, cwd=app_dir if external_app else project_root, check=False
+    )
     if result.returncode != 0:
         raise DoodadError(f"guest build failed with exit code {result.returncode}")
 
     artifact_name = package_name.replace("-", "_") + ".wasm"
     built_wasm = (
-        project_root
-        / "target"
+        target_root
         / "wasm32-unknown-unknown"
         / "release"
         / artifact_name
@@ -403,7 +409,7 @@ def build_and_stage(project_root: Path, app_dir: Path) -> ProjectPaths:
         raise DoodadError(f"Cargo did not produce expected artifact {built_wasm}")
     validate_module(project_root, built_wasm, manifest, abi)
 
-    staging_root = (project_root / "target" / "doodad").resolve()
+    staging_root = (target_root / "doodad").resolve()
     staging = (staging_root / manifest["id"]).resolve()
     if staging.parent != staging_root:
         raise DoodadError("unsafe staging package identifier")
@@ -415,6 +421,9 @@ def build_and_stage(project_root: Path, app_dir: Path) -> ProjectPaths:
     staged_wasm = staging / "app.wasm"
     shutil.copy2(source_manifest_path, staged_manifest)
     shutil.copy2(built_wasm, staged_wasm)
+    source_agent = app_dir / "agent.json"
+    if source_agent.is_file():
+        shutil.copy2(source_agent, staging / "agent.json")
 
     staged_ui: Path | None = None
     if source_ui is not None:

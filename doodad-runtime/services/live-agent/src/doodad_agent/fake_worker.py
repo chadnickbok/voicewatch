@@ -33,11 +33,11 @@ class FakeAppBuilder:
 
     def tick(self, now_ms: int) -> list[str]:
         changed: list[str] = []
-        rows = self.jobs.store.connection.execute(
+        rows = self.jobs.store.fetch_all(
             "SELECT * FROM jobs WHERE device_id=? AND kind='fake_app_build' "
             "AND state NOT IN ('completed','failed','cancelled') ORDER BY created_at_ms",
             (self.jobs.device_id,),
-        ).fetchall()
+        )
         for row in rows:
             job_id = str(row["job_id"])
             events = self.jobs.events(job_id)
@@ -65,3 +65,6 @@ class FakeAppBuilder:
                 )
                 changed.append(job_id)
         return changed
+
+    def close(self) -> None:
+        """Match the production builder lifecycle without owning resources."""

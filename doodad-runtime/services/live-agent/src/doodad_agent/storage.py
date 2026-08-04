@@ -7,13 +7,13 @@ import sqlite3
 import threading
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterator
+from typing import Any, Iterator
 
 
-LATEST_SCHEMA_VERSION = 2
+LATEST_SCHEMA_VERSION = 4
 LEGACY_DEVICE_ID = "legacy-cores3"
 
-SCHEMA_V2 = """
+SCHEMA_LATEST = """
 PRAGMA journal_mode=WAL;
 PRAGMA foreign_keys=ON;
 CREATE TABLE IF NOT EXISTS conversations (
@@ -117,11 +117,26 @@ CREATE TABLE IF NOT EXISTS nutrition_entries (
     provisional INTEGER NOT NULL,
     created_at_ms INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS codex_sessions (
+    job_id TEXT PRIMARY KEY REFERENCES jobs(job_id),
+    device_id TEXT NOT NULL,
+    thread_id TEXT,
+    turn_id TEXT,
+    workspace_path TEXT NOT NULL,
+    pending_question_json TEXT,
+    stable_summary TEXT NOT NULL DEFAULT '',
+    artifact_json TEXT,
+    codex_version TEXT NOT NULL,
+    stage TEXT NOT NULL DEFAULT 'eliciting_layout',
+    updated_at_ms INTEGER NOT NULL
+);
 CREATE INDEX IF NOT EXISTS jobs_by_device ON jobs(device_id, created_at_ms);
 CREATE INDEX IF NOT EXISTS events_by_device ON job_events(device_id, created_at_ms);
 CREATE INDEX IF NOT EXISTS conversations_by_device
 ON conversations(device_id, started_at_ms);
-PRAGMA user_version=2;
+CREATE INDEX IF NOT EXISTS codex_sessions_by_device
+ON codex_sessions(device_id, updated_at_ms);
+PRAGMA user_version=4;
 """
 
 
@@ -146,10 +161,16 @@ class Store:
             "SELECT 1 FROM sqlite_master WHERE type='table' AND name='jobs'"
         ).fetchone() is not None
         if not has_legacy_schema:
-            self.connection.executescript(SCHEMA_V2)
+            self.connection.executescript(SCHEMA_LATEST)
             return
         if version < 2:
             self._migrate_legacy_to_v2()
+            version = 2
+        if version < 3:
+            self._migrate_v2_to_v3()
+            version = 3
+        if version < 4:
+            self._migrate_v3_to_v4()
 
     def _columns(self, table: str) -> set[str]:
         return {
@@ -249,6 +270,37 @@ class Store:
         finally:
             self.connection.execute("PRAGMA foreign_keys=ON")
 
+    def _migrate_v2_to_v3(self) -> None:
+        with self.transaction() as connection:
+            connection.executescript(
+                """
+                CREATE TABLE IF NOT EXISTS codex_sessions (
+                    job_id TEXT PRIMARY KEY REFERENCES jobs(job_id),
+                    device_id TEXT NOT NULL,
+                    thread_id TEXT,
+                    turn_id TEXT,
+                    workspace_path TEXT NOT NULL,
+                    pending_question_json TEXT,
+                    stable_summary TEXT NOT NULL DEFAULT '',
+                    artifact_json TEXT,
+                    codex_version TEXT NOT NULL,
+                    updated_at_ms INTEGER NOT NULL
+                );
+                CREATE INDEX IF NOT EXISTS codex_sessions_by_device
+                ON codex_sessions(device_id, updated_at_ms);
+                PRAGMA user_version=3;
+                """
+            )
+
+    def _migrate_v3_to_v4(self) -> None:
+        with self.transaction() as connection:
+            if "stage" not in self._columns("codex_sessions"):
+                connection.execute(
+                    "ALTER TABLE codex_sessions ADD COLUMN stage TEXT NOT NULL "
+                    "DEFAULT 'eliciting_layout'"
+                )
+            connection.execute("PRAGMA user_version=4")
+
     def relink_legacy_device(self, device_id: str) -> None:
         """Assign pre-v2 CoreS3 rows to its stable MAC-derived identity."""
         with self.transaction() as connection:
@@ -256,7 +308,7 @@ class Store:
                 "conversations", "conversation_summaries", "jobs", "job_events",
                 "job_questions", "job_answers", "worker_leases",
                 "attention_deliveries", "capability_invocations",
-                "nutrition_entries",
+                "nutrition_entries", "codex_sessions",
             ):
                 connection.execute(
                     f"UPDATE {table} SET device_id=? WHERE device_id=?",
@@ -285,6 +337,14 @@ class Store:
     def close(self) -> None:
         with self._lock:
             self.connection.close()
+
+    def fetch_one(self, query: str, parameters: tuple[object, ...] = ()) -> Any:
+        with self._lock:
+            return self.connection.execute(query, parameters).fetchone()
+
+    def fetch_all(self, query: str, parameters: tuple[object, ...] = ()) -> list[Any]:
+        with self._lock:
+            return self.connection.execute(query, parameters).fetchall()
 
     @staticmethod
     def encode(value: object) -> str:

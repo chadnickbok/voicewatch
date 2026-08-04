@@ -1,6 +1,6 @@
 # Doodad live-agent service
 
-This service is the Phase 0–4 foreground conversation and durable-control
+This service is the Phase 0–5 foreground conversation and durable-control
 vertical slice. It uses the firmware's Opus WebRTC seam, resamples
 uplink/downlink audio at the process boundary, and runs a Pipecat cascade with
 local Silero VAD and Smart Turn, streaming OpenAI transcription, a persistent
@@ -35,6 +35,20 @@ The watch still receives only a 160-character display projection. Capacity
 violations are explicit service errors and telemetry events; ordinary long
 responses are never silently truncated.
 
+Production `start_app_build` jobs use the pinned Codex app-server binary over
+supervised stdio. Each job writes only to its own Application Support workspace,
+persists thread/turn/question/artifact state in SQLite, and stops at
+`ready_for_review`; it never signs, installs, activates, or touches hardware.
+The deterministic verifier owns schema, semantics, permissions, Rust/Wasm,
+build/check/test, timer conformance, and the 240×240 simulator render. Set
+`DOODAD_CODEX_BINARY` or `DOODAD_CODEX_WORKSPACE_ROOT` only when overriding the
+defaults. Packaged deployments outside the monorepo can set
+`DOODAD_RUNTIME_ROOT`. Regenerate the checked protocol subset with:
+
+```sh
+./services/live-agent/scripts/generate-codex-protocol.sh
+```
+
 From the repository root:
 
 ```sh
@@ -47,3 +61,10 @@ From the repository root:
 their contents. Runtime state defaults to Application Support and latency events
 to `~/Library/Logs/Doodad/live-agent-latency.jsonl`. Use `fake-demo --database
 /tmp/doodad-demo.sqlite3` for a provider-free lifecycle demonstration.
+
+For a physical smoke test, start `serve`, say “Build me a rest timer,” and ask
+an unrelated workout question while the build badge remains active. At the
+next natural pause answer “ring.” Success is a single review-ready card whose
+artifact opens as a 240×240 ring countdown in the simulator; the primary action
+changes to Cancel after starting. No signing, transfer, or activation should
+occur in this phase.

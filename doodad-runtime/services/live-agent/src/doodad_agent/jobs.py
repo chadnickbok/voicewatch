@@ -193,36 +193,36 @@ class JobManager:
                 raise ValueError("question cannot receive focus")
 
     def focused(self) -> dict[str, Any] | None:
-        row = self.store.connection.execute(
+        row = self.store.fetch_one(
             "SELECT * FROM job_questions WHERE device_id=? AND status='focused'",
             (self.device_id,),
-        ).fetchone()
+        )
         return self._question(row) if row else None
 
     def open_questions(self) -> list[dict[str, Any]]:
-        rows = self.store.connection.execute(
+        rows = self.store.fetch_all(
             """
             SELECT q.* FROM job_questions q JOIN jobs j ON j.job_id=q.job_id
             WHERE q.device_id=? AND j.device_id=? AND q.status IN ('open','focused')
             ORDER BY q.created_at_ms,j.created_at_ms,q.job_id
             """, (self.device_id, self.device_id)
-        ).fetchall()
+        )
         return [self._question(row) for row in rows]
 
     def job(self, job_id: str) -> dict[str, Any]:
-        row = self.store.connection.execute(
+        row = self.store.fetch_one(
             "SELECT * FROM jobs WHERE device_id=? AND job_id=?",
             (self.device_id, job_id),
-        ).fetchone()
+        )
         if row is None:
             raise KeyError(job_id)
         return dict(row)
 
     def events(self, job_id: str) -> list[JobEvent]:
-        rows = self.store.connection.execute(
+        rows = self.store.fetch_all(
             "SELECT * FROM job_events WHERE device_id=? AND job_id=? ORDER BY sequence",
             (self.device_id, job_id),
-        ).fetchall()
+        )
         return [self._event(row) for row in rows]
 
     def rebuild_state(self, job_id: str) -> str:

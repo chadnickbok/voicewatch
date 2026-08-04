@@ -28,10 +28,12 @@ It now also contains a substantial Material 3 Expressive framework slice:
 
 The [20-app and OS conformance suite](docs/20-app-conformance-suite.md) is the
 permanent UI/runtime executable specification, and
-[Project Parallax](docs/project-parallax.md) tracks dual-renderer fidelity. The
-active product milestone is Phase 5 of the
-[live foreground agent and durable jobs plan](docs/live-agent-vertical-slice.md):
-a real Codex worker that produces a validated `ready_for_review` app artifact.
+[Project Parallax](docs/project-parallax.md) tracks dual-renderer fidelity.
+Phase 5 of the
+[live foreground agent and durable jobs plan](docs/live-agent-vertical-slice.md)
+now routes production builds through a real Codex worker and stops at a
+validated `ready_for_review` app artifact. The active product milestone is the
+first real shared backing-data query described in the roadmap.
 The suite now includes 20 separate interactive Wasm packages, deterministic
 scenario and cross-surface contracts, a trusted Home/Voice/App Manager shell,
 CoreS3 system-shortcut wiring, dual 3 MiB firmware slots, and 9.94 MiB of
@@ -84,9 +86,10 @@ remediation order are in the
 All 20 decisive flows are executable and emit checked-in semantic/resource
 evidence. Cross-app replacement stress, display-sleep service behavior,
 surface-revision consistency, selected physical CoreS3 traces, and the duplex
-Opus live-agent path are covered. Real Codex generation, general backing data,
-signed package activation, remaining production providers, long-running
-audio/sensor services, power budgets, and physical T-Watch qualification remain.
+Opus live-agent path and bounded Codex rest-timer generation are covered.
+General backing data, signed package activation, remaining production
+providers, long-running audio/sensor services, power budgets, and physical
+T-Watch qualification remain.
 
 The guest exports `app_start` and imports one capability:
 `doodad.ui_mount(i32 pointer, i32 length) -> i32`. Its payload is canonical

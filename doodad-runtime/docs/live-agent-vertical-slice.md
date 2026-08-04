@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Phases 0–4 implemented and verified on CoreS3 SE; Phase 5 next; T-Watch BSP/build support landed but physical qualification remains |
+| Status | Phases 0–5 implemented; Phase 6 pending; T-Watch BSP/build support landed but physical qualification remains |
 | Last updated | 2026-08-04 |
 | First hardware target | M5Stack CoreS3 SE |
 | Host | Apple Silicon Mac |
@@ -38,9 +38,9 @@ The decisive demonstration is:
    spoken only at a policy-approved pause.
 9. Restart the Mac service while the job or question is pending and prove that
    the job, focus token, and delivery state recover without duplicate speech.
-10. Replace the fake worker with Codex app-server. Codex creates a simple
-    Doodad rest-timer package, the existing build/check/test pipeline validates
-    it, and the system offers a reviewed installation.
+10. Route production builds through Codex app-server. Codex creates a simple
+    Doodad rest-timer package, the independent build/check/test pipeline
+    validates it, and the system stops at `ready_for_review`.
 
 This slice is successful only if normal conversation remains available during
 steps 6 through 10. Speech recognition by itself, a one-shot chatbot, or a

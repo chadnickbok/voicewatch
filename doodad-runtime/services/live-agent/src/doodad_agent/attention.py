@@ -56,14 +56,14 @@ class AttentionBroker:
             self._deliver(event.event_id, "haptic", now_ms)
             return AttentionAction("question", focused["prompt"], focused["job_id"], focused["question_id"])
 
-        row = self.store.connection.execute(
+        row = self.store.fetch_one(
             """
             SELECT e.* FROM attention_deliveries d
             JOIN job_events e ON e.event_id=d.event_id
             WHERE d.device_id=? AND e.device_id=? AND d.channel='spoken' AND d.state='pending'
             ORDER BY e.created_at_ms,e.job_id,e.sequence LIMIT 1
             """, (self.device_id, self.device_id)
-        ).fetchone()
+        )
         if row is None:
             return None
         self._deliver(row["event_id"], "spoken", now_ms)
@@ -78,20 +78,25 @@ class AttentionBroker:
         )
 
     def background_snapshot(self) -> dict[str, object]:
-        running = self.store.connection.execute(
+        running = self.store.fetch_one(
             "SELECT COUNT(*) FROM jobs WHERE device_id=? "
-            "AND state NOT IN ('completed','failed','cancelled')",
+            "AND state NOT IN ('ready_for_review','completed','failed','cancelled')",
             (self.device_id,),
-        ).fetchone()[0]
-        completion = self.store.connection.execute(
+        )[0]
+        review_ready = self.store.fetch_one(
+            "SELECT COUNT(*) FROM jobs WHERE device_id=? AND state='ready_for_review'",
+            (self.device_id,),
+        )[0]
+        completion = self.store.fetch_one(
             "SELECT COUNT(*) FROM attention_deliveries WHERE device_id=? "
             "AND channel='spoken' AND state='pending'",
             (self.device_id,),
-        ).fetchone()[0]
+        )[0]
         focused = self.jobs.focused()
         return {
             "running_count": int(running),
             "focused_question": focused,
+            "review_ready": bool(review_ready),
             "completion_pending": int(completion),
         }
 

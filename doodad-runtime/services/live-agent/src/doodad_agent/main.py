@@ -1,4 +1,4 @@
-"""Command-line entry point for the Phase 0-4 live-agent slice."""
+"""Command-line entry point for the Phase 0-5 live-agent slice."""
 
 from __future__ import annotations
 
@@ -16,7 +16,9 @@ from typing import Any
 from zeroconf import IPVersion, ServiceInfo, Zeroconf
 
 from .attention import AttentionBroker
+from .builder import AppBuilder
 from .capabilities import CapabilityKernel
+from .codex_worker import CodexAppBuilder, default_codex_binary
 from .controller import ForegroundController
 from .fake_worker import FakeAppBuilder, ManualClock
 from .jobs import JobManager
@@ -27,6 +29,25 @@ from .transport import DownlinkUtteranceBinding, WatchTransportServer, local_ipv
 
 DEFAULT_DATABASE = Path.home() / "Library/Application Support/Doodad/agent-control.sqlite3"
 DEFAULT_TRACE = Path.home() / "Library/Logs/Doodad/live-agent-latency.jsonl"
+DEFAULT_CODEX_WORKSPACES = (
+    Path.home() / "Library/Application Support/Doodad/codex-jobs"
+)
+
+
+def find_runtime_root() -> Path:
+    override = os.getenv("DOODAD_RUNTIME_ROOT")
+    candidates = (
+        [Path(override).expanduser()] if override else []
+    ) + list(Path(__file__).resolve().parents) + list(Path.cwd().resolve().parents)
+    for candidate in candidates:
+        if (candidate / "doodad").is_file() and (
+            candidate / "contracts"
+        ).is_dir():
+            return candidate.resolve()
+    raise RuntimeError("cannot locate doodad-runtime; set DOODAD_RUNTIME_ROOT")
+
+
+RUNTIME_ROOT = find_runtime_root()
 
 
 def advertise(ip: str, port: int) -> tuple[Zeroconf, ServiceInfo]:
@@ -71,7 +92,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             self,
             device_id: str,
             controller: ForegroundController,
-            builder: FakeAppBuilder,
+            builder: AppBuilder,
             attention: AttentionBroker,
         ) -> None:
             self.device_id = device_id
@@ -92,7 +113,15 @@ async def serve(arguments: argparse.Namespace) -> None:
         jobs = JobManager(store, device_id)
         jobs.recover_expired(int(time.time() * 1000))
         kernel = CapabilityKernel(store, int(time.time() * 1000), device_id)
-        builder = FakeAppBuilder(jobs)
+        workspace_root = Path(
+            os.getenv("DOODAD_CODEX_WORKSPACE_ROOT", str(DEFAULT_CODEX_WORKSPACES))
+        )
+        builder = CodexAppBuilder(
+            jobs,
+            RUNTIME_ROOT,
+            workspace_root,
+            binary=default_codex_binary(),
+        )
         attention = AttentionBroker(store, jobs)
         controller = ForegroundController(kernel, builder, attention)
         runtime = DeviceRuntime(device_id, controller, builder, attention)
@@ -277,6 +306,9 @@ def check_config() -> int:
         "DOODAD_MAX_COMPLETION_TOKENS",
         "DOODAD_MAX_RESPONSE_TEXT_BYTES",
         "DOODAD_DOWNLINK_MAX_SPOOL_SECONDS",
+        "DOODAD_CODEX_BINARY",
+        "DOODAD_CODEX_WORKSPACE_ROOT",
+        "DOODAD_RUNTIME_ROOT",
     )
     result = {
         "ready": all(bool(os.getenv(name)) for name in required),
@@ -302,17 +334,17 @@ def fake_demo(database: Path) -> int:
         foreground = controller.fake_reply("What is my next set?", "demo-next")
         clock.advance(10_000)
         builder.tick(clock.now_ms)
-        for event in jobs.events(jobs.store.connection.execute(
+        for event in jobs.events(jobs.store.fetch_one(
             "SELECT job_id FROM jobs ORDER BY created_at_ms LIMIT 1"
-        ).fetchone()[0]):
+        )[0]):
             attention.observe(event, clock.now_ms)
         question = attention.natural_pause(clock.now_ms)
         answer = controller.fake_reply("the ring", "demo-answer")
         clock.advance(30_000)
         builder.tick(clock.now_ms)
-        job_id = jobs.store.connection.execute(
+        job_id = jobs.store.fetch_one(
             "SELECT job_id FROM jobs ORDER BY created_at_ms LIMIT 1"
-        ).fetchone()[0]
+        )[0]
         for event in jobs.events(job_id):
             attention.observe(event, clock.now_ms)
         completion = attention.natural_pause(clock.now_ms)

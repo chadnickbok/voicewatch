@@ -51,7 +51,7 @@ from pipecat.workers.runner import WorkerRunner
 
 from .attention import AttentionBroker
 from .controller import ForegroundController
-from .fake_worker import FakeAppBuilder
+from .builder import AppBuilder
 from .metrics import LatencyTrace
 
 
@@ -305,7 +305,7 @@ class LiveConversation:
     def __init__(
         self,
         controller: ForegroundController,
-        builder: FakeAppBuilder,
+        builder: AppBuilder,
         attention: AttentionBroker,
         trace: LatencyTrace,
         audio_sink: AudioSink,
@@ -557,6 +557,7 @@ class LiveConversation:
         if self._control_task is not None:
             self._control_task.cancel()
             await asyncio.gather(self._control_task, return_exceptions=True)
+        self.builder.close()
         if self.worker is not None:
             await self.worker.queue_frame(EndFrame())
         if self._runner_task is not None:
@@ -598,11 +599,11 @@ class LiveConversation:
         while True:
             now_ms = int(time.time() * 1000)
             self.builder.tick(now_ms)
-            rows = self.attention.store.connection.execute(
+            rows = self.attention.store.fetch_all(
                 "SELECT job_id FROM jobs WHERE device_id=? "
                 "ORDER BY created_at_ms,job_id",
                 (self.attention.device_id,),
-            ).fetchall()
+            )
             for row in rows:
                 for event in self.attention.jobs.events(row["job_id"]):
                     if event.event_id not in self._seen_events:
@@ -706,7 +707,7 @@ class LiveConversation:
             ),
             FunctionSchema(
                 "start_app_build",
-                "Start a durable fake app build and return immediately.",
+                "Start a durable app build and return immediately.",
                 {"brief": {"type": "string"}},
                 ["brief"],
                 handler=build,
