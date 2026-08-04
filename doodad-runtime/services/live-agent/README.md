@@ -1,7 +1,7 @@
 # Doodad live-agent service
 
 This service is the Phase 0–4 foreground conversation and durable-control
-vertical slice. It retains the firmware's proven PCMU WebRTC seam, resamples
+vertical slice. It uses the firmware's Opus WebRTC seam, resamples
 uplink/downlink audio at the process boundary, and runs a Pipecat cascade with
 local Silero VAD and Smart Turn, streaming OpenAI transcription, a persistent
 Responses WebSocket foreground model, and ElevenLabs Flash WebSocket TTS.

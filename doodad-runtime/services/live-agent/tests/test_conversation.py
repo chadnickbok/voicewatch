@@ -185,6 +185,9 @@ async def test_playback_completion_returns_to_ready_without_rearming_capture() -
     async def wait_for_playback() -> None:
         order.append("drained")
 
+    async def end_downlink() -> None:
+        order.append("ended")
+
     class Attention(StubAttention):
         def natural_pause(self, _now_ms: int):
             return None
@@ -193,6 +196,7 @@ async def test_playback_completion_returns_to_ready_without_rearming_capture() -
     conversation.voice_phase = "speaking"
     conversation.attention = Attention()
     conversation.state_sink = state_sink
+    conversation.end_downlink = end_downlink
     conversation.wait_for_playback = wait_for_playback
     conversation.worker = None
     conversation.user_text = "Hello"
@@ -200,7 +204,29 @@ async def test_playback_completion_returns_to_ready_without_rearming_capture() -
 
     await conversation._at_natural_pause()
 
-    assert order == ["drained", "ready"]
+    assert order == ["ended", "drained", "ready"]
+
+
+@pytest.mark.asyncio
+async def test_interrupted_tts_stop_does_not_override_listening_state() -> None:
+    order: list[str] = []
+
+    async def end_downlink() -> None:
+        order.append("ended")
+
+    async def wait_for_playback() -> None:
+        order.append("drained")
+
+    conversation = object.__new__(LiveConversation)
+    conversation.voice_phase = "listening"
+    conversation.end_downlink = end_downlink
+    conversation.wait_for_playback = wait_for_playback
+    conversation.trace = LatencyTrace()
+
+    await conversation._at_natural_pause()
+
+    assert order == ["ended"]
+    assert conversation.voice_phase == "listening"
 
 
 @pytest.mark.asyncio

@@ -20,9 +20,24 @@ config DOODAD_VOICE_UPLINK
     default n
     help
         Connects to a local doodad-voice signaling service over WebSocket and
-        sends 8 kHz mono G.711 mu-law audio through an Espressif PeerConnection.
+        sends mono audio through an Espressif PeerConnection.
 
 if DOODAD_VOICE_UPLINK
+
+choice DOODAD_VOICE_CODEC
+    prompt "WebRTC voice codec"
+    default DOODAD_VOICE_CODEC_OPUS
+    help
+        Opus provides 16 kHz wideband speech. PCMU remains available as the
+        narrowband diagnostic fallback used by the original bring-up path.
+
+config DOODAD_VOICE_CODEC_OPUS
+    bool "Opus wideband (recommended)"
+
+config DOODAD_VOICE_CODEC_PCMU
+    bool "PCMU 8 kHz fallback"
+
+endchoice
 
 config DOODAD_VOICE_SIGNALING_URL
     string "Static signaling WebSocket URL (optional)"
@@ -42,6 +57,14 @@ config DOODAD_VOICE_AUTOCONNECT
     help
         Useful for the unattended Echo Bridge hardware test. Capture still
         requires an explicit app or server command.
+
+config DOODAD_SPEAKER_VOLUME
+    int "Voice response speaker volume"
+    range 0 255
+    default 96
+    help
+        M5Unified master volume used for WebRTC voice responses. Keep this
+        below full scale while validating downlink clipping and distortion.
 
 endif
 

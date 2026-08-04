@@ -1,3 +1,4 @@
 aiohttp==3.12.15
 aiortc==1.15.0
+pyserial==3.5
 zeroconf==0.147.0

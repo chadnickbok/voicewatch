@@ -14,14 +14,16 @@ import json
 import re
 import socket
 import sys
-from array import array
+import time
 from collections.abc import Awaitable, Callable
+from fractions import Fraction
 from typing import Any
 
 import numpy as np
 import soxr
 from aiohttp import WSMsgType, web
 from aiortc import AudioStreamTrack, RTCPeerConnection, RTCSessionDescription
+from av import AudioFrame
 from av.audio.resampler import AudioResampler
 
 from .metrics import LatencyTrace
@@ -29,6 +31,72 @@ from .metrics import LatencyTrace
 
 AudioCallback = Callable[[bytes], Awaitable[None]]
 EventCallback = Callable[[str, dict[str, Any]], Awaitable[None]]
+
+
+class _PacketPacer:
+    """Maintain a monotonic RTP clock without replaying time lost while idle."""
+
+    def __init__(
+        self,
+        *,
+        sample_rate: int = 16_000,
+        frame_samples: int = 320,
+        clock: Callable[[], float] | None = None,
+        sleep: Callable[[float], Awaitable[None]] | None = None,
+    ) -> None:
+        self.sample_rate = sample_rate
+        self.frame_samples = frame_samples
+        self.frame_period = frame_samples / sample_rate
+        self._clock = clock or time.monotonic
+        self._sleep = sleep or asyncio.sleep
+        self._last_emit_at: float | None = None
+        self._last_pts: int | None = None
+        self._next_deadline: float | None = None
+        self._next_pts = 0
+        self.last_reanchored = False
+        self.last_interval_ms = 0.0
+
+    async def wait(self) -> int:
+        """Wait for one packet deadline and return its monotonic RTP PTS."""
+        now = self._clock()
+        if self._last_emit_at is None:
+            pts = self._next_pts
+            emitted_at = now
+            reanchored = True
+            self.last_reanchored = False
+            self.last_interval_ms = 0.0
+        else:
+            assert self._last_pts is not None
+            assert self._next_deadline is not None
+            if now < self._next_deadline:
+                await self._sleep(self._next_deadline - now)
+                now = self._clock()
+
+            # A scheduler slip under half a packet still leaves at least 10 ms
+            # before the following deadline. Larger gaps are idle periods: move
+            # the RTP clock forward by wall time and start a fresh cadence rather
+            # than emitting a catch-up burst.
+            reanchored = now - self._next_deadline >= self.frame_period / 2
+            if reanchored:
+                elapsed_samples = max(
+                    self.frame_samples,
+                    round((now - self._last_emit_at) * self.sample_rate),
+                )
+                pts = max(self._next_pts, self._last_pts + elapsed_samples)
+            else:
+                pts = self._next_pts
+            emitted_at = now
+            self.last_reanchored = reanchored
+            self.last_interval_ms = (emitted_at - self._last_emit_at) * 1_000
+
+        self._last_emit_at = emitted_at
+        self._last_pts = pts
+        self._next_pts = pts + self.frame_samples
+        if reanchored or self._next_deadline is None:
+            self._next_deadline = emitted_at + self.frame_period
+        else:
+            self._next_deadline += self.frame_period
+        return pts
 
 
 class WatchActionError(RuntimeError):
@@ -82,47 +150,122 @@ def keep_host_candidate(sdp: str, address: str) -> str:
 
 
 class DownlinkAudioTrack(AudioStreamTrack):
-    """Paced 8 kHz mono source consumed by aiortc's PCMU sender."""
+    """Paced 16 kHz mono source consumed by aiortc's Opus sender."""
+
+    _SAMPLE_RATE = 16_000
+    _FRAME_SAMPLES = 320
+    _MAX_QUEUED_SAMPLES = 128_000
 
     def __init__(self, trace: LatencyTrace) -> None:
         super().__init__()
-        self._samples: asyncio.Queue[int] = asyncio.Queue(maxsize=64_000)
+        self._frames: asyncio.Queue[tuple[int, bytes]] = asyncio.Queue(
+            maxsize=self._MAX_QUEUED_SAMPLES // self._FRAME_SAMPLES
+        )
         self._trace = trace
+        self._pacer = _PacketPacer(
+            sample_rate=self._SAMPLE_RATE,
+            frame_samples=self._FRAME_SAMPLES,
+        )
+        self._generation = 0
+        self._pending_pcm = bytearray()
+        self._input_sample_rate: int | None = None
+        self._resampler: soxr.ResampleStream | None = None
+        self._utterance_active = False
+        self._frame_in_progress = False
         self._first_audible = True
         self.audible_frames = 0
+        self.dropped_samples = 0
+
+    def begin_utterance(self) -> None:
+        if self._utterance_active:
+            raise RuntimeError("downlink utterance is already active")
+        if self._pending_pcm:
+            raise RuntimeError("previous downlink utterance was not finalized")
+        self._utterance_active = True
+        self._input_sample_rate = None
+        self._resampler = None
+        self._first_audible = True
 
     def enqueue_pcm(self, pcm: bytes, sample_rate: int) -> int:
+        if not self._utterance_active:
+            raise RuntimeError("begin_utterance() must be called before enqueue_pcm()")
+        if sample_rate <= 0:
+            raise ValueError("sample_rate must be positive")
+        if len(pcm) % 2:
+            raise ValueError("16-bit PCM must contain an even number of bytes")
         source = np.frombuffer(pcm, dtype="<i2")
         if source.size == 0:
             return 0
-        if sample_rate != 8_000:
-            source = np.clip(
-                soxr.resample(source.astype(np.float32), sample_rate, 8_000), -32768, 32767
-            ).astype(np.int16)
+
+        if self._input_sample_rate is None:
+            self._input_sample_rate = sample_rate
+            if sample_rate != self._SAMPLE_RATE:
+                self._resampler = soxr.ResampleStream(
+                    sample_rate,
+                    self._SAMPLE_RATE,
+                    1,
+                    dtype="int16",
+                    quality="HQ",
+                )
+        elif sample_rate != self._input_sample_rate:
+            self._trace.mark(
+                "downlink.sample_rate_rejected",
+                expected=self._input_sample_rate,
+                actual=sample_rate,
+            )
+            raise ValueError(
+                "downlink sample rate changed within an utterance "
+                f"({self._input_sample_rate} -> {sample_rate})"
+            )
+
+        output = (
+            source
+            if self._resampler is None
+            else self._resampler.resample_chunk(source, last=False)
+        )
+        return self._accept_output(output)
+
+    def end_utterance(self) -> int:
+        if not self._utterance_active:
+            return 0
         accepted = 0
-        for sample in source:
-            try:
-                self._samples.put_nowait(int(sample))
-                accepted += 1
-            except asyncio.QueueFull:
-                break
+        if self._resampler is not None:
+            accepted = self._accept_output(
+                self._resampler.resample_chunk(
+                    np.empty(0, dtype=np.int16),
+                    last=True,
+                )
+            )
+        self._queue_final_frame()
+        self._utterance_active = False
+        self._input_sample_rate = None
+        self._resampler = None
         return accepted
 
     def clear(self) -> None:
+        self._generation += 1
         while True:
             try:
-                self._samples.get_nowait()
+                self._frames.get_nowait()
             except asyncio.QueueEmpty:
                 break
+        self._pending_pcm.clear()
+        self._utterance_active = False
+        self._input_sample_rate = None
+        self._resampler = None
         self._first_audible = True
 
     @property
     def pending_ms(self) -> int:
-        return self._samples.qsize() // 8
+        samples = self._frames.qsize() * self._FRAME_SAMPLES + len(self._pending_pcm) // 2
+        return samples // (self._SAMPLE_RATE // 1_000)
 
     async def wait_drained(self, timeout: float = 20.0) -> None:
         deadline = asyncio.get_running_loop().time() + timeout
-        while self._samples.qsize() and asyncio.get_running_loop().time() < deadline:
+        while (
+            (not self._frames.empty() or self._frame_in_progress or self._pending_pcm)
+            and asyncio.get_running_loop().time() < deadline
+        ):
             await asyncio.sleep(0.02)
         # `recv()` removing the final sample means aiortc has accepted it, not
         # that the packet has cleared its encoder, socket, the ESP32 jitter
@@ -134,24 +277,72 @@ class DownlinkAudioTrack(AudioStreamTrack):
         # Do not transmit an endless silent RTP stream while the watch is
         # recording. The ESP32 peer's single manual loop otherwise spends its
         # budget consuming downlink packets and its uplink sender starves.
-        first_sample = await self._samples.get()
-        frame = await super().recv()
-        samples = array("h", [first_sample])
-        audible = first_sample != 0
-        for _ in range(frame.samples - 1):
+        while True:
+            generation, payload = await self._frames.get()
+            self._frame_in_progress = True
             try:
-                sample = self._samples.get_nowait()
-            except asyncio.QueueEmpty:
-                sample = 0
-            samples.append(sample)
-            audible = audible or sample != 0
-        frame.planes[0].update(samples.tobytes())
-        if audible:
-            self.audible_frames += 1
-            if self._first_audible:
-                self._trace.mark("downlink.first_audio")
-                self._first_audible = False
-        return frame
+                pts = await self._pacer.wait()
+                if generation != self._generation:
+                    continue
+                if getattr(self._pacer, "last_reanchored", False):
+                    self._trace.mark(
+                        "downlink.pacer_reanchored",
+                        interval_ms=round(self._pacer.last_interval_ms, 3),  # type: ignore[attr-defined]
+                        pts=pts,
+                    )
+                frame = AudioFrame(
+                    format="s16",
+                    layout="mono",
+                    samples=self._FRAME_SAMPLES,
+                )
+                frame.planes[0].update(payload)
+                frame.sample_rate = self._SAMPLE_RATE
+                frame.pts = pts
+                frame.time_base = Fraction(1, self._SAMPLE_RATE)
+                if any(payload):
+                    self.audible_frames += 1
+                    if self._first_audible:
+                        self._trace.mark("downlink.first_audio")
+                        self._first_audible = False
+                return frame
+            finally:
+                self._frame_in_progress = False
+
+    def _accept_output(self, output: np.ndarray) -> int:
+        if output.size == 0:
+            return 0
+        queued_samples = self._frames.qsize() * self._FRAME_SAMPLES
+        pending_samples = len(self._pending_pcm) // 2
+        available = self._MAX_QUEUED_SAMPLES - queued_samples - pending_samples
+        accepted = min(int(output.size), available)
+        if accepted:
+            encoded = output[:accepted].astype("<i2", copy=False).tobytes()
+            self._pending_pcm.extend(encoded)
+            self._queue_complete_frames()
+        rejected = int(output.size) - accepted
+        if rejected:
+            self.dropped_samples += rejected
+            self._trace.mark(
+                "downlink.queue_overflow",
+                dropped_samples=rejected,
+                total_dropped_samples=self.dropped_samples,
+            )
+        return accepted
+
+    def _queue_complete_frames(self) -> None:
+        frame_bytes = self._FRAME_SAMPLES * 2
+        while len(self._pending_pcm) >= frame_bytes:
+            payload = bytes(self._pending_pcm[:frame_bytes])
+            del self._pending_pcm[:frame_bytes]
+            self._frames.put_nowait((self._generation, payload))
+
+    def _queue_final_frame(self) -> None:
+        if not self._pending_pcm:
+            return
+        frame_bytes = self._FRAME_SAMPLES * 2
+        payload = bytes(self._pending_pcm).ljust(frame_bytes, b"\0")
+        self._pending_pcm.clear()
+        self._frames.put_nowait((self._generation, payload))
 
 
 class WatchSession:
@@ -213,7 +404,11 @@ class WatchSession:
         if kind == "hello":
             await self.send(
                 "welcome",
-                {"mode": "live-agent", "barge_in": "touch", "audio": "pcmu-8000-mono"},
+                {
+                    "mode": "live-agent",
+                    "barge_in": "touch",
+                    "audio": "opus-48000-rtp-16000-pcm-mono",
+                },
             )
         elif kind == "sdp" and payload.get("kind") == "offer":
             if isinstance(payload.get("sdp"), str):
@@ -241,8 +436,14 @@ class WatchSession:
         await self.send("capture.stop", {})
         self.trace.mark("capture.command", state="stopped")
 
+    def begin_downlink(self) -> None:
+        self.downlink.begin_utterance()
+
     def enqueue_downlink(self, pcm: bytes, sample_rate: int) -> int:
         return self.downlink.enqueue_pcm(pcm, sample_rate)
+
+    def end_downlink(self) -> int:
+        return self.downlink.end_utterance()
 
     async def invoke_action(
         self,
@@ -365,6 +566,8 @@ class WatchSession:
                     )
 
     async def _accept_offer(self, sdp: str) -> None:
+        if "opus/48000" not in sdp.lower():
+            raise RuntimeError("watch SDP offer did not advertise Opus/48000")
         await self.peer.setRemoteDescription(RTCSessionDescription(sdp=sdp, type="offer"))
         self.trace.mark(
             "webrtc.remote_description",
@@ -378,6 +581,14 @@ class WatchSession:
         await self.peer.setLocalDescription(answer)
         assert self.peer.localDescription is not None
         answer_sdp = keep_host_candidate(self.peer.localDescription.sdp, local_ipv4())
+        if "opus/48000" not in answer_sdp.lower():
+            raise RuntimeError("host SDP answer did not negotiate Opus/48000")
+        self.trace.mark(
+            "webrtc.codec_negotiated",
+            codec="opus",
+            rtp_clock_rate=48_000,
+            pcm_sample_rate=16_000,
+        )
         await self.send("sdp", {"kind": "answer", "sdp": answer_sdp})
 
     async def _receive_sdp_chunk(self, payload: dict[str, Any]) -> None:
@@ -398,6 +609,54 @@ class WatchSession:
             offer = "".join(chunk or "" for chunk in self.sdp_chunks)
             self.sdp_chunks = None
             await self._accept_offer(offer)
+
+
+class DownlinkUtteranceBinding:
+    """Keep one TTS utterance attached to the session that started it.
+
+    Pipecat may deliver already-buffered audio after an interruption, and the
+    watch may reconnect between TTS lifecycle frames. Stale chunks are dropped
+    instead of being enqueued into an inactive or replacement session.
+    """
+
+    def __init__(self) -> None:
+        self._session: WatchSession | None = None
+
+    def begin(self, session: WatchSession | None) -> None:
+        self.cancel()
+        if session is None:
+            return
+        session.begin_downlink()
+        self._session = session
+
+    def enqueue(
+        self,
+        current_session: WatchSession | None,
+        pcm: bytes,
+        sample_rate: int,
+    ) -> int:
+        if self._session is None:
+            return 0
+        if self._session is not current_session:
+            self.cancel()
+            return 0
+        return self._session.enqueue_downlink(pcm, sample_rate)
+
+    def end(self, current_session: WatchSession | None) -> int:
+        session = self._session
+        self._session = None
+        if session is None:
+            return 0
+        if session is not current_session:
+            session.clear_downlink()
+            return 0
+        return session.end_downlink()
+
+    def cancel(self) -> None:
+        session = self._session
+        self._session = None
+        if session is not None:
+            session.clear_downlink()
 
 
 class WatchTransportServer:
@@ -449,8 +708,13 @@ class WatchTransportServer:
                 elif raw.type == WSMsgType.ERROR:
                     break
         finally:
-            await self.on_event("disconnected", {})
-            await session.close()
-            if self.session is session:
-                self.session = None
+            await self._finish_session(session)
         return websocket
+
+    async def _finish_session(self, session: WatchSession) -> None:
+        """Close one handler without tearing down a replacement session."""
+        await session.close()
+        if self.session is not session:
+            return
+        self.session = None
+        await self.on_event("disconnected", {})

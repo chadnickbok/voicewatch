@@ -22,7 +22,7 @@ from .fake_worker import FakeAppBuilder, ManualClock
 from .jobs import JobManager
 from .metrics import LatencyTrace
 from .storage import Store
-from .transport import WatchTransportServer, local_ipv4
+from .transport import DownlinkUtteranceBinding, WatchTransportServer, local_ipv4
 
 
 DEFAULT_DATABASE = Path.home() / "Library/Application Support/Doodad/agent-control.sqlite3"
@@ -66,6 +66,7 @@ async def serve(arguments: argparse.Namespace) -> None:
     store, _, _, builder, attention, controller = control_plane(arguments.database)
     conversation: LiveConversation | None = None
     transport: WatchTransportServer
+    downlink_binding = DownlinkUtteranceBinding()
     last_agent_state: dict[str, Any] | None = None
 
     async def on_audio(pcm: bytes) -> None:
@@ -75,13 +76,14 @@ async def serve(arguments: argparse.Namespace) -> None:
     async def on_event(kind: str, payload: dict[str, Any]) -> None:
         nonlocal last_agent_state
         if kind == "connected" and transport.session is not None:
+            downlink_binding.cancel()
             last_agent_state = None
             if conversation is not None:
                 await conversation.ready()
         elif kind == "listen.requested" and transport.session is not None:
+            downlink_binding.cancel()
             if conversation is not None:
                 if conversation.voice_phase == "speaking":
-                    transport.session.clear_downlink()
                     await conversation.interrupt()
                 await conversation.begin_listening()
             await transport.session.start_capture()
@@ -94,24 +96,34 @@ async def serve(arguments: argparse.Namespace) -> None:
                     await conversation.feed_audio(b"\0\0" * 160)
         elif kind == "listen.cancelled" and transport.session is not None:
             await transport.session.stop_capture()
-            transport.session.clear_downlink()
+            downlink_binding.cancel()
             if conversation is not None:
                 await conversation.cancel()
+        elif kind == "capture.started":
+            downlink_binding.cancel()
         elif kind == "capture.stopped" and transport.session is not None:
             trace.mark("capture.stopped", reason=payload.get("reason", "unknown"))
-        elif kind == "disconnected" and conversation is not None:
-            conversation.disconnected()
+        elif kind == "disconnected":
+            downlink_binding.cancel()
+            if conversation is not None:
+                conversation.disconnected()
         elif kind == "watch.state":
             controller.kernel.replace_snapshot(payload, int(time.time() * 1000))
 
     transport = WatchTransportServer(trace, on_audio, on_event, arguments.port)
 
     def audio_sink(pcm: bytes, sample_rate: int) -> int:
-        return 0 if transport.session is None else transport.session.enqueue_downlink(pcm, sample_rate)
+        return downlink_binding.enqueue(transport.session, pcm, sample_rate)
 
     async def stop_capture() -> None:
         if transport.session is not None:
             await transport.session.stop_capture()
+
+    async def begin_downlink() -> None:
+        downlink_binding.begin(transport.session)
+
+    async def end_downlink() -> None:
+        downlink_binding.end(transport.session)
 
     async def wait_for_playback() -> None:
         if transport.session is not None:
@@ -154,7 +166,8 @@ async def serve(arguments: argparse.Namespace) -> None:
 
     conversation = LiveConversation(
         controller, builder, attention, trace, audio_sink, stop_capture,
-        wait_for_playback, invoke_action, publish_state
+        begin_downlink, end_downlink, wait_for_playback, invoke_action,
+        publish_state
     )
     await conversation.start()
     await transport.start()

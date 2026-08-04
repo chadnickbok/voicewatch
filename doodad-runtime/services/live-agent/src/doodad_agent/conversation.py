@@ -264,6 +264,8 @@ class LiveConversation:
         trace: LatencyTrace,
         audio_sink: AudioSink,
         stop_capture: AsyncCallback,
+        begin_downlink: AsyncCallback,
+        end_downlink: AsyncCallback,
         wait_for_playback: AsyncCallback,
         action_invoker: ActionInvoker,
         state_sink: StateSink,
@@ -274,6 +276,8 @@ class LiveConversation:
         self.trace = trace
         self.audio_sink = audio_sink
         self.stop_capture = stop_capture
+        self.begin_downlink = begin_downlink
+        self.end_downlink = end_downlink
         self.wait_for_playback = wait_for_playback
         self.action_invoker = action_invoker
         self.state_sink = state_sink
@@ -303,10 +307,9 @@ class LiveConversation:
                 self.trace,
                 sample_rate=16_000,
                 params=VADParams(
-                    # CoreS3 narrowband PCMU speech is consistently separated
-                    # from room noise (about 0.08 versus 0.01) but scores much
-                    # lower than clean wideband speech in Silero. Calibrate to
-                    # the actual transport instead of the generic 0.5 default.
+                    # CoreS3 speech is consistently separated from room noise
+                    # (about 0.08 versus 0.01). Calibrate to the physical
+                    # microphone path instead of Silero's generic 0.5 default.
                     confidence=0.05,
                     start_secs=0.15,
                     stop_secs=0.2,
@@ -454,6 +457,7 @@ class LiveConversation:
 
     async def _begin_speaking(self) -> None:
         await self.stop_capture()
+        await self.begin_downlink()
         await self._set_voice_phase("speaking")
 
     def _cancel_transcript_watchdog(self) -> None:
@@ -496,6 +500,14 @@ class LiveConversation:
                 self.trace.mark("pipeline.cleanup_timeout")
 
     async def _at_natural_pause(self) -> None:
+        # Flush the utterance's stateful resampler before deciding whether to
+        # enqueue another announcement or wait for the physical playout tail.
+        await self.end_downlink()
+        if self.voice_phase != "speaking":
+            self.trace.mark(
+                "downlink.stale_stop", voice_phase=self.voice_phase
+            )
+            return
         action = self.attention.natural_pause(int(time.time() * 1000))
         if action is not None and self.worker is not None:
             self.trace.mark(

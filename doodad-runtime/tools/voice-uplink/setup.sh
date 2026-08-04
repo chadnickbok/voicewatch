@@ -11,6 +11,13 @@ if ! command -v whisper-cli >/dev/null 2>&1; then
     brew install whisper-cpp
 fi
 
+if [ "$(uname -s)" = Darwin ]; then
+    "$SCRIPT_DIR/build-capture-ffmpeg.sh"
+elif ! command -v ffmpeg >/dev/null 2>&1; then
+    echo "Install FFmpeg before running the physical capture harness." >&2
+    exit 2
+fi
+
 "$PYTHON_BIN" -m venv "$SCRIPT_DIR/.venv"
 "$SCRIPT_DIR/.venv/bin/python" -m pip install --upgrade pip
 "$SCRIPT_DIR/.venv/bin/python" -m pip install -r "$SCRIPT_DIR/requirements.txt"
