@@ -1,11 +1,17 @@
 # Doodad 20-app and OS conformance suite
 
+Document role: permanent UI/runtime conformance specification and completed
+desktop-first execution plan; not the overall product roadmap
+
 Status: desktop-first UI conformance slice implemented; production providers and
 power-loss persistence remain separate networking/hardware milestones
 
 Target: 240×240 square simulator and CoreS3 SE
 
-Purpose: stress and sanity-check the UI/runtime layer before networking work
+Purpose: continuously stress and sanity-check the UI/runtime layer independently
+of production provider and package-delivery work
+
+Current product sequencing lives in the [Doodad roadmap](roadmap.md).
 
 ## 1. Outcome
 

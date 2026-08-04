@@ -166,8 +166,15 @@ milestones use 16 KiB for each plus an 8 KiB execution-environment stack and a
 
 ## Remaining validation
 
-These slices do not yet complete voice/audio transport, touch-to-guest event
-delivery, Wi-Fi/HTTPS package delivery, signatures, atomic on-device package
-installation, shared data, migrations, OTA base-firmware updates, or AOT.
-The device still loads a bare Wasm module from microSD; package installation is
-defined and exercised on desktop but is not yet the device loader.
+Voice/audio transport and touch-to-guest event delivery now have working
+CoreS3 implementations and deterministic test lanes. They still require the
+hardening and T-Watch qualification described in the
+[roadmap](roadmap.md).
+
+The remaining product boundary is Wi-Fi/HTTPS package delivery, signatures,
+trusted review, atomic on-device package activation and rollback, real shared
+data and migrations, OTA base-firmware updates, and any justified AOT path.
+The device currently selects a bare Wasm module from onboard package storage or
+microSD with an embedded recovery fallback. The package contract is validated
+on desktop, but signing and the complete device activation unit are not yet
+implemented.

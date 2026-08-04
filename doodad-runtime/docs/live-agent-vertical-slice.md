@@ -2,13 +2,16 @@
 
 | Field | Value |
 |---|---|
-| Status | Phases 0–4 implemented and verified on CoreS3 SE; Phases 5–8 proposed |
-| Last updated | 2026-08-03 |
+| Status | Phases 0–4 implemented and verified on CoreS3 SE; Phase 5 next; T-Watch BSP/build support landed but physical qualification remains |
+| Last updated | 2026-08-04 |
 | First hardware target | M5Stack CoreS3 SE |
 | Host | Apple Silicon Mac |
 | Foreground runtime | Pipecat cascaded voice pipeline |
 | Durable worker | Codex app-server behind a job manager |
-| Final port in this sequence | T-Watch S3, only after the CoreS3 gate passes |
+| T-Watch status | Board abstraction and build support landed; Phase 8 physical qualification pending |
+
+Overall sequencing lives in the [Doodad roadmap](roadmap.md). This document is
+the active detailed plan for its live-agent phases.
 
 ## 1. Outcome
 
@@ -49,8 +52,10 @@ Phases 0 through 4 are implemented in this repository and were exercised
 end-to-end on the attached CoreS3 SE. The completed scope is the foreground
 conversation plane, typed watch capabilities, durable fake-worker jobs, the
 attention broker, recovery, and the orthogonal watch UI. Codex integration,
-generated-package activation, the wider hardening/evaluation phase, and the
-T-Watch port remain Phase 5 through Phase 8 work.
+generated-package activation, the wider hardening/evaluation phase, and full
+physical T-Watch qualification remain Phase 5 through Phase 8 work. The shared
+board abstraction and T-Watch firmware/build path landed after the original
+Phase 0–4 record; that is bring-up support, not Phase 8 qualification.
 
 The implementation includes:
 
@@ -60,7 +65,8 @@ The implementation includes:
   test seams;
 - versioned agent, watch-state, capability, job-event, and question contracts,
   with Workout, Calories, and Timer agent contracts;
-- duplex PCMU media, a single-owner CoreS3 codec loop, bounded playback queues,
+- duplex wideband Opus media, a single-owner CoreS3 codec loop, bounded
+  playback queues,
   watch-authoritative Workout and Calories journals, revision checks, and
   idempotent `record_missed_set`, `get_next_set`, and `log_food` operations;
 - SQLite job/event/question/answer/delivery persistence, leases, deterministic
@@ -91,7 +97,8 @@ Verification completed on 2026-08-03:
 - Repeated physical microphone/speaker/microphone cycles completed with zero
   dropped playback frames and no I2S ownership failures after moving all codec
   transitions onto one firmware task.
-- `./scripts/test-live-agent.sh` passed 17 tests; the independent Echo Bridge
+- `./scripts/test-live-agent.sh` passes 43 tests as reverified on 2026-08-04;
+  the independent Echo Bridge
   protocol lane passed 3 tests; and `./scripts/test-all.sh` passed the full
   desktop, native, SDK, contract, conformance, WAMR, golden, and firmware
   suite, including 168 Python tests, 15 native tests, 9 SDK tests, 16 contract
@@ -113,7 +120,8 @@ pieces.
 ### Existing foundation to preserve
 
 - [`voice_service.cpp`](../firmware/main/src/voice_service.cpp) captures the
-  CoreS3 microphone and sends PCMU audio through an Espressif WebRTC peer.
+  CoreS3 microphone and exchanges wideband Opus audio through an Espressif
+  WebRTC peer.
 - The [Echo Bridge](../tools/voice-uplink/README.md) receives that track on the
   Mac, records it, transcribes it with `whisper.cpp`, and returns a bounded
   `transcript.final` event to the Voice Notes guest.
@@ -133,28 +141,20 @@ pieces.
 The existing physical voice test remains a permanent conformance lane. The
 production conversation service must extend it, not delete or weaken it.
 
-### Gaps this plan closes
+### Remaining gaps after Phases 0–4
 
-- The current WebRTC media path is send-only; the watch does not receive and
-  play streamed TTS audio.
-- Capture is a bounded diagnostic operation rather than a persistent,
-  interruptible conversation session.
-- There is no foreground LLM pipeline, tool selection layer, or conversation
-  context manager.
 - Workout storage and most other domain providers are still marked as mocked
-  in [`contracts/abi/v1.json`](../contracts/abi/v1.json).
-- Packages expose a manifest, provider capabilities, AppSpec, and live
-  semantics, but no versioned agent-facing action/view contract.
-- There is no durable job database, event log, worker lease, pending-question
-  model, attention policy, or delivery ledger.
-- `VoicePhase::building` currently models building as a foreground voice phase.
-  Long-running work must instead be orthogonal to listening, thinking, and
-  speaking.
+  in [`contracts/abi/v1.json`](../contracts/abi/v1.json); the minimal
+  watch-owned Workout and Calories journals prove typed actions, not general
+  history or shared data.
 - There is no Codex app-server client, isolated build workspace, event
-  normalizer, or resumable thread mapping.
+  normalizer, persisted Codex session mapping, or real generated artifact.
 - Firmware can read `/packages/active.wasm`, but download, signed bundle
   verification, inactive staging, atomic activation, and rollback are not yet
   implemented.
+- The T-Watch firmware builds through the shared board abstraction, but its
+  media, input, haptic, thermal, memory, reconnect, power, and battery behavior
+  has not completed the Phase 8 physical gate.
 
 ## 3. Decisions locked by this plan
 
@@ -180,7 +180,7 @@ The first production-shaped path is:
 
 ```text
 CoreS3 microphone
-  -> PCMU/WebRTC
+  -> Opus/WebRTC
   -> PCM normalization
   -> Silero VAD + local Smart Turn
   -> streaming STT
@@ -268,13 +268,14 @@ foreground returns to ordinary conversation immediately after accepting a
 job. The existing build and result stories remain useful as focused detail
 views, not as the global state for the whole job lifetime.
 
-### 3.10 CoreS3 is the integration target before T-Watch
+### 3.10 CoreS3 remains the qualification target
 
-The Pipecat ESP32 client has a CoreS3 target, while this repository already has
-a measured CoreS3 media implementation. Phase 0 compares their signaling,
-media, speaker, and interruption behavior. Reuse code at the narrowest useful
-seam; do not replace the proven Doodad service wholesale merely to match an
-example.
+The repository now has a shared board abstraction plus CoreS3 and T-Watch
+firmware/build support. CoreS3 remains the measured end-to-end integration
+target for Phases 0–7. The T-Watch path may compile and receive ordinary board
+maintenance in parallel, but that does not substitute for the codec, input,
+haptic, reconnect, thermal, memory, power, and battery measurements required by
+Phase 8.
 
 ## 4. Target architecture
 
@@ -931,12 +932,14 @@ Deliverables:
 **Gate:** all definition-of-done criteria below pass in repeatable desktop and
 CoreS3 runs.
 
-### Phase 8 — T-Watch port
+### Phase 8 — T-Watch physical qualification
 
-Port only the proven media, control, state, and Voice UI contracts. Re-run
-codec, memory, thermal, display, microphone, speaker, touch, haptic, reconnect,
-and battery measurements on T-Watch hardware. Do not change foreground/job
-semantics during the board port.
+The shared board abstraction, T-Watch BSP, firmware selection, and build path
+are implemented. Complete the phase by running the proven media, control,
+state, and Voice UI contracts on physical T-Watch hardware and recording codec,
+memory, thermal, display, microphone, speaker, touch, haptic, reconnect, power,
+and battery measurements. Do not change foreground/job semantics during board
+qualification.
 
 ## 14. Verification strategy
 
@@ -1050,8 +1053,9 @@ true:
 - a checked-in evaluation report contains measured latency, reliability,
   duplicate-effect, and recovery results.
 
-Only after this definition is met should the same contracts be ported to the
-T-Watch S3.
+T-Watch BSP/build support may evolve in parallel, but it is not physically
+qualified until this definition is met and the Phase 8 hardware evidence is
+recorded.
 
 ## 17. Primary references
 

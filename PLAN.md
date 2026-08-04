@@ -1,5 +1,10 @@
 # Doodad Runtime — First Vertical Slice Plan
 
+> **Document status:** Historical and completed first-milestone brief. This
+> file preserves the original assignment and acceptance criteria; its
+> “non-goals” and planned milestones are not the current backlog. See the
+> [current Doodad roadmap](doodad-runtime/docs/roadmap.md).
+
 Build the first vertical slice of an experimental voice-first, dynamically extensible watch platform on an M5Stack CoreS3 SE connected to my Apple Silicon Mac.
 
 Work directly in a new local project named `doodad-runtime`. Implement the project, build it, and help me flash it onto the attached device. Do not merely describe how I could implement it.

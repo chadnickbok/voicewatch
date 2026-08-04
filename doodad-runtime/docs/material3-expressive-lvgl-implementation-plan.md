@@ -4,11 +4,17 @@
 
 ## Codex-ready implementation plan for an ESP32-S3 voice-first watch platform
 
-**Status:** implementation specification  
+**Document role:** Reference implementation specification and historical phased plan
+**Status:** Not the current roadmap; substantial portions are implemented and tracked elsewhere
 **Target hardware:** LilyGO T-Watch S3; M5Stack CoreS3 SE development target  
 **Target stack:** ESP-IDF, LVGL 9.5.x, `esp_lvgl_port`, WAMR, Rust/Wasm generated apps  
 **Reference design system:** Wear Compose Material 3 Expressive 1.6.2  
 **Document date:** 2026-07-30
+
+The phase ordering and kickoff prompt below preserve the original platform
+specification. Do not restart at Phase 0 or use this file as the live backlog.
+Current sequencing lives in the [Doodad roadmap](roadmap.md); focused progress
+is recorded in the conformance, Parallax, Weather, and live-agent documents.
 
 ---
 

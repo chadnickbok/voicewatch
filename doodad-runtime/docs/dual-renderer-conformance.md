@@ -5,7 +5,7 @@ Status: initial Compose oracle lane implemented
 Stable oracle: Wear Compose Material 3 `1.6.2`
 Product renderer: LVGL `9.5.0`, RGB565, 240×240 square
 
-The complete implementation roadmap and progress tracker is
+The complete dual-renderer implementation and progress tracker is
 [`Project Parallax`](project-parallax.md).
 
 ## Contract

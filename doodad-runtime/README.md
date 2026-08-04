@@ -1,7 +1,10 @@
 # Doodad Runtime
 
-This project implements the first three vertical slices of the Doodad watch
-runtime on an M5Stack CoreS3 SE:
+This project implements a trusted, voice-first Doodad watch runtime for CoreS3
+SE, with shared board/build support for T-Watch S3. The current overall
+sequence is maintained in the [Doodad roadmap](docs/roadmap.md).
+
+The original runtime foundation includes:
 
 1. A trusted ESP-IDF shell embeds and runs a Rust WebAssembly guest.
 2. Packages load from a 9.94 MiB onboard wear-levelled partition first, with
@@ -23,10 +26,12 @@ It now also contains a substantial Material 3 Expressive framework slice:
 - deterministic 240×240 RGB565 catalog goldens;
 - a visually verified CoreS3 40MHz synchronous strip-display path.
 
-The active UI/runtime milestone is specified in the
-[20-app and OS conformance-suite plan](docs/20-app-conformance-suite.md).
-The next voice/agent milestone is specified in the
-[live foreground agent and durable jobs vertical-slice plan](docs/live-agent-vertical-slice.md).
+The [20-app and OS conformance suite](docs/20-app-conformance-suite.md) is the
+permanent UI/runtime executable specification, and
+[Project Parallax](docs/project-parallax.md) tracks dual-renderer fidelity. The
+active product milestone is Phase 5 of the
+[live foreground agent and durable jobs plan](docs/live-agent-vertical-slice.md):
+a real Codex worker that produces a validated `ready_for_review` app artifact.
 The suite now includes 20 separate interactive Wasm packages, deterministic
 scenario and cross-surface contracts, a trusted Home/Voice/App Manager shell,
 CoreS3 system-shortcut wiring, dual 3 MiB firmware slots, and 9.94 MiB of
@@ -78,9 +83,10 @@ remediation order are in the
 
 All 20 decisive flows are executable and emit checked-in semantic/resource
 evidence. Cross-app replacement stress, display-sleep service behavior,
-surface-revision consistency, and selected physical CoreS3 traces are covered.
-Production networking, flash-backed scheduler journals, long-running
-audio/sensor services, and power budgets are subsequent milestones.
+surface-revision consistency, selected physical CoreS3 traces, and the duplex
+Opus live-agent path are covered. Real Codex generation, general backing data,
+signed package activation, remaining production providers, long-running
+audio/sensor services, power budgets, and physical T-Watch qualification remain.
 
 The guest exports `app_start` and imports one capability:
 `doodad.ui_mount(i32 pointer, i32 length) -> i32`. Its payload is canonical
@@ -400,6 +406,7 @@ doodad-runtime/
 ├── components/m3e_lvgl/        Material tokens, runtime, and LVGL components
 ├── contracts/                   Versioned package, UI, and ABI contracts
 ├── sdk/rust/doodad-sdk/         Guest-side ABI wrapper
+├── services/live-agent/         Foreground conversation and durable jobs
 ├── firmware/                    ESP-IDF shell
 │   └── main/
 │       ├── embedded/hello.wasm  Generated embedded guest
@@ -409,10 +416,11 @@ doodad-runtime/
 ├── tools/doodad_cli/            Package and simulator CLI
 ├── tools/token_sync/            Pinned upstream token extraction/generation
 ├── ui/                          LVGL shell shared by desktop and firmware
+├── docs/roadmap.md              Current overall project sequence
 ├── doodad                       Development command
 ├── scripts/                     Build, flash, inspect, and SD install tools
 └── docs/architecture.md
 ```
 
 See [docs/architecture.md](docs/architecture.md) for the trust boundary and
-milestone design.
+runtime design.

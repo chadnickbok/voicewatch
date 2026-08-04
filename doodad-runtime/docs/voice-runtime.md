@@ -2,10 +2,11 @@
 
 Voice is a system capability, not an app-owned screen.
 
-The next implementation slice—persistent foreground conversation, typed watch
-actions, durable background jobs, attention policy, and a Codex app-builder
-worker—is specified in the
-[live foreground agent vertical-slice plan](live-agent-vertical-slice.md).
+Persistent foreground conversation, typed watch actions, durable fake-worker
+jobs, and attention policy are implemented. The next slice is the real Codex
+app-builder worker described in the
+[live foreground agent vertical-slice plan](live-agent-vertical-slice.md); see
+the [current roadmap](roadmap.md) for overall sequencing.
 
 ## Layer and task ownership
 
@@ -86,14 +87,17 @@ Home navigation, permission review, or recovery.
 The `apps/voice/appspec.json` fixture exercises the public semantic shape for
 preview, but the production voice overlay remains host-owned native UI.
 
-## Physical microphone uplink slice
+## Physical voice transport
 
-The first working transport slice is implemented by the native
-`voice_service` and the local `tools/voice-uplink` Echo Bridge harness:
+The native `voice_service`, production live-agent, and local Echo Bridge harness
+share the current bidirectional wideband transport:
 
 ```text
-Mac test phrase -> Mac speaker -> CoreS3 microphone -> PCMU/WebRTC
-                -> Mac WAV -> whisper.cpp -> transcript.final
+CoreS3 microphone -> Opus/WebRTC -> live-agent STT/model/tools/TTS
+                 -> Opus/WebRTC -> CoreS3 speaker
+
+Mac test phrase -> Mac speaker -> CoreS3 microphone -> Opus/WebRTC
+                -> Echo Bridge WAV -> whisper.cpp -> transcript.final
                 -> provider event -> voice-notes Wasm UI
 ```
 
@@ -104,11 +108,11 @@ The watch owns Wi-Fi, microphone access, codec selection, and the WebRTC
 session. Wasm can request capture and receive lifecycle/transcript events but
 never receives raw microphone buffers or network access.
 
-PCMU at 8 kHz is the baseline conformance codec because it sustains real-time
-20 ms frames on ESP32-S3 with the complete display, WAMR, Wi-Fi, and TLS stack
-resident. Opus remains a future bandwidth-optimized profile; it should only be
-enabled after its encoder is moved off the capture path or shown to maintain
-real-time pacing under the production memory layout.
+Opus uses 48 kHz RTP with 16 kHz mono PCM at the application edges. The
+production and Echo Bridge lanes exercise bidirectional pacing, bounded queues,
+and the CoreS3 microphone/speaker handoff under the complete display, WAMR,
+Wi-Fi, and TLS layout. A compile-time PCMU fallback remains an implementation
+option, not the current conformance baseline.
 
 Run `tools/voice-uplink/setup.sh`, flash a voice-notes firmware build, and run
 `tools/voice-uplink/run.sh`. The harness temporarily makes the Mac output

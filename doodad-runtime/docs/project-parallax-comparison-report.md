@@ -1,9 +1,15 @@
 # Project Parallax: initial 20-app comparison report
 
-Status: **implemented baseline; fidelity review pending**
+Document role: **historical initial-baseline report**
+Status: **implemented baseline; superseded for current status**
+Current tracker: [Project Parallax](project-parallax.md)
 Evidence date: **2026-07-30**
 Profile: **`watch_square_240` — 240×240 physical pixels, 192×192dp**
 Suite: **20 resting initial scenes**
+
+The measurements and recommendations below describe the first batch before the
+subsequent app-by-app fidelity work. Preserve them as baseline evidence; do not
+read “pending review” statements as the current project status.
 
 ## Executive result
 

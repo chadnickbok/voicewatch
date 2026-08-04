@@ -1,10 +1,16 @@
 # Project Nimbus: square Weather app pre-build plan
 
-Status: planning
+Document role: implemented project record and focused hardware-closure tracker
+Status: implemented through the app, renderer, and provider slices; hardware closure pending
+Last reconciled: 2026-08-04
 Target: Doodad 240×240 physical / 192×192dp square display
 Reference renderer: Wear Compose Material 3 Expressive
 Product renderer: LVGL RGB565
 Guest runtime: Rust `no_std` WebAssembly
+
+This document no longer sets overall project order. See the
+[Doodad roadmap](roadmap.md). The unchecked Phase 6 hardware, endurance, and
+final-review items remain valid Weather follow-up work.
 
 ## 1. Outcome
 
