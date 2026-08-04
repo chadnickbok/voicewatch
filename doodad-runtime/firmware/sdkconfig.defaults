@@ -17,7 +17,6 @@ CONFIG_FREERTOS_HZ=1000
 # CONFIG_ESP_SYSTEM_MEMPROT_FEATURE is not set
 
 CONFIG_SPIRAM=y
-CONFIG_SPIRAM_MODE_QUAD=y
 CONFIG_SPIRAM_TYPE_AUTO=y
 CONFIG_SPIRAM_SPEED_80M=y
 CONFIG_SPIRAM_BOOT_HW_INIT=y
@@ -61,7 +60,7 @@ CONFIG_ESP_WIFI_STATIC_TX_BUFFER_NUM=6
 CONFIG_ESP_WIFI_CACHE_TX_BUFFER_NUM=8
 CONFIG_ESP_WIFI_MGMT_SBUF_NUM=8
 
-# TLS is host-owned and the CoreS3 has ample PSRAM but little spare internal
+# TLS is host-owned and both boards have ample PSRAM but little spare internal
 # RAM after LVGL, WAMR, and Wi-Fi are resident.
 CONFIG_MBEDTLS_EXTERNAL_MEM_ALLOC=y
 # The ESP32-S3 AES accelerator requires internal DMA bounce buffers for TLS
@@ -72,3 +71,7 @@ CONFIG_LV_USE_BAR=y
 CONFIG_LV_USE_BUTTON=y
 CONFIG_LV_USE_FLEX=y
 CONFIG_LV_USE_GRID=y
+
+# The production artifacts both expose the same local live-agent contract.
+CONFIG_DOODAD_VOICE_UPLINK=y
+CONFIG_DOODAD_VOICE_AUTOCONNECT=y

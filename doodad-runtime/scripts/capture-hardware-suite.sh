@@ -5,201 +5,100 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/.." && pwd)"
 WORKSPACE_DIR="$(cd "${PROJECT_DIR}/.." && pwd)"
-PORT=""
-ONLY_APP=""
-START_AT=""
-EXPOSURE=16
-GAIN=58
-WHITE_BALANCE_TEMPERATURE=4000
-MOIRE_SIGMA=0
-OUTPUT_DIR="${PROJECT_DIR}/target/hardware-gallery/apps"
-CALIBRATION_PROFILE="${PROJECT_DIR}/config/capture/streamcam-cores3-sharp.json"
+CORES3_PORT="/dev/cu.usbmodem21101"
+WATCH_PORT="/dev/cu.usbmodem22301"
+PROFILE="${PROJECT_DIR}/config/capture/streamcam-dual-v2.json"
+OUTPUT="${PROJECT_DIR}/target/hardware-gallery/dual"
+REFERENCE=""
+SCENE=""
+EXPECTED_SCREEN=""
+EXPECTED_TEXT=()
+CALIBRATE=0
+FLASH=0
+OFFLINE=0
 CLEANCAM="${WORKSPACE_DIR}/.build/CleanCam.app/Contents/MacOS/CleanCam"
-CAPTURE_ONLY=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --port)
-            PORT="${2:?--port requires a serial device}"
-            shift 2
-            ;;
-        --app)
-            ONLY_APP="${2:?--app requires an app slug}"
-            shift 2
-            ;;
-        --start-at)
-            START_AT="${2:?--start-at requires an app slug}"
-            shift 2
-            ;;
-        --exposure)
-            EXPOSURE="${2:?--exposure requires a value}"
-            shift 2
-            ;;
-        --gain)
-            GAIN="${2:?--gain requires a value}"
-            shift 2
-            ;;
-        --white-balance-temperature)
-            WHITE_BALANCE_TEMPERATURE="${2:?--white-balance-temperature requires a value}"
-            shift 2
-            ;;
-        --moire-sigma)
-            MOIRE_SIGMA="${2:?--moire-sigma requires a value}"
-            shift 2
-            ;;
-        --output)
-            OUTPUT_DIR="${2:?--output requires a directory}"
-            shift 2
-            ;;
-        --calibration-profile)
-            CALIBRATION_PROFILE="${2:?--calibration-profile requires a file}"
-            shift 2
-            ;;
-        --capture-only)
-            CAPTURE_ONLY=1
-            shift
-            ;;
+        --cores3-port) CORES3_PORT="${2:?--cores3-port requires a device}"; shift 2 ;;
+        --watch-port) WATCH_PORT="${2:?--watch-port requires a device}"; shift 2 ;;
+        --profile) PROFILE="${2:?--profile requires a file}"; shift 2 ;;
+        --output) OUTPUT="${2:?--output requires a directory}"; shift 2 ;;
+        --reference) REFERENCE="${2:?--reference requires a 240x240 image}"; shift 2 ;;
+        --scene) SCENE="${2:?--scene requires the firmware scene name}"; shift 2 ;;
+        --expected-screen) EXPECTED_SCREEN="${2:?--expected-screen requires a name}"; shift 2 ;;
+        --expected-text) EXPECTED_TEXT+=("$2"); shift 2 ;;
+        --calibrate) CALIBRATE=1; shift ;;
+        --flash) FLASH=1; shift ;;
+        --offline) OFFLINE=1; shift ;;
         *)
-            echo \
-                "Usage: $0 [--port DEVICE] [--app SLUG] [--start-at SLUG]" \
-                "[--exposure N] [--gain N] [--white-balance-temperature K]" \
-                "[--moire-sigma N] [--calibration-profile FILE]" \
-                "[--output DIR] [--capture-only]" >&2
+            echo "Usage: $0 [--calibrate] [--flash] [--profile FILE] [--output DIR]" >&2
+            echo "  --scene NAME --reference PNG --expected-screen NAME [--expected-text TEXT]" >&2
+            echo "  [--cores3-port DEVICE] [--watch-port DEVICE] [--offline]" >&2
             exit 2
             ;;
     esac
 done
 
-if [[ -z "${PORT}" ]]; then
-    PORT="$(find /dev -maxdepth 1 -name 'cu.usbmodem*' -print 2>/dev/null | head -n 1)"
-fi
-if [[ -z "${PORT}" || ! -e "${PORT}" ]]; then
-    echo "No CoreS3 serial port found. Supply one with --port." >&2
-    exit 1
-fi
-if [[ ! -x "${CLEANCAM}" ]]; then
-    echo "CleanCam is not built: ${CLEANCAM}" >&2
-    exit 1
-fi
-if ! command -v magick >/dev/null; then
-    echo "ImageMagick is required for the comparison sheets." >&2
-    exit 1
-fi
-if [[ ! -f "${CALIBRATION_PROFILE}" ]]; then
-    echo "Capture calibration is missing: ${CALIBRATION_PROFILE}" >&2
-    echo "Run scripts/capture-color-bars.sh --profile-output ${CALIBRATION_PROFILE}" >&2
-    exit 1
-fi
-if [[ ! "${MOIRE_SIGMA}" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
-    echo "--moire-sigma must be a non-negative number" >&2
-    exit 2
-fi
-VIEWPORT_GEOMETRY="$(
-    python3 -c \
-        'import json,sys; print(json.load(open(sys.argv[1]))["capture"]["viewport_geometry"])' \
-        "${CALIBRATION_PROFILE}"
-)"
-if [[ ! "${VIEWPORT_GEOMETRY}" =~ ^[0-9]+x[0-9]+\+[0-9]+\+[0-9]+$ ]]; then
-    echo "Calibration has invalid viewport geometry: ${VIEWPORT_GEOMETRY}" >&2
-    exit 1
+[[ -x "${CLEANCAM}" ]] || { echo "CleanCam is not built: ${CLEANCAM}" >&2; exit 1; }
+if [[ "${OFFLINE}" -eq 0 ]]; then
+    [[ -e "${CORES3_PORT}" && -e "${WATCH_PORT}" ]] || {
+        echo "Both explicitly selected serial devices must be present." >&2; exit 1;
+    }
 fi
 
-mkdir -p \
-    "${OUTPUT_DIR}/desktop" \
-    "${OUTPUT_DIR}/hardware-raw" \
-    "${OUTPUT_DIR}/hardware-crop-unfiltered" \
-    "${OUTPUT_DIR}/hardware-crop" \
-    "${OUTPUT_DIR}/hardware-corrected" \
-    "${OUTPUT_DIR}/comparison"
-
-ALL_APPS=()
-while IFS= read -r app; do
-    ALL_APPS+=("${app}")
-done < <(
-    sed -n \
-        's/.*"slug": "\([^"]*\)".*/\1/p' \
-        "${PROJECT_DIR}/apps/conformance-suite.json"
-)
-if [[ -n "${ONLY_APP}" ]]; then
-    APPS=("${ONLY_APP}")
-else
-    APPS=("${ALL_APPS[@]}")
-fi
-
-started=false
-if [[ -z "${START_AT}" ]]; then
-    started=true
-fi
-
-for app in "${APPS[@]}"; do
-    if [[ "${started}" != true ]]; then
-        if [[ "${app}" == "${START_AT}" ]]; then
-            started=true
-        else
-            continue
-        fi
-    fi
-    if [[ ! -f "${PROJECT_DIR}/apps/${app}/appspec.json" ]]; then
-        echo "Unknown conformance app: ${app}" >&2
-        exit 2
-    fi
-
-    echo "=== Hardware conformance: ${app} ==="
-    "${PROJECT_DIR}/doodad" \
-        appspec \
-        "${PROJECT_DIR}/apps/${app}/appspec.json" \
-        --output "${OUTPUT_DIR}/desktop/${app}.bmp"
-    magick \
-        "${OUTPUT_DIR}/desktop/${app}.bmp" \
-        "${OUTPUT_DIR}/desktop/${app}.png"
-
-    if [[ "${CAPTURE_ONLY}" -eq 0 ]]; then
-        "${SCRIPT_DIR}/build-firmware.sh" --app "${app}" --show-app
-        "${SCRIPT_DIR}/flash.sh" --port "${PORT}" --no-monitor
-    fi
-    "${CLEANCAM}" \
-        --capture "${OUTPUT_DIR}/hardware-raw/${app}.png" \
-        --exposure "${EXPOSURE}" \
-        --gain "${GAIN}" \
-        --white-balance-temperature "${WHITE_BALANCE_TEMPERATURE}" \
-        --auto-focus
-
-    # The geometry comes from the same registered color-bars frame that fitted
-    # the correction matrix. Moving the fixture requires a profile recapture.
-    magick \
-        "${OUTPUT_DIR}/hardware-raw/${app}.png" \
-        -crop "${VIEWPORT_GEOMETRY}" \
-        +repage \
-        -filter Lanczos \
-        -resize 240x240! \
-        "${OUTPUT_DIR}/hardware-crop-unfiltered/${app}.png"
-    if [[ "${MOIRE_SIGMA}" == "0" || "${MOIRE_SIGMA}" == "0.0" ]]; then
-        magick \
-            "${OUTPUT_DIR}/hardware-crop-unfiltered/${app}.png" \
-            "${OUTPUT_DIR}/hardware-crop/${app}.png"
+if [[ "${FLASH}" -eq 1 ]]; then
+    if [[ "${CALIBRATE}" -eq 1 ]]; then
+        "${SCRIPT_DIR}/build-firmware.sh" --board all --catalog-story color-bars
     else
-        magick \
-            "${OUTPUT_DIR}/hardware-raw/${app}.png" \
-            -crop "${VIEWPORT_GEOMETRY}" \
-            +repage \
-            -blur "0x${MOIRE_SIGMA}" \
-            -filter Lanczos \
-            -resize 240x240! \
-            "${OUTPUT_DIR}/hardware-crop/${app}.png"
+        "${SCRIPT_DIR}/build-firmware.sh" --board all
     fi
-    python3 "${PROJECT_DIR}/tools/color_calibration/apply.py" \
-        "${OUTPUT_DIR}/hardware-crop/${app}.png" \
-        "${OUTPUT_DIR}/hardware-corrected/${app}.png" \
-        --profile "${CALIBRATION_PROFILE}" \
-        --exposure "${EXPOSURE}" \
-        --gain "${GAIN}" \
-        --white-balance-temperature "${WHITE_BALANCE_TEMPERATURE}" \
-        --focus-mode auto
-    magick \
-        "${OUTPUT_DIR}/desktop/${app}.png" \
-        "${OUTPUT_DIR}/hardware-corrected/${app}.png" \
-        +append \
-        "${OUTPUT_DIR}/comparison/${app}.png"
-done
+    "${SCRIPT_DIR}/flash.sh" --board cores3 --port "${CORES3_PORT}" --no-monitor
+    "${SCRIPT_DIR}/flash.sh" --board t-watch-s3 --port "${WATCH_PORT}" --no-monitor
+fi
 
-echo "Hardware gallery complete: ${OUTPUT_DIR}"
+mkdir -p "${OUTPUT}"
+offline_args=()
+[[ "${OFFLINE}" -eq 1 ]] && offline_args+=(--offline)
+if [[ "${CALIBRATE}" -eq 1 ]]; then
+    registration="${OUTPUT}/registration-raw.png"
+    rm -f "${registration}"
+    python3 "${PROJECT_DIR}/tools/dual_capture.py" calibrate \
+        --raw "${registration}" \
+        --output "${PROFILE}" \
+        --cleancam "${CLEANCAM}" \
+        --cores3-port "${CORES3_PORT}" \
+        --watch-port "${WATCH_PORT}" \
+        "${offline_args[@]}"
+    exit 0
+fi
+
+[[ -n "${SCENE}" && -n "${REFERENCE}" && -n "${EXPECTED_SCREEN}" ]] || {
+    echo "--scene, --reference, and --expected-screen are required." >&2; exit 2;
+}
+[[ -f "${PROFILE}" ]] || {
+    echo "Dual calibration is missing: ${PROFILE}; run with --calibrate first." >&2; exit 1;
+}
+[[ -f "${REFERENCE}" ]] || { echo "Reference does not exist: ${REFERENCE}" >&2; exit 1; }
+raw="${OUTPUT}/${SCENE}-acquisition.png"
+rm -f "${raw}"
+text_args=()
+for value in "${EXPECTED_TEXT[@]}"; do text_args+=(--expected-text "${value}"); done
+python3 "${PROJECT_DIR}/tools/dual_capture.py" capture \
+    --profile "${PROFILE}" \
+    --raw "${raw}" \
+    --cleancam "${CLEANCAM}" \
+    --reference "${REFERENCE}" \
+    --output "${OUTPUT}" \
+    --scene "${SCENE}" \
+    --expected-screen "${EXPECTED_SCREEN}" \
+    --cores3-port "${CORES3_PORT}" \
+    --watch-port "${WATCH_PORT}" \
+    "${text_args[@]}" \
+    "${offline_args[@]}"
+
+echo "Open the raw frame, both corrected crops, and contact sheet before recording review:"
+echo "  ${OUTPUT}/${SCENE}/raw/both-devices.png"
+echo "  ${OUTPUT}/${SCENE}/corrected/cores3.png"
+echo "  ${OUTPUT}/${SCENE}/corrected/t-watch-s3.png"
+echo "  ${OUTPUT}/${SCENE}/contact-sheet.png"

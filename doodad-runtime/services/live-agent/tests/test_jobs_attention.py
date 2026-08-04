@@ -91,7 +91,34 @@ def test_expired_lease_recovers_to_queue(tmp_path) -> None:
             "UPDATE jobs SET lease_owner='worker',lease_expires_ms=5 WHERE job_id=?", (job_id,)
         )
         connection.execute(
-            "INSERT INTO worker_leases VALUES(?,?,?,?,?)", (job_id, "worker", 5, 1, 1)
+            "INSERT INTO worker_leases "
+            "(job_id,device_id,owner,expires_at_ms,heartbeat_at_ms,attempts) "
+            "VALUES(?,?,?,?,?,?)",
+            (job_id, jobs.device_id, "worker", 5, 1, 1),
         )
     assert jobs.recover_expired(6) == [job_id]
     assert jobs.job(job_id)["state"] == "queued"
+
+
+def test_each_device_can_hold_one_independent_focused_question(tmp_path) -> None:
+    store = Store(tmp_path / "agent.sqlite3")
+    core_jobs = JobManager(store, "cores3-se-aabbccddeeff")
+    watch_jobs = JobManager(store, "t-watch-s3-112233445566")
+    core_worker = FakeAppBuilder(core_jobs)
+    watch_worker = FakeAppBuilder(watch_jobs)
+    core_broker = AttentionBroker(store, core_jobs)
+    watch_broker = AttentionBroker(store, watch_jobs)
+
+    core_job = core_worker.start("Core timer", 0)
+    watch_job = watch_worker.start("Watch timer", 0)
+    core_worker.tick(10_000)
+    watch_worker.tick(10_000)
+    for event in core_jobs.events(core_job):
+        core_broker.observe(event, 10_000)
+    for event in watch_jobs.events(watch_job):
+        watch_broker.observe(event, 10_000)
+
+    assert core_broker.natural_pause(10_000).job_id == core_job
+    assert watch_broker.natural_pause(10_000).job_id == watch_job
+    assert core_jobs.focused()["job_id"] == core_job
+    assert watch_jobs.focused()["job_id"] == watch_job

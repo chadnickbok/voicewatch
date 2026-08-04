@@ -26,20 +26,23 @@ class Capability:
 
 
 class CapabilityKernel:
-    DEVICE_ID = "cores3-se"
+    DEFAULT_DEVICE_ID = "cores3-se"
 
-    def __init__(self, store: Store, now_ms: int = 0) -> None:
+    def __init__(
+        self, store: Store, now_ms: int = 0, device_id: str = DEFAULT_DEVICE_ID
+    ) -> None:
         self.store = store
+        self.device_id = device_id
         if self.store.connection.execute(
-            "SELECT 1 FROM watch_replicas WHERE device_id=?", (self.DEVICE_ID,)
+            "SELECT 1 FROM watch_replicas WHERE device_id=?", (self.device_id,)
         ).fetchone() is None:
-            self.replace_snapshot(self.default_snapshot(), now_ms)
+            self.replace_snapshot(self.default_snapshot(self.device_id), now_ms)
 
     @staticmethod
-    def default_snapshot() -> dict[str, Any]:
+    def default_snapshot(device_id: str = DEFAULT_DEVICE_ID) -> dict[str, Any]:
         return {
             "schema_version": 1,
-            "device_id": CapabilityKernel.DEVICE_ID,
+            "device_id": device_id,
             "revision": 1,
             "foreground_app": "dev.doodad.workout",
             "route": "active_session",
@@ -61,7 +64,7 @@ class CapabilityKernel:
 
     def snapshot(self) -> dict[str, Any]:
         row = self.store.connection.execute(
-            "SELECT snapshot_json FROM watch_replicas WHERE device_id=?", (self.DEVICE_ID,)
+            "SELECT snapshot_json FROM watch_replicas WHERE device_id=?", (self.device_id,)
         ).fetchone()
         return json.loads(row["snapshot_json"])
 
@@ -69,7 +72,7 @@ class CapabilityKernel:
         with self.store.transaction() as connection:
             connection.execute(
                 "INSERT INTO watch_replicas VALUES(?,?,?,?) ON CONFLICT(device_id) DO UPDATE SET revision=excluded.revision,snapshot_json=excluded.snapshot_json,synchronized_at_ms=excluded.synchronized_at_ms",
-                (self.DEVICE_ID, int(snapshot["revision"]), Store.encode(snapshot), now_ms),
+                (self.device_id, int(snapshot["revision"]), Store.encode(snapshot), now_ms),
             )
 
     def retrieve(self, utterance: str, limit: int = 8) -> list[Capability]:
@@ -111,7 +114,7 @@ class CapabilityKernel:
             return {**prior, "duplicate": True}
         with self.store.transaction() as connection:
             row = connection.execute(
-                "SELECT * FROM watch_replicas WHERE device_id=?", (self.DEVICE_ID,)
+                "SELECT * FROM watch_replicas WHERE device_id=?", (self.device_id,)
             ).fetchone()
             state = json.loads(row["snapshot_json"])
             if int(row["revision"]) != expected_revision:
@@ -140,11 +143,13 @@ class CapabilityKernel:
             }
             connection.execute(
                 "UPDATE watch_replicas SET revision=?,snapshot_json=?,synchronized_at_ms=? WHERE device_id=?",
-                (state["revision"], Store.encode(state), now_ms, self.DEVICE_ID),
+                (state["revision"], Store.encode(state), now_ms, self.device_id),
             )
             connection.execute(
-                "INSERT INTO capability_invocations VALUES(?,?,?,?,?)",
-                (idempotency_key, "record_missed_set", Store.encode(input_value), Store.encode(result), now_ms),
+                "INSERT INTO capability_invocations "
+                "(device_id,idempotency_key,capability_id,input_json,result_json,created_at_ms) "
+                "VALUES(?,?,?,?,?,?)",
+                (self.device_id, idempotency_key, "record_missed_set", Store.encode(input_value), Store.encode(result), now_ms),
             )
         return result
 
@@ -170,7 +175,7 @@ class CapabilityKernel:
         entry_id = f"food_{uuid.uuid4().hex}"
         with self.store.transaction() as connection:
             row = connection.execute(
-                "SELECT * FROM watch_replicas WHERE device_id=?", (self.DEVICE_ID,)
+                "SELECT * FROM watch_replicas WHERE device_id=?", (self.device_id,)
             ).fetchone()
             state = json.loads(row["snapshot_json"])
             state["revision"] = int(row["revision"]) + 1
@@ -180,22 +185,27 @@ class CapabilityKernel:
                 "provisional": True, "revision": state["revision"],
             }
             connection.execute(
-                "INSERT INTO nutrition_entries VALUES(?,?,?,?,?,?)",
-                (entry_id, description, quantity, unit, 1, now_ms),
+                "INSERT INTO nutrition_entries "
+                "(entry_id,device_id,description,quantity,unit,provisional,created_at_ms) "
+                "VALUES(?,?,?,?,?,?,?)",
+                (entry_id, self.device_id, description, quantity, unit, 1, now_ms),
             )
             connection.execute(
                 "UPDATE watch_replicas SET revision=?,snapshot_json=?,synchronized_at_ms=? WHERE device_id=?",
-                (state["revision"], Store.encode(state), now_ms, self.DEVICE_ID),
+                (state["revision"], Store.encode(state), now_ms, self.device_id),
             )
             connection.execute(
-                "INSERT INTO capability_invocations VALUES(?,?,?,?,?)",
-                (idempotency_key, "log_food", Store.encode({"description": description, "quantity": quantity, "unit": unit}), Store.encode(result), now_ms),
+                "INSERT INTO capability_invocations "
+                "(device_id,idempotency_key,capability_id,input_json,result_json,created_at_ms) "
+                "VALUES(?,?,?,?,?,?)",
+                (self.device_id, idempotency_key, "log_food", Store.encode({"description": description, "quantity": quantity, "unit": unit}), Store.encode(result), now_ms),
             )
         return result
 
     def _prior(self, key: str, capability: str) -> dict[str, Any] | None:
         row = self.store.connection.execute(
-            "SELECT capability_id,result_json FROM capability_invocations WHERE idempotency_key=?", (key,)
+            "SELECT capability_id,result_json FROM capability_invocations "
+            "WHERE device_id=? AND idempotency_key=?", (self.device_id, key)
         ).fetchone()
         if row is None:
             return None

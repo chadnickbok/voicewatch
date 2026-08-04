@@ -34,7 +34,9 @@ class FakeAppBuilder:
     def tick(self, now_ms: int) -> list[str]:
         changed: list[str] = []
         rows = self.jobs.store.connection.execute(
-            "SELECT * FROM jobs WHERE kind='fake_app_build' AND state NOT IN ('completed','failed','cancelled') ORDER BY created_at_ms"
+            "SELECT * FROM jobs WHERE device_id=? AND kind='fake_app_build' "
+            "AND state NOT IN ('completed','failed','cancelled') ORDER BY created_at_ms",
+            (self.jobs.device_id,),
         ).fetchall()
         for row in rows:
             job_id = str(row["job_id"])

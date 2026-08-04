@@ -1,4 +1,4 @@
-"""CoreS3 WebRTC signaling and bidirectional PCM adapter.
+"""Multi-device WebRTC signaling and bidirectional PCM adapter.
 
 The CoreS3 has one shared codec path. It captures while the user is speaking and
 plays while the assistant is speaking, so touch capture is the supported
@@ -30,8 +30,10 @@ from av.audio.resampler import AudioResampler
 from .metrics import LatencyTrace
 
 
-AudioCallback = Callable[[bytes], Awaitable[None]]
-EventCallback = Callable[[str, dict[str, Any]], Awaitable[None]]
+AudioCallback = Callable[[str, bytes], Awaitable[None]]
+EventCallback = Callable[[str, str, dict[str, Any]], Awaitable[None]]
+IdentityCallback = Callable[["WatchSession", str, dict[str, Any]], Awaitable[None]]
+DEVICE_ID_PATTERN = re.compile(r"^[a-z0-9][a-z0-9._:-]{7,63}$")
 
 
 class _PacketPacer:
@@ -393,7 +395,7 @@ class DownlinkAudioTrack(AudioStreamTrack):
 
 
 class WatchSession:
-    """One reconnectable CoreS3 signaling and media session."""
+    """One reconnectable, identity-bound watch signaling and media session."""
 
     def __init__(
         self,
@@ -401,11 +403,16 @@ class WatchSession:
         trace: LatencyTrace,
         on_audio: AudioCallback,
         on_event: EventCallback,
+        on_identified: IdentityCallback,
     ) -> None:
         self.websocket = websocket
         self.trace = trace
         self.on_audio = on_audio
         self.on_event = on_event
+        self.on_identified = on_identified
+        self.device_id: str | None = None
+        self.board: str | None = None
+        self.capabilities: dict[str, Any] = {}
         self.peer = RTCPeerConnection()
         self.downlink = DownlinkAudioTrack(
             trace,
@@ -423,10 +430,13 @@ class WatchSession:
         self._pending_actions: dict[str, asyncio.Future[dict[str, Any]]] = {}
         self._level_frames = 0
         self._level_peak = 0
+        self._closed = False
 
         @self.peer.on("track")
         async def on_track(track: Any) -> None:
-            self.trace.mark("webrtc.track", media_kind=track.kind)
+            self.trace.mark(
+                "webrtc.track", device_id=self.device_id, media_kind=track.kind
+            )
             if track.kind == "audio":
                 self._audio_task = asyncio.create_task(self._consume_audio(track))
                 self._audio_task.add_done_callback(self._report_audio_failure)
@@ -434,16 +444,21 @@ class WatchSession:
         @self.peer.on("connectionstatechange")
         async def on_state() -> None:
             state = self.peer.connectionState
-            self.trace.mark("webrtc.state", state=state)
+            self.trace.mark("webrtc.state", device_id=self.device_id, state=state)
             if state == "connected":
+                if self.device_id is None:
+                    await self.close(code=4003, message=b"identity required")
+                    return
                 self.connected.set()
                 if self._stats_task is None:
                     self._stats_task = asyncio.create_task(self._trace_inbound_stats())
-                await self.on_event("connected", {})
+                await self.on_event(self.device_id, "connected", {})
 
     async def send(self, message_type: str, payload: dict[str, Any] | None = None) -> None:
         self.sequence += 1
         document = {"v": 1, "type": message_type, "seq": self.sequence}
+        if self.device_id is not None:
+            document["device_id"] = self.device_id
         if payload is not None:
             document["payload"] = payload
         await self.websocket.send_str(json.dumps(document, separators=(",", ":")))
@@ -454,6 +469,29 @@ class WatchSession:
         kind = message["type"]
         payload = message.get("payload") or {}
         if kind == "hello":
+            if not isinstance(payload, dict):
+                await self.close(code=4002, message=b"invalid hello")
+                return
+            device_id = payload.get("device_id") or message.get("device_id")
+            board = payload.get("board") or payload.get("device")
+            capabilities = payload.get("capabilities") or {}
+            if (
+                not isinstance(device_id, str)
+                or DEVICE_ID_PATTERN.fullmatch(device_id) is None
+                or not isinstance(board, str)
+                or not 1 <= len(board) <= 32
+                or not isinstance(capabilities, dict)
+            ):
+                self.trace.mark("signal.identity_rejected")
+                await self.close(code=4002, message=b"invalid device identity")
+                return
+            if self.device_id is not None and self.device_id != device_id:
+                await self.close(code=4002, message=b"identity changed")
+                return
+            self.device_id = device_id
+            self.board = board
+            self.capabilities = dict(capabilities)
+            await self.on_identified(self, device_id, payload)
             await self.send(
                 "welcome",
                 {
@@ -462,6 +500,9 @@ class WatchSession:
                     "audio": "opus-48000-rtp-16000-pcm-mono",
                 },
             )
+        elif self.device_id is None:
+            self.trace.mark("signal.message_before_identity", message_type=kind)
+            await self.close(code=4003, message=b"hello required first")
         elif kind == "sdp" and payload.get("kind") == "offer":
             if isinstance(payload.get("sdp"), str):
                 await self._accept_offer(payload["sdp"])
@@ -473,12 +514,14 @@ class WatchSession:
                 future = self._pending_actions.pop(request_id, None)
                 if future is not None and not future.done():
                     future.set_result(payload)
-            await self.on_event(kind, payload)
+            assert self.device_id is not None
+            await self.on_event(self.device_id, kind, payload)
         elif kind != "ice":
             if kind == "capture.started" and self.downlink.pending_ms:
                 self.downlink.clear()
                 self.trace.mark("conversation.interrupted", strategy="touch")
-            await self.on_event(kind, payload)
+            assert self.device_id is not None
+            await self.on_event(self.device_id, kind, payload)
 
     async def start_capture(self, duration_ms: int = 30_000) -> None:
         await self.send("capture.start", {"duration_ms": duration_ms})
@@ -544,7 +587,10 @@ class WatchSession:
     def clear_downlink(self) -> None:
         self.downlink.clear()
 
-    async def close(self) -> None:
+    async def close(self, *, code: int = 1000, message: bytes = b"") -> None:
+        if self._closed:
+            return
+        self._closed = True
         for future in self._pending_actions.values():
             if not future.done():
                 future.set_exception(ConnectionError("watch disconnected"))
@@ -556,6 +602,8 @@ class WatchSession:
             self._stats_task.cancel()
             await asyncio.gather(self._stats_task, return_exceptions=True)
         await self.peer.close()
+        if not self.websocket.closed:
+            await self.websocket.close(code=code, message=message)
 
     async def _consume_audio(self, track: Any) -> None:
         first = True
@@ -583,7 +631,8 @@ class WatchSession:
                     if first:
                         self.trace.mark("uplink.first_audio")
                         first = False
-                    await self.on_audio(pcm)
+                    assert self.device_id is not None
+                    await self.on_audio(self.device_id, pcm)
 
     def _report_audio_failure(self, task: asyncio.Task[None]) -> None:
         if task.cancelled():
@@ -592,6 +641,7 @@ class WatchSession:
         if error is not None:
             self.trace.mark(
                 "uplink.consumer_failed",
+                device_id=self.device_id,
                 error_type=type(error).__name__,
                 message=str(error)[:160],
             )
@@ -610,6 +660,7 @@ class WatchSession:
                 if report.type == "inbound-rtp" and getattr(report, "kind", None) == "audio":
                     self.trace.mark(
                         "webrtc.inbound_stats",
+                        device_id=self.device_id,
                         packets_received=getattr(report, "packetsReceived", 0),
                         packets_lost=getattr(report, "packetsLost", 0),
                         jitter=getattr(report, "jitter", 0),
@@ -729,7 +780,7 @@ class DownlinkUtteranceBinding:
 
 
 class WatchTransportServer:
-    """Own the aiohttp endpoint and replace stale sessions on reconnect."""
+    """Own one endpoint and isolate sessions by stable device identity."""
 
     def __init__(
         self,
@@ -742,7 +793,8 @@ class WatchTransportServer:
         self.on_audio = on_audio
         self.on_event = on_event
         self.port = port
-        self.session: WatchSession | None = None
+        self.sessions: dict[str, WatchSession] = {}
+        self._pending: set[WatchSession] = set()
         self._runner: web.AppRunner | None = None
 
     async def start(self) -> None:
@@ -753,9 +805,12 @@ class WatchTransportServer:
         await web.TCPSite(self._runner, "0.0.0.0", self.port).start()
 
     async def close(self) -> None:
-        if self.session is not None:
-            await self.session.close()
-            self.session = None
+        sessions = list(self._pending | set(self.sessions.values()))
+        self._pending.clear()
+        self.sessions.clear()
+        await asyncio.gather(
+            *(session.close() for session in sessions), return_exceptions=True
+        )
         if self._runner is not None:
             await self._runner.cleanup()
             self._runner = None
@@ -763,10 +818,10 @@ class WatchTransportServer:
     async def _websocket(self, request: web.Request) -> web.WebSocketResponse:
         websocket = web.WebSocketResponse(max_msg_size=16 * 1024)
         await websocket.prepare(request)
-        if self.session is not None:
-            await self.session.close()
-        session = WatchSession(websocket, self.trace, self.on_audio, self.on_event)
-        self.session = session
+        session = WatchSession(
+            websocket, self.trace, self.on_audio, self.on_event, self._identify
+        )
+        self._pending.add(session)
         try:
             async for raw in websocket:
                 if raw.type == WSMsgType.TEXT:
@@ -782,8 +837,23 @@ class WatchTransportServer:
 
     async def _finish_session(self, session: WatchSession) -> None:
         """Close one handler without tearing down a replacement session."""
+        self._pending.discard(session)
         await session.close()
-        if self.session is not session:
+        device_id = session.device_id
+        if device_id is None or self.sessions.get(device_id) is not session:
             return
-        self.session = None
-        await self.on_event("disconnected", {})
+        del self.sessions[device_id]
+        await self.on_event(device_id, "disconnected", {})
+
+    async def _identify(
+        self, session: WatchSession, device_id: str, payload: dict[str, Any]
+    ) -> None:
+        self._pending.discard(session)
+        prior = self.sessions.get(device_id)
+        if prior is not None and prior is not session:
+            await prior.close(code=4001, message=b"same device reconnected")
+        self.sessions[device_id] = session
+        self.trace.mark(
+            "device.identified", device_id=device_id, board=session.board
+        )
+        await self.on_event(device_id, "identified", payload)

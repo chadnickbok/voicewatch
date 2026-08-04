@@ -8,7 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 
-#include "M5Unified.h"
+#include "board.hpp"
 #include "cJSON.h"
 #include "decoder/impl/esp_g711_dec.h"
 #include "decoder/impl/esp_opus_dec.h"
@@ -171,7 +171,7 @@ std::atomic<std::uint32_t> g_prebuffer_started_ms{0};
 std::uint32_t g_last_level_publish_ms = 0;
 std::uint16_t g_peak_pcm = 0;
 std::atomic<std::uint16_t> g_playback_peak_pcm{0};
-std::array<PlaybackFrame, kPlaybackSlotCount> g_playback_slots{};
+PlaybackFrame* g_playback_slots = nullptr;
 std::uint8_t g_playback_slot_index = 0;
 std::int8_t g_last_playback_slot = -1;
 std::atomic<bool> g_prebuffering{false};
@@ -188,7 +188,7 @@ PlaybackTelemetrySnapshot g_playback_baseline{};
 std::uint16_t g_playback_run_peak_pcm = 0;
 std::uint32_t g_playback_run_queue_high_water = 0;
 bool g_playback_baseline_active = false;
-std::int16_t g_pcm[kSamplesPerFrame];
+std::int16_t* g_pcm = nullptr;
 std::uint8_t* g_encoded_audio = nullptr;
 std::int16_t* g_decoded_audio = nullptr;
 char* g_websocket_payload = nullptr;
@@ -413,6 +413,8 @@ void add_envelope(cJSON* root, const char* type) {
     cJSON_AddNumberToObject(root, "v", 1);
     cJSON_AddStringToObject(root, "type", type);
     cJSON_AddStringToObject(root, "session_id", "watch-uplink");
+    cJSON_AddStringToObject(
+        root, "device_id", doodad::board::identity().device_id);
     cJSON_AddNumberToObject(root, "seq", ++g_sequence);
 }
 
@@ -488,10 +490,21 @@ void send_hello() {
     auto* root = cJSON_CreateObject();
     add_envelope(root, "hello");
     auto* payload = cJSON_AddObjectToObject(root, "payload");
-    cJSON_AddStringToObject(payload, "device", "cores3");
+    const auto& identity = doodad::board::identity();
+    cJSON_AddStringToObject(payload, "device_id", identity.device_id);
+    cJSON_AddStringToObject(payload, "device", identity.board);
+    cJSON_AddStringToObject(payload, "board", identity.board);
     cJSON_AddStringToObject(payload, "transport", "webrtc");
     cJSON_AddStringToObject(payload, "audio", kCodecDescription);
     cJSON_AddNumberToObject(payload, "frame_ms", kFrameDurationMs);
+    auto* capabilities = cJSON_AddObjectToObject(payload, "capabilities");
+    cJSON_AddBoolToObject(capabilities, "touch", true);
+    cJSON_AddBoolToObject(capabilities, "microphone", true);
+    cJSON_AddBoolToObject(capabilities, "speaker", true);
+    cJSON_AddBoolToObject(capabilities, "haptic",
+        std::strcmp(identity.board, "t-watch-s3") == 0);
+    cJSON_AddBoolToObject(capabilities, "microsd",
+        doodad::board::has_microsd());
     send_json(root);
 }
 
@@ -606,7 +619,10 @@ void send_watch_snapshot() {
     add_envelope(root, "watch.state");
     auto* payload = cJSON_AddObjectToObject(root, "payload");
     cJSON_AddNumberToObject(payload, "schema_version", 1);
-    cJSON_AddStringToObject(payload, "device_id", "cores3-se");
+    cJSON_AddStringToObject(
+        payload, "device_id", doodad::board::identity().device_id);
+    cJSON_AddStringToObject(
+        payload, "board", doodad::board::identity().board);
     cJSON_AddNumberToObject(payload, "revision", g_agent_state.revision);
     cJSON_AddStringToObject(payload, "foreground_app", "dev.doodad.workout");
     cJSON_AddStringToObject(payload, "route", "active_session");
@@ -954,14 +970,18 @@ void close_decoder() {
 }
 
 void clear_playback_slots() {
-    for (auto& slot : g_playback_slots) slot = PlaybackFrame{};
+    if (g_playback_slots != nullptr) {
+        for (std::size_t index = 0; index < kPlaybackSlotCount; ++index) {
+            g_playback_slots[index] = PlaybackFrame{};
+        }
+    }
     g_playback_slot_index = 0;
     g_last_playback_slot = -1;
 }
 
 void stop_and_reset_playback(const char* reason) {
     const auto generation = invalidate_playback_generation();
-    if (M5.Speaker.isRunning()) M5.Speaker.end();
+    if (doodad::board::speaker_running()) doodad::board::speaker_end();
     acquire_audio_dma_reserve();
     g_playing.store(false, std::memory_order_release);
     if (g_playback_frames != nullptr) xQueueReset(g_playback_frames);
@@ -1208,12 +1228,13 @@ void play_queued_audio() {
             return;
         }
 
-        while (M5.Mic.isRecording()) vTaskDelay(1);
-        if (M5.Mic.isRunning()) M5.Mic.end();
+        while (doodad::board::microphone_recording()) vTaskDelay(1);
+        if (doodad::board::microphone_running()) {
+            doodad::board::microphone_end();
+        }
         g_microphone_ready = false;
-        M5.Speaker.setVolume(kSpeakerVolume);
         release_audio_dma_reserve();
-        if (!M5.Speaker.begin()) {
+        if (!doodad::board::speaker_begin()) {
             acquire_audio_dma_reserve();
             g_speaker_submission_failures.fetch_add(
                 1, std::memory_order_relaxed);
@@ -1239,10 +1260,8 @@ void play_queued_audio() {
 
     while (!g_recording.load(std::memory_order_acquire) &&
            g_playback_accepting.load(std::memory_order_acquire)) {
-        // M5Unified channel 0 retains two asynchronous playRaw pointers and
-        // blocks when both entries are occupied. Advancing through three
-        // persistent slots only after playRaw returns therefore guarantees
-        // that the next slot cannot still be referenced by the speaker task.
+        // The board adapter consumes or retains each persistent slot according
+        // to its native I2S implementation before returning.
         auto& slot = g_playback_slots[g_playback_slot_index];
         if (xQueueReceive(g_playback_frames, &slot, 0) != pdTRUE) break;
         if (slot.generation !=
@@ -1254,9 +1273,8 @@ void play_queued_audio() {
             continue;
         }
         const auto submitted_slot = g_playback_slot_index;
-        if (M5.Speaker.playRaw(
-                slot.samples.data(), slot.sample_count, kCaptureSampleRate,
-                false, 1, 0, false)) {
+        if (doodad::board::speaker_play(
+                slot.samples.data(), slot.sample_count, kCaptureSampleRate)) {
             const auto submitted =
                 g_submitted_playback_frames.fetch_add(
                     1, std::memory_order_relaxed) + 1;
@@ -1286,7 +1304,7 @@ void finish_playback_if_idle() {
         uxQueueMessagesWaiting(g_playback_frames) != 0) {
         return;
     }
-    if (M5.Speaker.isPlaying(0) != 0) return;
+    if (doodad::board::speaker_playing()) return;
     const auto idle_ms = now_ms() -
         g_last_valid_playback_packet_ms.load(std::memory_order_acquire);
     if (idle_ms < kPlaybackIdleMs) {
@@ -1299,7 +1317,7 @@ void finish_playback_if_idle() {
         }
         return;
     }
-    M5.Speaker.end();
+    doodad::board::speaker_end();
     acquire_audio_dma_reserve();
     g_playing.store(false, std::memory_order_release);
     g_prebuffering.store(false, std::memory_order_release);
@@ -1516,8 +1534,9 @@ bool open_encoder() {
 #endif
     if (frame_result != ESP_AUDIO_ERR_OK ||
         input_size <= 0 || output_size <= 0 ||
-        sizeof(g_pcm) % input_size != 0 ||
-        sizeof(g_pcm) / input_size * output_size > kMaximumEncodedBytes) {
+        kSamplesPerFrame * sizeof(std::int16_t) % input_size != 0 ||
+        kSamplesPerFrame * sizeof(std::int16_t) / input_size * output_size >
+            kMaximumEncodedBytes) {
         ESP_LOGE(
             kTag,
             "unexpected %s frame sizes in=%d out=%d",
@@ -1536,7 +1555,7 @@ bool open_encoder() {
 }
 
 bool start_microphone() {
-    if (g_microphone_ready && M5.Mic.isRunning()) return true;
+    if (g_microphone_ready && doodad::board::microphone_running()) return true;
     release_audio_dma_reserve();
     for (std::uint32_t attempt = 1; attempt <= 2; ++attempt) {
         ESP_LOGI(
@@ -1547,7 +1566,7 @@ bool start_microphone() {
                 heap_caps_get_free_size(MALLOC_CAP_DMA)),
             static_cast<unsigned>(
                 heap_caps_get_largest_free_block(MALLOC_CAP_DMA)));
-        g_microphone_ready = M5.Mic.begin();
+        g_microphone_ready = doodad::board::microphone_begin();
         if (g_microphone_ready) {
             ESP_LOGI(kTag, "microphone started for push-to-talk turn");
             return true;
@@ -1578,7 +1597,8 @@ void start_capture(std::uint64_t request_id, std::uint32_t duration_ms) {
     // Reserve the I2S DMA descriptors before opening Opus. The software codec
     // can use ordinary heap/PSRAM, while the microphone ring can only come
     // from the small contiguous DMA-capable pool.
-    if ((!g_microphone_ready || !M5.Mic.isRunning()) && !start_microphone()) {
+    if ((!g_microphone_ready || !doodad::board::microphone_running()) &&
+        !start_microphone()) {
         g_recording.store(false, std::memory_order_release);
         g_playback_accepting.store(true, std::memory_order_release);
         publish(VoiceEventKind::error, "Microphone failed to start");
@@ -1586,7 +1606,9 @@ void start_capture(std::uint64_t request_id, std::uint32_t duration_ms) {
         return;
     }
     if (!open_encoder()) {
-        if (M5.Mic.isRunning()) M5.Mic.end();
+        if (doodad::board::microphone_running()) {
+            doodad::board::microphone_end();
+        }
         g_microphone_ready = false;
         acquire_audio_dma_reserve();
         g_recording.store(false, std::memory_order_release);
@@ -1609,8 +1631,10 @@ void start_capture(std::uint64_t request_id, std::uint32_t duration_ms) {
 void stop_capture(bool accept_downlink = true) {
     if (!g_recording.load(std::memory_order_acquire)) return;
     g_recording.store(false, std::memory_order_release);
-    while (M5.Mic.isRecording()) vTaskDelay(1);
-    if (M5.Mic.isRunning()) M5.Mic.end();
+    while (doodad::board::microphone_recording()) vTaskDelay(1);
+    if (doodad::board::microphone_running()) {
+        doodad::board::microphone_end();
+    }
     g_microphone_ready = false;
     close_encoder();
     acquire_audio_dma_reserve();
@@ -1632,21 +1656,23 @@ void stop_capture(bool accept_downlink = true) {
 
 void capture_frame() {
     const bool first_frame = g_encoded_frames == 0 && g_dropped_frames == 0;
-    if (!M5.Mic.record(
-            g_pcm, kSamplesPerFrame, kCaptureSampleRate, false)) {
+    if (!doodad::board::microphone_record(
+            g_pcm, kSamplesPerFrame, kCaptureSampleRate)) {
         ++g_dropped_frames;
         vTaskDelay(1);
         return;
     }
-    while (M5.Mic.isRecording() &&
+    while (doodad::board::microphone_recording() &&
            g_recording.load(std::memory_order_acquire)) {
         vTaskDelay(1);
     }
     if (!g_recording.load(std::memory_order_acquire)) return;
     esp_audio_enc_in_frame_t input{
-        reinterpret_cast<std::uint8_t*>(g_pcm), sizeof(g_pcm)};
+        reinterpret_cast<std::uint8_t*>(g_pcm),
+        kSamplesPerFrame * sizeof(std::int16_t)};
     std::uint16_t pcm_peak = 0;
-    for (const auto sample : g_pcm) {
+    for (std::size_t index = 0; index < kSamplesPerFrame; ++index) {
+        const auto sample = g_pcm[index];
         const auto magnitude = static_cast<std::uint16_t>(
             sample == INT16_MIN ? INT16_MAX : std::abs(sample));
         pcm_peak = std::max(pcm_peak, magnitude);
@@ -1970,30 +1996,16 @@ bool voice_service_init() {
     // Configure a compact I2S ring now, but allocate and start it only for an
     // explicit push-to-talk turn. This keeps the physical microphone off while
     // the voice link is merely connected and preserves DMA memory for DTLS.
-    auto microphone = M5.Mic.config();
-    microphone.sample_rate = kCaptureSampleRate;
-    // CoreS3's codec defaults to a conservative 2x software gain. A voice
-    // source beside the watch needs more headroom for voice uplink while
-    // remaining comfortably below clipping in the physical conformance test.
-    microphone.magnification = 8;
-    microphone.dma_buf_len = kMicrophoneDmaBufferLength;
-    // The compact two-descriptor ring is consumed continuously and leaves
-    // enough contiguous DMA-capable memory for repeated speaker/mic handoffs
-    // while the WebRTC stack is resident.
-    microphone.dma_buf_count = kMicrophoneDmaBufferCount;
-    microphone.task_priority = 6;
-    M5.Mic.config(microphone);
-    auto speaker = M5.Speaker.config();
-    // The default 8 x 256-sample speaker ring cannot be allocated after the
-    // WebRTC stack has fragmented the ESP32-S3 internal heap. Three short DMA
-    // buffers are sufficient for the paced 20 ms mono downlink and keep the
-    // mic/speaker handoff deterministic. Keep I2S at the codec's decoded PCM
-    // rate so M5Unified never inserts a second, lower-quality resampling stage.
-    speaker.sample_rate = kCaptureSampleRate;
-    speaker.dma_buf_len = kSpeakerDmaBufferLength;
-    speaker.dma_buf_count = kSpeakerDmaBufferCount;
-    speaker.task_priority = 6;
-    M5.Speaker.config(speaker);
+    doodad::board::audio_configure(doodad::board::AudioConfig{
+        .sample_rate = kCaptureSampleRate,
+        .microphone_dma_length = kMicrophoneDmaBufferLength,
+        .microphone_dma_count = kMicrophoneDmaBufferCount,
+        .speaker_dma_length = kSpeakerDmaBufferLength,
+        .speaker_dma_count = kSpeakerDmaBufferCount,
+        .task_priority = 6,
+        .speaker_volume = kSpeakerVolume,
+        .microphone_gain = 8,
+    });
     if (!network_service_init()) return false;
     if (!load_agent_state()) {
         ESP_LOGE(kTag, "agent journal initialization failed");
@@ -2026,6 +2038,14 @@ bool voice_service_init() {
         kMaximumEncodedBytes, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
     g_decoded_audio = static_cast<std::int16_t*>(heap_caps_malloc(
         kMaximumDecodedBytes, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
+    g_pcm = static_cast<std::int16_t*>(heap_caps_calloc(
+        kSamplesPerFrame,
+        sizeof(std::int16_t),
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
+    g_playback_slots = static_cast<PlaybackFrame*>(heap_caps_calloc(
+        kPlaybackSlotCount,
+        sizeof(PlaybackFrame),
+        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
     g_task_stack = static_cast<StackType_t*>(heap_caps_calloc(
         kVoiceTaskStackBytes / sizeof(StackType_t),
         sizeof(StackType_t),
@@ -2033,7 +2053,8 @@ bool voice_service_init() {
     if (g_commands == nullptr || g_events == nullptr ||
         g_playback_frames == nullptr ||
         g_websocket_payload == nullptr || g_encoded_audio == nullptr ||
-        g_decoded_audio == nullptr ||
+        g_decoded_audio == nullptr || g_pcm == nullptr ||
+        g_playback_slots == nullptr ||
         g_task_stack == nullptr) {
         ESP_LOGE(kTag, "voice service allocation failed");
         return false;

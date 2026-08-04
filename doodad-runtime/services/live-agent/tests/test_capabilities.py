@@ -66,3 +66,26 @@ def test_retrieval_is_bounded_and_foreground_aware(tmp_path) -> None:
     tools = kernel.retrieve("I missed that set", limit=99)
     assert len(tools) <= 8
     assert tools[0].capability_id == "record_missed_set"
+
+
+def test_identical_idempotency_keys_and_state_are_device_scoped(tmp_path) -> None:
+    store = Store(tmp_path / "agent.sqlite3")
+    core = CapabilityKernel(store, device_id="cores3-se-aabbccddeeff")
+    watch = CapabilityKernel(store, device_id="t-watch-s3-112233445566")
+
+    core_result = core.log_food(
+        description="core bagel", quantity=1, unit="item",
+        idempotency_key="same-turn", now_ms=100,
+    )
+    watch_result = watch.log_food(
+        description="watch apple", quantity=1, unit="item",
+        idempotency_key="same-turn", now_ms=101,
+    )
+
+    assert core_result["entry_id"] != watch_result["entry_id"]
+    assert core.snapshot()["revision"] == 2
+    assert watch.snapshot()["revision"] == 2
+    assert store.connection.execute(
+        "SELECT COUNT(*) FROM capability_invocations "
+        "WHERE idempotency_key='same-turn'"
+    ).fetchone()[0] == 2

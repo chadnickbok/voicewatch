@@ -20,7 +20,7 @@ from .capabilities import CapabilityKernel
 from .controller import ForegroundController
 from .fake_worker import FakeAppBuilder, ManualClock
 from .jobs import JobManager
-from .metrics import LatencyTrace
+from .metrics import DeviceLatencyTrace, LatencyTrace
 from .storage import Store
 from .transport import DownlinkUtteranceBinding, WatchTransportServer, local_ipv4
 
@@ -63,117 +63,167 @@ async def serve(arguments: argparse.Namespace) -> None:
     from .conversation import LiveConversation
 
     trace = LatencyTrace(arguments.trace)
-    store, _, _, builder, attention, controller = control_plane(arguments.database)
-    conversation: LiveConversation | None = None
+    store = Store(arguments.database)
     transport: WatchTransportServer
-    downlink_binding = DownlinkUtteranceBinding()
-    last_agent_state: dict[str, Any] | None = None
 
-    async def on_audio(pcm: bytes) -> None:
-        if conversation is not None:
-            await conversation.feed_audio(pcm)
+    class DeviceRuntime:
+        def __init__(
+            self,
+            device_id: str,
+            controller: ForegroundController,
+            builder: FakeAppBuilder,
+            attention: AttentionBroker,
+        ) -> None:
+            self.device_id = device_id
+            self.controller = controller
+            self.builder = builder
+            self.attention = attention
+            self.downlink = DownlinkUtteranceBinding()
+            self.last_agent_state: dict[str, Any] | None = None
+            self.conversation: LiveConversation | None = None
 
-    async def on_event(kind: str, payload: dict[str, Any]) -> None:
-        nonlocal last_agent_state
-        if kind == "connected" and transport.session is not None:
-            downlink_binding.cancel()
-            last_agent_state = None
+    runtimes: dict[str, DeviceRuntime] = {}
+    legacy_relinked = False
+
+    def current_session(device_id: str):  # type: ignore[no-untyped-def]
+        return transport.sessions.get(device_id)
+
+    async def create_runtime(device_id: str) -> DeviceRuntime:
+        jobs = JobManager(store, device_id)
+        jobs.recover_expired(int(time.time() * 1000))
+        kernel = CapabilityKernel(store, int(time.time() * 1000), device_id)
+        builder = FakeAppBuilder(jobs)
+        attention = AttentionBroker(store, jobs)
+        controller = ForegroundController(kernel, builder, attention)
+        runtime = DeviceRuntime(device_id, controller, builder, attention)
+        runtimes[device_id] = runtime
+        device_trace = DeviceLatencyTrace(trace, device_id)
+
+        def audio_sink(pcm: bytes, sample_rate: int) -> int:
+            return runtime.downlink.enqueue(
+                current_session(device_id), pcm, sample_rate
+            )
+
+        async def stop_capture() -> None:
+            session = current_session(device_id)
+            if session is not None:
+                await session.stop_capture()
+
+        async def begin_downlink() -> None:
+            runtime.downlink.begin(current_session(device_id))
+
+        async def end_downlink() -> None:
+            runtime.downlink.end(current_session(device_id))
+
+        async def wait_for_playback() -> None:
+            session = current_session(device_id)
+            try:
+                if session is not None:
+                    await session.resume_after_downlink()
+            finally:
+                runtime.downlink.release(current_session(device_id))
+
+        async def invoke_action(
+            capability: str, action_arguments: dict[str, Any], idempotency_key: str
+        ) -> dict[str, Any]:
+            session = current_session(device_id)
+            if session is None:
+                raise ConnectionError(f"{device_id} is not connected")
+            return await session.invoke_action(
+                capability, action_arguments, idempotency_key
+            )
+
+        async def publish_state(
+            voice_phase: str,
+            background: dict[str, object],
+            display: dict[str, str],
+        ) -> None:
+            document = {
+                "device_id": device_id,
+                "voice_phase": voice_phase,
+                "display": {
+                    "transcript": str(display.get("transcript", ""))[:160],
+                    "response": str(display.get("response", ""))[:160],
+                },
+                "background": {
+                    "running_count": int(background.get("running_count", 0)),
+                    "focused_question": background.get("focused_question") is not None,
+                    "review_ready": bool(background.get("review_ready", False)),
+                    "completion_pending": bool(background.get("completion_pending", 0)),
+                    "install_state": 0,
+                },
+            }
+            if document == runtime.last_agent_state:
+                return
+            runtime.last_agent_state = document
+            session = current_session(device_id)
+            if session is not None:
+                await session.send("agent.state", document)
+
+        runtime.conversation = LiveConversation(
+            controller, builder, attention, device_trace, audio_sink, stop_capture,
+            begin_downlink, end_downlink, wait_for_playback, invoke_action,
+            publish_state,
+        )
+        await runtime.conversation.start()
+        return runtime
+
+    async def on_audio(device_id: str, pcm: bytes) -> None:
+        runtime = runtimes.get(device_id)
+        if runtime is not None and runtime.conversation is not None:
+            await runtime.conversation.feed_audio(pcm)
+
+    async def on_event(
+        device_id: str, kind: str, payload: dict[str, Any]
+    ) -> None:
+        nonlocal legacy_relinked
+        if kind == "identified" and device_id.startswith("cores3-") and not legacy_relinked:
+            store.relink_legacy_device(device_id)
+            legacy_relinked = True
+        runtime = runtimes.get(device_id)
+        if runtime is None:
+            runtime = await create_runtime(device_id)
+        conversation = runtime.conversation
+        session = current_session(device_id)
+        if kind == "connected" and session is not None:
+            runtime.downlink.cancel()
+            runtime.last_agent_state = None
             if conversation is not None:
                 await conversation.ready()
-        elif kind == "listen.requested" and transport.session is not None:
-            downlink_binding.cancel()
+        elif kind == "listen.requested" and session is not None:
+            runtime.downlink.cancel()
             if conversation is not None:
                 if conversation.voice_phase == "speaking":
                     await conversation.interrupt()
                 await conversation.begin_listening()
-            await transport.session.start_capture()
-        elif kind == "listen.finished" and transport.session is not None:
-            await transport.session.stop_capture()
+            await session.start_capture()
+        elif kind == "listen.finished" and session is not None:
+            await session.stop_capture()
             if conversation is not None:
-                # Feed a short bounded silence tail so VAD can close a turn
-                # when the user taps Done before natural endpointing fires.
                 for _ in range(25):
                     await conversation.feed_audio(b"\0\0" * 160)
-        elif kind == "listen.cancelled" and transport.session is not None:
-            await transport.session.stop_capture()
-            downlink_binding.cancel()
+        elif kind == "listen.cancelled" and session is not None:
+            await session.stop_capture()
+            runtime.downlink.cancel()
             if conversation is not None:
                 await conversation.cancel()
         elif kind == "capture.started":
-            downlink_binding.cancel()
-        elif kind == "capture.stopped" and transport.session is not None:
-            trace.mark("capture.stopped", reason=payload.get("reason", "unknown"))
+            runtime.downlink.cancel()
+        elif kind == "capture.stopped":
+            trace.mark(
+                "capture.stopped", device_id=device_id,
+                reason=payload.get("reason", "unknown"),
+            )
         elif kind == "disconnected":
-            downlink_binding.cancel()
+            runtime.downlink.cancel()
             if conversation is not None:
                 conversation.disconnected()
         elif kind == "watch.state":
-            controller.kernel.replace_snapshot(payload, int(time.time() * 1000))
+            runtime.controller.kernel.replace_snapshot(
+                payload, int(time.time() * 1000)
+            )
 
     transport = WatchTransportServer(trace, on_audio, on_event, arguments.port)
-
-    def audio_sink(pcm: bytes, sample_rate: int) -> int:
-        return downlink_binding.enqueue(transport.session, pcm, sample_rate)
-
-    async def stop_capture() -> None:
-        if transport.session is not None:
-            await transport.session.stop_capture()
-
-    async def begin_downlink() -> None:
-        downlink_binding.begin(transport.session)
-
-    async def end_downlink() -> None:
-        downlink_binding.end(transport.session)
-
-    async def wait_for_playback() -> None:
-        session = transport.session
-        try:
-            if session is not None:
-                await session.resume_after_downlink()
-        finally:
-            downlink_binding.release(transport.session)
-
-    async def invoke_action(
-        capability: str, arguments: dict[str, Any], idempotency_key: str
-    ) -> dict[str, Any]:
-        if transport.session is None:
-            raise ConnectionError("watch is not connected")
-        return await transport.session.invoke_action(
-            capability, arguments, idempotency_key
-        )
-
-    async def publish_state(
-        voice_phase: str,
-        background: dict[str, object],
-        display: dict[str, str],
-    ) -> None:
-        nonlocal last_agent_state
-        document = {
-            "voice_phase": voice_phase,
-            "display": {
-                "transcript": str(display.get("transcript", ""))[:160],
-                "response": str(display.get("response", ""))[:160],
-            },
-            "background": {
-                "running_count": int(background.get("running_count", 0)),
-                "focused_question": background.get("focused_question") is not None,
-                "review_ready": bool(background.get("review_ready", False)),
-                "completion_pending": bool(background.get("completion_pending", 0)),
-                "install_state": 0,
-            },
-        }
-        if document == last_agent_state:
-            return
-        last_agent_state = document
-        if transport.session is not None:
-            await transport.session.send("agent.state", document)
-
-    conversation = LiveConversation(
-        controller, builder, attention, trace, audio_sink, stop_capture,
-        begin_downlink, end_downlink, wait_for_playback, invoke_action,
-        publish_state
-    )
-    await conversation.start()
     await transport.start()
     ip = local_ipv4()
     zeroconf, service = await asyncio.to_thread(advertise, ip, arguments.port)
@@ -204,10 +254,16 @@ async def serve(arguments: argparse.Namespace) -> None:
             await asyncio.wait_for(transport.close(), 8)
         except TimeoutError:
             trace.mark("shutdown.timeout", component="transport")
-        try:
-            await asyncio.wait_for(conversation.close(), 18)
-        except TimeoutError:
-            trace.mark("shutdown.timeout", component="conversation")
+        for device_id, runtime in runtimes.items():
+            if runtime.conversation is None:
+                continue
+            try:
+                await asyncio.wait_for(runtime.conversation.close(), 18)
+            except TimeoutError:
+                trace.mark(
+                    "shutdown.timeout", component="conversation",
+                    device_id=device_id,
+                )
         store.close()
         trace.mark("shutdown.completed")
 

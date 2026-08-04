@@ -1,7 +1,16 @@
+if(CONFIG_DOODAD_BOARD_TWATCH_S3)
+    set(DOODAD_BOARD_SOURCE "src/board_twatch_s3.cpp")
+    set(DOODAD_BOARD_REQUIREMENTS esp_lcd)
+else()
+    set(DOODAD_BOARD_SOURCE "src/board_cores3.cpp")
+    set(DOODAD_BOARD_REQUIREMENTS m5unified)
+endif()
+
 idf_component_register(
     SRCS
         "src/app_runner.cpp"
         "src/app_sources.cpp"
+        "${DOODAD_BOARD_SOURCE}"
         "src/display.cpp"
         "src/main.cpp"
         "src/network_service.cpp"
@@ -25,7 +34,7 @@ idf_component_register(
         json
         lvgl
         m3e_lvgl
-        m5unified
+        ${DOODAD_BOARD_REQUIREMENTS}
         mbedtls
         mdns
         nvs_flash

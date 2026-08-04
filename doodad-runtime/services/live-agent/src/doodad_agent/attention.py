@@ -20,6 +20,7 @@ class AttentionBroker:
     def __init__(self, store: Store, jobs: JobManager) -> None:
         self.store = store
         self.jobs = jobs
+        self.device_id = jobs.device_id
 
     def observe(self, event: JobEvent, now_ms: int) -> None:
         channels = ["display"]
@@ -32,12 +33,14 @@ class AttentionBroker:
         with self.store.transaction() as connection:
             for channel in channels:
                 connection.execute(
-                    "INSERT INTO attention_deliveries(event_id,channel,state) VALUES(?,?,?) ON CONFLICT DO NOTHING",
-                    (event.event_id, channel, "pending"),
+                    "INSERT INTO attention_deliveries(event_id,device_id,channel,state) "
+                    "VALUES(?,?,?,?) ON CONFLICT DO NOTHING",
+                    (event.event_id, self.device_id, channel, "pending"),
                 )
             connection.execute(
-                "UPDATE attention_deliveries SET state='delivered',delivered_at_ms=? WHERE event_id=? AND channel='display' AND state='pending'",
-                (now_ms, event.event_id),
+                "UPDATE attention_deliveries SET state='delivered',delivered_at_ms=? "
+                "WHERE device_id=? AND event_id=? AND channel='display' AND state='pending'",
+                (now_ms, self.device_id, event.event_id),
             )
 
     def natural_pause(self, now_ms: int) -> AttentionAction | None:
@@ -57,9 +60,9 @@ class AttentionBroker:
             """
             SELECT e.* FROM attention_deliveries d
             JOIN job_events e ON e.event_id=d.event_id
-            WHERE d.channel='spoken' AND d.state='pending'
+            WHERE d.device_id=? AND e.device_id=? AND d.channel='spoken' AND d.state='pending'
             ORDER BY e.created_at_ms,e.job_id,e.sequence LIMIT 1
-            """
+            """, (self.device_id, self.device_id)
         ).fetchone()
         if row is None:
             return None
@@ -76,10 +79,14 @@ class AttentionBroker:
 
     def background_snapshot(self) -> dict[str, object]:
         running = self.store.connection.execute(
-            "SELECT COUNT(*) FROM jobs WHERE state NOT IN ('completed','failed','cancelled')"
+            "SELECT COUNT(*) FROM jobs WHERE device_id=? "
+            "AND state NOT IN ('completed','failed','cancelled')",
+            (self.device_id,),
         ).fetchone()[0]
         completion = self.store.connection.execute(
-            "SELECT COUNT(*) FROM attention_deliveries WHERE channel='spoken' AND state='pending'"
+            "SELECT COUNT(*) FROM attention_deliveries WHERE device_id=? "
+            "AND channel='spoken' AND state='pending'",
+            (self.device_id,),
         ).fetchone()[0]
         focused = self.jobs.focused()
         return {
@@ -91,8 +98,9 @@ class AttentionBroker:
     def _deliver(self, event_id: str, channel: str, now_ms: int) -> None:
         with self.store.transaction() as connection:
             connection.execute(
-                "UPDATE attention_deliveries SET state='delivered',delivered_at_ms=? WHERE event_id=? AND channel=? AND state='pending'",
-                (now_ms, event_id, channel),
+                "UPDATE attention_deliveries SET state='delivered',delivered_at_ms=? "
+                "WHERE device_id=? AND event_id=? AND channel=? AND state='pending'",
+                (now_ms, self.device_id, event_id, channel),
             )
 
     def _question_event(self, job_id: str, question_id: str) -> JobEvent:

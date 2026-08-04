@@ -1,3 +1,19 @@
+menu "Doodad hardware"
+
+choice DOODAD_BOARD
+    prompt "Target board"
+    default DOODAD_BOARD_CORES3
+
+config DOODAD_BOARD_CORES3
+    bool "M5Stack CoreS3 SE"
+
+config DOODAD_BOARD_TWATCH_S3
+    bool "LilyGO T-Watch S3"
+
+endchoice
+
+endmenu
+
 menu "Doodad networking"
 
 config DOODAD_WIFI_SSID
@@ -61,10 +77,10 @@ config DOODAD_VOICE_AUTOCONNECT
 config DOODAD_SPEAKER_VOLUME
     int "Voice response speaker volume"
     range 0 255
-    default 96
+    default 144
     help
-        M5Unified master volume used for WebRTC voice responses. Keep this
-        below full scale while validating downlink clipping and distortion.
+        Normalized board speaker volume used for WebRTC voice responses.
+        Keep this below full scale while validating clipping and distortion.
 
 endif
 
