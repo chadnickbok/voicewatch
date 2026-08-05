@@ -51,6 +51,17 @@ SceneOperationCallback = ctypes.CFUNCTYPE(
 class NativeHost:
     WIDTH = 240
     HEIGHT = 240
+    SYSTEM_SURFACES = {
+        "watch_face": 0,
+        "live_cards": 1,
+        "launcher": 2,
+        "control_center": 3,
+        "app": 4,
+        "app_manager": 5,
+        "app_detail": 6,
+        "install_progress": 7,
+        "crash_recovery": 8,
+    }
     EVENT_KINDS = {
         "tap": 0,
         "long_press": 1,
@@ -121,6 +132,20 @@ class NativeHost:
         library.doodad_host_framebuffer_pixels.restype = ctypes.c_size_t
         library.doodad_host_show_catalog.argtypes = [ctypes.c_int]
         library.doodad_host_show_catalog.restype = None
+        library.doodad_host_start_system_shell.argtypes = [
+            ctypes.c_char_p,
+            ctypes.c_char_p,
+            ctypes.c_char_p,
+            ctypes.c_char_p,
+        ]
+        library.doodad_host_start_system_shell.restype = ctypes.c_int
+        library.doodad_host_click_system_action.argtypes = [
+            ctypes.c_char_p,
+        ]
+        library.doodad_host_click_system_action.restype = ctypes.c_int
+        library.doodad_host_system_back.restype = ctypes.c_int
+        library.doodad_host_system_home.restype = ctypes.c_int
+        library.doodad_host_system_surface.restype = ctypes.c_int
         library.doodad_host_show_appspec.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
@@ -271,6 +296,43 @@ class NativeHost:
 
     def show_catalog(self, story: int = 0) -> None:
         self.library.doodad_host_show_catalog(story)
+
+    def start_system_shell(
+        self,
+        *,
+        app_id: str,
+        app_name: str,
+        app_detail: str,
+        wasm_path: Path,
+    ) -> None:
+        if not self.library.doodad_host_start_system_shell(
+            app_id.encode("utf-8"),
+            app_name.encode("utf-8"),
+            app_detail.encode("utf-8"),
+            str(wasm_path).encode("utf-8"),
+        ):
+            raise DoodadError(self.last_error())
+
+    def click_system_action(self, action_id: str) -> None:
+        if not self.library.doodad_host_click_system_action(
+            action_id.encode("utf-8")
+        ):
+            raise DoodadError(self.last_error())
+
+    def system_back(self) -> None:
+        if not self.library.doodad_host_system_back():
+            raise DoodadError(self.last_error())
+
+    def system_home(self) -> None:
+        if not self.library.doodad_host_system_home():
+            raise DoodadError(self.last_error())
+
+    def system_surface(self) -> str:
+        value = int(self.library.doodad_host_system_surface())
+        for name, identifier in self.SYSTEM_SURFACES.items():
+            if identifier == value:
+                return name
+        raise DoodadError(f"native host returned unknown shell surface {value}")
 
     def show_appspec(self, canonical_cbor: bytes) -> None:
         payload = (ctypes.c_uint8 * len(canonical_cbor)).from_buffer_copy(

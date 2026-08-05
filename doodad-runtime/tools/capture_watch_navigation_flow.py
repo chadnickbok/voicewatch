@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import json
 from pathlib import Path
 
 from doodad_cli.contract import build_and_stage
@@ -17,8 +18,6 @@ from doodad_cli.rgb565 import rgb565le_to_rgb888
 
 
 ROOT = Path(__file__).resolve().parents[1]
-WATCH_FACE_STORY = 16
-LAUNCHER_STORY = 18
 
 
 def capture(
@@ -59,30 +58,46 @@ def main() -> int:
     output.mkdir(parents=True, exist_ok=True)
 
     timer = build_and_stage(ROOT, ROOT / "apps" / "timer")
+    manifest = json.loads(timer.manifest.read_text(encoding="utf-8"))
     frames: list[RGB888Image] = []
     buffers: list[bytes] = []
     with NativeHost(ROOT) as host:
-        host.show_catalog(WATCH_FACE_STORY)
+        host.start_system_shell(
+            app_id=manifest["id"],
+            app_name=manifest["name"],
+            app_detail=f"Version {manifest['version']}  •  ready",
+            wasm_path=timer.wasm,
+        )
+        if host.system_surface() != "watch_face":
+            raise RuntimeError("system shell did not start on the watch face")
         frame, pixels = capture(host, output, "01-watch-face")
         frames.append(frame)
         buffers.append(pixels)
 
-        host.show_catalog(LAUNCHER_STORY)
+        host.click_system_action("system.apps")
+        if host.system_surface() != "launcher":
+            raise RuntimeError("Apps action did not open the package launcher")
         frame, pixels = capture(host, output, "02-launcher")
         frames.append(frame)
         buffers.append(pixels)
 
-        host.start_wasm(timer.wasm)
+        host.click_system_action(manifest["id"])
+        if host.system_surface() != "app":
+            raise RuntimeError("package launcher did not enter the app surface")
         frame, pixels = capture(host, output, "03-timer-app")
         frames.append(frame)
         buffers.append(pixels)
 
-        host.show_catalog(LAUNCHER_STORY)
+        host.system_back()
+        if host.system_surface() != "launcher":
+            raise RuntimeError("Back did not return to the package launcher")
         frame, pixels = capture(host, output, "04-back-to-launcher")
         frames.append(frame)
         buffers.append(pixels)
 
-        host.show_catalog(WATCH_FACE_STORY)
+        host.system_home()
+        if host.system_surface() != "watch_face":
+            raise RuntimeError("Home did not return to the watch face")
         frame, pixels = capture(host, output, "05-home")
         frames.append(frame)
         buffers.append(pixels)

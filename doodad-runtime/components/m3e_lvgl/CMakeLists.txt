@@ -41,6 +41,7 @@ set(M3E_LVGL_SOURCES
     src/foundation/semantic_tokens.cpp
     src/navigation/route_stack.cpp
     src/os/shell_state.cpp
+    src/os/system_shell.cpp
     src/os/surface_registry.cpp
     src/semantics/semantic_tree.cpp
     src/services/exact_scheduler.cpp

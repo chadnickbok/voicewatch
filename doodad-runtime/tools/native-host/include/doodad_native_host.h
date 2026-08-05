@@ -69,6 +69,15 @@ void doodad_host_render_now(void);
 const uint16_t* doodad_host_framebuffer(void);
 size_t doodad_host_framebuffer_pixels(void);
 void doodad_host_show_catalog(int story);
+int doodad_host_start_system_shell(
+    const char* app_id,
+    const char* app_name,
+    const char* app_detail,
+    const char* wasm_path);
+int doodad_host_click_system_action(const char* action_id);
+int doodad_host_system_back(void);
+int doodad_host_system_home(void);
+int doodad_host_system_surface(void);
 int doodad_host_show_appspec(const uint8_t* bytes, size_t size);
 int doodad_host_click_first_action(void);
 int doodad_host_click_button(const char* label);

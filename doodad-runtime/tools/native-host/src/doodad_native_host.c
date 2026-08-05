@@ -10,6 +10,7 @@
 #include "lvgl.h"
 #include "m3e/appspec/c_api.h"
 #include "m3e/catalog/catalog.h"
+#include "m3e/os/system_shell.h"
 #include "m3e/services/exact_scheduler_c.h"
 #include "m3e/services/provider_event_c.h"
 #include "wasm_export.h"
@@ -64,6 +65,23 @@ static int g_current_cause_kind = DOODAD_SCENE_CAUSE_START;
 static uint8_t g_current_cause[kMaximumProviderEventBytes];
 static size_t g_current_cause_size;
 static char g_scene_snapshot[kMaximumSceneSnapshotBytes];
+static m3e_system_shell_controller_t* g_system_shell;
+static m3e_system_shell_home_view_t g_system_home_view;
+static m3e_system_shell_launcher_view_t g_system_launcher_view;
+static m3e_voice_runtime_view_t g_system_voice_view;
+static char g_system_app_id[97];
+static char g_system_app_name[49];
+static char g_system_app_detail[97];
+static char g_system_app_wasm_path[1024];
+
+enum {
+    kPendingSystemActionNone = 0,
+    kPendingSystemActionApps = 1,
+    kPendingSystemActionVoice = 2,
+    kPendingSystemActionLaunch = 3,
+};
+
+static int g_pending_system_action;
 
 static void set_error(const char* message) {
     snprintf(g_last_error, sizeof(g_last_error), "%s", message);
@@ -642,6 +660,115 @@ static void reset_native_shell(void) {
     doodad_lvgl_ui_show_shell(&g_ui, "STARTING", "DEV");
 }
 
+static void queue_system_apps(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = kPendingSystemActionApps;
+    }
+}
+
+static void queue_system_voice(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = kPendingSystemActionVoice;
+    }
+}
+
+static void queue_system_launch(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = kPendingSystemActionLaunch;
+    }
+}
+
+static int render_system_shell(void) {
+    if (g_system_shell == NULL || g_display == NULL) return 0;
+    g_system_home_view = (m3e_system_shell_home_view_t){0};
+    g_system_launcher_view = (m3e_system_shell_launcher_view_t){0};
+    g_system_voice_view = (m3e_voice_runtime_view_t){0};
+    const int overlay =
+        m3e_system_shell_controller_overlay(g_system_shell);
+    const int surface =
+        m3e_system_shell_controller_surface(g_system_shell);
+    if (overlay == M3E_SYSTEM_SHELL_OVERLAY_VOICE) {
+        m3e_appspec_reset_mounted_document();
+        m3e_catalog_show_voice_runtime(
+            lv_screen_active(),
+            m3e_system_shell_controller_voice_phase(g_system_shell),
+            NULL,
+            NULL,
+            &g_system_voice_view);
+    } else if (surface == M3E_SYSTEM_SHELL_SURFACE_WATCH_FACE) {
+        m3e_appspec_reset_mounted_document();
+        m3e_system_shell_home_model_t model = {0};
+        m3e_system_shell_default_home_model(&model);
+        m3e_system_shell_show_home(
+            lv_screen_active(), &model, &g_system_home_view);
+        lv_obj_add_event_cb(
+            g_system_home_view.apps_action,
+            queue_system_apps,
+            LV_EVENT_CLICKED,
+            NULL);
+        lv_obj_add_event_cb(
+            g_system_home_view.voice_action,
+            queue_system_voice,
+            LV_EVENT_CLICKED,
+            NULL);
+    } else if (surface == M3E_SYSTEM_SHELL_SURFACE_LAUNCHER) {
+        m3e_appspec_reset_mounted_document();
+        const m3e_system_shell_launcher_item_t item = {
+            g_system_app_id,
+            g_system_app_name,
+            g_system_app_detail,
+            M3E_SYSTEM_SHELL_TONE_PRIMARY,
+        };
+        m3e_system_shell_show_launcher(
+            lv_screen_active(), &item, 1, &g_system_launcher_view);
+        if (g_system_launcher_view.action_count == 1) {
+            lv_obj_add_event_cb(
+                g_system_launcher_view.actions[0],
+                queue_system_launch,
+                LV_EVENT_CLICKED,
+                NULL);
+        }
+    } else if (surface != M3E_SYSTEM_SHELL_SURFACE_APP) {
+        set_error("native host shell surface is unsupported");
+        return 0;
+    }
+    doodad_host_render_now();
+    return 1;
+}
+
+static int apply_pending_system_action(void) {
+    const int action = g_pending_system_action;
+    g_pending_system_action = kPendingSystemActionNone;
+    if (action == kPendingSystemActionApps) {
+        if (!m3e_system_shell_controller_dispatch(
+                g_system_shell,
+                M3E_SYSTEM_SHELL_INTENT_HOME_OR_LAUNCHER)) {
+            set_error("system shell rejected Apps action");
+            return 0;
+        }
+        return render_system_shell();
+    }
+    if (action == kPendingSystemActionVoice) {
+        if (!m3e_system_shell_controller_dispatch(
+                g_system_shell,
+                M3E_SYSTEM_SHELL_INTENT_OPEN_VOICE)) {
+            set_error("system shell rejected Voice action");
+            return 0;
+        }
+        return render_system_shell();
+    }
+    if (action == kPendingSystemActionLaunch) {
+        if (!m3e_system_shell_controller_open_app(
+                g_system_shell, g_system_app_id, 1)) {
+            set_error("system shell rejected app launch");
+            return 0;
+        }
+        return doodad_host_start_wasm(g_system_app_wasm_path);
+    }
+    set_error("system action callback did not run");
+    return 0;
+}
+
 int doodad_host_create(void) {
     memset(g_last_error, 0, sizeof(g_last_error));
     memset(g_framebuffer, 0, sizeof(g_framebuffer));
@@ -656,11 +783,22 @@ int doodad_host_create(void) {
     g_scene_revision = 0;
     g_route_generation = 0;
     g_wasm_call_count = 0;
+    g_pending_system_action = kPendingSystemActionNone;
+    memset(&g_system_home_view, 0, sizeof(g_system_home_view));
+    memset(&g_system_launcher_view, 0, sizeof(g_system_launcher_view));
+    memset(&g_system_voice_view, 0, sizeof(g_system_voice_view));
     m3e_appspec_set_font_scale_milli(1000);
     set_current_cause(DOODAD_SCENE_CAUSE_START, NULL, 0);
     g_scheduler = m3e_exact_scheduler_create();
     if (g_scheduler == NULL) {
         set_error("exact scheduler allocation failed");
+        return 0;
+    }
+    g_system_shell = m3e_system_shell_controller_create();
+    if (g_system_shell == NULL) {
+        set_error("system shell allocation failed");
+        m3e_exact_scheduler_destroy(g_scheduler);
+        g_scheduler = NULL;
         return 0;
     }
 
@@ -709,6 +847,8 @@ void doodad_host_destroy(void) {
     // core initialized while deleting each test display and guest runtime.
     m3e_exact_scheduler_destroy(g_scheduler);
     g_scheduler = NULL;
+    m3e_system_shell_controller_destroy(g_system_shell);
+    g_system_shell = NULL;
 }
 
 const char* doodad_host_last_error(void) {
@@ -1060,6 +1200,96 @@ void doodad_host_show_catalog(int story) {
     }
     m3e_catalog_show(lv_screen_active(), story);
     doodad_host_render_now();
+}
+
+int doodad_host_start_system_shell(
+    const char* app_id,
+    const char* app_name,
+    const char* app_detail,
+    const char* wasm_path) {
+    if (g_system_shell == NULL || g_display == NULL || app_id == NULL ||
+        app_name == NULL || app_detail == NULL || wasm_path == NULL ||
+        app_id[0] == '\0' || app_name[0] == '\0' || wasm_path[0] == '\0' ||
+        strlen(app_id) >= sizeof(g_system_app_id) ||
+        strlen(app_name) >= sizeof(g_system_app_name) ||
+        strlen(app_detail) >= sizeof(g_system_app_detail) ||
+        strlen(wasm_path) >= sizeof(g_system_app_wasm_path)) {
+        set_error("system shell package metadata is invalid");
+        return 0;
+    }
+    release_wasm();
+    m3e_appspec_reset_mounted_document();
+    snprintf(g_system_app_id, sizeof(g_system_app_id), "%s", app_id);
+    snprintf(g_system_app_name, sizeof(g_system_app_name), "%s", app_name);
+    snprintf(
+        g_system_app_detail,
+        sizeof(g_system_app_detail),
+        "%s",
+        app_detail);
+    snprintf(
+        g_system_app_wasm_path,
+        sizeof(g_system_app_wasm_path),
+        "%s",
+        wasm_path);
+    g_pending_system_action = kPendingSystemActionNone;
+    if (!m3e_system_shell_controller_initialize(g_system_shell)) {
+        set_error("system shell initialization failed");
+        return 0;
+    }
+    return render_system_shell();
+}
+
+int doodad_host_click_system_action(const char* action_id) {
+    if (g_system_shell == NULL || action_id == NULL || action_id[0] == '\0') {
+        set_error("system action is invalid");
+        return 0;
+    }
+    lv_obj_t* target = NULL;
+    if (strcmp(action_id, "system.apps") == 0) {
+        target = g_system_home_view.apps_action;
+    } else if (strcmp(action_id, "system.voice") == 0) {
+        target = g_system_home_view.voice_action;
+    } else if (strcmp(action_id, g_system_app_id) == 0 &&
+               g_system_launcher_view.action_count == 1) {
+        target = g_system_launcher_view.actions[0];
+    }
+    if (target == NULL || !lv_obj_is_valid(target)) {
+        set_error("system action is not available on the current surface");
+        return 0;
+    }
+    g_pending_system_action = kPendingSystemActionNone;
+    if (lv_obj_send_event(target, LV_EVENT_CLICKED, NULL) != LV_RESULT_OK) {
+        set_error("system action callback rejected the event");
+        return 0;
+    }
+    return apply_pending_system_action();
+}
+
+int doodad_host_system_back(void) {
+    if (g_system_shell == NULL ||
+        !m3e_system_shell_controller_dispatch(
+            g_system_shell, M3E_SYSTEM_SHELL_INTENT_BACK)) {
+        set_error("system shell rejected Back");
+        return 0;
+    }
+    return render_system_shell();
+}
+
+int doodad_host_system_home(void) {
+    if (g_system_shell == NULL ||
+        !m3e_system_shell_controller_dispatch(
+            g_system_shell,
+            M3E_SYSTEM_SHELL_INTENT_HOME_OR_LAUNCHER)) {
+        set_error("system shell rejected Home");
+        return 0;
+    }
+    return render_system_shell();
+}
+
+int doodad_host_system_surface(void) {
+    return g_system_shell == NULL
+        ? -1
+        : m3e_system_shell_controller_surface(g_system_shell);
 }
 
 int doodad_host_show_appspec(const uint8_t* bytes, size_t size) {

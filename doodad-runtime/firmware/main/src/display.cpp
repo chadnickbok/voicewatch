@@ -1,6 +1,7 @@
 #include "display.hpp"
 
 #include <algorithm>
+#include <array>
 #include <cstdio>
 #include <cstring>
 #include <new>
@@ -23,6 +24,7 @@
 #include "m3e/catalog/catalog.h"
 #include "m3e/components/components.hpp"
 #include "m3e/os/shell_state.hpp"
+#include "m3e/os/system_shell.h"
 #include "m3e/os/surface_registry.hpp"
 #include "m3e/theme/resolved_theme.hpp"
 #include "package_service.hpp"
@@ -96,6 +98,11 @@ enum class PendingVoiceAction : std::uint8_t {
     cancel,
 };
 
+enum class PendingSystemAction : std::uint8_t {
+    none,
+    open_launcher,
+};
+
 bool g_display_ready = false;
 TaskHandle_t g_ui_task = nullptr;
 QueueHandle_t g_ui_queue = nullptr;
@@ -132,14 +139,23 @@ m3e::os::ShellState g_shell{};
 m3e::os::SurfaceRegistry* g_surface_registry = nullptr;
 bool g_shell_active = false;
 m3e_voice_runtime_view_t g_voice_view{};
+m3e_system_shell_home_view_t g_home_view{};
+m3e_system_shell_launcher_view_t g_launcher_view{};
 char g_voice_transcript[161]{};
 char g_voice_response[161]{};
 PendingVoiceAction g_pending_voice_action = PendingVoiceAction::none;
+PendingSystemAction g_pending_system_action = PendingSystemAction::none;
 char g_visual_scene[49]{};
 std::uint32_t g_visual_revision = 0;
 std::uint32_t g_visual_frame_hash = 2166136261U;
 bool g_visual_pending = false;
 doodad::packages::CatalogSnapshot g_launcher_apps{};
+std::array<
+    m3e_system_shell_launcher_item_t,
+    doodad::packages::CatalogSnapshot::kCapacity> g_launcher_items{};
+std::array<
+    std::array<char, 96>,
+    doodad::packages::CatalogSnapshot::kCapacity> g_launcher_details{};
 PackageUiEvent g_ready_app{};
 bool g_has_ready_app = false;
 bool g_ready_is_rollback = false;
@@ -578,141 +594,74 @@ void dismiss_ready_app(lv_event_t* event) {
     render_shell_now();
 }
 
-void installed_launcher_now() {
-    if (!ensure_system_styles()) {
-        error_now("THEME INIT FAILED");
-        return;
+void queue_home_launcher(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = PendingSystemAction::open_launcher;
     }
+}
+
+void queue_home_voice(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_voice_action = PendingVoiceAction::primary;
+    }
+}
+
+void system_home_surface_now() {
+    m3e_system_shell_home_model_t model{};
+    m3e_system_shell_default_home_model(&model);
+    m3e_system_shell_show_home(
+        lv_screen_active(), &model, &g_home_view);
+    if (g_home_view.apps_action != nullptr) {
+        lv_obj_add_event_cb(
+            g_home_view.apps_action,
+            queue_home_launcher,
+            LV_EVENT_CLICKED,
+            nullptr);
+    }
+    if (g_home_view.voice_action != nullptr) {
+        lv_obj_add_event_cb(
+            g_home_view.voice_action,
+            queue_home_voice,
+            LV_EVENT_CLICKED,
+            nullptr);
+    }
+}
+
+void installed_launcher_now() {
     stage_visual_scene("installed-launcher");
     discard_guest_document();
     g_launcher_apps = {};
     doodad::packages::package_service_catalog(g_launcher_apps);
-
-    m3e::ComponentFactory factory(g_appspec_styles);
-    auto* screen = factory.screen(lv_screen_active());
-    auto* title = factory.text(
-        screen,
-        "APPS",
-        m3e::generated::TypographyRole::title_medium);
-    lv_obj_set_pos(title, 15, 10);
-    auto* home_hint = factory.text(
-        screen,
-        "B  •  HOME",
-        m3e::generated::TypographyRole::body_extra_small,
-        true);
-    lv_obj_align(home_hint, LV_ALIGN_TOP_RIGHT, -15, 13);
-
-    auto* list = lv_obj_create(screen);
-    lv_obj_remove_style_all(list);
-    lv_obj_set_pos(list, 12, 40);
-    lv_obj_set_size(list, 216, 188);
-    lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
-    lv_obj_set_flex_align(
-        list, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_style_pad_row(list, 7, 0);
-    lv_obj_set_scroll_dir(list, LV_DIR_VER);
-    lv_obj_set_scrollbar_mode(list, LV_SCROLLBAR_MODE_AUTO);
-
-    if (g_launcher_apps.count == 0) {
-        auto* empty = factory.text(
-            list,
-            "No apps yet\n\nHold B and ask Doodad\nto build your first one.",
-            m3e::generated::TypographyRole::body_medium,
-            true);
-        lv_obj_set_width(empty, 204);
-        lv_obj_set_style_text_align(empty, LV_TEXT_ALIGN_CENTER, 0);
-        lv_obj_set_style_margin_top(empty, 36, 0);
-        return;
-    }
-
-    for (std::size_t index = 0; index < g_launcher_apps.count; ++index) {
+    const auto count = std::min(
+        g_launcher_apps.count,
+        g_launcher_items.size());
+    for (std::size_t index = 0; index < count; ++index) {
         auto& app = g_launcher_apps.apps[index];
-        char detail[96]{};
         std::snprintf(
-            detail,
-            sizeof(detail),
+            g_launcher_details[index].data(),
+            g_launcher_details[index].size(),
             "Version %.60s  •  ready",
             app.semantic_version.data());
-        auto* button = factory.button(
-            list,
-            {
-                app.app_id.data(),
-                "",
-                index % 3 == 0
-                    ? m3e::Tone::primary
-                    : index % 3 == 1
-                    ? m3e::Tone::secondary
-                    : m3e::Tone::tertiary,
-                m3e::ButtonVariant::tonal,
-                m3e::ComponentSize::normal,
-                true,
-                false,
-            });
-        lv_obj_clean(button);
-        lv_obj_set_size(button, 204, 54);
-        lv_obj_set_flex_grow(button, 0);
-        lv_obj_set_style_pad_hor(button, 9, 0);
-        lv_obj_set_style_pad_column(button, 10, 0);
-        lv_obj_set_flex_flow(button, LV_FLEX_FLOW_ROW);
-        lv_obj_set_flex_align(
-            button,
-            LV_FLEX_ALIGN_START,
-            LV_FLEX_ALIGN_CENTER,
-            LV_FLEX_ALIGN_CENTER);
-
-        auto* avatar = lv_obj_create(button);
-        m3e::ComponentFactory::reset(avatar);
-        lv_obj_set_size(avatar, 36, 36);
-        lv_obj_set_style_radius(avatar, LV_RADIUS_CIRCLE, 0);
-        lv_obj_set_style_bg_color(
-            avatar, lv_color_make(0x33, 0x2E, 0x3C), 0);
-        lv_obj_set_style_bg_opa(avatar, LV_OPA_COVER, 0);
-        char monogram[2]{
-            app.name[0] == '\0' ? '?' : app.name[0],
-            '\0',
-        };
-        auto* monogram_label = factory.text(
-            avatar,
-            monogram,
-            m3e::generated::TypographyRole::title_medium);
-        lv_obj_set_style_text_color(
-            monogram_label, lv_color_make(0xF6, 0xED, 0xFF), 0);
-        lv_obj_center(monogram_label);
-
-        auto* labels = lv_obj_create(button);
-        m3e::ComponentFactory::reset(labels);
-        lv_obj_set_height(labels, LV_SIZE_CONTENT);
-        lv_obj_set_flex_grow(labels, 1);
-        lv_obj_set_flex_flow(labels, LV_FLEX_FLOW_COLUMN);
-        lv_obj_set_flex_align(
-            labels,
-            LV_FLEX_ALIGN_CENTER,
-            LV_FLEX_ALIGN_START,
-            LV_FLEX_ALIGN_START);
-        auto* name = factory.text(
-            labels,
+        g_launcher_items[index] = {
+            app.app_id.data(),
             app.name.data(),
-            m3e::generated::TypographyRole::title_medium);
-        auto* version = factory.text(
-            labels,
-            detail,
-            m3e::generated::TypographyRole::body_extra_small);
-        lv_obj_set_style_text_color(
-            name, lv_color_make(0x21, 0x18, 0x2B), 0);
-        lv_obj_set_style_text_color(
-            version, lv_color_make(0x49, 0x40, 0x53), 0);
-
-        auto* arrow = factory.text(
-            button,
-            ">",
-            m3e::generated::TypographyRole::title_medium);
-        lv_obj_set_style_text_color(
-            arrow, lv_color_make(0x21, 0x18, 0x2B), 0);
+            g_launcher_details[index].data(),
+            static_cast<std::uint8_t>(index % 3),
+        };
+    }
+    m3e_system_shell_show_launcher(
+        lv_screen_active(),
+        g_launcher_items.data(),
+        count,
+        &g_launcher_view);
+    for (std::size_t index = 0;
+         index < g_launcher_view.action_count;
+         ++index) {
         lv_obj_add_event_cb(
-            button,
+            g_launcher_view.actions[index],
             launch_catalog_entry,
             LV_EVENT_CLICKED,
-            &app);
+            &g_launcher_apps.apps[index]);
     }
 }
 
@@ -852,7 +801,9 @@ void render_shell_now() {
         }
     } else {
         g_voice_view = {};
-        if (g_shell.snapshot().surface == m3e::os::Surface::app &&
+        if (g_shell.snapshot().surface == m3e::os::Surface::watch_face) {
+            system_home_surface_now();
+        } else if (g_shell.snapshot().surface == m3e::os::Surface::app &&
             g_pending_document != nullptr) {
             auto* pending = g_pending_document;
             g_pending_document = nullptr;
@@ -925,14 +876,18 @@ void perform_voice_action(PendingVoiceAction action) {
         show_voice_error("Voice service unavailable");
         return;
     }
-    if (g_shell.snapshot().overlay != m3e::os::Overlay::voice) {
-        g_shell.show_overlay(m3e::os::Overlay::voice);
+    const bool opening_voice =
+        g_shell.snapshot().overlay != m3e::os::Overlay::voice;
+    if (opening_voice &&
+        !g_shell.dispatch(m3e::os::Intent::open_voice)) {
+        show_voice_error("Voice surface unavailable");
+        return;
     }
     if (next == m3e::os::VoicePhase::listening) {
         g_voice_transcript[0] = '\0';
         g_voice_response[0] = '\0';
     }
-    force_voice_phase(next);
+    if (!opening_voice) force_voice_phase(next);
     render_shell_now();
 }
 
@@ -1765,6 +1720,10 @@ void display_update() {
     doodad::board::update();
     handle_system_inputs();
     lv_timer_handler();
+    if (g_pending_system_action == PendingSystemAction::open_launcher) {
+        g_pending_system_action = PendingSystemAction::none;
+        dispatch_system_input(m3e::os::Input::button_b);
+    }
     if (g_pending_voice_action != PendingVoiceAction::none) {
         const auto action = g_pending_voice_action;
         g_pending_voice_action = PendingVoiceAction::none;

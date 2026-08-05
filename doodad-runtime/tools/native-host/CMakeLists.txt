@@ -124,6 +124,11 @@ if(BUILD_TESTING)
   target_link_libraries(m3e_os_shell_test PRIVATE m3e::lvgl)
   add_test(NAME m3e_os_shell COMMAND m3e_os_shell_test)
 
+  add_executable(m3e_system_shell_ui_test
+    "${DOODAD_ROOT}/tests/m3e/system_shell_ui_test.cpp")
+  target_link_libraries(m3e_system_shell_ui_test PRIVATE m3e::lvgl)
+  add_test(NAME m3e_system_shell_ui COMMAND m3e_system_shell_ui_test)
+
   add_executable(m3e_exact_scheduler_test
     "${DOODAD_ROOT}/tests/m3e/exact_scheduler_test.cpp")
   target_link_libraries(m3e_exact_scheduler_test PRIVATE m3e::lvgl)

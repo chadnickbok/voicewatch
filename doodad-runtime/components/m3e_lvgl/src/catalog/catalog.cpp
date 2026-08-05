@@ -7,10 +7,10 @@
 #include "m3e/components/components.hpp"
 #include "m3e/foundation/display_profile.hpp"
 #include "m3e/generated/core_tokens.hpp"
+#include "m3e/os/system_shell.h"
 #include "m3e/theme/resolved_theme.hpp"
 
 LV_FONT_DECLARE(m3e_timer_font_55);
-LV_FONT_DECLARE(m3e_home_time_font_114);
 
 namespace {
 
@@ -33,11 +33,6 @@ constexpr std::uint8_t expand6(std::uint8_t value) {
 lv_color_t exact_rgb565(
     std::uint8_t red5, std::uint8_t green6, std::uint8_t blue5) {
     return lv_color_make(expand5(red5), expand6(green6), expand5(blue5));
-}
-
-lv_color_t rgb(
-    std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
-    return lv_color_make(red, green, blue);
 }
 
 std::int32_t dp(std::int32_t value) {
@@ -80,106 +75,6 @@ lv_obj_t* surface(
     lv_obj_set_style_radius(object, dp(radius_dp), 0);
     lv_obj_set_style_bg_color(object, color(role), 0);
     lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
-    return object;
-}
-
-lv_obj_t* color_surface(
-    lv_obj_t* parent,
-    std::int32_t x_dp,
-    std::int32_t y_dp,
-    std::int32_t width_dp,
-    std::int32_t height_dp,
-    std::int32_t radius_dp,
-    lv_color_t fill) {
-    auto* object = lv_obj_create(parent);
-    reset(object);
-    lv_obj_set_pos(object, dp(x_dp), dp(y_dp));
-    lv_obj_set_size(object, dp(width_dp), dp(height_dp));
-    lv_obj_set_style_radius(object, dp(radius_dp), 0);
-    lv_obj_set_style_bg_color(object, fill, 0);
-    lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
-    return object;
-}
-
-lv_obj_t* color_label(
-    lv_obj_t* parent,
-    const char* value,
-    const lv_font_t* font,
-    lv_color_t text_color) {
-    auto* object = lv_label_create(parent);
-    reset(object);
-    lv_label_set_text(object, value);
-    lv_obj_set_style_text_font(object, font, 0);
-    lv_obj_set_style_text_color(object, text_color, 0);
-    return object;
-}
-
-void nine_dot_icon(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
-    constexpr std::int32_t kDot = 3;
-    constexpr std::int32_t kStep = 6;
-    for (std::int32_t row = 0; row < 3; ++row) {
-        for (std::int32_t column = 0; column < 3; ++column) {
-            auto* dot = lv_obj_create(parent);
-            reset(dot);
-            lv_obj_set_pos(dot, dp(x + column * kStep), dp(y + row * kStep));
-            lv_obj_set_size(dot, dp(kDot), dp(kDot));
-            lv_obj_set_style_radius(dot, LV_RADIUS_CIRCLE, 0);
-            lv_obj_set_style_bg_color(dot, rgb(255, 255, 255), 0);
-            lv_obj_set_style_bg_opa(dot, LV_OPA_COVER, 0);
-        }
-    }
-}
-
-void voice_bar_icon(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
-    constexpr std::int32_t kHeights[] = {6, 12, 18, 12, 6};
-    for (std::size_t index = 0; index < 5; ++index) {
-        auto* bar = lv_obj_create(parent);
-        reset(bar);
-        lv_obj_set_size(bar, dp(2), dp(kHeights[index]));
-        lv_obj_set_pos(
-            bar,
-            dp(x + static_cast<std::int32_t>(index) * 4),
-            dp(y + (18 - kHeights[index]) / 2));
-        lv_obj_set_style_radius(bar, LV_RADIUS_CIRCLE, 0);
-        lv_obj_set_style_bg_color(bar, rgb(255, 255, 255), 0);
-        lv_obj_set_style_bg_opa(bar, LV_OPA_COVER, 0);
-    }
-}
-
-void sun_icon(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
-    const auto purple = rgb(114, 65, 255);
-    color_surface(parent, x + 4, y + 4, 8, 8, 4, purple);
-    color_surface(parent, x + 7, y, 2, 3, 1, purple);
-    color_surface(parent, x + 7, y + 13, 2, 3, 1, purple);
-    color_surface(parent, x, y + 7, 3, 2, 1, purple);
-    color_surface(parent, x + 13, y + 7, 3, 2, 1, purple);
-}
-
-void battery_icon(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
-    const auto lime = rgb(185, 255, 36);
-    auto* body = lv_obj_create(parent);
-    reset(body);
-    lv_obj_set_pos(body, dp(x), dp(y));
-    lv_obj_set_size(body, dp(14), dp(8));
-    lv_obj_set_style_radius(body, dp(2), 0);
-    lv_obj_set_style_bg_opa(body, LV_OPA_TRANSP, 0);
-    lv_obj_set_style_border_width(body, dp(2), 0);
-    lv_obj_set_style_border_color(body, lime, 0);
-    color_surface(parent, x + 3, y + 3, 7, 2, 1, lime);
-    color_surface(parent, x + 14, y + 2, 2, 4, 1, lime);
-}
-
-lv_obj_t* transparent_container(
-    lv_obj_t* parent,
-    std::int32_t x_dp,
-    std::int32_t y_dp,
-    std::int32_t width_dp,
-    std::int32_t height_dp) {
-    auto* object = lv_obj_create(parent);
-    reset(object);
-    lv_obj_set_pos(object, dp(x_dp), dp(y_dp));
-    lv_obj_set_size(object, dp(width_dp), dp(height_dp));
-    lv_obj_set_style_bg_opa(object, LV_OPA_TRANSP, 0);
     return object;
 }
 
@@ -592,68 +487,9 @@ void system_story(lv_obj_t* screen) {
 }
 
 void os_home_story(lv_obj_t* screen) {
-    lv_obj_clean(screen);
-    reset(screen);
-    lv_obj_set_size(screen, 240, 240);
-    lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
-    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
-
-    auto* time = color_label(
-        screen,
-        "10:09",
-        &m3e_home_time_font_114,
-        rgb(250, 249, 255));
-    lv_obj_set_size(time, 240, 88);
-    lv_obj_set_pos(time, 0, 16);
-    lv_obj_set_style_text_align(time, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_letter_space(time, -3, 0);
-
-    // The date is the first complication, matching the visual rhythm of the
-    // selected concept while leaving the full upper field to the time.
-    auto* date_column = transparent_container(screen, 8, 97, 56, 42);
-    auto* weekday = color_label(
-        date_column, "THU", &lv_font_montserrat_14, rgb(115, 65, 255));
-    lv_obj_align(weekday, LV_ALIGN_TOP_MID, 0, dp(3));
-    auto* calendar_date = color_label(
-        date_column, "JUL 30", &lv_font_montserrat_14, rgb(250, 249, 255));
-    lv_obj_align(calendar_date, LV_ALIGN_TOP_MID, 0, dp(21));
-
-    auto* weather_column = transparent_container(screen, 68, 97, 56, 42);
-    sun_icon(weather_column, 20, 1);
-    auto* weather_value = color_label(
-        weather_column, "72°  SF", &lv_font_montserrat_14,
-        rgb(115, 65, 255));
-    lv_obj_align(weather_value, LV_ALIGN_BOTTOM_MID, 0, -dp(3));
-
-    auto* battery_column = transparent_container(screen, 128, 97, 56, 42);
-    battery_icon(battery_column, 20, 4);
-    auto* battery_value = color_label(
-        battery_column, "82%", &lv_font_montserrat_14,
-        rgb(185, 255, 36));
-    lv_obj_align(battery_value, LV_ALIGN_BOTTOM_MID, 0, -dp(3));
-
-    constexpr std::int32_t kDividerX[] = {66, 126};
-    for (const auto x : kDividerX) {
-        color_surface(screen, x, 101, 1, 34, 1, rgb(54, 54, 62));
-    }
-
-    auto* apps = color_surface(
-        screen, 10, 150, 83, 36, 12, rgb(83, 53, 218));
-    lv_obj_set_style_bg_grad_color(apps, rgb(104, 66, 255), 0);
-    lv_obj_set_style_bg_grad_dir(apps, LV_GRAD_DIR_HOR, 0);
-    nine_dot_icon(apps, 10, 10);
-    auto* apps_title = color_label(
-        apps, "APPS", &lv_font_montserrat_16, rgb(255, 255, 255));
-    lv_obj_align(apps_title, LV_ALIGN_RIGHT_MID, -dp(8), 0);
-
-    auto* voice = color_surface(
-        screen, 99, 150, 83, 36, 12, rgb(255, 65, 80));
-    lv_obj_set_style_bg_grad_color(voice, rgb(255, 92, 71), 0);
-    lv_obj_set_style_bg_grad_dir(voice, LV_GRAD_DIR_HOR, 0);
-    voice_bar_icon(voice, 9, 9);
-    auto* voice_title = color_label(
-        voice, "VOICE", &lv_font_montserrat_16, rgb(255, 255, 255));
-    lv_obj_align(voice_title, LV_ALIGN_RIGHT_MID, -dp(6), 0);
+    m3e_system_shell_home_model_t model{};
+    m3e_system_shell_default_home_model(&model);
+    m3e_system_shell_show_home(screen, &model, nullptr);
 }
 
 void os_live_cards_story(lv_obj_t* screen) {
@@ -697,80 +533,15 @@ void os_live_cards_story(lv_obj_t* screen) {
 }
 
 void os_launcher_story(lv_obj_t* screen) {
-    lv_obj_clean(screen);
-    reset(screen);
-    lv_obj_set_size(screen, 240, 240);
-    lv_obj_set_style_bg_color(screen, color(ColorRole::background), 0);
-    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
-
-    auto* title = label(
-        screen,
-        "APPS",
-        &lv_font_montserrat_18,
-        ColorRole::on_background);
-    lv_obj_set_pos(title, dp(12), dp(9));
-    auto* home = label(
-        screen,
-        "B  •  HOME",
-        &lv_font_montserrat_10,
-        ColorRole::outline);
-    lv_obj_align(home, LV_ALIGN_TOP_RIGHT, -dp(12), dp(11));
-
-    struct LauncherItem {
-        const char* monogram;
-        const char* label;
-        const char* detail;
-        ColorRole fill;
-        ColorRole content;
+    constexpr m3e_system_shell_launcher_item_t items[] = {
+        {"dev.doodad.timer", "Timer", "1 active",
+         M3E_SYSTEM_SHELL_TONE_PRIMARY},
+        {"dev.doodad.weather", "Weather", "72°  •  Partly cloudy",
+         M3E_SYSTEM_SHELL_TONE_SECONDARY},
+        {"dev.doodad.workout", "Workout", "Paused  •  Set 4",
+         M3E_SYSTEM_SHELL_TONE_TERTIARY},
     };
-    constexpr LauncherItem items[] = {
-        {"T", "Timer", "1 active", ColorRole::primary_container,
-         ColorRole::on_primary_container},
-        {"W", "Weather", "72°  •  Partly cloudy",
-         ColorRole::secondary_container,
-         ColorRole::on_secondary_container},
-        {"W", "Workout", "Paused  •  Set 4",
-         ColorRole::tertiary_container,
-         ColorRole::on_tertiary_container},
-    };
-    for (std::size_t index = 0; index < 3; ++index) {
-        const auto y = 34 + static_cast<std::int32_t>(index) * 47;
-        auto* row = surface(
-            screen, 12, y, 168, 43, 21, items[index].fill);
-        auto* avatar = surface(
-            row, 6, 6, 31, 31, 16, ColorRole::surface_container_high);
-        auto* monogram = label(
-            avatar,
-            items[index].monogram,
-            &lv_font_montserrat_18,
-            items[index].content);
-        lv_obj_center(monogram);
-        auto* name = label(
-            row,
-            items[index].label,
-            &lv_font_montserrat_18,
-            items[index].content);
-        lv_obj_set_pos(name, dp(45), dp(6));
-        auto* detail = label(
-            row,
-            items[index].detail,
-            &lv_font_montserrat_10,
-            items[index].content);
-        lv_obj_set_pos(detail, dp(45), dp(24));
-        auto* arrow = label(
-            row,
-            ">",
-            &lv_font_montserrat_18,
-            items[index].content);
-        lv_obj_align(arrow, LV_ALIGN_RIGHT_MID, -dp(12), 0);
-    }
-
-    auto* hint = label(
-        screen,
-        "A  •  BACK     HOLD B  •  VOICE",
-        &lv_font_montserrat_10,
-        ColorRole::outline);
-    lv_obj_align(hint, LV_ALIGN_BOTTOM_MID, 0, -dp(6));
+    m3e_system_shell_show_launcher(screen, items, 3, nullptr);
 }
 
 void os_control_center_story(lv_obj_t* screen) {
