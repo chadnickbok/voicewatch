@@ -1025,9 +1025,10 @@ packages  9.94MiB  wear-levelled FAT
 ```
 
 The firmware mounts `packages` first, reports capacity, and looks for the
-activated `/packages/active.wasm` before considering microSD or the embedded
-recovery guest. The current 0.91MiB firmware has about 70% free in either
-firmware slot. A physical boot on the connected CoreS3 SE reported
+legacy `/packages/active.wasm` fallback before considering microSD or the
+embedded recovery guest. Current CoreS3 and T-Watch images remain within their
+3MiB firmware slots, with about 6% and 10% free respectively. An earlier
+physical boot on the connected CoreS3 SE reported
 `10060 KiB free / 10060 KiB` for the package volume, found and tested 8MiB
 Quad PSRAM, loaded the embedded recovery package with no SD card present,
 instantiated WAMR, mounted AppSpec, and reached steady state with roughly

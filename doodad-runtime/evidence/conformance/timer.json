@@ -24,7 +24,7 @@
   },
   "summary": {
     "module_bytes": 8964,
-    "package_bytes": 9211,
+    "package_bytes": 10112,
     "authored_json_documents": 8,
     "canonical_cbor_documents": 2,
     "maximum_appspec_bytes": 354,

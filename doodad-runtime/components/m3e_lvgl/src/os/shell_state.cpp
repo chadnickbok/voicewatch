@@ -246,6 +246,24 @@ bool ShellState::open_app(
     return true;
 }
 
+bool ShellState::replace_app(
+    const char* app_id,
+    std::uint32_t generation) {
+    navigation::RouteStack replacement;
+    if (app_id == nullptr || generation == 0 ||
+        !replacement.reset("system.watchface") ||
+        !replacement.push(
+            app_id, navigation::LayerOwner::application, generation)) {
+        return false;
+    }
+    routes_ = replacement;
+    snapshot_.surface = Surface::app;
+    snapshot_.overlay = Overlay::none;
+    snapshot_.voice_phase = VoicePhase::idle;
+    ++snapshot_.generation;
+    return true;
+}
+
 bool ShellState::open_app_manager() {
     return push_system_route("system.app-manager", Surface::app_manager);
 }

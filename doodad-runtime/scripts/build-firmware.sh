@@ -78,6 +78,56 @@ source "${SCRIPT_DIR}/env.sh"
 BUILD_DIR="${PROJECT_DIR}/firmware/build/${BOARD}"
 SDKCONFIG="${PROJECT_DIR}/firmware/sdkconfig.${BOARD}"
 SDKCONFIG_DEFAULTS="${PROJECT_DIR}/firmware/sdkconfig.defaults;${PROJECT_DIR}/firmware/boards/${BOARD}/sdkconfig.defaults"
+
+# Existing per-board sdkconfigs are intentionally ignored because they can
+# contain local Wi-Fi and personal signing secrets. Migrate the FAT choice in
+# place rather than regenerating the file and dropping those values when LFN
+# support was added.
+migrate_fatfs_lfn() {
+    [[ -f "${SDKCONFIG}" ]] || return 0
+    if grep -q '^CONFIG_FATFS_LFN_HEAP=y$' "${SDKCONFIG}" \
+        && grep -q '^CONFIG_FATFS_MAX_LFN=255$' "${SDKCONFIG}"; then
+        return 0
+    fi
+
+    local migrated
+    migrated="$(mktemp "${SDKCONFIG}.lfn.XXXXXX")"
+    if ! awk '
+        BEGIN { heap = 0; maximum = 0 }
+        /^CONFIG_FATFS_LFN_NONE=y$/ {
+            print "# CONFIG_FATFS_LFN_NONE is not set"
+            next
+        }
+        /^CONFIG_FATFS_LFN_STACK=y$/ {
+            print "# CONFIG_FATFS_LFN_STACK is not set"
+            next
+        }
+        /^# CONFIG_FATFS_LFN_HEAP is not set$/ {
+            print "CONFIG_FATFS_LFN_HEAP=y"
+            heap = 1
+            next
+        }
+        /^CONFIG_FATFS_LFN_HEAP=y$/ { heap = 1 }
+        /^CONFIG_FATFS_MAX_LFN=/ {
+            print "CONFIG_FATFS_MAX_LFN=255"
+            maximum = 1
+            next
+        }
+        { print }
+        END {
+            if (!heap) print "CONFIG_FATFS_LFN_HEAP=y"
+            if (!maximum) print "CONFIG_FATFS_MAX_LFN=255"
+        }
+    ' "${SDKCONFIG}" > "${migrated}"; then
+        rm -f "${migrated}"
+        return 1
+    fi
+    chmod 600 "${migrated}"
+    mv -f "${migrated}" "${SDKCONFIG}"
+    echo "Migrated ${BOARD} sdkconfig to FATFS long filenames"
+}
+
+migrate_fatfs_lfn
 SDKCONFIG_READY=true
 if [[ "${BOARD}" == "cores3" ]]; then
     BOARD_SETTING='CONFIG_DOODAD_BOARD_CORES3=y'
@@ -96,6 +146,8 @@ for setting in \
     'CONFIG_LV_FONT_MONTSERRAT_12=y' \
     'CONFIG_LV_FONT_MONTSERRAT_16=y' \
     'CONFIG_LV_FONT_MONTSERRAT_18=y' \
+    'CONFIG_FATFS_LFN_HEAP=y' \
+    'CONFIG_FATFS_MAX_LFN=255' \
     'CONFIG_DOODAD_VOICE_UPLINK=y' \
     'CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y' \
     "${BOARD_SETTING}" \

@@ -5,13 +5,19 @@ import threading
 import time
 from pathlib import Path
 
-from doodad_agent.app_verifier import VerifiedArtifact
+from doodad_agent.app_verifier import VerifiedArtifact, package_tree_snapshot
 from doodad_agent.attention import AttentionBroker
 from doodad_agent.capabilities import CapabilityKernel
 from doodad_agent.codex_protocol import CodexTurnResult
 from doodad_agent.codex_worker import CodexAppBuilder
 from doodad_agent.controller import ForegroundController
 from doodad_agent.jobs import JobManager
+from doodad_agent.personal_bundle import (
+    ArtifactStore,
+    PersonalBundlePackager,
+    PersonalTrustProfile,
+    decode_personal_bundle,
+)
 from doodad_agent.storage import Store
 
 
@@ -79,6 +85,44 @@ class RepairingVerifier(FakeVerifier):
 
             raise VerificationError("Wasm import order does not match manifest")
         return super().verify(workspace, layout)
+
+
+class MaterializingVerifier(FakeVerifier):
+    def verify(self, workspace: Path, layout: str) -> VerifiedArtifact:
+        self.calls.append((workspace, layout))
+        package = (
+            workspace
+            / "app"
+            / "target"
+            / "doodad"
+            / "dev.doodad.generated-rest"
+        )
+        package.mkdir(parents=True, exist_ok=True)
+        (package / "manifest.json").write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "id": "dev.doodad.generated-rest",
+                    "name": "Lift Rest",
+                    "version": "0.1.0",
+                    "host_abi": 1,
+                    "capabilities": ["ui.mount", "timer.schedule"],
+                    "wasm": "app.wasm",
+                }
+            ),
+            encoding="utf-8",
+        )
+        (package / "app.wasm").write_bytes(b"\0asm-generated")
+        (package / "preview.bmp").write_bytes(b"BM")
+        tree_sha256, _ = package_tree_snapshot(package)
+        return VerifiedArtifact(
+            "dev.doodad.generated-rest@0.1.0",
+            str(package),
+            str(package / "preview.bmp"),
+            tree_sha256,
+            f"Lift Rest ({layout}) passed independent gates.",
+            ("schema", "build"),
+        )
 
 
 def observe_all(jobs: JobManager, broker: AttentionBroker, job_id: str) -> None:
@@ -204,6 +248,99 @@ def test_independent_failure_gets_one_bounded_codex_repair(tmp_path: Path) -> No
         assert len(calls) == 3
         assert "independent Doodad verifier rejected" in str(calls[-1]["prompt"])
         assert [event.kind for event in jobs.events(job_id)].count("progress") == 2
+    finally:
+        builder.close()
+        store.close()
+
+
+def test_verified_output_is_outer_packaged_and_persisted_before_review_ready(
+    tmp_path: Path,
+) -> None:
+    store = Store(tmp_path / "agent.sqlite3")
+    jobs = JobManager(store, "cores3-package")
+    calls: list[dict[str, object]] = []
+    results = iter(("needs_input", "ready"))
+    key = bytes(range(32))
+    verifier = MaterializingVerifier()
+    packager = PersonalBundlePackager(
+        PersonalTrustProfile("nick.local", "macbook-v0", key),
+        ArtifactStore(tmp_path / "durable-artifacts"),
+    )
+    builder = CodexAppBuilder(
+        jobs,
+        RUNTIME_ROOT,
+        tmp_path / "workspaces",
+        binary="unused",
+        client_factory=lambda: ScriptedClient(next(results), calls),
+        verifier=verifier,  # type: ignore[arg-type]
+        packager=packager,
+    )
+    try:
+        job_id = builder.start("Build a timer", 1)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        jobs.focus(job_id, "layout")
+        assert jobs.answer(job_id, "layout", "ring", "package-answer", 2)
+        builder.tick(3)
+        wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
+
+        session = store.fetch_one(
+            "SELECT stage,artifact_json FROM codex_sessions WHERE job_id=?", (job_id,)
+        )
+        assert session["stage"] == "ready_for_review"
+        artifact = json.loads(session["artifact_json"])
+        assert artifact["sha256"] == package_tree_snapshot(
+            Path(artifact["package_path"])
+        )[0]
+        bundle = artifact["bundle"]
+        assert bundle["owner_id"] == "nick.local"
+        assert bundle["generation_id"].startswith(
+            "dev.doodad.generated-rest@0.1.0+"
+        )
+        bundle_path = Path(bundle["storage_path"])
+        assert bundle_path.is_file()
+        assert bundle_path.is_relative_to(tmp_path / "durable-artifacts")
+        metadata, payload = decode_personal_bundle(bundle_path.read_bytes(), key)
+        assert metadata["app_id"] == "dev.doodad.generated-rest"
+        assert payload == b"\0asm-generated"
+        assert jobs.events(job_id)[-1].payload["artifact"]["bundle"] == bundle
+    finally:
+        builder.close()
+        store.close()
+
+
+def test_packaging_failure_is_a_controlled_terminal_gate(tmp_path: Path) -> None:
+    store = Store(tmp_path / "agent.sqlite3")
+    jobs = JobManager(store, "cores3-package-fail")
+    calls: list[dict[str, object]] = []
+    results = iter(("needs_input", "ready"))
+    builder = CodexAppBuilder(
+        jobs,
+        RUNTIME_ROOT,
+        tmp_path / "workspaces",
+        binary="unused",
+        client_factory=lambda: ScriptedClient(next(results), calls),
+        verifier=FakeVerifier(),  # type: ignore[arg-type]
+        packager=PersonalBundlePackager(
+            PersonalTrustProfile(
+                "nick.local", "macbook-v0", bytes(range(32))
+            ),
+            ArtifactStore(tmp_path / "durable-artifacts"),
+        ),
+    )
+    try:
+        job_id = builder.start("Build a timer", 1)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        jobs.focus(job_id, "layout")
+        assert jobs.answer(job_id, "layout", "ring", "package-fail-answer", 2)
+        builder.tick(3)
+        wait_for(lambda: jobs.job(job_id)["state"] == "failed")
+        terminal = jobs.events(job_id)[-1]
+        assert terminal.payload == {"reason_code": "packaging_failed"}
+        session = store.fetch_one(
+            "SELECT stage,artifact_json FROM codex_sessions WHERE job_id=?", (job_id,)
+        )
+        assert session["stage"] == "packaging"
+        assert session["artifact_json"] is None
     finally:
         builder.close()
         store.close()

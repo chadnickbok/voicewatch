@@ -13,6 +13,7 @@ from typing import Any, Callable
 from .app_verifier import RestTimerVerifier, VerificationError
 from .codex_protocol import AppServerClient, CodexProtocolError, PINNED_CODEX_VERSION
 from .jobs import JobManager, TERMINAL
+from .personal_bundle import PersonalBundleError, PersonalBundlePackager
 from .storage import Store
 
 
@@ -33,6 +34,7 @@ class CodexAppBuilder:
         binary: Path | str,
         client_factory: ClientFactory | None = None,
         verifier: RestTimerVerifier | None = None,
+        packager: PersonalBundlePackager | None = None,
         max_concurrent: int = 1,
     ) -> None:
         self.jobs = jobs
@@ -48,6 +50,7 @@ class CodexAppBuilder:
             lambda: AppServerClient(binary, schema_directory)
         )
         self.verifier = verifier or RestTimerVerifier(self.runtime_root)
+        self.packager = packager
         self.max_concurrent = max(1, max_concurrent)
         self._stop = threading.Event()
         self._threads: dict[str, threading.Thread] = {}
@@ -281,6 +284,10 @@ class CodexAppBuilder:
                     "independent verification did not produce an artifact"
                 )
             artifact_document = artifact.document()
+            if self.packager is not None:
+                self._update_session(job_id, stage="packaging")
+                packaged = self.packager.package(artifact)
+                artifact_document["bundle"] = packaged.document()
             self._update_session(
                 job_id,
                 artifact_json=Store.encode(artifact_document),
@@ -299,6 +306,7 @@ class CodexAppBuilder:
         except (
             CodexProtocolError,
             VerificationError,
+            PersonalBundleError,
             OSError,
             KeyError,
             ValueError,
@@ -311,6 +319,8 @@ class CodexAppBuilder:
                     reason_code = (
                         "verification_failed"
                         if isinstance(error, VerificationError)
+                        else "packaging_failed"
+                        if isinstance(error, PersonalBundleError)
                         else "codex_protocol_failed"
                         if isinstance(error, CodexProtocolError)
                         else "worker_failed"

@@ -36,7 +36,13 @@ from fidelity import (
     parse_playback_telemetry,
     write_wave_mono_s16,
 )
-from protocol import envelope, word_error_rate
+from protocol import (
+    capture_correlation,
+    correlated_transcript,
+    current_guest_capture_request,
+    envelope,
+    word_error_rate,
+)
 
 
 ROOT = Path(__file__).resolve().parent
@@ -959,7 +965,10 @@ class LabSession:
             wav_path = directory / "watch-uplink.wav"
             await self.recorder.start(wav_path)
             started = time.monotonic()
-            await self.send("capture.start", {"duration_ms": self.arguments.duration_ms})
+            await self.send(
+                "capture.start",
+                current_guest_capture_request(self.arguments.duration_ms),
+            )
             await asyncio.sleep(0.6)
             prior_volume, prior_muted = mac_output_settings()
             try:
@@ -987,6 +996,7 @@ class LabSession:
             playback = await self.run_downlink_fidelity(directory)
             received_frames = self.recorder.samples_written // 960
             capture = stopped.get("payload") or {}
+            correlation = capture_correlation(capture)
             result = RunResult(
                 run=run_number,
                 wav=str(wav_path),
@@ -1006,7 +1016,10 @@ class LabSession:
             (directory / "result.json").write_text(
                 json.dumps(result.__dict__, indent=2) + "\n", encoding="utf-8"
             )
-            await self.send("transcript.final", {"text": transcript})
+            await self.send(
+                "transcript.final",
+                correlated_transcript(transcript, correlation),
+            )
             print(
                 f"run {run_number}/{self.arguments.runs}: "
                 f"{result.encoded_frames} encoded, "

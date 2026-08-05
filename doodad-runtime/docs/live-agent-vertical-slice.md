@@ -2,7 +2,7 @@
 
 | Field | Value |
 |---|---|
-| Status | Phases 0–5 implemented; Phase 6 pending; T-Watch BSP/build support landed but physical qualification remains |
+| Status | Phases 0–6 implemented in code; Phase 6 CoreS3 gate pending; T-Watch BSP/build support landed but physical qualification remains |
 | Last updated | 2026-08-04 |
 | First hardware target | M5Stack CoreS3 SE |
 | Host | Apple Silicon Mac |
@@ -39,11 +39,15 @@ The decisive demonstration is:
 9. Restart the Mac service while the job or question is pending and prove that
    the job, focus token, and delivery state recover without duplicate speech.
 10. Route production builds through Codex app-server. Codex creates a simple
-    Doodad rest-timer package, the independent build/check/test pipeline
-    validates it, and the system stops at `ready_for_review`.
+    Doodad rest-timer package and the independent build/check/test pipeline
+    validates it.
+11. Outside Codex, package the verified Wasm for the current user, announce it
+    with `app.ready`, install it on CoreS3, and offer **Launch now**. Switch the
+    one resident guest without rebooting; a detectable bad update restores the
+    prior generation.
 
 This slice is successful only if normal conversation remains available during
-steps 6 through 10. Speech recognition by itself, a one-shot chatbot, or a
+steps 6 through 11. Speech recognition by itself, a one-shot chatbot, or a
 blocking “building” screen does not satisfy the outcome.
 
 ## Phase 0–4 implementation and verification record
@@ -52,10 +56,12 @@ Phases 0 through 4 are implemented in this repository and were exercised
 end-to-end on the attached CoreS3 SE. The completed scope is the foreground
 conversation plane, typed watch capabilities, durable fake-worker jobs, the
 attention broker, recovery, and the orthogonal watch UI. Codex integration,
-generated-package activation, the wider hardening/evaluation phase, and full
-physical T-Watch qualification remain Phase 5 through Phase 8 work. The shared
-board abstraction and T-Watch firmware/build path landed after the original
-Phase 0–4 record; that is bring-up support, not Phase 8 qualification.
+personal-app installation, the wider hardening/evaluation
+phase, and full physical T-Watch qualification were Phase 5 through Phase 8
+work at the time of this record. Phases 5 and 6 are now implemented in code,
+but the Phase 6 physical CoreS3 gate has not been recorded. The shared board
+abstraction and T-Watch firmware/build path are bring-up support, not Phase 8
+qualification.
 
 The implementation includes:
 
@@ -75,7 +81,7 @@ The implementation includes:
 - separate foreground `VoicePhase` and background job state, allowing the
   VoiceOrb to listen while a build badge or focused question remains visible.
 
-Verification completed on 2026-08-03:
+Physical verification completed on 2026-08-03:
 
 - A single uninterrupted hardware soak ran for 626.552 seconds between the
   first and final inbound statistics samples. It ended at service monotonic
@@ -97,25 +103,72 @@ Verification completed on 2026-08-03:
 - Repeated physical microphone/speaker/microphone cycles completed with zero
   dropped playback frames and no I2S ownership failures after moving all codec
   transitions onto one firmware task.
-- `./scripts/test-live-agent.sh` passes 43 tests as reverified on 2026-08-04;
-  the independent Echo Bridge
-  protocol lane passed 3 tests; and `./scripts/test-all.sh` passed the full
-  desktop, native, SDK, contract, conformance, WAMR, golden, and firmware
-  suite, including 168 Python tests, 15 native tests, 9 SDK tests, 16 contract
-  tests, and all 20 conformance packages.
+
+Current software validation record, reconciled on 2026-08-04:
+
+- `./scripts/test-live-agent.sh` passes 85 tests;
+- the independent Echo Bridge protocol lane passes 14 tests;
+- native CTest passes 17 tests; and
+- root Python discovery passes 176 tests as part of the broader desktop, SDK,
+  contract, conformance, WAMR, golden, and firmware verification lanes.
 
 The CoreS3 microphone and speaker share one codec/I2S controller, so this slice
 uses the documented touch-to-interrupt fallback: touching the VoiceOrb stops
 queued assistant audio and restarts capture. True simultaneous acoustic
 barge-in is not claimed for this board configuration. The broader definition
-of done in section 16 intentionally remains open until Phases 5 through 8 are
-implemented.
+of done in section 16 intentionally remains open for the Phase 6 physical gate
+and Phases 7–8.
 
-## 2. Why this is the next slice
+## Phase 5–6 implementation record
 
-The repository already proves much of the embedded runtime and the first half
-of the audio path. The missing product behavior is coordination across those
-pieces.
+Phase 5 now uses the supervised Codex app-server worker, durable thread and
+question recovery, and a verifier independent of Codex's own completion claim.
+After that verifier succeeds, the Phase 6 outer packager reads the staged
+manifest and Wasm, writes an immutable content-addressed DDB1 artifact outside
+the mutable worker workspace, and persists the bundle identity with the durable
+`ready_for_review` job state. Codex never receives the personal signing key.
+
+The personal profile is explicitly user-bound and intentionally smaller than
+the original store-shaped proposal. A configured local `owner_id`, signer-key
+label, and shared 32-byte HMAC key authenticate canonical bundle metadata and
+the raw Wasm. The existing WebSocket sends `app.ready`; the same aiohttp port
+serves `/apps/<bundle_sha256>` over HTTP. HTTP transports bytes, while the
+announced bundle hash and DDB1 HMAC establish integrity and local-owner trust.
+
+CoreS3 queues downloads off the WebSocket callback, verifies into `.part`
+storage, and promotes only authenticated bytes into a durable multi-app
+registry. Each app retains current and previous generations. The trusted shell
+shows **APP READY** with **Launch now** and **Later**, and Home's **APPS**
+launcher is populated from the registry. Launch replaces the one WAMR guest
+without rebooting the native OS. Detectable startup or guest-handler failure
+restores the prior generation and records the exact failed
+`(app_id, semantic_version, payload_sha256)` tuple in a bounded, non-evicting
+quarantine set; launch and reinstall reject every recorded tuple. A ninth
+distinct failure persists a terminal app-level block, removes the app from the
+launcher, and rejects both retained slots plus reinstall until destructive
+profile reset. An install
+that completes beneath the trusted
+Voice overlay is notification-only until Voice closes, so **APP READY** never
+preempts listening or speaking. Exact-scheduler records are keyed by app ID plus
+timer ID so guest switches cannot cross-route them.
+
+Package storage is initialized only when a raw first-use scan proves the whole
+partition is erased (`0xFF`). A non-erased mount failure is never reformatted.
+The checksummed DDR2 registry uses a FatFs-compatible `.part`/`.bak` promotion
+and boot-repair transaction, and both board builds require heap-backed long
+filenames with a 255-byte maximum.
+
+This record describes implemented code and deterministic seams, not a completed
+physical Phase 6 run. The manual CoreS3 gate, expected logs, and explicit limits
+are in [Personal app installation](personal-app-installation.md). Published-app
+identity, revocation, capability approval, and app-store policy remain later
+work rather than requirements for personal v0.
+
+## 2. Why this vertical slice exists
+
+The repository already proved much of the embedded runtime and the first half
+of the audio path. This vertical slice was chosen to prove coordination across
+those pieces.
 
 ### Existing foundation to preserve
 
@@ -128,30 +181,32 @@ pieces.
 - [`voice-runtime.md`](voice-runtime.md) already locks the important trust
   boundary: audio, transport, Voice UI, permissions, and app lifecycle are
   host-owned services rather than guest-owned facilities.
-- The native shell already has trusted Voice, review, build, result, App
-  Manager, install-progress, and recovery visual states.
+- The native shell has trusted Voice, build/result, install-progress,
+  **APP READY**, installed-launcher, and recovery states.
 - The runtime has 20 separate Rust/Wasm applications, canonical AppSpec/CBOR,
   stable semantic IDs, a live semantic snapshot, typed provider imports, a
   surface registry, WAMR validation, and desktop conformance tooling.
 - Workout and Calories already exercise realistic app flows. Timer already
   exercises a host-owned exact scheduler and multi-surface projection.
-- Onboard package storage and embedded recovery exist, and desktop package
-  build/check/test commands already validate a staged Wasm artifact.
+- Onboard package storage, the personal current/previous registry, live guest
+  switching, and embedded recovery exist, while desktop package build/check/test
+  commands validate staged Wasm before the outer packager runs.
 
 The existing physical voice test remains a permanent conformance lane. The
 production conversation service must extend it, not delete or weaken it.
 
-### Remaining gaps after Phases 0–4
+### Remaining gaps after the Phase 6 implementation
 
 - Workout storage and most other domain providers are still marked as mocked
   in [`contracts/abi/v1.json`](../contracts/abi/v1.json); the minimal
   watch-owned Workout and Calories journals prove typed actions, not general
   history or shared data.
-- There is no Codex app-server client, isolated build workspace, event
-  normalizer, persisted Codex session mapping, or real generated artifact.
-- Firmware can read `/packages/active.wasm`, but download, signed bundle
-  verification, inactive staging, atomic activation, and rollback are not yet
-  implemented.
+- The complete personal build/download/install/live-launch/rollback flow has
+  deterministic coverage but still needs the physical CoreS3 evidence run in
+  [Personal app installation](personal-app-installation.md).
+- Personal HMAC trust is not published-app/store trust. Publisher identity,
+  revocation, distribution policy, and on-device capability grants remain
+  intentionally out of v0 scope.
 - The T-Watch firmware builds through the shared board abstraction, but its
   media, input, haptic, thermal, memory, reconnect, power, and battery behavior
   has not completed the Phase 8 physical gate.
@@ -266,7 +321,9 @@ background activity:
 A build badge can be present while the VoiceOrb is listening or speaking. The
 foreground returns to ordinary conversation immediately after accepting a
 job. The existing build and result stories remain useful as focused detail
-views, not as the global state for the whole job lifetime.
+views, not as the global state for the whole job lifetime. App installation and
+its completion haptic may proceed in the background, but **APP READY** is
+deferred while the Voice overlay owns the screen.
 
 ### 3.10 CoreS3 remains the qualification target
 
@@ -276,6 +333,24 @@ target for Phases 0–7. The T-Watch path may compile and receive ordinary board
 maintenance in parallel, but that does not substitute for the codec, input,
 haptic, reconnect, thermal, memory, power, and battery measurements required by
 Phase 8.
+
+### 3.11 Personal and published apps are separate trust profiles
+
+Personal v0 binds a bundle to the current user with one explicitly configured
+HMAC key. The owner implicitly trusts apps that pass the independent verifier;
+there is no second capability-approval or store-review ceremony on device.
+Installation still does not imply launch: the native **APP READY** surface owns
+the explicit **Launch now** action.
+
+Owner or signer/HMAC changes are destructive profile migrations in v0. Erase
+the package partition, rebuild the firmware profile, and repackage and reinstall
+the desired apps; a different authenticated envelope under the same generation
+triple is an identity conflict, not an in-place key rotation.
+
+If published distribution is later required, it gets a distinct asymmetric
+publisher/store profile, identity lifecycle, revocation, capability-grant
+policy, and review UI. The personal shared key must not silently become a store
+root of trust.
 
 ## 4. Target architecture
 
@@ -289,7 +364,7 @@ flowchart TB
         Kernel[Native capability service]
         WatchStore[(Watch-owned domain journal)]
         Runtime[WAMR apps and semantic snapshot]
-        Packages[Package verifier and activator]
+        Packages[Personal verifier, registry, and launcher]
 
         Mic <--> Media
         Control --> UI
@@ -309,7 +384,7 @@ flowchart TB
         Replica[(watch_data replica)]
         Fake[Deterministic fake worker]
         Codex[Codex app-builder worker]
-        Build[Build, conformance, sign, and stage]
+        Build[Independent verify and outer DDB1 packager]
 
         Transport <--> Foreground
         Foreground <--> Capabilities
@@ -432,12 +507,17 @@ Required message families are:
 - `job.summary`;
 - `question.focus` / `question.clear`;
 - `attention.delivery` / `attention.ack`;
-- `package.stage` / `package.progress` / `package.result`; and
+- `app.ready` with immutable bundle URL, size, and hashes; and
 - heartbeat, reconnect, and protocol-error messages.
 
 Every request has a bounded payload, correlation ID, deadline, and idempotency
 key where side effects are possible. Unknown versions and message types fail
 closed.
+
+`app.ready` is an idempotent announcement rather than a request/approval RPC.
+The network callback copies only its bounded URL, bundle SHA-256, and byte count
+onto the installer queue; HTTP and filesystem work happen elsewhere. Download,
+verification, and ready/failed progress are trusted local shell state in v0.
 
 ### Immediate capabilities in the slice
 
@@ -703,43 +783,53 @@ schema validation
   -> semantic and permission checks
   -> timer scenario/conformance checks
   -> simulator render and artifact hashes
-  -> bundle staging
+  -> outer personal DDB1 packaging and immutable artifact storage
   -> ready_for_review
 ```
 
-Codex does not decide that its own output passed. The job manager records each
-gate and refuses to stage an artifact after any failure.
+Codex does not decide that its own output passed and never receives the personal
+HMAC key. The job manager records each gate and refuses to package or announce
+an artifact after any failure.
 
-## 11. Package review, staging, and activation
+## 11. Personal packaging, installation, and launch
 
-App generation and app activation are distinct approvals.
+Generation, outer packaging, installation, and launch are separate operations,
+but personal v0 intentionally avoids a store-style review/activation ceremony.
+The local owner implicitly trusts output that reaches the independent verifier
+and outer packager. The explicit on-device choice is whether to launch now.
 
-The first complete CoreS3 slice adds:
+The implemented CoreS3 slice is:
 
-1. a canonical bundle containing manifest, Wasm, agent contract, assets, and
-   hashes;
-2. a local development signing identity with its public key pinned or
-   provisioned into the trusted shell;
-3. authenticated transfer from the Mac to an inactive package directory;
-4. streamed size and hash validation before files become visible;
-5. signature, ABI, capability, schema, resource, and migration preflight;
-6. a trusted review screen showing app identity, version, permissions, and
-   artifact hash;
-7. explicit user activation;
-8. an atomic active-generation pointer update;
-9. launch health confirmation; and
-10. automatic rollback to the prior known-good generation on failed startup.
+1. after deterministic verification, package raw `app.wasm` with canonical
+   owner/app/version/ABI/hash metadata in DDB1;
+2. authenticate the fixed header, metadata, and payload with HMAC-SHA256 using
+   a local key unavailable to Codex;
+3. persist the whole bundle in an immutable content-addressed artifact store;
+4. announce its identity, sizes, hashes, and URL with reconnect-safe
+   `app.ready` over the existing WebSocket;
+5. serve `/apps/<bundle_sha256>` over HTTP on that same live-agent port;
+6. stream into a `.part` file and verify announced length/hash, DDB1 HMAC,
+   owner, signer-key label, host ABI, canonical metadata, and payload hash;
+7. promote verified files through a checksummed DDR2 `.part`/`.bak` transaction
+   and advance the durable per-owner registry, retaining current and previous
+   generations per app;
+8. show **APP READY** with **Launch now** and **Later**, without preempting an
+   active Voice overlay, and populate the Home launcher from that registry;
+9. live-switch the one resident WAMR guest without rebooting the native shell;
+   and
+10. attribute detectable startup/handler failure to the exact app/version/
+    payload triple, record that tuple in the bounded non-evicting quarantine
+    set, reject it from launch and reinstall, restore and reload the prior
+    generation, and keep timers app-namespaced.
 
-No voice utterance interpreted solely by the foreground model may silently
-expand permissions or activate a newly generated package. The trusted review
-UI owns that decision.
+Capabilities remain part of the existing manifest/import verifier but are not
+an on-device grant UI in personal v0. A future published-app profile may add
+asymmetric publisher identity, capability grants, store review, and revocation;
+none of those should be implied by this shared user key. See
+[Personal app installation](personal-app-installation.md) for exact format,
+configuration, limits, and physical validation.
 
-If package activation threatens to delay the core conversation/job proof, keep
-it as a separately gated phase. A simulator-tested, `ready_for_review` Codex
-artifact is the Codex-worker gate; on-device activation is the subsequent
-package-system gate.
-
-## 12. Proposed repository shape
+## 12. Implemented repository seams
 
 ```text
 doodad-runtime/
@@ -748,32 +838,28 @@ doodad-runtime/
 │   ├── calories/agent.json
 │   └── timer/agent.json
 ├── contracts/
-│   ├── agent-contract-v1.schema.json
-│   ├── agent-control-event-v1.schema.json
-│   ├── watch-state-v1.schema.json
-│   ├── workout-agent-v1.schema.json
-│   └── nutrition-agent-v1.schema.json
+│   └── agent, control, watch-state, Workout, and nutrition schemas
 ├── services/
 │   └── live-agent/
-│       ├── pyproject.toml
-│       ├── uv.lock
 │       ├── src/doodad_agent/
 │       │   ├── main.py
 │       │   ├── conversation.py
 │       │   ├── transport.py
-│       │   ├── context.py
 │       │   ├── capabilities.py
-│       │   ├── watch_client.py
 │       │   ├── jobs.py
 │       │   ├── attention.py
 │       │   ├── fake_worker.py
 │       │   ├── codex_worker.py
+│       │   ├── app_verifier.py
+│       │   ├── personal_bundle.py
+│       │   ├── app_delivery.py
 │       │   └── storage.py
-│       ├── generated/codex-app-server/
 │       └── tests/
 ├── firmware/main/
-│   ├── include/agent_control_service.hpp
-│   └── src/agent_control_service.cpp
+│   ├── include/{personal_bundle,package_registry,package_service}.hpp
+│   └── src/{personal_bundle,package_registry,package_service}.cpp
+├── components/m3e_lvgl/
+│   └── exact scheduler with app-owned records
 ├── fixtures/agent/
 │   ├── conversations/
 │   ├── jobs/
@@ -791,6 +877,9 @@ remain runnable without hosted STT, LLM, TTS, or Codex credentials.
 Provider credentials live in environment variables or the macOS keychain and
 never in firmware, fixtures, logs, or checked-in configuration. Runtime SQLite
 files and Codex workspaces live in application-support storage, not the repo.
+The personal HMAC key is a separate local-development secret: it is explicitly
+configured in the service environment and Git-ignored CoreS3 `sdkconfig`, and
+is never sent to Codex or written into its workspace.
 
 ## 13. Phased implementation
 
@@ -900,20 +989,30 @@ resume the correct Codex thread, and produce a rest-timer artifact that passes
 all deterministic gates. Foreground context and logs contain no raw Codex
 deltas or build output.
 
-### Phase 6 — signed package staging and CoreS3 activation
+### Phase 6 — personal package installation and live launch
 
 Deliverables:
 
-- define the canonical bundle and development signing flow;
-- implement authenticated inactive transfer and verification;
-- add trusted permission/artifact review;
-- atomically activate a package generation;
-- confirm launch health and preserve the prior generation; and
-- exercise rollback after a deliberately invalid or trapping update.
+- define byte-exact DDB1 and the explicit personal owner/HMAC configuration;
+- package only independently verified output outside the Codex workspace;
+- announce `app.ready` over WebSocket and serve immutable artifacts over HTTP
+  on the same port;
+- verify and atomically install into a multi-app current/previous registry;
+- replace the fixture launcher with the installed-app launcher plus **Launch
+  now** and **Later**;
+- live-switch the single WAMR guest while native Home and Voice remain
+  resident;
+- restore the prior generation after a detectable bad startup or guest-handler
+  failure, quarantine the exact failed generation from launch/reinstall, and
+  defer **APP READY** rather than preempt active Voice; and
+- namespace host-owned exact timers by app identity.
 
-**Gate:** the reviewed generated rest timer installs on CoreS3 without firmware
-reflash, and a failed generation rolls back without losing Home, Voice, or the
-embedded recovery path.
+**Implementation status:** these seams are implemented in code and deterministic
+tests. **Physical gate still open:** the generated rest timer must install and
+launch on CoreS3 without firmware reflash or reboot, and a deliberately failing
+second generation must restore the prior one without losing Home, Voice, or the
+embedded recovery path. Record the evidence using the
+[manual procedure](personal-app-installation.md#manual-cores3-validation).
 
 ### Phase 7 — evaluation and hardening
 
@@ -953,7 +1052,12 @@ qualification.
 - idempotency under repeated STT finals and network retries;
 - event-log rebuild equals materialized state;
 - worker lease expiry and restart recovery; and
-- app-server protocol fixtures from the pinned generated schema.
+- app-server protocol fixtures from the pinned generated schema;
+- byte-identical host/device DDB1 fixtures plus canonicalization, owner, ABI,
+  length, hash, HMAC, and tamper rejection; and
+- current/previous DDR2 transitions, FatFs non-replacing `.part`/`.bak` recovery,
+  LFN configuration, replay idempotency, exact-generation quarantine, and
+  `(app_id, timer_id)` isolation.
 
 ### Integration tests
 
@@ -964,7 +1068,10 @@ qualification.
   failures, and restarts;
 - real `doodad build`, `check`, and `test` for a checked-in generated fixture;
 - process-kill recovery at every durable job state; and
-- simultaneous foreground conversation plus two durable jobs.
+- simultaneous foreground conversation plus two durable jobs;
+- same-port artifact HTTP responses and reconnect-safe `app.ready`; and
+- installed-app load/start/handler-failure rollback without restarting the
+  native runtime.
 
 ### Physical CoreS3 tests
 
@@ -975,7 +1082,9 @@ qualification.
 - Wi-Fi loss and reconnect during listening, speaking, and a pending job;
 - immediate Workout and Calories actions with visible revision change;
 - question and completion attention behavior; and
-- generated package stage, activation, crash, and rollback.
+- generated personal package announcement, download, install, **Launch now**,
+  Voice non-preemption, launcher re-entry, live switch, detectable crash,
+  exact-generation quarantine, and rollback.
 
 ### Latency instrumentation
 
@@ -1018,7 +1127,10 @@ the targets are met.
 | Codex protocol changes | Pin Codex; generate schemas from that binary; isolate all protocol handling in one adapter |
 | Experimental Codex input request changes | Stable constrained-output question fallback |
 | Codex output passes its own optimistic assessment | Separate deterministic schema/build/check/test/conformance pipeline |
-| Generated app expands permissions | Trusted permission review and signature/preflight before activation |
+| Generated app expands imports/capabilities | Independent manifest/import/permission verifier rejects it before personal packaging; published per-install grants remain later policy |
+| Plain HTTP artifact bytes are altered or replayed | Verify announced whole-bundle SHA-256 plus owner-bound DDB1 HMAC; make repeated immutable digests idempotent |
+| A live switch misroutes old callbacks or timers | Copy generation identity, discard stale UI events, key timers by app ID plus timer ID, and attribute handler failure before rollback |
+| The personal shared key is mistaken for store trust | Label the profile personal-only; add a separate asymmetric publisher/store profile if distribution becomes real |
 | Raw worker context degrades voice latency or privacy | Persist compact typed summaries; never inject logs/deltas into the foreground model |
 | Device and Mac replicas diverge | Watch-authoritative revisions, explicit stale state, and reconciliation tests |
 | Hosted provider outage blocks all UI | Voice error/retry state remains native; apps and watch-owned data continue offline |
@@ -1046,8 +1158,16 @@ true:
   its persisted thread;
 - the generated rest timer includes a valid agent contract and passes schema,
   Wasm, simulator, semantic, permission, and timer conformance gates;
-- installation requires trusted review, activation is atomic, and a failed app
-  rolls back without disabling Voice or Home;
+- only the outer user-bound packager can turn that verified artifact into DDB1,
+  and reconnect-safe `app.ready` plus same-port HTTP delivers exactly those
+  authenticated bytes;
+- installation advances a durable current/previous registry without launching,
+  and the trusted **Launch now** action or installed launcher live-switches the
+  one guest without rebooting;
+- **APP READY** never preempts an active Voice overlay, and a detectable bad
+  generation is quarantined by its exact app/version/payload triple while the
+  safe current or previous guest is loaded without disabling Voice or Home;
+- per-app timers never cross-route after a guest switch;
 - no secret, raw Codex log, unrestricted SQL surface, or general MCP tool enters
   the foreground hot path; and
 - a checked-in evaluation report contains measured latency, reliability,

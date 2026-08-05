@@ -134,6 +134,17 @@ if(BUILD_TESTING)
   target_link_libraries(m3e_surface_registry_test PRIVATE m3e::lvgl)
   add_test(NAME m3e_surface_registry COMMAND m3e_surface_registry_test)
 
+  add_executable(m3e_personal_packages_test
+    "${DOODAD_ROOT}/tests/m3e/personal_packages_test.cpp"
+    "${DOODAD_ROOT}/firmware/main/src/package_registry.cpp"
+    "${DOODAD_ROOT}/firmware/main/src/personal_bundle.cpp")
+  target_include_directories(m3e_personal_packages_test PRIVATE
+    "${DOODAD_ROOT}/firmware/main/include")
+  # This suite uses assert as the existing native tests do; keep checks and
+  # their exercised calls enabled even in the default Release host build.
+  target_compile_options(m3e_personal_packages_test PRIVATE -UNDEBUG)
+  add_test(NAME m3e_personal_packages COMMAND m3e_personal_packages_test)
+
   find_package(Python3 REQUIRED COMPONENTS Interpreter)
   add_test(
     NAME m3e_token_sync

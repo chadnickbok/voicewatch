@@ -16,6 +16,7 @@ from typing import Any
 from zeroconf import IPVersion, ServiceInfo, Zeroconf
 
 from .attention import AttentionBroker
+from .app_delivery import AppArtifactServer, AppReadyPublisher
 from .builder import AppBuilder
 from .capabilities import CapabilityKernel
 from .codex_worker import CodexAppBuilder, default_codex_binary
@@ -23,6 +24,12 @@ from .controller import ForegroundController
 from .fake_worker import FakeAppBuilder, ManualClock
 from .jobs import JobManager
 from .metrics import DeviceLatencyTrace, LatencyTrace
+from .personal_bundle import (
+    ArtifactStore,
+    PersonalBundleError,
+    PersonalBundlePackager,
+    PersonalTrustProfile,
+)
 from .storage import Store
 from .transport import DownlinkUtteranceBinding, WatchTransportServer, local_ipv4
 
@@ -31,6 +38,9 @@ DEFAULT_DATABASE = Path.home() / "Library/Application Support/Doodad/agent-contr
 DEFAULT_TRACE = Path.home() / "Library/Logs/Doodad/live-agent-latency.jsonl"
 DEFAULT_CODEX_WORKSPACES = (
     Path.home() / "Library/Application Support/Doodad/codex-jobs"
+)
+DEFAULT_PERSONAL_ARTIFACTS = (
+    Path.home() / "Library/Application Support/Doodad/personal-apps"
 )
 
 
@@ -48,6 +58,25 @@ def find_runtime_root() -> Path:
 
 
 RUNTIME_ROOT = find_runtime_root()
+
+
+def personal_trust_from_environment() -> PersonalTrustProfile | None:
+    """Enable personal delivery only with one complete explicit trust profile."""
+
+    owner_id = os.getenv("DOODAD_PERSONAL_OWNER_ID", "").strip()
+    key_hex = os.getenv("DOODAD_PERSONAL_HMAC_KEY_HEX", "").strip()
+    if not owner_id and not key_hex:
+        return None
+    if not owner_id or not key_hex:
+        raise PersonalBundleError(
+            "DOODAD_PERSONAL_OWNER_ID and DOODAD_PERSONAL_HMAC_KEY_HEX "
+            "must be configured together"
+        )
+    signer_key_id = (
+        os.getenv("DOODAD_PERSONAL_SIGNER_KEY_ID", "personal-v1").strip()
+        or "personal-v1"
+    )
+    return PersonalTrustProfile.from_hex(owner_id, signer_key_id, key_hex)
 
 
 def advertise(ip: str, port: int) -> tuple[Zeroconf, ServiceInfo]:
@@ -78,6 +107,7 @@ def control_plane(database: Path, now_ms: int | None = None) -> tuple[
 
 
 async def serve(arguments: argparse.Namespace) -> None:
+    personal_trust = personal_trust_from_environment()
     if os.getenv("DOODAD_AIORTC_DEBUG") == "1":
         logging.basicConfig(level=logging.WARNING)
         logging.getLogger("aiortc").setLevel(logging.DEBUG)
@@ -85,6 +115,38 @@ async def serve(arguments: argparse.Namespace) -> None:
 
     trace = LatencyTrace(arguments.trace)
     store = Store(arguments.database)
+    ip = local_ipv4()
+    artifact_store = (
+        ArtifactStore(
+            Path(
+                os.getenv(
+                    "DOODAD_PERSONAL_ARTIFACT_ROOT",
+                    str(DEFAULT_PERSONAL_ARTIFACTS),
+                )
+                or str(DEFAULT_PERSONAL_ARTIFACTS)
+            )
+        )
+        if personal_trust is not None
+        else None
+    )
+    packager = (
+        PersonalBundlePackager(personal_trust, artifact_store)
+        if personal_trust is not None and artifact_store is not None
+        else None
+    )
+    artifact_server = (
+        AppArtifactServer(artifact_store) if artifact_store is not None else None
+    )
+    app_publisher = (
+        AppReadyPublisher(
+            f"http://{ip}:{arguments.port}",
+            artifact_store,
+            owner_id=personal_trust.owner_id,
+            signer_key_id=personal_trust.signer_key_id,
+        )
+        if artifact_store is not None and personal_trust is not None
+        else None
+    )
     transport: WatchTransportServer
 
     class DeviceRuntime:
@@ -101,6 +163,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             self.attention = attention
             self.downlink = DownlinkUtteranceBinding()
             self.last_agent_state: dict[str, Any] | None = None
+            self.last_app_publish_at = 0.0
             self.conversation: LiveConversation | None = None
 
     runtimes: dict[str, DeviceRuntime] = {}
@@ -108,6 +171,27 @@ async def serve(arguments: argparse.Namespace) -> None:
 
     def current_session(device_id: str):  # type: ignore[no-untyped-def]
         return transport.sessions.get(device_id)
+
+    async def publish_ready_apps(
+        runtime: DeviceRuntime, *, force: bool = False
+    ) -> None:
+        if app_publisher is None:
+            return
+        session = current_session(runtime.device_id)
+        if session is None:
+            return
+        now = asyncio.get_running_loop().time()
+        if not force and now - runtime.last_app_publish_at < 1.0:
+            return
+        runtime.last_app_publish_at = now
+        announced = await app_publisher.publish_pending(
+            session, store, runtime.device_id
+        )
+        for digest in announced:
+            trace.mark(
+                "app.ready", device_id=runtime.device_id,
+                bundle_sha256=digest,
+            )
 
     async def create_runtime(device_id: str) -> DeviceRuntime:
         jobs = JobManager(store, device_id)
@@ -121,6 +205,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             RUNTIME_ROOT,
             workspace_root,
             binary=default_codex_binary(),
+            packager=packager,
         )
         attention = AttentionBroker(store, jobs)
         controller = ForegroundController(kernel, builder, attention)
@@ -182,12 +267,14 @@ async def serve(arguments: argparse.Namespace) -> None:
                     "install_state": 0,
                 },
             }
-            if document == runtime.last_agent_state:
-                return
-            runtime.last_agent_state = document
+            changed = document != runtime.last_agent_state
             session = current_session(device_id)
-            if session is not None:
+            if changed:
+                runtime.last_agent_state = document
+            if changed and session is not None:
                 await session.send("agent.state", document)
+            if document["background"]["review_ready"]:
+                await publish_ready_apps(runtime, force=changed)
 
         runtime.conversation = LiveConversation(
             controller, builder, attention, device_trace, audio_sink, stop_capture,
@@ -217,6 +304,8 @@ async def serve(arguments: argparse.Namespace) -> None:
         if kind == "connected" and session is not None:
             runtime.downlink.cancel()
             runtime.last_agent_state = None
+            runtime.last_app_publish_at = 0.0
+            await publish_ready_apps(runtime, force=True)
             if conversation is not None:
                 await conversation.ready()
         elif kind == "listen.requested" and session is not None:
@@ -252,12 +341,20 @@ async def serve(arguments: argparse.Namespace) -> None:
                 payload, int(time.time() * 1000)
             )
 
-    transport = WatchTransportServer(trace, on_audio, on_event, arguments.port)
+    transport = WatchTransportServer(
+        trace, on_audio, on_event, arguments.port,
+        artifact_server=artifact_server,
+    )
     await transport.start()
-    ip = local_ipv4()
     zeroconf, service = await asyncio.to_thread(advertise, ip, arguments.port)
     print(f"Doodad Live Agent listening at ws://{ip}:{arguments.port}/ws", flush=True)
     print("Foreground model and provider keys loaded (values hidden).", flush=True)
+    print(
+        "Personal app delivery enabled."
+        if personal_trust is not None
+        else "Personal app delivery disabled; owner and key are not configured.",
+        flush=True,
+    )
     stopped = asyncio.Event()
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGINT, signal.SIGTERM):
@@ -309,11 +406,28 @@ def check_config() -> int:
         "DOODAD_CODEX_BINARY",
         "DOODAD_CODEX_WORKSPACE_ROOT",
         "DOODAD_RUNTIME_ROOT",
+        "DOODAD_PERSONAL_OWNER_ID",
+        "DOODAD_PERSONAL_SIGNER_KEY_ID",
+        "DOODAD_PERSONAL_HMAC_KEY_HEX",
+        "DOODAD_PERSONAL_ARTIFACT_ROOT",
     )
+    try:
+        personal_profile = personal_trust_from_environment()
+        personal_valid = True
+        personal_error = None
+    except PersonalBundleError as error:
+        personal_profile = None
+        personal_valid = False
+        personal_error = str(error)
     result = {
-        "ready": all(bool(os.getenv(name)) for name in required),
+        "ready": all(bool(os.getenv(name)) for name in required) and personal_valid,
         "required": {name: bool(os.getenv(name)) for name in required},
         "optional_overrides": {name: bool(os.getenv(name)) for name in optional},
+        "personal_app_delivery": {
+            "enabled": personal_profile is not None,
+            "valid": personal_valid,
+            "error": personal_error,
+        },
     }
     print(json.dumps(result, indent=2))
     return 0 if result["ready"] else 2

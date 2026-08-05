@@ -34,6 +34,7 @@ if [[ "${DOODAD_BUILD_TESTS:-1}" == "1" ]]; then
         m3e_deterministic_system_test \
         m3e_exact_scheduler_test \
         m3e_surface_registry_test \
+        m3e_personal_packages_test \
         m3e_os_shell_test \
         m3e_framework_test
 fi

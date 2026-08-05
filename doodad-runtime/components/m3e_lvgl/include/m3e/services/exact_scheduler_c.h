@@ -10,6 +10,7 @@ extern "C" {
 typedef void* m3e_exact_scheduler_handle;
 
 typedef struct {
+    char owner_app_id[97];
     char id[49];
     uint64_t deadline_scenario_ms;
     uint64_t original_duration_ms;
@@ -19,6 +20,7 @@ typedef struct {
 } m3e_schedule_record;
 
 typedef struct {
+    char owner_app_id[97];
     char id[49];
     uint64_t deadline_scenario_ms;
     uint64_t revision;
@@ -27,6 +29,20 @@ typedef struct {
 
 m3e_exact_scheduler_handle m3e_exact_scheduler_create(void);
 void m3e_exact_scheduler_destroy(m3e_exact_scheduler_handle handle);
+uint64_t m3e_exact_scheduler_schedule_after_for_app(
+    m3e_exact_scheduler_handle handle,
+    const char* owner_app_id,
+    const char* id,
+    uint64_t duration_ms,
+    uint64_t scenario_now_ms);
+int m3e_exact_scheduler_cancel_for_app(
+    m3e_exact_scheduler_handle handle,
+    const char* owner_app_id,
+    const char* id);
+int m3e_exact_scheduler_acknowledge_for_app(
+    m3e_exact_scheduler_handle handle,
+    const char* owner_app_id,
+    const char* id);
 uint64_t m3e_exact_scheduler_schedule_after(
     m3e_exact_scheduler_handle handle,
     const char* id,
@@ -45,6 +61,12 @@ size_t m3e_exact_scheduler_poll(
     size_t delivery_capacity);
 size_t m3e_exact_scheduler_records(
     m3e_exact_scheduler_handle handle,
+    m3e_schedule_record* records,
+    size_t record_capacity,
+    uint64_t scenario_now_ms);
+size_t m3e_exact_scheduler_records_for_app(
+    m3e_exact_scheduler_handle handle,
+    const char* owner_app_id,
     m3e_schedule_record* records,
     size_t record_capacity,
     uint64_t scenario_now_ms);

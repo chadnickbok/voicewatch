@@ -10,6 +10,9 @@ idf_component_register(
     SRCS
         "src/app_runner.cpp"
         "src/app_sources.cpp"
+        "src/package_registry.cpp"
+        "src/package_service.cpp"
+        "src/personal_bundle.cpp"
         "${DOODAD_BOARD_SOURCE}"
         "src/display.cpp"
         "src/main.cpp"
@@ -26,6 +29,7 @@ idf_component_register(
         esp_audio_codec
         esp_http_client
         esp_peer
+        esp_partition
         esp_driver_sdspi
         esp_netif
         esp_websocket_client

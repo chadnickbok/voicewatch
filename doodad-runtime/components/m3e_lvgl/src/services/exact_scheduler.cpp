@@ -6,7 +6,10 @@
 namespace m3e::services {
 namespace {
 
-bool copy_id(std::array<char, 49>& destination, const char* source) {
+constexpr char kLegacyOwnerAppId[] = "dev.doodad.legacy";
+
+template <std::size_t Size>
+bool copy_text(std::array<char, Size>& destination, const char* source) {
     if (source == nullptr) return false;
     const auto length = std::strlen(source);
     if (length == 0 || length >= destination.size()) return false;
@@ -14,8 +17,12 @@ bool copy_id(std::array<char, 49>& destination, const char* source) {
     return true;
 }
 
-bool same_id(const std::array<char, 49>& id, const char* candidate) {
-    return candidate != nullptr && std::strcmp(id.data(), candidate) == 0;
+template <std::size_t Size>
+bool same_text(
+    const std::array<char, Size>& stored,
+    const char* candidate) {
+    return candidate != nullptr &&
+        std::strcmp(stored.data(), candidate) == 0;
 }
 
 bool can_add(std::uint64_t value, std::uint64_t increment) {
@@ -30,34 +37,53 @@ void ExactScheduler::changed() {
     }
 }
 
-ScheduleRecord* ExactScheduler::find_mutable(const char* id) {
-    if (id == nullptr) return nullptr;
+ScheduleRecord* ExactScheduler::find_mutable_for_app(
+    const char* owner_app_id,
+    const char* id) {
+    if (owner_app_id == nullptr || id == nullptr) return nullptr;
     for (std::size_t index = 0; index < size_; ++index) {
-        if (same_id(records_[index].id, id)) return &records_[index];
+        if (same_text(records_[index].owner_app_id, owner_app_id) &&
+            same_text(records_[index].id, id)) {
+            return &records_[index];
+        }
+    }
+    return nullptr;
+}
+
+const ScheduleRecord* ExactScheduler::find_for_app(
+    const char* owner_app_id,
+    const char* id) const {
+    if (owner_app_id == nullptr || id == nullptr) return nullptr;
+    for (std::size_t index = 0; index < size_; ++index) {
+        if (same_text(records_[index].owner_app_id, owner_app_id) &&
+            same_text(records_[index].id, id)) {
+            return &records_[index];
+        }
     }
     return nullptr;
 }
 
 const ScheduleRecord* ExactScheduler::find(const char* id) const {
-    if (id == nullptr) return nullptr;
-    for (std::size_t index = 0; index < size_; ++index) {
-        if (same_id(records_[index].id, id)) return &records_[index];
-    }
-    return nullptr;
+    return find_for_app(kLegacyOwnerAppId, id);
 }
 
-bool ExactScheduler::schedule_after(
+bool ExactScheduler::schedule_after_for_app(
+    const char* owner_app_id,
     const char* id,
     std::uint64_t duration_ms,
     std::uint64_t scenario_now_ms) {
     if (duration_ms == 0 || !can_add(scenario_now_ms, duration_ms)) {
         return false;
     }
-    auto* record = find_mutable(id);
+    auto* record = find_mutable_for_app(owner_app_id, id);
     if (record == nullptr) {
         if (size_ >= kCapacity) return false;
         record = &records_[size_];
-        if (!copy_id(record->id, id)) return false;
+        if (!copy_text(record->owner_app_id, owner_app_id) ||
+            !copy_text(record->id, id)) {
+            *record = {};
+            return false;
+        }
         ++size_;
     } else if (
         record->state == ScheduleState::scheduled ||
@@ -72,11 +98,20 @@ bool ExactScheduler::schedule_after(
     return true;
 }
 
-bool ExactScheduler::snooze(
+bool ExactScheduler::schedule_after(
     const char* id,
     std::uint64_t duration_ms,
     std::uint64_t scenario_now_ms) {
-    auto* record = find_mutable(id);
+    return schedule_after_for_app(
+        kLegacyOwnerAppId, id, duration_ms, scenario_now_ms);
+}
+
+bool ExactScheduler::snooze_for_app(
+    const char* owner_app_id,
+    const char* id,
+    std::uint64_t duration_ms,
+    std::uint64_t scenario_now_ms) {
+    auto* record = find_mutable_for_app(owner_app_id, id);
     if (record == nullptr || record->state != ScheduleState::firing ||
         duration_ms == 0 || !can_add(scenario_now_ms, duration_ms)) {
         return false;
@@ -89,8 +124,18 @@ bool ExactScheduler::snooze(
     return true;
 }
 
-bool ExactScheduler::cancel(const char* id) {
-    auto* record = find_mutable(id);
+bool ExactScheduler::snooze(
+    const char* id,
+    std::uint64_t duration_ms,
+    std::uint64_t scenario_now_ms) {
+    return snooze_for_app(
+        kLegacyOwnerAppId, id, duration_ms, scenario_now_ms);
+}
+
+bool ExactScheduler::cancel_for_app(
+    const char* owner_app_id,
+    const char* id) {
+    auto* record = find_mutable_for_app(owner_app_id, id);
     if (record == nullptr ||
         (record->state != ScheduleState::scheduled &&
          record->state != ScheduleState::firing)) {
@@ -102,8 +147,14 @@ bool ExactScheduler::cancel(const char* id) {
     return true;
 }
 
-bool ExactScheduler::acknowledge(const char* id) {
-    auto* record = find_mutable(id);
+bool ExactScheduler::cancel(const char* id) {
+    return cancel_for_app(kLegacyOwnerAppId, id);
+}
+
+bool ExactScheduler::acknowledge_for_app(
+    const char* owner_app_id,
+    const char* id) {
+    auto* record = find_mutable_for_app(owner_app_id, id);
     if (record == nullptr || record->state != ScheduleState::firing) {
         return false;
     }
@@ -111,6 +162,10 @@ bool ExactScheduler::acknowledge(const char* id) {
     ++record->revision;
     changed();
     return true;
+}
+
+bool ExactScheduler::acknowledge(const char* id) {
+    return acknowledge_for_app(kLegacyOwnerAppId, id);
 }
 
 std::size_t ExactScheduler::poll(
@@ -133,6 +188,7 @@ std::size_t ExactScheduler::poll(
         ++record.revision;
         ++record.fire_count;
         auto& delivery = deliveries[emitted++];
+        delivery.owner_app_id = record.owner_app_id;
         delivery.id = record.id;
         delivery.deadline_scenario_ms = record.deadline_scenario_ms;
         delivery.revision = record.revision;
@@ -144,6 +200,10 @@ std::size_t ExactScheduler::poll(
 
 bool ExactScheduler::record_is_valid(const ScheduleRecord& record) {
     if (record.state == ScheduleState::empty ||
+        record.owner_app_id[0] == '\0' ||
+        record.owner_app_id.back() != '\0' ||
+        std::strlen(record.owner_app_id.data()) >=
+            record.owner_app_id.size() ||
         record.id[0] == '\0' ||
         record.id.back() != '\0' ||
         std::strlen(record.id.data()) >= record.id.size()) {
@@ -168,8 +228,10 @@ bool ExactScheduler::restore(const SchedulerJournal& journal) {
     for (std::size_t index = 0; index < journal.count; ++index) {
         if (!record_is_valid(journal.records[index])) return false;
         for (std::size_t earlier = 0; earlier < index; ++earlier) {
-            if (journal.records[index].id ==
-                journal.records[earlier].id) {
+            if (journal.records[index].owner_app_id ==
+                    journal.records[earlier].owner_app_id &&
+                journal.records[index].id ==
+                    journal.records[earlier].id) {
                 return false;
             }
         }
@@ -188,15 +250,23 @@ SchedulerJournal ExactScheduler::journal() const {
     return result;
 }
 
-std::uint64_t ExactScheduler::remaining_ms(
+std::uint64_t ExactScheduler::remaining_ms_for_app(
+    const char* owner_app_id,
     const char* id,
     std::uint64_t scenario_now_ms) const {
-    const auto* record = find(id);
+    const auto* record = find_for_app(owner_app_id, id);
     if (record == nullptr || record->state != ScheduleState::scheduled ||
         record->deadline_scenario_ms <= scenario_now_ms) {
         return 0;
     }
     return record->deadline_scenario_ms - scenario_now_ms;
+}
+
+std::uint64_t ExactScheduler::remaining_ms(
+    const char* id,
+    std::uint64_t scenario_now_ms) const {
+    return remaining_ms_for_app(
+        kLegacyOwnerAppId, id, scenario_now_ms);
 }
 
 std::size_t ExactScheduler::size() const {

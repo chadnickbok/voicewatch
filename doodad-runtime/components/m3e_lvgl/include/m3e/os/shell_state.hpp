@@ -149,6 +149,11 @@ public:
     [[nodiscard]] bool open_app(
         const char* app_id,
         std::uint32_t generation);
+    // Replaces the foreground guest route without retaining app-detail,
+    // recovery, or prior-app routes from an earlier resident generation.
+    [[nodiscard]] bool replace_app(
+        const char* app_id,
+        std::uint32_t generation);
     [[nodiscard]] bool open_app_manager();
     [[nodiscard]] bool open_app_detail();
     [[nodiscard]] bool open_install_progress();

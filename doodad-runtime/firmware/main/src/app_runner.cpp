@@ -1,6 +1,7 @@
 #include "app_runner.hpp"
 
 #include <array>
+#include <atomic>
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
@@ -36,8 +37,10 @@ constexpr std::uint32_t kExecEnvStackBytes = 8 * 1024;
 constexpr std::size_t kEventQueueDepth = 16;
 constexpr std::uint32_t kMaximumTimerDurationMs =
     7 * 24 * 60 * 60 * 1000;
+constexpr char kEmbeddedAppId[] = "system.embedded";
 
 struct GuestEvent {
+    std::uint64_t ui_owner_epoch;
     std::uint8_t schema;
     std::array<char, 65> app_id;
     std::array<char, 65> screen_id;
@@ -69,7 +72,22 @@ std::uint64_t g_timer_surface_revision = 0;
 std::uint64_t g_weather_request_id = 0;
 std::uint64_t g_weather_surface_revision = 0;
 bool g_weather_request_pending = false;
-std::uint8_t g_weather_cycle = 0;
+std::uint64_t g_weather_pending_owner_token = 0;
+std::uint64_t g_weather_inflight_owner_token = 0;
+[[maybe_unused]] std::uint8_t g_weather_cycle = 0;
+AppRuntimeIdentity g_current_identity{};
+bool g_has_current_identity = false;
+bool g_guest_healthy = false;
+std::uint64_t g_provider_owner_sequence = 0;
+std::uint64_t g_current_provider_owner_token = 0;
+AppRuntimeFailure g_pending_failure{};
+bool g_failure_pending = false;
+std::uint64_t g_failure_sequence = 0;
+portMUX_TYPE g_ui_owner_lock = portMUX_INITIALIZER_UNLOCKED;
+const char* g_active_ui_owner_pointer = nullptr;
+std::uint64_t g_active_ui_owner_epoch = 0;
+std::uint64_t g_ui_owner_epoch_sequence = 0;
+std::atomic<bool> g_allow_legacy_event_alias{false};
 
 void log_exception(wasm_module_inst_t module_instance);
 std::uint64_t scenario_now_ms();
@@ -82,6 +100,188 @@ bool copy_identifier(
     if (length == 0 || length >= destination.size()) return false;
     std::memcpy(destination.data(), source, length + 1);
     return true;
+}
+
+bool copy_identity_text(
+    char* destination,
+    std::size_t capacity,
+    const char* source,
+    bool allow_empty) {
+    if (destination == nullptr || capacity == 0 || source == nullptr) {
+        return false;
+    }
+    const auto length = std::strlen(source);
+    if ((!allow_empty && length == 0) || length >= capacity) {
+        return false;
+    }
+    std::memcpy(destination, source, length + 1);
+    return true;
+}
+
+bool identity_for_image(
+    const AppImage& image,
+    AppRuntimeIdentity& identity) {
+    identity = {};
+    const auto* app_id = image.app_id == nullptr
+        ? kEmbeddedAppId
+        : image.app_id;
+    const auto* semantic_version =
+        image.semantic_version == nullptr ? "" : image.semantic_version;
+    const auto* generation =
+        image.generation == nullptr ? "" : image.generation;
+    return copy_identity_text(
+               identity.app_id,
+               sizeof(identity.app_id),
+               app_id,
+               false) &&
+        copy_identity_text(
+               identity.semantic_version,
+               sizeof(identity.semantic_version),
+               semantic_version,
+               true) &&
+        copy_identity_text(
+               identity.generation,
+               sizeof(identity.generation),
+               generation,
+               true);
+}
+
+void invalidate_active_ui_owner() {
+    portENTER_CRITICAL(&g_ui_owner_lock);
+    g_active_ui_owner_pointer = nullptr;
+    g_active_ui_owner_epoch = 0;
+    portEXIT_CRITICAL(&g_ui_owner_lock);
+}
+
+bool activate_ui_owner(
+    const char* document_app_id,
+    std::uint64_t& epoch) {
+    epoch = 0;
+    if (document_app_id == nullptr) return false;
+    portENTER_CRITICAL(&g_ui_owner_lock);
+    if (g_ui_owner_epoch_sequence !=
+        std::numeric_limits<std::uint64_t>::max()) {
+        epoch = ++g_ui_owner_epoch_sequence;
+        g_active_ui_owner_pointer = document_app_id;
+        g_active_ui_owner_epoch = epoch;
+    }
+    portEXIT_CRITICAL(&g_ui_owner_lock);
+    return epoch != 0;
+}
+
+void invalidate_ui_owner_if(const char* document_app_id) {
+    if (document_app_id == nullptr) return;
+    portENTER_CRITICAL(&g_ui_owner_lock);
+    if (g_active_ui_owner_pointer == document_app_id) {
+        g_active_ui_owner_pointer = nullptr;
+        g_active_ui_owner_epoch = 0;
+    }
+    portEXIT_CRITICAL(&g_ui_owner_lock);
+}
+
+bool snapshot_ui_owner(
+    const m3e::appspec::UiEvent& event,
+    bool trusted_legacy_alias,
+    const char*& pointer,
+    std::uint64_t& epoch) {
+    pointer = nullptr;
+    epoch = 0;
+    portENTER_CRITICAL(&g_ui_owner_lock);
+    const auto* active_pointer = g_active_ui_owner_pointer;
+    const auto active_epoch = g_active_ui_owner_epoch;
+    const bool matches = active_pointer != nullptr && active_epoch != 0 &&
+        event.app_id != nullptr &&
+        (event.app_id == active_pointer ||
+         (trusted_legacy_alias &&
+          g_allow_legacy_event_alias.load(std::memory_order_relaxed) &&
+          std::strcmp(event.app_id, active_pointer) == 0));
+    if (matches) {
+        pointer = active_pointer;
+        epoch = active_epoch;
+    }
+    portEXIT_CRITICAL(&g_ui_owner_lock);
+    return matches;
+}
+
+bool ui_owner_still_active(
+    const char* pointer,
+    std::uint64_t epoch) {
+    portENTER_CRITICAL(&g_ui_owner_lock);
+    const bool active = pointer != nullptr && epoch != 0 &&
+        g_active_ui_owner_pointer == pointer &&
+        g_active_ui_owner_epoch == epoch;
+    portEXIT_CRITICAL(&g_ui_owner_lock);
+    return active;
+}
+
+void clear_current_identity() {
+    invalidate_active_ui_owner();
+    g_allow_legacy_event_alias.store(false, std::memory_order_release);
+    g_current_identity = {};
+    g_has_current_identity = false;
+    g_guest_healthy = false;
+    g_current_provider_owner_token = 0;
+}
+
+bool advance_provider_owner() {
+    if (g_provider_owner_sequence ==
+        std::numeric_limits<std::uint64_t>::max()) {
+        return false;
+    }
+    g_current_provider_owner_token = ++g_provider_owner_sequence;
+    return true;
+}
+
+bool guest_provider_event_targets_current(std::uint64_t owner_token) {
+    return owner_token != 0 &&
+        owner_token == g_current_provider_owner_token;
+}
+
+bool voice_event_targets_current(std::uint64_t owner_token) {
+    // Owner zero belongs to the trusted native voice surface, not whichever
+    // guest happens to be resident when the event queue is drained.
+    return guest_provider_event_targets_current(owner_token);
+}
+
+void clear_pending_failure() {
+    g_pending_failure = {};
+    g_failure_pending = false;
+}
+
+void latch_runtime_failure(AppRuntimeFailureKind kind) {
+    if (!g_has_current_identity || !g_guest_healthy ||
+        kind == AppRuntimeFailureKind::none) {
+        return;
+    }
+    if (!g_failure_pending) {
+        if (g_failure_sequence !=
+            std::numeric_limits<std::uint64_t>::max()) {
+            ++g_failure_sequence;
+        }
+        g_pending_failure.sequence = g_failure_sequence;
+        g_pending_failure.kind = kind;
+        g_pending_failure.identity = g_current_identity;
+        g_failure_pending = true;
+    }
+    // Once a handler has failed, do not enter that WAMR instance again. The
+    // runtime manager remains alive and can replace it with the prior
+    // generation after consuming the bounded failure record.
+    g_guest_healthy = false;
+}
+
+const char* current_scheduler_owner() {
+    return g_has_current_identity
+        ? g_current_identity.app_id
+        : kEmbeddedAppId;
+}
+
+bool queued_event_targets_current_ui(const GuestEvent& event) {
+    portENTER_CRITICAL(&g_ui_owner_lock);
+    const bool active = g_active_ui_owner_pointer != nullptr &&
+        event.ui_owner_epoch != 0 &&
+        event.ui_owner_epoch == g_active_ui_owner_epoch;
+    portEXIT_CRITICAL(&g_ui_owner_lock);
+    return active;
 }
 
 template <std::size_t Size>
@@ -115,7 +315,7 @@ bool publish_timer_surfaces(
         static_cast<unsigned long long>(seconds % 60));
 
     m3e::os::DomainSurfaceSnapshot snapshot{};
-    set_text(snapshot.app_id, "dev.doodad.timer");
+    set_text(snapshot.app_id, record.owner_app_id);
     snapshot.domain_revision = ++g_timer_surface_revision;
     snapshot.observed_at_ms = now;
     snapshot.declared_mask =
@@ -255,8 +455,20 @@ bool publish_weather_surfaces(
 }
 
 void release_app() {
+    // A request accepted but not yet handed to a provider belongs to the
+    // outgoing instance. In-flight work keeps its token until its completion
+    // is polled, at which point the new instance will discard it.
+    g_weather_request_pending = false;
+    g_weather_pending_owner_token = 0;
+    if (g_current_provider_owner_token != 0 &&
+        !voice_service_release_owner(
+            g_current_provider_owner_token)) {
+        ESP_LOGW(kTag, "[host] voice owner release queue full");
+    }
+    voice_service_set_current_guest_owner(0);
     g_handle_event = nullptr;
     g_handle_provider_event = nullptr;
+    g_guest_healthy = false;
     if (g_execution_environment != nullptr) {
         wasm_runtime_destroy_exec_env(g_execution_environment);
         g_execution_environment = nullptr;
@@ -273,6 +485,7 @@ void release_app() {
     g_module_bytes = nullptr;
     delete g_app_store;
     g_app_store = nullptr;
+    clear_current_identity();
 }
 
 bool invoke_guest_handler(
@@ -358,8 +571,7 @@ bool invoke_guest_handler(
     }
     if (batch->domain == m3e::appspec::CommandDomain::ui) {
         if (!display_apply_command_batch(batch)) {
-            delete batch;
-            ESP_LOGE(kTag, "[host] UI queue rejected CommandBatch");
+            ESP_LOGE(kTag, "[host] UI rejected CommandBatch");
             return false;
         }
     } else {
@@ -431,34 +643,87 @@ bool dispatch_event(const GuestEvent& event) {
         "handle_event");
 }
 
+bool deliver_weather_snapshot(
+    m3e_weather_snapshot_v2& snapshot,
+    std::uint8_t freshness,
+    std::int32_t temperature,
+    const char* condition,
+    const char* detail) {
+    if (g_handle_provider_event == nullptr ||
+        g_provider_revision ==
+            std::numeric_limits<std::uint64_t>::max()) {
+        return false;
+    }
+    const auto now = scenario_now_ms();
+    std::array<std::uint8_t, 512> encoded{};
+    const auto encoded_size =
+        m3e_encode_weather_provider_event_v2(
+            &snapshot,
+            ++g_provider_revision,
+            freshness,
+            now,
+            encoded.data(),
+            encoded.size());
+    return encoded_size != 0 &&
+           invoke_guest_handler(
+               g_handle_provider_event,
+               encoded.data(),
+               encoded_size,
+               "handle_provider_event") &&
+           publish_weather_surfaces(
+               temperature,
+               condition,
+               detail,
+               freshness,
+               now);
+}
+
 bool deliver_weather_provider() {
 #if defined(CONFIG_DOODAD_WEATHER_NETWORK_PROVIDER) && \
     CONFIG_DOODAD_WEATHER_NETWORK_PROVIDER
-    if (g_weather_request_pending) {
-        g_weather_request_pending = false;
-        if (!weather_provider_request()) return false;
-    }
     WeatherProviderResult delivery{};
-    if (!weather_provider_poll(delivery)) return true;
-    if (g_handle_provider_event == nullptr ||
-        g_provider_revision ==
-            std::numeric_limits<std::uint64_t>::max()) {
-        return false;
+    if (weather_provider_poll(delivery)) {
+        const auto owner_token = g_weather_inflight_owner_token;
+        g_weather_inflight_owner_token = 0;
+        if (!guest_provider_event_targets_current(owner_token)) {
+            ESP_LOGW(kTag, "[host] dropped stale weather completion");
+            return true;
+        }
+        auto snapshot = delivery.snapshot;
+        snapshot.location = delivery.location;
+        return deliver_weather_snapshot(
+            snapshot,
+            delivery.freshness,
+            snapshot.current.temperature_tenths,
+            delivery.condition,
+            delivery.detail);
     }
-    auto snapshot = delivery.snapshot;
-    snapshot.location = delivery.location;
-    const auto freshness = delivery.freshness;
-    const auto temperature = snapshot.current.temperature_tenths;
-    const auto* condition = delivery.condition;
-    const auto* detail = delivery.detail;
+    if (g_weather_request_pending) {
+        const auto owner_token = g_weather_pending_owner_token;
+        g_weather_request_pending = false;
+        g_weather_pending_owner_token = 0;
+        if (!guest_provider_event_targets_current(owner_token)) {
+            ESP_LOGW(kTag, "[host] discarded stale weather request");
+            return true;
+        }
+        if (!weather_provider_request()) return false;
+        g_weather_inflight_owner_token = owner_token;
+    }
+    return true;
 #else
     if (!g_weather_request_pending) return true;
+    const auto owner_token = g_weather_pending_owner_token;
+    g_weather_request_pending = false;
+    g_weather_pending_owner_token = 0;
+    if (!guest_provider_event_targets_current(owner_token)) {
+        ESP_LOGW(kTag, "[host] discarded stale weather request");
+        return true;
+    }
     if (g_handle_provider_event == nullptr ||
         g_provider_revision ==
             std::numeric_limits<std::uint64_t>::max()) {
         return false;
     }
-    g_weather_request_pending = false;
     g_weather_cycle =
         static_cast<std::uint8_t>((g_weather_cycle + 1) % 3);
 
@@ -534,37 +799,28 @@ bool deliver_weather_provider() {
         snapshot.cache_age_minutes = 0;
         freshness = 0;
     }
-    const auto temperature = snapshot.current.temperature_tenths;
-    const char* condition = "Partly cloudy";
-    const char* detail = "High 67 - Low 54 - Feels 59";
+    return deliver_weather_snapshot(
+        snapshot,
+        freshness,
+        snapshot.current.temperature_tenths,
+        "Partly cloudy",
+        "High 67 - Low 54 - Feels 59");
 #endif
-    const auto now = scenario_now_ms();
-    std::array<std::uint8_t, 512> encoded{};
-    const auto encoded_size =
-        m3e_encode_weather_provider_event_v2(
-            &snapshot,
-            ++g_provider_revision,
-            freshness,
-            now,
-            encoded.data(),
-            encoded.size());
-    return encoded_size != 0 &&
-           invoke_guest_handler(
-               g_handle_provider_event,
-               encoded.data(),
-               encoded_size,
-               "handle_provider_event") &&
-           publish_weather_surfaces(
-               temperature,
-               condition,
-               detail,
-               freshness,
-               now);
 }
 
 bool deliver_voice_provider() {
     VoiceEvent delivery{};
     while (voice_service_poll(delivery)) {
+        if (delivery.owner_token == 0) {
+            // Native voice state is rendered directly by voice_service and
+            // display. It is intentionally consumed here without entering
+            // an unrelated resident Wasm guest.
+            continue;
+        }
+        if (!voice_event_targets_current(delivery.owner_token)) {
+            ESP_LOGW(kTag, "[host] dropped stale voice completion");
+            continue;
+        }
         if (g_handle_provider_event == nullptr) continue;
         if (g_provider_revision ==
             std::numeric_limits<std::uint64_t>::max()) {
@@ -648,10 +904,18 @@ std::int32_t host_ui_mount(
             module_instance, "canonical CBOR validation failed");
     }
     const auto node_count = document->node_count;
-    if (!display_mount_appspec(document)) {
+    const auto* document_app_id =
+        document->string_at(document->app_id_offset);
+    std::uint64_t ui_owner_epoch = 0;
+    if (!activate_ui_owner(document_app_id, ui_owner_epoch)) {
         delete document;
         return reject_guest_appspec(
-            module_instance, "UI command queue rejected mount");
+            module_instance, "UI ownership sequence exhausted");
+    }
+    if (!display_mount_appspec(document)) {
+        invalidate_ui_owner_if(document_app_id);
+        return reject_guest_appspec(
+            module_instance, "UI renderer rejected mount");
     }
     ESP_LOGI(
         kTag,
@@ -710,8 +974,9 @@ std::uint64_t host_timer_schedule_after(
             id)) {
         return 0;
     }
-    return m3e_exact_scheduler_schedule_after(
+    return m3e_exact_scheduler_schedule_after_for_app(
         g_scheduler,
+        current_scheduler_owner(),
         id.data(),
         duration_ms,
         scenario_now_ms());
@@ -730,7 +995,8 @@ std::int32_t host_timer_cancel(
             id)) {
         return 0;
     }
-    return m3e_exact_scheduler_cancel(g_scheduler, id.data());
+    return m3e_exact_scheduler_cancel_for_app(
+        g_scheduler, current_scheduler_owner(), id.data());
 }
 
 std::int32_t host_timer_acknowledge(
@@ -746,8 +1012,8 @@ std::int32_t host_timer_acknowledge(
             id)) {
         return 0;
     }
-    return m3e_exact_scheduler_acknowledge(
-        g_scheduler, id.data());
+    return m3e_exact_scheduler_acknowledge_for_app(
+        g_scheduler, current_scheduler_owner(), id.data());
 }
 
 std::uint64_t host_provider_request(
@@ -790,7 +1056,11 @@ std::uint64_t host_provider_request(
          (g_weather_request_pending || weather_provider_busy()))) {
         return 0;
     }
-    if (weather) g_weather_request_pending = true;
+    if (weather) {
+        g_weather_request_pending = true;
+        g_weather_pending_owner_token =
+            g_current_provider_owner_token;
+    }
     return ++g_weather_request_id;
 }
 
@@ -855,7 +1125,11 @@ std::uint64_t host_audio_request(
         return 0;
     }
     const auto request_id = ++g_weather_request_id;
-    return voice_service_request(operation.data(), request_id)
+    return voice_service_request(
+               operation.data(),
+               request_id,
+               8'000,
+               g_current_provider_owner_token)
         ? request_id : 0;
 }
 
@@ -1098,11 +1372,21 @@ bool run_app(const AppImage& image) {
         display_error("MODULE LOAD FAILED");
         return false;
     }
+    AppRuntimeIdentity candidate_identity{};
+    if (!identity_for_image(image, candidate_identity)) {
+        ESP_LOGE(kTag, "[host] invalid app generation identity");
+        display_error("MODULE LOAD FAILED");
+        return false;
+    }
 
     char error_buffer[192]{};
-    ESP_LOGI(kTag, "[host] %s app size: %u bytes", image.source,
+    const auto* source = image.source == nullptr ? "UNKNOWN" : image.source;
+    ESP_LOGI(kTag, "[host] %s app size: %u bytes", source,
              static_cast<unsigned>(image.size));
 
+    // A switch establishes a new failure epoch. Any report not consumed for
+    // the outgoing instance must not be mistaken for the incoming generation.
+    clear_pending_failure();
     release_app();
     g_module_bytes = static_cast<std::uint8_t*>(std::malloc(image.size));
     if (g_module_bytes == nullptr) {
@@ -1164,7 +1448,20 @@ bool run_app(const AppImage& image) {
             g_instance, "handle_provider_event");
     xQueueReset(g_event_queue);
 
-    display_shell("WASM RUNNING", image.source);
+    if (!advance_provider_owner()) {
+        ESP_LOGE(kTag, "[host] provider ownership sequence exhausted");
+        display_error("MODULE LOAD FAILED");
+        release_app();
+        return false;
+    }
+    voice_service_set_current_guest_owner(
+        g_current_provider_owner_token);
+    g_current_identity = candidate_identity;
+    g_has_current_identity = true;
+    g_guest_healthy = true;
+    g_allow_legacy_event_alias.store(
+        image.app_id == nullptr, std::memory_order_release);
+    display_shell("WASM RUNNING", source);
     ESP_LOGI(kTag, "[host] invoking app_start");
     g_semantic_mount_called = false;
     g_invalid_guest_message = false;
@@ -1191,12 +1488,50 @@ bool run_app(const AppImage& image) {
     return succeeded;
 }
 
-bool app_post_ui_event(const m3e::appspec::UiEvent& event) {
-    if (g_event_queue == nullptr ||
-        !m3e::appspec::event_is_valid(event)) {
-        return false;
+bool app_runtime_current_identity(AppRuntimeIdentity& identity) {
+    identity = {};
+    if (!g_has_current_identity) return false;
+    identity = g_current_identity;
+    return true;
+}
+
+bool app_runtime_poll_failure(AppRuntimeFailure& failure) {
+    failure = {};
+    if (!g_failure_pending) return false;
+    failure = g_pending_failure;
+    clear_pending_failure();
+    return true;
+}
+
+void app_runtime_invalidate_ui_mount(const char* document_app_id) {
+    invalidate_ui_owner_if(document_app_id);
+}
+
+namespace {
+
+bool post_ui_event(
+    const m3e::appspec::UiEvent& event,
+    bool trusted_legacy_alias) {
+    if (g_event_queue == nullptr) return false;
+    const char* ui_owner_pointer = nullptr;
+    std::uint64_t ui_owner_epoch = 0;
+    if (!snapshot_ui_owner(
+            event,
+            trusted_legacy_alias,
+            ui_owner_pointer,
+            ui_owner_epoch)) {
+        // A live switch can leave the outgoing LVGL tree visible until the
+        // new mount command is processed. Treat its callbacks as consumed,
+        // but never queue or attribute them to the incoming generation.
+        ESP_LOGW(kTag, "[host] dropped stale semantic UI event");
+        return true;
     }
+    // Origin validation deliberately precedes semantic validation: callbacks
+    // from a retired document can contain freed string pointers, which must
+    // never be dereferenced merely to decide that they are stale.
+    if (!m3e::appspec::event_is_valid(event)) return false;
     GuestEvent copy{};
+    copy.ui_owner_epoch = ui_owner_epoch;
     copy.schema = event.schema;
     copy.kind = event.kind;
     copy.timestamp_monotonic_ms = event.timestamp_monotonic_ms;
@@ -1219,6 +1554,14 @@ bool app_post_ui_event(const m3e::appspec::UiEvent& event) {
             event.value.text_value,
             length + 1);
     }
+    // The UI task can retire a document while another producer is copying a
+    // direct event. Recheck the coherent pointer/epoch pair before enqueueing;
+    // queued delivery later compares the monotonic epoch only, so allocator
+    // address reuse can never grant an old event to a new mount.
+    if (!ui_owner_still_active(ui_owner_pointer, ui_owner_epoch)) {
+        ESP_LOGW(kTag, "[host] dropped semantic UI event during remount");
+        return true;
+    }
     if (xQueueSend(g_event_queue, &copy, 0) != pdTRUE) {
         ESP_LOGE(kTag, "[host] semantic event queue overflow");
         return false;
@@ -1226,23 +1569,58 @@ bool app_post_ui_event(const m3e::appspec::UiEvent& event) {
     return true;
 }
 
+}  // namespace
+
+bool app_post_ui_event(const m3e::appspec::UiEvent& event) {
+    return post_ui_event(event, false);
+}
+
+bool app_post_embedded_ui_event(const m3e::appspec::UiEvent& event) {
+    return post_ui_event(event, true);
+}
+
 void app_runtime_update(std::uint32_t maximum_wait_ms) {
-    if (g_event_queue == nullptr) return;
+    if (g_event_queue == nullptr || !g_has_current_identity ||
+        !g_guest_healthy) {
+        return;
+    }
     GuestEvent event{};
     if (xQueueReceive(
             g_event_queue,
             &event,
             pdMS_TO_TICKS(maximum_wait_ms)) == pdTRUE) {
-        dispatch_event(event);
+        if (!queued_event_targets_current_ui(event)) {
+            ESP_LOGW(kTag, "[host] discarded queued stale UI event");
+        } else if (!dispatch_event(event)) {
+            ESP_LOGE(kTag, "[host] semantic UI event delivery failed");
+            latch_runtime_failure(AppRuntimeFailureKind::ui_event);
+            return;
+        }
         while (xQueueReceive(g_event_queue, &event, 0) == pdTRUE) {
-            dispatch_event(event);
+            if (!queued_event_targets_current_ui(event)) {
+                ESP_LOGW(
+                    kTag,
+                    "[host] discarded queued stale UI event");
+                continue;
+            }
+            if (!dispatch_event(event)) {
+                ESP_LOGE(
+                    kTag,
+                    "[host] semantic UI event delivery failed");
+                latch_runtime_failure(AppRuntimeFailureKind::ui_event);
+                return;
+            }
         }
     }
     if (!deliver_weather_provider()) {
         ESP_LOGE(kTag, "[host] weather provider delivery failed");
+        latch_runtime_failure(AppRuntimeFailureKind::provider_event);
+        return;
     }
     if (!deliver_voice_provider()) {
         ESP_LOGE(kTag, "[host] voice provider delivery failed");
+        latch_runtime_failure(AppRuntimeFailureKind::provider_event);
+        return;
     }
 
     if (g_scheduler == nullptr) return;
@@ -1258,8 +1636,12 @@ void app_runtime_update(std::uint32_t maximum_wait_ms) {
     if (g_handle_provider_event == nullptr) return;
 
     m3e_schedule_record records[8]{};
-    const auto count = m3e_exact_scheduler_records(
-        g_scheduler, records, 8, now);
+    const auto count = m3e_exact_scheduler_records_for_app(
+        g_scheduler,
+        current_scheduler_owner(),
+        records,
+        8,
+        now);
     for (std::size_t index = 0; index < count; ++index) {
         if (records[index].state != 1 &&
             records[index].state != 2) {
@@ -1268,6 +1650,7 @@ void app_runtime_update(std::uint32_t maximum_wait_ms) {
         if (g_provider_revision ==
             std::numeric_limits<std::uint64_t>::max()) {
             ESP_LOGE(kTag, "[host] provider revision overflow");
+            latch_runtime_failure(AppRuntimeFailureKind::timer_event);
             return;
         }
         std::array<std::uint8_t, 256> encoded{};
@@ -1287,12 +1670,14 @@ void app_runtime_update(std::uint32_t maximum_wait_ms) {
             ESP_LOGE(
                 kTag,
                 "[host] timer provider delivery failed");
+            latch_runtime_failure(AppRuntimeFailureKind::timer_event);
             return;
         }
         if (!publish_timer_surfaces(records[index], now)) {
             ESP_LOGE(
                 kTag,
                 "[host] timer surface publication failed");
+            latch_runtime_failure(AppRuntimeFailureKind::timer_event);
             return;
         }
     }
