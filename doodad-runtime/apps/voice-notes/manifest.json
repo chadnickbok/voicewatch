@@ -4,6 +4,7 @@
   "name": "Voice Notes",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "generic", "theme_seed": "#FF4FA3"},
   "capabilities": [
     "ui.mount",
     "audio.capture"

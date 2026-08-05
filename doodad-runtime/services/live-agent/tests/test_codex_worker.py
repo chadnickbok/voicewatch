@@ -49,11 +49,57 @@ class ScriptedClient:
                 "workspace": arguments["workspace"],
             }
         )
+        result = self.result
+        if result == "needs_input" and "Plan and implement" in str(arguments["prompt"]):
+            answer = arguments["on_question"](
+                {
+                    "questions": [
+                        {
+                            "id": "layout",
+                            "header": "Layout",
+                            "question": "Should progress use a ring or a horizontal bar?",
+                            "options": [
+                                {"label": "ring", "description": "Circular progress."},
+                                {"label": "bar", "description": "Linear progress."},
+                            ],
+                        }
+                    ]
+                }
+            )
+            if answer is None:
+                return CodexTurnResult(thread_id, turn_id, "failed", "", "stopped")
+            result = "ready"
+        elif result == "needs_input":
+            result = "ready"
+        if result == "ready":
+            workspace = Path(arguments["workspace"])
+            (workspace / "BUILD_PLAN.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "product_summary": "A generated rest timer.",
+                        "app_id": "dev.doodad.generated-rest",
+                        "name": "Lift Rest",
+                        "version": "0.1.0",
+                        "identity": {"icon": "timer", "theme_seed": "#20BFF4"},
+                        "capabilities": ["ui.mount", "timer.schedule"],
+                        "interactions": ["Start the timer"],
+                        "scenarios": [
+                            {
+                                "id": "timer.baseline",
+                                "kind": "timer",
+                                "required_ops": ["action.dispatch", "assert.state", "clock.advance"],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
         return CodexTurnResult(
             thread_id,
             turn_id,
             "completed",
-            json.dumps({"status": self.result, "summary": f"{self.result} summary"}),
+            json.dumps({"status": result, "summary": f"{result} summary"}),
         )
 
     def close(self) -> None:
@@ -106,6 +152,7 @@ class MaterializingVerifier(FakeVerifier):
                     "name": "Lift Rest",
                     "version": "0.1.0",
                     "host_abi": 1,
+                    "identity": {"icon": "timer", "theme_seed": "#20BFF4"},
                     "capabilities": ["ui.mount", "timer.schedule"],
                     "wasm": "app.wasm",
                 }
@@ -167,8 +214,8 @@ def test_codex_job_persists_question_resumes_thread_and_becomes_review_ready(
 
         builder.tick(int(time.time() * 1000))
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
-        assert [call["thread_id"] for call in calls] == [None, "thread-rest-timer"]
-        assert verifier.calls[0][1] == "ring"
+        assert [call["thread_id"] for call in calls] == [None]
+        assert verifier.calls[0][1]["name"] == "Lift Rest"
         events = jobs.events(job_id)
         assert [event.kind for event in events].count("needs_input") == 1
         artifact = events[-1].payload["artifact"]
@@ -181,6 +228,32 @@ def test_codex_job_persists_question_resumes_thread_and_becomes_review_ready(
         assert json.loads(session["artifact_json"])["sha256"] == "a" * 64
         assert broker.background_snapshot()["review_ready"]
         builder.tick(int(time.time() * 1000))
+        assert len(verifier.calls) == 1
+    finally:
+        builder.close()
+        store.close()
+
+
+def test_complete_brief_builds_without_interrupting_for_input(tmp_path: Path) -> None:
+    store = Store(tmp_path / "agent.sqlite3")
+    jobs = JobManager(store, "t-watch-no-question")
+    calls: list[dict[str, object]] = []
+    verifier = FakeVerifier()
+    builder = CodexAppBuilder(
+        jobs,
+        RUNTIME_ROOT,
+        tmp_path / "workspaces",
+        binary="unused",
+        client_factory=lambda: ScriptedClient("ready", calls),
+        verifier=verifier,  # type: ignore[arg-type]
+    )
+    try:
+        job_id = builder.start(
+            "Build a blue hydration tracker with a water-drop icon", 1
+        )
+        wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
+        assert jobs.open_questions() == []
+        assert len(calls) == 1
         assert len(verifier.calls) == 1
     finally:
         builder.close()
@@ -218,7 +291,7 @@ def test_codex_job_resumes_after_restart_while_waiting_for_layout(tmp_path: Path
         second.tick(3)
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
         assert calls[-1]["thread_id"] == "thread-rest-timer"
-        assert verifier.calls[0][1] == "bar"
+        assert verifier.calls[0][1]["name"] == "Lift Rest"
     finally:
         second.close()
         store.close()
@@ -245,7 +318,7 @@ def test_independent_failure_gets_one_bounded_codex_repair(tmp_path: Path) -> No
         jobs.answer(job_id, "layout", "ring", "repair-answer", 2)
         builder.tick(3)
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
-        assert len(calls) == 3
+        assert len(calls) == 2
         assert "independent Doodad verifier rejected" in str(calls[-1]["prompt"])
         assert [event.kind for event in jobs.events(job_id)].count("progress") == 2
     finally:

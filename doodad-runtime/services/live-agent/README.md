@@ -42,9 +42,10 @@ persists thread/turn/question/artifact state in SQLite, and reaches
 `ready_for_review` only after the deterministic verifier and outer personal
 packager succeed. Codex itself never receives a signing key, installs an app, or
 touches hardware. The deterministic verifier owns schema, semantics,
-permissions, Rust/Wasm, build/check/test, timer conformance, and the 240×240
+plan/manifest agreement, permissions, Rust/Wasm, build/check/test,
+capability-specific conformance, and the 240×240
 simulator render. The outer packager then authenticates owner/app/version/ABI
-and payload-hash metadata plus raw `app.wasm` as DDB1 with the local user's
+signed semantic icon/theme identity and payload-hash metadata plus raw `app.wasm` as DDB1 with the local user's
 HMAC key, outside the mutable Codex workspace.
 
 With personal delivery configured, this same aiohttp service announces the
@@ -68,7 +69,9 @@ The immutable host store defaults to
 Set
 `DOODAD_CODEX_BINARY` or `DOODAD_CODEX_WORKSPACE_ROOT` only when overriding the
 defaults. Packaged deployments outside the monorepo can set
-`DOODAD_RUNTIME_ROOT`. Regenerate the checked protocol subset with:
+`DOODAD_RUNTIME_ROOT`. `DOODAD_GENERATED_CAPABILITIES` is an optional
+comma-separated target allowlist; its safe default is UI plus host-owned timer
+capabilities. Regenerate the checked protocol subset with:
 
 ```sh
 ./services/live-agent/scripts/generate-codex-protocol.sh

@@ -15,6 +15,8 @@ constexpr std::size_t kMaximumQuarantinedGenerationsPerApp = 8;
 struct PackageGeneration {
     std::string semantic_version;
     std::string name;
+    std::string icon;
+    std::string theme_seed;
     std::string payload_sha256;
     std::string bundle_sha256;
     std::string relative_path;
@@ -111,9 +113,10 @@ class PackageRegistry {
     std::optional<RunningPackage> running_;
 };
 
-// Deterministic, checksummed DDR2 representation. DDR2 stores the signed name
+// Deterministic, checksummed DDR3 representation. DDR3 stores signed visual
+// identity alongside the name
 // per generation, each app's canonical persisted one-way quarantine set, and
-// its terminal saturation bit; older layouts fail closed rather than being
+// and each app's terminal saturation bit; older layouts fail closed rather than being
 // misparsed.
 // `running()` is intentionally
 // absent from this encoding because it describes a live WAMR instance.

@@ -10,6 +10,7 @@
     "name",
     "version",
     "host_abi",
+    "identity",
     "capabilities",
     "wasm"
   ],
@@ -35,6 +36,7 @@
       "type": "integer",
       "minimum": 1
     },
+    "identity": {"$ref": "#/$defs/identity"},
     "capabilities": {
       "type": "array",
       "uniqueItems": true,
@@ -98,6 +100,17 @@
             "maximum": 524288
           }
         }
+      }
+    }
+  },
+  "$defs": {
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["icon", "theme_seed"],
+      "properties": {
+        "icon": {"enum": ["generic", "timer", "weather", "tasks", "calculator", "calendar", "water_drop"]},
+        "theme_seed": {"type": "string", "pattern": "^#[0-9A-F]{6}$"}
       }
     }
   }

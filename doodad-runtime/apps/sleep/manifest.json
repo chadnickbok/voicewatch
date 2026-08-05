@@ -4,6 +4,7 @@
   "name": "Sleep + Smart Alarm",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "timer", "theme_seed": "#7241FF"},
   "capabilities": [
     "ui.mount",
     "sleep.track"

@@ -14,9 +14,14 @@ from .capabilities import CapabilityKernel
 
 
 def normalize_choice(text: str, choices: list[object]) -> object | None:
-    """Resolve a short answer only when exactly one enum choice is named."""
-    words = set(re.findall(r"[a-z0-9]+", text.casefold()))
-    matches = [choice for choice in choices if str(choice).casefold() in words]
+    """Resolve one whole enum label, including multiword voice choices."""
+    normalized = " ".join(re.findall(r"[a-z0-9]+", text.casefold()))
+    padded = f" {normalized} "
+    matches = []
+    for choice in choices:
+        candidate = " ".join(re.findall(r"[a-z0-9]+", str(choice).casefold()))
+        if candidate and f" {candidate} " in padded:
+            matches.append(choice)
     return matches[0] if len(matches) == 1 else None
 
 

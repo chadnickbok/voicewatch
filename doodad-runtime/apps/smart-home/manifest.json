@@ -4,6 +4,7 @@
   "name": "Smart Home",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "generic", "theme_seed": "#B9FF24"},
   "capabilities": [
     "ui.mount",
     "home.control"

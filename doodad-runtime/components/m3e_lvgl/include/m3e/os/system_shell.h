@@ -21,6 +21,7 @@ enum {
     M3E_SYSTEM_SHELL_APP_ICON_TASKS = 3,
     M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR = 4,
     M3E_SYSTEM_SHELL_APP_ICON_CALENDAR = 5,
+    M3E_SYSTEM_SHELL_APP_ICON_WATER_DROP = 6,
 };
 
 enum {
@@ -75,6 +76,8 @@ typedef struct {
     const char* detail;
     // Required package-owned color encoded as 0xRRGGBB.
     uint32_t primary_color_rgb;
+    // Host-derived accessible icon color encoded as 0xRRGGBB.
+    uint32_t on_primary_color_rgb;
     // Required semantic icon from M3E_SYSTEM_SHELL_APP_ICON_*.
     uint8_t icon;
 } m3e_system_shell_launcher_item_t;

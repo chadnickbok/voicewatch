@@ -4,6 +4,7 @@
   "name": "Pass + QR Wallet",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "generic", "theme_seed": "#FF9F1C"},
   "capabilities": [
     "ui.mount",
     "wallet.read"

@@ -4,6 +4,7 @@
   "name": "Medication + Habits",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "tasks", "theme_seed": "#B9FF24"},
   "capabilities": [
     "ui.mount",
     "medication.schedule"

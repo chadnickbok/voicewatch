@@ -49,6 +49,7 @@ struct ThemeValidation {
 ResolvedColorScheme resolve_color_scheme(
     const generated::WearColorScheme& source);
 ResolvedTheme baseline_dark_theme();
+ResolvedTheme seeded_dark_theme(std::uint32_t seed_rgb);
 ThemeValidation validate_resolved_theme(
     const ResolvedTheme& theme,
     double minimum_contrast = 4.5);

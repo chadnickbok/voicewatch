@@ -34,6 +34,10 @@ _KEY_HEX_PATTERN = re.compile(r"^[0-9a-fA-F]{64}$")
 _IDENTIFIER_PATTERN = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 _APP_ID_PATTERN = re.compile(r"^[a-z][a-z0-9]*(?:\.[a-z0-9][a-z0-9-]*)+$")
 _VERSION_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
+_THEME_SEED_PATTERN = re.compile(r"^#[0-9A-F]{6}$")
+PERSONAL_ICON_IDS = frozenset(
+    {"generic", "timer", "weather", "tasks", "calculator", "calendar", "water_drop"}
+)
 
 _METADATA_KEYS = frozenset(
     {
@@ -45,6 +49,7 @@ _METADATA_KEYS = frozenset(
         "name",
         "semantic_version",
         "host_abi",
+        "identity",
         "payload_sha256",
         "payload_bytes",
     }
@@ -93,6 +98,8 @@ class PackagedArtifact:
     name: str
     semantic_version: str
     host_abi: int
+    icon: str
+    theme_seed: str
     payload_sha256: str
     payload_bytes: int
     bundle_sha256: str
@@ -113,6 +120,7 @@ class PackagedArtifact:
             "name": self.name,
             "semantic_version": self.semantic_version,
             "host_abi": self.host_abi,
+            "identity": {"icon": self.icon, "theme_seed": self.theme_seed},
             "payload_sha256": self.payload_sha256,
             "payload_bytes": self.payload_bytes,
             "bundle_sha256": self.bundle_sha256,
@@ -124,6 +132,9 @@ class PackagedArtifact:
     @classmethod
     def from_document(cls, value: Mapping[str, Any]) -> "PackagedArtifact":
         try:
+            identity = value["identity"]
+            if not isinstance(identity, Mapping):
+                raise TypeError("identity is not an object")
             strings = {
                 key: value[key]
                 for key in (
@@ -161,6 +172,8 @@ class PackagedArtifact:
                 name=strings["name"],
                 semantic_version=strings["semantic_version"],
                 host_abi=integers["host_abi"],
+                icon=str(identity["icon"]),
+                theme_seed=str(identity["theme_seed"]),
                 payload_sha256=strings["payload_sha256"],
                 payload_bytes=integers["payload_bytes"],
                 bundle_sha256=strings["bundle_sha256"],
@@ -183,6 +196,7 @@ class PackagedArtifact:
             raise PersonalBundleError("app name must contain 1..48 characters")
         if self.host_abi < 1 or self.host_abi > 0xFFFFFFFF:
             raise PersonalBundleError("host_abi is outside the uint32 range")
+        _validate_visual_identity(self.icon, self.theme_seed)
         _validate_digest("payload_sha256", self.payload_sha256)
         _validate_digest("bundle_sha256", self.bundle_sha256)
         if not 1 <= self.payload_bytes <= MAX_PAYLOAD_BYTES:
@@ -196,6 +210,7 @@ class PackagedArtifact:
             "name": self.name,
             "semantic_version": self.semantic_version,
             "host_abi": self.host_abi,
+            "identity": {"icon": self.icon, "theme_seed": self.theme_seed},
             "payload_sha256": self.payload_sha256,
             "payload_bytes": self.payload_bytes,
         }
@@ -332,6 +347,8 @@ class PersonalBundlePackager:
             name=str(metadata["name"]),
             semantic_version=str(metadata["semantic_version"]),
             host_abi=int(metadata["host_abi"]),
+            icon=str(metadata["identity"]["icon"]),
+            theme_seed=str(metadata["identity"]["theme_seed"]),
             payload_sha256=str(metadata["payload_sha256"]),
             payload_bytes=len(payload),
             bundle_sha256=bundle_digest,
@@ -405,14 +422,21 @@ def _metadata_from_manifest(
     name = manifest.get("name")
     version = manifest.get("version")
     host_abi = manifest.get("host_abi")
+    identity = manifest.get("identity")
     if (
         not isinstance(app_id, str)
         or not isinstance(name, str)
         or not isinstance(version, str)
         or isinstance(host_abi, bool)
         or not isinstance(host_abi, int)
+        or not isinstance(identity, dict)
     ):
         raise PersonalBundleError("verified manifest lacks a typed package identity")
+    icon = identity.get("icon")
+    theme_seed = identity.get("theme_seed")
+    if not isinstance(icon, str) or not isinstance(theme_seed, str):
+        raise PersonalBundleError("verified manifest lacks a typed visual identity")
+    _validate_visual_identity(icon, theme_seed)
     return {
         "bundle_version": 1,
         "kind": "personal",
@@ -422,6 +446,7 @@ def _metadata_from_manifest(
         "name": name,
         "semantic_version": version,
         "host_abi": host_abi,
+        "identity": {"icon": icon, "theme_seed": theme_seed},
         "payload_sha256": hashlib.sha256(payload).hexdigest(),
         "payload_bytes": len(payload),
     }
@@ -472,6 +497,14 @@ def _validate_metadata(metadata: Mapping[str, Any], payload: bytes) -> None:
     host_abi = metadata.get("host_abi")
     if isinstance(host_abi, bool) or not isinstance(host_abi, int) or not 1 <= host_abi <= 0xFFFFFFFF:
         raise PersonalBundleError("host_abi must be a positive uint32")
+    identity = metadata.get("identity")
+    if not isinstance(identity, dict) or frozenset(identity) != {"icon", "theme_seed"}:
+        raise PersonalBundleError("identity must contain exactly icon and theme_seed")
+    icon = identity.get("icon")
+    theme_seed = identity.get("theme_seed")
+    if not isinstance(icon, str) or not isinstance(theme_seed, str):
+        raise PersonalBundleError("identity fields must be strings")
+    _validate_visual_identity(icon, theme_seed)
     payload_bytes = metadata.get("payload_bytes")
     if (
         isinstance(payload_bytes, bool)
@@ -536,6 +569,13 @@ def _validate_digest(label: str, value: str) -> None:
 def _validate_hmac_key(value: bytes) -> None:
     if not isinstance(value, bytes) or len(value) != 32:
         raise PersonalBundleError("personal HMAC key must contain exactly 32 bytes")
+
+
+def _validate_visual_identity(icon: str, theme_seed: str) -> None:
+    if icon not in PERSONAL_ICON_IDS:
+        raise PersonalBundleError("identity icon is not in the curated personal icon set")
+    if _THEME_SEED_PATTERN.fullmatch(theme_seed) is None:
+        raise PersonalBundleError("identity theme_seed must be uppercase #RRGGBB")
 
 
 def _file_sha256(path: Path) -> str:

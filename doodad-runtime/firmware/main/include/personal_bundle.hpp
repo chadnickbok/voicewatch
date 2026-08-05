@@ -17,6 +17,8 @@ constexpr std::size_t kMaximumPersonalAppVersionBytes = 64;
 constexpr std::size_t kMaximumPersonalAppNameCodepoints = 48;
 constexpr std::size_t kMaximumPersonalAppNameBytes =
     kMaximumPersonalAppNameCodepoints * 4;
+constexpr std::size_t kMaximumPersonalIconBytes = 16;
+constexpr std::size_t kThemeSeedBytes = 7;
 
 using Sha256Digest = std::array<std::uint8_t, kSha256Bytes>;
 
@@ -33,6 +35,8 @@ struct PersonalBundleMetadata {
     std::string app_id;
     std::string name;
     std::string semantic_version;
+    std::string icon;
+    std::string theme_seed;
     std::string payload_sha256;
     std::uint32_t host_abi = 0;
     std::uint32_t payload_bytes = 0;

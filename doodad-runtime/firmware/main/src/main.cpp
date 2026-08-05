@@ -32,7 +32,7 @@ bool run_installed_package(
             request.payload_sha256.data());
         return false;
     }
-    if (!display_prepare_app_switch()) {
+    if (!display_prepare_app_switch(request.theme_seed.data())) {
         ESP_LOGE(kTag, "[packages] could not close system overlay for app switch");
         return false;
     }
@@ -103,6 +103,8 @@ bool restore_previous_package(
         previous.app_id.data(),
         previous.name.data(),
         previous.semantic_version.data(),
+        previous.icon.data(),
+        previous.theme_seed.data(),
         previous.payload_sha256.data());
     return true;
 }
@@ -157,6 +159,8 @@ bool recover_safe_current_package(
         current.app_id.data(),
         current.name.data(),
         current.semantic_version.data(),
+        current.icon.data(),
+        current.theme_seed.data(),
         current.payload_sha256.data());
     return true;
 }

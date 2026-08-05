@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <new>
 
@@ -62,6 +63,8 @@ struct PackageUiEvent {
     char app_id[97]{};
     char name[193]{};
     char semantic_version[65]{};
+    char icon[17]{};
+    char theme_seed[8]{};
     char payload_sha256[65]{};
     char detail[129]{};
     std::uint8_t phase = 0;
@@ -162,6 +165,8 @@ bool g_ready_is_rollback = false;
 bool g_ready_deferred_by_overlay = false;
 std::uint8_t g_local_install_state = 0;
 char g_install_detail[129]{};
+
+std::uint32_t launcher_color_for(const char* seed);
 
 void stage_visual_scene(const char* scene) {
     std::strncpy(
@@ -312,6 +317,10 @@ void complete(UiCommand& command, bool result) {
 }
 
 void shell_now(const char* status, const char* source) {
+    // The production shell and AppSpec renderer replace the legacy boot UI's
+    // LVGL tree. Runtime status updates are informational only; never follow
+    // stale handles after either renderer has taken ownership of the screen.
+    if (g_ui.status == nullptr || g_ui.source == nullptr) return;
     stage_visual_scene("boot-shell");
     doodad_lvgl_ui_show_shell(&g_ui, status, source);
 }
@@ -363,6 +372,7 @@ bool appspec_now(m3e::appspec::WireDocument* document) {
         error_now("APPSPEC RENDER FAILED");
         return false;
     }
+    g_ui = {};
     destroy_guest_document(g_active_document);
     g_active_document = document;
     return true;
@@ -407,6 +417,11 @@ bool command_batch_now(m3e::appspec::CommandBatch* batch) {
 void error_now(const char* stage) {
     stage_visual_scene("error");
     doodad::board::haptic(8);
+    if (g_ui.status == nullptr || g_ui.source == nullptr ||
+        g_ui.content == nullptr) {
+        lv_obj_clean(lv_screen_active());
+        doodad_lvgl_ui_init(&g_ui, lv_screen_active());
+    }
     doodad_lvgl_ui_show_error(&g_ui, stage);
 }
 
@@ -415,6 +430,7 @@ void catalog_now(int story) {
     std::snprintf(scene, sizeof(scene), "catalog-%d", story);
     stage_visual_scene(scene);
     m3e_catalog_show(lv_screen_active(), story);
+    g_ui = {};
     if (story == M3E_CATALOG_STORY_COLOR_BARS) {
         // Board marker in the unused edge of the black calibration patch:
         // CoreS3 has one white cell and T-Watch has two. This lets the camera
@@ -522,12 +538,20 @@ bool ensure_system_styles() {
         g_appspec_styles.initialize(m3e::baseline_dark_theme());
 }
 
+void apply_identity_theme(const char* theme_seed) {
+    if (!ensure_system_styles()) return;
+    if (!g_appspec_styles.apply_theme(
+            m3e::seeded_dark_theme(launcher_color_for(theme_seed)))) {
+        g_appspec_styles.apply_theme(m3e::baseline_dark_theme());
+    }
+}
+
 void discard_guest_document() {
     destroy_guest_document(g_active_document);
     destroy_guest_document(g_pending_document);
 }
 
-bool prepare_app_switch_now() {
+bool prepare_app_switch_now(const char* theme_seed = nullptr) {
     if (!g_shell_active) return true;
     if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
         // System voice is host-owned (owner token zero). Closing the overlay
@@ -540,6 +564,12 @@ bool prepare_app_switch_now() {
         return false;
     }
     discard_guest_document();
+    if (ensure_system_styles()) {
+        const auto seed = launcher_color_for(theme_seed);
+        if (!g_appspec_styles.apply_theme(m3e::seeded_dark_theme(seed))) {
+            g_appspec_styles.apply_theme(m3e::baseline_dark_theme());
+        }
+    }
     return true;
 }
 
@@ -627,44 +657,32 @@ void system_home_surface_now() {
     }
 }
 
-std::uint8_t launcher_icon_for(const char* app_id) {
-    if (app_id == nullptr) return M3E_SYSTEM_SHELL_APP_ICON_GENERIC;
-    if (std::strstr(app_id, ".timer") != nullptr) {
-        return M3E_SYSTEM_SHELL_APP_ICON_TIMER;
-    }
-    if (std::strstr(app_id, ".weather") != nullptr) {
-        return M3E_SYSTEM_SHELL_APP_ICON_WEATHER;
-    }
-    if (std::strstr(app_id, ".tasks") != nullptr) {
-        return M3E_SYSTEM_SHELL_APP_ICON_TASKS;
-    }
-    if (std::strstr(app_id, ".calculator") != nullptr) {
-        return M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR;
-    }
-    if (std::strstr(app_id, ".calendar") != nullptr) {
-        return M3E_SYSTEM_SHELL_APP_ICON_CALENDAR;
-    }
+std::uint8_t launcher_icon_for(const char* icon) {
+    if (icon == nullptr) return M3E_SYSTEM_SHELL_APP_ICON_GENERIC;
+    if (std::strcmp(icon, "timer") == 0) return M3E_SYSTEM_SHELL_APP_ICON_TIMER;
+    if (std::strcmp(icon, "weather") == 0) return M3E_SYSTEM_SHELL_APP_ICON_WEATHER;
+    if (std::strcmp(icon, "tasks") == 0) return M3E_SYSTEM_SHELL_APP_ICON_TASKS;
+    if (std::strcmp(icon, "calculator") == 0) return M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR;
+    if (std::strcmp(icon, "calendar") == 0) return M3E_SYSTEM_SHELL_APP_ICON_CALENDAR;
+    if (std::strcmp(icon, "water_drop") == 0) return M3E_SYSTEM_SHELL_APP_ICON_WATER_DROP;
     return M3E_SYSTEM_SHELL_APP_ICON_GENERIC;
 }
 
-std::uint32_t launcher_color_for(const char* app_id) {
-    constexpr std::uint32_t colors[] = {
-        0xff524d,
-        0x7241ff,
-        0xb9ff24,
-        0x20bff4,
-        0xff9f1c,
-        0xff4fa3,
-    };
-    std::uint32_t hash = 2166136261U;
-    if (app_id != nullptr) {
-        for (const auto* byte =
-                 reinterpret_cast<const unsigned char*>(app_id);
-             *byte != '\0'; ++byte) {
-            hash = (hash ^ *byte) * 16777619U;
-        }
-    }
-    return colors[hash % (sizeof(colors) / sizeof(colors[0]))];
+std::uint32_t launcher_color_for(const char* seed) {
+    if (seed == nullptr || seed[0] != '#' || std::strlen(seed) != 7) return 0x7241ff;
+    char* end = nullptr;
+    const auto parsed = std::strtoul(seed + 1, &end, 16);
+    return end != nullptr && *end == '\0'
+        ? static_cast<std::uint32_t>(parsed)
+        : 0x7241ff;
+}
+
+std::uint32_t launcher_foreground_for(std::uint32_t background) {
+    const auto red = (background >> 16) & 0xffU;
+    const auto green = (background >> 8) & 0xffU;
+    const auto blue = background & 0xffU;
+    const auto luma = red * 299U + green * 587U + blue * 114U;
+    return luma >= 145000U ? 0x000000 : 0xffffff;
 }
 
 void installed_launcher_now() {
@@ -686,8 +704,9 @@ void installed_launcher_now() {
             app.app_id.data(),
             app.name.data(),
             g_launcher_details[index].data(),
-            launcher_color_for(app.app_id.data()),
-            launcher_icon_for(app.app_id.data()),
+            launcher_color_for(app.theme_seed.data()),
+            launcher_foreground_for(launcher_color_for(app.theme_seed.data())),
+            launcher_icon_for(app.icon.data()),
         };
     }
     m3e_system_shell_show_launcher(
@@ -791,6 +810,15 @@ void render_shell_now() {
             return;
         }
     }
+    if (g_shell.snapshot().overlay == m3e::os::Overlay::none &&
+        g_shell.snapshot().surface == m3e::os::Surface::app &&
+        g_pending_document == nullptr && g_active_document != nullptr) {
+        // Background/provider state can update while a guest owns the screen.
+        // With no trusted overlay to compose, keep the mounted AppSpec tree;
+        // falling through to a shell catalog story would repaint Home over a
+        // healthy resident app.
+        return;
+    }
     const char* visual_scene = "system-shell";
     if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
         switch (g_shell.snapshot().voice_phase) {
@@ -804,6 +832,9 @@ void render_shell_now() {
         visual_scene = "home";
     }
     stage_visual_scene(visual_scene);
+    // Every production-shell renderer below owns and may replace the active
+    // screen tree. Retire the legacy boot UI handles before that happens.
+    g_ui = {};
     if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
         m3e_catalog_show_voice_runtime(
             lv_screen_active(),
@@ -1065,6 +1096,7 @@ void install_state_now(const PackageUiEvent& event) {
 }
 
 void package_ready_event_now(const PackageUiEvent& event) {
+    apply_identity_theme(event.theme_seed);
     g_ready_app = event;
     g_has_ready_app = true;
     g_ready_is_rollback = false;
@@ -1133,6 +1165,7 @@ void app_running_event_now(const PackageUiEvent& event) {
 }
 
 void app_rollback_event_now(const PackageUiEvent& event) {
+    apply_identity_theme(event.theme_seed);
     g_ready_app = event;
     g_has_ready_app = true;
     g_ready_is_rollback = true;
@@ -1285,7 +1318,7 @@ void drain_ui_commands() {
                 apps_changed_now();
                 break;
             case UiCommandType::prepare_app_switch:
-                complete(command, prepare_app_switch_now());
+                complete(command, prepare_app_switch_now(command.primary));
                 break;
         }
     }
@@ -1476,11 +1509,14 @@ bool display_apply_command_batch(
     return completion.result;
 }
 
-bool display_prepare_app_switch() {
+bool display_prepare_app_switch(const char* theme_seed) {
     if (!g_display_ready) return false;
-    if (on_ui_task()) return prepare_app_switch_now();
+    if (on_ui_task()) return prepare_app_switch_now(theme_seed);
     UiCommand command{};
     command.type = UiCommandType::prepare_app_switch;
+    std::strncpy(
+        command.primary, theme_seed == nullptr ? "" : theme_seed,
+        sizeof(command.primary) - 1);
     StaticSemaphore_t semaphore_storage{};
     UiCompletion completion{
         xSemaphoreCreateBinaryStatic(&semaphore_storage),
@@ -1604,6 +1640,8 @@ PackageUiEvent* package_ui_event(
     const char* app_id,
     const char* name,
     const char* semantic_version,
+    const char* icon,
+    const char* theme_seed,
     const char* payload_sha256,
     const char* detail,
     std::uint8_t phase) {
@@ -1617,6 +1655,10 @@ PackageUiEvent* package_ui_event(
         event->semantic_version,
         semantic_version == nullptr ? "" : semantic_version,
         sizeof(event->semantic_version) - 1);
+    std::strncpy(event->icon, icon == nullptr ? "" : icon,
+                 sizeof(event->icon) - 1);
+    std::strncpy(event->theme_seed, theme_seed == nullptr ? "" : theme_seed,
+                 sizeof(event->theme_seed) - 1);
     std::strncpy(
         event->payload_sha256,
         payload_sha256 == nullptr ? "" : payload_sha256,
@@ -1672,13 +1714,15 @@ bool display_publish_install_state(
     const char* detail) {
     return enqueue_package_command(
         UiCommandType::install_state,
-        package_ui_event(nullptr, nullptr, nullptr, nullptr, detail, phase));
+        package_ui_event(nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, detail, phase));
 }
 
 bool display_publish_app_ready(
     const char* app_id,
     const char* name,
     const char* semantic_version,
+    const char* icon,
+    const char* theme_seed,
     const char* payload_sha256) {
     return enqueue_package_command(
         UiCommandType::app_ready,
@@ -1686,6 +1730,8 @@ bool display_publish_app_ready(
             app_id,
             name,
             semantic_version,
+            icon,
+            theme_seed,
             payload_sha256,
             nullptr,
             3));
@@ -1701,6 +1747,8 @@ bool display_note_app_running(
             app_id,
             nullptr,
             semantic_version,
+            nullptr,
+            nullptr,
             payload_sha256,
             nullptr,
             0));
@@ -1710,6 +1758,8 @@ bool display_publish_app_rollback(
     const char* app_id,
     const char* name,
     const char* semantic_version,
+    const char* icon,
+    const char* theme_seed,
     const char* payload_sha256) {
     return enqueue_package_command(
         UiCommandType::app_rollback,
@@ -1717,6 +1767,8 @@ bool display_publish_app_rollback(
             app_id,
             name,
             semantic_version,
+            icon,
+            theme_seed,
             payload_sha256,
             nullptr,
             0));
@@ -1726,6 +1778,8 @@ bool display_publish_app_current_recovery(
     const char* app_id,
     const char* name,
     const char* semantic_version,
+    const char* icon,
+    const char* theme_seed,
     const char* payload_sha256) {
     return enqueue_package_command(
         UiCommandType::app_rollback,
@@ -1733,6 +1787,8 @@ bool display_publish_app_current_recovery(
             app_id,
             name,
             semantic_version,
+            icon,
+            theme_seed,
             payload_sha256,
             "safe-current",
             0));

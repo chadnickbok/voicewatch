@@ -180,7 +180,7 @@ void battery_icon_pixels(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
 }
 
 void calculator_icon(lv_obj_t* parent) {
-    const auto white = rgb(255, 255, 255);
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
     auto* body = pixel_surface(parent, 5, 2, 26, 32, 5, white);
     lv_obj_set_style_bg_opa(body, LV_OPA_TRANSP, 0);
     lv_obj_set_style_border_width(body, 2, 0);
@@ -196,7 +196,7 @@ void calculator_icon(lv_obj_t* parent) {
 }
 
 void timer_icon(lv_obj_t* parent) {
-    const auto white = rgb(255, 255, 255);
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
     auto* dial = pixel_surface(parent, 5, 7, 26, 26, 13, white);
     lv_obj_set_style_bg_opa(dial, LV_OPA_TRANSP, 0);
     lv_obj_set_style_border_width(dial, 3, 0);
@@ -207,7 +207,7 @@ void timer_icon(lv_obj_t* parent) {
 }
 
 void weather_icon(lv_obj_t* parent) {
-    const auto white = rgb(255, 255, 255);
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
     pixel_surface(parent, 5, 7, 14, 14, 7, white);
     pixel_surface(parent, 8, 22, 23, 11, 6, white);
     pixel_surface(parent, 13, 17, 13, 15, 7, white);
@@ -216,7 +216,7 @@ void weather_icon(lv_obj_t* parent) {
 }
 
 void tasks_icon(lv_obj_t* parent) {
-    const auto white = rgb(255, 255, 255);
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
     for (std::int32_t row = 0; row < 3; ++row) {
         pixel_surface(parent, 3, 5 + row * 10, 7, 7, 2, white);
         pixel_surface(parent, 14, 7 + row * 10, 19, 3, 2, white);
@@ -224,7 +224,7 @@ void tasks_icon(lv_obj_t* parent) {
 }
 
 void calendar_icon(lv_obj_t* parent) {
-    const auto white = rgb(255, 255, 255);
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
     auto* body = pixel_surface(parent, 4, 6, 28, 27, 5, white);
     lv_obj_set_style_bg_opa(body, LV_OPA_TRANSP, 0);
     lv_obj_set_style_border_width(body, 3, 0);
@@ -235,7 +235,7 @@ void calendar_icon(lv_obj_t* parent) {
 }
 
 void generic_icon(lv_obj_t* parent) {
-    const auto white = rgb(255, 255, 255);
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
     for (std::int32_t row = 0; row < 3; ++row) {
         for (std::int32_t column = 0; column < 3; ++column) {
             pixel_surface(
@@ -243,6 +243,13 @@ void generic_icon(lv_obj_t* parent) {
                 6, 6, 3, white);
         }
     }
+}
+
+void water_drop_icon(lv_obj_t* parent) {
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
+    auto* drop = pixel_surface(parent, 10, 10, 16, 20, 8, white);
+    lv_obj_set_style_transform_rotation(drop, 450, 0);
+    pixel_surface(parent, 14, 3, 8, 16, 5, white);
 }
 
 void launcher_icon(lv_obj_t* parent, std::uint8_t icon) {
@@ -263,6 +270,9 @@ void launcher_icon(lv_obj_t* parent, std::uint8_t icon) {
             break;
         case M3E_SYSTEM_SHELL_APP_ICON_CALENDAR:
             calendar_icon(glyph);
+            break;
+        case M3E_SYSTEM_SHELL_APP_ICON_WATER_DROP:
+            water_drop_icon(glyph);
             break;
         default:
             generic_icon(glyph);
@@ -494,6 +504,8 @@ extern "C" void m3e_system_shell_show_launcher(
                 row, const_cast<char*>(items[index].app_id));
             auto* icon_tile = pixel_surface(
                 row, 6, 6, 40, 40, 10, primary);
+            lv_obj_set_style_text_color(
+                icon_tile, rgb24(items[index].on_primary_color_rgb), 0);
             launcher_icon(icon_tile, items[index].icon);
             const auto display_name = launcher_name(items[index].name);
             auto* name = label(

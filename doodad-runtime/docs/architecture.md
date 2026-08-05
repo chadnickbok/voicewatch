@@ -213,7 +213,7 @@ and runtime-owner identity. AppSpec's shorter `app_id` remains a guest-local UI
 event namespace (such as `timer`); it is not used as package authority. Stale
 UI delivery is isolated with a generation-specific mounted-document token.
 
-`/packages/registry.ddr` is a deterministic checksummed DDR2 registry tied to
+`/packages/registry.ddr` is a deterministic checksummed DDR3 registry tied to
 one owner. It supports multiple app IDs and retains at most the current and
 previous immutable generation for each. The resident generation is separate,
 volatile state: installing advances current/previous but does not launch.

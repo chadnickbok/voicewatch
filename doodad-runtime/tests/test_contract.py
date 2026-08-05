@@ -43,6 +43,18 @@ class ManifestContractTests(unittest.TestCase):
         with self.assertRaisesRegex(DoodadError, "unknown fields"):
             validate_manifest(manifest, self.abi, self.path)
 
+    def test_unknown_identity_icon_is_rejected(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        manifest["identity"]["icon"] = "arbitrary_bitmap"
+        with self.assertRaisesRegex(DoodadError, "curated icon set"):
+            validate_manifest(manifest, self.abi, self.path)
+
+    def test_noncanonical_theme_seed_is_rejected(self) -> None:
+        manifest = copy.deepcopy(self.manifest)
+        manifest["identity"]["theme_seed"] = "#20bff4"
+        with self.assertRaisesRegex(DoodadError, "uppercase #RRGGBB"):
+            validate_manifest(manifest, self.abi, self.path)
+
 
 class DeclarativeUiTests(unittest.TestCase):
     def setUp(self) -> None:

@@ -69,5 +69,8 @@ def test_focused_answer_is_typed_and_duplicate_safe(tmp_path):
 
 def test_choice_normalization_requires_one_enum_value():
     assert normalize_choice("The ring, please.", ["ring", "bar"]) == "ring"
+    assert normalize_choice(
+        "Use the horizontal bar please", ["circular ring", "horizontal bar"]
+    ) == "horizontal bar"
     assert normalize_choice("ring or bar", ["ring", "bar"]) is None
     assert normalize_choice("surprise me", ["ring", "bar"]) is None

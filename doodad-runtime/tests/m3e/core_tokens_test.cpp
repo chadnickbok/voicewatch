@@ -93,5 +93,11 @@ int main() {
     invalid_theme.color.roles[
         static_cast<std::size_t>(ColorRole::primary)].rgb565.value = 0;
     assert(!m3e::validate_resolved_theme(invalid_theme).valid());
+    const auto hydration = m3e::seeded_dark_theme(0x20bff4);
+    const auto primary = hydration.color.get(ColorRole::primary).rgb888;
+    const auto on_primary = hydration.color.get(ColorRole::on_primary).rgb888;
+    assert(primary.red == 0x20 && primary.green == 0xbf && primary.blue == 0xf4);
+    assert(on_primary.red == 0 && on_primary.green == 0 && on_primary.blue == 0);
+    assert(m3e::validate_resolved_theme(hydration).valid());
     return 0;
 }

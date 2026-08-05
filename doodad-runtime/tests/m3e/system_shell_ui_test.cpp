@@ -53,9 +53,9 @@ int main() {
 
     constexpr m3e_system_shell_launcher_item_t items[] = {
         {"dev.doodad.timer", "Timer", "Version 0.1.0  •  ready",
-         0xff524d, M3E_SYSTEM_SHELL_APP_ICON_TIMER},
+         0xff524d, 0x000000, M3E_SYSTEM_SHELL_APP_ICON_TIMER},
         {"dev.doodad.weather", "Weather", "72°  •  Partly cloudy",
-         0x7241ff, M3E_SYSTEM_SHELL_APP_ICON_WEATHER},
+         0x7241ff, 0xffffff, M3E_SYSTEM_SHELL_APP_ICON_WEATHER},
     };
     m3e_system_shell_launcher_view_t launcher_view{};
     m3e_system_shell_show_launcher(screen, items, 2, &launcher_view);

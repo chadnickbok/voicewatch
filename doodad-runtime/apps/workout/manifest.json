@@ -4,6 +4,7 @@
   "name": "Workout Tracker",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "timer", "theme_seed": "#FF9F1C"},
   "capabilities": [
     "workout.store",
     "ui.mount"

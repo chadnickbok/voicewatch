@@ -202,6 +202,8 @@ bool fill_launch(
     return copy_text(request.app_id, app.app_id) &&
         copy_text(request.name, generation.name) &&
         copy_text(request.semantic_version, generation.semantic_version) &&
+        copy_text(request.icon, generation.icon) &&
+        copy_text(request.theme_seed, generation.theme_seed) &&
         copy_text(request.payload_sha256, generation.payload_sha256);
 }
 
@@ -338,6 +340,8 @@ void install_one(const AppReadyOffer& offer) {
         metadata.app_id.c_str(),
         metadata.name.c_str(),
         metadata.semantic_version.c_str(),
+        metadata.icon.c_str(),
+        metadata.theme_seed.c_str(),
         metadata.payload_sha256.c_str());
 }
 
@@ -433,7 +437,10 @@ bool package_service_init() {
             nullptr,
             4,
             &g_installer_task,
-            MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT) != pdPASS) {
+            // The installer writes the internal flash-backed package
+            // filesystem. Its stack must remain usable while ESP-IDF has the
+            // external flash cache disabled during those writes.
+            MALLOC_CAP_INTERNAL | MALLOC_CAP_8BIT) != pdPASS) {
         ESP_LOGE(kTag, "installer task creation failed");
         abandon_package_mount();
         return false;
@@ -485,6 +492,8 @@ bool package_service_catalog(CatalogSnapshot& snapshot) {
         if (!copy_text(output.app_id, app.app_id) ||
             !copy_text(output.name, app.current.name) ||
             !copy_text(output.semantic_version, app.current.semantic_version) ||
+            !copy_text(output.icon, app.current.icon) ||
+            !copy_text(output.theme_seed, app.current.theme_seed) ||
             !copy_text(output.payload_sha256, app.current.payload_sha256)) {
             continue;
         }

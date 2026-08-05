@@ -332,6 +332,25 @@ bool valid_display_name(const std::string& value) {
         });
 }
 
+bool valid_visual_identity(
+    const std::string& icon,
+    const std::string& theme_seed) {
+    constexpr const char* icons[] = {
+        "generic", "timer", "weather", "tasks", "calculator", "calendar",
+        "water_drop",
+    };
+    const bool known_icon = std::any_of(
+        std::begin(icons), std::end(icons),
+        [&](const char* candidate) { return icon == candidate; });
+    if (!known_icon || theme_seed.size() != kThemeSeedBytes ||
+        theme_seed.front() != '#') return false;
+    return std::all_of(
+        theme_seed.begin() + 1, theme_seed.end(), [](char character) {
+            return (character >= '0' && character <= '9') ||
+                (character >= 'A' && character <= 'F');
+        });
+}
+
 class CanonicalMetadataParser {
   public:
     CanonicalMetadataParser(const std::uint8_t* bytes, std::size_t size)
@@ -345,7 +364,10 @@ class CanonicalMetadataParser {
             number > std::numeric_limits<std::uint32_t>::max()) return false;
         metadata.host_abi = static_cast<std::uint32_t>(number);
         std::string kind;
-        if (!literal(",\"kind\":") || !string(kind) || kind != "personal" ||
+        if (!literal(",\"identity\":{\"icon\":") || !string(metadata.icon) ||
+            !literal(",\"theme_seed\":") || !string(metadata.theme_seed) ||
+            !literal("}") ||
+            !literal(",\"kind\":") || !string(kind) || kind != "personal" ||
             !literal(",\"name\":") || !string(metadata.name) ||
             !literal(",\"owner_id\":") || !string(metadata.owner_id) ||
             !literal(",\"payload_bytes\":") || !integer(number) || number < 1 ||
@@ -364,6 +386,7 @@ class CanonicalMetadataParser {
             ascii_identifier(metadata.owner_id) &&
             ascii_identifier(metadata.signer_key_id) &&
             semantic_version(metadata.semantic_version) &&
+            valid_visual_identity(metadata.icon, metadata.theme_seed) &&
             parse_sha256_hex(metadata.payload_sha256, ignored);
     }
 

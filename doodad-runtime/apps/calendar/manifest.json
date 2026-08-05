@@ -4,6 +4,7 @@
   "name": "Calendar + Agenda",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "calendar", "theme_seed": "#20BFF4"},
   "capabilities": [
     "ui.mount",
     "calendar.sync"

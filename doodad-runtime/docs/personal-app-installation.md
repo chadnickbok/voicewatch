@@ -22,7 +22,7 @@ One DDB1 artifact contains a fixed header, canonical UTF-8 JSON metadata, raw
 `app.wasm`, and an HMAC-SHA256 tag. The signed metadata binds:
 
 - `owner_id` and `signer_key_id`;
-- `app_id`, display name, and semantic version;
+- `app_id`, display name, semantic version, curated icon, and theme seed;
 - supported host ABI; and
 - payload byte length and SHA-256.
 
@@ -132,17 +132,22 @@ byte is `0xFF`. A non-erased partition that fails to mount is never reformatted;
 the package service stays unavailable while the native shell and recovery path
 remain usable.
 
-The owner-bound registry is checksummed DDR2. Because FatFs rename cannot
+The owner-bound registry is checksummed DDR3. DDR2 has no migration reader:
+the signed-identity rollout is a clean break and requires erasing the package
+partition once. Because FatFs rename cannot
 overwrite a destination, an update syncs `registry.ddr.part`, preserves the
 last valid registry as `registry.ddr.bak`, and then promotes the new final. Boot
 repairs an interrupted promotion from the valid final or backup and removes
 stale transaction files.
 
-Build, flash, and monitor as usual:
+The build script can apply the exported profile directly to the ignored board
+configuration without printing it. For the T-Watch clean break, erase only the
+package partition, then build, flash, and monitor:
 
 ```sh
-./scripts/build-firmware.sh --board cores3
-./scripts/flash.sh --port /dev/cu.usbmodem21101 --no-monitor
+./scripts/erase-package-partition.sh /dev/cu.usbmodem21101
+./scripts/build-firmware.sh --board t-watch-s3
+./scripts/flash.sh --board t-watch-s3 --port /dev/cu.usbmodem21101 --no-monitor
 ./scripts/monitor.sh /dev/cu.usbmodem21101
 ```
 
@@ -171,8 +176,9 @@ payload and bundle hashes while performing this gate.
    On a factory-erased first boot, one `initializing erased package partition`
    line is expected; it should not recur once the initialized filesystem exists.
 
-2. Start a voice turn and ask, “Build me a rest-timer app.” Answer the focused
-   ring/bar question. Continue an unrelated conversation while the durable job
+2. Start a voice turn and ask, “Build me a hydration tracker with a blue
+   water-drop identity.” A complete brief should ask no question; an ambiguous
+   request may ask at most one focused enum question. Continue an unrelated conversation while the durable job
    runs; app generation must not block Voice. Before delivery completes, keep
    or reopen Voice in a listening or speaking state.
 
@@ -204,7 +210,8 @@ payload and bundle hashes while performing this gate.
    [packages] running <app-id> <version> <12 hex> without reboot
    ```
 
-   Exercise the rest timer once, including its scheduled completion.
+   Log water once. The app package, icon, and theme persist; hydration data is
+   deliberately session-scoped until the SDK gains host-owned guest storage.
 
 6. Press Button B to return Home, then Button B again to open **APPS**. Confirm
    the installed launcher lists the app name and version; tap it and confirm the

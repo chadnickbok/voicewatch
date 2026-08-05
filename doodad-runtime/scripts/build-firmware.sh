@@ -168,6 +168,48 @@ if [[ "${SDKCONFIG_READY}" != true ]]; then
         -D SDKCONFIG_DEFAULTS="${SDKCONFIG_DEFAULTS}" \
         set-target esp32s3
 fi
+
+# Optional local trust/signaling profile. The per-board sdkconfig is ignored by
+# git; values are never printed. Supplying only part of the trust tuple fails
+# closed so a build cannot silently produce install-disabled firmware.
+if [[ -n "${DOODAD_PERSONAL_OWNER_ID:-}" ||
+      -n "${DOODAD_PERSONAL_HMAC_KEY_HEX:-}" ]]; then
+    [[ "${DOODAD_PERSONAL_OWNER_ID:-}" =~ ^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$ ]] || {
+        echo "DOODAD_PERSONAL_OWNER_ID is invalid" >&2; exit 2;
+    }
+    [[ "${DOODAD_PERSONAL_HMAC_KEY_HEX:-}" =~ ^[0-9A-Fa-f]{64}$ ]] || {
+        echo "DOODAD_PERSONAL_HMAC_KEY_HEX must contain 64 hex characters" >&2; exit 2;
+    }
+    local_signer="${DOODAD_PERSONAL_SIGNER_KEY_ID:-personal-v1}"
+    [[ "${local_signer}" =~ ^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$ ]] || {
+        echo "DOODAD_PERSONAL_SIGNER_KEY_ID is invalid" >&2; exit 2;
+    }
+    local_signal="${DOODAD_VOICE_SIGNALING_URL:-}"
+    [[ "${local_signal}" != *'"'* && "${local_signal}" != *$'\n'* ]] || {
+        echo "DOODAD_VOICE_SIGNALING_URL contains unsupported characters" >&2; exit 2;
+    }
+    profile_tmp="$(mktemp "${SDKCONFIG}.profile.XXXXXX")"
+    awk -v owner="${DOODAD_PERSONAL_OWNER_ID}" \
+        -v signer="${local_signer}" \
+        -v key="${DOODAD_PERSONAL_HMAC_KEY_HEX}" \
+        -v signal="${local_signal}" '
+        BEGIN { o=0; s=0; k=0; u=0 }
+        /^CONFIG_DOODAD_PERSONAL_OWNER_ID=/ { print "CONFIG_DOODAD_PERSONAL_OWNER_ID=\"" owner "\""; o=1; next }
+        /^CONFIG_DOODAD_PERSONAL_SIGNER_KEY_ID=/ { print "CONFIG_DOODAD_PERSONAL_SIGNER_KEY_ID=\"" signer "\""; s=1; next }
+        /^CONFIG_DOODAD_PERSONAL_HMAC_KEY_HEX=/ { print "CONFIG_DOODAD_PERSONAL_HMAC_KEY_HEX=\"" key "\""; k=1; next }
+        /^CONFIG_DOODAD_VOICE_SIGNALING_URL=/ { print "CONFIG_DOODAD_VOICE_SIGNALING_URL=\"" signal "\""; u=1; next }
+        { print }
+        END {
+            if (!o) print "CONFIG_DOODAD_PERSONAL_OWNER_ID=\"" owner "\""
+            if (!s) print "CONFIG_DOODAD_PERSONAL_SIGNER_KEY_ID=\"" signer "\""
+            if (!k) print "CONFIG_DOODAD_PERSONAL_HMAC_KEY_HEX=\"" key "\""
+            if (!u) print "CONFIG_DOODAD_VOICE_SIGNALING_URL=\"" signal "\""
+        }
+    ' "${SDKCONFIG}" > "${profile_tmp}"
+    chmod 600 "${profile_tmp}"
+    mv -f "${profile_tmp}" "${SDKCONFIG}"
+    echo "Applied ignored local personal-app profile for ${BOARD}"
+fi
 if [[ "${SHOW_APP}" -eq 1 ]]; then
     idf.py \
         -C "${PROJECT_DIR}/firmware" \

@@ -33,6 +33,17 @@ VERSION_PATTERN = re.compile(r"^[0-9]+\.[0-9]+\.[0-9]+(?:[-+][0-9A-Za-z.-]+)?$")
 CAPABILITY_PATTERN = re.compile(r"^[a-z][a-z0-9]*(\.[a-z][a-z0-9]*)+$")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 ASSET_MEDIA_TYPE = "image/vnd.doodad.rgb565le"
+IDENTITY_FIELDS = {"icon", "theme_seed"}
+IDENTITY_ICONS = {
+    "generic",
+    "timer",
+    "weather",
+    "tasks",
+    "calculator",
+    "calendar",
+    "water_drop",
+}
+THEME_SEED_PATTERN = re.compile(r"^#[0-9A-F]{6}$")
 ASSET_FIELDS = {
     "sha256",
     "path",
@@ -93,6 +104,7 @@ def validate_manifest(
         "version",
         "host_abi",
         "capabilities",
+        "identity",
         "wasm",
         "ui",
         "assets",
@@ -129,6 +141,22 @@ def validate_manifest(
         raise DoodadError("manifest wasm filename must be app.wasm")
     if "ui" in manifest and manifest["ui"] != "ui.json":
         raise DoodadError("manifest ui filename must be ui.json")
+
+    identity = manifest["identity"]
+    if not isinstance(identity, dict) or set(identity) != IDENTITY_FIELDS:
+        raise DoodadError(
+            "manifest identity must contain exactly icon and theme_seed"
+        )
+    if (
+        not isinstance(identity["icon"], str)
+        or identity["icon"] not in IDENTITY_ICONS
+    ):
+        raise DoodadError("manifest identity icon is not in the curated icon set")
+    if (
+        not isinstance(identity["theme_seed"], str)
+        or THEME_SEED_PATTERN.fullmatch(identity["theme_seed"]) is None
+    ):
+        raise DoodadError("manifest identity theme_seed must be uppercase #RRGGBB")
 
     capabilities = manifest["capabilities"]
     if not isinstance(capabilities, list):

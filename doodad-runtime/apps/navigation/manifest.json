@@ -4,6 +4,7 @@
   "name": "Navigation",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "generic", "theme_seed": "#20BFF4"},
   "capabilities": [
     "ui.mount",
     "navigation.route"

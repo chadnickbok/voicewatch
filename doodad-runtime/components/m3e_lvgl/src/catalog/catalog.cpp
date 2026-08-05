@@ -534,13 +534,13 @@ void os_live_cards_story(lv_obj_t* screen) {
 
 void os_launcher_story(lv_obj_t* screen) {
     constexpr m3e_system_shell_launcher_item_t items[] = {
-        {"dev.doodad.timer", "Timer", "1 active", 0xff524d,
+        {"dev.doodad.timer", "Timer", "1 active", 0xff524d, 0x000000,
          M3E_SYSTEM_SHELL_APP_ICON_TIMER},
         {"dev.doodad.weather", "Weather", "72°  •  Partly cloudy",
-         0x7241ff, M3E_SYSTEM_SHELL_APP_ICON_WEATHER},
-        {"dev.doodad.tasks", "Tasks", "3 remaining", 0xb9ff24,
+         0x7241ff, 0xffffff, M3E_SYSTEM_SHELL_APP_ICON_WEATHER},
+        {"dev.doodad.tasks", "Tasks", "3 remaining", 0xb9ff24, 0x000000,
          M3E_SYSTEM_SHELL_APP_ICON_TASKS},
-        {"dev.doodad.calculator", "Calculator", "Ready", 0x20bff4,
+        {"dev.doodad.calculator", "Calculator", "Ready", 0x20bff4, 0x000000,
          M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR},
     };
     m3e_system_shell_show_launcher(screen, items, 4, nullptr);

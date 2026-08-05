@@ -1,8 +1,9 @@
-"""Independent deterministic gates for a generated rest-timer package."""
+"""Independent deterministic gates for bounded generated applications."""
 
 from __future__ import annotations
 
 import hashlib
+import hmac
 import json
 import os
 import struct
@@ -63,8 +64,8 @@ class VerifiedArtifact:
         }
 
 
-class RestTimerVerifier:
-    ALLOWED_CAPABILITIES = {
+class GeneratedAppVerifier:
+    DEFAULT_CAPABILITIES = {
         "ui.mount",
         "timer.schedule",
         "timer.cancel",
@@ -74,19 +75,49 @@ class RestTimerVerifier:
     def __init__(self, runtime_root: Path, timeout_seconds: int = 600) -> None:
         self.runtime_root = runtime_root.resolve()
         self.timeout_seconds = timeout_seconds
+        configured = os.getenv("DOODAD_GENERATED_CAPABILITIES", "")
+        self.allowed_capabilities = (
+            {item.strip() for item in configured.split(",") if item.strip()}
+            if configured.strip()
+            else set(self.DEFAULT_CAPABILITIES)
+        )
+        self.allowed_capabilities.add("ui.mount")
+        abi = self._read_json(self.runtime_root / "contracts" / "abi" / "v1.json")
+        imports = abi.get("capabilities", {})
+        unknown = self.allowed_capabilities - (
+            set(imports) if isinstance(imports, dict) else set()
+        )
+        if unknown:
+            raise ValueError(
+                "configured generated capabilities are absent from ABI v1: "
+                + ", ".join(sorted(unknown))
+            )
 
-    def verify(self, workspace: Path, layout: str) -> VerifiedArtifact:
+    def verify(self, workspace: Path, plan: dict[str, Any] | None = None) -> VerifiedArtifact:
         app = workspace / "app"
+        try:
+            expected_reference = (workspace / "REFERENCE_SHA256").read_text(
+                encoding="ascii"
+            ).strip()
+            actual_reference, _ = package_tree_snapshot(workspace / "reference")
+        except OSError as error:
+            raise VerificationError(f"cannot audit generated reference tree: {error}") from error
+        if not hmac.compare_digest(expected_reference, actual_reference):
+            raise VerificationError("generated app modified its immutable reference tree")
+        plan = plan or self._read_json(workspace / "BUILD_PLAN.json")
         manifest = self._read_json(app / "manifest.json")
         appspec = self._read_json(app / "appspec.json")
         agent = self._read_json(app / "agent.json")
+        self._validate_schema("generated-app-plan-v1.schema.json", plan)
         self._validate_schema("manifest-v1.schema.json", manifest)
         self._validate_schema("appspec-v1.schema.json", appspec)
         self._validate_schema("agent-contract-v1.schema.json", agent)
         self._validate_identity(manifest, appspec, agent)
+        self._validate_plan(manifest, plan)
         self._validate_permissions(manifest, agent)
-        self._validate_semantics(appspec, layout)
-        self._validate_timer_source(app / "src" / "lib.rs")
+        self._validate_semantics(appspec)
+        if "timer.schedule" in manifest.get("capabilities", []):
+            self._validate_timer_source(app / "src" / "lib.rs")
         self._compile_appspec(appspec, app / "appspec.cbor")
 
         self._run(
@@ -98,7 +129,9 @@ class RestTimerVerifier:
             ],
             cwd=app,
         )
-        gates = ["schema", "semantics", "permissions", "timer-source"]
+        gates = ["schema", "plan", "semantics", "permissions"]
+        if "timer.schedule" in manifest.get("capabilities", []):
+            gates.append("timer-source")
         for command in ("build", "check", "test"):
             self._run([str(self.runtime_root / "doodad"), command, str(app)])
             gates.append(command)
@@ -110,28 +143,52 @@ class RestTimerVerifier:
 
         scenarios = sorted((app / "scenarios").glob("*.scenario.json"))
         if not scenarios:
-            raise VerificationError("generated app has no deterministic timer scenario")
+            raise VerificationError("generated app has no deterministic scenario")
+        observed_ops: set[str] = set()
+        observed_scenarios: dict[str, set[str]] = {}
         for scenario in scenarios:
             document = self._read_json(scenario)
             self._validate_schema("conformance-scenario-v1.schema.json", document)
             if document.get("app_id") != manifest["id"]:
                 raise VerificationError(f"scenario app_id mismatch: {scenario.name}")
             operations = [step.get("op") for step in document.get("steps", [])]
-            if "clock.advance" not in operations or "assert.state" not in operations:
-                raise VerificationError(
-                    f"scenario lacks clock and state assertions: {scenario.name}"
-                )
+            observed_ops.update(str(operation) for operation in operations)
+            observed_scenarios[str(document.get("id", ""))] = {
+                str(operation) for operation in operations
+            }
             self._run(
                 [str(self.runtime_root / "doodad"), "conformance", str(scenario)]
             )
-        gates.append("timer-conformance")
+        for expected in plan.get("scenarios", []):
+            scenario_id = str(expected.get("id", ""))
+            actual = observed_scenarios.get(scenario_id)
+            if actual is None:
+                raise VerificationError(f"build-plan scenario is missing: {scenario_id}")
+            missing = set(expected.get("required_ops", [])) - actual
+            if missing:
+                raise VerificationError(
+                    f"scenario {scenario_id} lacks planned operations: "
+                    + ", ".join(sorted(missing))
+                )
+        required_ops = {"action.dispatch", "assert.state"}
+        capabilities = set(manifest.get("capabilities", []))
+        if "timer.schedule" in capabilities:
+            required_ops.add("clock.advance")
+        if capabilities - {"ui.mount", "timer.schedule", "timer.cancel", "timer.acknowledge"}:
+            required_ops.update({"provider.emit", "lifecycle.set"})
+        missing_ops = sorted(required_ops - observed_ops)
+        if missing_ops:
+            raise VerificationError(
+                "generated scenarios lack required operations: " + ", ".join(missing_ops)
+            )
+        gates.append("conformance")
 
         preview = package / "preview.bmp"
         self._validate_preview(preview)
         gates.append("simulator-render")
         digest, _ = package_tree_snapshot(package)
         artifact_id = f"{manifest['id']}@{manifest['version']}"
-        summary = f"{manifest['name']} ({layout}) passed {len(gates)} independent gates."
+        summary = f"{manifest['name']} passed {len(gates)} independent gates."
         return VerifiedArtifact(
             artifact_id,
             str(package),
@@ -185,12 +242,15 @@ class RestTimerVerifier:
         self, manifest: dict[str, Any], agent: dict[str, Any]
     ) -> None:
         capabilities = set(manifest.get("capabilities", []))
-        if "timer.schedule" not in capabilities or "ui.mount" not in capabilities:
-            raise VerificationError("rest timer must request ui.mount and timer.schedule")
-        unexpected = capabilities - self.ALLOWED_CAPABILITIES
+        if "ui.mount" not in capabilities:
+            raise VerificationError("generated apps must request ui.mount")
+        timer_dependents = {"timer.cancel", "timer.acknowledge"} & capabilities
+        if timer_dependents and "timer.schedule" not in capabilities:
+            raise VerificationError("timer cancel/acknowledge requires timer.schedule")
+        unexpected = capabilities - self.allowed_capabilities
         if unexpected:
             raise VerificationError(
-                "rest timer requests forbidden capabilities: "
+                "generated app requests unavailable capabilities: "
                 + ", ".join(sorted(unexpected))
             )
         contract_permissions = {
@@ -214,14 +274,25 @@ class RestTimerVerifier:
             if isinstance(children, list):
                 stack.extend(reversed(children))
 
-    def _validate_semantics(self, appspec: dict[str, Any], layout: str) -> None:
+    @staticmethod
+    def _validate_plan(manifest: dict[str, Any], plan: dict[str, Any]) -> None:
+        comparisons = {
+            "id": "app_id",
+            "name": "name",
+            "version": "version",
+            "identity": "identity",
+            "capabilities": "capabilities",
+        }
+        for manifest_key, plan_key in comparisons.items():
+            if manifest.get(manifest_key) != plan.get(plan_key):
+                raise VerificationError(
+                    f"manifest {manifest_key} does not match generated build plan"
+                )
+
+    def _validate_semantics(self, appspec: dict[str, Any]) -> None:
         nodes = list(self._nodes(appspec))
-        progress = [node for node in nodes if node.get("type") == "progress"]
-        if len(progress) != 1:
-            raise VerificationError("rest timer must contain exactly one progress component")
-        expected_style = "circular" if layout == "ring" else "linear"
-        if progress[0].get("props", {}).get("style") != expected_style:
-            raise VerificationError(f"{layout} layout requires {expected_style} progress")
+        if not nodes:
+            raise VerificationError("generated AppSpec has no nodes")
         for node in nodes:
             if node.get("events"):
                 semantics = node.get("semantics", {})
@@ -233,7 +304,7 @@ class RestTimerVerifier:
                 if node.get("type") == "button":
                     size = node.get("props", {}).get("size", "default")
                     if size != "default":
-                        raise VerificationError("timer action must use the 48dp default button")
+                        raise VerificationError("generated buttons must use the 48dp default size")
 
     @staticmethod
     def _validate_timer_source(path: Path) -> None:
@@ -331,3 +402,8 @@ class RestTimerVerifier:
         if not isinstance(value, dict):
             raise VerificationError(f"{path} must contain a JSON object")
         return value
+
+
+# Transitional import name for callers that have not yet moved to the generic
+# verifier. Its behavior is intentionally generic.
+RestTimerVerifier = GeneratedAppVerifier

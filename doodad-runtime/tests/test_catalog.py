@@ -28,7 +28,7 @@ EXPECTED = {
     "mockup-music": "c93dc7afb7aa5debc3f67644d227820ad5975d653bf24a53448da948a9f2a7ae",
     "os-home": "204d607441789683cd751194fd1cd004dd23ed779523bef1eecd65e01089151f",
     "os-live-cards": "04566e5812696f6200af2fd5e60d8bc6997733aa8481b8ac20482872eb8a4e5f",
-    "os-launcher": "43f93f0d42f7d2fdc30f78446cf3761cc57b12579b9fdff7d6ca9afbafb57f77",
+    "os-launcher": "58e0b11c743ef635fc7dcba1517d574b4c6945582503eaf21a2781c903d025ed",
     "os-control-center": "56bf7a1d016cc0910e759e303fbe86651fc3de2691d5fa8cb0790e59abad31b6",
     "os-app-manager": "34272ca9a3949b0a5e80ba601cc3a4aa6693b79f7eeb6445987c76f716350a84",
     "os-voice": "42b0fa50a91cde75fbb662446c047922a307c20f1e92de949d34fc3f582266e9",

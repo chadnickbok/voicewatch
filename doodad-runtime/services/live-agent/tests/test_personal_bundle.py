@@ -31,6 +31,7 @@ from doodad_agent.personal_bundle import (
 
 
 KEY = bytes(range(32))
+RUNTIME_ROOT = Path(__file__).resolve().parents[3]
 
 
 def metadata(payload: bytes = b"\0asm-test") -> dict[str, object]:
@@ -43,6 +44,7 @@ def metadata(payload: bytes = b"\0asm-test") -> dict[str, object]:
         "name": "Lift Rest",
         "semantic_version": "0.1.0",
         "host_abi": 1,
+        "identity": {"icon": "timer", "theme_seed": "#20BFF4"},
         "payload_sha256": hashlib.sha256(payload).hexdigest(),
         "payload_bytes": len(payload),
     }
@@ -59,6 +61,7 @@ def verified_package(tmp_path: Path, payload: bytes = b"\0asm-app") -> VerifiedA
                 "name": "Lift Rest",
                 "version": "0.1.0",
                 "host_abi": 1,
+                "identity": {"icon": "timer", "theme_seed": "#20BFF4"},
                 "capabilities": ["ui.mount", "timer.schedule"],
                 "wasm": "app.wasm",
             }
@@ -93,10 +96,10 @@ def test_ddb1_wire_format_is_exact_canonical_and_round_trips() -> None:
     )
     # Shared with the firmware verifier as the cross-language DDB1 vector.
     assert bundle[-32:].hex() == (
-        "d0d8ba0b89d45c9babb1b71d49c50d067cf3cbac0d0e12cecc19aa6b66d74c12"
+        "f7507d730c6ff6f3e0a693ddb25b116563a9b38ebe5e831cfb49be73998f5e71"
     )
     assert hashlib.sha256(bundle).hexdigest() == (
-        "29c88588c68b46839ced00e44773fc865c99c9ffda9ccd53f5755b858fc2d80a"
+            "ffb5818c5452b80be1c01c65e1413b53a481d18fb3681603626c70cfa2ec8320"
     )
     decoded, decoded_payload = decode_personal_bundle(bundle, KEY)
     assert decoded == document
@@ -211,6 +214,20 @@ def test_metadata_binds_owner_identity_and_exact_payload() -> None:
     invalid_name["name"] = "Lift\0Rest"
     with pytest.raises(PersonalBundleError, match="printable Unicode"):
         encode_personal_bundle(invalid_name, payload, KEY)
+
+
+@pytest.mark.parametrize(
+    ("identity", "message"),
+    [
+        ({"icon": "downloaded_svg", "theme_seed": "#20BFF4"}, "curated"),
+        ({"icon": "water_drop", "theme_seed": "#20bff4"}, "uppercase"),
+    ],
+)
+def test_signed_visual_identity_is_strict(identity: dict[str, str], message: str) -> None:
+    document = metadata()
+    document["identity"] = identity
+    with pytest.raises(PersonalBundleError, match=message):
+        encode_personal_bundle(document, b"\0asm-test", KEY)
 
 
 def test_packager_promotes_only_wasm_to_immutable_content_addressed_store(
@@ -333,6 +350,6 @@ def test_independent_build_commands_never_inherit_outer_packager_key(
 
     monkeypatch.setenv("DOODAD_PERSONAL_HMAC_KEY_HEX", KEY.hex())
     monkeypatch.setattr(app_verifier_module.subprocess, "run", fake_run)
-    app_verifier_module.RestTimerVerifier(tmp_path)._run(["doodad", "check"])
+    app_verifier_module.RestTimerVerifier(RUNTIME_ROOT)._run(["doodad", "check"])
     assert "DOODAD_PERSONAL_HMAC_KEY_HEX" not in captured
     assert captured["ASDF_RUST_VERSION"] == "1.95.0"

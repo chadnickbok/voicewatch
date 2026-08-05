@@ -77,23 +77,23 @@ constexpr BundleFixture kFixtures[] = {
     {
         "0.1.0",
         "2a01ddca210fc5bccc7d140fcfdfe75ab7082c323b24782399a79c2137e9d571",
-        "fd03340e40a634fcedaeb6dbd977eaa15b160f1bee1bab833c69b97a3dd99bcc",
+        "aec59e222eef99304e6cc04ceea5ea88976539f42c5c5ea896543fd456e0f0dd",
         "0061736d666978747572652d6f6e65",
-        "c289819c83cdb4c2724ce798c508b8f6adc612ee55115a593d1b1222ad624f79",
+        "6f46e04e656da2d0affd47a7a2d766b3785d474f93de72eb0cdfc38fd43211c2",
     },
     {
         "0.2.0",
         "0643e41e5b7b54ad8514f8a7046898038dd63be30bbe0ba17442600a397049c8",
-        "deda8d14c255627045bff2223eced48abcc620c5ecdafe2851db451d60dec0b0",
+        "85ee212a8a18de86780af877ca05cc456b024c9c60c61a133e5ca39e954f35f4",
         "0061736d666978747572652d74776f",
-        "6ab77590552921daa78c4905d9dd7521397fb0d8bb848f8e5468477eeff2b696",
+        "0b4173c9a5b52c40e4574268821fc1bcec0215bdd513c61c738f9576c5d4a71b",
     },
     {
         "0.3.0",
         "a68c4264a31dbc081a157aac32fbd67aadd759c60a519c6a7e63a17de5ad8279",
-        "d3ae39e5bcbd30d830a9c986a89100cd887ce8f49f320682d04d3293ce75b873",
+        "7080da12c0d51948d57018ee8482466f55177e04067b4f09bcf7ee65f18943ae",
         "0061736d666978747572652d7468726565",
-        "64f50cfcb6884a2f0257a93bf456ae697220f9e14e9f6fa2cb062114feb52552",
+        "4cd7f716e069a4add65b419fb36b8e2ba47a5f896e75dcfce7e7318cdfae1871",
     },
 };
 
@@ -101,13 +101,14 @@ std::vector<std::uint8_t> fixture_bundle(const BundleFixture& fixture) {
     const auto payload = from_hex(fixture.payload_hex);
     const std::string metadata =
         "{\"app_id\":\"dev.doodad.rest-timer\",\"bundle_version\":1,"
-        "\"host_abi\":1,\"kind\":\"personal\",\"name\":\"Lift Rest\","
+        "\"host_abi\":1,\"identity\":{\"icon\":\"timer\",\"theme_seed\":\"#20BFF4\"},"
+        "\"kind\":\"personal\",\"name\":\"Lift Rest\","
         "\"owner_id\":\"nick.local\",\"payload_bytes\":" +
         std::to_string(payload.size()) +
         ",\"payload_sha256\":\"" + fixture.payload_sha256 +
         "\",\"semantic_version\":\"" + fixture.version +
         "\",\"signer_key_id\":\"mac.dev.1\"}";
-    assert(metadata.size() == 285);
+    assert(metadata.size() == 336);
     std::vector<std::uint8_t> bundle = {'D', 'D', 'B', '1'};
     const auto append_u32 = [&](std::uint32_t value) {
         bundle.push_back(static_cast<std::uint8_t>(value >> 24));
@@ -184,7 +185,8 @@ std::vector<std::uint8_t> signed_fixture_bundle(
     const auto payload = from_hex(fixture.payload_hex);
     const std::string metadata =
         "{\"app_id\":\"dev.doodad.rest-timer\",\"bundle_version\":1,"
-        "\"host_abi\":1,\"kind\":\"personal\",\"name\":\"" + name +
+        "\"host_abi\":1,\"identity\":{\"icon\":\"timer\",\"theme_seed\":\"#20BFF4\"},"
+        "\"kind\":\"personal\",\"name\":\"" + name +
         "\",\"owner_id\":\"nick.local\",\"payload_bytes\":" +
         std::to_string(payload.size()) +
         ",\"payload_sha256\":\"" + fixture.payload_sha256 +
@@ -198,17 +200,18 @@ std::vector<std::uint8_t> signed_fixture_bundle(
 std::vector<std::uint8_t> shared_cross_language_vector() {
     const std::string metadata =
         "{\"app_id\":\"dev.doodad.generated-rest\",\"bundle_version\":1,"
-        "\"host_abi\":1,\"kind\":\"personal\",\"name\":\"Lift Rest\","
+        "\"host_abi\":1,\"identity\":{\"icon\":\"timer\",\"theme_seed\":\"#20BFF4\"},"
+        "\"kind\":\"personal\",\"name\":\"Lift Rest\","
         "\"owner_id\":\"nick.local\",\"payload_bytes\":9,"
         "\"payload_sha256\":\"90e93f21d64a418cb8437ae85094bb50ff12b7bd389ba8c47019dd670fa51743\","
         "\"semantic_version\":\"0.1.0\",\"signer_key_id\":\"macbook-v0\"}";
-    assert(metadata.size() == 289);
-    std::vector<std::uint8_t> bundle = from_hex("444442310000012100000009");
+    assert(metadata.size() == 340);
+    std::vector<std::uint8_t> bundle = from_hex("444442310000015400000009");
     bundle.insert(bundle.end(), metadata.begin(), metadata.end());
     const auto payload = from_hex("0061736d2d74657374");
     bundle.insert(bundle.end(), payload.begin(), payload.end());
     const auto tag = from_hex(
-        "d0d8ba0b89d45c9babb1b71d49c50d067cf3cbac0d0e12cecc19aa6b66d74c12");
+        "f7507d730c6ff6f3e0a693ddb25b116563a9b38ebe5e831cfb49be73998f5e71");
     bundle.insert(bundle.end(), tag.begin(), tag.end());
     return bundle;
 }
@@ -283,22 +286,25 @@ void verify_bundle_contract() {
     auto profile = trust();
     profile.signer_key_id = "macbook-v0";
     const auto bundle = shared_cross_language_vector();
-    assert(bundle.size() == 342);
+    assert(bundle.size() == 393);
     VerifiedPersonalBundle verified;
     assert(doodad::packages::verify_personal_bundle_bytes(
                bundle.data(), bundle.size(), profile,
-               "29c88588c68b46839ced00e44773fc865c99c9ffda9ccd53f5755b858fc2d80a",
+               "ffb5818c5452b80be1c01c65e1413b53a481d18fb3681603626c70cfa2ec8320",
                verified) == PersonalBundleError::ok);
     assert(verified.metadata.app_id == "dev.doodad.generated-rest");
+    assert(verified.metadata.icon == "timer");
+    assert(verified.metadata.theme_seed == "#20BFF4");
     assert(verified.metadata.payload_bytes == 9);
-    assert(verified.payload_offset == 301);
+    assert(verified.payload_offset == 352);
 
     // The same JSON value written with a printable Unicode escape is valid
     // JSON but is not the packager's canonical ensure_ascii=false encoding.
     const auto vector_payload = from_hex("0061736d2d74657374");
     const std::string escaped_metadata =
         "{\"app_id\":\"dev\\u002edoodad.generated-rest\",\"bundle_version\":1,"
-        "\"host_abi\":1,\"kind\":\"personal\",\"name\":\"Lift Rest\","
+        "\"host_abi\":1,\"identity\":{\"icon\":\"timer\",\"theme_seed\":\"#20BFF4\"},"
+        "\"kind\":\"personal\",\"name\":\"Lift Rest\","
         "\"owner_id\":\"nick.local\",\"payload_bytes\":9,"
         "\"payload_sha256\":\"90e93f21d64a418cb8437ae85094bb50ff12b7bd389ba8c47019dd670fa51743\","
         "\"semantic_version\":\"0.1.0\",\"signer_key_id\":\"macbook-v0\"}";
@@ -339,7 +345,7 @@ void verify_bundle_contract() {
            PersonalBundleError::invalid_metadata);
 
     auto tampered = bundle;
-    tampered[301] ^= 1;
+    tampered[352] ^= 1;
     assert(doodad::packages::verify_personal_bundle_bytes(
                tampered.data(), tampered.size(), profile, "", verified) ==
            PersonalBundleError::invalid_hmac);
@@ -366,6 +372,8 @@ void verify_manifest_bounds() {
     const std::string emoji = "\xf0\x9f\x98\x80";
     for (int index = 0; index < 48; ++index) metadata.name += emoji;
     metadata.semantic_version = "1.0.0";
+    metadata.icon = "generic";
+    metadata.theme_seed = "#20BFF4";
     metadata.payload_sha256 = std::string(64, 'a');
     metadata.host_abi = 1;
     metadata.payload_bytes = 8;
@@ -432,6 +440,8 @@ void verify_generation_identity_selection() {
         value.app_id = app_id;
         value.name = name;
         value.semantic_version = version;
+        value.icon = "generic";
+        value.theme_seed = "#20BFF4";
         value.payload_sha256 = payload_sha256;
         value.host_abi = 1;
         value.payload_bytes = 8;
@@ -592,6 +602,8 @@ void verify_noncurrent_failure_quarantine() {
         value.app_id = app_id;
         value.name = "Resident " + version;
         value.semantic_version = version;
+        value.icon = "generic";
+        value.theme_seed = "#20BFF4";
         value.payload_sha256 = payload_sha256;
         value.host_abi = 1;
         value.payload_bytes = 8;
@@ -659,6 +671,8 @@ void verify_quarantine_history() {
         value.app_id = app_id;
         value.name = "Failure history " + version;
         value.semantic_version = version;
+        value.icon = "generic";
+        value.theme_seed = "#20BFF4";
         value.payload_sha256 = std::string(64, payload_digit);
         value.host_abi = 1;
         value.payload_bytes = 8;
@@ -735,6 +749,8 @@ void verify_quarantine_capacity_and_canonical_encoding() {
         value.app_id = app_id;
         value.name = "Failure capacity " + version;
         value.semantic_version = version;
+        value.icon = "generic";
+        value.theme_seed = "#20BFF4";
         value.payload_sha256 = std::string(64, payload_digit);
         value.host_abi = 1;
         value.payload_bytes = 8;
@@ -885,7 +901,7 @@ void verify_quarantine_capacity_and_canonical_encoding() {
     assert(install(durable, first, 'a') == RegistryUpdate::invalid);
     assert(install(durable, future, 'c') == RegistryUpdate::invalid);
 
-    // DDR2 requires the set itself to be strictly sorted and unique, not just
+    // DDR3 requires the set itself to be strictly sorted and unique, not just
     // semantically equivalent. Repairing the outer checksum must not make
     // either non-canonical representation decodable.
     const auto first_record = registry_identity_record(
@@ -1001,6 +1017,8 @@ PackageRegistry registry_snapshot(
     metadata.app_id = "dev.doodad.recovery";
     metadata.name = "Recovery " + version;
     metadata.semantic_version = version;
+    metadata.icon = "generic";
+    metadata.theme_seed = "#20BFF4";
     metadata.payload_sha256 = std::string(64, payload_digit);
     metadata.host_abi = 1;
     metadata.payload_bytes = 8;
@@ -1204,7 +1222,7 @@ void verify_registry_and_store() {
 
     const auto encoded = doodad::packages::encode_package_registry(registry);
     assert(encoded.size() > 4);
-    assert(std::string(encoded.begin(), encoded.begin() + 4) == "DDR2");
+    assert(std::string(encoded.begin(), encoded.begin() + 4) == "DDR3");
     auto old_layout = encoded;
     old_layout[3] = '1';
     const auto old_checksum = doodad::packages::sha256_bytes(

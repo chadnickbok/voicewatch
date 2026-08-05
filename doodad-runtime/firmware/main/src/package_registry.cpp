@@ -13,7 +13,7 @@
 namespace doodad::packages {
 namespace {
 
-constexpr std::uint8_t kRegistryMagic[] = {'D', 'D', 'R', '2'};
+constexpr std::uint8_t kRegistryMagic[] = {'D', 'D', 'R', '3'};
 constexpr std::size_t kMaximumRegistryBytes = 128 * 1024;
 constexpr std::uint16_t kMaximumRegistryStringBytes = 512;
 
@@ -134,8 +134,24 @@ bool safe_relative_path(const std::string& path) {
 }
 
 bool valid_generation(const PackageGeneration& generation) {
+    constexpr const char* icons[] = {
+        "generic", "timer", "weather", "tasks", "calculator", "calendar",
+        "water_drop",
+    };
+    const bool known_icon = std::any_of(
+        std::begin(icons), std::end(icons),
+        [&](const char* candidate) { return generation.icon == candidate; });
+    const bool valid_seed = generation.theme_seed.size() == kThemeSeedBytes &&
+        generation.theme_seed.front() == '#' && std::all_of(
+            generation.theme_seed.begin() + 1,
+            generation.theme_seed.end(),
+            [](char character) {
+                return (character >= '0' && character <= '9') ||
+                    (character >= 'A' && character <= 'F');
+            });
     return valid_version(generation.semantic_version) &&
         valid_name(generation.name) &&
+        known_icon && valid_seed &&
         digest(generation.payload_sha256) && digest(generation.bundle_sha256) &&
         safe_relative_path(generation.relative_path) && generation.host_abi > 0;
 }
@@ -362,6 +378,8 @@ bool append_generation(
     if (!valid_generation(generation)) return false;
     return append_string(output, generation.semantic_version) &&
         append_string(output, generation.name) &&
+        append_string(output, generation.icon) &&
+        append_string(output, generation.theme_seed) &&
         append_string(output, generation.payload_sha256) &&
         append_string(output, generation.bundle_sha256) &&
         append_string(output, generation.relative_path) &&
@@ -411,7 +429,8 @@ class RegistryReader {
 
     bool generation(PackageGeneration& output) {
         return string(output.semantic_version) &&
-            string(output.name) && string(output.payload_sha256) &&
+            string(output.name) && string(output.icon) &&
+            string(output.theme_seed) && string(output.payload_sha256) &&
             string(output.bundle_sha256) && string(output.relative_path) &&
             u32(output.host_abi) && valid_generation(output);
     }
@@ -446,6 +465,7 @@ bool verify_existing_generation(
 
 bool PackageGeneration::operator==(const PackageGeneration& other) const {
     return semantic_version == other.semantic_version && name == other.name &&
+        icon == other.icon && theme_seed == other.theme_seed &&
         payload_sha256 == other.payload_sha256 &&
         bundle_sha256 == other.bundle_sha256 &&
         relative_path == other.relative_path && host_abi == other.host_abi;
@@ -496,6 +516,8 @@ RegistryUpdate PackageRegistry::record_install(
     PackageGeneration generation{
         metadata.semantic_version,
         metadata.name,
+        metadata.icon,
+        metadata.theme_seed,
         metadata.payload_sha256,
         bundle_sha256,
         relative_path,

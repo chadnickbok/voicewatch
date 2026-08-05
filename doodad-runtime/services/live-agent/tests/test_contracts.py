@@ -47,7 +47,8 @@ def test_manifest_app_identity_matches_runtime_64_byte_limit() -> None:
         "id": "a." + "b" * 62,
         "name": "Bounded app",
         "version": "1.0.0",
-        "host_abi": 1,
+            "host_abi": 1,
+            "identity": {"icon": "generic", "theme_seed": "#20BFF4"},
         "capabilities": ["ui.mount"],
         "wasm": "app.wasm",
     }

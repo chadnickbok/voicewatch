@@ -4,6 +4,7 @@
   "name": "Remote Control Lab",
   "version": "0.1.0",
   "host_abi": 1,
+  "identity": {"icon": "generic", "theme_seed": "#FF524D"},
   "capabilities": [
     "ui.mount",
     "remote.control"

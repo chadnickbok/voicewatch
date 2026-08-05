@@ -27,6 +27,8 @@ struct CatalogEntry {
     std::array<char, kMaximumPersonalAppIdBytes + 1> app_id{};
     std::array<char, kMaximumPersonalAppNameBytes + 1> name{};
     std::array<char, kMaximumPersonalAppVersionBytes + 1> semantic_version{};
+    std::array<char, kMaximumPersonalIconBytes + 1> icon{};
+    std::array<char, kThemeSeedBytes + 1> theme_seed{};
     std::array<char, (kSha256Bytes * 2) + 1> payload_sha256{};
     bool has_previous = false;
     bool rollback_available = false;
@@ -43,6 +45,8 @@ struct LaunchRequest {
     std::array<char, kMaximumPersonalAppIdBytes + 1> app_id{};
     std::array<char, kMaximumPersonalAppNameBytes + 1> name{};
     std::array<char, kMaximumPersonalAppVersionBytes + 1> semantic_version{};
+    std::array<char, kMaximumPersonalIconBytes + 1> icon{};
+    std::array<char, kThemeSeedBytes + 1> theme_seed{};
     std::array<char, (kSha256Bytes * 2) + 1> payload_sha256{};
 };
 

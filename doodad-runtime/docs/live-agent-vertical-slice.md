@@ -154,7 +154,7 @@ timer ID so guest switches cannot cross-route them.
 
 Package storage is initialized only when a raw first-use scan proves the whole
 partition is erased (`0xFF`). A non-erased mount failure is never reformatted.
-The checksummed DDR2 registry uses a FatFs-compatible `.part`/`.bak` promotion
+The checksummed DDR3 registry uses a FatFs-compatible `.part`/`.bak` promotion
 and boot-repair transaction, and both board builds require heap-backed long
 filenames with a 255-byte maximum.
 
@@ -810,7 +810,7 @@ The implemented CoreS3 slice is:
 5. serve `/apps/<bundle_sha256>` over HTTP on that same live-agent port;
 6. stream into a `.part` file and verify announced length/hash, DDB1 HMAC,
    owner, signer-key label, host ABI, canonical metadata, and payload hash;
-7. promote verified files through a checksummed DDR2 `.part`/`.bak` transaction
+7. promote verified files through a checksummed DDR3 `.part`/`.bak` transaction
    and advance the durable per-owner registry, retaining current and previous
    generations per app;
 8. show **APP READY** with **Launch now** and **Later**, without preempting an
@@ -1055,7 +1055,7 @@ qualification.
 - app-server protocol fixtures from the pinned generated schema;
 - byte-identical host/device DDB1 fixtures plus canonicalization, owner, ABI,
   length, hash, HMAC, and tamper rejection; and
-- current/previous DDR2 transitions, FatFs non-replacing `.part`/`.bak` recovery,
+- current/previous DDR3 transitions, FatFs non-replacing `.part`/`.bak` recovery,
   LFN configuration, replay idempotency, exact-generation quarantine, and
   `(app_id, timer_id)` isolation.
 
