@@ -50,8 +50,12 @@ notices.
 
 ## Roboto Flex
 
+- Commit: `739e06dc46ebb14cddd88b9768a6c1504d4677f6`
 - License: SIL Open Font License 1.1
-- Planned use: static, subsetted LVGL bitmap-font instances
+- Source asset:
+  `reference/watch-face/vendor/roboto-flex/RobotoFlex-Condensed760-Optical120.ttf`
+- Use: pinned static watch-face instance and generated 114px numeral-only LVGL
+  bitmap-font subset
 - Source: `https://github.com/googlefonts/roboto-flex`
 
 ## Roboto

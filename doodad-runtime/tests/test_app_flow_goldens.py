@@ -14,7 +14,7 @@ from tools.doodad_cli.scene_trace import run_flow_action
 ROOT = Path(__file__).resolve().parents[1]
 
 EXPECTED = {
-    "timer": "1b729d24bda3e8a3992d09d3f73c68bf5e5cce25c197f8fdf01fcc4af0920140",
+    "timer": "ece72f6c4645c159b5fad2d1305a62a713f722839645f8d6809783a3d451f9bc",
     "weather": "2109485abf664ca89050f51a8904cd180dd98287f3701b61a54727a38a92d513",
     "notifications": "661c5f0388eb18dc78b8c997efb5060e533a72945f159d63cc0eccfa1a0a1729",
     "tasks": "c11f8816d430395f679697543835bb9b0ec5e3494bdf3e43820c7b7d2918df3a",

@@ -22,6 +22,13 @@ int main() {
     assert(shell.snapshot().surface == Surface::launcher);
     assert(shell.open_app("dev.doodad.timer", 4));
     assert(shell.snapshot().surface == Surface::app);
+    assert(shell.dispatch(map_input(Input::button_b)));
+    assert(shell.snapshot().surface == Surface::watch_face);
+
+    assert(shell.dispatch(map_input(Input::button_b)));
+    assert(shell.snapshot().surface == Surface::launcher);
+    assert(shell.open_app("dev.doodad.timer", 5));
+    assert(shell.snapshot().surface == Surface::app);
     assert(shell.dispatch(map_input(Input::button_a)));
     assert(shell.snapshot().surface == Surface::launcher);
     assert(shell.dispatch(map_input(Input::button_b)));

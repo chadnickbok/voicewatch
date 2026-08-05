@@ -1,6 +1,7 @@
 set(M3E_LVGL_SOURCES
     src/assets/calculator_font_20.c
     src/assets/calculator_result_font_40.c
+    src/assets/home_time_font_114.c
     src/assets/nutrition_font_32.c
     src/assets/timer_font_55.c
     src/assets/timer_value_font_28.c

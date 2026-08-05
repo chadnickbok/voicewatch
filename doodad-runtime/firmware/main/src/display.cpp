@@ -594,12 +594,18 @@ void installed_launcher_now() {
         screen,
         "APPS",
         m3e::generated::TypographyRole::title_medium);
-    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 8);
+    lv_obj_set_pos(title, 15, 10);
+    auto* home_hint = factory.text(
+        screen,
+        "B  •  HOME",
+        m3e::generated::TypographyRole::body_extra_small,
+        true);
+    lv_obj_align(home_hint, LV_ALIGN_TOP_RIGHT, -15, 13);
 
     auto* list = lv_obj_create(screen);
     lv_obj_remove_style_all(list);
-    lv_obj_set_pos(list, 12, 38);
-    lv_obj_set_size(list, 216, 190);
+    lv_obj_set_pos(list, 12, 40);
+    lv_obj_set_size(list, 216, 188);
     lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(
         list, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
@@ -610,29 +616,28 @@ void installed_launcher_now() {
     if (g_launcher_apps.count == 0) {
         auto* empty = factory.text(
             list,
-            "No personal apps yet.\nAsk Doodad to build one.",
+            "No apps yet\n\nHold B and ask Doodad\nto build your first one.",
             m3e::generated::TypographyRole::body_medium,
             true);
         lv_obj_set_width(empty, 204);
         lv_obj_set_style_text_align(empty, LV_TEXT_ALIGN_CENTER, 0);
-        lv_obj_set_style_margin_top(empty, 42, 0);
+        lv_obj_set_style_margin_top(empty, 36, 0);
         return;
     }
 
     for (std::size_t index = 0; index < g_launcher_apps.count; ++index) {
         auto& app = g_launcher_apps.apps[index];
-        char label[160]{};
+        char detail[96]{};
         std::snprintf(
-            label,
-            sizeof(label),
-            "%.88s  %.60s",
-            app.name.data(),
+            detail,
+            sizeof(detail),
+            "Version %.60s  •  ready",
             app.semantic_version.data());
         auto* button = factory.button(
             list,
             {
                 app.app_id.data(),
-                label,
+                "",
                 index % 3 == 0
                     ? m3e::Tone::primary
                     : index % 3 == 1
@@ -643,8 +648,66 @@ void installed_launcher_now() {
                 true,
                 false,
             });
-        lv_obj_set_size(button, 204, 48);
+        lv_obj_clean(button);
+        lv_obj_set_size(button, 204, 54);
         lv_obj_set_flex_grow(button, 0);
+        lv_obj_set_style_pad_hor(button, 9, 0);
+        lv_obj_set_style_pad_column(button, 10, 0);
+        lv_obj_set_flex_flow(button, LV_FLEX_FLOW_ROW);
+        lv_obj_set_flex_align(
+            button,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_CENTER);
+
+        auto* avatar = lv_obj_create(button);
+        m3e::ComponentFactory::reset(avatar);
+        lv_obj_set_size(avatar, 36, 36);
+        lv_obj_set_style_radius(avatar, LV_RADIUS_CIRCLE, 0);
+        lv_obj_set_style_bg_color(
+            avatar, lv_color_make(0x33, 0x2E, 0x3C), 0);
+        lv_obj_set_style_bg_opa(avatar, LV_OPA_COVER, 0);
+        char monogram[2]{
+            app.name[0] == '\0' ? '?' : app.name[0],
+            '\0',
+        };
+        auto* monogram_label = factory.text(
+            avatar,
+            monogram,
+            m3e::generated::TypographyRole::title_medium);
+        lv_obj_set_style_text_color(
+            monogram_label, lv_color_make(0xF6, 0xED, 0xFF), 0);
+        lv_obj_center(monogram_label);
+
+        auto* labels = lv_obj_create(button);
+        m3e::ComponentFactory::reset(labels);
+        lv_obj_set_height(labels, LV_SIZE_CONTENT);
+        lv_obj_set_flex_grow(labels, 1);
+        lv_obj_set_flex_flow(labels, LV_FLEX_FLOW_COLUMN);
+        lv_obj_set_flex_align(
+            labels,
+            LV_FLEX_ALIGN_CENTER,
+            LV_FLEX_ALIGN_START,
+            LV_FLEX_ALIGN_START);
+        auto* name = factory.text(
+            labels,
+            app.name.data(),
+            m3e::generated::TypographyRole::title_medium);
+        auto* version = factory.text(
+            labels,
+            detail,
+            m3e::generated::TypographyRole::body_extra_small);
+        lv_obj_set_style_text_color(
+            name, lv_color_make(0x21, 0x18, 0x2B), 0);
+        lv_obj_set_style_text_color(
+            version, lv_color_make(0x49, 0x40, 0x53), 0);
+
+        auto* arrow = factory.text(
+            button,
+            ">",
+            m3e::generated::TypographyRole::title_medium);
+        lv_obj_set_style_text_color(
+            arrow, lv_color_make(0x21, 0x18, 0x2B), 0);
         lv_obj_add_event_cb(
             button,
             launch_catalog_entry,

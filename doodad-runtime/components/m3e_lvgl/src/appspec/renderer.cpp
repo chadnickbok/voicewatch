@@ -3155,17 +3155,17 @@ bool Renderer::mount(
                         object, LV_TEXT_ALIGN_RIGHT, 0);
                 } else if (countdown_document && node.variant == 4) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
-                    lv_obj_set_size(object, px(112), px(58));
+                    lv_obj_set_size(object, px(104), px(50));
                     lv_obj_set_pos(
                         object,
-                        (240 - px(112)) / 2,
-                        px(41));
+                        (240 - px(104)) / 2,
+                        px(24));
                     lv_obj_set_style_text_font(
                         object, &m3e_timer_font_55, 0);
                     lv_obj_set_style_text_align(
                         object, LV_TEXT_ALIGN_CENTER, 0);
                     lv_obj_set_style_pad_top(
-                        object, px(10), 0);
+                        object, px(5), 0);
                 } else if (weather_hero_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
                     if (node.variant == 1) {
@@ -3582,8 +3582,8 @@ bool Renderer::mount(
                     lv_obj_set_pos(
                         object,
                         (240 - px(120)) / 2,
-                        px(140));
-                    lv_obj_set_height(object, px(48));
+                        px(154));
+                    lv_obj_set_height(object, px(34));
                     lv_obj_set_style_radius(
                         object, LV_RADIUS_CIRCLE, 0);
                     lv_obj_set_style_bg_color(
@@ -4325,10 +4325,10 @@ bool Renderer::mount(
                           {primary, node.value, node.maximum, tone(node.tone)});
                 if (countdown_document) {
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
-                    lv_obj_set_size(object, px(132), px(132));
+                    lv_obj_set_size(object, px(112), px(112));
                     lv_obj_set_pos(
                         object,
-                        (240 - px(132) + 1) / 2,
+                        (240 - px(112) + 1) / 2,
                         px(4));
                     lv_obj_set_style_arc_width(
                         object, px(6), LV_PART_MAIN);
@@ -4483,11 +4483,11 @@ bool Renderer::mount(
                     object = lv_obj_create(parent);
                     ComponentFactory::reset(object);
                     lv_obj_add_flag(object, LV_OBJ_FLAG_FLOATING);
-                    lv_obj_set_size(object, px(140), px(48));
+                    lv_obj_set_size(object, px(140), px(40));
                     lv_obj_set_pos(
                         object,
                         (240 - px(140) + 1) / 2,
-                        px(88));
+                        px(112));
                     lv_obj_set_style_pad_all(object, px(4), 0);
                     lv_obj_set_style_pad_column(object, px(4), 0);
                     lv_obj_set_flex_flow(object, LV_FLEX_FLOW_ROW);
@@ -4508,7 +4508,7 @@ bool Renderer::mount(
                             node.value > node.minimum && node.enabled,
                             false,
                         });
-                    lv_obj_set_size(decrement, px(40), px(40));
+                    lv_obj_set_size(decrement, px(36), px(36));
                     if (lv_obj_get_child_count(decrement) == 1) {
                         lv_obj_set_style_text_font(
                             lv_obj_get_child(decrement, 0),
@@ -4519,7 +4519,7 @@ bool Renderer::mount(
                     auto* value_box = lv_obj_create(object);
                     ComponentFactory::reset(value_box);
                     lv_obj_set_size(
-                        value_box, px(64), px(40));
+                        value_box, px(64), px(36));
                     lv_obj_set_style_radius(
                         value_box, px(14), 0);
                     lv_obj_set_style_bg_color(
@@ -4571,7 +4571,7 @@ bool Renderer::mount(
                             node.value < node.maximum && node.enabled,
                             false,
                         });
-                    lv_obj_set_size(increment, px(40), px(40));
+                    lv_obj_set_size(increment, px(36), px(36));
                     lv_obj_set_style_bg_color(
                         increment,
                         lv_color_make(0xD8, 0xB9, 0xFF),
