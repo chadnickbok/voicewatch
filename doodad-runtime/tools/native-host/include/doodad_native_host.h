@@ -79,6 +79,7 @@ int doodad_host_system_back(void);
 int doodad_host_system_home(void);
 int doodad_host_system_surface(void);
 int doodad_host_system_advance_animation(uint32_t milliseconds);
+int doodad_host_system_scroll_launcher(int32_t pixels);
 int doodad_host_show_appspec(const uint8_t* bytes, size_t size);
 int doodad_host_click_first_action(void);
 int doodad_host_click_button(const char* label);

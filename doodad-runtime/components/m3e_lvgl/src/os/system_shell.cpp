@@ -1,36 +1,37 @@
 #include "m3e/os/system_shell.h"
 
 #include <algorithm>
+#include <array>
+#include <cctype>
 #include <cstddef>
 #include <cstdint>
 #include <new>
 
 #include "m3e/foundation/display_profile.hpp"
-#include "m3e/generated/core_tokens.hpp"
 #include "m3e/os/shell_state.hpp"
 
 LV_FONT_DECLARE(m3e_home_time_font_114);
+LV_FONT_DECLARE(m3e_launcher_font_26);
 LV_FONT_DECLARE(m3e_voice_display_font_44);
 LV_FONT_DECLARE(m3e_voice_label_font_26);
 
 namespace {
-
-using m3e::generated::ColorRole;
 
 constexpr char kAppsAction[] = "system.apps";
 constexpr char kVoiceAction[] = "system.voice";
 constexpr char kVoicePrimaryAction[] = "voice.primary";
 constexpr char kVoiceCancelAction[] = "voice.cancel";
 
-lv_color_t color(ColorRole role) {
-    const auto value =
-        m3e::generated::kBaselineDarkColorScheme.get(role);
-    return lv_color_make(value.red, value.green, value.blue);
-}
-
 lv_color_t rgb(
     std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
     return lv_color_make(red, green, blue);
+}
+
+lv_color_t rgb24(std::uint32_t value) {
+    return rgb(
+        static_cast<std::uint8_t>((value >> 16) & 0xffU),
+        static_cast<std::uint8_t>((value >> 8) & 0xffU),
+        static_cast<std::uint8_t>(value & 0xffU));
 }
 
 std::int32_t dp(std::int32_t value) {
@@ -178,28 +179,109 @@ void battery_icon_pixels(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
     pixel_surface(parent, x + 14, y + 2, 2, 4, 1, lime);
 }
 
-ColorRole launcher_fill(std::uint8_t tone) {
-    switch (tone) {
-        case M3E_SYSTEM_SHELL_TONE_SECONDARY:
-            return ColorRole::secondary_container;
-        case M3E_SYSTEM_SHELL_TONE_TERTIARY:
-            return ColorRole::tertiary_container;
-        case M3E_SYSTEM_SHELL_TONE_PRIMARY:
-        default:
-            return ColorRole::primary_container;
+void calculator_icon(lv_obj_t* parent) {
+    const auto white = rgb(255, 255, 255);
+    auto* body = pixel_surface(parent, 5, 2, 26, 32, 5, white);
+    lv_obj_set_style_bg_opa(body, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(body, 2, 0);
+    lv_obj_set_style_border_color(body, white, 0);
+    pixel_surface(parent, 9, 7, 18, 6, 2, white);
+    for (std::int32_t row = 0; row < 2; ++row) {
+        for (std::int32_t column = 0; column < 3; ++column) {
+            pixel_surface(
+                parent, 9 + column * 7, 18 + row * 7,
+                4, 4, 2, white);
+        }
     }
 }
 
-ColorRole launcher_content(std::uint8_t tone) {
-    switch (tone) {
-        case M3E_SYSTEM_SHELL_TONE_SECONDARY:
-            return ColorRole::on_secondary_container;
-        case M3E_SYSTEM_SHELL_TONE_TERTIARY:
-            return ColorRole::on_tertiary_container;
-        case M3E_SYSTEM_SHELL_TONE_PRIMARY:
-        default:
-            return ColorRole::on_primary_container;
+void timer_icon(lv_obj_t* parent) {
+    const auto white = rgb(255, 255, 255);
+    auto* dial = pixel_surface(parent, 5, 7, 26, 26, 13, white);
+    lv_obj_set_style_bg_opa(dial, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(dial, 3, 0);
+    lv_obj_set_style_border_color(dial, white, 0);
+    pixel_surface(parent, 14, 2, 8, 4, 2, white);
+    pixel_surface(parent, 17, 12, 3, 10, 2, white);
+    pixel_surface(parent, 12, 20, 8, 3, 2, white);
+}
+
+void weather_icon(lv_obj_t* parent) {
+    const auto white = rgb(255, 255, 255);
+    pixel_surface(parent, 5, 7, 14, 14, 7, white);
+    pixel_surface(parent, 8, 22, 23, 11, 6, white);
+    pixel_surface(parent, 13, 17, 13, 15, 7, white);
+    pixel_surface(parent, 4, 13, 4, 2, 1, white);
+    pixel_surface(parent, 10, 3, 2, 4, 1, white);
+}
+
+void tasks_icon(lv_obj_t* parent) {
+    const auto white = rgb(255, 255, 255);
+    for (std::int32_t row = 0; row < 3; ++row) {
+        pixel_surface(parent, 3, 5 + row * 10, 7, 7, 2, white);
+        pixel_surface(parent, 14, 7 + row * 10, 19, 3, 2, white);
     }
+}
+
+void calendar_icon(lv_obj_t* parent) {
+    const auto white = rgb(255, 255, 255);
+    auto* body = pixel_surface(parent, 4, 6, 28, 27, 5, white);
+    lv_obj_set_style_bg_opa(body, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(body, 3, 0);
+    lv_obj_set_style_border_color(body, white, 0);
+    pixel_surface(parent, 4, 12, 28, 3, 0, white);
+    pixel_surface(parent, 10, 2, 3, 8, 2, white);
+    pixel_surface(parent, 23, 2, 3, 8, 2, white);
+}
+
+void generic_icon(lv_obj_t* parent) {
+    const auto white = rgb(255, 255, 255);
+    for (std::int32_t row = 0; row < 3; ++row) {
+        for (std::int32_t column = 0; column < 3; ++column) {
+            pixel_surface(
+                parent, 5 + column * 10, 5 + row * 10,
+                6, 6, 3, white);
+        }
+    }
+}
+
+void launcher_icon(lv_obj_t* parent, std::uint8_t icon) {
+    auto* glyph = pixel_surface(parent, 2, 2, 36, 36, 0, rgb(0, 0, 0));
+    lv_obj_set_style_bg_opa(glyph, LV_OPA_TRANSP, 0);
+    switch (icon) {
+        case M3E_SYSTEM_SHELL_APP_ICON_TIMER:
+            timer_icon(glyph);
+            break;
+        case M3E_SYSTEM_SHELL_APP_ICON_WEATHER:
+            weather_icon(glyph);
+            break;
+        case M3E_SYSTEM_SHELL_APP_ICON_TASKS:
+            tasks_icon(glyph);
+            break;
+        case M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR:
+            calculator_icon(glyph);
+            break;
+        case M3E_SYSTEM_SHELL_APP_ICON_CALENDAR:
+            calendar_icon(glyph);
+            break;
+        default:
+            generic_icon(glyph);
+            break;
+    }
+}
+
+std::array<char, 49> launcher_name(const char* supplied) {
+    std::array<char, 49> output{};
+    if (supplied == nullptr) return output;
+    std::size_t index = 0;
+    while (supplied[index] != '\0' && index + 1 < output.size()) {
+        const auto byte = static_cast<unsigned char>(supplied[index]);
+        output[index] = byte < 0x80U
+            ? static_cast<char>(std::toupper(byte))
+            : supplied[index];
+        ++index;
+    }
+    return output;
 }
 
 m3e::os::Intent intent_from_c(int intent) {
@@ -237,7 +319,7 @@ void set_voice_bar_height(void* object, std::int32_t height) {
     auto* bar = static_cast<lv_obj_t*>(object);
     if (bar == nullptr) return;
     lv_obj_set_height(bar, height);
-    lv_obj_set_y(bar, 67 - height / 2);
+    lv_obj_set_y(bar, (124 - height) / 2);
 }
 
 void start_voice_bar_animation(
@@ -360,29 +442,33 @@ extern "C" void m3e_system_shell_show_launcher(
     lv_obj_clean(screen);
     reset(screen);
     lv_obj_set_size(screen, 240, 240);
-    lv_obj_set_style_bg_color(screen, color(ColorRole::background), 0);
+    lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
 
     auto* title = label(
-        screen, "APPS", &lv_font_montserrat_18,
-        color(ColorRole::on_background));
-    lv_obj_set_pos(title, dp(12), dp(9));
-    auto* home = label(
-        screen, "B  •  HOME", &lv_font_montserrat_10,
-        color(ColorRole::outline));
-    lv_obj_align(home, LV_ALIGN_TOP_RIGHT, -dp(12), dp(11));
+        screen, "APPS", &m3e_voice_label_font_26,
+        rgb(250, 249, 255));
+    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 5);
+    lv_obj_set_style_text_letter_space(title, 3, 0);
 
     auto* list = lv_obj_create(screen);
     reset(list);
-    lv_obj_set_pos(list, dp(12), dp(34));
-    lv_obj_set_size(list, dp(168), dp(139));
+    lv_obj_set_pos(list, 10, 32);
+    lv_obj_set_size(list, 220, 208);
+    lv_obj_set_style_bg_opa(list, LV_OPA_TRANSP, 0);
     lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
     lv_obj_set_flex_align(
         list, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER,
         LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_style_pad_row(list, dp(4), 0);
+    lv_obj_set_style_pad_all(list, 2, 0);
+    lv_obj_set_style_pad_row(list, 6, 0);
     lv_obj_set_scroll_dir(list, LV_DIR_VER);
     lv_obj_set_scrollbar_mode(list, LV_SCROLLBAR_MODE_AUTO);
+    lv_obj_set_style_width(list, 3, LV_PART_SCROLLBAR);
+    lv_obj_set_style_radius(list, 2, LV_PART_SCROLLBAR);
+    lv_obj_set_style_bg_color(
+        list, rgb(250, 249, 255), LV_PART_SCROLLBAR);
+    lv_obj_set_style_bg_opa(list, LV_OPA_60, LV_PART_SCROLLBAR);
 
     const auto bounded_count = std::min(
         item_count,
@@ -392,50 +478,37 @@ extern "C" void m3e_system_shell_show_launcher(
             list,
             "No apps yet\n\nHold B and ask Doodad\nto build your first one.",
             &lv_font_montserrat_14,
-            color(ColorRole::outline));
-        lv_obj_set_width(empty, dp(160));
+            rgb(160, 157, 168));
+        lv_obj_set_width(empty, 196);
         lv_obj_set_style_text_align(empty, LV_TEXT_ALIGN_CENTER, 0);
-        lv_obj_set_style_margin_top(empty, dp(28), 0);
+        lv_obj_set_style_margin_top(empty, 42, 0);
     } else {
         for (std::size_t index = 0; index < bounded_count; ++index) {
-            const auto fill = color(launcher_fill(items[index].tone));
-            const auto content = color(launcher_content(items[index].tone));
-            auto* row = surface(
-                list, 0, 0, 168, 43, 21, fill, true);
+            const auto primary = rgb24(items[index].primary_color_rgb);
+            auto* row = pixel_surface(
+                list, 0, 0, 216, 56, 14, rgb(0, 0, 0), true);
             lv_obj_set_flex_grow(row, 0);
+            lv_obj_set_style_border_width(row, 2, 0);
+            lv_obj_set_style_border_color(row, primary, 0);
             lv_obj_set_user_data(
                 row, const_cast<char*>(items[index].app_id));
-            auto* avatar = surface(
-                row, 6, 6, 31, 31, 16,
-                color(ColorRole::surface_container_high));
-            char monogram_text[2]{
-                items[index].name == nullptr || items[index].name[0] == '\0'
-                    ? '?'
-                    : items[index].name[0],
-                '\0',
-            };
-            auto* monogram = label(
-                avatar, monogram_text, &lv_font_montserrat_18, content);
-            lv_obj_center(monogram);
+            auto* icon_tile = pixel_surface(
+                row, 6, 6, 40, 40, 10, primary);
+            launcher_icon(icon_tile, items[index].icon);
+            const auto display_name = launcher_name(items[index].name);
             auto* name = label(
-                row, items[index].name, &lv_font_montserrat_18, content);
-            lv_obj_set_pos(name, dp(45), dp(6));
-            auto* detail = label(
-                row, items[index].detail, &lv_font_montserrat_10, content);
-            lv_obj_set_pos(detail, dp(45), dp(24));
-            auto* arrow = label(
-                row, ">", &lv_font_montserrat_18, content);
-            lv_obj_align(arrow, LV_ALIGN_RIGHT_MID, -dp(12), 0);
+                row,
+                display_name.data(),
+                &m3e_launcher_font_26,
+                rgb(250, 249, 255));
+            lv_obj_set_pos(name, 59, 16);
+            lv_obj_set_size(name, 132, 25);
+            lv_label_set_long_mode(name, LV_LABEL_LONG_DOT);
+            lv_obj_set_style_text_letter_space(name, 0, 0);
+            pixel_surface(row, 201, 25, 6, 6, 3, primary);
             if (view != nullptr) view->actions[index] = row;
         }
     }
-
-    auto* hint = label(
-        screen,
-        "A  •  BACK     HOLD B  •  VOICE",
-        &lv_font_montserrat_10,
-        color(ColorRole::outline));
-    lv_obj_align(hint, LV_ALIGN_BOTTOM_MID, 0, -dp(6));
     if (view != nullptr) view->action_count = bounded_count;
 }
 
@@ -488,7 +561,7 @@ extern "C" void m3e_system_shell_show_voice_overlay(
     lv_obj_set_user_data(level, const_cast<char*>(kVoicePrimaryAction));
 
     constexpr std::int32_t kBarX[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
-        46, 72, 98, 124, 150,
+        48, 74, 100, 126, 152,
     };
     constexpr std::int32_t kPeak[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
         43, 69, 92, 69, 43,
@@ -506,7 +579,7 @@ extern "C" void m3e_system_shell_show_voice_overlay(
         auto* bar = pixel_surface(
             level,
             kBarX[index],
-            64,
+            58,
             16,
             7,
             4,

@@ -15,9 +15,12 @@ enum {
 };
 
 enum {
-    M3E_SYSTEM_SHELL_TONE_PRIMARY = 0,
-    M3E_SYSTEM_SHELL_TONE_SECONDARY = 1,
-    M3E_SYSTEM_SHELL_TONE_TERTIARY = 2,
+    M3E_SYSTEM_SHELL_APP_ICON_GENERIC = 0,
+    M3E_SYSTEM_SHELL_APP_ICON_TIMER = 1,
+    M3E_SYSTEM_SHELL_APP_ICON_WEATHER = 2,
+    M3E_SYSTEM_SHELL_APP_ICON_TASKS = 3,
+    M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR = 4,
+    M3E_SYSTEM_SHELL_APP_ICON_CALENDAR = 5,
 };
 
 enum {
@@ -70,7 +73,10 @@ typedef struct {
     const char* app_id;
     const char* name;
     const char* detail;
-    uint8_t tone;
+    // Required package-owned color encoded as 0xRRGGBB.
+    uint32_t primary_color_rgb;
+    // Required semantic icon from M3E_SYSTEM_SHELL_APP_ICON_*.
+    uint8_t icon;
 } m3e_system_shell_launcher_item_t;
 
 typedef struct {

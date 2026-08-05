@@ -53,17 +53,20 @@ int main() {
 
     constexpr m3e_system_shell_launcher_item_t items[] = {
         {"dev.doodad.timer", "Timer", "Version 0.1.0  •  ready",
-         M3E_SYSTEM_SHELL_TONE_PRIMARY},
+         0xff524d, M3E_SYSTEM_SHELL_APP_ICON_TIMER},
         {"dev.doodad.weather", "Weather", "72°  •  Partly cloudy",
-         M3E_SYSTEM_SHELL_TONE_SECONDARY},
+         0x7241ff, M3E_SYSTEM_SHELL_APP_ICON_WEATHER},
     };
     m3e_system_shell_launcher_view_t launcher_view{};
     m3e_system_shell_show_launcher(screen, items, 2, &launcher_view);
     assert(launcher_view.action_count == 2);
     assert_action(launcher_view.actions[0], "dev.doodad.timer");
     assert_action(launcher_view.actions[1], "dev.doodad.weather");
-    assert(contains_label(screen, "Timer"));
-    assert(contains_label(screen, "Weather"));
+    assert(contains_label(screen, "TIMER"));
+    assert(contains_label(screen, "WEATHER"));
+    assert(lv_obj_has_flag(
+        lv_obj_get_parent(launcher_view.actions[0]),
+        LV_OBJ_FLAG_SCROLLABLE));
 
     auto* controller = m3e_system_shell_controller_create();
     assert(controller != nullptr);

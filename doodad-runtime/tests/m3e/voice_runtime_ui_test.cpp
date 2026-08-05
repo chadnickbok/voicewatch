@@ -51,6 +51,21 @@ int main() {
         assert(bar != nullptr);
         assert(lv_obj_get_height(bar) == 7);
     }
+    lv_obj_update_layout(screen);
+    const auto bar_group_left = lv_obj_get_x(view.level_bars[0]);
+    const auto bar_group_right =
+        lv_obj_get_x(view.level_bars[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT - 1]) +
+        lv_obj_get_width(
+            view.level_bars[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT - 1]);
+    assert(
+        bar_group_left + bar_group_right ==
+        lv_obj_get_width(view.level_ring));
+    const auto bar_group_top = lv_obj_get_y(view.level_bars[0]);
+    const auto bar_group_bottom =
+        bar_group_top + lv_obj_get_height(view.level_bars[0]);
+    const auto vertical_center_error =
+        bar_group_top + bar_group_bottom - lv_obj_get_height(view.level_ring);
+    assert(vertical_center_error >= -1 && vertical_center_error <= 1);
     assert(contains_label(screen, "READY"));
 
     m3e_catalog_show_voice_runtime(

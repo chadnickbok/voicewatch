@@ -150,6 +150,10 @@ class NativeHost:
             ctypes.c_uint32,
         ]
         library.doodad_host_system_advance_animation.restype = ctypes.c_int
+        library.doodad_host_system_scroll_launcher.argtypes = [
+            ctypes.c_int32,
+        ]
+        library.doodad_host_system_scroll_launcher.restype = ctypes.c_int
         library.doodad_host_show_appspec.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
@@ -342,6 +346,12 @@ class NativeHost:
         if not 0 <= milliseconds <= 0xFFFFFFFF:
             raise ValueError("animation step must fit uint32 milliseconds")
         if not self.library.doodad_host_system_advance_animation(milliseconds):
+            raise DoodadError(self.last_error())
+
+    def scroll_system_launcher(self, pixels: int) -> None:
+        if not -(2**31) <= pixels < 2**31:
+            raise ValueError("launcher scroll must fit int32 pixels")
+        if not self.library.doodad_host_system_scroll_launcher(pixels):
             raise DoodadError(self.last_error())
 
     def show_appspec(self, canonical_cbor: bytes) -> None:

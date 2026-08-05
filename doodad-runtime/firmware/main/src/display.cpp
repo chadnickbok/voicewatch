@@ -627,6 +627,46 @@ void system_home_surface_now() {
     }
 }
 
+std::uint8_t launcher_icon_for(const char* app_id) {
+    if (app_id == nullptr) return M3E_SYSTEM_SHELL_APP_ICON_GENERIC;
+    if (std::strstr(app_id, ".timer") != nullptr) {
+        return M3E_SYSTEM_SHELL_APP_ICON_TIMER;
+    }
+    if (std::strstr(app_id, ".weather") != nullptr) {
+        return M3E_SYSTEM_SHELL_APP_ICON_WEATHER;
+    }
+    if (std::strstr(app_id, ".tasks") != nullptr) {
+        return M3E_SYSTEM_SHELL_APP_ICON_TASKS;
+    }
+    if (std::strstr(app_id, ".calculator") != nullptr) {
+        return M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR;
+    }
+    if (std::strstr(app_id, ".calendar") != nullptr) {
+        return M3E_SYSTEM_SHELL_APP_ICON_CALENDAR;
+    }
+    return M3E_SYSTEM_SHELL_APP_ICON_GENERIC;
+}
+
+std::uint32_t launcher_color_for(const char* app_id) {
+    constexpr std::uint32_t colors[] = {
+        0xff524d,
+        0x7241ff,
+        0xb9ff24,
+        0x20bff4,
+        0xff9f1c,
+        0xff4fa3,
+    };
+    std::uint32_t hash = 2166136261U;
+    if (app_id != nullptr) {
+        for (const auto* byte =
+                 reinterpret_cast<const unsigned char*>(app_id);
+             *byte != '\0'; ++byte) {
+            hash = (hash ^ *byte) * 16777619U;
+        }
+    }
+    return colors[hash % (sizeof(colors) / sizeof(colors[0]))];
+}
+
 void installed_launcher_now() {
     stage_visual_scene("installed-launcher");
     discard_guest_document();
@@ -646,7 +686,8 @@ void installed_launcher_now() {
             app.app_id.data(),
             app.name.data(),
             g_launcher_details[index].data(),
-            static_cast<std::uint8_t>(index % 3),
+            launcher_color_for(app.app_id.data()),
+            launcher_icon_for(app.app_id.data()),
         };
     }
     m3e_system_shell_show_launcher(

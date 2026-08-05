@@ -713,15 +713,42 @@ static int render_system_shell(void) {
             NULL);
     } else if (surface == M3E_SYSTEM_SHELL_SURFACE_LAUNCHER) {
         m3e_appspec_reset_mounted_document();
-        const m3e_system_shell_launcher_item_t item = {
-            g_system_app_id,
-            g_system_app_name,
-            g_system_app_detail,
-            M3E_SYSTEM_SHELL_TONE_PRIMARY,
+        const m3e_system_shell_launcher_item_t items[] = {
+            {
+                g_system_app_id,
+                g_system_app_name,
+                g_system_app_detail,
+                0xff524d,
+                M3E_SYSTEM_SHELL_APP_ICON_TIMER,
+            },
+            {
+                "dev.doodad.weather",
+                "Weather",
+                "72 degrees",
+                0x7241ff,
+                M3E_SYSTEM_SHELL_APP_ICON_WEATHER,
+            },
+            {
+                "dev.doodad.tasks",
+                "Tasks",
+                "3 remaining",
+                0xb9ff24,
+                M3E_SYSTEM_SHELL_APP_ICON_TASKS,
+            },
+            {
+                "dev.doodad.calculator",
+                "Calculator",
+                "Ready",
+                0x20bff4,
+                M3E_SYSTEM_SHELL_APP_ICON_CALCULATOR,
+            },
         };
         m3e_system_shell_show_launcher(
-            lv_screen_active(), &item, 1, &g_system_launcher_view);
-        if (g_system_launcher_view.action_count == 1) {
+            lv_screen_active(),
+            items,
+            sizeof(items) / sizeof(items[0]),
+            &g_system_launcher_view);
+        if (g_system_launcher_view.action_count > 0) {
             lv_obj_add_event_cb(
                 g_system_launcher_view.actions[0],
                 queue_system_launch,
@@ -1250,7 +1277,7 @@ int doodad_host_click_system_action(const char* action_id) {
     } else if (strcmp(action_id, "system.voice") == 0) {
         target = g_system_home_view.voice_action;
     } else if (strcmp(action_id, g_system_app_id) == 0 &&
-               g_system_launcher_view.action_count == 1) {
+               g_system_launcher_view.action_count > 0) {
         target = g_system_launcher_view.actions[0];
     }
     if (target == NULL || !lv_obj_is_valid(target)) {
@@ -1300,6 +1327,24 @@ int doodad_host_system_advance_animation(uint32_t milliseconds) {
     }
     g_scenario_ms += milliseconds;
     lv_timer_handler();
+    doodad_host_render_now();
+    return 1;
+}
+
+int doodad_host_system_scroll_launcher(int32_t pixels) {
+    if (g_system_shell == NULL || g_display == NULL ||
+        m3e_system_shell_controller_surface(g_system_shell) !=
+            M3E_SYSTEM_SHELL_SURFACE_LAUNCHER ||
+        g_system_launcher_view.action_count == 0) {
+        set_error("system launcher is not available for scrolling");
+        return 0;
+    }
+    lv_obj_t* list = lv_obj_get_parent(g_system_launcher_view.actions[0]);
+    if (list == NULL || !lv_obj_is_valid(list)) {
+        set_error("system launcher scroll container is invalid");
+        return 0;
+    }
+    lv_obj_scroll_by(list, 0, pixels, LV_ANIM_OFF);
     doodad_host_render_now();
     return 1;
 }
