@@ -16,5 +16,5 @@ fi
 # Wi-Fi provisioning, factory data, and both firmware slots.
 source "${SCRIPT_DIR}/env.sh"
 python -m esptool --chip esp32s3 --port "${PORT}" \
-    erase-region 0x610000 0x9f0000
+    erase_region 0x610000 0x9f0000
 echo "Erased only the personal package partition"

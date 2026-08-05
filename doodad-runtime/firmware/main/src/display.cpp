@@ -10,6 +10,7 @@
 #include "app_runner.hpp"
 #include "board.hpp"
 #include "doodad_lvgl_ui.h"
+#include "esp_attr.h"
 #include "esp_heap_caps.h"
 #include "esp_log.h"
 #include "esp_timer.h"
@@ -152,11 +153,13 @@ char g_visual_scene[49]{};
 std::uint32_t g_visual_revision = 0;
 std::uint32_t g_visual_frame_hash = 2166136261U;
 bool g_visual_pending = false;
-doodad::packages::CatalogSnapshot g_launcher_apps{};
-std::array<
+// Launcher catalog storage is large, cold, and never DMA-facing. Keep it in
+// PSRAM so signed identity metadata cannot crowd out Wi-Fi's internal RX pool.
+EXT_RAM_BSS_ATTR doodad::packages::CatalogSnapshot g_launcher_apps{};
+EXT_RAM_BSS_ATTR std::array<
     m3e_system_shell_launcher_item_t,
     doodad::packages::CatalogSnapshot::kCapacity> g_launcher_items{};
-std::array<
+EXT_RAM_BSS_ATTR std::array<
     std::array<char, 96>,
     doodad::packages::CatalogSnapshot::kCapacity> g_launcher_details{};
 PackageUiEvent g_ready_app{};

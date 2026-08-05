@@ -148,6 +148,7 @@ for setting in \
     'CONFIG_LV_FONT_MONTSERRAT_18=y' \
     'CONFIG_FATFS_LFN_HEAP=y' \
     'CONFIG_FATFS_MAX_LFN=255' \
+    'CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y' \
     'CONFIG_DOODAD_VOICE_UPLINK=y' \
     'CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y' \
     "${BOARD_SETTING}" \
@@ -167,6 +168,61 @@ if [[ "${SDKCONFIG_READY}" != true ]]; then
         -D SDKCONFIG="${SDKCONFIG}" \
         -D SDKCONFIG_DEFAULTS="${SDKCONFIG_DEFAULTS}" \
         set-target esp32s3
+
+    # `set-target` regenerates sdkconfig from tracked defaults. Restore only
+    # the ignored device-local network/trust fields from the saved config so a
+    # required default migration cannot silently deprovision the watch.
+    if [[ -f "${SDKCONFIG}.old" ]]; then
+        local_config_tmp="$(mktemp "${SDKCONFIG}.local.XXXXXX")"
+        awk '
+            NR == FNR {
+                if ($0 ~ /^CONFIG_DOODAD_(WIFI_SSID|WIFI_PASSWORD|VOICE_SIGNALING_URL|PERSONAL_OWNER_ID|PERSONAL_SIGNER_KEY_ID|PERSONAL_HMAC_KEY_HEX)=/) {
+                    split($0, fields, "=")
+                    saved[fields[1]] = $0
+                }
+                next
+            }
+            $0 ~ /^CONFIG_DOODAD_(WIFI_SSID|WIFI_PASSWORD|VOICE_SIGNALING_URL|PERSONAL_OWNER_ID|PERSONAL_SIGNER_KEY_ID|PERSONAL_HMAC_KEY_HEX)=/ {
+                split($0, fields, "=")
+                if (fields[1] in saved) {
+                    print saved[fields[1]]
+                    next
+                }
+            }
+            { print }
+        ' "${SDKCONFIG}.old" "${SDKCONFIG}" > "${local_config_tmp}"
+        chmod 600 "${local_config_tmp}"
+        mv -f "${local_config_tmp}" "${SDKCONFIG}"
+        echo "Restored ignored local network/trust profile for ${BOARD}"
+    fi
+fi
+
+# Recover configs produced by the older refresh path, which saved the local
+# profile but left the regenerated Wi-Fi fields empty.
+if [[ -f "${SDKCONFIG}.old" ]] \
+    && grep -q '^CONFIG_DOODAD_WIFI_SSID=""$' "${SDKCONFIG}" \
+    && ! grep -q '^CONFIG_DOODAD_WIFI_SSID=""$' "${SDKCONFIG}.old"; then
+    recovery_tmp="$(mktemp "${SDKCONFIG}.recovery.XXXXXX")"
+    awk '
+        NR == FNR {
+            if ($0 ~ /^CONFIG_DOODAD_(WIFI_SSID|WIFI_PASSWORD)=/) {
+                split($0, fields, "=")
+                saved[fields[1]] = $0
+            }
+            next
+        }
+        $0 ~ /^CONFIG_DOODAD_(WIFI_SSID|WIFI_PASSWORD)=/ {
+            split($0, fields, "=")
+            if (fields[1] in saved) {
+                print saved[fields[1]]
+                next
+            }
+        }
+        { print }
+    ' "${SDKCONFIG}.old" "${SDKCONFIG}" > "${recovery_tmp}"
+    chmod 600 "${recovery_tmp}"
+    mv -f "${recovery_tmp}" "${SDKCONFIG}"
+    echo "Recovered ignored local Wi-Fi profile for ${BOARD}"
 fi
 
 # Optional local trust/signaling profile. The per-board sdkconfig is ignored by

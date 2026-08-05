@@ -30,6 +30,7 @@ CONFIG_SPIRAM_BOOT_INIT=y
 CONFIG_SPIRAM_USE_MALLOC=y
 CONFIG_SPIRAM_MEMTEST=y
 CONFIG_SPIRAM_TRY_ALLOCATE_WIFI_LWIP=y
+CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y
 # Keep only genuinely small general-purpose allocations internal. Larger
 # HTTP/UI/runtime buffers can live in PSRAM, preserving DMA-capable heap for
 # Wi-Fi receive traffic and hardware drivers.
