@@ -39,8 +39,14 @@ automatically.
 Flash the firmware and leave its serial monitor visible. Once the peer is
 connected, the harness starts capture, plays the deterministic phrase, writes
 the received WAV, transcribes it locally, and sends the final transcript back
-through the provider event path. It then sends a separate, fixed downlink
-conformance program: a 660 Hz opening marker, a 300 ms gap, a locally
+through the provider event path. The diagnostic `capture.start` explicitly
+targets `current_guest`; firmware snapshots that resident generation and
+returns `capture_id` and `request_id` as decimal strings. Echo Bridge must echo
+both values with `transcript.final`, so a delayed, missing, replayed, or
+cross-generation transcript is dropped instead of being guessed from the app
+that happens to be active. Ordinary live-agent capture omits the target and
+remains owned by the trusted native voice surface. It then sends a separate,
+fixed downlink conformance program: a 660 Hz opening marker, a 300 ms gap, a locally
 synthesized phrase, a 160 ms gap, and a 300 ms 880 Hz closing marker. The
 default phrase is “Please set the timer for five minutes” repeated twice. The
 repetition keeps the room-acoustic WER gate stable while still exposing

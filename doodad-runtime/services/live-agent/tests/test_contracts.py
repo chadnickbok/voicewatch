@@ -37,3 +37,20 @@ def test_watch_and_job_fixtures_validate() -> None:
         "job-event-v1.schema.json",
         load(ROOT / "fixtures" / "agent" / "jobs" / "completed-event.json"),
     )
+
+
+def test_manifest_app_identity_matches_runtime_64_byte_limit() -> None:
+    schema = load(ROOT / "contracts" / "manifest-v1.schema.json")
+    validator = Draft202012Validator(schema)
+    document = {
+        "schema_version": 1,
+        "id": "a." + "b" * 62,
+        "name": "Bounded app",
+        "version": "1.0.0",
+        "host_abi": 1,
+        "capabilities": ["ui.mount"],
+        "wasm": "app.wasm",
+    }
+    assert validator.is_valid(document)
+    document["id"] += "b"
+    assert not validator.is_valid(document)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import itertools
 import json
+import os
 import queue
 import subprocess
 import threading
@@ -16,6 +17,15 @@ from jsonschema import Draft7Validator
 
 
 PINNED_CODEX_VERSION = "codex-cli 0.146.0-alpha.9.2"
+_OUTER_PACKAGER_SECRET = "DOODAD_PERSONAL_HMAC_KEY_HEX"
+
+
+def _codex_environment() -> dict[str, str]:
+    """Keep the outer packaging secret out of the untrusted builder process."""
+
+    environment = os.environ.copy()
+    environment.pop(_OUTER_PACKAGER_SECRET, None)
+    return environment
 
 
 class CodexProtocolError(RuntimeError):
@@ -64,6 +74,7 @@ class AppServerClient:
             capture_output=True,
             text=True,
             timeout=10,
+            env=_codex_environment(),
         )
         version = result.stdout.strip()
         if result.returncode != 0 or version != self.expected_version:
@@ -138,6 +149,7 @@ class AppServerClient:
             stderr=subprocess.DEVNULL,
             text=True,
             bufsize=1,
+            env=_codex_environment(),
         )
         with self._lock:
             self._process = process

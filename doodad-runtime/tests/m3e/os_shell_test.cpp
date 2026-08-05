@@ -27,6 +27,15 @@ int main() {
     assert(shell.dispatch(map_input(Input::button_b)));
     assert(shell.snapshot().surface == Surface::watch_face);
 
+    for (std::uint32_t generation = 1; generation <= 16; ++generation) {
+        assert(shell.open_app_detail());
+        assert(shell.replace_app("dev.doodad.timer", generation));
+        assert(shell.snapshot().surface == Surface::app);
+        assert(shell.routes().depth() == 2);
+    }
+    assert(shell.dispatch(map_input(Input::button_a)));
+    assert(shell.snapshot().surface == Surface::watch_face);
+
     shell.publish_surface_counts(3, 2, 1);
     assert(shell.dispatch(map_input(Input::button_c)));
     assert(shell.snapshot().surface == Surface::live_cards);

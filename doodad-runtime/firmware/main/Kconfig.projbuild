@@ -86,6 +86,51 @@ endif
 
 endmenu
 
+menu "Doodad personal apps"
+
+config DOODAD_PERSONAL_APPS
+    bool "Enable signed personal-app installation"
+    default y
+    help
+        Accept owner-bound DDB1 bundles announced by the live-agent, download
+        them over HTTP, and install them into the onboard package registry.
+        This is the local-development trust profile, not a published-app PKI.
+
+if DOODAD_PERSONAL_APPS
+
+config DOODAD_PERSONAL_OWNER_ID
+    string "Personal app owner ID"
+    default ""
+    help
+        Stable local user identifier embedded in and verified against every
+        personal bundle. It must match DOODAD_PERSONAL_OWNER_ID on the
+        live-agent host.
+
+config DOODAD_PERSONAL_SIGNER_KEY_ID
+    string "Personal signer key ID"
+    default "personal-v1"
+    help
+        Label for the shared local-development signing key. It is metadata,
+        not a published-developer identity.
+
+config DOODAD_PERSONAL_HMAC_KEY_HEX
+    string "Personal HMAC key (hex)"
+    default ""
+    help
+        Exactly 64 hexadecimal characters (32 bytes). It must match
+        DOODAD_PERSONAL_HMAC_KEY_HEX on the live-agent host. Leaving either
+        the owner or key empty disables new installs while preserving the
+        native shell and already-installed registry.
+
+config DOODAD_PERSONAL_HOST_ABI
+    int "Supported personal-app host ABI"
+    range 1 2147483647
+    default 1
+
+endif
+
+endmenu
+
 menu "Doodad Weather provider"
 
 config DOODAD_WEATHER_NETWORK_PROVIDER

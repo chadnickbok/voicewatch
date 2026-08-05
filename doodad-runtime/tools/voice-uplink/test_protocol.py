@@ -12,7 +12,13 @@ from fidelity import (
     packet_timing_metrics,
     parse_playback_telemetry,
 )
-from protocol import envelope, word_error_rate
+from protocol import (
+    capture_correlation,
+    correlated_transcript,
+    current_guest_capture_request,
+    envelope,
+    word_error_rate,
+)
 from server import (
     DEFAULT_DOWNLINK_PHRASE,
     DEFAULT_PHRASE,
@@ -32,6 +38,44 @@ class ProtocolTests(unittest.TestCase):
     def test_word_error_rate(self) -> None:
         self.assertEqual(word_error_rate("one two", "one two"), 0.0)
         self.assertEqual(word_error_rate("one two", "one"), 0.5)
+
+    def test_capture_correlation_preserves_decimal_u64_strings(self) -> None:
+        self.assertEqual(
+            capture_correlation({
+                "capture_id": "18446744073709551615",
+                "request_id": "0",
+            }),
+            {
+                "capture_id": "18446744073709551615",
+                "request_id": "0",
+            },
+        )
+
+    def test_capture_correlation_rejects_missing_noncanonical_or_overflow(self) -> None:
+        invalid = (
+            {},
+            {"capture_id": 1, "request_id": "1"},
+            {"capture_id": "0", "request_id": "1"},
+            {"capture_id": "01", "request_id": "1"},
+            {"capture_id": "1", "request_id": "-1"},
+            {"capture_id": "18446744073709551616", "request_id": "1"},
+        )
+        for payload in invalid:
+            with self.subTest(payload=payload), self.assertRaises(ValueError):
+                capture_correlation(payload)
+
+    def test_echo_bridge_targets_current_guest_and_echoes_correlation(self) -> None:
+        self.assertEqual(
+            current_guest_capture_request(8_000),
+            {"duration_ms": 8_000, "target": "current_guest"},
+        )
+        self.assertEqual(
+            correlated_transcript(
+                "hello",
+                {"capture_id": "19", "request_id": "19"},
+            ),
+            {"text": "hello", "capture_id": "19", "request_id": "19"},
+        )
 
     def test_host_candidate_filter(self) -> None:
         sdp = (

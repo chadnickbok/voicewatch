@@ -4,11 +4,12 @@ This project implements a trusted, voice-first Doodad watch runtime for CoreS3
 SE, with shared board/build support for T-Watch S3. The current overall
 sequence is maintained in the [Doodad roadmap](docs/roadmap.md).
 
-The original runtime foundation includes:
+The runtime foundation includes:
 
 1. A trusted ESP-IDF shell embeds and runs a Rust WebAssembly guest.
-2. Packages load from a 9.94 MiB onboard wear-levelled partition first, with
-   optional microSD and the embedded recovery image as fallbacks.
+2. Owner-bound personal apps install into a multi-app registry on the 9.94 MiB
+   onboard wear-levelled partition; optional legacy bare-Wasm and embedded
+   recovery paths remain available.
 3. A package-first desktop simulator builds the guest, validates its manifest
    and ABI, runs it in WAMR, and renders declarative UI through LVGL.
 
@@ -31,9 +32,11 @@ permanent UI/runtime executable specification, and
 [Project Parallax](docs/project-parallax.md) tracks dual-renderer fidelity.
 Phase 5 of the
 [live foreground agent and durable jobs plan](docs/live-agent-vertical-slice.md)
-now routes production builds through a real Codex worker and stops at a
-validated `ready_for_review` app artifact. The active product milestone is the
-first real shared backing-data query described in the roadmap.
+routes production builds through a real Codex worker and an independent
+verifier. The personal-app Phase 6 path packages successful output outside the
+Codex workspace, announces it to the watch, installs it, and offers live
+launch. The active qualification gate and next product slice are described in
+the roadmap.
 The suite now includes 20 separate interactive Wasm packages, deterministic
 scenario and cross-surface contracts, a trusted Home/Voice/App Manager shell,
 CoreS3 system-shortcut wiring, dual 3 MiB firmware slots, and 9.94 MiB of
@@ -87,9 +90,11 @@ All 20 decisive flows are executable and emit checked-in semantic/resource
 evidence. Cross-app replacement stress, display-sleep service behavior,
 surface-revision consistency, selected physical CoreS3 traces, and the duplex
 Opus live-agent path and bounded Codex rest-timer generation are covered.
-General backing data, signed package activation, remaining production
-providers, long-running audio/sensor services, power budgets, and physical
-T-Watch qualification remain.
+The deterministic personal-app packaging/install path is implemented, but its
+physical CoreS3 gate is not yet recorded. General backing data,
+published-app/store trust, remaining production providers, long-running
+audio/sensor services, power budgets, and physical T-Watch qualification
+remain.
 
 The guest exports `app_start` and imports one capability:
 `doodad.ui_mount(i32 pointer, i32 length) -> i32`. Its payload is canonical
@@ -178,6 +183,38 @@ The staged package is written to `target/doodad/<app-id>/`. `check` executes
 produced a non-empty 240×240 frame. See
 [docs/simulator.md](docs/simulator.md) for the package and UI contracts.
 
+## Install a generated personal app
+
+After the independent Codex verifier succeeds, the live-agent's outer
+packager creates an owner-bound DDB1 bundle with canonical metadata, raw
+`app.wasm`, and an HMAC-SHA256 tag. The same live-agent port sends an
+`app.ready` control message over WebSocket and serves the immutable bundle over
+HTTP. The watch downloads to temporary storage, verifies the announced bundle
+hash, owner, signer key ID, host ABI, HMAC, and payload hash, and only then
+advances the installed-app registry.
+
+Installation and launch are separate: the trusted shell shows **APP READY**
+with **Launch now** and **Later** actions. Home's launcher lists installed
+apps, while the native shell keeps exactly one WAMR guest resident and can
+replace that guest without rebooting. Each app retains `current` and
+`previous` generations; a detectable startup or guest-handler failure in the
+new generation reloads the prior generation when one exists and records the
+exact failed `(app_id, semantic_version, payload_sha256)` tuple in a persisted,
+non-evicting quarantine set of up to eight entries per app. Launch and reinstall
+reject every recorded tuple. A ninth distinct failure persists a terminal block
+for that whole app, removes it from the launcher, and requires a destructive
+profile reset rather than forgetting an older failure. An
+`app.ready` completion never displaces the trusted Voice
+overlay; **APP READY** is deferred until Voice closes normally. Host-owned
+timers are keyed by app identity so switching guests cannot deliver one app's
+timer event to another.
+
+This v0 profile intentionally trusts the local user who holds the shared key.
+Published apps, store publisher identity, revocation, and on-device capability
+approval are later policy. See
+[Personal app installation](docs/personal-app-installation.md) for the exact
+contract, configuration, limitations, and manual CoreS3 validation flow.
+
 ## Apple Silicon setup
 
 The host needs Git, CMake, Ninja, Python 3, Rustup, and Rust 1.95.0. Homebrew
@@ -263,8 +300,9 @@ The normal successful lifecycle includes:
 ```text
 [host] boot
 [host] display ready
+[package-service] package storage mounted: ... KiB free / ... KiB apps=...
 [host] WAMR ready (interpreter, stack=16384, heap=16384)
-[host] onboard package storage: 10060 KiB free / 10060 KiB
+[host] no legacy onboard package at /packages/active.wasm
 [host] using embedded recovery app
 [host] EMBEDDED app size: ... bytes
 [host] module loaded
@@ -290,11 +328,15 @@ With no prepared card, the embedded semantic app should show:
 
 ## Run the microSD milestone
 
-An SD card is not required for current development. The firmware now formats
-and mounts the onboard `packages` partition and checks
-`/packages/active.wasm` first. Until the package activation command is added,
-an empty onboard store simply falls through to optional microSD and then the
-embedded recovery guest.
+An SD card is not required for current development. Personal installs use the
+onboard registry described above. A factory-erased package partition is
+initialized once only after an all-`0xFF` check; a non-erased mount failure is
+never reformatted and its bytes remain available for diagnosis/recovery. The
+older `/packages/active.wasm` bare-module path is retained only as a legacy boot
+fallback; it is not the installed-app registry, does not name the currently
+running guest, and is never updated by the DDB1 installer. An unavailable
+legacy module falls through to optional microSD and then the embedded recovery
+guest.
 
 First build the guest. Put the CoreS3 SE's card in a Mac card reader, identify
 its mounted volume, and copy the exact built module:
@@ -399,7 +441,10 @@ If the serial port is missing:
 
 A broken application cannot prevent reflashing through the ROM bootloader.
 Enter download mode as above and rerun `scripts/flash.sh`. The embedded guest is
-also the runtime recovery path when a microSD application fails.
+the final runtime recovery path when neither an installed/legacy generation nor
+a microSD application can run. Personal-app switching does not reboot or replace
+the native shell, and the registry preserves the prior generation for bounded
+automatic rollback.
 
 ## Layout
 
@@ -420,6 +465,8 @@ doodad-runtime/
 ├── tools/token_sync/            Pinned upstream token extraction/generation
 ├── ui/                          LVGL shell shared by desktop and firmware
 ├── docs/roadmap.md              Current overall project sequence
+├── docs/personal-app-installation.md
+│                                Personal bundle/install/launch contract
 ├── doodad                       Development command
 ├── scripts/                     Build, flash, inspect, and SD install tools
 └── docs/architecture.md

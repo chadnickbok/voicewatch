@@ -15,6 +15,7 @@ enum class ScheduleState : std::uint8_t {
 };
 
 struct ScheduleRecord {
+    std::array<char, 97> owner_app_id{};
     std::array<char, 49> id{};
     std::uint64_t deadline_scenario_ms = 0;
     std::uint64_t original_duration_ms = 0;
@@ -24,7 +25,7 @@ struct ScheduleRecord {
 };
 
 struct SchedulerJournal {
-    static constexpr std::uint32_t kSchemaVersion = 1;
+    static constexpr std::uint32_t kSchemaVersion = 2;
     static constexpr std::size_t kCapacity = 8;
 
     std::uint32_t schema_version = kSchemaVersion;
@@ -34,6 +35,7 @@ struct SchedulerJournal {
 };
 
 struct DueDelivery {
+    std::array<char, 97> owner_app_id{};
     std::array<char, 49> id{};
     std::uint64_t deadline_scenario_ms = 0;
     std::uint64_t revision = 0;
@@ -47,6 +49,28 @@ class ExactScheduler {
 public:
     static constexpr std::size_t kCapacity = SchedulerJournal::kCapacity;
 
+    // Timer IDs are app-local. Owned operations key records by the stable
+    // manifest app ID as well as the guest-supplied timer ID, so two resident
+    // apps can safely use the same local name.
+    [[nodiscard]] bool schedule_after_for_app(
+        const char* owner_app_id,
+        const char* id,
+        std::uint64_t duration_ms,
+        std::uint64_t scenario_now_ms);
+    [[nodiscard]] bool snooze_for_app(
+        const char* owner_app_id,
+        const char* id,
+        std::uint64_t duration_ms,
+        std::uint64_t scenario_now_ms);
+    [[nodiscard]] bool cancel_for_app(
+        const char* owner_app_id,
+        const char* id);
+    [[nodiscard]] bool acknowledge_for_app(
+        const char* owner_app_id,
+        const char* id);
+
+    // Legacy single-app wrappers remain for the native simulator and existing
+    // callers. Production multi-app hosts should always use the owned forms.
     [[nodiscard]] bool schedule_after(
         const char* id,
         std::uint64_t duration_ms,
@@ -67,7 +91,14 @@ public:
 
     [[nodiscard]] bool restore(const SchedulerJournal& journal);
     [[nodiscard]] SchedulerJournal journal() const;
+    [[nodiscard]] const ScheduleRecord* find_for_app(
+        const char* owner_app_id,
+        const char* id) const;
     [[nodiscard]] const ScheduleRecord* find(const char* id) const;
+    [[nodiscard]] std::uint64_t remaining_ms_for_app(
+        const char* owner_app_id,
+        const char* id,
+        std::uint64_t scenario_now_ms) const;
     [[nodiscard]] std::uint64_t remaining_ms(
         const char* id,
         std::uint64_t scenario_now_ms) const;
@@ -75,7 +106,9 @@ public:
     [[nodiscard]] std::uint32_t generation() const;
 
 private:
-    [[nodiscard]] ScheduleRecord* find_mutable(const char* id);
+    [[nodiscard]] ScheduleRecord* find_mutable_for_app(
+        const char* owner_app_id,
+        const char* id);
     [[nodiscard]] static bool record_is_valid(const ScheduleRecord& record);
     void changed();
 

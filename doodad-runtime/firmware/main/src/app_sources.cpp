@@ -7,6 +7,7 @@
 #include "esp_err.h"
 #include "esp_log.h"
 #include "esp_vfs_fat.h"
+#include "package_service.hpp"
 #include "sdmmc_cmd.h"
 
 namespace {
@@ -64,9 +65,34 @@ AppImage embedded_app_image() {
 bool load_onboard_app(
     std::vector<std::uint8_t>& storage,
     AppImage& image) {
+    // The package service owns the long-lived /packages mount. Reuse it when
+    // available so the legacy active.wasm fallback cannot unmount the registry
+    // underneath the installer or launcher.
+    if (doodad::packages::package_service_mounted()) {
+        if (!load_file(kOnboardAppPath, storage)) {
+            ESP_LOGI(
+                kTag,
+                "[host] no legacy onboard package at %s",
+                kOnboardAppPath);
+            return false;
+        }
+        image = AppImage{
+            .data = storage.data(),
+            .size = storage.size(),
+            .source = "ONBOARD-LEGACY",
+        };
+        ESP_LOGI(
+            kTag,
+            "[host] legacy onboard package loaded: %u bytes",
+            static_cast<unsigned>(image.size));
+        return true;
+    }
+
     esp_vfs_fat_mount_config_t mount_config =
         VFS_FAT_MOUNT_DEFAULT_CONFIG();
-    mount_config.format_if_mount_failed = true;
+    // Installed packages are user data. A transient mount failure must never
+    // erase the registry or its current/previous generations.
+    mount_config.format_if_mount_failed = false;
     mount_config.max_files = 4;
     mount_config.allocation_unit_size = 4 * 1024;
     wl_handle_t wear_level_handle = WL_INVALID_HANDLE;
@@ -98,7 +124,7 @@ bool load_onboard_app(
     if (!loaded) {
         ESP_LOGI(
             kTag,
-            "[host] no activated onboard package at %s",
+            "[host] no legacy onboard package at %s",
             kOnboardAppPath);
     }
     esp_vfs_fat_spiflash_unmount_rw_wl(
@@ -108,11 +134,11 @@ bool load_onboard_app(
     image = AppImage{
         .data = storage.data(),
         .size = storage.size(),
-        .source = "ONBOARD",
+        .source = "ONBOARD-LEGACY",
     };
     ESP_LOGI(
         kTag,
-        "[host] onboard package loaded: %u bytes",
+        "[host] legacy onboard package loaded: %u bytes",
         static_cast<unsigned>(image.size));
     return true;
 }

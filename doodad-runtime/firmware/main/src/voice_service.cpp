@@ -30,6 +30,7 @@
 #include "mdns.h"
 #include "network_service.hpp"
 #include "nvs.h"
+#include "package_service.hpp"
 #include "sdkconfig.h"
 
 namespace {
@@ -63,6 +64,7 @@ constexpr std::size_t kCommandQueueDepth = 6;
 constexpr std::size_t kEventQueueDepth = 6;
 constexpr std::size_t kPlaybackQueueDepth = 12;
 constexpr std::size_t kPlaybackSlotCount = 3;
+constexpr std::size_t kCaptureCorrelationCount = 8;
 constexpr std::size_t kPlaybackPrebufferFrames = 3;
 constexpr std::uint32_t kPlaybackPrebufferTimeoutMs = 80;
 constexpr std::size_t kSpeakerDmaBufferLength = 128;
@@ -98,14 +100,23 @@ enum class CommandKind : std::uint8_t {
     activate,
     finish,
     cancel,
+    release_owner,
 };
 
 struct Command {
     CommandKind kind;
     std::uint64_t request_id;
+    std::uint64_t owner_token;
+    std::uint64_t capture_id;
     std::uint32_t duration_ms;
     std::uint8_t* data;
     std::size_t size;
+};
+
+struct CaptureCorrelation {
+    std::uint64_t capture_id = 0;
+    std::uint64_t request_id = 0;
+    std::uint64_t owner_token = 0;
 };
 
 struct PlaybackFrame {
@@ -149,6 +160,14 @@ bool g_mdns_initialized = false;
 bool g_microphone_ready = false;
 std::uint64_t g_sequence = 0;
 std::uint64_t g_active_request = 0;
+std::uint64_t g_active_owner_token = 0;
+std::uint64_t g_active_capture_id = 0;
+std::uint64_t g_capture_sequence = 0;
+std::array<CaptureCorrelation, kCaptureCorrelationCount>
+    g_capture_correlations{};
+std::size_t g_capture_correlation_cursor = 0;
+portMUX_TYPE g_current_guest_owner_lock = portMUX_INITIALIZER_UNLOCKED;
+std::uint64_t g_current_guest_owner_token = 0;
 std::uint32_t g_capture_duration_ms = 8'000;
 std::uint32_t g_capture_started_ms = 0;
 std::uint32_t g_encoded_frames = 0;
@@ -368,14 +387,54 @@ void free_command(Command& command) {
     command.size = 0;
 }
 
-void publish(
+std::uint64_t current_guest_owner_snapshot() {
+    portENTER_CRITICAL(&g_current_guest_owner_lock);
+    const auto owner_token = g_current_guest_owner_token;
+    portEXIT_CRITICAL(&g_current_guest_owner_lock);
+    return owner_token;
+}
+
+std::uint64_t next_capture_id() {
+    if (g_capture_sequence == UINT64_MAX) return 0;
+    return ++g_capture_sequence;
+}
+
+void remember_capture(const CaptureCorrelation& correlation) {
+    g_capture_correlations[g_capture_correlation_cursor] = correlation;
+    g_capture_correlation_cursor =
+        (g_capture_correlation_cursor + 1) %
+        g_capture_correlations.size();
+}
+
+bool consume_capture(
+    std::uint64_t capture_id,
+    std::uint64_t request_id,
+    CaptureCorrelation& correlation) {
+    correlation = {};
+    if (capture_id == 0) return false;
+    for (auto& candidate : g_capture_correlations) {
+        if (candidate.capture_id != capture_id ||
+            candidate.request_id != request_id) {
+            continue;
+        }
+        correlation = candidate;
+        candidate = {};
+        return true;
+    }
+    return false;
+}
+
+void publish_owned(
     VoiceEventKind kind,
-    const char* text = nullptr,
-    std::uint32_t elapsed_ms = 0) {
+    const char* text,
+    std::uint32_t elapsed_ms,
+    std::uint64_t request_id,
+    std::uint64_t owner_token) {
     if (g_events == nullptr) return;
     VoiceEvent event{};
     event.kind = kind;
-    event.request_id = g_active_request;
+    event.request_id = request_id;
+    event.owner_token = owner_token;
     event.elapsed_ms = elapsed_ms;
     event.encoded_frames = g_encoded_frames;
     event.dropped_frames = g_dropped_frames;
@@ -387,14 +446,36 @@ void publish(
     }
 }
 
+void publish(
+    VoiceEventKind kind,
+    const char* text = nullptr,
+    std::uint32_t elapsed_ms = 0) {
+    publish_owned(
+        kind,
+        text,
+        elapsed_ms,
+        g_active_request,
+        g_active_owner_token);
+}
+
 bool enqueue(
     CommandKind kind,
     const char* data = nullptr,
     std::size_t size = 0,
     std::uint32_t duration_ms = 0,
-    std::uint64_t request_id = 0) {
+    std::uint64_t request_id = 0,
+    std::uint64_t owner_token = 0,
+    TickType_t wait_ticks = 0,
+    std::uint64_t capture_id = 0) {
     if (g_commands == nullptr || size > kMaximumSignalBytes) return false;
-    Command command{kind, request_id, duration_ms, nullptr, size};
+    Command command{
+        kind,
+        request_id,
+        owner_token,
+        capture_id,
+        duration_ms,
+        nullptr,
+        size};
     if (size != 0) {
         command.data = static_cast<std::uint8_t*>(heap_caps_malloc(
             size + 1, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
@@ -402,7 +483,7 @@ bool enqueue(
         std::memcpy(command.data, data, size);
         command.data[size] = 0;
     }
-    if (xQueueSend(g_commands, &command, 0) != pdTRUE) {
+    if (xQueueSend(g_commands, &command, wait_ticks) != pdTRUE) {
         free_command(command);
         return false;
     }
@@ -475,6 +556,19 @@ void send_simple(const char* type) {
     send_json(root);
 }
 
+void add_decimal_u64(
+    cJSON* object,
+    const char* name,
+    std::uint64_t value) {
+    char encoded[21]{};
+    std::snprintf(
+        encoded,
+        sizeof(encoded),
+        "%llu",
+        static_cast<unsigned long long>(value));
+    cJSON_AddStringToObject(object, name, encoded);
+}
+
 void send_capture_status(const char* type, std::uint32_t elapsed_ms) {
     auto* root = cJSON_CreateObject();
     add_envelope(root, type);
@@ -483,6 +577,10 @@ void send_capture_status(const char* type, std::uint32_t elapsed_ms) {
     cJSON_AddNumberToObject(payload, "encoded_frames", g_encoded_frames);
     cJSON_AddNumberToObject(payload, "dropped_frames", g_dropped_frames);
     cJSON_AddNumberToObject(payload, "encoded_bytes", g_encoded_bytes);
+    // Decimal strings preserve the full 64-bit correlation across JSON
+    // implementations that otherwise coerce numbers through IEEE-754.
+    add_decimal_u64(payload, "capture_id", g_active_capture_id);
+    add_decimal_u64(payload, "request_id", g_active_request);
     send_json(root);
 }
 
@@ -1581,8 +1679,24 @@ bool start_microphone() {
     return false;
 }
 
-void start_capture(std::uint64_t request_id, std::uint32_t duration_ms) {
+void start_capture(
+    std::uint64_t request_id,
+    std::uint64_t owner_token,
+    std::uint32_t duration_ms) {
+    const auto capture_id = next_capture_id();
+    if (capture_id == 0) {
+        ESP_LOGE(kTag, "capture correlation sequence exhausted");
+        return;
+    }
+    if (request_id == 0 && owner_token != 0) {
+        // Explicit remote diagnostic capture has no guest import call from
+        // which to inherit a request ID. Reuse the firmware-issued capture
+        // ID so the resulting provider event remains nonzero and bounded.
+        request_id = capture_id;
+    }
     g_active_request = request_id;
+    g_active_owner_token = owner_token;
+    g_active_capture_id = capture_id;
     if (!g_peer_connected) {
         publish(VoiceEventKind::error, "Voice link is not ready");
         send_simple("capture.failed");
@@ -1624,6 +1738,11 @@ void start_capture(std::uint64_t request_id, std::uint32_t duration_ms) {
     g_dropped_frames = 0;
     g_encoded_bytes = 0;
     g_peak_pcm = 0;
+    remember_capture(CaptureCorrelation{
+        capture_id,
+        request_id,
+        owner_token,
+    });
     publish(VoiceEventKind::recording, "Listening");
     send_capture_status("capture.started", 0);
 }
@@ -1767,18 +1886,31 @@ void handle_command(Command& command) {
             }
             break;
         case CommandKind::start:
-            start_capture(command.request_id, command.duration_ms);
+            start_capture(
+                command.request_id,
+                command.owner_token,
+                command.duration_ms);
             break;
         case CommandKind::stop:
             stop_capture();
             break;
-        case CommandKind::transcript:
-            g_active_request = command.request_id != 0
-                ? command.request_id : g_active_request;
-            publish(
+        case CommandKind::transcript: {
+            CaptureCorrelation correlation{};
+            if (!consume_capture(
+                    command.capture_id,
+                    command.request_id,
+                    correlation)) {
+                ESP_LOGW(kTag, "dropped uncorrelated transcript");
+                break;
+            }
+            publish_owned(
                 VoiceEventKind::transcript,
-                reinterpret_cast<char*>(command.data));
+                reinterpret_cast<char*>(command.data),
+                0,
+                correlation.request_id,
+                correlation.owner_token);
             break;
+        }
         case CommandKind::action:
             if (command.data != nullptr) {
                 handle_action(
@@ -1802,7 +1934,44 @@ void handle_command(Command& command) {
             stop_and_reset_playback("cancelled");
             send_simple("listen.cancelled");
             break;
+        case CommandKind::release_owner:
+            if (command.owner_token != 0 &&
+                command.owner_token == g_active_owner_token) {
+                // Keep the retired token active after stopping. Any delayed
+                // transcript or lifecycle event is then still attributable
+                // to the outgoing guest and cannot become owner-neutral.
+                stop_capture(false);
+                stop_and_reset_playback("guest released");
+            }
+            break;
     }
+}
+
+bool parse_decimal_u64(
+    const cJSON* value,
+    bool allow_zero,
+    std::uint64_t& output) {
+    output = 0;
+    if (!cJSON_IsString(value) || value->valuestring == nullptr) {
+        return false;
+    }
+    const auto* text = value->valuestring;
+    const auto length = std::strlen(text);
+    if (length == 0 || length > 20 ||
+        (length > 1 && text[0] == '0')) {
+        return false;
+    }
+    std::uint64_t parsed = 0;
+    for (std::size_t index = 0; index < length; ++index) {
+        const auto character = text[index];
+        if (character < '0' || character > '9') return false;
+        const auto digit = static_cast<std::uint64_t>(character - '0');
+        if (parsed > (UINT64_MAX - digit) / 10) return false;
+        parsed = parsed * 10 + digit;
+    }
+    if (!allow_zero && parsed == 0) return false;
+    output = parsed;
+    return true;
 }
 
 void parse_message(const char* bytes, std::size_t size) {
@@ -1832,15 +2001,54 @@ void parse_message(const char* bytes, std::size_t size) {
         }
     } else if (std::strcmp(type->valuestring, "capture.start") == 0) {
         const auto* duration = cJSON_GetObjectItemCaseSensitive(payload, "duration_ms");
-        enqueue(CommandKind::start, nullptr, 0,
-                cJSON_IsNumber(duration) ? duration->valueint : 8'000, 0);
+        const auto* target =
+            cJSON_GetObjectItemCaseSensitive(payload, "target");
+        std::uint64_t owner_token = 0;
+        bool target_valid = target == nullptr;
+        if (target != nullptr && cJSON_IsString(target) &&
+            target->valuestring != nullptr &&
+            std::strcmp(target->valuestring, "current_guest") == 0) {
+            owner_token = current_guest_owner_snapshot();
+            target_valid = owner_token != 0;
+        }
+        if (!target_valid) {
+            ESP_LOGW(kTag, "capture.start guest target unavailable");
+        } else {
+            enqueue(
+                CommandKind::start,
+                nullptr,
+                0,
+                cJSON_IsNumber(duration) ? duration->valueint : 8'000,
+                0,
+                owner_token);
+        }
     } else if (std::strcmp(type->valuestring, "capture.stop") == 0) {
         enqueue(CommandKind::stop);
     } else if (std::strcmp(type->valuestring, "transcript.final") == 0) {
         const auto* transcript = cJSON_GetObjectItemCaseSensitive(payload, "text");
-        if (cJSON_IsString(transcript)) {
-            enqueue(CommandKind::transcript, transcript->valuestring,
-                    std::strlen(transcript->valuestring), 0, 0);
+        std::uint64_t capture_id = 0;
+        std::uint64_t request_id = 0;
+        if (cJSON_IsString(transcript) &&
+            transcript->valuestring != nullptr &&
+            parse_decimal_u64(
+                cJSON_GetObjectItemCaseSensitive(payload, "capture_id"),
+                false,
+                capture_id) &&
+            parse_decimal_u64(
+                cJSON_GetObjectItemCaseSensitive(payload, "request_id"),
+                true,
+                request_id)) {
+            enqueue(
+                CommandKind::transcript,
+                transcript->valuestring,
+                std::strlen(transcript->valuestring),
+                0,
+                request_id,
+                0,
+                0,
+                capture_id);
+        } else {
+            ESP_LOGW(kTag, "dropped transcript without valid correlation");
         }
     } else if (std::strcmp(type->valuestring, "action.invoke") == 0 ||
                std::strcmp(type->valuestring, "agent.state") == 0) {
@@ -1851,6 +2059,45 @@ void parse_message(const char* bytes, std::size_t size) {
                     ? CommandKind::action : CommandKind::agent_state,
                 encoded, std::strlen(encoded));
             cJSON_free(encoded);
+        }
+    } else if (std::strcmp(type->valuestring, "app.ready") == 0 &&
+               cJSON_IsObject(payload)) {
+        const auto* url = cJSON_GetObjectItemCaseSensitive(payload, "url");
+        const auto* digest = cJSON_GetObjectItemCaseSensitive(
+            payload, "bundle_sha256");
+        const auto* bytes_value = cJSON_GetObjectItemCaseSensitive(
+            payload, "bundle_bytes");
+        doodad::packages::AppReadyOffer offer{};
+        const auto copy_bounded = [](auto& destination, const cJSON* value) {
+            if (!cJSON_IsString(value) || value->valuestring == nullptr) {
+                return false;
+            }
+            const auto length = std::strlen(value->valuestring);
+            if (length == 0 || length >= destination.size()) return false;
+            std::memcpy(
+                destination.data(), value->valuestring, length + 1);
+            return true;
+        };
+        const bool size_valid = cJSON_IsNumber(bytes_value) &&
+            bytes_value->valuedouble > 0 &&
+            bytes_value->valuedouble <= UINT32_MAX &&
+            bytes_value->valuedouble ==
+                static_cast<double>(bytes_value->valueint);
+        if (copy_bounded(offer.url, url) &&
+            copy_bounded(offer.bundle_sha256, digest) && size_valid) {
+            offer.bundle_bytes = static_cast<std::uint32_t>(
+                bytes_value->valuedouble);
+            if (!doodad::packages::package_service_offer(offer)) {
+                ESP_LOGW(kTag, "app.ready rejected or installer busy");
+            } else {
+                ESP_LOGI(
+                    kTag,
+                    "app.ready accepted bundle=%.12s bytes=%u",
+                    offer.bundle_sha256.data(),
+                    static_cast<unsigned>(offer.bundle_bytes));
+            }
+        } else {
+            ESP_LOGW(kTag, "invalid app.ready payload");
         }
     }
     cJSON_Delete(root);
@@ -2085,7 +2332,8 @@ bool voice_service_init() {
 bool voice_service_request(
     const char* operation,
     std::uint64_t request_id,
-    std::uint32_t duration_ms) {
+    std::uint32_t duration_ms,
+    std::uint64_t owner_token) {
 #if !CONFIG_DOODAD_VOICE_UPLINK
     return false;
 #else
@@ -2105,13 +2353,41 @@ bool voice_service_request(
     }
     if (std::strcmp(operation, "voice-notes.record") == 0 ||
         std::strcmp(operation, "voice-notes.again") == 0) {
-        return enqueue(CommandKind::start, nullptr, 0, duration_ms, request_id);
+        return enqueue(
+            CommandKind::start,
+            nullptr,
+            0,
+            duration_ms,
+            request_id,
+            owner_token);
     }
     if (std::strcmp(operation, "voice-notes.finish-capture") == 0 ||
         std::strcmp(operation, "voice-notes.pause") == 0) {
         return enqueue(CommandKind::stop, nullptr, 0, 0, request_id);
     }
     return std::strncmp(operation, "voice-notes.", 12) == 0;
+#endif
+}
+
+void voice_service_set_current_guest_owner(std::uint64_t owner_token) {
+    portENTER_CRITICAL(&g_current_guest_owner_lock);
+    g_current_guest_owner_token = owner_token;
+    portEXIT_CRITICAL(&g_current_guest_owner_lock);
+}
+
+bool voice_service_release_owner(std::uint64_t owner_token) {
+#if !CONFIG_DOODAD_VOICE_UPLINK
+    return true;
+#else
+    if (owner_token == 0) return true;
+    return enqueue(
+        CommandKind::release_owner,
+        nullptr,
+        0,
+        0,
+        0,
+        owner_token,
+        pdMS_TO_TICKS(100));
 #endif
 }
 

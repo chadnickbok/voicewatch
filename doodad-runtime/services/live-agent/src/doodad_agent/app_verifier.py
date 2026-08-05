@@ -20,6 +20,29 @@ class VerificationError(RuntimeError):
     pass
 
 
+def package_tree_snapshot(directory: Path) -> tuple[str, dict[str, bytes]]:
+    """Read and hash one exact package snapshot.
+
+    The returned bytes are the bytes covered by the digest.  The outer
+    packager uses this boundary so it cannot verify one mutable package tree
+    and then accidentally sign a later version of ``manifest.json`` or
+    ``app.wasm``.
+    """
+
+    files: dict[str, bytes] = {}
+    for path in sorted(item for item in directory.rglob("*") if item.is_file()):
+        relative = path.relative_to(directory).as_posix()
+        files[relative] = path.read_bytes()
+    digest = hashlib.sha256()
+    for relative, payload in files.items():
+        encoded_relative = relative.encode("utf-8")
+        digest.update(len(encoded_relative).to_bytes(4, "big"))
+        digest.update(encoded_relative)
+        digest.update(len(payload).to_bytes(8, "big"))
+        digest.update(payload)
+    return digest.hexdigest(), files
+
+
 @dataclass(frozen=True)
 class VerifiedArtifact:
     artifact_id: str
@@ -106,7 +129,7 @@ class RestTimerVerifier:
         preview = package / "preview.bmp"
         self._validate_preview(preview)
         gates.append("simulator-render")
-        digest = self._tree_hash(package)
+        digest, _ = package_tree_snapshot(package)
         artifact_id = f"{manifest['id']}@{manifest['version']}"
         summary = f"{manifest['name']} ({layout}) passed {len(gates)} independent gates."
         return VerifiedArtifact(
@@ -148,6 +171,9 @@ class RestTimerVerifier:
         app_id = manifest["id"]
         if not isinstance(appspec.get("app_id"), str) or not appspec["app_id"]:
             raise VerificationError("AppSpec app_id is missing")
+        # AppSpec app_id is the guest UI/event namespace (for example
+        # "timer"), not the signed reverse-domain package identity. Runtime
+        # ownership is bound separately to the resident package generation.
         if agent.get("app_id") != app_id:
             raise VerificationError("agent contract app_id does not match manifest id")
         if agent.get("app_version") != manifest.get("version"):
@@ -250,6 +276,9 @@ class RestTimerVerifier:
 
     def _run(self, command: list[str], cwd: Path | None = None) -> None:
         environment = os.environ.copy()
+        # Generated build inputs run before the trusted outer packager and must
+        # never inherit the user's personal signing material.
+        environment.pop("DOODAD_PERSONAL_HMAC_KEY_HEX", None)
         # The isolated workspace intentionally sits outside the repository,
         # so cwd-based asdf discovery cannot see the checked-in Rust pin.
         environment["ASDF_RUST_VERSION"] = "1.95.0"
@@ -290,15 +319,8 @@ class RestTimerVerifier:
 
     @staticmethod
     def _tree_hash(directory: Path) -> str:
-        digest = hashlib.sha256()
-        for path in sorted(item for item in directory.rglob("*") if item.is_file()):
-            relative = path.relative_to(directory).as_posix().encode("utf-8")
-            digest.update(len(relative).to_bytes(4, "big"))
-            digest.update(relative)
-            payload = path.read_bytes()
-            digest.update(len(payload).to_bytes(8, "big"))
-            digest.update(payload)
-        return digest.hexdigest()
+        digest, _ = package_tree_snapshot(directory)
+        return digest
 
     @staticmethod
     def _read_json(path: Path) -> dict[str, Any]:

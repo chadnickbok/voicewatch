@@ -4,15 +4,24 @@ import os
 import threading
 from pathlib import Path
 
+import pytest
+
 from doodad_agent.codex_protocol import AppServerClient, PINNED_CODEX_VERSION
 
 
-def test_jsonl_reader_does_not_hide_bursted_turn_completion(tmp_path: Path) -> None:
+def test_jsonl_reader_does_not_hide_bursted_turn_completion(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("DOODAD_PERSONAL_HMAC_KEY_HEX", "ab" * 32)
     binary = tmp_path / "fake-codex"
     binary.write_text(
         f"""#!/usr/bin/env python3
 import json
+import os
 import sys
+
+if os.getenv('DOODAD_PERSONAL_HMAC_KEY_HEX'):
+    raise SystemExit(9)
 
 if '--version' in sys.argv:
     print({PINNED_CODEX_VERSION!r})

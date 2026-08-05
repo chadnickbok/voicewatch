@@ -14,15 +14,18 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/idf_additions.h"
 #include "freertos/queue.h"
+#include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "lvgl.h"
 #include "m3e/appspec/command_batch.hpp"
 #include "m3e/appspec/renderer.hpp"
 #include "m3e/appspec/wire.hpp"
 #include "m3e/catalog/catalog.h"
+#include "m3e/components/components.hpp"
 #include "m3e/os/shell_state.hpp"
 #include "m3e/os/surface_registry.hpp"
 #include "m3e/theme/resolved_theme.hpp"
+#include "package_service.hpp"
 #include "voice_service.hpp"
 
 namespace {
@@ -45,6 +48,26 @@ enum class UiCommandType : std::uint8_t {
     surface_publish,
     agent_state,
     voice_level,
+    install_state,
+    app_ready,
+    app_running,
+    app_rollback,
+    apps_changed,
+    prepare_app_switch,
+};
+
+struct PackageUiEvent {
+    char app_id[97]{};
+    char name[193]{};
+    char semantic_version[65]{};
+    char payload_sha256[65]{};
+    char detail[129]{};
+    std::uint8_t phase = 0;
+};
+
+struct UiCompletion {
+    SemaphoreHandle_t semaphore = nullptr;
+    bool result = false;
 };
 
 struct UiCommand {
@@ -63,6 +86,8 @@ struct UiCommand {
     bool completion_pending;
     std::uint8_t install_state;
     std::uint8_t voice_level;
+    PackageUiEvent* package;
+    UiCompletion* completion;
 };
 
 enum class PendingVoiceAction : std::uint8_t {
@@ -79,6 +104,7 @@ lv_indev_t* g_touch_input = nullptr;
 doodad_lvgl_ui_t g_ui{};
 m3e::StyleRegistry g_appspec_styles{};
 m3e::appspec::WireDocument* g_active_document = nullptr;
+m3e::appspec::WireDocument* g_pending_document = nullptr;
 std::uint16_t* g_draw_buffer_a = nullptr;
 std::uint16_t* g_draw_buffer_b = nullptr;
 std::uint32_t g_window_frames = 0;
@@ -113,6 +139,13 @@ char g_visual_scene[49]{};
 std::uint32_t g_visual_revision = 0;
 std::uint32_t g_visual_frame_hash = 2166136261U;
 bool g_visual_pending = false;
+doodad::packages::CatalogSnapshot g_launcher_apps{};
+PackageUiEvent g_ready_app{};
+bool g_has_ready_app = false;
+bool g_ready_is_rollback = false;
+bool g_ready_deferred_by_overlay = false;
+std::uint8_t g_local_install_state = 0;
+char g_install_detail[129]{};
 
 void stage_visual_scene(const char* scene) {
     std::strncpy(
@@ -253,12 +286,22 @@ bool enqueue(const UiCommand& command) {
     return true;
 }
 
+void complete(UiCommand& command, bool result) {
+    if (command.completion == nullptr ||
+        command.completion->semaphore == nullptr) {
+        return;
+    }
+    command.completion->result = result;
+    xSemaphoreGive(command.completion->semaphore);
+}
+
 void shell_now(const char* status, const char* source) {
     stage_visual_scene("boot-shell");
     doodad_lvgl_ui_show_shell(&g_ui, status, source);
 }
 
 void error_now(const char* stage);
+void render_shell_now();
 
 void forward_app_event(
     const m3e::appspec::UiEvent& event,
@@ -268,19 +311,28 @@ void forward_app_event(
     }
 }
 
+void destroy_guest_document(m3e::appspec::WireDocument*& document) {
+    if (document == nullptr) return;
+    app_runtime_invalidate_ui_mount(
+        document->string_at(document->app_id_offset));
+    delete document;
+    document = nullptr;
+}
+
 bool appspec_now(m3e::appspec::WireDocument* document) {
     if (document == nullptr) return false;
     if (g_shell_active &&
         g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
         // The trusted system voice surface owns the display while it is open.
-        // A voice-aware guest may still receive provider events, but it must
-        // not replace or invalidate native overlay objects.
-        delete document;
+        // Retain the newest complete document so its owner token stays valid
+        // and the app surface can be restored when the overlay closes.
+        destroy_guest_document(g_pending_document);
+        g_pending_document = document;
         return true;
     }
     if (!g_appspec_styles.initialized() &&
         !g_appspec_styles.initialize(m3e::baseline_dark_theme())) {
-        delete document;
+        destroy_guest_document(document);
         error_now("THEME INIT FAILED");
         return false;
     }
@@ -291,11 +343,11 @@ bool appspec_now(m3e::appspec::WireDocument* document) {
             *document,
             forward_app_event,
             nullptr)) {
-        delete document;
+        destroy_guest_document(document);
         error_now("APPSPEC RENDER FAILED");
         return false;
     }
-    delete g_active_document;
+    destroy_guest_document(g_active_document);
     g_active_document = document;
     return true;
 }
@@ -303,7 +355,11 @@ bool appspec_now(m3e::appspec::WireDocument* document) {
 bool command_batch_now(m3e::appspec::CommandBatch* batch) {
     if (batch == nullptr) return false;
     if (g_shell_active &&
-        g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+        (g_shell.snapshot().overlay != m3e::os::Overlay::none ||
+         g_shell.snapshot().surface != m3e::os::Surface::app)) {
+        // The guest remains resident while trusted shell surfaces are open.
+        // It may update its model in the background, but it cannot repaint
+        // over the launcher, voice overlay, or package manager.
         delete batch;
         return true;
     }
@@ -445,7 +501,243 @@ int shell_story() {
     return M3E_CATALOG_STORY_OS_HOME;
 }
 
+bool ensure_system_styles() {
+    return g_appspec_styles.initialized() ||
+        g_appspec_styles.initialize(m3e::baseline_dark_theme());
+}
+
+void discard_guest_document() {
+    destroy_guest_document(g_active_document);
+    destroy_guest_document(g_pending_document);
+}
+
+bool prepare_app_switch_now() {
+    if (!g_shell_active) return true;
+    if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
+        // System voice is host-owned (owner token zero). Closing the overlay
+        // also stops a capture that should not remain hidden behind a newly
+        // launched guest.
+        voice_service_request("system.voice.cancel", 0);
+    }
+    if (g_shell.snapshot().overlay != m3e::os::Overlay::none &&
+        !g_shell.dismiss_overlay()) {
+        return false;
+    }
+    discard_guest_document();
+    return true;
+}
+
+void launch_package(const PackageUiEvent& package) {
+    if (!doodad::packages::package_service_request_launch(
+            package.app_id,
+            package.semantic_version,
+            package.payload_sha256)) {
+        error_now("APP LAUNCH FAILED");
+        return;
+    }
+    doodad::board::haptic(1);
+}
+
+void launch_catalog_entry(lv_event_t* event) {
+    if (lv_event_get_code(event) != LV_EVENT_CLICKED) return;
+    const auto* app = static_cast<const doodad::packages::CatalogEntry*>(
+        lv_event_get_user_data(event));
+    if (app == nullptr) return;
+    PackageUiEvent package{};
+    std::strncpy(package.app_id, app->app_id.data(), sizeof(package.app_id) - 1);
+    std::strncpy(package.name, app->name.data(), sizeof(package.name) - 1);
+    std::strncpy(
+        package.semantic_version,
+        app->semantic_version.data(),
+        sizeof(package.semantic_version) - 1);
+    std::strncpy(
+        package.payload_sha256,
+        app->payload_sha256.data(),
+        sizeof(package.payload_sha256) - 1);
+    launch_package(package);
+}
+
+void launch_ready_app(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED && g_has_ready_app) {
+        launch_package(g_ready_app);
+    }
+}
+
+void dismiss_ready_app(lv_event_t* event) {
+    if (lv_event_get_code(event) != LV_EVENT_CLICKED) return;
+    g_has_ready_app = false;
+    g_ready_is_rollback = false;
+    g_ready_deferred_by_overlay = false;
+    g_local_install_state = 0;
+    g_install_detail[0] = '\0';
+    if (!g_shell.initialize() ||
+        !g_shell.dispatch(m3e::os::Intent::home_or_launcher)) {
+        error_now("SYSTEM SHELL FAILED");
+        return;
+    }
+    render_shell_now();
+}
+
+void installed_launcher_now() {
+    if (!ensure_system_styles()) {
+        error_now("THEME INIT FAILED");
+        return;
+    }
+    stage_visual_scene("installed-launcher");
+    discard_guest_document();
+    g_launcher_apps = {};
+    doodad::packages::package_service_catalog(g_launcher_apps);
+
+    m3e::ComponentFactory factory(g_appspec_styles);
+    auto* screen = factory.screen(lv_screen_active());
+    auto* title = factory.text(
+        screen,
+        "APPS",
+        m3e::generated::TypographyRole::title_medium);
+    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 8);
+
+    auto* list = lv_obj_create(screen);
+    lv_obj_remove_style_all(list);
+    lv_obj_set_pos(list, 12, 38);
+    lv_obj_set_size(list, 216, 190);
+    lv_obj_set_flex_flow(list, LV_FLEX_FLOW_COLUMN);
+    lv_obj_set_flex_align(
+        list, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_row(list, 7, 0);
+    lv_obj_set_scroll_dir(list, LV_DIR_VER);
+    lv_obj_set_scrollbar_mode(list, LV_SCROLLBAR_MODE_AUTO);
+
+    if (g_launcher_apps.count == 0) {
+        auto* empty = factory.text(
+            list,
+            "No personal apps yet.\nAsk Doodad to build one.",
+            m3e::generated::TypographyRole::body_medium,
+            true);
+        lv_obj_set_width(empty, 204);
+        lv_obj_set_style_text_align(empty, LV_TEXT_ALIGN_CENTER, 0);
+        lv_obj_set_style_margin_top(empty, 42, 0);
+        return;
+    }
+
+    for (std::size_t index = 0; index < g_launcher_apps.count; ++index) {
+        auto& app = g_launcher_apps.apps[index];
+        char label[160]{};
+        std::snprintf(
+            label,
+            sizeof(label),
+            "%.88s  %.60s",
+            app.name.data(),
+            app.semantic_version.data());
+        auto* button = factory.button(
+            list,
+            {
+                app.app_id.data(),
+                label,
+                index % 3 == 0
+                    ? m3e::Tone::primary
+                    : index % 3 == 1
+                    ? m3e::Tone::secondary
+                    : m3e::Tone::tertiary,
+                m3e::ButtonVariant::tonal,
+                m3e::ComponentSize::normal,
+                true,
+                false,
+            });
+        lv_obj_set_size(button, 204, 48);
+        lv_obj_set_flex_grow(button, 0);
+        lv_obj_add_event_cb(
+            button,
+            launch_catalog_entry,
+            LV_EVENT_CLICKED,
+            &app);
+    }
+}
+
+void app_ready_now() {
+    if (!g_has_ready_app || !ensure_system_styles()) {
+        installed_launcher_now();
+        return;
+    }
+    const bool recovered_to_current = g_ready_is_rollback &&
+        std::strcmp(g_ready_app.detail, "safe-current") == 0;
+    stage_visual_scene(
+        recovered_to_current
+            ? "app-recovered-current"
+            : g_ready_is_rollback ? "app-restored" : "app-ready");
+    discard_guest_document();
+    m3e::ComponentFactory factory(g_appspec_styles);
+    auto* screen = factory.screen(lv_screen_active());
+    auto* eyebrow = factory.text(
+        screen,
+        g_ready_is_rollback ? "RECOVERED" : "APP READY",
+        m3e::generated::TypographyRole::label_small,
+        true);
+    lv_obj_align(eyebrow, LV_ALIGN_TOP_MID, 0, 14);
+    auto* title = factory.text(
+        screen,
+        g_ready_app.name,
+        m3e::generated::TypographyRole::title_large);
+    lv_obj_set_width(title, 216);
+    lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_align(title, LV_ALIGN_TOP_MID, 0, 43);
+    char version[96]{};
+    std::snprintf(
+        version,
+        sizeof(version),
+        "%s%s",
+        recovered_to_current
+            ? "Recovered current "
+            : g_ready_is_rollback ? "Restored " : "Installed ",
+        g_ready_app.semantic_version);
+    auto* detail = factory.text(
+        screen,
+        version,
+        m3e::generated::TypographyRole::body_small,
+        true);
+    lv_obj_align(detail, LV_ALIGN_TOP_MID, 0, 86);
+    auto* launch = factory.button(
+        screen,
+        {
+            "package.launch-now",
+            "Launch now",
+            m3e::Tone::primary,
+            m3e::ButtonVariant::filled,
+            m3e::ComponentSize::large,
+            true,
+            false,
+        });
+    lv_obj_set_pos(launch, 24, 122);
+    lv_obj_set_size(launch, 192, 54);
+    lv_obj_add_event_cb(
+        launch, launch_ready_app, LV_EVENT_CLICKED, nullptr);
+    auto* later = factory.button(
+        screen,
+        {
+            "package.later",
+            "Later",
+            m3e::Tone::neutral,
+            m3e::ButtonVariant::text,
+            m3e::ComponentSize::compact,
+            true,
+            false,
+        });
+    lv_obj_set_pos(later, 66, 188);
+    lv_obj_set_size(later, 108, 38);
+    lv_obj_add_event_cb(later, dismiss_ready_app, LV_EVENT_CLICKED, nullptr);
+}
+
 void render_shell_now() {
+    if (g_ready_deferred_by_overlay &&
+        g_shell.snapshot().overlay == m3e::os::Overlay::none) {
+        // Installing an app must never displace the trusted Voice surface.
+        // Once that overlay is explicitly dismissed, surface the deferred
+        // Launch now choice on the next shell render.
+        g_ready_deferred_by_overlay = false;
+        if (!g_shell.open_app_detail()) {
+            error_now("APP READY FAILED");
+            return;
+        }
+    }
     const char* visual_scene = "system-shell";
     if (g_shell.snapshot().overlay == m3e::os::Overlay::voice) {
         switch (g_shell.snapshot().voice_phase) {
@@ -466,10 +758,13 @@ void render_shell_now() {
             g_voice_transcript,
             g_voice_response,
             &g_voice_view);
-        // Rendering the trusted surface replaces the mounted guest tree.
-        // Its document must no longer be eligible for later command batches.
-        delete g_active_document;
-        g_active_document = nullptr;
+        // Rendering the trusted surface replaces the LVGL guest tree, but the
+        // immutable document remains the restore source after dismissal.
+        if (g_active_document != nullptr) {
+            destroy_guest_document(g_pending_document);
+            g_pending_document = g_active_document;
+            g_active_document = nullptr;
+        }
         if (g_voice_view.primary_action != nullptr) {
             lv_obj_add_event_cb(
                 g_voice_view.primary_action,
@@ -494,7 +789,22 @@ void render_shell_now() {
         }
     } else {
         g_voice_view = {};
-        catalog_now(shell_story());
+        if (g_shell.snapshot().surface == m3e::os::Surface::app &&
+            g_pending_document != nullptr) {
+            auto* pending = g_pending_document;
+            g_pending_document = nullptr;
+            appspec_now(pending);
+        } else if (g_shell.snapshot().surface == m3e::os::Surface::launcher) {
+            installed_launcher_now();
+        } else if ((g_shell.snapshot().surface ==
+                        m3e::os::Surface::app_detail ||
+                    g_shell.snapshot().surface ==
+                        m3e::os::Surface::crash_recovery) &&
+                   g_has_ready_app) {
+            app_ready_now();
+        } else {
+            catalog_now(shell_story());
+        }
     }
     render_background_badge();
 }
@@ -641,11 +951,15 @@ void agent_state_now(const UiCommand& command) {
         }
         force_voice_phase(requested);
     }
-    const auto install_state = command.install_state <=
+    const auto remote_install_state = command.install_state <=
             static_cast<std::uint8_t>(
                 m3e::os::BackgroundInstallState::failed)
         ? static_cast<m3e::os::BackgroundInstallState>(command.install_state)
         : m3e::os::BackgroundInstallState::failed;
+    const auto install_state = g_local_install_state != 0
+        ? static_cast<m3e::os::BackgroundInstallState>(
+              std::min<std::uint8_t>(g_local_install_state, 4))
+        : remote_install_state;
     const auto previous_question = g_shell.snapshot().background.focused_question;
     const auto previous_completion = g_shell.snapshot().background.completion_pending;
     g_shell.publish_background_activity(
@@ -662,6 +976,141 @@ void agent_state_now(const UiCommand& command) {
     if (g_shell_active && g_shell.snapshot().display_awake &&
         (initialized_now || text_changed ||
          g_shell.snapshot().generation != generation_before)) {
+        render_shell_now();
+    }
+}
+
+void install_state_now(const PackageUiEvent& event) {
+    g_local_install_state = std::min<std::uint8_t>(event.phase, 4);
+    std::strncpy(
+        g_install_detail,
+        event.detail,
+        sizeof(g_install_detail) - 1);
+    if (!g_shell_active) {
+        if (!g_shell.initialize()) return;
+        g_surface_registry->sync_shell_counts(g_shell);
+        g_shell_active = true;
+    }
+    const auto background = g_shell.snapshot().background;
+    g_shell.publish_background_activity(
+        background.running_count,
+        background.focused_question,
+        background.review_ready,
+        background.completion_pending,
+        static_cast<m3e::os::BackgroundInstallState>(g_local_install_state));
+    if (g_local_install_state == 4) doodad::board::haptic(8);
+    if (g_shell.snapshot().surface != m3e::os::Surface::app &&
+        g_shell.snapshot().display_awake) {
+        render_shell_now();
+    }
+}
+
+void package_ready_event_now(const PackageUiEvent& event) {
+    g_ready_app = event;
+    g_has_ready_app = true;
+    g_ready_is_rollback = false;
+    g_local_install_state = 3;
+    if (!g_shell_active && !g_shell.initialize()) {
+        error_now("SYSTEM SHELL FAILED");
+        return;
+    }
+    g_shell_active = true;
+    if (g_shell.snapshot().overlay != m3e::os::Overlay::none) {
+        // Completion is notification-only while a trusted overlay (most
+        // importantly Voice) owns the screen. Preserve that interaction and
+        // reveal Launch now after the overlay is dismissed normally.
+        g_ready_deferred_by_overlay = true;
+        doodad::board::haptic(47);
+        return;
+    }
+    g_ready_deferred_by_overlay = false;
+    if (!g_shell.open_app_detail()) {
+        error_now("APP READY FAILED");
+        return;
+    }
+    doodad::board::haptic(47);
+    render_shell_now();
+}
+
+void app_running_event_now(const PackageUiEvent& event) {
+    if (!g_shell_active && !g_shell.initialize()) return;
+    g_shell_active = true;
+    if (g_shell.snapshot().overlay == m3e::os::Overlay::voice &&
+        !voice_service_request("system.voice.cancel", 0)) {
+        ESP_LOGW(
+            kTag,
+            "[display] voice cancel queue full during app switch");
+    }
+    if (g_shell.snapshot().overlay != m3e::os::Overlay::none) {
+        g_shell.dismiss_overlay();
+    }
+    const bool entered_app =
+        g_shell.snapshot().surface == m3e::os::Surface::launcher
+        ? g_shell.open_app(event.app_id, 1)
+        : g_shell.replace_app(event.app_id, 1);
+    if (!entered_app) {
+        ESP_LOGE(kTag, "[display] app route rejected: %s", event.app_id);
+        return;
+    }
+    g_local_install_state = 0;
+    g_install_detail[0] = '\0';
+    // A native voice update can race the small interval between switch
+    // preparation and the incoming guest's initial mount. In that case
+    // appspec_now retained the document behind the overlay; now that the app
+    // route owns the screen, restore exactly that pending document.
+    if (g_pending_document != nullptr) {
+        render_shell_now();
+    }
+    if (g_has_ready_app &&
+        std::strcmp(g_ready_app.app_id, event.app_id) == 0 &&
+        std::strcmp(
+            g_ready_app.semantic_version, event.semantic_version) == 0 &&
+        std::strcmp(
+            g_ready_app.payload_sha256, event.payload_sha256) == 0) {
+        g_has_ready_app = false;
+        g_ready_is_rollback = false;
+        g_ready_deferred_by_overlay = false;
+    }
+}
+
+void app_rollback_event_now(const PackageUiEvent& event) {
+    g_ready_app = event;
+    g_has_ready_app = true;
+    g_ready_is_rollback = true;
+    g_local_install_state = 0;
+    if (!g_shell_active && !g_shell.initialize()) {
+        error_now("SYSTEM SHELL FAILED");
+        return;
+    }
+    g_shell_active = true;
+    if (g_shell.snapshot().overlay != m3e::os::Overlay::none) {
+        g_shell.dismiss_overlay();
+    }
+    if (!g_shell.open_crash_recovery()) {
+        error_now("APP RECOVERY FAILED");
+        return;
+    }
+    doodad::board::haptic(47);
+    render_shell_now();
+    if (std::strcmp(event.detail, "safe-current") == 0) {
+        ESP_LOGW(
+            kTag,
+            "[display] recovered %s to installed current %s",
+            event.app_id,
+            event.semantic_version);
+    } else {
+        ESP_LOGW(
+            kTag,
+            "[display] restored %s %s after guest failure",
+            event.app_id,
+            event.semantic_version);
+    }
+}
+
+void apps_changed_now() {
+    if (g_shell_active &&
+        g_shell.snapshot().overlay == m3e::os::Overlay::none &&
+        g_shell.snapshot().surface == m3e::os::Surface::launcher) {
         render_shell_now();
     }
 }
@@ -726,10 +1175,10 @@ void drain_ui_commands() {
                 shell_now(command.primary, command.secondary);
                 break;
             case UiCommandType::appspec:
-                appspec_now(command.document);
+                complete(command, appspec_now(command.document));
                 break;
             case UiCommandType::command_batch:
-                command_batch_now(command.batch);
+                complete(command, command_batch_now(command.batch));
                 break;
             case UiCommandType::error:
                 error_now(command.primary);
@@ -748,6 +1197,36 @@ void drain_ui_commands() {
                 break;
             case UiCommandType::voice_level:
                 voice_level_now(command.voice_level);
+                break;
+            case UiCommandType::install_state:
+                if (command.package != nullptr) {
+                    install_state_now(*command.package);
+                }
+                delete command.package;
+                break;
+            case UiCommandType::app_ready:
+                if (command.package != nullptr) {
+                    package_ready_event_now(*command.package);
+                }
+                delete command.package;
+                break;
+            case UiCommandType::app_running:
+                if (command.package != nullptr) {
+                    app_running_event_now(*command.package);
+                }
+                delete command.package;
+                break;
+            case UiCommandType::app_rollback:
+                if (command.package != nullptr) {
+                    app_rollback_event_now(*command.package);
+                }
+                delete command.package;
+                break;
+            case UiCommandType::apps_changed:
+                apps_changed_now();
+                break;
+            case UiCommandType::prepare_app_switch:
+                complete(command, prepare_app_switch_now());
                 break;
         }
     }
@@ -864,16 +1343,8 @@ void display_shell(const char* status, const char* source) {
         shell_now(status, source);
         return;
     }
-    UiCommand command{
-        UiCommandType::shell,
-        {},
-        {},
-        0,
-        0,
-        nullptr,
-        nullptr,
-        nullptr,
-    };
+    UiCommand command{};
+    command.type = UiCommandType::shell;
     std::strncpy(command.primary, status, sizeof(command.primary) - 1);
     std::strncpy(command.secondary, source, sizeof(command.secondary) - 1);
     enqueue(command);
@@ -882,43 +1353,87 @@ void display_shell(const char* status, const char* source) {
 bool display_mount_appspec(
     m3e::appspec::WireDocument* owned_document) {
     if (!g_display_ready || owned_document == nullptr) {
+        destroy_guest_document(owned_document);
         return false;
     }
     if (on_ui_task()) {
         return appspec_now(owned_document);
     }
-    UiCommand command{
-        UiCommandType::appspec,
-        {},
-        {},
-        0,
-        0,
-        owned_document,
-        nullptr,
-        nullptr,
+    UiCommand command{};
+    command.type = UiCommandType::appspec;
+    command.document = owned_document;
+    StaticSemaphore_t semaphore_storage{};
+    UiCompletion completion{
+        xSemaphoreCreateBinaryStatic(&semaphore_storage),
+        false,
     };
-    return enqueue(command);
+    if (completion.semaphore == nullptr) {
+        destroy_guest_document(owned_document);
+        return false;
+    }
+    command.completion = &completion;
+    if (!enqueue(command)) {
+        destroy_guest_document(owned_document);
+        return false;
+    }
+    // The runtime thread must observe renderer rejection before reporting a
+    // generation as started. The UI owns and consumes the document once the
+    // command is queued; this wait only returns its mount result.
+    if (xSemaphoreTake(completion.semaphore, portMAX_DELAY) != pdTRUE) {
+        return false;
+    }
+    return completion.result;
 }
 
 bool display_apply_command_batch(
     m3e::appspec::CommandBatch* owned_batch) {
     if (!g_display_ready || owned_batch == nullptr) {
+        delete owned_batch;
         return false;
     }
     if (on_ui_task()) {
         return command_batch_now(owned_batch);
     }
-    UiCommand command{
-        UiCommandType::command_batch,
-        {},
-        {},
-        0,
-        0,
-        nullptr,
-        owned_batch,
-        nullptr,
+    UiCommand command{};
+    command.type = UiCommandType::command_batch;
+    command.batch = owned_batch;
+    StaticSemaphore_t semaphore_storage{};
+    UiCompletion completion{
+        xSemaphoreCreateBinaryStatic(&semaphore_storage),
+        false,
     };
-    return enqueue(command);
+    if (completion.semaphore == nullptr) {
+        delete owned_batch;
+        return false;
+    }
+    command.completion = &completion;
+    if (!enqueue(command)) {
+        delete owned_batch;
+        return false;
+    }
+    if (xSemaphoreTake(completion.semaphore, portMAX_DELAY) != pdTRUE) {
+        return false;
+    }
+    return completion.result;
+}
+
+bool display_prepare_app_switch() {
+    if (!g_display_ready) return false;
+    if (on_ui_task()) return prepare_app_switch_now();
+    UiCommand command{};
+    command.type = UiCommandType::prepare_app_switch;
+    StaticSemaphore_t semaphore_storage{};
+    UiCompletion completion{
+        xSemaphoreCreateBinaryStatic(&semaphore_storage),
+        false,
+    };
+    if (completion.semaphore == nullptr) return false;
+    command.completion = &completion;
+    if (!enqueue(command)) return false;
+    if (xSemaphoreTake(completion.semaphore, portMAX_DELAY) != pdTRUE) {
+        return false;
+    }
+    return completion.result;
 }
 
 void display_error(const char* stage) {
@@ -929,16 +1444,8 @@ void display_error(const char* stage) {
         error_now(stage);
         return;
     }
-    UiCommand command{
-        UiCommandType::error,
-        {},
-        {},
-        0,
-        0,
-        nullptr,
-        nullptr,
-        nullptr,
-    };
+    UiCommand command{};
+    command.type = UiCommandType::error;
     std::strncpy(command.primary, stage, sizeof(command.primary) - 1);
     enqueue(command);
 }
@@ -951,16 +1458,9 @@ void display_show_catalog(int story) {
         catalog_now(story);
         return;
     }
-    UiCommand command{
-        UiCommandType::catalog,
-        {},
-        {},
-        0,
-        story,
-        nullptr,
-        nullptr,
-        nullptr,
-    };
+    UiCommand command{};
+    command.type = UiCommandType::catalog;
+    command.story = story;
     enqueue(command);
 }
 
@@ -972,16 +1472,8 @@ void display_show_system_home() {
         system_home_now();
         return;
     }
-    UiCommand command{
-        UiCommandType::system_home,
-        {},
-        {},
-        0,
-        0,
-        nullptr,
-        nullptr,
-        nullptr,
-    };
+    UiCommand command{};
+    command.type = UiCommandType::system_home;
     enqueue(command);
 }
 
@@ -994,16 +1486,9 @@ bool display_publish_surfaces(
     if (on_ui_task()) {
         return surface_publish_now(copy);
     }
-    UiCommand command{
-        UiCommandType::surface_publish,
-        {},
-        {},
-        0,
-        0,
-        nullptr,
-        nullptr,
-        copy,
-    };
+    UiCommand command{};
+    command.type = UiCommandType::surface_publish;
+    command.surfaces = copy;
     if (!enqueue(command)) {
         delete copy;
         return false;
@@ -1051,6 +1536,157 @@ bool display_publish_voice_level(std::uint8_t level) {
         voice_level_now(command.voice_level);
         return true;
     }
+    return enqueue(command);
+}
+
+namespace {
+
+PackageUiEvent* package_ui_event(
+    const char* app_id,
+    const char* name,
+    const char* semantic_version,
+    const char* payload_sha256,
+    const char* detail,
+    std::uint8_t phase) {
+    auto* event = new (std::nothrow) PackageUiEvent{};
+    if (event == nullptr) return nullptr;
+    std::strncpy(event->app_id, app_id == nullptr ? "" : app_id,
+                 sizeof(event->app_id) - 1);
+    std::strncpy(event->name, name == nullptr ? "" : name,
+                 sizeof(event->name) - 1);
+    std::strncpy(
+        event->semantic_version,
+        semantic_version == nullptr ? "" : semantic_version,
+        sizeof(event->semantic_version) - 1);
+    std::strncpy(
+        event->payload_sha256,
+        payload_sha256 == nullptr ? "" : payload_sha256,
+        sizeof(event->payload_sha256) - 1);
+    std::strncpy(event->detail, detail == nullptr ? "" : detail,
+                 sizeof(event->detail) - 1);
+    event->phase = phase;
+    return event;
+}
+
+bool enqueue_package_command(
+    UiCommandType type,
+    PackageUiEvent* event) {
+    if (!g_display_ready || event == nullptr) {
+        delete event;
+        return false;
+    }
+    if (on_ui_task()) {
+        switch (type) {
+            case UiCommandType::install_state:
+                install_state_now(*event);
+                break;
+            case UiCommandType::app_ready:
+                package_ready_event_now(*event);
+                break;
+            case UiCommandType::app_running:
+                app_running_event_now(*event);
+                break;
+            case UiCommandType::app_rollback:
+                app_rollback_event_now(*event);
+                break;
+            default:
+                delete event;
+                return false;
+        }
+        delete event;
+        return true;
+    }
+    UiCommand command{};
+    command.type = type;
+    command.package = event;
+    if (!enqueue(command)) {
+        delete event;
+        return false;
+    }
+    return true;
+}
+
+}  // namespace
+
+bool display_publish_install_state(
+    std::uint8_t phase,
+    const char* detail) {
+    return enqueue_package_command(
+        UiCommandType::install_state,
+        package_ui_event(nullptr, nullptr, nullptr, nullptr, detail, phase));
+}
+
+bool display_publish_app_ready(
+    const char* app_id,
+    const char* name,
+    const char* semantic_version,
+    const char* payload_sha256) {
+    return enqueue_package_command(
+        UiCommandType::app_ready,
+        package_ui_event(
+            app_id,
+            name,
+            semantic_version,
+            payload_sha256,
+            nullptr,
+            3));
+}
+
+bool display_note_app_running(
+    const char* app_id,
+    const char* semantic_version,
+    const char* payload_sha256) {
+    return enqueue_package_command(
+        UiCommandType::app_running,
+        package_ui_event(
+            app_id,
+            nullptr,
+            semantic_version,
+            payload_sha256,
+            nullptr,
+            0));
+}
+
+bool display_publish_app_rollback(
+    const char* app_id,
+    const char* name,
+    const char* semantic_version,
+    const char* payload_sha256) {
+    return enqueue_package_command(
+        UiCommandType::app_rollback,
+        package_ui_event(
+            app_id,
+            name,
+            semantic_version,
+            payload_sha256,
+            nullptr,
+            0));
+}
+
+bool display_publish_app_current_recovery(
+    const char* app_id,
+    const char* name,
+    const char* semantic_version,
+    const char* payload_sha256) {
+    return enqueue_package_command(
+        UiCommandType::app_rollback,
+        package_ui_event(
+            app_id,
+            name,
+            semantic_version,
+            payload_sha256,
+            "safe-current",
+            0));
+}
+
+bool display_refresh_installed_apps() {
+    if (!g_display_ready) return false;
+    if (on_ui_task()) {
+        apps_changed_now();
+        return true;
+    }
+    UiCommand command{};
+    command.type = UiCommandType::apps_changed;
     return enqueue(command);
 }
 

@@ -7,7 +7,7 @@
   "required": ["schema_version", "app_id", "app_version", "host_abi", "display_name", "purpose", "examples", "aliases", "views", "actions"],
   "properties": {
     "schema_version": {"const": 1},
-    "app_id": {"type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)+$"},
+    "app_id": {"type": "string", "pattern": "^[a-z0-9]+(?:[._-][a-z0-9]+)+$", "maxLength": 64},
     "app_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
     "host_abi": {"type": "integer", "minimum": 1},
     "display_name": {"type": "string", "minLength": 1, "maxLength": 80},

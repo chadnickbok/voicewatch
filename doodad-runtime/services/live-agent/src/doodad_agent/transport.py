@@ -18,7 +18,7 @@ import sys
 import time
 from collections.abc import Awaitable, Callable
 from fractions import Fraction
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 import soxr
@@ -28,6 +28,9 @@ from av import AudioFrame
 from av.audio.resampler import AudioResampler
 
 from .metrics import LatencyTrace
+
+if TYPE_CHECKING:
+    from .app_delivery import AppArtifactServer
 
 
 AudioCallback = Callable[[str, bytes], Awaitable[None]]
@@ -788,11 +791,13 @@ class WatchTransportServer:
         on_audio: AudioCallback,
         on_event: EventCallback,
         port: int = 8765,
+        artifact_server: AppArtifactServer | None = None,
     ) -> None:
         self.trace = trace
         self.on_audio = on_audio
         self.on_event = on_event
         self.port = port
+        self.artifact_server = artifact_server
         self.sessions: dict[str, WatchSession] = {}
         self._pending: set[WatchSession] = set()
         self._runner: web.AppRunner | None = None
@@ -800,6 +805,8 @@ class WatchTransportServer:
     async def start(self) -> None:
         application = web.Application()
         application.router.add_get("/ws", self._websocket)
+        if self.artifact_server is not None:
+            self.artifact_server.add_routes(application)
         self._runner = web.AppRunner(application)
         await self._runner.setup()
         await web.TCPSite(self._runner, "0.0.0.0", self.port).start()
