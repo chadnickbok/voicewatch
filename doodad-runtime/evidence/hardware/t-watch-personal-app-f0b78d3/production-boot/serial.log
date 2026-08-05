@@ -1,0 +1,158 @@
+I (239) esp_image: segment 1: paddr=0011e274 vaddr=3fca1100 size=01da4h (  7588) load
+I (241) esp_image: segment 2: paddr=00120020 vaddr=42000020 size=180114h (1573140) map
+I (528) esp_image: segment 3: paddr=002a013c vaddr=3fca2ea4 size=045c8h ( 17864) load
+I (532) esp_image: segment 4: paddr=002a470c vaddr=40374000 size=1d088h (118920) load
+I (560) esp_image: segment 5: paddr=002c179c vaddr=50000000 size=00020h (    32) load
+I (572) boot: Loaded app from partition at offset 0x10000
+I (572) boot: Disabling RNG early entropy source...
+I (573) octal_psram: vendor id    : 0x0d (AP)
+I (573) octal_psram: dev id       : 0x02 (generation 3)
+I (574) octal_psram: density      : 0x03 (64 Mbit)
+I (574) octal_psram: good-die     : 0x01 (Pass)
+I (574) octal_psram: Latency      : 0x01 (Fixed)
+I (574) octal_psram: VCC          : 0x01 (3V)
+I (575) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (575) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (575) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (575) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (575) octal_psram: DriveStrength: 0x00 (1/1)
+I (576) MSPI Timing: Enter psram timing tuning
+I (577) esp_psram: Found 8MB PSRAM device
+I (577) esp_psram: Speed: 80MHz
+I (577) cpu_start: Multicore app
+I (1003) esp_psram: SPI SRAM memory test OK
+I (1012) cpu_start: Pro cpu start user code
+I (1012) cpu_start: cpu freq: 240000000 Hz
+I (1012) app_init: Application information:
+I (1013) app_init: Project name:     doodad_runtime
+I (1013) app_init: App version:      074f34a
+I (1013) app_init: Compile time:     Aug  5 2026 15:53:18
+I (1013) app_init: ELF file SHA256:  c16ea262d...
+I (1013) app_init: ESP-IDF:          v5.5.5
+I (1013) efuse_init: Min chip rev:     v0.0
+I (1014) efuse_init: Max chip rev:     v0.99 
+I (1014) efuse_init: Chip rev:         v0.2
+I (1014) heap_init: Initializing. RAM available for dynamic allocation:
+I (1014) heap_init: At 3FCCAC50 len 0001EAC0 (122 KiB): RAM
+I (1014) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1014) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1015) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (1015) esp_psram: Adding pool of 8161K of PSRAM memory to heap allocator
+I (1016) spi_flash: detected chip: winbond
+I (1016) spi_flash: flash io: dio
+W (1016) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (1017) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1017) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1018) main_task: Started on CPU0
+I (1019) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1019) main_task: Calling app_main()
+I (1019) doodad: [host] boot
+I (1320) twatch_s3: board ready device_id=t-watch-s3-a0f262e11e18
+I (1355) doodad: [display] LVGL draw buffers caps=0x80c (19200 bytes each)
+I (1416) doodad: [host] display ready
+I (1427) package-service: package storage mounted: 10052 KiB free / 10060 KiB apps=0
+I (1437) pp: pp rom version: e7ae62f
+I (1438) net80211: net80211 rom version: e7ae62f
+I (1438) doodad: [host] runtime pthread started
+I (1439) wifi:wifi driver task: 3fcd78e4, prio:23, stack:6656, core=0
+I (1442) wifi:wifi firmware version: b9f67df
+I (1443) wifi:wifi certification version: v7.0
+I (1443) wifi:config NVS flash: enabled
+I (1443) wifi:config nano formatting: disabled
+I (1443) wifi:Init data frame dynamic rx buffer num: 5
+I (1444) wifi:Init static rx mgmt buffer num: 4
+I (1444) wifi:Init management short buffer num: 8
+I (1444) wifi:Init static tx buffer num: 6
+I (1444) wifi:Init tx cache buffer num: 8
+I (1444) wifi:Init static tx FG buffer num: 2
+I (1445) wifi:Init static rx buffer size: 1600
+I (1445) wifi:Init static rx buffer num: 5
+I (1445) wifi:Init dynamic rx buffer num: 5
+I (1446) wifi_init: rx ba win: 5
+I (1447) wifi_init: accept mbox: 6
+I (1447) wifi_init: tcpip mbox: 32
+I (1447) wifi_init: udp mbox: 6
+I (1447) wifi_init: tcp mbox: 6
+I (1447) wifi_init: tcp tx win: 5760
+I (1448) wifi_init: tcp rx win: 5760
+I (1448) wifi_init: tcp mss: 1440
+I (1448) wifi_init: WiFi/LWIP prefer SPIRAM
+I (1448) wifi_init: WiFi IRAM OP enabled
+I (1449) wifi_init: WiFi RX IRAM OP enabled
+W (1449) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1450) phy_init: phy_version 712,87e8c20e,Apr 13 2026,18:51:10
+I (1491) wifi:mode : sta (a0:f2:62:e1:1e:18)
+I (1492) wifi:enable tsf
+I (1493) wifi:Set ps type: 0, coexist: 0
+
+I (1493) network-service: shared Wi-Fi station initialized
+I (1495) voice-service: agent journal restored revision=1 food=0 missed=0
+I (1500) voice-service: audio DMA reserved bytes=4096 free=20791 largest=20480
+I (1506) doodad: [host] WAMR ready (interpreter, stack=16384, heap=16384)
+I (1509) doodad: [visual] device_id=t-watch-s3-a0f262e11e18 scene=boot-shell revision=1 frame_hash=2664f9b8
+I (1509) doodad: [host] no legacy onboard package at /packages/active.wasm
+I (1510) doodad: [host] board has no microSD fallback
+I (1510) doodad: [host] using embedded recovery app
+I (1510) doodad: [host] EMBEDDED app size: 445 bytes
+I (1515) doodad: [host] module loaded
+I (1517) doodad: [host] module instantiated
+I (1517) doodad: [host] invoking app_start
+I (1566) wifi:state: init -> auth (0xb0)
+I (1571) wifi:state: auth -> assoc (0x0)
+I (1584) wifi:state: assoc -> run (0x10)
+I (1586) doodad: [guest] ui_mount: 151 bytes, 3 nodes
+I (1587) doodad: [host] app started; instance remains resident
+I (1591) doodad: [host] steady state; free heap: 8048783 bytes
+I (1598) wifi:connected with melburnians, aid = 2, channel 1, BW20, bssid = 78:45:58:ec:1f:73
+I (1599) wifi:security: WPA2-PSK, phy: bgn, rssi: -58, cipher(pairwise:0x3, group:0x3), pmf:0
+I (1599) wifi:pm start, type: 0
+
+I (1599) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (1600) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (1612) wifi:<ba-add>idx:0 (ifx:0, 78:45:58:ec:1f:73), tid:6, ssn:0, winSize:64
+I (1684) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (1743) doodad: [visual] device_id=t-watch-s3-a0f262e11e18 scene=home revision=6 frame_hash=42fbdc0c
+I (2623) esp_netif_handlers: sta ip: 192.168.1.166, mask: 255.255.255.0, gw: 192.168.1.1
+I (2700) wifi:<ba-add>idx:1 (ifx:0, 78:45:58:ec:1f:73), tid:0, ssn:1, winSize:64
+I (3364) doodad: [display] fps=2.0 frames=4 flushes=14 pixels=116655 avg_render_us=64897 max_render_us=86697 avg_flush_us=5659 max_flush_us=7079 touch_presses=0 objects=37 internal_free=28123 internal_min=23928 internal_largest=19456 psram_free=8019836 psram_min=8009296 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=64897 total_max_render_us=86697 total_avg_flush_us=5659 total_max_flush_us=7079 transfer=synchronous
+I (4024) voice-service: signaling endpoint discovered: ws://192.168.1.95:8765/ws
+I (4025) websocket_client: Started
+I (4099) DTLS: Init SRTP OK
+I (4349) voice-service: peer state=2
+I (4351) voice-service: peer state=3
+I (4352) AGENT: Start agent as Controlling
+I (4354) voice-service: remote audio codec=3 rate=48000 channels=1
+I (4355) voice-service: local peer message type=1 size=546
+I (4374) voice-service: local SDP chunks=9 delivered=1
+I (4510) wifi:[ADDBA]RX DELBA, reason:39, delete tid:0, initiator:1(originator)
+I (4510) wifi:<ba-del>idx:1, tid:0
+I (4510) wifi:[ADDBA]RX DELBA, reason:39, delete tid:0, initiator:0(recipient)
+I (4511) wifi:[ADDBA]RX DELBA, reason:39, delete tid:6, initiator:1(originator)
+I (4512) wifi:<ba-del>idx:0, tid:6
+E (4515) AGENT: 0 Not found for bind remote 192.168.1.95:50909
+I (4522) wifi:<ba-add>idx:0 (ifx:0, 78:45:58:ec:1f:73), tid:0, ssn:15, winSize:64
+I (4525) PEER_DEF: Get peer role 0
+I (4525) PEER_DEF: Extract SDP: stream_count=1, audio_mid=255 (dir=3), video_mid=255 (dir=3), data_mid=255, assrc=3245290647, vssrc=0, vrtx_ssrc=0, vfmt=0, vrtx_fmt=0
+I (4526) AGENT: 0 Add remote type:1 192.168.1.95:50909
+I (4526) voice-service: peer state=4
+I (4526) voice-service: remote peer message type=1 size=1096 result=0
+I (4537) AGENT: 0 0 Send binding request (cand:0) local0:192.168.1.166:57896 remote0:192.168.1.95:50909 id:7043bfa4398150e937521657
+E (4541) AGENT: 0 Not found for bind remote 192.168.1.52:60845
+I (4563) AGENT: 0 0 LocalBinding resp 7043bfa4398150e937521657 local1
+I (4564) AGENT: 0 Select pair192.168.1.95:50909
+I (4565) AGENT: 0 0 Send binding request (cand:1) local0:192.168.1.166:57896 remote0:192.168.1.95:50909 id:4d9a2fdb76c3625e55075020
+I (4589) AGENT: 0 0 LocalBinding resp 4d9a2fdb76c3625e55075020 local1
+I (4590) AGENT: 0 Candidate responded
+I (4590) AGENT: 0 Connection OK 192.168.1.95:50909
+I (4590) voice-service: peer state=5
+I (4591) PEER_DEF: Start DTLS role as 1
+I (4592) voice-service: peer state=6
+I (4612) DTLS: Start to do server handshake
+I (5365) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=22499 internal_min=22460 internal_largest=14336 psram_free=7937492 psram_min=7925048 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=64897 total_max_render_us=86697 total_avg_flush_us=5659 total_max_flush_us=7079 transfer=synchronous
+I (5382) DTLS: SRTP connected OK
+I (5387) DTLS: Server handshake success
+I (5388) PEER_DEF: DTLS handshake success
+I (5388) voice-service: peer state=7
+I (7367) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=22499 internal_min=22460 internal_largest=14336 psram_free=7934288 psram_min=7925048 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=64897 total_max_render_us=86697 total_avg_flush_us=5659 total_max_flush_us=7079 transfer=synchronous
+I (9367) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=22499 internal_min=22460 internal_largest=14336 psram_free=7934288 psram_min=7925048 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=64897 total_max_render_us=86697 total_avg_flush_us=5659 total_max_flush_us=7079 transfer=synchronous
+I (11368) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=22499 internal_min=22460 internal_largest=14336 psram_free=7934284 psram_min=7925048 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=64897 total_max_render_us=86697 total_avg_flush_us=5659 total_max_flush_us=7079 transfer=synchronous
