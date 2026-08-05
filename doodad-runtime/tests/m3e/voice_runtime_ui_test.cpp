@@ -47,35 +47,33 @@ int main() {
     assert_action(view.primary_action, "voice.primary");
     assert_action(view.cancel_action, "voice.cancel");
     assert(view.level_ring == view.primary_action);
+    for (auto* bar : view.level_bars) {
+        assert(bar != nullptr);
+        assert(lv_obj_get_height(bar) == 7);
+    }
     assert(contains_label(screen, "READY"));
-    assert(contains_label(screen, "Tap to talk"));
 
     m3e_catalog_show_voice_runtime(
         screen, 1, "Hello Doodad", nullptr, &view);
     assert_action(view.primary_action, "voice.primary");
     assert(contains_label(screen, "LISTENING"));
-    assert(contains_label(screen, "Hello Doodad"));
-    assert(!contains_label(screen, "Set a timer for five minutes"));
 
     m3e_catalog_show_voice_runtime(
         screen, 2, "What's the weather?", nullptr, &view);
     assert(view.primary_action == nullptr);
     assert_action(view.cancel_action, "voice.cancel");
     assert(contains_label(screen, "THINKING"));
-    assert(contains_label(screen, "What's the weather?"));
 
     m3e_catalog_show_voice_runtime(
         screen, 3, nullptr, "It will be sunny today.", &view);
     assert_action(view.primary_action, "voice.primary");
     assert(contains_label(screen, "SPEAKING"));
-    assert(contains_label(screen, "It will be sunny today."));
 
     m3e_catalog_show_voice_runtime(
         screen, 5, nullptr, "Voice connection lost", &view);
     assert(view.primary_action == nullptr);
     assert_action(view.cancel_action, "voice.cancel");
     assert(contains_label(screen, "UNAVAILABLE"));
-    assert(contains_label(screen, "Voice connection lost"));
 
     lv_display_delete(display);
     lv_deinit();

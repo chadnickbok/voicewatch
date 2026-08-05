@@ -146,6 +146,10 @@ class NativeHost:
         library.doodad_host_system_back.restype = ctypes.c_int
         library.doodad_host_system_home.restype = ctypes.c_int
         library.doodad_host_system_surface.restype = ctypes.c_int
+        library.doodad_host_system_advance_animation.argtypes = [
+            ctypes.c_uint32,
+        ]
+        library.doodad_host_system_advance_animation.restype = ctypes.c_int
         library.doodad_host_show_appspec.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
@@ -333,6 +337,12 @@ class NativeHost:
             if identifier == value:
                 return name
         raise DoodadError(f"native host returned unknown shell surface {value}")
+
+    def advance_system_animation(self, milliseconds: int) -> None:
+        if not 0 <= milliseconds <= 0xFFFFFFFF:
+            raise ValueError("animation step must fit uint32 milliseconds")
+        if not self.library.doodad_host_system_advance_animation(milliseconds):
+            raise DoodadError(self.last_error())
 
     def show_appspec(self, canonical_cbor: bytes) -> None:
         payload = (ctypes.c_uint8 * len(canonical_cbor)).from_buffer_copy(

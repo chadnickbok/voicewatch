@@ -1292,6 +1292,18 @@ int doodad_host_system_surface(void) {
         : m3e_system_shell_controller_surface(g_system_shell);
 }
 
+int doodad_host_system_advance_animation(uint32_t milliseconds) {
+    if (g_system_shell == NULL || g_display == NULL ||
+        milliseconds > UINT64_MAX - g_scenario_ms) {
+        set_error("system animation step is invalid");
+        return 0;
+    }
+    g_scenario_ms += milliseconds;
+    lv_timer_handler();
+    doodad_host_render_now();
+    return 1;
+}
+
 int doodad_host_show_appspec(const uint8_t* bytes, size_t size) {
     char error[192];
     memset(error, 0, sizeof(error));

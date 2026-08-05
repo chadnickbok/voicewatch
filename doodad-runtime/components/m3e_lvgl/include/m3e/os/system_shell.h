@@ -11,6 +11,7 @@ extern "C" {
 
 enum {
     M3E_SYSTEM_SHELL_MAX_LAUNCHER_ACTIONS = 32,
+    M3E_SYSTEM_SHELL_VOICE_BAR_COUNT = 5,
 };
 
 enum {
@@ -42,6 +43,16 @@ enum {
     M3E_SYSTEM_SHELL_INTENT_OPEN_VOICE = 2,
 };
 
+enum {
+    M3E_SYSTEM_SHELL_VOICE_IDLE = 0,
+    M3E_SYSTEM_SHELL_VOICE_LISTENING = 1,
+    M3E_SYSTEM_SHELL_VOICE_THINKING = 2,
+    M3E_SYSTEM_SHELL_VOICE_SPEAKING = 3,
+    M3E_SYSTEM_SHELL_VOICE_CLARIFYING = 4,
+    M3E_SYSTEM_SHELL_VOICE_ERROR = 5,
+    M3E_SYSTEM_SHELL_VOICE_READY = 6,
+};
+
 typedef struct {
     const char* time;
     const char* weekday;
@@ -67,6 +78,13 @@ typedef struct {
     lv_obj_t* actions[M3E_SYSTEM_SHELL_MAX_LAUNCHER_ACTIONS];
 } m3e_system_shell_launcher_view_t;
 
+typedef struct {
+    lv_obj_t* primary_action;
+    lv_obj_t* cancel_action;
+    lv_obj_t* level_ring;
+    lv_obj_t* level_bars[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT];
+} m3e_system_shell_voice_view_t;
+
 typedef struct m3e_system_shell_controller m3e_system_shell_controller_t;
 
 void m3e_system_shell_default_home_model(
@@ -80,6 +98,12 @@ void m3e_system_shell_show_launcher(
     const m3e_system_shell_launcher_item_t* items,
     size_t item_count,
     m3e_system_shell_launcher_view_t* view);
+void m3e_system_shell_show_voice_overlay(
+    lv_obj_t* screen,
+    int phase,
+    const char* transcript,
+    const char* response,
+    m3e_system_shell_voice_view_t* view);
 
 m3e_system_shell_controller_t* m3e_system_shell_controller_create(void);
 void m3e_system_shell_controller_destroy(

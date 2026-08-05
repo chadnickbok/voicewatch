@@ -1408,64 +1408,6 @@ extern "C" void m3e_catalog_show_voice_runtime(
     const char* transcript,
     const char* response,
     m3e_voice_runtime_view_t* view) {
-    if (view != nullptr) *view = {};
-    if (screen == nullptr) return;
-
-    const char* status = "READY";
-    const char* detail = "Tap to talk";
-    m3e::Tone tone = m3e::Tone::neutral;
-    auto orb_state = m3e::VoiceOrbState::idle;
-    bool primary_enabled = true;
-    switch (phase) {
-        case 1:
-            status = "LISTENING";
-            detail = transcript != nullptr && transcript[0] != '\0'
-                ? transcript : "Speak now...";
-            tone = m3e::Tone::primary;
-            orb_state = m3e::VoiceOrbState::listening;
-            break;
-        case 2:
-        case 4:
-            status = "THINKING";
-            detail = transcript != nullptr && transcript[0] != '\0'
-                ? transcript : "Working on it...";
-            tone = m3e::Tone::secondary;
-            orb_state = m3e::VoiceOrbState::thinking;
-            primary_enabled = false;
-            break;
-        case 3:
-            status = "SPEAKING";
-            detail = response != nullptr && response[0] != '\0'
-                ? response : "Replying...";
-            tone = m3e::Tone::primary;
-            orb_state = m3e::VoiceOrbState::speaking;
-            break;
-        case 5:
-            status = "UNAVAILABLE";
-            detail = response != nullptr && response[0] != '\0'
-                ? response : "Voice connection lost";
-            tone = m3e::Tone::error;
-            orb_state = m3e::VoiceOrbState::error;
-            primary_enabled = false;
-            break;
-        case 0:
-        case 6:
-        default:
-            break;
-    }
-
-    os_home_story(screen);
-    auto& factory = component_factory();
-    auto* overlay = factory.voice_overlay(
-        screen, status, detail, tone, orb_state);
-    auto* primary = find_action(overlay, "voice.primary");
-    auto* cancel = find_action(overlay, "voice.cancel");
-    if (!primary_enabled && primary != nullptr) {
-        lv_obj_add_state(primary, LV_STATE_DISABLED);
-    }
-    if (view != nullptr) {
-        view->primary_action = primary_enabled ? primary : nullptr;
-        view->cancel_action = cancel;
-        view->level_ring = primary;
-    }
+    m3e_system_shell_show_voice_overlay(
+        screen, phase, transcript, response, view);
 }

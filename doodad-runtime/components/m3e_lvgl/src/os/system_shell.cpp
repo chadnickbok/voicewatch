@@ -10,6 +10,8 @@
 #include "m3e/os/shell_state.hpp"
 
 LV_FONT_DECLARE(m3e_home_time_font_114);
+LV_FONT_DECLARE(m3e_voice_display_font_44);
+LV_FONT_DECLARE(m3e_voice_label_font_26);
 
 namespace {
 
@@ -17,6 +19,8 @@ using m3e::generated::ColorRole;
 
 constexpr char kAppsAction[] = "system.apps";
 constexpr char kVoiceAction[] = "system.voice";
+constexpr char kVoicePrimaryAction[] = "voice.primary";
+constexpr char kVoiceCancelAction[] = "voice.cancel";
 
 lv_color_t color(ColorRole role) {
     const auto value =
@@ -68,6 +72,25 @@ lv_obj_t* surface(
     lv_obj_set_pos(object, dp(x), dp(y));
     lv_obj_set_size(object, dp(width), dp(height));
     lv_obj_set_style_radius(object, dp(radius), 0);
+    lv_obj_set_style_bg_color(object, fill, 0);
+    lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
+    return object;
+}
+
+lv_obj_t* pixel_surface(
+    lv_obj_t* parent,
+    std::int32_t x,
+    std::int32_t y,
+    std::int32_t width,
+    std::int32_t height,
+    std::int32_t radius,
+    lv_color_t fill,
+    bool button = false) {
+    auto* object = button ? lv_button_create(parent) : lv_obj_create(parent);
+    reset(object);
+    lv_obj_set_pos(object, x, y);
+    lv_obj_set_size(object, width, height);
+    lv_obj_set_style_radius(object, radius, 0);
     lv_obj_set_style_bg_color(object, fill, 0);
     lv_obj_set_style_bg_opa(object, LV_OPA_COVER, 0);
     return object;
@@ -141,6 +164,20 @@ void battery_icon(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
     surface(parent, x + 14, y + 2, 2, 4, 1, lime);
 }
 
+void battery_icon_pixels(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
+    const auto lime = rgb(185, 255, 36);
+    auto* body = lv_obj_create(parent);
+    reset(body);
+    lv_obj_set_pos(body, x, y);
+    lv_obj_set_size(body, 14, 8);
+    lv_obj_set_style_radius(body, 2, 0);
+    lv_obj_set_style_bg_opa(body, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(body, 2, 0);
+    lv_obj_set_style_border_color(body, lime, 0);
+    pixel_surface(parent, x + 3, y + 3, 7, 2, 1, lime);
+    pixel_surface(parent, x + 14, y + 2, 2, 4, 1, lime);
+}
+
 ColorRole launcher_fill(std::uint8_t tone) {
     switch (tone) {
         case M3E_SYSTEM_SHELL_TONE_SECONDARY:
@@ -176,6 +213,50 @@ m3e::os::Intent intent_from_c(int intent) {
         default:
             return m3e::os::Intent::none;
     }
+}
+
+const char* voice_status(int phase) {
+    switch (phase) {
+        case M3E_SYSTEM_SHELL_VOICE_LISTENING:
+            return "LISTENING";
+        case M3E_SYSTEM_SHELL_VOICE_THINKING:
+        case M3E_SYSTEM_SHELL_VOICE_CLARIFYING:
+            return "THINKING";
+        case M3E_SYSTEM_SHELL_VOICE_SPEAKING:
+            return "SPEAKING";
+        case M3E_SYSTEM_SHELL_VOICE_ERROR:
+            return "UNAVAILABLE";
+        case M3E_SYSTEM_SHELL_VOICE_IDLE:
+        case M3E_SYSTEM_SHELL_VOICE_READY:
+        default:
+            return "READY";
+    }
+}
+
+void set_voice_bar_height(void* object, std::int32_t height) {
+    auto* bar = static_cast<lv_obj_t*>(object);
+    if (bar == nullptr) return;
+    lv_obj_set_height(bar, height);
+    lv_obj_set_y(bar, 67 - height / 2);
+}
+
+void start_voice_bar_animation(
+    lv_obj_t* bar,
+    std::int32_t peak,
+    std::uint32_t duration,
+    std::uint32_t delay) {
+    lv_anim_t animation{};
+    lv_anim_init(&animation);
+    lv_anim_set_var(&animation, bar);
+    lv_anim_set_exec_cb(&animation, set_voice_bar_height);
+    lv_anim_set_values(&animation, 7, peak);
+    lv_anim_set_duration(&animation, duration);
+    lv_anim_set_reverse_duration(&animation, duration);
+    lv_anim_set_delay(&animation, delay);
+    lv_anim_set_repeat_delay(&animation, 35);
+    lv_anim_set_repeat_count(&animation, LV_ANIM_REPEAT_INFINITE);
+    lv_anim_set_path_cb(&animation, lv_anim_path_ease_in_out);
+    lv_anim_start(&animation);
 }
 
 }  // namespace
@@ -356,6 +437,116 @@ extern "C" void m3e_system_shell_show_launcher(
         color(ColorRole::outline));
     lv_obj_align(hint, LV_ALIGN_BOTTOM_MID, 0, -dp(6));
     if (view != nullptr) view->action_count = bounded_count;
+}
+
+extern "C" void m3e_system_shell_show_voice_overlay(
+    lv_obj_t* screen,
+    int phase,
+    const char* transcript,
+    const char* response,
+    m3e_system_shell_voice_view_t* view) {
+    if (screen == nullptr) return;
+    if (view != nullptr) *view = {};
+    (void)transcript;
+    (void)response;
+
+    lv_obj_clean(screen);
+    reset(screen);
+    lv_obj_set_size(screen, 240, 240);
+    lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
+    lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
+
+    auto* status = label(
+        screen,
+        voice_status(phase),
+        &m3e_voice_display_font_44,
+        rgb(250, 249, 255));
+    lv_obj_set_size(status, 190, 48);
+    lv_obj_align(status, LV_ALIGN_TOP_MID, 0, 12);
+    lv_obj_set_style_text_align(status, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_letter_space(status, -1, 0);
+    lv_obj_set_style_transform_pivot_x(status, 95, 0);
+    lv_obj_set_style_transform_pivot_y(status, 24, 0);
+    lv_obj_set_style_transform_scale_x(status, 129, 0);
+
+    battery_icon_pixels(screen, 195, 10);
+    auto* battery = label(
+        screen, "82%", &lv_font_montserrat_12, rgb(185, 255, 36));
+    lv_obj_align(battery, LV_ALIGN_TOP_RIGHT, -9, 7);
+
+    auto* level = pixel_surface(
+        screen,
+        12,
+        57,
+        216,
+        124,
+        LV_RADIUS_CIRCLE,
+        rgb(81, 48, 229),
+        true);
+    lv_obj_set_style_bg_grad_color(level, rgb(84, 52, 234), 0);
+    lv_obj_set_style_bg_grad_dir(level, LV_GRAD_DIR_HOR, 0);
+    lv_obj_set_user_data(level, const_cast<char*>(kVoicePrimaryAction));
+
+    constexpr std::int32_t kBarX[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+        46, 72, 98, 124, 150,
+    };
+    constexpr std::int32_t kPeak[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+        43, 69, 92, 69, 43,
+    };
+    constexpr std::uint32_t kDuration[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+        390, 470, 520, 450, 410,
+    };
+    constexpr std::uint32_t kDelay[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+        100, 165, 225, 135, 195,
+    };
+    const bool listening = phase == M3E_SYSTEM_SHELL_VOICE_LISTENING;
+    for (std::size_t index = 0;
+         index < M3E_SYSTEM_SHELL_VOICE_BAR_COUNT;
+         ++index) {
+        auto* bar = pixel_surface(
+            level,
+            kBarX[index],
+            64,
+            16,
+            7,
+            4,
+            rgb(255, 255, 255));
+        if (listening) {
+            start_voice_bar_animation(
+                bar, kPeak[index], kDuration[index], kDelay[index]);
+        }
+        if (view != nullptr) view->level_bars[index] = bar;
+    }
+
+    auto* cancel = pixel_surface(
+        screen, 61, 198, 118, 32, 16, rgb(249, 82, 77), true);
+    lv_obj_set_style_bg_grad_color(cancel, rgb(249, 102, 77), 0);
+    lv_obj_set_style_bg_grad_dir(cancel, LV_GRAD_DIR_HOR, 0);
+    lv_obj_set_user_data(cancel, const_cast<char*>(kVoiceCancelAction));
+    auto* cancel_label = label(
+        cancel,
+        "CANCEL",
+        &m3e_voice_label_font_26,
+        rgb(255, 255, 255));
+    lv_obj_update_layout(cancel_label);
+    lv_obj_set_style_transform_pivot_x(
+        cancel_label, lv_obj_get_width(cancel_label) / 2, 0);
+    lv_obj_set_style_transform_pivot_y(
+        cancel_label, lv_obj_get_height(cancel_label) / 2, 0);
+    lv_obj_align(cancel_label, LV_ALIGN_CENTER, 0, 1);
+    lv_obj_set_style_text_letter_space(cancel_label, -1, 0);
+    lv_obj_set_style_transform_scale_x(cancel_label, 128, 0);
+
+    const bool primary_enabled =
+        phase != M3E_SYSTEM_SHELL_VOICE_THINKING &&
+        phase != M3E_SYSTEM_SHELL_VOICE_CLARIFYING &&
+        phase != M3E_SYSTEM_SHELL_VOICE_ERROR;
+    if (!primary_enabled) lv_obj_add_state(level, LV_STATE_DISABLED);
+    if (view != nullptr) {
+        view->primary_action = primary_enabled ? level : nullptr;
+        view->cancel_action = cancel;
+        view->level_ring = level;
+    }
 }
 
 extern "C" m3e_system_shell_controller_t*
