@@ -1,0 +1,36 @@
+{
+  "canvas": "240x240",
+  "states": [
+    "home",
+    "agents",
+    "agent_detail"
+  ],
+  "navigation_restores_exactly": true,
+  "contact_sheet": "evidence/watch-shell/agent-complication-simulator/agent-tracking-flow.png",
+  "comparisons": {
+    "01-home": {
+      "mockup": "evidence/watch-shell/agent-complication-v1/01-home-four-status-items.png",
+      "simulator": "evidence/watch-shell/agent-complication-simulator/01-home.png",
+      "dimensions": "240x240",
+      "normalized_rmse": 0.108458,
+      "side_by_side": "evidence/watch-shell/agent-complication-simulator/01-home-mockup-vs-simulator.png",
+      "difference": "evidence/watch-shell/agent-complication-simulator/01-home-difference.png"
+    },
+    "02-agents": {
+      "mockup": "evidence/watch-shell/agent-complication-v2/02-agents-list.png",
+      "simulator": "evidence/watch-shell/agent-complication-simulator/02-agents.png",
+      "dimensions": "240x240",
+      "normalized_rmse": 0.397663,
+      "side_by_side": "evidence/watch-shell/agent-complication-simulator/02-agents-mockup-vs-simulator.png",
+      "difference": "evidence/watch-shell/agent-complication-simulator/02-agents-difference.png"
+    },
+    "03-agent-detail": {
+      "mockup": "evidence/watch-shell/agent-complication-v2/03-agent-detail.png",
+      "simulator": "evidence/watch-shell/agent-complication-simulator/03-agent-detail.png",
+      "dimensions": "240x240",
+      "normalized_rmse": 0.263704,
+      "side_by_side": "evidence/watch-shell/agent-complication-simulator/03-agent-detail-mockup-vs-simulator.png",
+      "difference": "evidence/watch-shell/agent-complication-simulator/03-agent-detail-difference.png"
+    }
+  }
+}

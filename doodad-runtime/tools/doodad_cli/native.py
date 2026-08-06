@@ -61,6 +61,8 @@ class NativeHost:
         "app_detail": 6,
         "install_progress": 7,
         "crash_recovery": 8,
+        "agents": 9,
+        "agent_detail": 10,
     }
     EVENT_KINDS = {
         "tap": 0,

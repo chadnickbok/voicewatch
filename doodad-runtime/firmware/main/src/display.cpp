@@ -105,6 +105,9 @@ enum class PendingVoiceAction : std::uint8_t {
 enum class PendingSystemAction : std::uint8_t {
     none,
     open_launcher,
+    open_agents,
+    open_agent_detail,
+    agent_back,
 };
 
 bool g_display_ready = false;
@@ -145,6 +148,8 @@ bool g_shell_active = false;
 m3e_voice_runtime_view_t g_voice_view{};
 m3e_system_shell_home_view_t g_home_view{};
 m3e_system_shell_launcher_view_t g_launcher_view{};
+m3e_system_shell_agents_view_t g_agents_view{};
+m3e_system_shell_agent_detail_view_t g_agent_detail_view{};
 char g_voice_transcript[161]{};
 char g_voice_response[161]{};
 PendingVoiceAction g_pending_voice_action = PendingVoiceAction::none;
@@ -168,6 +173,76 @@ bool g_ready_is_rollback = false;
 bool g_ready_deferred_by_overlay = false;
 std::uint8_t g_local_install_state = 0;
 char g_install_detail[129]{};
+std::size_t g_selected_agent_index = 0;
+
+constexpr m3e_system_shell_agent_item_t kAgentPlaceholders[] = {
+    {
+        "agent.building-app",
+        "BUILDING APP",
+        "GENERATING UI",
+        "2:14",
+        0x7241ff,
+        M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
+    },
+    {
+        "agent.research-report",
+        "RESEARCH REPORT",
+        "READING SOURCES",
+        "4:32",
+        0x20bff4,
+        M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH,
+    },
+    {
+        "agent.monitoring",
+        "MONITORING",
+        "WATCHING TESTS",
+        "12:08",
+        0xb9ff24,
+        M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
+    },
+};
+
+constexpr m3e_system_shell_agent_detail_model_t kAgentDetails[] = {
+    {
+        "BUILDING APP",
+        "GENERATING UI",
+        "2:14",
+        "REQUEST",
+        "HYDRATION TRACKER",
+        {"BRIEF", "BUILD", "VERIFY", "INSTALL"},
+        1,
+        1,
+        45,
+        0x7241ff,
+        M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
+    },
+    {
+        "RESEARCH REPORT",
+        "READING SOURCES",
+        "4:32",
+        "REQUEST",
+        "AGENT WORKFLOWS",
+        {"BRIEF", "RESEARCH", "DRAFT", "REVIEW"},
+        1,
+        1,
+        38,
+        0x20bff4,
+        M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH,
+    },
+    {
+        "MONITORING",
+        "WATCHING TESTS",
+        "12:08",
+        "TARGET",
+        "WATCH BUILD",
+        {"SETUP", "WATCH", "ALERT", "DONE"},
+        1,
+        1,
+        50,
+        0xb9ff24,
+        M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
+    },
+};
 
 std::uint32_t launcher_color_for(const char* seed);
 
@@ -454,6 +529,12 @@ void catalog_now(int story) {
 
 void render_background_badge() {
     const auto& activity = g_shell.snapshot().background;
+    const auto surface = g_shell.snapshot().surface;
+    if (surface == m3e::os::Surface::watch_face ||
+        surface == m3e::os::Surface::agents ||
+        surface == m3e::os::Surface::agent_detail) {
+        return;
+    }
     if (activity.running_count == 0 && !activity.focused_question &&
         !activity.review_ready && !activity.completion_pending &&
         activity.install_state == m3e::os::BackgroundInstallState::none) {
@@ -530,6 +611,9 @@ int shell_story() {
             return M3E_CATALOG_STORY_OS_INSTALL_PROGRESS;
         case m3e::os::Surface::crash_recovery:
             return M3E_CATALOG_STORY_OS_CRASH_RECOVERY;
+        case m3e::os::Surface::agents:
+        case m3e::os::Surface::agent_detail:
+            return M3E_CATALOG_STORY_OS_HOME;
         case m3e::os::Surface::app:
             return M3E_CATALOG_STORY_OS_HOME;
     }
@@ -639,9 +723,32 @@ void queue_home_voice(lv_event_t* event) {
     }
 }
 
+void queue_home_agents(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = PendingSystemAction::open_agents;
+    }
+}
+
+void queue_agent_detail(lv_event_t* event) {
+    if (lv_event_get_code(event) != LV_EVENT_CLICKED) return;
+    g_selected_agent_index = reinterpret_cast<std::uintptr_t>(
+        lv_event_get_user_data(event));
+    g_pending_system_action = PendingSystemAction::open_agent_detail;
+}
+
+void queue_agent_back(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = PendingSystemAction::agent_back;
+    }
+}
+
 void system_home_surface_now() {
     m3e_system_shell_home_model_t model{};
     m3e_system_shell_default_home_model(&model);
+    const auto& background = g_shell.snapshot().background;
+    model.agent_count = background.running_count;
+    model.agent_status_changed = background.focused_question ||
+        background.review_ready || background.completion_pending;
     m3e_system_shell_show_home(
         lv_screen_active(), &model, &g_home_view);
     if (g_home_view.apps_action != nullptr) {
@@ -655,6 +762,56 @@ void system_home_surface_now() {
         lv_obj_add_event_cb(
             g_home_view.voice_action,
             queue_home_voice,
+            LV_EVENT_CLICKED,
+            nullptr);
+    }
+    if (g_home_view.agents_action != nullptr) {
+        lv_obj_add_event_cb(
+            g_home_view.agents_action,
+            queue_home_agents,
+            LV_EVENT_CLICKED,
+            nullptr);
+    }
+}
+
+void system_agents_surface_now() {
+    stage_visual_scene("agents");
+    discard_guest_document();
+    const auto active_count = g_shell.snapshot().background.running_count;
+    const auto visible_count = std::min<std::size_t>(
+        active_count,
+        std::size(kAgentPlaceholders));
+    m3e_system_shell_show_agents(
+        lv_screen_active(),
+        kAgentPlaceholders,
+        visible_count,
+        active_count,
+        &g_agents_view);
+    for (std::size_t index = 0;
+         index < g_agents_view.action_count;
+         ++index) {
+        lv_obj_add_event_cb(
+            g_agents_view.actions[index],
+            queue_agent_detail,
+            LV_EVENT_CLICKED,
+            reinterpret_cast<void*>(index));
+    }
+}
+
+void system_agent_detail_surface_now() {
+    stage_visual_scene("agent-detail");
+    discard_guest_document();
+    if (g_selected_agent_index >= std::size(kAgentDetails)) {
+        g_selected_agent_index = 0;
+    }
+    m3e_system_shell_show_agent_detail(
+        lv_screen_active(),
+        &kAgentDetails[g_selected_agent_index],
+        &g_agent_detail_view);
+    if (g_agent_detail_view.back_action != nullptr) {
+        lv_obj_add_event_cb(
+            g_agent_detail_view.back_action,
+            queue_agent_back,
             LV_EVENT_CLICKED,
             nullptr);
     }
@@ -885,6 +1042,11 @@ void render_shell_now() {
             appspec_now(pending);
         } else if (g_shell.snapshot().surface == m3e::os::Surface::launcher) {
             installed_launcher_now();
+        } else if (g_shell.snapshot().surface == m3e::os::Surface::agents) {
+            system_agents_surface_now();
+        } else if (
+            g_shell.snapshot().surface == m3e::os::Surface::agent_detail) {
+            system_agent_detail_surface_now();
         } else if ((g_shell.snapshot().surface ==
                         m3e::os::Surface::app_detail ||
                     g_shell.snapshot().surface ==
@@ -1820,9 +1982,32 @@ void display_update() {
     doodad::board::update();
     handle_system_inputs();
     lv_timer_handler();
-    if (g_pending_system_action == PendingSystemAction::open_launcher) {
+    if (g_pending_system_action != PendingSystemAction::none) {
+        const auto action = g_pending_system_action;
         g_pending_system_action = PendingSystemAction::none;
-        dispatch_system_input(m3e::os::Input::button_b);
+        bool dispatched = false;
+        switch (action) {
+            case PendingSystemAction::open_launcher:
+                dispatched = g_shell.dispatch(
+                    m3e::os::Intent::home_or_launcher);
+                break;
+            case PendingSystemAction::open_agents:
+                dispatched = g_shell.dispatch(m3e::os::Intent::open_agents);
+                break;
+            case PendingSystemAction::open_agent_detail:
+                dispatched = g_shell.dispatch(
+                    m3e::os::Intent::open_agent_detail);
+                break;
+            case PendingSystemAction::agent_back:
+                dispatched = g_shell.dispatch(m3e::os::Intent::back);
+                break;
+            case PendingSystemAction::none:
+                break;
+        }
+        if (dispatched) {
+            doodad::board::haptic(1);
+            render_shell_now();
+        }
     }
     if (g_pending_voice_action != PendingVoiceAction::none) {
         const auto action = g_pending_voice_action;

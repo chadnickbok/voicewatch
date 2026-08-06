@@ -68,6 +68,8 @@ static char g_scene_snapshot[kMaximumSceneSnapshotBytes];
 static m3e_system_shell_controller_t* g_system_shell;
 static m3e_system_shell_home_view_t g_system_home_view;
 static m3e_system_shell_launcher_view_t g_system_launcher_view;
+static m3e_system_shell_agents_view_t g_system_agents_view;
+static m3e_system_shell_agent_detail_view_t g_system_agent_detail_view;
 static m3e_voice_runtime_view_t g_system_voice_view;
 static char g_system_app_id[97];
 static char g_system_app_name[49];
@@ -79,9 +81,82 @@ enum {
     kPendingSystemActionApps = 1,
     kPendingSystemActionVoice = 2,
     kPendingSystemActionLaunch = 3,
+    kPendingSystemActionAgents = 4,
+    kPendingSystemActionAgentDetail = 5,
+    kPendingSystemActionAgentBack = 6,
 };
 
 static int g_pending_system_action;
+static size_t g_selected_agent_index;
+
+static const m3e_system_shell_agent_item_t kSystemAgentItems[] = {
+    {
+        "agent.building-app",
+        "BUILDING APP",
+        "GENERATING UI",
+        "2:14",
+        0x7241ff,
+        M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
+    },
+    {
+        "agent.research-report",
+        "RESEARCH REPORT",
+        "READING SOURCES",
+        "4:32",
+        0x20bff4,
+        M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH,
+    },
+    {
+        "agent.monitoring",
+        "MONITORING",
+        "WATCHING TESTS",
+        "12:08",
+        0xb9ff24,
+        M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
+    },
+};
+
+static const m3e_system_shell_agent_detail_model_t kSystemAgentDetails[] = {
+    {
+        "BUILDING APP",
+        "GENERATING UI",
+        "2:14",
+        "REQUEST",
+        "HYDRATION TRACKER",
+        {"BRIEF", "BUILD", "VERIFY", "INSTALL"},
+        1,
+        1,
+        45,
+        0x7241ff,
+        M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
+    },
+    {
+        "RESEARCH REPORT",
+        "READING SOURCES",
+        "4:32",
+        "REQUEST",
+        "AGENT WORKFLOWS",
+        {"BRIEF", "RESEARCH", "DRAFT", "REVIEW"},
+        1,
+        1,
+        38,
+        0x20bff4,
+        M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH,
+    },
+    {
+        "MONITORING",
+        "WATCHING TESTS",
+        "12:08",
+        "TARGET",
+        "WATCH BUILD",
+        {"SETUP", "WATCH", "ALERT", "DONE"},
+        1,
+        1,
+        50,
+        0xb9ff24,
+        M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
+    },
+};
 
 static void set_error(const char* message) {
     snprintf(g_last_error, sizeof(g_last_error), "%s", message);
@@ -678,10 +753,32 @@ static void queue_system_launch(lv_event_t* event) {
     }
 }
 
+static void queue_system_agents(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = kPendingSystemActionAgents;
+    }
+}
+
+static void queue_system_agent_detail(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_selected_agent_index = (size_t)(uintptr_t)lv_event_get_user_data(event);
+        g_pending_system_action = kPendingSystemActionAgentDetail;
+    }
+}
+
+static void queue_system_agent_back(lv_event_t* event) {
+    if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
+        g_pending_system_action = kPendingSystemActionAgentBack;
+    }
+}
+
 static int render_system_shell(void) {
     if (g_system_shell == NULL || g_display == NULL) return 0;
     g_system_home_view = (m3e_system_shell_home_view_t){0};
     g_system_launcher_view = (m3e_system_shell_launcher_view_t){0};
+    g_system_agents_view = (m3e_system_shell_agents_view_t){0};
+    g_system_agent_detail_view =
+        (m3e_system_shell_agent_detail_view_t){0};
     g_system_voice_view = (m3e_voice_runtime_view_t){0};
     const int overlay =
         m3e_system_shell_controller_overlay(g_system_shell);
@@ -709,6 +806,11 @@ static int render_system_shell(void) {
         lv_obj_add_event_cb(
             g_system_home_view.voice_action,
             queue_system_voice,
+            LV_EVENT_CLICKED,
+            NULL);
+        lv_obj_add_event_cb(
+            g_system_home_view.agents_action,
+            queue_system_agents,
             LV_EVENT_CLICKED,
             NULL);
     } else if (surface == M3E_SYSTEM_SHELL_SURFACE_LAUNCHER) {
@@ -755,6 +857,38 @@ static int render_system_shell(void) {
                 LV_EVENT_CLICKED,
                 NULL);
         }
+    } else if (surface == M3E_SYSTEM_SHELL_SURFACE_AGENTS) {
+        m3e_appspec_reset_mounted_document();
+        m3e_system_shell_show_agents(
+            lv_screen_active(),
+            kSystemAgentItems,
+            sizeof(kSystemAgentItems) / sizeof(kSystemAgentItems[0]),
+            3,
+            &g_system_agents_view);
+        for (size_t index = 0;
+             index < g_system_agents_view.action_count;
+             ++index) {
+            lv_obj_add_event_cb(
+                g_system_agents_view.actions[index],
+                queue_system_agent_detail,
+                LV_EVENT_CLICKED,
+                (void*)(uintptr_t)index);
+        }
+    } else if (surface == M3E_SYSTEM_SHELL_SURFACE_AGENT_DETAIL) {
+        m3e_appspec_reset_mounted_document();
+        if (g_selected_agent_index >=
+            sizeof(kSystemAgentDetails) / sizeof(kSystemAgentDetails[0])) {
+            g_selected_agent_index = 0;
+        }
+        m3e_system_shell_show_agent_detail(
+            lv_screen_active(),
+            &kSystemAgentDetails[g_selected_agent_index],
+            &g_system_agent_detail_view);
+        lv_obj_add_event_cb(
+            g_system_agent_detail_view.back_action,
+            queue_system_agent_back,
+            LV_EVENT_CLICKED,
+            NULL);
     } else if (surface != M3E_SYSTEM_SHELL_SURFACE_APP) {
         set_error("native host shell surface is unsupported");
         return 0;
@@ -792,6 +926,33 @@ static int apply_pending_system_action(void) {
         }
         return doodad_host_start_wasm(g_system_app_wasm_path);
     }
+    if (action == kPendingSystemActionAgents) {
+        if (!m3e_system_shell_controller_dispatch(
+                g_system_shell,
+                M3E_SYSTEM_SHELL_INTENT_OPEN_AGENTS)) {
+            set_error("system shell rejected Agents action");
+            return 0;
+        }
+        return render_system_shell();
+    }
+    if (action == kPendingSystemActionAgentDetail) {
+        if (!m3e_system_shell_controller_dispatch(
+                g_system_shell,
+                M3E_SYSTEM_SHELL_INTENT_OPEN_AGENT_DETAIL)) {
+            set_error("system shell rejected agent detail action");
+            return 0;
+        }
+        return render_system_shell();
+    }
+    if (action == kPendingSystemActionAgentBack) {
+        if (!m3e_system_shell_controller_dispatch(
+                g_system_shell,
+                M3E_SYSTEM_SHELL_INTENT_BACK)) {
+            set_error("system shell rejected agent Back action");
+            return 0;
+        }
+        return render_system_shell();
+    }
     set_error("system action callback did not run");
     return 0;
 }
@@ -811,6 +972,7 @@ int doodad_host_create(void) {
     g_route_generation = 0;
     g_wasm_call_count = 0;
     g_pending_system_action = kPendingSystemActionNone;
+    g_selected_agent_index = 0;
     memset(&g_system_home_view, 0, sizeof(g_system_home_view));
     memset(&g_system_launcher_view, 0, sizeof(g_system_launcher_view));
     memset(&g_system_voice_view, 0, sizeof(g_system_voice_view));
@@ -1276,9 +1438,22 @@ int doodad_host_click_system_action(const char* action_id) {
         target = g_system_home_view.apps_action;
     } else if (strcmp(action_id, "system.voice") == 0) {
         target = g_system_home_view.voice_action;
+    } else if (strcmp(action_id, "system.agents") == 0) {
+        target = g_system_home_view.agents_action;
+    } else if (strcmp(action_id, "system.agent.back") == 0) {
+        target = g_system_agent_detail_view.back_action;
     } else if (strcmp(action_id, g_system_app_id) == 0 &&
                g_system_launcher_view.action_count > 0) {
         target = g_system_launcher_view.actions[0];
+    } else {
+        for (size_t index = 0;
+             index < g_system_agents_view.action_count;
+             ++index) {
+            if (strcmp(action_id, kSystemAgentItems[index].task_id) == 0) {
+                target = g_system_agents_view.actions[index];
+                break;
+            }
+        }
     }
     if (target == NULL || !lv_obj_is_valid(target)) {
         set_error("system action is not available on the current surface");

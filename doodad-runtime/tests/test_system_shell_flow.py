@@ -30,6 +30,24 @@ class SystemShellFlowTests(unittest.TestCase):
             self.assertEqual(host.system_surface(), "watch_face")
             home = host.framebuffer_rgb565()
 
+            host.click_system_action("system.agents")
+            self.assertEqual(host.system_surface(), "agents")
+            agents = host.framebuffer_rgb565()
+            self.assertNotEqual(agents, home)
+
+            host.click_system_action("agent.building-app")
+            self.assertEqual(host.system_surface(), "agent_detail")
+            detail = host.framebuffer_rgb565()
+            self.assertNotIn(detail, (home, agents))
+
+            host.click_system_action("system.agent.back")
+            self.assertEqual(host.system_surface(), "agents")
+            self.assertEqual(host.framebuffer_rgb565(), agents)
+
+            host.system_back()
+            self.assertEqual(host.system_surface(), "watch_face")
+            self.assertEqual(host.framebuffer_rgb565(), home)
+
             host.click_system_action("system.voice")
             self.assertEqual(host.system_surface(), "watch_face")
             self.assertNotEqual(host.framebuffer_rgb565(), home)

@@ -57,6 +57,7 @@ int main() {
         2, false, false, false, BackgroundInstallState::none);
     assert(shell.snapshot().voice_phase == VoicePhase::listening);
     assert(shell.snapshot().background.running_count == 2);
+
     assert(shell.set_voice_phase(VoicePhase::thinking));
     assert(shell.snapshot().background.running_count == 2);
     assert(shell.set_voice_phase(VoicePhase::speaking));
@@ -72,6 +73,15 @@ int main() {
     assert(shell.snapshot().overlay == Overlay::none);
     assert(shell.snapshot().surface == Surface::live_cards);
     assert(shell.snapshot().background.running_count == 2);
+
+    assert(shell.dispatch(Intent::open_agents));
+    assert(shell.snapshot().surface == Surface::agents);
+    assert(shell.dispatch(Intent::open_agent_detail));
+    assert(shell.snapshot().surface == Surface::agent_detail);
+    assert(shell.dispatch(Intent::back));
+    assert(shell.snapshot().surface == Surface::agents);
+    assert(shell.dispatch(Intent::back));
+    assert(shell.snapshot().surface == Surface::live_cards);
 
     assert(shell.dispatch(map_input(Input::power_button)));
     assert(!shell.snapshot().display_awake);

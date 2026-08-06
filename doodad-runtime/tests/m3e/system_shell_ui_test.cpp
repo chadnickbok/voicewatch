@@ -46,10 +46,12 @@ int main() {
     m3e_system_shell_show_home(screen, &home, &home_view);
     assert_action(home_view.apps_action, "system.apps");
     assert_action(home_view.voice_action, "system.voice");
+    assert_action(home_view.agents_action, "system.agents");
     assert(contains_label(screen, "10:09"));
     assert(contains_label(screen, "JUL 30"));
     assert(contains_label(screen, "APPS"));
     assert(contains_label(screen, "VOICE"));
+    assert(contains_label(screen, "3"));
 
     constexpr m3e_system_shell_launcher_item_t items[] = {
         {"dev.doodad.timer", "Timer", "Version 0.1.0  •  ready",
@@ -67,6 +69,51 @@ int main() {
     assert(lv_obj_has_flag(
         lv_obj_get_parent(launcher_view.actions[0]),
         LV_OBJ_FLAG_SCROLLABLE));
+
+    constexpr m3e_system_shell_agent_item_t agents[] = {
+        {
+            "agent.building-app", "BUILDING APP", "GENERATING UI", "2:14",
+            0x7241ff, M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
+        },
+        {
+            "agent.research-report", "RESEARCH REPORT", "READING SOURCES", "4:32",
+            0x20bff4, M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH,
+        },
+        {
+            "agent.monitoring", "MONITORING", "WATCHING TESTS", "12:08",
+            0xb9ff24, M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
+        },
+    };
+    m3e_system_shell_agents_view_t agents_view{};
+    m3e_system_shell_show_agents(screen, agents, 3, 3, &agents_view);
+    assert(agents_view.action_count == 3);
+    assert_action(agents_view.actions[0], "agent.building-app");
+    assert(contains_label(screen, "AGENTS"));
+    assert(contains_label(screen, "3 ACTIVE"));
+    assert(contains_label(screen, "BUILDING APP"));
+    assert(contains_label(screen, "RESEARCH REPORT"));
+    assert(contains_label(screen, "MONITORING"));
+
+    constexpr m3e_system_shell_agent_detail_model_t detail = {
+        "BUILDING APP",
+        "GENERATING UI",
+        "2:14",
+        "REQUEST",
+        "HYDRATION TRACKER",
+        {"BRIEF", "BUILD", "VERIFY", "INSTALL"},
+        1,
+        1,
+        45,
+        0x7241ff,
+        M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
+    };
+    m3e_system_shell_agent_detail_view_t detail_view{};
+    m3e_system_shell_show_agent_detail(screen, &detail, &detail_view);
+    assert_action(detail_view.back_action, "system.agent.back");
+    assert(contains_label(screen, "AGENT"));
+    assert(contains_label(screen, "BUILDING APP"));
+    assert(contains_label(screen, "HYDRATION TRACKER"));
+    assert(contains_label(screen, "UPDATES AUTOMATICALLY"));
 
     auto* controller = m3e_system_shell_controller_create();
     assert(controller != nullptr);
@@ -97,6 +144,18 @@ int main() {
         controller, M3E_SYSTEM_SHELL_INTENT_BACK));
     assert(m3e_system_shell_controller_overlay(controller) ==
            M3E_SYSTEM_SHELL_OVERLAY_NONE);
+    assert(m3e_system_shell_controller_dispatch(
+        controller, M3E_SYSTEM_SHELL_INTENT_OPEN_AGENTS));
+    assert(m3e_system_shell_controller_surface(controller) ==
+           M3E_SYSTEM_SHELL_SURFACE_AGENTS);
+    assert(m3e_system_shell_controller_dispatch(
+        controller, M3E_SYSTEM_SHELL_INTENT_OPEN_AGENT_DETAIL));
+    assert(m3e_system_shell_controller_surface(controller) ==
+           M3E_SYSTEM_SHELL_SURFACE_AGENT_DETAIL);
+    assert(m3e_system_shell_controller_dispatch(
+        controller, M3E_SYSTEM_SHELL_INTENT_BACK));
+    assert(m3e_system_shell_controller_surface(controller) ==
+           M3E_SYSTEM_SHELL_SURFACE_AGENTS);
     m3e_system_shell_controller_destroy(controller);
 
     lv_display_delete(display);

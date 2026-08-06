@@ -18,6 +18,8 @@ enum class Surface : std::uint8_t {
     app_detail,
     install_progress,
     crash_recovery,
+    agents,
+    agent_detail,
 };
 
 enum class Overlay : std::uint8_t {
@@ -77,6 +79,8 @@ enum class Intent : std::uint8_t {
     open_control_center,
     open_voice,
     open_app_manager,
+    open_agents,
+    open_agent_detail,
     toggle_sleep,
 };
 

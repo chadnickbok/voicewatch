@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -11,6 +12,7 @@ extern "C" {
 
 enum {
     M3E_SYSTEM_SHELL_MAX_LAUNCHER_ACTIONS = 32,
+    M3E_SYSTEM_SHELL_MAX_AGENT_ACTIONS = 8,
     M3E_SYSTEM_SHELL_VOICE_BAR_COUNT = 5,
 };
 
@@ -34,6 +36,8 @@ enum {
     M3E_SYSTEM_SHELL_SURFACE_APP_DETAIL = 6,
     M3E_SYSTEM_SHELL_SURFACE_INSTALL_PROGRESS = 7,
     M3E_SYSTEM_SHELL_SURFACE_CRASH_RECOVERY = 8,
+    M3E_SYSTEM_SHELL_SURFACE_AGENTS = 9,
+    M3E_SYSTEM_SHELL_SURFACE_AGENT_DETAIL = 10,
 };
 
 enum {
@@ -45,6 +49,14 @@ enum {
     M3E_SYSTEM_SHELL_INTENT_BACK = 0,
     M3E_SYSTEM_SHELL_INTENT_HOME_OR_LAUNCHER = 1,
     M3E_SYSTEM_SHELL_INTENT_OPEN_VOICE = 2,
+    M3E_SYSTEM_SHELL_INTENT_OPEN_AGENTS = 3,
+    M3E_SYSTEM_SHELL_INTENT_OPEN_AGENT_DETAIL = 4,
+};
+
+enum {
+    M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER = 0,
+    M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH = 1,
+    M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING = 2,
 };
 
 enum {
@@ -63,11 +75,14 @@ typedef struct {
     const char* calendar_date;
     const char* weather;
     const char* battery;
+    uint8_t agent_count;
+    bool agent_status_changed;
 } m3e_system_shell_home_model_t;
 
 typedef struct {
     lv_obj_t* apps_action;
     lv_obj_t* voice_action;
+    lv_obj_t* agents_action;
 } m3e_system_shell_home_view_t;
 
 typedef struct {
@@ -86,6 +101,38 @@ typedef struct {
     size_t action_count;
     lv_obj_t* actions[M3E_SYSTEM_SHELL_MAX_LAUNCHER_ACTIONS];
 } m3e_system_shell_launcher_view_t;
+
+typedef struct {
+    const char* task_id;
+    const char* title;
+    const char* status;
+    const char* elapsed;
+    uint32_t primary_color_rgb;
+    uint8_t icon;
+} m3e_system_shell_agent_item_t;
+
+typedef struct {
+    size_t action_count;
+    lv_obj_t* actions[M3E_SYSTEM_SHELL_MAX_AGENT_ACTIONS];
+} m3e_system_shell_agents_view_t;
+
+typedef struct {
+    const char* title;
+    const char* status;
+    const char* elapsed;
+    const char* context_label;
+    const char* context;
+    const char* stages[4];
+    uint8_t completed_stage_count;
+    uint8_t active_stage;
+    uint8_t progress_percent;
+    uint32_t primary_color_rgb;
+    uint8_t icon;
+} m3e_system_shell_agent_detail_model_t;
+
+typedef struct {
+    lv_obj_t* back_action;
+} m3e_system_shell_agent_detail_view_t;
 
 typedef struct {
     lv_obj_t* primary_action;
@@ -107,6 +154,16 @@ void m3e_system_shell_show_launcher(
     const m3e_system_shell_launcher_item_t* items,
     size_t item_count,
     m3e_system_shell_launcher_view_t* view);
+void m3e_system_shell_show_agents(
+    lv_obj_t* screen,
+    const m3e_system_shell_agent_item_t* items,
+    size_t item_count,
+    uint8_t active_count,
+    m3e_system_shell_agents_view_t* view);
+void m3e_system_shell_show_agent_detail(
+    lv_obj_t* screen,
+    const m3e_system_shell_agent_detail_model_t* model,
+    m3e_system_shell_agent_detail_view_t* view);
 void m3e_system_shell_show_voice_overlay(
     lv_obj_t* screen,
     int phase,

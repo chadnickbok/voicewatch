@@ -225,6 +225,11 @@ bool ShellState::dispatch(Intent intent) {
             return set_voice_phase(VoicePhase::listening);
         case Intent::open_app_manager:
             return open_app_manager();
+        case Intent::open_agents:
+            return push_system_route("system.agents", Surface::agents);
+        case Intent::open_agent_detail:
+            return push_system_route(
+                "system.agent-detail", Surface::agent_detail);
         case Intent::toggle_sleep:
             snapshot_.display_awake = !snapshot_.display_awake;
             ++snapshot_.generation;
@@ -445,6 +450,10 @@ bool ShellState::sync_surface_from_route() {
         snapshot_.surface = Surface::install_progress;
     } else if (same_text(route, "system.crash-recovery")) {
         snapshot_.surface = Surface::crash_recovery;
+    } else if (same_text(route, "system.agents")) {
+        snapshot_.surface = Surface::agents;
+    } else if (same_text(route, "system.agent-detail")) {
+        snapshot_.surface = Surface::agent_detail;
     } else {
         snapshot_.surface = Surface::app;
     }
