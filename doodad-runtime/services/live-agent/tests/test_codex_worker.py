@@ -260,6 +260,36 @@ def test_complete_brief_builds_without_interrupting_for_input(tmp_path: Path) ->
         store.close()
 
 
+def test_hello_world_brief_has_a_deterministic_no_question_product_shape(
+    tmp_path: Path,
+) -> None:
+    store = Store(tmp_path / "agent.sqlite3")
+    jobs = JobManager(store, "t-watch-hello-world")
+    calls: list[dict[str, object]] = []
+    verifier = FakeVerifier()
+    builder = CodexAppBuilder(
+        jobs,
+        RUNTIME_ROOT,
+        tmp_path / "workspaces",
+        binary="unused",
+        client_factory=lambda: ScriptedClient("ready", calls),
+        verifier=verifier,  # type: ignore[arg-type]
+    )
+    try:
+        job_id = builder.start("Build me a hello world app", 1)
+        wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
+        assert jobs.open_questions() == []
+        workspace = Path(calls[0]["workspace"])
+        brief = (workspace / "BUILD_BRIEF.md").read_text(encoding="utf-8")
+        assert "Hello World" in brief
+        assert "ask no follow-up question" in brief
+        assert "toggles the greeting" in brief
+        assert "Use only `ui.mount`" in brief
+    finally:
+        builder.close()
+        store.close()
+
+
 def test_codex_job_resumes_after_restart_while_waiting_for_layout(tmp_path: Path) -> None:
     store = Store(tmp_path / "agent.sqlite3")
     jobs = JobManager(store, "cores3-restart")

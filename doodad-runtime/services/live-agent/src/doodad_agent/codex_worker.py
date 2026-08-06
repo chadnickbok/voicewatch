@@ -533,6 +533,13 @@ and provider SDK calls are required for those integrations. No guest clock,
 network, filesystem, raw display, raw LVGL, signing, installation, activation,
 persistence claims, or direct hardware actions.
 
+Treat a request for a Hello World app as a complete product brief: create a
+small greeting app named `Hello World`, use the curated `generic` icon and a
+legible blue theme seed, and ask no follow-up question. A display-only request
+still needs one meaningful local interaction so it can be verified: include a
+default-size semantic button that toggles the greeting between two visibly
+different states. Use only `ui.mount` for this app.
+
 First write `BUILD_PLAN.json` at the workspace root conforming to
 `generated-app-plan-v1.schema.json`. Required app files are `Cargo.toml`,
 `manifest.json`, `agent.json`,

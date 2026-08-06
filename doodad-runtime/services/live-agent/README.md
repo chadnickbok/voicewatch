@@ -86,9 +86,24 @@ From the repository root:
 ```
 
 `run-live-agent.sh` loads `../openai.env` and `../elevenlabs.env` without printing
-their contents. Runtime state defaults to Application Support and latency events
+their contents. On macOS it also loads the personal HMAC key from Keychain
+service `voicewatch.doodad.personal.hmac`, using the configured owner or
+`local.nick`, when no explicit key is present. Runtime state defaults to Application Support and latency events
 to `~/Library/Logs/Doodad/live-agent-latency.jsonl`. Use `fake-demo --database
 /tmp/doodad-demo.sqlite3` for a provider-free lifecycle demonstration.
+
+For a pickup-ready Mac service that restarts after failure and launches at
+login, install the user LaunchAgent once:
+
+```sh
+./scripts/live-agent-service.sh install
+./scripts/live-agent-service.sh status
+```
+
+The installer deploys a runtime snapshot and mode-600 provider configuration
+under `~/Library/Application Support/Doodad`. macOS background services cannot
+reliably read a source checkout in `Documents`; rerun `install` after changing
+the service or generated-app runtime.
 
 The Phase 6 physical CoreS3 gate is still pending. To run it, start `serve`, say
 “Build me a rest timer,” and ask an unrelated workout question while the build

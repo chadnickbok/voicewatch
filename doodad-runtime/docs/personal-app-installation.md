@@ -159,6 +159,19 @@ service:
 ./scripts/run-live-agent.sh serve
 ```
 
+On macOS, `run-live-agent.sh` retrieves the key from Keychain service
+`voicewatch.doodad.personal.hmac` when the key is not already exported. To keep
+the pickup-ready service running across terminal closures and login, install
+the user LaunchAgent:
+
+```sh
+./scripts/live-agent-service.sh install
+```
+
+The installer deploys the live runtime and mode-600 provider configuration to
+`~/Library/Application Support/Doodad`, outside macOS's protected `Documents`
+folder. Rerun it after changing the runtime or service.
+
 The artifact store defaults to
 `~/Library/Application Support/Doodad/personal-apps`. Override it with
 `DOODAD_PERSONAL_ARTIFACT_ROOT` if needed; it must remain outside mutable Codex
