@@ -36,6 +36,16 @@ int main() {
            "four one-dp spans must fill the same five pixels as one 4dp span");
 
     expect(profile_is_valid(watch_square_192), "square profile must be valid");
+    expect(profile_is_valid(twatch_ultra_portrait),
+           "T-Watch Ultra profile must be valid");
+    expect(twatch_ultra_portrait.physical_width_px == 410,
+           "T-Watch Ultra width");
+    expect(twatch_ultra_portrait.physical_height_px == 502,
+           "T-Watch Ultra height");
+    expect(logical_x_to_physical_px(twatch_ultra_portrait, 205) == 410,
+           "T-Watch Ultra logical right edge");
+    expect(logical_y_to_physical_px(twatch_ultra_portrait, 251) == 502,
+           "T-Watch Ultra logical bottom edge");
     expect(profile_is_valid(cores3_watch_preview),
            "CoreS3 preview profile must be valid");
     expect(profile_is_valid(wear_round_192_reference),
@@ -51,6 +61,9 @@ int main() {
            "CoreS3 logical bottom must match panel bottom");
     expect(find_display_profile("watch_square_192") == &watch_square_192,
            "profile lookup");
+    expect(find_display_profile("twatch_ultra_410x502") ==
+               &twatch_ultra_portrait,
+           "T-Watch Ultra profile lookup");
     expect(find_display_profile("missing") == nullptr,
            "unknown profile lookup");
 

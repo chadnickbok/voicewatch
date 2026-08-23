@@ -1,0 +1,221 @@
+{
+  "schema_version": 1,
+  "snapshot_sha256": "b171af81c84ef478d30ee3340dbed5a8b7f55cbf21458edf898d6fafa776b741",
+  "capture_phase": {
+    "id": "resting",
+    "state": "resting",
+    "animation_fraction_milli": 0
+  },
+  "renderer": {
+    "kind": "lvgl",
+    "mode": "simulator",
+    "version": "9.5.0",
+    "build_sha256": "858d0558cbcdba7d655438a9379e3e9300ec8e553580509b519e3e1c7c2b6fb2"
+  },
+  "profile_id": "watch_square_240",
+  "physical_width_px": 240,
+  "physical_height_px": 240,
+  "nodes": [
+    {
+      "id": "powerlifting.workout-builder",
+      "parent_id": null,
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 240
+      },
+      "bounds_dp_q8_8": {
+        "x": 0,
+        "y": 0,
+        "width": 49152,
+        "height": 49152
+      },
+      "token_roles": {
+        "background": "background"
+      }
+    },
+    {
+      "id": "powerlifting.workout-builder.title",
+      "parent_id": "powerlifting.workout-builder",
+      "role": "heading",
+      "label": "HEAVY DAY",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 3,
+        "width": 163,
+        "height": 25
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 614,
+        "width": 33382,
+        "height": 5120
+      },
+      "token_roles": {
+        "typography": "title"
+      }
+    },
+    {
+      "id": "powerlifting.workout-builder.count",
+      "parent_id": "powerlifting.workout-builder",
+      "role": "text",
+      "label": "14 SETS",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 175,
+        "y": 5,
+        "width": 55,
+        "height": 23
+      },
+      "bounds_dp_q8_8": {
+        "x": 35840,
+        "y": 1024,
+        "width": 11264,
+        "height": 4710
+      },
+      "token_roles": {
+        "typography": "caption"
+      }
+    },
+    {
+      "id": "powerlifting.workout-builder.squat",
+      "parent_id": "powerlifting.workout-builder",
+      "role": "list_item",
+      "label": "BACK SQUAT",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.plan.exercise"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 33,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 6758,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "container": "surface_container",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.workout-builder.remaining",
+      "parent_id": "powerlifting.workout-builder",
+      "role": "list_item",
+      "label": "BENCH 5 X 5  /  DEAD 4 X 5",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 95,
+        "width": 220,
+        "height": 18
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 19456,
+        "width": 45056,
+        "height": 3686
+      },
+      "token_roles": {
+        "container": "surface_container",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.workout-builder.add",
+      "parent_id": "powerlifting.workout-builder",
+      "role": "list_item",
+      "label": "+ ADD EXERCISE",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.plan.add"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 115,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 23552,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "container": "surface_container",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.workout-builder.save",
+      "parent_id": "powerlifting.workout-builder",
+      "role": "button",
+      "label": "SAVE PLAN",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.plan.save"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 175,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 35840,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "container": "primary",
+        "content": "on_surface"
+      }
+    }
+  ]
+}

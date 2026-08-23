@@ -9,9 +9,11 @@
 | Runtime | Multiple installed apps, one live WAMR guest |
 
 This is the small personal-app loop, not an app-store design. Codex generates
-source in its isolated workspace. A separate deterministic verifier decides
+an approved plan, ImageGen design targets, and source in its isolated
+workspace. Clarification and plan approval use the watch's durable focused
+question path, so answers can be spoken and survive service restart. A separate deterministic verifier decides
 whether the result passes Doodad's schema, build, ABI, semantic, permission,
-timer, and simulator gates. Only then does an outer packager with access to the
+timer, simulator, and visual-target comparison gates. Only then does an outer packager with access to the
 local user's key produce the device artifact. The packager signs bytes from one
 snapshot only when its complete tree hash still matches the verifier's result;
 mutable workspace changes require verification again.
@@ -190,12 +192,18 @@ payload and bundle hashes while performing this gate.
    line is expected; it should not recur once the initialized filesystem exists.
 
 2. Start a voice turn and ask, “Build me a hydration tracker with a blue
-   water-drop identity.” A complete brief should ask no question; an ambiguous
-   request may ask at most one focused enum question. Continue an unrelated conversation while the durable job
-   runs; app generation must not block Voice. Before delivery completes, keep
+   water-drop identity.” Plan mode may ask up to three focused, voice-friendly
+   clarification questions when genuinely necessary. Every build then presents
+   a bounded plan-approval question; say **approve** by itself to continue, or
+   describe the revision you want. The approved plan hash must appear in
+   `PLAN_APPROVAL.json` and `design/DESIGN_MANIFEST.json`. Continue an unrelated conversation while the durable job
+   runs; ImageGen design and app generation must not block Voice. Before delivery completes, keep
    or reopen Voice in a listening or speaking state.
 
-3. Wait for the independent verifier and outer packager. The service latency
+3. Confirm `design/targets/` contains one to three ImageGen mockups and
+   `design/review/VISUAL_COMPARISON.json` records a passing comparison between
+   the primary target and the 240×240 simulator frame. Then wait for the
+   independent verifier and outer packager. The service latency
    JSONL should contain `"kind":"app.ready"` with a bundle hash. The watch
    should log lines matching:
 

@@ -13,6 +13,7 @@ def test_jsonl_reader_does_not_hide_bursted_turn_completion(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setenv("DOODAD_PERSONAL_HMAC_KEY_HEX", "ab" * 32)
+    monkeypatch.setenv("DOODAD_SMTP_PASSWORD", "host-only-email-secret")
     binary = tmp_path / "fake-codex"
     binary.write_text(
         f"""#!/usr/bin/env python3
@@ -22,6 +23,8 @@ import sys
 
 if os.getenv('DOODAD_PERSONAL_HMAC_KEY_HEX'):
     raise SystemExit(9)
+if os.getenv('DOODAD_SMTP_PASSWORD'):
+    raise SystemExit(10)
 
 if '--version' in sys.argv:
     print({PINNED_CODEX_VERSION!r})
@@ -35,6 +38,8 @@ for line in sys.stdin:
     elif method == 'thread/start':
         print(json.dumps({{'id': message['id'], 'result': {{'thread': {{'id': 'thread-1'}}}}}}), flush=True)
     elif method == 'turn/start':
+        if message['params'].get('collaborationMode', {{}}).get('mode') != 'plan':
+            raise SystemExit(11)
         turn = {{'id': 'turn-1', 'status': 'inProgress', 'items': [], 'error': None}}
         completed = {{'id': 'turn-1', 'status': 'completed', 'items': [], 'error': None}}
         print(json.dumps({{'id': message['id'], 'result': {{'turn': turn}}}}))
@@ -59,6 +64,7 @@ for line in sys.stdin:
         stop=threading.Event(),
         on_started=lambda thread_id, turn_id: started.append((thread_id, turn_id)),
         on_question=lambda _params: "ring",
+        collaboration_mode="plan",
     )
 
     assert started == [("thread-1", "turn-1")]

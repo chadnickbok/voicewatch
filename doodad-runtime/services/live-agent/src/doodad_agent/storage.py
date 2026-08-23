@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import Any, Iterator
 
 
-LATEST_SCHEMA_VERSION = 4
+LATEST_SCHEMA_VERSION = 5
 LEGACY_DEVICE_ID = "legacy-cores3"
 
 SCHEMA_LATEST = """
@@ -126,8 +126,10 @@ CREATE TABLE IF NOT EXISTS codex_sessions (
     pending_question_json TEXT,
     stable_summary TEXT NOT NULL DEFAULT '',
     artifact_json TEXT,
+    approved_plan_sha256 TEXT,
+    design_target_sha256 TEXT,
     codex_version TEXT NOT NULL,
-    stage TEXT NOT NULL DEFAULT 'eliciting_layout',
+    stage TEXT NOT NULL DEFAULT 'planning',
     updated_at_ms INTEGER NOT NULL
 );
 CREATE INDEX IF NOT EXISTS jobs_by_device ON jobs(device_id, created_at_ms);
@@ -136,7 +138,7 @@ CREATE INDEX IF NOT EXISTS conversations_by_device
 ON conversations(device_id, started_at_ms);
 CREATE INDEX IF NOT EXISTS codex_sessions_by_device
 ON codex_sessions(device_id, updated_at_ms);
-PRAGMA user_version=4;
+PRAGMA user_version=5;
 """
 
 
@@ -171,6 +173,9 @@ class Store:
             version = 3
         if version < 4:
             self._migrate_v3_to_v4()
+            version = 4
+        if version < 5:
+            self._migrate_v4_to_v5()
 
     def _columns(self, table: str) -> set[str]:
         return {
@@ -297,9 +302,21 @@ class Store:
             if "stage" not in self._columns("codex_sessions"):
                 connection.execute(
                     "ALTER TABLE codex_sessions ADD COLUMN stage TEXT NOT NULL "
-                    "DEFAULT 'eliciting_layout'"
+                    "DEFAULT 'planning'"
                 )
             connection.execute("PRAGMA user_version=4")
+
+    def _migrate_v4_to_v5(self) -> None:
+        with self.transaction() as connection:
+            if "approved_plan_sha256" not in self._columns("codex_sessions"):
+                connection.execute(
+                    "ALTER TABLE codex_sessions ADD COLUMN approved_plan_sha256 TEXT"
+                )
+            if "design_target_sha256" not in self._columns("codex_sessions"):
+                connection.execute(
+                    "ALTER TABLE codex_sessions ADD COLUMN design_target_sha256 TEXT"
+                )
+            connection.execute("PRAGMA user_version=5")
 
     def relink_legacy_device(self, device_id: str) -> None:
         """Assign pre-v2 CoreS3 rows to its stable MAC-derived identity."""

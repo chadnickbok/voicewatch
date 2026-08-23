@@ -90,8 +90,11 @@ struct UiCommand {
     bool focused_question;
     bool review_ready;
     bool completion_pending;
+    bool task_status_changed;
     std::uint8_t install_state;
     std::uint8_t voice_level;
+    std::uint8_t agent_task_count;
+    std::array<DisplayAgentTask, kDisplayAgentTaskCapacity> agent_tasks;
     PackageUiEvent* package;
     UiCompletion* completion;
 };
@@ -174,75 +177,14 @@ bool g_ready_deferred_by_overlay = false;
 std::uint8_t g_local_install_state = 0;
 char g_install_detail[129]{};
 std::size_t g_selected_agent_index = 0;
-
-constexpr m3e_system_shell_agent_item_t kAgentPlaceholders[] = {
-    {
-        "agent.building-app",
-        "BUILDING APP",
-        "GENERATING UI",
-        "2:14",
-        0x7241ff,
-        M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
-    },
-    {
-        "agent.research-report",
-        "RESEARCH REPORT",
-        "READING SOURCES",
-        "4:32",
-        0x20bff4,
-        M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH,
-    },
-    {
-        "agent.monitoring",
-        "MONITORING",
-        "WATCHING TESTS",
-        "12:08",
-        0xb9ff24,
-        M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
-    },
-};
-
-constexpr m3e_system_shell_agent_detail_model_t kAgentDetails[] = {
-    {
-        "BUILDING APP",
-        "GENERATING UI",
-        "2:14",
-        "REQUEST",
-        "HYDRATION TRACKER",
-        {"BRIEF", "BUILD", "VERIFY", "INSTALL"},
-        1,
-        1,
-        45,
-        0x7241ff,
-        M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER,
-    },
-    {
-        "RESEARCH REPORT",
-        "READING SOURCES",
-        "4:32",
-        "REQUEST",
-        "AGENT WORKFLOWS",
-        {"BRIEF", "RESEARCH", "DRAFT", "REVIEW"},
-        1,
-        1,
-        38,
-        0x20bff4,
-        M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH,
-    },
-    {
-        "MONITORING",
-        "WATCHING TESTS",
-        "12:08",
-        "TARGET",
-        "WATCH BUILD",
-        {"SETUP", "WATCH", "ALERT", "DONE"},
-        1,
-        1,
-        50,
-        0xb9ff24,
-        M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
-    },
-};
+char g_selected_agent_id[65]{};
+std::array<DisplayAgentTask, kDisplayAgentTaskCapacity> g_agent_tasks{};
+std::array<m3e_system_shell_agent_item_t, kDisplayAgentTaskCapacity> g_agent_items{};
+std::array<
+    m3e_system_shell_agent_detail_model_t,
+    kDisplayAgentTaskCapacity> g_agent_details{};
+std::size_t g_agent_task_count = 0;
+bool g_agent_status_changed = false;
 
 std::uint32_t launcher_color_for(const char* seed);
 
@@ -733,6 +675,12 @@ void queue_agent_detail(lv_event_t* event) {
     if (lv_event_get_code(event) != LV_EVENT_CLICKED) return;
     g_selected_agent_index = reinterpret_cast<std::uintptr_t>(
         lv_event_get_user_data(event));
+    if (g_selected_agent_index < g_agent_task_count) {
+        std::strncpy(
+            g_selected_agent_id,
+            g_agent_tasks[g_selected_agent_index].task_id,
+            sizeof(g_selected_agent_id) - 1);
+    }
     g_pending_system_action = PendingSystemAction::open_agent_detail;
 }
 
@@ -742,13 +690,46 @@ void queue_agent_back(lv_event_t* event) {
     }
 }
 
+void rebuild_agent_models() {
+    for (std::size_t index = 0; index < g_agent_task_count; ++index) {
+        const auto& task = g_agent_tasks[index];
+        g_agent_items[index] = {
+            task.task_id,
+            task.title,
+            task.status,
+            task.elapsed,
+            task.primary_color_rgb,
+            task.icon,
+        };
+        g_agent_details[index] = {
+            task.title,
+            task.status,
+            task.elapsed,
+            task.context_label,
+            task.context,
+            {
+                task.stages[0],
+                task.stages[1],
+                task.stages[2],
+                task.stages[3],
+            },
+            task.completed_stage_count,
+            task.active_stage,
+            task.progress_percent,
+            task.primary_color_rgb,
+            task.icon,
+        };
+    }
+}
+
 void system_home_surface_now() {
     m3e_system_shell_home_model_t model{};
     m3e_system_shell_default_home_model(&model);
     const auto& background = g_shell.snapshot().background;
     model.agent_count = background.running_count;
     model.agent_status_changed = background.focused_question ||
-        background.review_ready || background.completion_pending;
+        background.review_ready || background.completion_pending ||
+        g_agent_status_changed;
     m3e_system_shell_show_home(
         lv_screen_active(), &model, &g_home_view);
     if (g_home_view.apps_action != nullptr) {
@@ -780,10 +761,10 @@ void system_agents_surface_now() {
     const auto active_count = g_shell.snapshot().background.running_count;
     const auto visible_count = std::min<std::size_t>(
         active_count,
-        std::size(kAgentPlaceholders));
+        g_agent_task_count);
     m3e_system_shell_show_agents(
         lv_screen_active(),
-        kAgentPlaceholders,
+        g_agent_items.data(),
         visible_count,
         active_count,
         &g_agents_view);
@@ -801,12 +782,20 @@ void system_agents_surface_now() {
 void system_agent_detail_surface_now() {
     stage_visual_scene("agent-detail");
     discard_guest_document();
-    if (g_selected_agent_index >= std::size(kAgentDetails)) {
+    if (g_selected_agent_index >= g_agent_task_count) {
         g_selected_agent_index = 0;
+    }
+    if (g_agent_task_count == 0) {
+        if (!g_shell.dispatch(m3e::os::Intent::back)) {
+            error_now("AGENT VIEW FAILED");
+            return;
+        }
+        system_agents_surface_now();
+        return;
     }
     m3e_system_shell_show_agent_detail(
         lv_screen_active(),
-        &kAgentDetails[g_selected_agent_index],
+        &g_agent_details[g_selected_agent_index],
         &g_agent_detail_view);
     if (g_agent_detail_view.back_action != nullptr) {
         lv_obj_add_event_cb(
@@ -1187,6 +1176,43 @@ void agent_state_now(const UiCommand& command) {
     const bool text_changed =
         std::strcmp(g_voice_transcript, command.primary) != 0 ||
         std::strcmp(g_voice_response, command.secondary) != 0;
+    const auto next_task_count = std::min<std::size_t>(
+        command.agent_task_count,
+        kDisplayAgentTaskCapacity);
+    const bool tasks_changed =
+        next_task_count != g_agent_task_count ||
+        std::memcmp(
+            g_agent_tasks.data(),
+            command.agent_tasks.data(),
+            next_task_count * sizeof(DisplayAgentTask)) != 0;
+    const bool task_status_flag_changed =
+        g_agent_status_changed != command.task_status_changed;
+    g_agent_status_changed = command.task_status_changed;
+    g_agent_task_count = next_task_count;
+    std::copy_n(
+        command.agent_tasks.begin(),
+        g_agent_task_count,
+        g_agent_tasks.begin());
+    rebuild_agent_models();
+    bool selected_task_found = g_selected_agent_id[0] == '\0';
+    if (!selected_task_found) {
+        for (std::size_t index = 0; index < g_agent_task_count; ++index) {
+            if (std::strcmp(
+                    g_selected_agent_id,
+                    g_agent_tasks[index].task_id) == 0) {
+                g_selected_agent_index = index;
+                selected_task_found = true;
+                break;
+            }
+        }
+    }
+    const bool selected_task_removed =
+        g_selected_agent_id[0] != '\0' && !selected_task_found;
+    if (g_agent_task_count == 0 || !selected_task_found ||
+        g_selected_agent_index >= g_agent_task_count) {
+        g_selected_agent_index = 0;
+        g_selected_agent_id[0] = '\0';
+    }
     std::strncpy(
         g_voice_transcript, command.primary, sizeof(g_voice_transcript) - 1);
     std::strncpy(
@@ -1223,13 +1249,25 @@ void agent_state_now(const UiCommand& command) {
         command.review_ready,
         command.completion_pending,
         install_state);
+    if (selected_task_removed &&
+        g_shell.snapshot().surface == m3e::os::Surface::agent_detail) {
+        if (!g_shell.dispatch(m3e::os::Intent::back)) {
+            error_now("AGENT VIEW FAILED");
+            return;
+        }
+    }
     if (command.focused_question && !previous_question) {
         doodad::board::haptic(10);
     } else if (command.completion_pending && !previous_completion) {
         doodad::board::haptic(47);
     }
+    const bool trusted_surface_owns_tree =
+        g_shell.snapshot().overlay != m3e::os::Overlay::none ||
+        g_shell.snapshot().surface != m3e::os::Surface::app;
     if (g_shell_active && g_shell.snapshot().display_awake &&
+        trusted_surface_owns_tree &&
         (initialized_now || text_changed ||
+         tasks_changed || task_status_flag_changed ||
          g_shell.snapshot().generation != generation_before)) {
         render_shell_now();
     }
@@ -1764,7 +1802,10 @@ bool display_publish_agent_state(
     bool completion_pending,
     std::uint8_t install_state,
     const char* transcript,
-    const char* response) {
+    const char* response,
+    const DisplayAgentTask* tasks,
+    std::size_t task_count,
+    bool task_status_changed) {
     UiCommand command{};
     command.type = UiCommandType::agent_state;
     command.voice_phase = voice_phase;
@@ -1773,6 +1814,15 @@ bool display_publish_agent_state(
     command.review_ready = review_ready;
     command.completion_pending = completion_pending;
     command.install_state = install_state;
+    command.agent_task_count = static_cast<std::uint8_t>(
+        std::min(task_count, kDisplayAgentTaskCapacity));
+    command.task_status_changed = task_status_changed;
+    if (tasks != nullptr) {
+        std::copy_n(
+            tasks,
+            command.agent_task_count,
+            command.agent_tasks.begin());
+    }
     std::strncpy(
         command.primary, transcript == nullptr ? "" : transcript,
         sizeof(command.primary) - 1);

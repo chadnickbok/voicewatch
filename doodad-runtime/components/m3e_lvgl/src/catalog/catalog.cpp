@@ -489,6 +489,10 @@ void system_story(lv_obj_t* screen) {
 void os_home_story(lv_obj_t* screen) {
     m3e_system_shell_home_model_t model{};
     m3e_system_shell_default_home_model(&model);
+    model.live_clock = false;
+    model.time = "10:09";
+    model.weekday = "THU";
+    model.calendar_date = "JUL 30";
     m3e_system_shell_show_home(screen, &model, nullptr);
 }
 

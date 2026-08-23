@@ -121,6 +121,66 @@ class WaveTwoAndSnakeTests(unittest.TestCase):
 
         self.run_app("workout", flow)
 
+    def test_workout_plan_and_strength_goal_journey(self) -> None:
+        def flow(native: NativeHost) -> None:
+            native.dispatch_semantic_action(
+                "powerlifting.today.volume",
+                "workout.manage",
+                "tap",
+            )
+            self.assertEqual(
+                native.node_text("powerlifting.training-hub.title"),
+                "TRAINING",
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.training-hub.plan",
+                "workout.plan.edit",
+                "tap",
+            )
+            self.assertEqual(
+                native.node_text("powerlifting.workout-builder.count"),
+                "14 SETS",
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.workout-builder.squat",
+                "workout.plan.exercise",
+                "tap",
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.exercise-prescription.sets",
+                "workout.plan.sets",
+                "value_committed",
+                6,
+            )
+            self.assertEqual(
+                native.node_text("powerlifting.exercise-prescription.sets"),
+                "6 SETS",
+            )
+            native.click_button("DONE")
+            native.click_button("SAVE PLAN")
+            native.dispatch_semantic_action(
+                "powerlifting.training-hub.goal",
+                "workout.goal.edit",
+                "tap",
+            )
+            native.dispatch_semantic_action(
+                "powerlifting.strength-goal.target",
+                "workout.goal.weight",
+                "value_committed",
+                155,
+            )
+            self.assertEqual(
+                native.node_text("powerlifting.strength-goal.target"),
+                "155 KG",
+            )
+            native.click_button("SAVE GOAL")
+            native.click_button("DONE")
+            self.assertTrue(
+                native.node_text("powerlifting.today.hero").startswith("HEAVY")
+            )
+
+        self.run_app("workout", flow)
+
     def test_snake_has_deterministic_playable_game_state(self) -> None:
         def flow(native: NativeHost) -> None:
             def canvas_display_list() -> str:

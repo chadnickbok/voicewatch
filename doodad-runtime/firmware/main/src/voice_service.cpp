@@ -28,6 +28,7 @@
 #include "freertos/queue.h"
 #include "freertos/task.h"
 #include "mdns.h"
+#include "m3e/os/system_shell.h"
 #include "network_service.hpp"
 #include "nvs.h"
 #include "package_service.hpp"
@@ -954,6 +955,45 @@ std::uint8_t voice_phase_value(const char* phase) {
     return 5;
 }
 
+void copy_agent_text(
+    char* destination,
+    std::size_t capacity,
+    const cJSON* value) {
+    if (destination == nullptr || capacity == 0) return;
+    destination[0] = '\0';
+    if (!cJSON_IsString(value) || value->valuestring == nullptr) return;
+    std::strncpy(destination, value->valuestring, capacity - 1);
+    destination[capacity - 1] = '\0';
+}
+
+std::uint32_t agent_color_value(const cJSON* value) {
+    if (!cJSON_IsString(value) || value->valuestring == nullptr ||
+        value->valuestring[0] != '#' || std::strlen(value->valuestring) != 7) {
+        return 0x7241ff;
+    }
+    char* end = nullptr;
+    const auto color = std::strtoul(value->valuestring + 1, &end, 16);
+    return end != nullptr && *end == '\0'
+        ? static_cast<std::uint32_t>(color)
+        : 0x7241ff;
+}
+
+std::uint8_t agent_icon_value(const cJSON* value) {
+    if (!cJSON_IsString(value) || value->valuestring == nullptr) {
+        return M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING;
+    }
+    if (std::strcmp(value->valuestring, "app_builder") == 0) {
+        return M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER;
+    }
+    if (std::strcmp(value->valuestring, "research") == 0) {
+        return M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH;
+    }
+    if (std::strcmp(value->valuestring, "presentation") == 0) {
+        return M3E_SYSTEM_SHELL_AGENT_ICON_PRESENTATION;
+    }
+    return M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING;
+}
+
 void handle_agent_state(const char* bytes, std::size_t size) {
     auto* payload = cJSON_ParseWithLength(bytes, size);
     if (payload == nullptr) return;
@@ -966,14 +1006,72 @@ void handle_agent_state(const char* bytes, std::size_t size) {
     const auto* focused = cJSON_GetObjectItemCaseSensitive(background, "focused_question");
     const auto* review = cJSON_GetObjectItemCaseSensitive(background, "review_ready");
     const auto* completion = cJSON_GetObjectItemCaseSensitive(background, "completion_pending");
+    const auto* status_changed = cJSON_GetObjectItemCaseSensitive(
+        background, "status_changed");
     const auto* install = cJSON_GetObjectItemCaseSensitive(background, "install_state");
+    std::array<DisplayAgentTask, kDisplayAgentTaskCapacity> tasks{};
+    std::size_t task_count = 0;
+    const auto* task_array = cJSON_GetObjectItemCaseSensitive(background, "tasks");
+    if (cJSON_IsArray(task_array)) {
+        const cJSON* item = nullptr;
+        cJSON_ArrayForEach(item, task_array) {
+            if (task_count >= tasks.size() || !cJSON_IsObject(item)) break;
+            auto& task = tasks[task_count];
+            copy_agent_text(
+                task.task_id, sizeof(task.task_id),
+                cJSON_GetObjectItemCaseSensitive(item, "job_id"));
+            copy_agent_text(
+                task.title, sizeof(task.title),
+                cJSON_GetObjectItemCaseSensitive(item, "title"));
+            copy_agent_text(
+                task.status, sizeof(task.status),
+                cJSON_GetObjectItemCaseSensitive(item, "status"));
+            copy_agent_text(
+                task.elapsed, sizeof(task.elapsed),
+                cJSON_GetObjectItemCaseSensitive(item, "elapsed"));
+            copy_agent_text(
+                task.context_label, sizeof(task.context_label),
+                cJSON_GetObjectItemCaseSensitive(item, "detail_label"));
+            copy_agent_text(
+                task.context, sizeof(task.context),
+                cJSON_GetObjectItemCaseSensitive(item, "detail"));
+            const auto* stages = cJSON_GetObjectItemCaseSensitive(item, "stages");
+            for (std::size_t stage = 0; stage < 4; ++stage) {
+                copy_agent_text(
+                    task.stages[stage], sizeof(task.stages[stage]),
+                    cJSON_IsArray(stages)
+                        ? cJSON_GetArrayItem(stages, static_cast<int>(stage))
+                        : nullptr);
+            }
+            const auto* completed = cJSON_GetObjectItemCaseSensitive(
+                item, "completed_stages");
+            const auto* active = cJSON_GetObjectItemCaseSensitive(
+                item, "active_stage");
+            const auto* progress = cJSON_GetObjectItemCaseSensitive(
+                item, "progress");
+            task.completed_stage_count = cJSON_IsNumber(completed)
+                ? std::clamp(completed->valueint, 0, 4) : 0;
+            task.active_stage = cJSON_IsNumber(active)
+                ? std::clamp(active->valueint, 0, 3) : 0;
+            task.progress_percent = cJSON_IsNumber(progress)
+                ? std::clamp(progress->valueint, 0, 100) : 0;
+            task.primary_color_rgb = agent_color_value(
+                cJSON_GetObjectItemCaseSensitive(item, "color"));
+            task.icon = agent_icon_value(
+                cJSON_GetObjectItemCaseSensitive(item, "icon"));
+            if (task.task_id[0] != '\0' && task.title[0] != '\0') {
+                ++task_count;
+            }
+        }
+    }
     display_publish_agent_state(
         voice_phase_value(cJSON_IsString(phase) ? phase->valuestring : "error"),
         cJSON_IsNumber(running) ? std::clamp(running->valueint, 0, 255) : 0,
         cJSON_IsTrue(focused), cJSON_IsTrue(review), cJSON_IsTrue(completion),
         cJSON_IsNumber(install) ? std::clamp(install->valueint, 0, 4) : 0,
         cJSON_IsString(transcript) ? transcript->valuestring : "",
-        cJSON_IsString(response) ? response->valuestring : "");
+        cJSON_IsString(response) ? response->valuestring : "",
+        tasks.data(), task_count, cJSON_IsTrue(status_changed));
     cJSON_Delete(payload);
 }
 

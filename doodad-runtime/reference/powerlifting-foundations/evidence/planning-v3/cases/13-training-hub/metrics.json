@@ -1,0 +1,37 @@
+{
+  "screen_id": "powerlifting.training-hub",
+  "target": "reference/powerlifting-foundations/generated/concepts-v3/targets/13-training-hub.png",
+  "pixel": {
+    "width": 240,
+    "height": 240,
+    "pixel_count": 57600,
+    "channel_samples": 172800,
+    "changed_pixels": 57279,
+    "changed_pixel_fraction": 0.9944270833333333,
+    "absolute_error_sum": 9758862,
+    "squared_error_sum": 1462388458,
+    "max_channel_error": 247,
+    "mae": 56.474895833333335,
+    "mse": 8462.896168981482,
+    "rmse": 91.99400072277258,
+    "exact": false
+  },
+  "quality": {
+    "node_count": 6,
+    "visible_node_count": 6,
+    "interactive_node_count": 3,
+    "minimum_touch_target_dp": 48,
+    "issue_count": 0,
+    "issue_counts": {},
+    "issue_code_counts": {},
+    "passed": true,
+    "issues": []
+  },
+  "artifacts": {
+    "reference": "cases/13-training-hub/reference.png",
+    "candidate": "cases/13-training-hub/candidate.png",
+    "side_by_side": "cases/13-training-hub/side_by_side.png",
+    "overlay": "cases/13-training-hub/overlay.png",
+    "difference": "cases/13-training-hub/difference.png"
+  }
+}

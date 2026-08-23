@@ -1,0 +1,150 @@
+I (236) esp_image: segment 1: paddr=0012459c vaddr=3fca0a00 size=06094h ( 24724) load
+I (242) esp_image: segment 2: paddr=0012a638 vaddr=40374000 size=059e0h ( 23008) load
+I (248) esp_image: segment 3: paddr=00130020 vaddr=42000020 size=19bcd8h (1686744) map
+I (556) esp_image: segment 4: paddr=002cbd00 vaddr=403799e0 size=17004h ( 94212) load
+I (577) esp_image: segment 5: paddr=002e2d0c vaddr=50000000 size=00020h (    32) load
+I (589) boot: Loaded app from partition at offset 0x10000
+I (589) boot: Disabling RNG early entropy source...
+I (591) esp_psram: Found 8MB PSRAM device
+I (591) esp_psram: Speed: 80MHz
+I (591) cpu_start: Multicore app
+I (1509) esp_psram: SPI SRAM memory test OK
+I (1517) cpu_start: Pro cpu start user code
+I (1517) cpu_start: cpu freq: 240000000 Hz
+I (1518) app_init: Application information:
+I (1518) app_init: Project name:     doodad_runtime
+I (1518) app_init: App version:      c73c16a-dirty
+I (1518) app_init: Compile time:     Aug  5 2026 13:20:58
+I (1518) app_init: ELF file SHA256:  746526c8a...
+I (1518) app_init: ESP-IDF:          v5.5.5
+I (1518) efuse_init: Min chip rev:     v0.0
+I (1519) efuse_init: Max chip rev:     v0.99 
+I (1519) efuse_init: Chip rev:         v0.2
+I (1519) heap_init: Initializing. RAM available for dynamic allocation:
+I (1519) heap_init: At 3FCD21C0 len 00017550 (93 KiB): RAM
+I (1519) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1519) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1520) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (1520) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1521) spi_flash: detected chip: generic
+I (1521) spi_flash: flash io: dio
+I (1522) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1523) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1523) main_task: Started on CPU0
+I (1524) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1524) main_task: Calling app_main()
+I (1524) doodad: [host] boot
+I (1541) M5GFX: [Autodetect] board_M5StackCoreS3SE
+W (1699) Power: setExtPower(true) is canceled.
+I (1770) doodad: [display] LVGL draw buffers caps=0x404 (19200 bytes each)
+I (1836) doodad: [host] display ready
+I (1894) package-service: package storage mounted: 3708 KiB free / 10060 KiB apps=1
+I (1895) weather-provider: ESP-IDF network provider enabled
+I (1912) pp: pp rom version: e7ae62f
+I (1912) net80211: net80211 rom version: e7ae62f
+I (1913) doodad: [host] runtime pthread started
+I (1914) wifi:wifi driver task: 3fcdd660, prio:23, stack:6656, core=0
+I (1921) wifi:wifi firmware version: b9f67df
+I (1922) wifi:wifi certification version: v7.0
+I (1922) wifi:config NVS flash: enabled
+I (1922) wifi:config nano formatting: disabled
+I (1922) wifi:Init data frame dynamic rx buffer num: 5
+I (1923) wifi:Init static rx mgmt buffer num: 4
+I (1923) wifi:Init management short buffer num: 8
+I (1923) wifi:Init static tx buffer num: 6
+I (1923) wifi:Init tx cache buffer num: 8
+I (1923) wifi:Init static tx FG buffer num: 2
+I (1924) wifi:Init static rx buffer size: 1600
+I (1924) wifi:Init static rx buffer num: 5
+I (1924) wifi:Init dynamic rx buffer num: 5
+I (1925) wifi_init: rx ba win: 5
+I (1926) wifi_init: accept mbox: 6
+I (1926) wifi_init: tcpip mbox: 32
+I (1926) wifi_init: udp mbox: 6
+I (1926) wifi_init: tcp mbox: 6
+I (1926) wifi_init: tcp tx win: 5760
+I (1926) wifi_init: tcp rx win: 5760
+I (1927) wifi_init: tcp mss: 1440
+I (1927) wifi_init: WiFi/LWIP prefer SPIRAM
+I (1927) wifi_init: WiFi IRAM OP enabled
+I (1927) wifi_init: WiFi RX IRAM OP enabled
+W (1928) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1929) phy_init: phy_version 712,87e8c20e,Apr 13 2026,18:51:10
+I (1962) wifi:mode : sta (1c:db:d4:ba:8e:00)
+I (1963) wifi:enable tsf
+I (1964) wifi:Set ps type: 0, coexist: 0
+
+I (1964) network-service: shared Wi-Fi station initialized
+I (1966) voice-service: agent journal restored revision=3 food=1 missed=1
+I (1976) voice-service: audio DMA reserved bytes=4096 free=28519 largest=25600
+I (1980) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=boot-shell revision=1 frame_hash=2664f9b8
+I (1984) doodad: [host] WAMR ready (interpreter, stack=16384, heap=16384)
+I (1988) doodad: [host] no legacy onboard package at /packages/active.wasm
+E (2011) vfs_fat_sdmmc: sdmmc_card_init failed (0x107).
+W (2012) doodad: [host] microSD unavailable: ESP_ERR_TIMEOUT
+I (2012) doodad: [host] using embedded recovery app
+I (2012) doodad: [host] EMBEDDED app size: 445 bytes
+I (2015) doodad: [host] module loaded
+I (2018) doodad: [host] module instantiated
+I (2019) doodad: [host] invoking app_start
+I (2045) wifi:state: init -> auth (0xb0)
+I (2048) wifi:state: auth -> assoc (0x0)
+I (2056) wifi:state: assoc -> run (0x10)
+I (2068) wifi:connected with melburnians, aid = 1, channel 1, BW20, bssid = 78:45:58:ec:1f:73
+I (2069) wifi:security: WPA2-PSK, phy: bgn, rssi: -56, cipher(pairwise:0x3, group:0x3), pmf:0
+I (2069) wifi:pm start, type: 0
+
+I (2070) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (2070) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (2076) doodad: [guest] ui_mount: 151 bytes, 3 nodes
+I (2076) doodad: [host] app started; instance remains resident
+I (2081) doodad: [host] steady state; free heap: 8046055 bytes
+I (2146) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (2228) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=home revision=6 frame_hash=42fbdc0c
+I (3088) esp_netif_handlers: sta ip: 192.168.1.47, mask: 255.255.255.0, gw: 192.168.1.1
+I (3780) doodad: [display] fps=2.0 frames=4 flushes=14 pixels=116655 avg_render_us=52264 max_render_us=91159 avg_flush_us=5109 max_flush_us=7020 touch_presses=0 objects=37 internal_free=34219 internal_min=29996 internal_largest=23552 psram_free=8010448 psram_min=7997244 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (4351) wifi:[ADDBA]RX DELBA, reason:39, delete tid:0, initiator:0(recipient)
+I (4529) voice-service: signaling endpoint discovered: ws://192.168.1.95:8765/ws
+I (4531) websocket_client: Started
+I (4594) DTLS: Init SRTP OK
+I (4849) voice-service: peer state=2
+I (4852) voice-service: peer state=3
+I (4854) AGENT: Start agent as Controlling
+I (4857) voice-service: remote audio codec=3 rate=48000 channels=1
+I (4858) voice-service: local peer message type=1 size=545
+I (4890) voice-service: local SDP chunks=9 delivered=1
+E (4949) AGENT: 0 Not found for bind remote 192.168.1.95:62188
+I (4961) PEER_DEF: Get peer role 0
+I (4961) PEER_DEF: Extract SDP: stream_count=1, audio_mid=255 (dir=3), video_mid=255 (dir=3), data_mid=255, assrc=1656936717, vssrc=0, vrtx_ssrc=0, vfmt=0, vrtx_fmt=0
+I (4962) AGENT: 0 Add remote type:1 192.168.1.95:62188
+I (4962) voice-service: peer state=4
+I (4962) voice-service: remote peer message type=1 size=1096 result=0
+I (4972) AGENT: 0 0 Send binding request (cand:0) local0:192.168.1.47:60655 remote0:192.168.1.95:62188 id:7043bfa4398150e937521657
+E (4976) AGENT: 0 Not found for bind remote 192.168.1.52:54444
+I (4999) AGENT: 0 0 LocalBinding resp 7043bfa4398150e937521657 local1
+I (4999) AGENT: 0 Select pair192.168.1.95:62188
+I (5000) AGENT: 0 0 Send binding request (cand:1) local0:192.168.1.47:60655 remote0:192.168.1.95:62188 id:4d9a2fdb76c3625e55075020
+I (5024) AGENT: 0 0 LocalBinding resp 4d9a2fdb76c3625e55075020 local1
+I (5024) AGENT: 0 Candidate responded
+I (5025) AGENT: 0 Connection OK 192.168.1.95:62188
+I (5025) voice-service: peer state=5
+I (5025) PEER_DEF: Start DTLS role as 1
+I (5027) voice-service: peer state=6
+I (5047) DTLS: Start to do server handshake
+E (5470) AGENT: 0 Not found for bind remote 192.168.1.52:54444
+I (5780) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7927896 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (5875) DTLS: SRTP connected OK
+I (5881) DTLS: Server handshake success
+I (5881) PEER_DEF: DTLS handshake success
+I (5882) voice-service: peer state=7
+I (7780) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (9782) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (11782) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (13783) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924860 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (15785) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (17786) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (19787) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (21789) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (23791) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (25793) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous
+I (27794) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28595 internal_min=28396 internal_largest=20480 psram_free=7924692 psram_min=7913180 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52264 total_max_render_us=91159 total_avg_flush_us=5109 total_max_flush_us=7020 transfer=synchronous

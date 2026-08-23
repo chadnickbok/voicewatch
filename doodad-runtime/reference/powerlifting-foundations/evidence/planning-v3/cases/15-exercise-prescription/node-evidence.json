@@ -1,0 +1,195 @@
+{
+  "schema_version": 1,
+  "snapshot_sha256": "d4bd25b961065ca152108e3538089bc2a327cd59738695d72e7d2071dcb91af1",
+  "capture_phase": {
+    "id": "resting",
+    "state": "resting",
+    "animation_fraction_milli": 0
+  },
+  "renderer": {
+    "kind": "lvgl",
+    "mode": "simulator",
+    "version": "9.5.0",
+    "build_sha256": "858d0558cbcdba7d655438a9379e3e9300ec8e553580509b519e3e1c7c2b6fb2"
+  },
+  "profile_id": "watch_square_240",
+  "physical_width_px": 240,
+  "physical_height_px": 240,
+  "nodes": [
+    {
+      "id": "powerlifting.exercise-prescription",
+      "parent_id": null,
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 240
+      },
+      "bounds_dp_q8_8": {
+        "x": 0,
+        "y": 0,
+        "width": 49152,
+        "height": 49152
+      },
+      "token_roles": {
+        "background": "background"
+      }
+    },
+    {
+      "id": "powerlifting.exercise-prescription.title",
+      "parent_id": "powerlifting.exercise-prescription",
+      "role": "heading",
+      "label": "BACK SQUAT",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 3,
+        "width": 220,
+        "height": 23
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 614,
+        "width": 45056,
+        "height": 4710
+      },
+      "token_roles": {
+        "typography": "title"
+      }
+    },
+    {
+      "id": "powerlifting.exercise-prescription.sets",
+      "parent_id": "powerlifting.exercise-prescription",
+      "role": "slider",
+      "label": "Work sets",
+      "value": "5 SETS",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "value_committed",
+          "action_id": "workout.plan.sets"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 30,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 6144,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "control": "primary",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.exercise-prescription.reps",
+      "parent_id": "powerlifting.exercise-prescription",
+      "role": "slider",
+      "label": "Target reps",
+      "value": "5 REPS",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "value_committed",
+          "action_id": "workout.plan.reps"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 93,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 19046,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "control": "primary",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.exercise-prescription.context",
+      "parent_id": "powerlifting.exercise-prescription",
+      "role": "list_item",
+      "label": "140 KG / 3:00 / AUTO WARMUP",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 155,
+        "width": 220,
+        "height": 18
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 31744,
+        "width": 45056,
+        "height": 3686
+      },
+      "token_roles": {
+        "container": "surface_container",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.exercise-prescription.done",
+      "parent_id": "powerlifting.exercise-prescription",
+      "role": "button",
+      "label": "DONE",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.plan.prescription.done"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 175,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 35840,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "container": "primary",
+        "content": "on_surface"
+      }
+    }
+  ]
+}

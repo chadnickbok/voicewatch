@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import time
 from dataclasses import dataclass
 
 from .jobs import JobEvent, JobManager
@@ -77,7 +78,7 @@ class AttentionBroker:
             focused["job_id"], focused["question_id"], answer, utterance_id, now_ms
         )
 
-    def background_snapshot(self) -> dict[str, object]:
+    def background_snapshot(self, now_ms: int | None = None) -> dict[str, object]:
         running = self.store.fetch_one(
             "SELECT COUNT(*) FROM jobs WHERE device_id=? "
             "AND state NOT IN ('ready_for_review','completed','failed','cancelled')",
@@ -93,11 +94,22 @@ class AttentionBroker:
             (self.device_id,),
         )[0]
         focused = self.jobs.focused()
+        projection_now = now_ms if now_ms is not None else int(time.time() * 1000)
+        tasks = self.jobs.task_snapshots(
+            projection_now,
+            active_only=True,
+            limit=3,
+        )
         return {
             "running_count": int(running),
             "focused_question": focused,
             "review_ready": bool(review_ready),
             "completion_pending": int(completion),
+            "status_changed": any(
+                projection_now - int(task["updated_at_ms"]) <= 30_000
+                for task in tasks
+            ),
+            "tasks": tasks,
         }
 
     def _deliver(self, event_id: str, channel: str, now_ms: int) -> None:

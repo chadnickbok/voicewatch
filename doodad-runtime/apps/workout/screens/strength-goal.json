@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.strength-goal",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.strength-goal.title",
+          "type": "text",
+          "props": {
+            "text": "STRENGTH GOAL",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.strength-goal.lift",
+          "type": "card",
+          "props": {
+            "title": "BACK SQUAT",
+            "body": "5RM TARGET",
+            "tone": "primary"
+          }
+        },
+        {
+          "id": "powerlifting.strength-goal.target",
+          "type": "stepper",
+          "props": {
+            "label": "5RM target",
+            "value": 150,
+            "unit": "KG",
+            "minimum": 50,
+            "maximum": 300,
+            "step": 5
+          },
+          "events": {
+            "valueCommitted": "workout.goal.weight"
+          },
+          "semantics": {
+            "label": "5RM target",
+            "value": "150 KG"
+          }
+        },
+        {
+          "id": "powerlifting.strength-goal.context",
+          "type": "text",
+          "props": {
+            "text": "142.5 CURRENT / 12 WEEKS",
+            "style": "caption",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.strength-goal.save",
+          "type": "button",
+          "props": {
+            "label": "SAVE GOAL",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.goal.save"
+          },
+          "semantics": {
+            "label": "SAVE GOAL"
+          }
+        }
+      ]
+    }
+  }
+}

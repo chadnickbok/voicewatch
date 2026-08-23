@@ -1,0 +1,37 @@
+{
+  "screen_id": "powerlifting.strength-goal",
+  "target": "reference/powerlifting-foundations/generated/concepts-v3/targets/16-strength-goal.png",
+  "pixel": {
+    "width": 240,
+    "height": 240,
+    "pixel_count": 57600,
+    "channel_samples": 172800,
+    "changed_pixels": 47469,
+    "changed_pixel_fraction": 0.8241145833333333,
+    "absolute_error_sum": 9012509,
+    "squared_error_sum": 1310394425,
+    "max_channel_error": 247,
+    "mae": 52.15572337962963,
+    "mse": 7583.301070601852,
+    "rmse": 87.08215127453991,
+    "exact": false
+  },
+  "quality": {
+    "node_count": 6,
+    "visible_node_count": 6,
+    "interactive_node_count": 2,
+    "minimum_touch_target_dp": 48,
+    "issue_count": 0,
+    "issue_counts": {},
+    "issue_code_counts": {},
+    "passed": true,
+    "issues": []
+  },
+  "artifacts": {
+    "reference": "cases/16-strength-goal/reference.png",
+    "candidate": "cases/16-strength-goal/candidate.png",
+    "side_by_side": "cases/16-strength-goal/side_by_side.png",
+    "overlay": "cases/16-strength-goal/overlay.png",
+    "difference": "cases/16-strength-goal/difference.png"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "generator": "built-in image generation",
+  "use_case": "ui-mockup",
+  "created_at": "2026-08-10",
+  "source_references": [
+    "reference/powerlifting-foundations/generated/concepts-v2/screens/01-today.png",
+    "reference/powerlifting-foundations/style-reference/weather-current-concept.png"
+  ],
+  "shared_prompt": "Create one implementation-facing square Doodad powerlifting smartwatch framebuffer. Use an exactly square full-bleed 240 x 240 canvas at high resolution with no watch case, bezel, border, caption, board, shadow, perspective, or environment. Preserve the near-black navy background, deep-indigo Material 3 Expressive surfaces, regular/medium sans serif, tabular hero numerals, off-white primary text, blue-gray secondary text, lavender current/primary, mint success, coral destructive, and amber assistance roles from the references. Use flat practical controls, the established rounded rectangles and spacing rhythm, one dominant number or decision, and a full-width inset bottom action. No logos, watermark, glossy 3D, neon, decorative outlines, athlete illustrations, circular medallions, tiny spreadsheet, or clipped text.",
+  "screens": [
+    {
+      "id": "powerlifting.training-hub",
+      "role": "Review the current routine and measurable goal before training.",
+      "source": "screens/13-training-hub.png",
+      "target_240": "targets/13-training-hub.png",
+      "source_sha256": "053e18e514de8a7c1072666a457aa00dc5d74bfd619274e47e3ee663c3f55a82",
+      "target_sha256": "db74cb3186c73a602b3a6408aac6d2dbac3a0277712c58ab86a32a1058d9cfb5",
+      "prompt": "TRAINING hub with HEAVY DAY, 14 SETS · 3 LIFTS, current SQUAT 5RM progress 142.5 / 150 KG at 95%, workout and goal edit affordances, and DONE."
+    },
+    {
+      "id": "powerlifting.workout-builder",
+      "role": "Edit the lift order and prescriptions in Heavy Day.",
+      "source": "screens/14-workout-builder.png",
+      "target_240": "targets/14-workout-builder.png",
+      "source_sha256": "d286f7087ddbe81c8b86cbcff31ae919b8cb104113cc1d90b77163d58f7bb042",
+      "target_sha256": "c3584816ad34821cfd533c943166f5383f7fa553f0172963d5daaa3f3673d793",
+      "prompt": "HEAVY DAY workout builder with 14 SETS; BACK SQUAT 5 × 5, BENCH PRESS 5 × 5, DEADLIFT 4 × 5, + ADD EXERCISE, and SAVE PLAN."
+    },
+    {
+      "id": "powerlifting.exercise-prescription",
+      "role": "Configure Back Squat work sets, reps, start load, rest, and warmups.",
+      "source": "screens/15-exercise-prescription.png",
+      "target_240": "targets/15-exercise-prescription.png",
+      "source_sha256": "959f69d4af89cdeb9331f85ec7fd7c5b989e94aeca7748d6e47136b3698d3374",
+      "target_sha256": "4d66d9ddb5c5c3e0a1488368a029f683ed4f3e03b66100c7e8db7c3f0f5b5b74",
+      "prompt": "BACK SQUAT prescription with dominant 5 SETS and 5 REPS controls, 140 KG start, 3:00 rest, automatic warmups, and DONE."
+    },
+    {
+      "id": "powerlifting.strength-goal",
+      "role": "Set a measurable 5RM target for Back Squat.",
+      "source": "screens/16-strength-goal.png",
+      "target_240": "targets/16-strength-goal.png",
+      "source_sha256": "2145cd5b3ec63e95dfb318493ae758e31f664cb3d625afc2e6a974b32df9c706",
+      "target_sha256": "baf7b7c3211b28cb76868d48048332892c19de8be0ceadda8907740294b3177f",
+      "prompt": "STRENGTH GOAL for BACK SQUAT with a dominant 150 KG 5RM target, CURRENT 142.5 KG, 12 WEEKS, restrained mint progress accent, and SAVE GOAL."
+    }
+  ]
+}

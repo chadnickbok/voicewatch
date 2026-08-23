@@ -11,6 +11,23 @@ namespace m3e::os {
 struct DomainSurfaceSnapshot;
 }
 
+constexpr std::size_t kDisplayAgentTaskCapacity = 3;
+
+struct DisplayAgentTask {
+    char task_id[65]{};
+    char title[25]{};
+    char status[25]{};
+    char elapsed[8]{};
+    char context_label[13]{};
+    char context[49]{};
+    char stages[4][13]{};
+    std::uint8_t completed_stage_count = 0;
+    std::uint8_t active_stage = 0;
+    std::uint8_t progress_percent = 0;
+    std::uint32_t primary_color_rgb = 0x7241ff;
+    std::uint8_t icon = 0;
+};
+
 bool display_init();
 void display_shell(const char* status, const char* source);
 // These functions always consume the owned object. Their result reflects the
@@ -34,7 +51,10 @@ bool display_publish_agent_state(
     bool completion_pending,
     std::uint8_t install_state,
     const char* transcript,
-    const char* response);
+    const char* response,
+    const DisplayAgentTask* tasks = nullptr,
+    std::size_t task_count = 0,
+    bool task_status_changed = false);
 bool display_publish_voice_level(std::uint8_t level);
 bool display_publish_install_state(
     std::uint8_t phase,

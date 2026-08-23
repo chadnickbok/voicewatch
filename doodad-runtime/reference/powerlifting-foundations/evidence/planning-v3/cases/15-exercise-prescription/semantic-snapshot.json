@@ -1,0 +1,83 @@
+{
+  "app": "workout",
+  "nodes": [
+    {
+      "id": "powerlifting.exercise-prescription",
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "text": "",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": null,
+      "children": 5
+    },
+    {
+      "id": "powerlifting.exercise-prescription.title",
+      "role": "heading",
+      "label": "BACK SQUAT",
+      "value": "",
+      "text": "BACK SQUAT",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.exercise-prescription.sets",
+      "role": "slider",
+      "label": "Work sets",
+      "value": "5 SETS",
+      "text": "Work sets",
+      "secondary": "SETS",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.exercise-prescription.reps",
+      "role": "slider",
+      "label": "Target reps",
+      "value": "5 REPS",
+      "text": "Target reps",
+      "secondary": "REPS",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.exercise-prescription.context",
+      "role": "list_item",
+      "label": "140 KG / 3:00 / AUTO WARMUP",
+      "value": "",
+      "text": "140 KG / 3:00 / AUTO WARMUP",
+      "secondary": "START / REST / WARMUPS",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.exercise-prescription.done",
+      "role": "button",
+      "label": "DONE",
+      "value": "",
+      "text": "DONE",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    }
+  ]
+}

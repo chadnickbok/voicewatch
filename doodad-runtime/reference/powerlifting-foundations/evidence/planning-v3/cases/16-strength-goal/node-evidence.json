@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "snapshot_sha256": "6b1aed70e32aa084b27573adb0f1e77d6d158474dfe21f242a0b4bc40844103f",
+  "capture_phase": {
+    "id": "resting",
+    "state": "resting",
+    "animation_fraction_milli": 0
+  },
+  "renderer": {
+    "kind": "lvgl",
+    "mode": "simulator",
+    "version": "9.5.0",
+    "build_sha256": "858d0558cbcdba7d655438a9379e3e9300ec8e553580509b519e3e1c7c2b6fb2"
+  },
+  "profile_id": "watch_square_240",
+  "physical_width_px": 240,
+  "physical_height_px": 240,
+  "nodes": [
+    {
+      "id": "powerlifting.strength-goal",
+      "parent_id": null,
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 240
+      },
+      "bounds_dp_q8_8": {
+        "x": 0,
+        "y": 0,
+        "width": 49152,
+        "height": 49152
+      },
+      "token_roles": {
+        "background": "background"
+      }
+    },
+    {
+      "id": "powerlifting.strength-goal.title",
+      "parent_id": "powerlifting.strength-goal",
+      "role": "heading",
+      "label": "STRENGTH GOAL",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 3,
+        "width": 220,
+        "height": 23
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 614,
+        "width": 45056,
+        "height": 4710
+      },
+      "token_roles": {
+        "typography": "title"
+      }
+    },
+    {
+      "id": "powerlifting.strength-goal.lift",
+      "parent_id": "powerlifting.strength-goal",
+      "role": "list_item",
+      "label": "BACK SQUAT",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 30,
+        "width": 220,
+        "height": 38
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 6144,
+        "width": 45056,
+        "height": 7782
+      },
+      "token_roles": {
+        "container": "surface_container",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.strength-goal.target",
+      "parent_id": "powerlifting.strength-goal",
+      "role": "slider",
+      "label": "5RM target",
+      "value": "150 KG",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "value_committed",
+          "action_id": "workout.goal.weight"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 73,
+        "width": 220,
+        "height": 80
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 14950,
+        "width": 45056,
+        "height": 16384
+      },
+      "token_roles": {
+        "control": "primary",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.strength-goal.context",
+      "parent_id": "powerlifting.strength-goal",
+      "role": "text",
+      "label": "142.5 CURRENT / 12 WEEKS",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 158,
+        "width": 220,
+        "height": 15
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 32358,
+        "width": 45056,
+        "height": 3072
+      },
+      "token_roles": {
+        "typography": "caption"
+      }
+    },
+    {
+      "id": "powerlifting.strength-goal.save",
+      "parent_id": "powerlifting.strength-goal",
+      "role": "button",
+      "label": "SAVE GOAL",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.goal.save"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 175,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 35840,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "container": "primary",
+        "content": "on_surface"
+      }
+    }
+  ]
+}

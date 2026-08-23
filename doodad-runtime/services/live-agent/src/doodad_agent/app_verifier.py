@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import math
 import os
 import struct
 import subprocess
@@ -14,6 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator
+from PIL import Image, ImageChops, ImageFilter, ImageStat
 from referencing import Registry, Resource
 
 
@@ -52,9 +54,10 @@ class VerifiedArtifact:
     sha256: str
     summary: str
     gates: tuple[str, ...]
+    visual_review: dict[str, Any] | None = None
 
     def document(self) -> dict[str, Any]:
-        return {
+        document = {
             "artifact_id": self.artifact_id,
             "package_path": self.package_path,
             "preview_path": self.preview_path,
@@ -62,6 +65,9 @@ class VerifiedArtifact:
             "summary": self.summary,
             "gates": list(self.gates),
         }
+        if self.visual_review is not None:
+            document["visual_review"] = self.visual_review
+        return document
 
 
 class GeneratedAppVerifier:
@@ -75,6 +81,15 @@ class GeneratedAppVerifier:
     def __init__(self, runtime_root: Path, timeout_seconds: int = 600) -> None:
         self.runtime_root = runtime_root.resolve()
         self.timeout_seconds = timeout_seconds
+        try:
+            configured_visual_rmse = float(
+                os.getenv("DOODAD_VISUAL_MAX_RMSE", "0.38")
+            )
+        except ValueError as error:
+            raise ValueError("DOODAD_VISUAL_MAX_RMSE must be numeric") from error
+        if not 0.05 <= configured_visual_rmse <= 0.75:
+            raise ValueError("DOODAD_VISUAL_MAX_RMSE must be between 0.05 and 0.75")
+        self.visual_max_rmse = configured_visual_rmse
         configured = os.getenv("DOODAD_GENERATED_CAPABILITIES", "")
         self.allowed_capabilities = (
             {item.strip() for item in configured.split(",") if item.strip()}
@@ -109,6 +124,7 @@ class GeneratedAppVerifier:
         appspec = self._read_json(app / "appspec.json")
         agent = self._read_json(app / "agent.json")
         self._validate_schema("generated-app-plan-v1.schema.json", plan)
+        design, primary_target = self.validate_design(workspace, plan)
         self._validate_schema("manifest-v1.schema.json", manifest)
         self._validate_schema("appspec-v1.schema.json", appspec)
         self._validate_schema("agent-contract-v1.schema.json", agent)
@@ -186,6 +202,10 @@ class GeneratedAppVerifier:
         preview = package / "preview.bmp"
         self._validate_preview(preview)
         gates.append("simulator-render")
+        visual_review = self._compare_visual_target(
+            workspace, preview, primary_target, design
+        )
+        gates.append("visual-target-compare")
         digest, _ = package_tree_snapshot(package)
         artifact_id = f"{manifest['id']}@{manifest['version']}"
         summary = f"{manifest['name']} passed {len(gates)} independent gates."
@@ -196,7 +216,143 @@ class GeneratedAppVerifier:
             digest,
             summary,
             tuple(gates),
+            visual_review,
         )
+
+    def validate_plan(self, plan: dict[str, Any]) -> None:
+        """Validate a plan before asking the user to approve it."""
+
+        self._validate_schema("generated-app-plan-v1.schema.json", plan)
+
+    def validate_design(
+        self, workspace: Path, plan: dict[str, Any]
+    ) -> tuple[dict[str, Any], Path]:
+        """Validate immutable ImageGen targets before implementation begins."""
+
+        approval = self._read_json(workspace / "PLAN_APPROVAL.json")
+        approved_sha256 = approval.get("plan_sha256")
+        if approved_sha256 != self.plan_sha256(plan):
+            raise VerificationError("build plan no longer matches its voice approval")
+        design = self._read_json(workspace / "design" / "DESIGN_MANIFEST.json")
+        self._validate_schema("generated-app-design-v1.schema.json", design)
+        if design.get("app_id") != plan.get("app_id"):
+            raise VerificationError("design app_id does not match the approved plan")
+        if design.get("plan_sha256") != self.plan_sha256(plan):
+            raise VerificationError("design does not target the approved plan revision")
+        references = design.get("source_references", [])
+        for relative in references:
+            path = (workspace / str(relative)).resolve()
+            reference_root = (workspace / "reference" / "design-language").resolve()
+            if not path.is_relative_to(reference_root) or not path.is_file():
+                raise VerificationError(
+                    f"design source reference is unavailable: {relative}"
+                )
+        primary = [
+            screen for screen in design.get("screens", []) if screen.get("primary") is True
+        ]
+        if len(primary) != 1:
+            raise VerificationError("design manifest must select exactly one primary screen")
+        for screen in design.get("screens", []):
+            target = (workspace / "design" / str(screen["target"])).resolve()
+            target_root = (workspace / "design" / "targets").resolve()
+            if not target.is_relative_to(target_root) or not target.is_file():
+                raise VerificationError(f"design target is unavailable: {screen['target']}")
+            self._validate_target_png(target)
+        return design, (workspace / "design" / str(primary[0]["target"])).resolve()
+
+    @staticmethod
+    def plan_sha256(plan: dict[str, Any]) -> str:
+        payload = json.dumps(
+            plan, sort_keys=True, separators=(",", ":"), ensure_ascii=False
+        ).encode("utf-8")
+        return hashlib.sha256(payload).hexdigest()
+
+    @staticmethod
+    def _validate_target_png(path: Path) -> None:
+        try:
+            with Image.open(path) as image:
+                if image.format != "PNG":
+                    raise VerificationError(f"design target is not a PNG: {path.name}")
+                if image.size != (240, 240):
+                    raise VerificationError(
+                        f"design target is {image.width}x{image.height}, expected 240x240"
+                    )
+        except OSError as error:
+            raise VerificationError(f"cannot read design target: {error}") from error
+
+    def _compare_visual_target(
+        self,
+        workspace: Path,
+        preview: Path,
+        target: Path,
+        design: dict[str, Any],
+    ) -> dict[str, Any]:
+        try:
+            with Image.open(target) as opened_target, Image.open(preview) as opened_preview:
+                target_rgb = opened_target.convert("RGB")
+                preview_rgb = opened_preview.convert("RGB")
+        except OSError as error:
+            raise VerificationError(f"cannot compare simulator visual: {error}") from error
+        if preview_rgb.size != target_rgb.size:
+            raise VerificationError("simulator and design target dimensions differ")
+
+        target_structure = target_rgb.filter(ImageFilter.GaussianBlur(2)).resize(
+            (48, 48), Image.Resampling.LANCZOS
+        )
+        preview_structure = preview_rgb.filter(ImageFilter.GaussianBlur(2)).resize(
+            (48, 48), Image.Resampling.LANCZOS
+        )
+        structural_rmse = self._normalized_rmse(target_structure, preview_structure)
+        pixel_rmse = self._normalized_rmse(target_rgb, preview_rgb)
+        target_mean = ImageStat.Stat(target_rgb).mean
+        preview_mean = ImageStat.Stat(preview_rgb).mean
+        theme_distance = math.sqrt(
+            sum((left - right) ** 2 for left, right in zip(target_mean, preview_mean))
+            / 3
+        ) / 255
+
+        review_root = workspace / "design" / "review"
+        review_root.mkdir(parents=True, exist_ok=True)
+        side_by_side = Image.new("RGB", (480, 240), "black")
+        side_by_side.paste(target_rgb, (0, 0))
+        side_by_side.paste(preview_rgb, (240, 0))
+        side_by_side_path = review_root / "target-vs-simulator.png"
+        side_by_side.save(side_by_side_path)
+        difference_path = review_root / "difference.png"
+        ImageChops.difference(target_rgb, preview_rgb).save(difference_path)
+        report = {
+            "schema_version": 1,
+            "primary_screen": next(
+                screen["id"] for screen in design["screens"] if screen["primary"]
+            ),
+            "target_path": str(target),
+            "simulator_path": str(preview),
+            "structural_rmse": round(structural_rmse, 6),
+            "pixel_rmse": round(pixel_rmse, 6),
+            "theme_distance": round(theme_distance, 6),
+            "maximum_structural_rmse": self.visual_max_rmse,
+            "maximum_theme_distance": 0.25,
+            "side_by_side_path": str(side_by_side_path),
+            "difference_path": str(difference_path),
+        }
+        report_path = review_root / "VISUAL_COMPARISON.json"
+        report_path.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+        report["report_path"] = str(report_path)
+        if structural_rmse > self.visual_max_rmse or theme_distance > 0.25:
+            raise VerificationError(
+                "simulator visual missed the approved target "
+                f"(structural RMSE {structural_rmse:.3f}/{self.visual_max_rmse:.3f}, "
+                f"theme distance {theme_distance:.3f}/0.250); "
+                "inspect design/review/target-vs-simulator.png"
+            )
+        return report
+
+    @staticmethod
+    def _normalized_rmse(left: Image.Image, right: Image.Image) -> float:
+        histogram = ImageChops.difference(left, right).histogram()
+        squared = sum((index % 256) ** 2 * count for index, count in enumerate(histogram))
+        samples = left.width * left.height * len(left.getbands())
+        return math.sqrt(squared / samples) / 255
 
     def _validate_schema(self, filename: str, document: object) -> None:
         path = self.runtime_root / "contracts" / filename

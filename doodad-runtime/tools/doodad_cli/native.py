@@ -48,9 +48,27 @@ SceneOperationCallback = ctypes.CFUNCTYPE(
 )
 
 
+class NativeAgentTask(ctypes.Structure):
+    _fields_ = [
+        ("task_id", ctypes.c_char_p),
+        ("title", ctypes.c_char_p),
+        ("status", ctypes.c_char_p),
+        ("elapsed", ctypes.c_char_p),
+        ("context_label", ctypes.c_char_p),
+        ("context", ctypes.c_char_p),
+        ("stages", ctypes.c_char_p * 4),
+        ("completed_stage_count", ctypes.c_uint8),
+        ("active_stage", ctypes.c_uint8),
+        ("progress_percent", ctypes.c_uint8),
+        ("primary_color_rgb", ctypes.c_uint32),
+        ("icon", ctypes.c_uint8),
+    ]
+
+
 class NativeHost:
-    WIDTH = 240
-    HEIGHT = 240
+    WIDTH = 410
+    HEIGHT = 502
+    PROFILE_ID = "twatch_ultra_410x502"
     SYSTEM_SURFACES = {
         "watch_face": 0,
         "live_cards": 1,
@@ -156,6 +174,13 @@ class NativeHost:
             ctypes.c_int32,
         ]
         library.doodad_host_system_scroll_launcher.restype = ctypes.c_int
+        library.doodad_host_set_agent_tasks.argtypes = [
+            ctypes.POINTER(NativeAgentTask),
+            ctypes.c_size_t,
+            ctypes.c_uint8,
+            ctypes.c_int,
+        ]
+        library.doodad_host_set_agent_tasks.restype = ctypes.c_int
         library.doodad_host_show_appspec.argtypes = [
             ctypes.POINTER(ctypes.c_uint8),
             ctypes.c_size_t,
@@ -329,6 +354,63 @@ class NativeHost:
         ):
             raise DoodadError(self.last_error())
 
+    def set_agent_tasks(
+        self,
+        tasks: list[dict[str, object]],
+        *,
+        active_count: int | None = None,
+        status_changed: bool = False,
+    ) -> None:
+        if len(tasks) > 3:
+            raise ValueError("the watch agent surface supports at most three rows")
+        icon_ids = {
+            "app_builder": 0,
+            "research": 1,
+            "monitoring": 2,
+            "presentation": 3,
+        }
+
+        def encoded(value: object) -> bytes:
+            return str(value or "").encode("utf-8")
+
+        native = (NativeAgentTask * len(tasks))()
+        retained: list[bytes] = []
+        for index, task in enumerate(tasks):
+            values = [
+                encoded(task.get("job_id")),
+                encoded(task.get("title")),
+                encoded(task.get("status")),
+                encoded(task.get("elapsed")),
+                encoded(task.get("detail_label")),
+                encoded(task.get("detail")),
+            ]
+            retained.extend(values)
+            stages = list(task.get("stages", []))[:4]
+            stage_values = [encoded(stages[i] if i < len(stages) else "") for i in range(4)]
+            retained.extend(stage_values)
+            color_text = str(task.get("color", "#7241FF"))
+            try:
+                color = int(color_text.removeprefix("#"), 16)
+            except ValueError:
+                color = 0x7241FF
+            native[index] = NativeAgentTask(
+                *values,
+                (ctypes.c_char_p * 4)(*stage_values),
+                int(task.get("completed_stages", 0)),
+                int(task.get("active_stage", 0)),
+                int(task.get("progress", 0)),
+                color,
+                icon_ids.get(str(task.get("icon", "monitoring")), 2),
+            )
+        count = len(tasks) if active_count is None else active_count
+        if not 0 <= count <= 255:
+            raise ValueError("active agent count must fit uint8")
+        pointer = native if tasks else None
+        if not self.library.doodad_host_set_agent_tasks(
+            pointer, len(tasks), count, int(status_changed)
+        ):
+            raise DoodadError(self.last_error())
+
     def system_back(self) -> None:
         if not self.library.doodad_host_system_back():
             raise DoodadError(self.last_error())
@@ -479,7 +561,7 @@ class NativeHost:
                     self.library_path.read_bytes()
                 ).hexdigest(),
             },
-            "profile_id": "watch_square_240",
+            "profile_id": self.PROFILE_ID,
             "physical_width_px": self.WIDTH,
             "physical_height_px": self.HEIGHT,
             "nodes": layout["nodes"],
@@ -692,7 +774,9 @@ class NativeHost:
                 f"native framebuffer has {pixel_count} pixels; expected {expected}"
             )
         pixels = self.library.doodad_host_framebuffer()
-        row_bytes = self.WIDTH * 3
+        raw_row_bytes = self.WIDTH * 3
+        row_padding = (-raw_row_bytes) % 4
+        row_bytes = raw_row_bytes + row_padding
         image_bytes = row_bytes * self.HEIGHT
         header = struct.pack(
             "<2sIHHI",
@@ -723,6 +807,7 @@ class NativeHost:
                 green = ((value >> 5) & 0x3F) * 255 // 63
                 blue = (value & 0x1F) * 255 // 31
                 output.extend((blue, green, red))
+            output.extend(b"\0" * row_padding)
         path.parent.mkdir(parents=True, exist_ok=True)
         temporary = path.with_suffix(path.suffix + ".tmp")
         temporary.write_bytes(output)

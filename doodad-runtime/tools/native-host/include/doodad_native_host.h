@@ -60,6 +60,21 @@ typedef void (*doodad_host_scene_operation_callback_t)(
     const char* snapshot_json,
     size_t snapshot_size);
 
+typedef struct {
+    const char* task_id;
+    const char* title;
+    const char* status;
+    const char* elapsed;
+    const char* context_label;
+    const char* context;
+    const char* stages[4];
+    uint8_t completed_stage_count;
+    uint8_t active_stage;
+    uint8_t progress_percent;
+    uint32_t primary_color_rgb;
+    uint8_t icon;
+} doodad_host_agent_task_t;
+
 int doodad_host_create(void);
 void doodad_host_destroy(void);
 const char* doodad_host_last_error(void);
@@ -80,6 +95,11 @@ int doodad_host_system_home(void);
 int doodad_host_system_surface(void);
 int doodad_host_system_advance_animation(uint32_t milliseconds);
 int doodad_host_system_scroll_launcher(int32_t pixels);
+int doodad_host_set_agent_tasks(
+    const doodad_host_agent_task_t* tasks,
+    size_t task_count,
+    uint8_t active_count,
+    int status_changed);
 int doodad_host_show_appspec(const uint8_t* bytes, size_t size);
 int doodad_host_click_first_action(void);
 int doodad_host_click_button(const char* label);

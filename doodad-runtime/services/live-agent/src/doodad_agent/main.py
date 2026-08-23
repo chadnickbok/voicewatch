@@ -17,11 +17,13 @@ from zeroconf import IPVersion, ServiceInfo, Zeroconf
 
 from .attention import AttentionBroker
 from .app_delivery import AppArtifactServer, AppReadyPublisher
-from .builder import AppBuilder
+from .builder import AppBuilder, CompositeBuilder
 from .capabilities import CapabilityKernel
 from .codex_worker import CodexAppBuilder, default_codex_binary
+from .codex_work_worker import CodexWorkBuilder, SmtpDeliveryProvider
 from .controller import ForegroundController
 from .fake_worker import FakeAppBuilder, ManualClock
+from .fake_work_worker import FakeWorkBuilder
 from .jobs import JobManager
 from .metrics import DeviceLatencyTrace, LatencyTrace
 from .personal_bundle import (
@@ -94,13 +96,13 @@ def advertise(ip: str, port: int) -> tuple[Zeroconf, ServiceInfo]:
 
 
 def control_plane(database: Path, now_ms: int | None = None) -> tuple[
-    Store, JobManager, CapabilityKernel, FakeAppBuilder, AttentionBroker, ForegroundController
+    Store, JobManager, CapabilityKernel, AppBuilder, AttentionBroker, ForegroundController
 ]:
     store = Store(database)
     jobs = JobManager(store)
     jobs.recover_expired(now_ms if now_ms is not None else int(time.time() * 1000))
     kernel = CapabilityKernel(store, now_ms or 0)
-    builder = FakeAppBuilder(jobs)
+    builder = CompositeBuilder(FakeAppBuilder(jobs), FakeWorkBuilder(jobs))
     attention = AttentionBroker(store, jobs)
     controller = ForegroundController(kernel, builder, attention)
     return store, jobs, kernel, builder, attention, controller
@@ -200,13 +202,20 @@ async def serve(arguments: argparse.Namespace) -> None:
         workspace_root = Path(
             os.getenv("DOODAD_CODEX_WORKSPACE_ROOT", str(DEFAULT_CODEX_WORKSPACES))
         )
-        builder = CodexAppBuilder(
+        app_builder = CodexAppBuilder(
             jobs,
             RUNTIME_ROOT,
             workspace_root,
             binary=default_codex_binary(),
             packager=packager,
         )
+        work_builder = CodexWorkBuilder(
+            jobs,
+            workspace_root,
+            default_codex_binary(),
+            delivery=SmtpDeliveryProvider.from_environment(),
+        )
+        builder = CompositeBuilder(app_builder, work_builder)
         attention = AttentionBroker(store, jobs)
         controller = ForegroundController(kernel, builder, attention)
         runtime = DeviceRuntime(device_id, controller, builder, attention)
@@ -253,6 +262,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             display: dict[str, str],
         ) -> None:
             document = {
+                "schema_version": 1,
                 "device_id": device_id,
                 "voice_phase": voice_phase,
                 "display": {
@@ -264,7 +274,9 @@ async def serve(arguments: argparse.Namespace) -> None:
                     "focused_question": background.get("focused_question") is not None,
                     "review_ready": bool(background.get("review_ready", False)),
                     "completion_pending": bool(background.get("completion_pending", 0)),
+                    "status_changed": bool(background.get("status_changed", False)),
                     "install_state": 0,
+                    "tasks": list(background.get("tasks", []))[:3],
                 },
             }
             changed = document != runtime.last_agent_state
@@ -325,6 +337,13 @@ async def serve(arguments: argparse.Namespace) -> None:
             runtime.downlink.cancel()
             if conversation is not None:
                 await conversation.cancel()
+        elif kind == "conversation.text" and conversation is not None:
+            text = payload.get("text")
+            if isinstance(text, str):
+                runtime.downlink.cancel()
+                if conversation.voice_phase == "speaking":
+                    await conversation.interrupt()
+                await conversation.submit_text(text)
         elif kind == "capture.started":
             runtime.downlink.cancel()
         elif kind == "capture.stopped":
@@ -410,6 +429,11 @@ def check_config() -> int:
         "DOODAD_PERSONAL_SIGNER_KEY_ID",
         "DOODAD_PERSONAL_HMAC_KEY_HEX",
         "DOODAD_PERSONAL_ARTIFACT_ROOT",
+        "DOODAD_SMTP_HOST",
+        "DOODAD_SMTP_PORT",
+        "DOODAD_SMTP_SENDER",
+        "DOODAD_SMTP_USERNAME",
+        "DOODAD_SMTP_PASSWORD",
     )
     try:
         personal_profile = personal_trust_from_environment()
@@ -439,7 +463,7 @@ def fake_demo(database: Path) -> int:
     try:
         jobs = JobManager(store)
         kernel = CapabilityKernel(store, clock.now_ms)
-        builder = FakeAppBuilder(jobs)
+        builder = CompositeBuilder(FakeAppBuilder(jobs), FakeWorkBuilder(jobs))
         attention = AttentionBroker(store, jobs)
         controller = ForegroundController(
             kernel, builder, attention, now_ms=lambda: clock.now_ms

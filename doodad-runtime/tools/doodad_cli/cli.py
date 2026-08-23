@@ -362,9 +362,14 @@ def load_package(package: ProjectPaths) -> NativeHost:
 
 def smoke_test_frame(frame: Path) -> None:
     payload = frame.read_bytes()
-    expected_size = 54 + 240 * 240 * 3
+    row_bytes = NativeHost.WIDTH * 3
+    padded_row_bytes = row_bytes + (-row_bytes) % 4
+    expected_size = 54 + padded_row_bytes * NativeHost.HEIGHT
     if len(payload) != expected_size or payload[:2] != b"BM":
-        raise DoodadError("headless renderer did not produce a 240x240 BMP")
+        raise DoodadError(
+            "headless renderer did not produce a "
+            f"{NativeHost.WIDTH}x{NativeHost.HEIGHT} BMP"
+        )
     if len(set(payload[54:])) < 4:
         raise DoodadError("headless renderer produced an empty-looking frame")
 

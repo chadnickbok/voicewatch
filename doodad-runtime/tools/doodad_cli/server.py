@@ -17,7 +17,11 @@ class PreviewState:
             "status": "starting",
             "message": "Building app",
             "stale": False,
-            "surface": {"width": 240, "height": 240},
+            "surface": {
+                "width": 410,
+                "height": 502,
+                "profile": "twatch_ultra_410x502",
+            },
             "engine": "WAMR 2.4.0",
             "renderer": "LVGL 9.5.0",
         }

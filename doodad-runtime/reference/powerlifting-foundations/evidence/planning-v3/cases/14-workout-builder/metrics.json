@@ -1,0 +1,37 @@
+{
+  "screen_id": "powerlifting.workout-builder",
+  "target": "reference/powerlifting-foundations/generated/concepts-v3/targets/14-workout-builder.png",
+  "pixel": {
+    "width": 240,
+    "height": 240,
+    "pixel_count": 57600,
+    "channel_samples": 172800,
+    "changed_pixels": 57490,
+    "changed_pixel_fraction": 0.9980902777777778,
+    "absolute_error_sum": 8790494,
+    "squared_error_sum": 1282727380,
+    "max_channel_error": 255,
+    "mae": 50.87091435185185,
+    "mse": 7423.190856481481,
+    "rmse": 86.15794134310244,
+    "exact": false
+  },
+  "quality": {
+    "node_count": 7,
+    "visible_node_count": 7,
+    "interactive_node_count": 3,
+    "minimum_touch_target_dp": 48,
+    "issue_count": 0,
+    "issue_counts": {},
+    "issue_code_counts": {},
+    "passed": true,
+    "issues": []
+  },
+  "artifacts": {
+    "reference": "cases/14-workout-builder/reference.png",
+    "candidate": "cases/14-workout-builder/candidate.png",
+    "side_by_side": "cases/14-workout-builder/side_by_side.png",
+    "overlay": "cases/14-workout-builder/overlay.png",
+    "difference": "cases/14-workout-builder/difference.png"
+  }
+}

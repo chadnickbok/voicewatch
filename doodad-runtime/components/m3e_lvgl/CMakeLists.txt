@@ -2,6 +2,8 @@ set(M3E_LVGL_SOURCES
     src/assets/calculator_font_20.c
     src/assets/calculator_result_font_40.c
     src/assets/home_time_font_114.c
+    src/assets/home_time_font_148.c
+    src/assets/shell_stat_font_38.c
     src/assets/launcher_font_26.c
     src/assets/agent_title_font_20.c
     src/assets/voice_display_font_44.c

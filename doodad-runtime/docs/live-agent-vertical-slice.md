@@ -736,13 +736,18 @@ For each build job:
 2. Start or resume the job's Codex thread with the isolated workspace as
    `cwd`, workspace-write sandboxing, no unrequested network access, and a
    non-interactive approval policy appropriate to that sandbox.
-3. Start a turn with the app brief, Doodad agent contract, package schemas,
-   design rules, existing Timer example, and exact verification commands.
-4. Normalize thread, turn, item, diff, command, approval, question, and
+3. Start a collaboration-mode `plan` turn with the app brief, Doodad agent
+   contract, package schemas, design rules, and existing examples. Route up to
+   three necessary clarification questions durably, then bind explicit voice
+   approval to the resulting plan hash.
+4. Run an ImageGen design turn against the approved plan and checked-in Doodad
+   visual references. Require one to three 240×240 targets and exactly one
+   primary initial state before starting the implementation turn.
+5. Normalize thread, turn, item, diff, command, approval, question, and
    completion notifications into compact job events.
-5. Persist `codex_thread_id`, active turn ID, workspace, last stable summary,
+6. Persist `codex_thread_id`, active turn ID, workspace, last stable summary,
    pending request, and artifact hash after every meaningful transition.
-6. Resume with a new turn after durable user input. Use `turn/steer` only when
+7. Resume with a new turn after durable user input. Use `turn/steer` only when
    the matching turn is still active and steering is actually preferable.
 
 The worker adapter handles `thread/start`, `thread/resume`, `turn/start`,
@@ -750,11 +755,11 @@ The worker adapter handles `thread/start`, `thread/resume`, `turn/start`,
 and server requests. It never forwards raw protocol messages to the foreground
 agent.
 
-`tool/requestUserInput` is an experimental app-server surface. The prototype
-may support it behind a pinned-version adapter, but correctness cannot depend
-on it. The stable fallback ends a turn with a constrained output schema whose
-result is either `ready`, `needs_input`, or `failed`; a later `turn/start`
-supplies the durable answer.
+`tool/requestUserInput` is an experimental app-server surface and remains
+behind the pinned-version adapter. Each question is mirrored into SQLite and
+the focused voice-attention path before the adapter returns an answer. Plan
+approval is service-owned rather than prompt-owned, uses an open bounded voice
+answer, and survives process restart.
 
 ### Builder input
 
@@ -772,7 +777,7 @@ The rest-timer brief includes:
 
 ### Build pipeline
 
-After Codex reports completion, a separate deterministic pipeline runs:
+After implementation, a separate deterministic pipeline runs:
 
 ```text
 schema validation
@@ -782,7 +787,9 @@ schema validation
   -> doodad test
   -> semantic and permission checks
   -> timer scenario/conformance checks
-  -> simulator render and artifact hashes
+  -> 240x240 simulator render
+  -> structural and theme comparison with the approved primary ImageGen target
+  -> visual review evidence and artifact hashes
   -> outer personal DDB1 packaging and immutable artifact storage
   -> ready_for_review
 ```

@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doodad.dev/contracts/agent-state-v1.schema.json",
+  "title": "Doodad agent state v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "device_id", "voice_phase", "display", "background"],
+  "properties": {
+    "schema_version": {"const": 1},
+    "device_id": {"type": "string", "minLength": 1, "maxLength": 96},
+    "voice_phase": {
+      "enum": ["idle", "listening", "thinking", "speaking", "clarifying", "error", "ready"]
+    },
+    "display": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["transcript", "response"],
+      "properties": {
+        "transcript": {"type": "string", "maxLength": 160},
+        "response": {"type": "string", "maxLength": 160}
+      }
+    },
+    "background": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "running_count",
+        "focused_question",
+        "review_ready",
+        "completion_pending",
+        "status_changed",
+        "install_state",
+        "tasks"
+      ],
+      "properties": {
+        "running_count": {"type": "integer", "minimum": 0, "maximum": 255},
+        "focused_question": {"type": "boolean"},
+        "review_ready": {"type": "boolean"},
+        "completion_pending": {"type": "boolean"},
+        "status_changed": {"type": "boolean"},
+        "install_state": {"type": "integer", "minimum": 0, "maximum": 4},
+        "tasks": {
+          "type": "array",
+          "maxItems": 3,
+          "items": {"$ref": "#/$defs/task"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "job_id",
+        "kind",
+        "title",
+        "status",
+        "state",
+        "summary",
+        "elapsed",
+        "progress",
+        "detail_label",
+        "detail",
+        "stages",
+        "active_stage",
+        "completed_stages",
+        "color",
+        "icon",
+        "updated_at_ms"
+      ],
+      "properties": {
+        "job_id": {"type": "string", "minLength": 1, "maxLength": 64},
+        "kind": {
+          "enum": ["app_build", "research_report", "presentation_delivery", "background_work"]
+        },
+        "title": {"type": "string", "minLength": 1, "maxLength": 24},
+        "status": {"type": "string", "minLength": 1, "maxLength": 24},
+        "state": {
+          "enum": ["new", "queued", "running", "needs_input", "ready_for_review", "completed", "failed", "cancelled"]
+        },
+        "summary": {"type": "string", "maxLength": 160},
+        "elapsed": {"type": "string", "pattern": "^[0-9]{1,2}:[0-5][0-9]$"},
+        "progress": {"type": "integer", "minimum": 0, "maximum": 100},
+        "detail_label": {"type": "string", "minLength": 1, "maxLength": 12},
+        "detail": {"type": "string", "minLength": 1, "maxLength": 48},
+        "stages": {
+          "type": "array",
+          "minItems": 4,
+          "maxItems": 4,
+          "items": {"type": "string", "minLength": 1, "maxLength": 12}
+        },
+        "active_stage": {"type": "integer", "minimum": 0, "maximum": 3},
+        "completed_stages": {"type": "integer", "minimum": 0, "maximum": 4},
+        "color": {"type": "string", "pattern": "^#[0-9A-F]{6}$"},
+        "icon": {"enum": ["app_builder", "research", "presentation", "monitoring"]},
+        "updated_at_ms": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}

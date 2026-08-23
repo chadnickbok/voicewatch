@@ -11,6 +11,7 @@
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "network_service.hpp"
 #include "package_service.hpp"
 
 namespace {
@@ -204,6 +205,14 @@ void* runtime_thread(void*) {
         ESP_LOGW(
             kTag,
             "[packages] personal app storage unavailable; native shell remains usable");
+    }
+
+    // The watch face owns a live wall clock. Give it a time source at boot
+    // instead of waiting for Weather or Voice to be opened for the first time.
+    if (network_service_connect(10'000)) {
+        network_service_sync_time(5'000);
+    } else {
+        ESP_LOGW(kTag, "[clock] network time unavailable");
     }
 
     if (!app_runtime_init()) {

@@ -1,0 +1,83 @@
+{
+  "app": "workout",
+  "nodes": [
+    {
+      "id": "powerlifting.strength-goal",
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "text": "",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": null,
+      "children": 5
+    },
+    {
+      "id": "powerlifting.strength-goal.title",
+      "role": "heading",
+      "label": "STRENGTH GOAL",
+      "value": "",
+      "text": "STRENGTH GOAL",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.strength-goal.lift",
+      "role": "list_item",
+      "label": "BACK SQUAT",
+      "value": "",
+      "text": "BACK SQUAT",
+      "secondary": "5RM TARGET",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.strength-goal.target",
+      "role": "slider",
+      "label": "5RM target",
+      "value": "150 KG",
+      "text": "5RM target",
+      "secondary": "KG",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.strength-goal.context",
+      "role": "text",
+      "label": "142.5 CURRENT / 12 WEEKS",
+      "value": "",
+      "text": "142.5 CURRENT / 12 WEEKS",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.strength-goal.save",
+      "role": "button",
+      "label": "SAVE GOAL",
+      "value": "",
+      "text": "SAVE GOAL",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    }
+  ]
+}

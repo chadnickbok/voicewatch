@@ -8,6 +8,7 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
+from PIL import Image
 
 import doodad_agent.app_verifier as app_verifier_module
 from doodad_agent.app_verifier import (
@@ -136,6 +137,64 @@ def test_verifier_distinguishes_ui_namespace_from_signed_package_identity() -> N
     agent["app_id"] = "dev.doodad.impostor"
     with pytest.raises(VerificationError, match="agent contract app_id"):
         RestTimerVerifier._validate_identity(manifest, appspec, agent)
+
+
+def test_generated_design_is_plan_bound_and_visual_comparison_is_gated(
+    tmp_path: Path,
+) -> None:
+    verifier = RestTimerVerifier(RUNTIME_ROOT)
+    plan = {
+        "app_id": "dev.doodad.generated-rest",
+    }
+    workspace = tmp_path / "workspace"
+    source = workspace / "reference" / "design-language" / "master.png"
+    target = workspace / "design" / "targets" / "primary.png"
+    preview = workspace / "package" / "preview.bmp"
+    source.parent.mkdir(parents=True)
+    target.parent.mkdir(parents=True)
+    preview.parent.mkdir(parents=True)
+    Image.new("RGB", (240, 240), (8, 14, 28)).save(source)
+    Image.new("RGB", (240, 240), (8, 14, 28)).save(target)
+    Image.new("RGB", (240, 240), (8, 14, 28)).save(preview)
+    design = {
+        "schema_version": 1,
+        "app_id": plan["app_id"],
+        "plan_sha256": verifier.plan_sha256(plan),
+        "generation_method": "imagegen",
+        "prompt": "Create a polished full-bleed square timer screen using the Doodad master.",
+        "source_references": ["reference/design-language/master.png"],
+        "screens": [
+            {
+                "id": "timer.initial",
+                "description": "Initial rest timer state.",
+                "target": "targets/primary.png",
+                "primary": True,
+            }
+        ],
+    }
+    (workspace / "PLAN_APPROVAL.json").write_text(
+        json.dumps(
+            {
+                "schema_version": 1,
+                "plan_sha256": verifier.plan_sha256(plan),
+                "voice_answer": "approve",
+                "approved_at_ms": 1,
+            }
+        ),
+        encoding="utf-8",
+    )
+    (workspace / "design" / "DESIGN_MANIFEST.json").write_text(
+        json.dumps(design), encoding="utf-8"
+    )
+
+    loaded, primary = verifier.validate_design(workspace, plan)
+    report = verifier._compare_visual_target(workspace, preview, primary, loaded)
+    assert report["structural_rmse"] == 0
+    assert Path(report["side_by_side_path"]).is_file()
+
+    Image.new("RGB", (240, 240), (250, 250, 250)).save(preview)
+    with pytest.raises(VerificationError, match="missed the approved target"):
+        verifier._compare_visual_target(workspace, preview, primary, loaded)
 
 
 @pytest.mark.parametrize("offset", [12, -33, -1])

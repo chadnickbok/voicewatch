@@ -28,6 +28,38 @@ class StubAttention:
 
 
 @pytest.mark.asyncio
+async def test_submit_text_bypasses_microphone_and_queues_one_final_turn() -> None:
+    queued: list[object] = []
+
+    class Worker:
+        async def queue_frame(self, frame: object) -> None:
+            queued.append(frame)
+
+    async def state_sink(
+        _phase: str,
+        _background: dict[str, object],
+        _display: dict[str, str],
+    ) -> None:
+        return None
+
+    conversation = object.__new__(LiveConversation)
+    conversation.worker = Worker()
+    conversation.voice_phase = "ready"
+    conversation.attention = StubAttention()
+    conversation.state_sink = state_sink
+    conversation._transcript_watchdog_task = None
+    conversation.user_text = "old"
+    conversation.assistant_text = "old"
+
+    await conversation.submit_text("  Create   a research report  ")
+
+    assert conversation.voice_phase == "listening"
+    assert len(queued) == 1
+    assert isinstance(queued[0], TranscriptionFrame)
+    assert queued[0].text == "Create a research report"
+
+
+@pytest.mark.asyncio
 async def test_final_before_user_stopped_does_not_arm_missing_transcript_watchdog() -> None:
     phases: list[str] = []
 

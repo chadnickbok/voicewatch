@@ -40,13 +40,42 @@ Production `start_app_build` jobs use the pinned Codex app-server binary over
 supervised stdio. Each job writes only to its own Application Support workspace,
 persists thread/turn/question/artifact state in SQLite, and reaches
 `ready_for_review` only after the deterministic verifier and outer personal
-packager succeed. Codex itself never receives a signing key, installs an app, or
-touches hardware. The deterministic verifier owns schema, semantics,
-plan/manifest agreement, permissions, Rust/Wasm, build/check/test,
-capability-specific conformance, and the 240×240
-simulator render. The outer packager then authenticates owner/app/version/ABI
+packager succeed. The worker first runs a real Codex plan-mode turn, routes up
+to three necessary clarification questions through the watch's focused voice
+path, and records explicit voice approval against the plan hash. A separate
+ImageGen turn creates one to three 240×240 visual targets from the checked-in
+Doodad design language before implementation begins.
+
+Codex itself never receives a signing key, installs an app, or touches
+hardware. The deterministic verifier owns schema, semantics, plan/manifest
+agreement, permissions, Rust/Wasm, build/check/test, capability-specific
+conformance, simulator rendering, and the primary target-versus-simulator
+comparison. `DOODAD_VISUAL_MAX_RMSE` can override the bounded structural-RMSE
+threshold (default `0.38`) for calibration runs. The outer packager then authenticates owner/app/version/ABI
 signed semantic icon/theme identity and payload-hash metadata plus raw `app.wasm` as DDB1 with the local user's
 HMAC key, outside the mutable Codex workspace.
+
+The same durable ledger now tracks app builds, research reports, and slide-deck
+delivery as independent concurrent tasks. Every `agent.state` projection carries
+up to three bounded task rows with real job IDs, stages, progress, and elapsed
+time; firmware uses those rows directly for the Agents list and detail screen.
+The bounded wire shape is `contracts/agent-state-v1.schema.json` and remains
+below the firmware's 16 KiB signaling limit.
+The foreground model has typed tools to start general work and read current task
+status, so status answers come from SQLite rather than conversational memory.
+
+Research work produces a Markdown report. Presentation work asks Codex for a
+bounded Markdown outline, converts it host-side into a real `.pptx`, and keeps
+email credentials outside the Codex process. Configure delivery with
+`DOODAD_SMTP_HOST`, `DOODAD_SMTP_SENDER`, and optionally `DOODAD_SMTP_PORT`,
+`DOODAD_SMTP_USERNAME`, and `DOODAD_SMTP_PASSWORD`. Without SMTP configuration,
+the task fails visibly at the controlled delivery gate instead of pretending it
+sent mail.
+
+For microphone-free live rehearsals, an identified signaling client may send a
+v1 `conversation.text` payload containing `{"text":"..."}`. It enters the normal
+foreground model/tool/TTS path after the microphone and STT boundary; production
+watch interaction remains push-to-talk.
 
 With personal delivery configured, this same aiohttp service announces the
 durable bundle as `app.ready` over the existing WebSocket and serves immutable
@@ -107,7 +136,8 @@ the service or generated-app runtime.
 
 The Phase 6 physical CoreS3 gate is still pending. To run it, start `serve`, say
 “Build me a rest timer,” and ask an unrelated workout question while the build
-badge remains active. At the next natural pause answer “ring.” After independent
+badge remains active. At the next natural pause answer “ring,” review the spoken
+plan, then say “approve.” After design generation and independent
 verification, expect one `app.ready` trace, watch download/verification, and an
 **APP READY** screen with **Launch now** and **Later**. Launch the timer, return
 Home, reopen it from **APPS**, then validate a second-generation detectable

@@ -16,8 +16,8 @@
 #include "wasm_export.h"
 
 enum {
-    kSurfaceWidth = 240,
-    kSurfaceHeight = 240,
+    kSurfaceWidth = 410,
+    kSurfaceHeight = 502,
     kDrawRows = 24,
     kMaximumModuleBytes = 256 * 1024,
     kMaximumAppSpecBytes = 4096,
@@ -88,6 +88,7 @@ enum {
 
 static int g_pending_system_action;
 static size_t g_selected_agent_index;
+static char g_selected_agent_id[65];
 
 static const m3e_system_shell_agent_item_t kSystemAgentItems[] = {
     {
@@ -157,6 +158,53 @@ static const m3e_system_shell_agent_detail_model_t kSystemAgentDetails[] = {
         M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING,
     },
 };
+
+enum { kSystemAgentCapacity = 3 };
+
+typedef struct {
+    char task_id[65];
+    char title[25];
+    char status[25];
+    char elapsed[8];
+    char context_label[13];
+    char context[49];
+    char stages[4][13];
+} system_agent_storage_t;
+
+static system_agent_storage_t g_system_agent_storage[kSystemAgentCapacity];
+static m3e_system_shell_agent_item_t g_dynamic_agent_items[kSystemAgentCapacity];
+static m3e_system_shell_agent_detail_model_t
+    g_dynamic_agent_details[kSystemAgentCapacity];
+static size_t g_dynamic_agent_count;
+static uint8_t g_dynamic_active_count;
+static bool g_dynamic_agent_status_changed;
+static bool g_has_dynamic_agents;
+
+static void copy_system_agent_text(
+    char* destination,
+    size_t capacity,
+    const char* source) {
+    if (capacity == 0) return;
+    snprintf(destination, capacity, "%s", source == NULL ? "" : source);
+}
+
+static const m3e_system_shell_agent_item_t* system_agent_items(void) {
+    return g_has_dynamic_agents ? g_dynamic_agent_items : kSystemAgentItems;
+}
+
+static const m3e_system_shell_agent_detail_model_t* system_agent_details(void) {
+    return g_has_dynamic_agents ? g_dynamic_agent_details : kSystemAgentDetails;
+}
+
+static size_t system_agent_count(void) {
+    return g_has_dynamic_agents
+        ? g_dynamic_agent_count
+        : sizeof(kSystemAgentItems) / sizeof(kSystemAgentItems[0]);
+}
+
+static uint8_t system_active_agent_count(void) {
+    return g_has_dynamic_agents ? g_dynamic_active_count : 3;
+}
 
 static void set_error(const char* message) {
     snprintf(g_last_error, sizeof(g_last_error), "%s", message);
@@ -762,6 +810,12 @@ static void queue_system_agents(lv_event_t* event) {
 static void queue_system_agent_detail(lv_event_t* event) {
     if (lv_event_get_code(event) == LV_EVENT_CLICKED) {
         g_selected_agent_index = (size_t)(uintptr_t)lv_event_get_user_data(event);
+        if (g_selected_agent_index < system_agent_count()) {
+            copy_system_agent_text(
+                g_selected_agent_id,
+                sizeof(g_selected_agent_id),
+                system_agent_items()[g_selected_agent_index].task_id);
+        }
         g_pending_system_action = kPendingSystemActionAgentDetail;
     }
 }
@@ -796,6 +850,9 @@ static int render_system_shell(void) {
         m3e_appspec_reset_mounted_document();
         m3e_system_shell_home_model_t model = {0};
         m3e_system_shell_default_home_model(&model);
+        model.agent_count = system_active_agent_count();
+        model.agent_status_changed = g_has_dynamic_agents
+            ? g_dynamic_agent_status_changed : true;
         m3e_system_shell_show_home(
             lv_screen_active(), &model, &g_system_home_view);
         lv_obj_add_event_cb(
@@ -861,9 +918,9 @@ static int render_system_shell(void) {
         m3e_appspec_reset_mounted_document();
         m3e_system_shell_show_agents(
             lv_screen_active(),
-            kSystemAgentItems,
-            sizeof(kSystemAgentItems) / sizeof(kSystemAgentItems[0]),
-            3,
+            system_agent_items(),
+            system_agent_count(),
+            system_active_agent_count(),
             &g_system_agents_view);
         for (size_t index = 0;
              index < g_system_agents_view.action_count;
@@ -876,13 +933,20 @@ static int render_system_shell(void) {
         }
     } else if (surface == M3E_SYSTEM_SHELL_SURFACE_AGENT_DETAIL) {
         m3e_appspec_reset_mounted_document();
-        if (g_selected_agent_index >=
-            sizeof(kSystemAgentDetails) / sizeof(kSystemAgentDetails[0])) {
+        if (g_selected_agent_index >= system_agent_count()) {
             g_selected_agent_index = 0;
+        }
+        if (system_agent_count() == 0) {
+            if (!m3e_system_shell_controller_dispatch(
+                    g_system_shell, M3E_SYSTEM_SHELL_INTENT_BACK)) {
+                set_error("system shell could not leave empty agent detail");
+                return 0;
+            }
+            return render_system_shell();
         }
         m3e_system_shell_show_agent_detail(
             lv_screen_active(),
-            &kSystemAgentDetails[g_selected_agent_index],
+            &system_agent_details()[g_selected_agent_index],
             &g_system_agent_detail_view);
         lv_obj_add_event_cb(
             g_system_agent_detail_view.back_action,
@@ -973,6 +1037,18 @@ int doodad_host_create(void) {
     g_wasm_call_count = 0;
     g_pending_system_action = kPendingSystemActionNone;
     g_selected_agent_index = 0;
+    memset(g_selected_agent_id, 0, sizeof(g_selected_agent_id));
+    g_dynamic_agent_count = 0;
+    g_dynamic_active_count = 0;
+    g_dynamic_agent_status_changed = false;
+    g_has_dynamic_agents = false;
+    memset(g_system_app_id, 0, sizeof(g_system_app_id));
+    memset(g_system_app_name, 0, sizeof(g_system_app_name));
+    memset(g_system_app_detail, 0, sizeof(g_system_app_detail));
+    memset(g_system_app_wasm_path, 0, sizeof(g_system_app_wasm_path));
+    memset(g_system_agent_storage, 0, sizeof(g_system_agent_storage));
+    memset(g_dynamic_agent_items, 0, sizeof(g_dynamic_agent_items));
+    memset(g_dynamic_agent_details, 0, sizeof(g_dynamic_agent_details));
     memset(&g_system_home_view, 0, sizeof(g_system_home_view));
     memset(&g_system_launcher_view, 0, sizeof(g_system_launcher_view));
     memset(&g_system_voice_view, 0, sizeof(g_system_voice_view));
@@ -1428,6 +1504,107 @@ int doodad_host_start_system_shell(
     return render_system_shell();
 }
 
+int doodad_host_set_agent_tasks(
+    const doodad_host_agent_task_t* tasks,
+    size_t task_count,
+    uint8_t active_count,
+    int status_changed) {
+    if ((tasks == NULL && task_count != 0) || task_count > kSystemAgentCapacity) {
+        set_error("agent task feed is invalid");
+        return 0;
+    }
+    memset(g_system_agent_storage, 0, sizeof(g_system_agent_storage));
+    memset(g_dynamic_agent_items, 0, sizeof(g_dynamic_agent_items));
+    memset(g_dynamic_agent_details, 0, sizeof(g_dynamic_agent_details));
+    for (size_t index = 0; index < task_count; ++index) {
+        if (tasks[index].task_id == NULL || tasks[index].title == NULL ||
+            tasks[index].task_id[0] == '\0' || tasks[index].title[0] == '\0') {
+            set_error("agent task identity is invalid");
+            return 0;
+        }
+        system_agent_storage_t* storage = &g_system_agent_storage[index];
+        copy_system_agent_text(
+            storage->task_id, sizeof(storage->task_id), tasks[index].task_id);
+        copy_system_agent_text(
+            storage->title, sizeof(storage->title), tasks[index].title);
+        copy_system_agent_text(
+            storage->status, sizeof(storage->status), tasks[index].status);
+        copy_system_agent_text(
+            storage->elapsed, sizeof(storage->elapsed), tasks[index].elapsed);
+        copy_system_agent_text(
+            storage->context_label,
+            sizeof(storage->context_label),
+            tasks[index].context_label);
+        copy_system_agent_text(
+            storage->context, sizeof(storage->context), tasks[index].context);
+        for (size_t stage = 0; stage < 4; ++stage) {
+            copy_system_agent_text(
+                storage->stages[stage],
+                sizeof(storage->stages[stage]),
+                tasks[index].stages[stage]);
+        }
+        g_dynamic_agent_items[index] = (m3e_system_shell_agent_item_t){
+            storage->task_id,
+            storage->title,
+            storage->status,
+            storage->elapsed,
+            tasks[index].primary_color_rgb,
+            tasks[index].icon,
+        };
+        g_dynamic_agent_details[index] =
+            (m3e_system_shell_agent_detail_model_t){
+                storage->title,
+                storage->status,
+                storage->elapsed,
+                storage->context_label,
+                storage->context,
+                {
+                    storage->stages[0],
+                    storage->stages[1],
+                    storage->stages[2],
+                    storage->stages[3],
+                },
+                tasks[index].completed_stage_count,
+                tasks[index].active_stage,
+                tasks[index].progress_percent,
+                tasks[index].primary_color_rgb,
+                tasks[index].icon,
+            };
+    }
+    g_dynamic_agent_count = task_count;
+    g_dynamic_active_count = active_count;
+    g_dynamic_agent_status_changed = status_changed != 0;
+    g_has_dynamic_agents = true;
+    if (g_selected_agent_id[0] != '\0') {
+        bool found = false;
+        for (size_t index = 0; index < task_count; ++index) {
+            if (strcmp(
+                    g_selected_agent_id,
+                    g_dynamic_agent_items[index].task_id) == 0) {
+                g_selected_agent_index = index;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            g_selected_agent_index = 0;
+            g_selected_agent_id[0] = '\0';
+            if (g_system_app_id[0] != '\0' &&
+                m3e_system_shell_controller_surface(g_system_shell) ==
+                    M3E_SYSTEM_SHELL_SURFACE_AGENT_DETAIL &&
+                !m3e_system_shell_controller_dispatch(
+                    g_system_shell, M3E_SYSTEM_SHELL_INTENT_BACK)) {
+                set_error("system shell could not leave removed agent detail");
+                return 0;
+            }
+        }
+    }
+    if (g_system_shell != NULL && g_system_app_id[0] != '\0') {
+        return render_system_shell();
+    }
+    return 1;
+}
+
 int doodad_host_click_system_action(const char* action_id) {
     if (g_system_shell == NULL || action_id == NULL || action_id[0] == '\0') {
         set_error("system action is invalid");
@@ -1449,7 +1626,7 @@ int doodad_host_click_system_action(const char* action_id) {
         for (size_t index = 0;
              index < g_system_agents_view.action_count;
              ++index) {
-            if (strcmp(action_id, kSystemAgentItems[index].task_id) == 0) {
+            if (strcmp(action_id, system_agent_items()[index].task_id) == 0) {
                 target = g_system_agents_view.actions[index];
                 break;
             }

@@ -11,7 +11,7 @@ Run this from `doodad-runtime`:
 The command builds the Rust guest, stages a package, checks the package against
 the versioned contracts, starts `app_start` in WAMR, validates the guest's
 canonical CBOR AppSpec through the same native decoder used on-device, and
-serves the resulting 240×240 RGB565 LVGL framebuffer to a local browser page.
+serves the resulting 410×502 RGB565 LVGL framebuffer to a local browser page.
 
 The browser is a viewer and inspector, not the application runtime. WebAssembly
 and LVGL both execute in the native host process. That keeps runtime behavior
@@ -65,21 +65,20 @@ arbitrary LVGL properties, native callbacks, or expressions.
 
 ## Display invariant
 
-All application and shell design happens on a 240×240 logical display.
+The simulator and shell now target the T-Watch Ultra's 410×502 portrait
+display directly. This is the sole active product profile; the old 240×240
+watch and CoreS3 preview profiles remain only as historical/reference data.
 
 ```text
-Simulator:  ┌──────────── 240 ────────────┐
-            │                             │ 240
-            └─────────────────────────────┘
-
-CoreS3:     40 px  ┌────── 240 ──────┐  40 px
-            gutter │  app + shell UI  │  gutter
-                   └──────────────────┘
+T-Watch Ultra:  ┌────────── 410 px ─────────┐
+                │                              │
+                │        app + shell UI        │ 502 px
+                │                              │
+                └──────────────────────────────┘
 ```
 
-The physical gutters are deliberately absent from the package contract. This
-prevents simulator work from drifting into 320×240 widescreen layouts that
-will not fit the eventual watch.
+The profile exposes 205×251 logical dp at 2 px/dp. The browser viewer preserves
+the physical portrait aspect ratio without scaling the captured framebuffer.
 
 ## Scope boundary and next seam
 

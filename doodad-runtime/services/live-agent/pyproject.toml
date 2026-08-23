@@ -14,7 +14,9 @@ dependencies = [
   "nltk==3.10.0",
   "numpy==2.4.6",
   "openai==2.52.0",
+  "pillow==12.3.0",
   "pipecat-ai[elevenlabs,openai,silero]==1.7.0",
+  "python-pptx==1.0.2",
   "soxr==1.0.0",
   "zeroconf==0.147.0"
 ]

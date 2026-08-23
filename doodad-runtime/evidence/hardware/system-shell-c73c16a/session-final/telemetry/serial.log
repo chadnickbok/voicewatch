@@ -1,0 +1,579 @@
+I (236) esp_image: segment 1: paddr=0012450c vaddr=3fca0a00 size=06094h ( 24724) load
+I (242) esp_image: segment 2: paddr=0012a5a8 vaddr=40374000 size=05a70h ( 23152) load
+I (248) esp_image: segment 3: paddr=00130020 vaddr=42000020 size=19bd64h (1686884) map
+I (556) esp_image: segment 4: paddr=002cbd8c vaddr=40379a70 size=16f74h ( 94068) load
+I (577) esp_image: segment 5: paddr=002e2d08 vaddr=50000000 size=00020h (    32) load
+I (589) boot: Loaded app from partition at offset 0x10000
+I (589) boot: Disabling RNG early entropy source...
+I (591) esp_psram: Found 8MB PSRAM device
+I (591) esp_psram: Speed: 80MHz
+I (591) cpu_start: Multicore app
+I (1509) esp_psram: SPI SRAM memory test OK
+I (1517) cpu_start: Pro cpu start user code
+I (1518) cpu_start: cpu freq: 240000000 Hz
+I (1518) app_init: Application information:
+I (1518) app_init: Project name:     doodad_runtime
+I (1518) app_init: App version:      c73c16a-dirty
+I (1518) app_init: Compile time:     Aug  5 2026 13:20:58
+I (1518) app_init: ELF file SHA256:  8026d7f85...
+I (1518) app_init: ESP-IDF:          v5.5.5
+I (1519) efuse_init: Min chip rev:     v0.0
+I (1519) efuse_init: Max chip rev:     v0.99 
+I (1519) efuse_init: Chip rev:         v0.2
+I (1519) heap_init: Initializing. RAM available for dynamic allocation:
+I (1519) heap_init: At 3FCD21C8 len 00017548 (93 KiB): RAM
+I (1519) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1520) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1520) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (1520) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1521) spi_flash: detected chip: generic
+I (1521) spi_flash: flash io: dio
+I (1522) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1523) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1524) main_task: Started on CPU0
+I (1525) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1525) main_task: Calling app_main()
+I (1525) doodad: [host] boot
+I (1555) M5GFX: [Autodetect] board_M5StackCoreS3SE
+W (1713) Power: setExtPower(true) is canceled.
+I (1784) doodad: [display] LVGL draw buffers caps=0x404 (19200 bytes each)
+I (1849) doodad: [host] display ready
+I (1908) package-service: package storage mounted: 3708 KiB free / 10060 KiB apps=1
+I (1909) weather-provider: ESP-IDF network provider enabled
+I (1924) pp: pp rom version: e7ae62f
+I (1925) net80211: net80211 rom version: e7ae62f
+I (1926) wifi:wifi driver task: 3fcdd668, prio:23, stack:6656, core=0
+I (1933) wifi:wifi firmware version: b9f67df
+I (1934) wifi:wifi certification version: v7.0
+I (1934) wifi:config NVS flash: enabled
+I (1934) wifi:config nano formatting: disabled
+I (1934) wifi:Init data frame dynamic rx buffer num: 5
+I (1935) wifi:Init static rx mgmt buffer num: 4
+I (1935) wifi:Init management short buffer num: 8
+I (1935) wifi:Init static tx buffer num: 6
+I (1935) wifi:Init tx cache buffer num: 8
+I (1935) wifi:Init static tx FG buffer num: 2
+I (1936) wifi:Init static rx buffer size: 1600
+I (1936) wifi:Init static rx buffer num: 5
+I (1936) wifi:Init dynamic rx buffer num: 5
+I (1925) doodad: [host] runtime pthread started
+I (1937) wifi_init: rx ba win: 5
+I (1937) wifi_init: accept mbox: 6
+I (1938) wifi_init: tcpip mbox: 32
+I (1938) wifi_init: udp mbox: 6
+I (1938) wifi_init: tcp mbox: 6
+I (1938) wifi_init: tcp tx win: 5760
+I (1938) wifi_init: tcp rx win: 5760
+I (1939) wifi_init: tcp mss: 1440
+I (1939) wifi_init: WiFi/LWIP prefer SPIRAM
+I (1939) wifi_init: WiFi IRAM OP enabled
+I (1939) wifi_init: WiFi RX IRAM OP enabled
+W (1940) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1941) phy_init: phy_version 712,87e8c20e,Apr 13 2026,18:51:10
+I (1975) wifi:mode : sta (1c:db:d4:ba:8e:00)
+I (1976) wifi:enable tsf
+I (1977) wifi:Set ps type: 0, coexist: 0
+
+I (1977) network-service: shared Wi-Fi station initialized
+I (1979) voice-service: agent journal restored revision=3 food=1 missed=1
+I (1989) voice-service: audio DMA reserved bytes=4096 free=28499 largest=25600
+I (1994) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=boot-shell revision=1 frame_hash=2664f9b8
+I (1998) doodad: [host] WAMR ready (interpreter, stack=16384, heap=16384)
+I (2002) doodad: [host] no legacy onboard package at /packages/active.wasm
+E (2025) vfs_fat_sdmmc: sdmmc_card_init failed (0x107).
+W (2026) doodad: [host] microSD unavailable: ESP_ERR_TIMEOUT
+I (2026) doodad: [host] using embedded recovery app
+I (2026) doodad: [host] EMBEDDED app size: 445 bytes
+I (2029) doodad: [host] module loaded
+I (2032) doodad: [host] module instantiated
+I (2033) doodad: [host] invoking app_start
+I (2058) wifi:state: init -> auth (0xb0)
+I (2064) wifi:state: auth -> assoc (0x0)
+I (2071) wifi:state: assoc -> run (0x10)
+I (2081) doodad: [guest] ui_mount: 151 bytes, 3 nodes
+I (2082) doodad: [host] app started; instance remains resident
+I (2086) wifi:connected with melburnians, aid = 1, channel 1, BW20, bssid = 78:45:58:ec:1f:73
+I (2087) wifi:security: WPA2-PSK, phy: bgn, rssi: -56, cipher(pairwise:0x3, group:0x3), pmf:0
+I (2087) wifi:pm start, type: 0
+
+I (2087) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (2088) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (2092) doodad: [host] steady state; free heap: 8046031 bytes
+I (2161) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (2241) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=home revision=6 frame_hash=42fbdc0c
+I (3133) esp_netif_handlers: sta ip: 192.168.1.47, mask: 255.255.255.0, gw: 192.168.1.1
+I (3793) doodad: [display] fps=2.0 frames=4 flushes=14 pixels=116655 avg_render_us=51940 max_render_us=90099 avg_flush_us=5112 max_flush_us=7088 touch_presses=0 objects=37 internal_free=34199 internal_min=29976 internal_largest=23552 psram_free=8010444 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+I (4524) voice-service: signaling endpoint discovered: ws://192.168.1.95:8765/ws
+I (4526) websocket_client: Started
+E (4956) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (4957) transport_base: Failed to open a new connection: 32772
+E (4957) transport_ws: Error connecting to host 192.168.1.95:8765
+E (4958) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (4958) websocket_client: Reconnect after 2000 ms
+I (4967) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=3
+I (5794) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+E (6996) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (6997) transport_base: Failed to open a new connection: 32772
+E (6998) transport_ws: Error connecting to host 192.168.1.95:8765
+E (6998) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (6999) websocket_client: Reconnect after 2000 ms
+I (7007) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=5
+I (7795) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+I (9796) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+E (10069) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (10070) transport_base: Failed to open a new connection: 32772
+E (10070) transport_ws: Error connecting to host 192.168.1.95:8765
+E (10071) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (10071) websocket_client: Reconnect after 2000 ms
+I (10077) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=7
+I (11798) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+E (13142) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (13143) transport_base: Failed to open a new connection: 32772
+E (13143) transport_ws: Error connecting to host 192.168.1.95:8765
+E (13143) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (13144) websocket_client: Reconnect after 2000 ms
+I (13147) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=9
+I (13799) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+I (15800) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+E (16214) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (16215) transport_base: Failed to open a new connection: 32772
+E (16215) transport_ws: Error connecting to host 192.168.1.95:8765
+E (16215) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (16216) websocket_client: Reconnect after 2000 ms
+I (16217) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=11
+I (17801) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+E (19285) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (19286) transport_base: Failed to open a new connection: 32772
+E (19286) transport_ws: Error connecting to host 192.168.1.95:8765
+E (19287) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (19287) websocket_client: Reconnect after 2000 ms
+I (19288) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=13
+I (19801) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=30323 internal_min=29140 internal_largest=20480 psram_free=8003736 psram_min=7998580 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=51940 total_max_render_us=90099 total_avg_flush_us=5112 total_max_flush_us=7088 transfer=synchronous
+I (21538) doodad: [system] input=6 intent=2 surface=2 overlay=0 generation=3
+I (21608) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=installed-launcher revision=8 frame_hash=28891abb
+I (21801) doodad: [display] fps=1.0 frames=2 flushes=6 pixels=57600 avg_render_us=61201 max_render_us=61201 avg_flush_us=5705 max_flush_us=5789 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+E (22358) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (22359) transport_base: Failed to open a new connection: 32772
+E (22359) transport_ws: Error connecting to host 192.168.1.95:8765
+E (22359) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (22360) websocket_client: Reconnect after 2000 ms
+I (22368) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=15
+I (23802) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+E (25428) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (25429) transport_base: Failed to open a new connection: 32772
+E (25429) transport_ws: Error connecting to host 192.168.1.95:8765
+E (25430) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (25430) websocket_client: Reconnect after 2000 ms
+I (25438) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=17
+I (25804) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+I (27805) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+E (28501) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (28502) transport_base: Failed to open a new connection: 32772
+E (28502) transport_ws: Error connecting to host 192.168.1.95:8765
+E (28502) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (28503) websocket_client: Reconnect after 2000 ms
+I (28508) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=19
+I (29806) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+E (31573) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (31574) transport_base: Failed to open a new connection: 32772
+E (31574) transport_ws: Error connecting to host 192.168.1.95:8765
+E (31575) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (31576) websocket_client: Reconnect after 2000 ms
+I (31578) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=21
+I (31808) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+I (33810) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+E (34644) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (34646) transport_base: Failed to open a new connection: 32772
+E (34646) transport_ws: Error connecting to host 192.168.1.95:8765
+E (34647) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (34647) websocket_client: Reconnect after 2000 ms
+I (34658) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=23
+I (35811) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+E (36692) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (36693) transport_base: Failed to open a new connection: 32772
+E (36693) transport_ws: Error connecting to host 192.168.1.95:8765
+E (36694) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (36695) websocket_client: Reconnect after 2000 ms
+I (36698) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=25
+I (37812) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037532 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+E (39765) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (39766) transport_base: Failed to open a new connection: 32772
+E (39766) transport_ws: Error connecting to host 192.168.1.95:8765
+E (39766) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (39767) websocket_client: Reconnect after 2000 ms
+I (39768) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=27
+I (39814) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=30323 internal_min=28496 internal_largest=20480 psram_free=8037512 psram_min=7998580 psram_largest=7995392 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=54255 total_max_render_us=90099 total_avg_flush_us=5290 total_max_flush_us=7088 transfer=synchronous
+I (41625) doodad: [host] PERSONAL app size: 32654 bytes
+I (41731) doodad: [host] module loaded
+I (41738) doodad: [host] module instantiated
+I (41740) doodad: [host] invoking app_start
+E (42837) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (42838) transport_base: Failed to open a new connection: 32772
+E (42838) transport_ws: Error connecting to host 192.168.1.95:8765
+E (42838) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (42839) websocket_client: Reconnect after 2000 ms
+I (42840) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=29
+E (44884) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (44885) transport_base: Failed to open a new connection: 32772
+E (44885) transport_ws: Error connecting to host 192.168.1.95:8765
+E (44886) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (44887) websocket_client: Reconnect after 2000 ms
+I (44890) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=31
+E (46744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (46744) task_wdt:  - IDLE0 (CPU 0)
+E (46744) task_wdt: Tasks currently running:
+E (46744) task_wdt: CPU 0: main
+E (46744) task_wdt: CPU 1: IDLE1
+E (46744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (47957) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (47958) transport_base: Failed to open a new connection: 32772
+E (47958) transport_ws: Error connecting to host 192.168.1.95:8765
+E (47958) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (47959) websocket_client: Reconnect after 2000 ms
+I (47960) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=33
+E (51029) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (51030) transport_base: Failed to open a new connection: 32772
+E (51031) transport_ws: Error connecting to host 192.168.1.95:8765
+E (51031) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (51032) websocket_client: Reconnect after 2000 ms
+I (51032) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=35
+E (51744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (51744) task_wdt:  - IDLE0 (CPU 0)
+E (51744) task_wdt: Tasks currently running:
+E (51744) task_wdt: CPU 0: main
+E (51744) task_wdt: CPU 1: IDLE1
+E (51744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (54102) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (54103) transport_base: Failed to open a new connection: 32772
+E (54103) transport_ws: Error connecting to host 192.168.1.95:8765
+E (54104) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (54104) websocket_client: Reconnect after 2000 ms
+I (54105) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=37
+E (56148) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (56149) transport_base: Failed to open a new connection: 32772
+E (56149) transport_ws: Error connecting to host 192.168.1.95:8765
+E (56150) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (56151) websocket_client: Reconnect after 2000 ms
+I (56155) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=39
+E (56744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (56744) task_wdt:  - IDLE0 (CPU 0)
+E (56744) task_wdt: Tasks currently running:
+E (56744) task_wdt: CPU 0: main
+E (56744) task_wdt: CPU 1: IDLE1
+E (56744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (59221) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (59222) transport_base: Failed to open a new connection: 32772
+E (59222) transport_ws: Error connecting to host 192.168.1.95:8765
+E (59222) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (59223) websocket_client: Reconnect after 2000 ms
+I (59226) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=41
+E (61744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (61744) task_wdt:  - IDLE0 (CPU 0)
+E (61744) task_wdt: Tasks currently running:
+E (61744) task_wdt: CPU 0: main
+E (61744) task_wdt: CPU 1: IDLE1
+E (61744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (62293) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (62294) transport_base: Failed to open a new connection: 32772
+E (62294) transport_ws: Error connecting to host 192.168.1.95:8765
+E (62295) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (62295) websocket_client: Reconnect after 2000 ms
+E (62296) doodad: [display] UI command queue overflow
+I (62296) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=43
+E (64306) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (64307) transport_base: Failed to open a new connection: 32772
+E (64307) transport_ws: Error connecting to host 192.168.1.95:8765
+E (64307) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (64308) websocket_client: Reconnect after 2000 ms
+E (64308) doodad: [display] UI command queue overflow
+I (64316) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=45
+E (66390) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (66391) transport_base: Failed to open a new connection: 32772
+E (66391) transport_ws: Error connecting to host 192.168.1.95:8765
+E (66392) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (66392) websocket_client: Reconnect after 2000 ms
+E (66392) doodad: [display] UI command queue overflow
+I (66396) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=47
+E (66744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (66744) task_wdt:  - IDLE0 (CPU 0)
+E (66744) task_wdt: Tasks currently running:
+E (66744) task_wdt: CPU 0: main
+E (66744) task_wdt: CPU 1: IDLE1
+E (66744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (68437) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (68438) transport_base: Failed to open a new connection: 32772
+E (68438) transport_ws: Error connecting to host 192.168.1.95:8765
+E (68439) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (68439) websocket_client: Reconnect after 2000 ms
+E (68440) doodad: [display] UI command queue overflow
+I (68446) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=49
+E (70485) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (70486) transport_base: Failed to open a new connection: 32772
+E (70486) transport_ws: Error connecting to host 192.168.1.95:8765
+E (70487) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (70487) websocket_client: Reconnect after 2000 ms
+E (70488) doodad: [display] UI command queue overflow
+I (70498) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=51
+E (71744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (71744) task_wdt:  - IDLE0 (CPU 0)
+E (71744) task_wdt: Tasks currently running:
+E (71744) task_wdt: CPU 0: main
+E (71744) task_wdt: CPU 1: IDLE1
+E (71744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (72534) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (72534) transport_base: Failed to open a new connection: 32772
+E (72535) transport_ws: Error connecting to host 192.168.1.95:8765
+E (72535) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (72536) websocket_client: Reconnect after 2000 ms
+E (72536) doodad: [display] UI command queue overflow
+I (72538) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=53
+E (75605) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (75606) transport_base: Failed to open a new connection: 32772
+E (75606) transport_ws: Error connecting to host 192.168.1.95:8765
+E (75607) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (75607) websocket_client: Reconnect after 2000 ms
+E (75607) doodad: [display] UI command queue overflow
+I (75608) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=55
+E (76744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (76744) task_wdt:  - IDLE0 (CPU 0)
+E (76744) task_wdt: Tasks currently running:
+E (76744) task_wdt: CPU 0: main
+E (76744) task_wdt: CPU 1: IDLE1
+E (76744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (77654) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (77655) transport_base: Failed to open a new connection: 32772
+E (77655) transport_ws: Error connecting to host 192.168.1.95:8765
+E (77655) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (77656) websocket_client: Reconnect after 2000 ms
+E (77656) doodad: [display] UI command queue overflow
+I (77658) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=57
+E (80725) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (80726) transport_base: Failed to open a new connection: 32772
+E (80726) transport_ws: Error connecting to host 192.168.1.95:8765
+E (80726) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (80727) websocket_client: Reconnect after 2000 ms
+E (80727) doodad: [display] UI command queue overflow
+I (80728) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=59
+E (81744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (81744) task_wdt:  - IDLE0 (CPU 0)
+E (81744) task_wdt: Tasks currently running:
+E (81744) task_wdt: CPU 0: main
+E (81744) task_wdt: CPU 1: IDLE1
+E (81744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (83734) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (83735) transport_base: Failed to open a new connection: 32772
+E (83735) transport_ws: Error connecting to host 192.168.1.95:8765
+E (83735) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (83736) websocket_client: Reconnect after 2000 ms
+E (83736) doodad: [display] UI command queue overflow
+I (83739) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=61
+E (86744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (86744) task_wdt:  - IDLE0 (CPU 0)
+E (86744) task_wdt: Tasks currently running:
+E (86744) task_wdt: CPU 0: main
+E (86744) task_wdt: CPU 1: IDLE1
+E (86744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (86767) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (86768) transport_base: Failed to open a new connection: 32772
+E (86768) transport_ws: Error connecting to host 192.168.1.95:8765
+E (86768) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (86769) websocket_client: Reconnect after 2000 ms
+E (86769) doodad: [display] UI command queue overflow
+I (86769) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=63
+E (89839) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (89840) transport_base: Failed to open a new connection: 32772
+E (89840) transport_ws: Error connecting to host 192.168.1.95:8765
+E (89840) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (89841) websocket_client: Reconnect after 2000 ms
+E (89841) doodad: [display] UI command queue overflow
+I (89850) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=65
+E (91744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (91744) task_wdt:  - IDLE0 (CPU 0)
+E (91744) task_wdt: Tasks currently running:
+E (91744) task_wdt: CPU 0: main
+E (91744) task_wdt: CPU 1: IDLE1
+E (91744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (91888) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (91889) transport_base: Failed to open a new connection: 32772
+E (91889) transport_ws: Error connecting to host 192.168.1.95:8765
+E (91890) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (91890) websocket_client: Reconnect after 2000 ms
+E (91891) doodad: [display] UI command queue overflow
+I (91891) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=67
+E (94985) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (94986) transport_base: Failed to open a new connection: 32772
+E (94986) transport_ws: Error connecting to host 192.168.1.95:8765
+E (94987) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (94988) websocket_client: Reconnect after 2000 ms
+E (94988) doodad: [display] UI command queue overflow
+I (94991) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=69
+E (96744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (96744) task_wdt:  - IDLE0 (CPU 0)
+E (96744) task_wdt: Tasks currently running:
+E (96744) task_wdt: CPU 0: main
+E (96744) task_wdt: CPU 1: IDLE1
+E (96744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (98031) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (98032) transport_base: Failed to open a new connection: 32772
+E (98032) transport_ws: Error connecting to host 192.168.1.95:8765
+E (98032) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (98033) websocket_client: Reconnect after 2000 ms
+E (98033) doodad: [display] UI command queue overflow
+I (98041) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=71
+E (101105) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (101106) transport_base: Failed to open a new connection: 32772
+E (101106) transport_ws: Error connecting to host 192.168.1.95:8765
+E (101107) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (101108) websocket_client: Reconnect after 2000 ms
+E (101108) doodad: [display] UI command queue overflow
+I (101111) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=73
+E (101744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (101744) task_wdt:  - IDLE0 (CPU 0)
+E (101744) task_wdt: Tasks currently running:
+E (101744) task_wdt: CPU 0: main
+E (101744) task_wdt: CPU 1: IDLE1
+E (101744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (104176) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (104177) transport_base: Failed to open a new connection: 32772
+E (104177) transport_ws: Error connecting to host 192.168.1.95:8765
+E (104177) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (104178) websocket_client: Reconnect after 2000 ms
+E (104178) doodad: [display] UI command queue overflow
+I (104181) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=75
+E (106744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (106744) task_wdt:  - IDLE0 (CPU 0)
+E (106744) task_wdt: Tasks currently running:
+E (106744) task_wdt: CPU 0: main
+E (106744) task_wdt: CPU 1: IDLE1
+E (106744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (107247) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (107248) transport_base: Failed to open a new connection: 32772
+E (107248) transport_ws: Error connecting to host 192.168.1.95:8765
+E (107248) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (107249) websocket_client: Reconnect after 2000 ms
+E (107249) doodad: [display] UI command queue overflow
+I (107251) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=77
+E (110324) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (110324) transport_base: Failed to open a new connection: 32772
+E (110325) transport_ws: Error connecting to host 192.168.1.95:8765
+E (110325) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (110326) websocket_client: Reconnect after 2000 ms
+E (110326) doodad: [display] UI command queue overflow
+I (110331) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=79
+E (111744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (111744) task_wdt:  - IDLE0 (CPU 0)
+E (111744) task_wdt: Tasks currently running:
+E (111744) task_wdt: CPU 0: main
+E (111744) task_wdt: CPU 1: IDLE1
+E (111744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (113391) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (113391) transport_base: Failed to open a new connection: 32772
+E (113392) transport_ws: Error connecting to host 192.168.1.95:8765
+E (113392) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (113393) websocket_client: Reconnect after 2000 ms
+E (113393) doodad: [display] UI command queue overflow
+I (113401) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=81
+E (116463) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (116464) transport_base: Failed to open a new connection: 32772
+E (116464) transport_ws: Error connecting to host 192.168.1.95:8765
+E (116464) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (116465) websocket_client: Reconnect after 2000 ms
+E (116465) doodad: [display] UI command queue overflow
+I (116471) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=83
+E (116744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (116744) task_wdt:  - IDLE0 (CPU 0)
+E (116744) task_wdt: Tasks currently running:
+E (116744) task_wdt: CPU 0: main
+E (116744) task_wdt: CPU 1: IDLE1
+E (116744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (119536) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (119537) transport_base: Failed to open a new connection: 32772
+E (119537) transport_ws: Error connecting to host 192.168.1.95:8765
+E (119537) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (119538) websocket_client: Reconnect after 2000 ms
+E (119538) doodad: [display] UI command queue overflow
+I (119541) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=85
+E (121584) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (121585) transport_base: Failed to open a new connection: 32772
+E (121585) transport_ws: Error connecting to host 192.168.1.95:8765
+E (121585) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (121586) websocket_client: Reconnect after 2000 ms
+E (121586) doodad: [display] UI command queue overflow
+I (121591) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=87
+E (121744) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (121744) task_wdt:  - IDLE0 (CPU 0)
+E (121744) task_wdt: Tasks currently running:
+E (121744) task_wdt: CPU 0: main
+E (121744) task_wdt: CPU 1: IDLE1
+E (121744) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420DDC32:0x3FCA3B00 0x420DE04C:0x3FCA3B20 0x40377855:0x3FCA3B50 0x4209E07C:0x3FCD8520 0x4209E15D:0x3FCD8560 0x420BAE5B:0x3FCD8590 0x420BB032:0x3FCD85B0 0x420BB0B4:0x3FCD85D0 0x42018E0F:0x3FCD85F0 0x420116FE:0x3FCD8610 0x42012D27:0x3FCD8630 0x420137DC:0x3FCD87C0 0x4200A3E7:0x3FCD8890 0x4219AD4B:0x3FCD88E0 0x40380D7D:0x3FCD8910
+
+E (123593) esp-tls: [sock=54] delayed connect error: Connection reset by peer
+E (123594) transport_base: Failed to open a new connection: 32772
+E (123594) transport_ws: Error connecting to host 192.168.1.95:8765
+E (123595) websocket_client: esp_transport_connect() failed with -1, transport_error=ESP_ERR_ESP_TLS_FAILED_CONNECT_TO_HOST, tls_error_code=0, tls_flags=0, esp_ws_handshake_status_code=0, errno=119
+I (123596) websocket_client: Reconnect after 2000 ms
+E (123596) doodad: [display] UI command queue overflow
+I (123601) voice-service: downlink reset reason=transport closed received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=89

@@ -1,0 +1,96 @@
+{
+  "app": "workout",
+  "nodes": [
+    {
+      "id": "powerlifting.workout-builder",
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "text": "",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": null,
+      "children": 6
+    },
+    {
+      "id": "powerlifting.workout-builder.title",
+      "role": "heading",
+      "label": "HEAVY DAY",
+      "value": "",
+      "text": "HEAVY DAY",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.workout-builder.count",
+      "role": "text",
+      "label": "14 SETS",
+      "value": "",
+      "text": "14 SETS",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.workout-builder.squat",
+      "role": "list_item",
+      "label": "BACK SQUAT",
+      "value": "",
+      "text": "BACK SQUAT",
+      "secondary": "5 X 5",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.workout-builder.remaining",
+      "role": "list_item",
+      "label": "BENCH 5 X 5  /  DEAD 4 X 5",
+      "value": "",
+      "text": "BENCH 5 X 5  /  DEAD 4 X 5",
+      "secondary": "2 MORE LIFTS",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.workout-builder.add",
+      "role": "list_item",
+      "label": "+ ADD EXERCISE",
+      "value": "",
+      "text": "+ ADD EXERCISE",
+      "secondary": "CHOOSE FROM RECENT LIFTS",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.workout-builder.save",
+      "role": "button",
+      "label": "SAVE PLAN",
+      "value": "",
+      "text": "SAVE PLAN",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    }
+  ]
+}

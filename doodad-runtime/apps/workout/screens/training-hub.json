@@ -1,0 +1,85 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.training-hub",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.training-hub.title",
+          "type": "text",
+          "props": {
+            "text": "TRAINING",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.training-hub.plan",
+          "type": "card",
+          "props": {
+            "title": "HEAVY DAY",
+            "body": "14 SETS / 3 LIFTS",
+            "tone": "primary"
+          },
+          "events": {
+            "tap": "workout.plan.edit"
+          },
+          "semantics": {
+            "label": "HEAVY DAY"
+          }
+        },
+        {
+          "id": "powerlifting.training-hub.goal",
+          "type": "card",
+          "props": {
+            "title": "142.5 / 150 KG",
+            "body": "SQUAT 5RM / 95% TO GOAL",
+            "tone": "secondary"
+          },
+          "events": {
+            "tap": "workout.goal.edit"
+          },
+          "semantics": {
+            "label": "142.5 / 150 KG"
+          }
+        },
+        {
+          "id": "powerlifting.training-hub.progress",
+          "type": "progress",
+          "props": {
+            "label": "Strength goal progress",
+            "value": 95,
+            "maximum": 100,
+            "style": "linear",
+            "tone": "secondary"
+          },
+          "semantics": {
+            "label": "Strength goal progress",
+            "value": "95 of 100"
+          }
+        },
+        {
+          "id": "powerlifting.training-hub.done",
+          "type": "button",
+          "props": {
+            "label": "DONE",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.training.done"
+          },
+          "semantics": {
+            "label": "DONE"
+          }
+        }
+      ]
+    }
+  }
+}

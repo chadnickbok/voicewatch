@@ -32,8 +32,14 @@
           "type": "card",
           "props": {
             "title": "14 SETS",
-            "body": "3 LIFTS / ABOUT 67 MIN",
+            "body": "3 LIFTS / TAP TO PLAN",
             "tone": "neutral"
+          },
+          "events": {
+            "tap": "workout.manage"
+          },
+          "semantics": {
+            "label": "14 SETS"
           }
         },
         {

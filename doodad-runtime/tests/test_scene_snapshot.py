@@ -221,7 +221,12 @@ class SceneSnapshotTests(unittest.TestCase):
         )
         self.assertEqual(
             evidence["nodes"][0]["bounds_px"],
-            {"x": 0, "y": 0, "width": 240, "height": 240},
+            {
+                "x": 0,
+                "y": 0,
+                "width": NativeHost.WIDTH,
+                "height": NativeHost.HEIGHT,
+            },
         )
         self.assertEqual(
             {node["kind"] for node in snapshot["nodes"]},

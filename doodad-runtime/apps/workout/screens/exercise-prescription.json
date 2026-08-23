@@ -1,0 +1,87 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.exercise-prescription",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.exercise-prescription.title",
+          "type": "text",
+          "props": {
+            "text": "BACK SQUAT",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-prescription.sets",
+          "type": "stepper",
+          "props": {
+            "label": "Work sets",
+            "value": 5,
+            "unit": "SETS",
+            "minimum": 1,
+            "maximum": 10,
+            "step": 1
+          },
+          "events": {
+            "valueCommitted": "workout.plan.sets"
+          },
+          "semantics": {
+            "label": "Work sets",
+            "value": "5 SETS"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-prescription.reps",
+          "type": "stepper",
+          "props": {
+            "label": "Target reps",
+            "value": 5,
+            "unit": "REPS",
+            "minimum": 1,
+            "maximum": 20,
+            "step": 1
+          },
+          "events": {
+            "valueCommitted": "workout.plan.reps"
+          },
+          "semantics": {
+            "label": "Target reps",
+            "value": "5 REPS"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-prescription.context",
+          "type": "card",
+          "props": {
+            "title": "140 KG / 3:00 / AUTO WARMUP",
+            "body": "START / REST / WARMUPS",
+            "tone": "secondary"
+          }
+        },
+        {
+          "id": "powerlifting.exercise-prescription.done",
+          "type": "button",
+          "props": {
+            "label": "DONE",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.plan.prescription.done"
+          },
+          "semantics": {
+            "label": "DONE"
+          }
+        }
+      ]
+    }
+  }
+}

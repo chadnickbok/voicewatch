@@ -1,0 +1,210 @@
+I (236) esp_image: segment 1: paddr=0012450c vaddr=3fca0a00 size=06094h ( 24724) load
+I (242) esp_image: segment 2: paddr=0012a5a8 vaddr=40374000 size=05a70h ( 23152) load
+I (248) esp_image: segment 3: paddr=00130020 vaddr=42000020 size=19bdf4h (1687028) map
+I (556) esp_image: segment 4: paddr=002cbe1c vaddr=40379a70 size=16f74h ( 94068) load
+I (577) esp_image: segment 5: paddr=002e2d98 vaddr=50000000 size=00020h (    32) load
+I (589) boot: Loaded app from partition at offset 0x10000
+I (589) boot: Disabling RNG early entropy source...
+I (591) esp_psram: Found 8MB PSRAM device
+I (591) esp_psram: Speed: 80MHz
+I (591) cpu_start: Multicore app
+I (1509) esp_psram: SPI SRAM memory test OK
+I (1517) cpu_start: Pro cpu start user code
+I (1517) cpu_start: cpu freq: 240000000 Hz
+I (1518) app_init: Application information:
+I (1518) app_init: Project name:     doodad_runtime
+I (1518) app_init: App version:      c73c16a-dirty
+I (1518) app_init: Compile time:     Aug  5 2026 13:20:58
+I (1518) app_init: ELF file SHA256:  a0145ac8a...
+I (1518) app_init: ESP-IDF:          v5.5.5
+I (1519) efuse_init: Min chip rev:     v0.0
+I (1519) efuse_init: Max chip rev:     v0.99 
+I (1519) efuse_init: Chip rev:         v0.2
+I (1519) heap_init: Initializing. RAM available for dynamic allocation:
+I (1519) heap_init: At 3FCD21C8 len 00017548 (93 KiB): RAM
+I (1519) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1520) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1520) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (1520) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1521) spi_flash: detected chip: generic
+I (1521) spi_flash: flash io: dio
+I (1522) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1523) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1524) main_task: Started on CPU0
+I (1525) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1525) main_task: Calling app_main()
+I (1525) doodad: [host] boot
+I (1555) M5GFX: [Autodetect] board_M5StackCoreS3SE
+W (1713) Power: setExtPower(true) is canceled.
+I (1784) doodad: [display] LVGL draw buffers caps=0x404 (19200 bytes each)
+I (1850) doodad: [host] display ready
+I (1909) package-service: package storage mounted: 3708 KiB free / 10060 KiB apps=1
+I (1909) weather-provider: ESP-IDF network provider enabled
+I (1924) doodad: [host] runtime pthread started
+I (1925) pp: pp rom version: e7ae62f
+I (1926) net80211: net80211 rom version: e7ae62f
+I (1927) wifi:wifi driver task: 3fcdd668, prio:23, stack:6656, core=0
+I (1934) wifi:wifi firmware version: b9f67df
+I (1935) wifi:wifi certification version: v7.0
+I (1935) wifi:config NVS flash: enabled
+I (1935) wifi:config nano formatting: disabled
+I (1935) wifi:Init data frame dynamic rx buffer num: 5
+I (1936) wifi:Init static rx mgmt buffer num: 4
+I (1936) wifi:Init management short buffer num: 8
+I (1936) wifi:Init static tx buffer num: 6
+I (1936) wifi:Init tx cache buffer num: 8
+I (1937) wifi:Init static tx FG buffer num: 2
+I (1937) wifi:Init static rx buffer size: 1600
+I (1937) wifi:Init static rx buffer num: 5
+I (1937) wifi:Init dynamic rx buffer num: 5
+I (1938) wifi_init: rx ba win: 5
+I (1939) wifi_init: accept mbox: 6
+I (1939) wifi_init: tcpip mbox: 32
+I (1939) wifi_init: udp mbox: 6
+I (1939) wifi_init: tcp mbox: 6
+I (1939) wifi_init: tcp tx win: 5760
+I (1939) wifi_init: tcp rx win: 5760
+I (1940) wifi_init: tcp mss: 1440
+I (1940) wifi_init: WiFi/LWIP prefer SPIRAM
+I (1940) wifi_init: WiFi IRAM OP enabled
+I (1940) wifi_init: WiFi RX IRAM OP enabled
+W (1941) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1942) phy_init: phy_version 712,87e8c20e,Apr 13 2026,18:51:10
+I (1976) wifi:mode : sta (1c:db:d4:ba:8e:00)
+I (1977) wifi:enable tsf
+I (1978) wifi:Set ps type: 0, coexist: 0
+
+I (1979) network-service: shared Wi-Fi station initialized
+I (1981) voice-service: agent journal restored revision=3 food=1 missed=1
+I (1990) voice-service: audio DMA reserved bytes=4096 free=28499 largest=25600
+I (1995) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=boot-shell revision=1 frame_hash=2664f9b8
+I (1998) doodad: [host] WAMR ready (interpreter, stack=16384, heap=16384)
+I (2002) doodad: [host] no legacy onboard package at /packages/active.wasm
+E (2026) vfs_fat_sdmmc: sdmmc_card_init failed (0x107).
+W (2027) doodad: [host] microSD unavailable: ESP_ERR_TIMEOUT
+I (2027) doodad: [host] using embedded recovery app
+I (2027) doodad: [host] EMBEDDED app size: 445 bytes
+I (2030) doodad: [host] module loaded
+I (2033) doodad: [host] module instantiated
+I (2034) doodad: [host] invoking app_start
+I (2059) wifi:state: init -> auth (0xb0)
+I (2062) wifi:state: auth -> assoc (0x0)
+I (2071) wifi:state: assoc -> run (0x10)
+I (2080) doodad: [guest] ui_mount: 151 bytes, 3 nodes
+I (2081) doodad: [host] app started; instance remains resident
+I (2087) wifi:connected with melburnians, aid = 1, channel 1, BW20, bssid = 78:45:58:ec:1f:73
+I (2088) wifi:security: WPA2-PSK, phy: bgn, rssi: -56, cipher(pairwise:0x3, group:0x3), pmf:0
+I (2088) wifi:pm start, type: 0
+
+I (2088) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (2089) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (2091) doodad: [host] steady state; free heap: 8045587 bytes
+I (2136) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (2244) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=home revision=6 frame_hash=42fbdc0c
+I (3107) esp_netif_handlers: sta ip: 192.168.1.47, mask: 255.255.255.0, gw: 192.168.1.1
+I (3793) doodad: [display] fps=2.0 frames=4 flushes=14 pixels=116655 avg_render_us=52902 max_render_us=92487 avg_flush_us=5082 max_flush_us=6619 touch_presses=0 objects=37 internal_free=34199 internal_min=29976 internal_largest=23552 psram_free=8010444 psram_min=7999652 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (4528) voice-service: signaling endpoint discovered: ws://192.168.1.95:8765/ws
+I (4530) websocket_client: Started
+I (4675) DTLS: Init SRTP OK
+I (4931) voice-service: peer state=2
+I (4933) voice-service: peer state=3
+I (4935) AGENT: Start agent as Controlling
+I (4938) voice-service: remote audio codec=3 rate=48000 channels=1
+I (4939) voice-service: local peer message type=1 size=545
+I (4960) voice-service: local SDP chunks=9 delivered=1
+I (5081) PEER_DEF: Get peer role 0
+I (5081) PEER_DEF: Extract SDP: stream_count=1, audio_mid=255 (dir=3), video_mid=255 (dir=3), data_mid=255, assrc=1210469186, vssrc=0, vrtx_ssrc=0, vfmt=0, vrtx_fmt=0
+I (5082) AGENT: 0 Add remote type:1 192.168.1.95:59870
+I (5082) voice-service: peer state=4
+I (5083) voice-service: remote peer message type=1 size=1096 result=0
+I (5103) AGENT: 0 0 Send binding request (cand:0) local0:192.168.1.47:55292 remote0:192.168.1.95:59870 id:7043bfa4398150e937521657
+I (5107) AGENT: 0 0 PeerBinding recv local0:192.168.1.47:55292 remote0:192.168.1.95:59870
+I (5108) AGENT: 0 0 Send binding response local0:192.168.1.47:55292 remote1:192.168.1.95:59870
+E (5112) AGENT: 0 Not found for bind remote 192.168.1.52:62540
+I (5114) AGENT: 0 0 LocalBinding resp 7043bfa4398150e937521657 local1
+I (5115) AGENT: 0 Select pair192.168.1.95:59870
+I (5115) AGENT: 0 0 Send binding request (cand:1) local0:192.168.1.47:55292 remote1:192.168.1.95:59870 id:4d9a2fdb76c3625e55075020
+I (5140) AGENT: 0 0 LocalBinding resp 4d9a2fdb76c3625e55075020 local1
+I (5141) AGENT: 0 Candidate responded
+I (5141) AGENT: 0 Connection OK 192.168.1.95:59870
+I (5141) voice-service: peer state=5
+I (5141) PEER_DEF: Start DTLS role as 1
+I (5144) voice-service: peer state=6
+I (5164) DTLS: Start to do server handshake
+I (5666) DTLS: SRTP connected OK
+I (5672) DTLS: Server handshake success
+I (5672) PEER_DEF: DTLS handshake success
+I (5673) voice-service: peer state=7
+I (5794) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28376 internal_largest=20480 psram_free=7924864 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (5809) wifi:[ADDBA]RX DELBA, reason:39, delete tid:0, initiator:0(recipient)
+I (7795) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28376 internal_largest=20480 psram_free=7924804 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (9796) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28236 internal_largest=20480 psram_free=7924680 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (11798) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28236 internal_largest=20480 psram_free=7924680 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (13800) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28236 internal_largest=20480 psram_free=7924680 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (15802) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28236 internal_largest=20480 psram_free=7924680 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (17802) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28236 internal_largest=20480 psram_free=7924680 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (19802) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28575 internal_min=28236 internal_largest=20480 psram_free=7923116 psram_min=7913400 psram_largest=7864320 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=52902 total_max_render_us=92487 total_avg_flush_us=5082 total_max_flush_us=6619 transfer=synchronous
+I (21539) doodad: [system] input=6 intent=2 surface=2 overlay=0 generation=3
+I (21611) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=installed-launcher revision=8 frame_hash=28891abb
+I (21804) doodad: [display] fps=1.0 frames=2 flushes=6 pixels=57600 avg_render_us=63800 max_render_us=63800 avg_flush_us=5839 max_flush_us=6480 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958652 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (23805) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958476 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (25807) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958476 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (27807) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958476 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (29809) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958652 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (31810) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958476 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (33811) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958476 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (35813) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958476 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (37814) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958652 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (39814) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=13 internal_free=28575 internal_min=27732 internal_largest=20480 psram_free=7958476 psram_min=7913400 psram_largest=7864320 total_frames=6 total_flushes=20 total_pixels=174255 total_avg_render_us=55627 total_max_render_us=92487 total_avg_flush_us=5309 total_max_flush_us=6619 transfer=synchronous
+I (41628) doodad: [host] PERSONAL app size: 32654 bytes
+I (41747) doodad: [host] module loaded
+I (41753) doodad: [host] module instantiated
+I (41755) doodad: [host] invoking app_start
+I (41892) doodad: [guest] ui_mount: 1292 bytes, 27 nodes
+I (41892) doodad: [host] app started; instance remains resident
+I (41893) doodad: [packages] running dev.doodad.weather 0.1.0 7fa401c7227a without reboot
+I (41997) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=appspec revision=9 frame_hash=6c5f980d
+I (41998) doodad: [display] fps=0.5 frames=1 flushes=6 pixels=57600 avg_render_us=102293 max_render_us=102293 avg_flush_us=5925 max_flush_us=6318 touch_presses=0 objects=31 internal_free=19927 internal_min=19084 internal_largest=11776 psram_free=7796708 psram_min=7796112 psram_largest=7733248 total_frames=7 total_flushes=26 total_pixels=231855 total_avg_render_us=64960 total_max_render_us=102293 total_avg_flush_us=5451 total_max_flush_us=6619 transfer=synchronous
+I (43999) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=19927 internal_min=19084 internal_largest=11776 psram_free=7796540 psram_min=7794716 psram_largest=7733248 total_frames=7 total_flushes=26 total_pixels=231855 total_avg_render_us=64960 total_max_render_us=102293 total_avg_flush_us=5451 total_max_flush_us=6619 transfer=synchronous
+I (46000) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=19927 internal_min=19084 internal_largest=11776 psram_free=7796540 psram_min=7791412 psram_largest=7733248 total_frames=7 total_flushes=26 total_pixels=231855 total_avg_render_us=64960 total_max_render_us=102293 total_avg_flush_us=5451 total_max_flush_us=6619 transfer=synchronous
+I (47176) esp-x509-crt-bundle: Certificate validated
+I (48002) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=19539 internal_min=19084 internal_largest=11264 psram_free=7740092 psram_min=7732324 psram_largest=7733248 total_frames=7 total_flushes=26 total_pixels=231855 total_avg_render_us=64960 total_max_render_us=102293 total_avg_flush_us=5451 total_max_flush_us=6619 transfer=synchronous
+I (48046) weather-provider: fresh forecast ready for San Francisco
+I (48206) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=appspec-update revision=10 frame_hash=8b2a27f2
+I (52004) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=8 total_flushes=32 total_pixels=289455 total_avg_render_us=71069 total_max_render_us=102293 total_avg_flush_us=5512 total_max_flush_us=6619 transfer=synchronous
+I (54005) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796368 psram_min=7732324 psram_largest=7733248 total_frames=8 total_flushes=32 total_pixels=289455 total_avg_render_us=71069 total_max_render_us=102293 total_avg_flush_us=5512 total_max_flush_us=6619 transfer=synchronous
+I (56006) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=8 total_flushes=32 total_pixels=289455 total_avg_render_us=71069 total_max_render_us=102293 total_avg_flush_us=5512 total_max_flush_us=6619 transfer=synchronous
+I (58007) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=8 total_flushes=32 total_pixels=289455 total_avg_render_us=71069 total_max_render_us=102293 total_avg_flush_us=5512 total_max_flush_us=6619 transfer=synchronous
+I (60008) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=31 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=8 total_flushes=32 total_pixels=289455 total_avg_render_us=71069 total_max_render_us=102293 total_avg_flush_us=5512 total_max_flush_us=6619 transfer=synchronous
+I (61565) doodad: [system] input=6 intent=2 surface=0 overlay=0 generation=6
+I (61673) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=home revision=11 frame_hash=42fbdc0c
+I (62009) doodad: [display] fps=1.0 frames=2 flushes=6 pixels=57600 avg_render_us=92662 max_render_us=92662 avg_flush_us=5867 max_flush_us=6456 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (62451) doodad: [host] uptime heartbeat; free heap: 7824507 bytes
+I (64010) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (66010) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (68010) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (70012) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (72014) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (74014) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (76016) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (78017) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (80019) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796368 psram_min=7732324 psram_largest=7733248 total_frames=10 total_flushes=38 total_pixels=347055 total_avg_render_us=74154 total_max_render_us=102293 total_avg_flush_us=5568 total_max_flush_us=6619 transfer=synchronous
+I (81550) doodad: [system] input=7 intent=5 surface=0 overlay=1 generation=8
+I (81652) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=voice-listening revision=12 frame_hash=54993de5
+I (82030) doodad: [display] fps=10.9 frames=22 flushes=71 pixels=84016 avg_render_us=16475 max_render_us=96456 avg_flush_us=1005 max_flush_us=5820 touch_presses=0 objects=14 internal_free=29619 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=32 total_flushes=109 total_pixels=431071 total_avg_render_us=32004 total_max_render_us=102293 total_avg_flush_us=2596 total_max_flush_us=6619 transfer=synchronous
+I (84045) doodad: [display] fps=46.6 frames=94 flushes=399 pixels=250576 avg_render_us=15235 max_render_us=21446 avg_flush_us=70I (86046) doodad: [display] fps=46.5 frames=93 flushes=398 pixels=251664 avg_render_us=15457 max_render_us=21597 avg_flush_us=710 max_flush_us=1787 touch_presses=0 objects=14 internal_free=29779 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=219 total_flushes=906 total_pixels=933311 total_avg_render_us=17379 total_max_render_us=102293 total_avg_flush_us=934 total_max_flush_us=6619 transfer=synchronous
+I (88059) doodad: [display] fps=47.7 frames=96 flushes=399 pixels=253968 avg_render_us=14941 max_render_us=20275 avg_flush_us=702 max_flush_us=1420 touch_presses=0 objects=14 internal_free=29907 internal_min=19084 internal_largest=11264 psram_free=7796368 psram_min=7732324 psram_largest=7733248 total_frames=315 total_flushes=1305 total_pixels=1187279 total_avg_render_us=16621 total_max_render_us=102293 total_avg_flush_us=863 total_max_flush_us=6619 transfer=synchronous
+I (90081) doodad: [display] fps=48.5 frames=98 flushes=398 pixels=246960 avg_render_us=14592 max_render_us=21195 avg_flush_us=695 max_flush_us=1900 touch_presses=0 objects=14 internal_free=29907 internal_min=19084 internal_largest=11264 psram_free=7796224 psram_min=7732324 psram_largest=7733248 total_frames=413 total_flushes=1703 total_pixels=1434239 total_avg_render_us=16133 total_max_render_us=102293 total_avg_flush_us=824 total_max_flush_us=6619 transfer=synchronous
+I (92089) doodad: [display] fps=48.3 frames=97 flushes=398 pixels=242128 avg_render_us=14623 max_render_us=23955 avg_flush_us=688 max_flush_us=1658 touch_presses=0 objects=14 internal_free=29907 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=510 total_flushes=2101 total_pixels=1676367 total_avg_render_us=15842 total_max_render_us=102293 total_avg_flush_us=798 total_max_flush_us=6619 transfer=synchronous
+I (94115) doodad: [display] fps=47.4 frames=96 flushes=402 pixels=241760 avg_render_us=14952 max_render_us=19938 avg_flush_us=674 max_flush_us=1584 touch_presses=0 objects=14 internal_free=29907 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=606 total_flushes=2503 total_pixels=1918127 total_avg_render_us=15700 total_max_render_us=102293 total_avg_flush_us=778 total_max_flush_us=6619 transfer=synchronous
+I (96118) doodad: [display] fps=46.4 frames=93 flushes=399 pixels=243952 avg_render_us=15344 max_render_us=19587 avg_flush_us=691 max_flush_us=1723 touch_presses=0 objects=14 internal_free=29651 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=699 total_flushes=2902 total_pixels=2162079 total_avg_render_us=15652 total_max_render_us=102293 total_avg_flush_us=766 total_max_flush_us=6619 transfer=synchronous
+I (98119) doodad: [display] fps=48.0 frames=96 flushes=397 pixels=248944 avg_render_us=14840 max_render_us=20246 avg_flush_us=701 max_flush_us=1821 touch_presses=0 objects=14 internal_free=29875 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=795 total_flushes=3299 total_pixels=2411023 total_avg_render_us=15553 total_max_render_us=102293 total_avg_flush_us=758 total_max_flush_us=6619 transfer=synchronous
+I (100131) doodad: [display] fps=47.2 frames=95 flushes=397 pixels=249056 avg_render_us=15115 max_render_us=22072 avg_flush_us=699 max_flush_us=1836 touch_presses=0 objects=14 internal_free=29651 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=890 total_flushes=3696 total_pixels=2660079 total_avg_render_us=15506 total_max_render_us=102293 total_avg_flush_us=752 total_max_flush_us=6619 transfer=synchronous
+I (101536) voice-service: downlink reset reason=cancelled received=0 queued=0 submitted=0 rejected=0 dropped=0 generation=2
+I (101696) doodad: [visual] device_id=cores3-se-1cdbd4ba8e00 scene=home revision=13 frame_hash=42fbdc0c
+I (102132) doodad: [display] fps=34.5 frames=69 flushes=286 pixels=213776 avg_render_us=16042 max_render_us=100852 avg_flush_us=784 max_flush_us=9033 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=959 total_flushes=3982 total_pixels=2873855 total_avg_render_us=15544 total_max_render_us=102293 total_avg_flush_us=754 total_max_flush_us=9033 transfer=synchronous
+I (104132) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=959 total_flushes=3982 total_pixels=2873855 total_avg_render_us=15544 total_max_render_us=102293 total_avg_flush_us=754 total_max_flush_us=9033 transfer=synchronous
+I (106134) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=959 total_flushes=3982 total_pixels=2873855 total_avg_render_us=15544 total_max_render_us=102293 total_avg_flush_us=754 total_max_flush_us=9033 transfer=synchronous
+I (108134) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=959 total_flushes=3982 total_pixels=2873855 total_avg_render_us=15544 total_max_render_us=102293 total_avg_flush_us=754 total_max_flush_us=9033 transfer=synchronous
+I (110135) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796368 psram_min=7732324 psram_largest=7733248 total_frames=959 total_flushes=3982 total_pixels=2873855 total_avg_render_us=15544 total_max_render_us=102293 total_avg_flush_us=754 total_max_flush_us=9033 transfer=synchronous
+I (112137) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=28307 internal_min=19084 internal_largest=11264 psram_free=7796200 psram_min=7732324 psram_largest=7733248 total_frames=959 total_flushes=3982 total_pixels=2873855 total_avg_render_us=15544 total_max_render_us=102293 total_avg_flush_us=754 total_max_flush_us=9033 transfer=synchronous

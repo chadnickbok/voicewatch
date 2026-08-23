@@ -2,7 +2,9 @@
 
 #include <algorithm>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
+#include <ctime>
 
 #include "esp_err.h"
 #include "esp_event.h"
@@ -148,6 +150,10 @@ bool network_service_connect(std::uint32_t timeout_ms) {
 }
 
 void network_service_sync_time(std::uint32_t timeout_ms) {
+#if defined(CONFIG_DOODAD_TIMEZONE)
+    setenv("TZ", CONFIG_DOODAD_TIMEZONE, 1);
+    tzset();
+#endif
     if (!network_service_connected()) return;
     if (!g_sntp_initialized) {
         esp_sntp_config_t configuration =

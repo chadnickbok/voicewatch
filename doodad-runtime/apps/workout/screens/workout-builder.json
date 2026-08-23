@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "app_id": "workout",
+  "screen": {
+    "id": "powerlifting.workout-builder",
+    "type": "screen",
+    "props": {
+      "gap": "none",
+      "align": "stretch",
+      "children": [
+        {
+          "id": "powerlifting.workout-builder.title",
+          "type": "text",
+          "props": {
+            "text": "HEAVY DAY",
+            "style": "title",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.workout-builder.count",
+          "type": "text",
+          "props": {
+            "text": "14 SETS",
+            "style": "caption",
+            "max_lines": 1,
+            "align": "center"
+          }
+        },
+        {
+          "id": "powerlifting.workout-builder.squat",
+          "type": "card",
+          "props": {
+            "title": "BACK SQUAT",
+            "body": "5 X 5",
+            "tone": "primary"
+          },
+          "events": {
+            "tap": "workout.plan.exercise"
+          },
+          "semantics": {
+            "label": "BACK SQUAT"
+          }
+        },
+        {
+          "id": "powerlifting.workout-builder.remaining",
+          "type": "card",
+          "props": {
+            "title": "BENCH 5 X 5  /  DEAD 4 X 5",
+            "body": "2 MORE LIFTS",
+            "tone": "neutral"
+          }
+        },
+        {
+          "id": "powerlifting.workout-builder.add",
+          "type": "card",
+          "props": {
+            "title": "+ ADD EXERCISE",
+            "body": "CHOOSE FROM RECENT LIFTS",
+            "tone": "neutral"
+          },
+          "events": {
+            "tap": "workout.plan.add"
+          },
+          "semantics": {
+            "label": "+ ADD EXERCISE"
+          }
+        },
+        {
+          "id": "powerlifting.workout-builder.save",
+          "type": "button",
+          "props": {
+            "label": "SAVE PLAN",
+            "tone": "primary",
+            "variant": "filled",
+            "size": "default"
+          },
+          "events": {
+            "tap": "workout.plan.save"
+          },
+          "semantics": {
+            "label": "SAVE PLAN"
+          }
+        }
+      ]
+    }
+  }
+}

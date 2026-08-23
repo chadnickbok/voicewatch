@@ -81,19 +81,26 @@ def button(
     }
 
 
-def progress(identifier: str, value: int, maximum: int) -> dict[str, Any]:
+def progress(
+    identifier: str,
+    value: int,
+    maximum: int,
+    *,
+    label: str = "Workout progress",
+    tone: str = "primary",
+) -> dict[str, Any]:
     return {
         "id": identifier,
         "type": "progress",
         "props": {
-            "label": "Workout progress",
+            "label": label,
             "value": value,
             "maximum": maximum,
             "style": "linear",
-            "tone": "primary",
+            "tone": tone,
         },
         "semantics": {
-            "label": "Workout progress",
+            "label": label,
             "value": f"{value} of {maximum}",
         },
     }
@@ -157,12 +164,152 @@ def screens() -> dict[str, dict[str, Any]]:
                     "SQUAT / BENCH / DEADLIFT",
                     tone="primary",
                 ),
-                card("powerlifting.today.volume", "14 SETS", "3 LIFTS / ABOUT 67 MIN"),
+                card(
+                    "powerlifting.today.volume",
+                    "14 SETS",
+                    "3 LIFTS / TAP TO PLAN",
+                    action="workout.manage",
+                ),
                 button(
                     "powerlifting.today.start",
                     "START WORKOUT",
                     "workout.start",
                     extra_events={"longPress": "workout.resume.preview"},
+                ),
+            ],
+        ),
+        "training-hub": document(
+            "powerlifting.training-hub",
+            [
+                text("powerlifting.training-hub.title", "TRAINING", "title"),
+                card(
+                    "powerlifting.training-hub.plan",
+                    "HEAVY DAY",
+                    "14 SETS / 3 LIFTS",
+                    tone="primary",
+                    action="workout.plan.edit",
+                ),
+                card(
+                    "powerlifting.training-hub.goal",
+                    "142.5 / 150 KG",
+                    "SQUAT 5RM / 95% TO GOAL",
+                    tone="secondary",
+                    action="workout.goal.edit",
+                ),
+                progress(
+                    "powerlifting.training-hub.progress",
+                    95,
+                    100,
+                    label="Strength goal progress",
+                    tone="secondary",
+                ),
+                button(
+                    "powerlifting.training-hub.done",
+                    "DONE",
+                    "workout.training.done",
+                ),
+            ],
+        ),
+        "workout-builder": document(
+            "powerlifting.workout-builder",
+            [
+                text("powerlifting.workout-builder.title", "HEAVY DAY", "title"),
+                text("powerlifting.workout-builder.count", "14 SETS", "caption"),
+                card(
+                    "powerlifting.workout-builder.squat",
+                    "BACK SQUAT",
+                    "5 X 5",
+                    tone="primary",
+                    action="workout.plan.exercise",
+                ),
+                card(
+                    "powerlifting.workout-builder.remaining",
+                    "BENCH 5 X 5  /  DEAD 4 X 5",
+                    "2 MORE LIFTS",
+                ),
+                card(
+                    "powerlifting.workout-builder.add",
+                    "+ ADD EXERCISE",
+                    "CHOOSE FROM RECENT LIFTS",
+                    action="workout.plan.add",
+                ),
+                button(
+                    "powerlifting.workout-builder.save",
+                    "SAVE PLAN",
+                    "workout.plan.save",
+                ),
+            ],
+        ),
+        "exercise-prescription": document(
+            "powerlifting.exercise-prescription",
+            [
+                text(
+                    "powerlifting.exercise-prescription.title",
+                    "BACK SQUAT",
+                    "title",
+                ),
+                stepper(
+                    "powerlifting.exercise-prescription.sets",
+                    "Work sets",
+                    5,
+                    "SETS",
+                    1,
+                    10,
+                    1,
+                    "workout.plan.sets",
+                ),
+                stepper(
+                    "powerlifting.exercise-prescription.reps",
+                    "Target reps",
+                    5,
+                    "REPS",
+                    1,
+                    20,
+                    1,
+                    "workout.plan.reps",
+                ),
+                card(
+                    "powerlifting.exercise-prescription.context",
+                    "140 KG / 3:00 / AUTO WARMUP",
+                    "START / REST / WARMUPS",
+                    tone="secondary",
+                ),
+                button(
+                    "powerlifting.exercise-prescription.done",
+                    "DONE",
+                    "workout.plan.prescription.done",
+                ),
+            ],
+        ),
+        "strength-goal": document(
+            "powerlifting.strength-goal",
+            [
+                text("powerlifting.strength-goal.title", "STRENGTH GOAL", "title"),
+                card(
+                    "powerlifting.strength-goal.lift",
+                    "BACK SQUAT",
+                    "5RM TARGET",
+                    tone="primary",
+                ),
+                stepper(
+                    "powerlifting.strength-goal.target",
+                    "5RM target",
+                    150,
+                    "KG",
+                    50,
+                    300,
+                    5,
+                    "workout.goal.weight",
+                ),
+                text(
+                    "powerlifting.strength-goal.context",
+                    "142.5 CURRENT / 12 WEEKS",
+                    "caption",
+                ),
+                button(
+                    "powerlifting.strength-goal.save",
+                    "SAVE GOAL",
+                    "workout.goal.save",
                 ),
             ],
         ),

@@ -18,13 +18,22 @@ from jsonschema import Draft7Validator
 
 PINNED_CODEX_VERSION = "codex-cli 0.146.0-alpha.9.2"
 _OUTER_PACKAGER_SECRET = "DOODAD_PERSONAL_HMAC_KEY_HEX"
+_HOST_ONLY_ENVIRONMENT = (
+    _OUTER_PACKAGER_SECRET,
+    "DOODAD_SMTP_HOST",
+    "DOODAD_SMTP_PORT",
+    "DOODAD_SMTP_SENDER",
+    "DOODAD_SMTP_USERNAME",
+    "DOODAD_SMTP_PASSWORD",
+)
 
 
 def _codex_environment() -> dict[str, str]:
-    """Keep the outer packaging secret out of the untrusted builder process."""
+    """Keep host packaging and delivery configuration out of Codex."""
 
     environment = os.environ.copy()
-    environment.pop(_OUTER_PACKAGER_SECRET, None)
+    for name in _HOST_ONLY_ENVIRONMENT:
+        environment.pop(name, None)
     return environment
 
 
@@ -140,6 +149,8 @@ class AppServerClient:
         stop: threading.Event,
         on_started: StartedCallback,
         on_question: QuestionCallback,
+        collaboration_mode: str = "default",
+        output_schema: dict[str, Any] | None = None,
     ) -> CodexTurnResult:
         self.check_version()
         process = subprocess.Popen(
@@ -155,7 +166,15 @@ class AppServerClient:
             self._process = process
         try:
             return self._drive(
-                process, workspace, prompt, thread_id, stop, on_started, on_question
+                process,
+                workspace,
+                prompt,
+                thread_id,
+                stop,
+                on_started,
+                on_question,
+                collaboration_mode,
+                output_schema,
             )
         finally:
             with self._lock:
@@ -179,6 +198,8 @@ class AppServerClient:
         stop: threading.Event,
         on_started: StartedCallback,
         on_question: QuestionCallback,
+        collaboration_mode: str,
+        output_schema: dict[str, Any] | None,
     ) -> CodexTurnResult:
         if process.stdin is None or process.stdout is None:
             raise CodexProtocolError("app-server stdio pipes were not created")
@@ -240,7 +261,7 @@ class AppServerClient:
         )
         active_thread = str(thread_response["result"]["thread"]["id"])
 
-        output_schema = {
+        default_output_schema = {
             "type": "object",
             "additionalProperties": False,
             "required": ["status", "summary"],
@@ -264,8 +285,21 @@ class AppServerClient:
             },
             "summary": "concise",
             "effort": "medium",
-            "outputSchema": output_schema,
+            "outputSchema": output_schema or default_output_schema,
         }
+        if collaboration_mode not in {"default", "plan"}:
+            raise CodexProtocolError(
+                f"unsupported Codex collaboration mode: {collaboration_mode}"
+            )
+        if collaboration_mode == "plan":
+            turn_params["collaborationMode"] = {
+                "mode": "plan",
+                "settings": {
+                    "model": os.getenv("DOODAD_CODEX_MODEL", "gpt-5.6-sol"),
+                    "reasoning_effort": "medium",
+                    "developer_instructions": None,
+                },
+            }
         self._validate("v2/TurnStartParams.json", turn_params)
         self._send(process, {"method": "turn/start", "id": 3, "params": turn_params})
         turn_response = self._wait_response(

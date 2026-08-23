@@ -157,7 +157,7 @@ def trace_environment(root: Path) -> dict[str, Any]:
         root / "contracts" / "scene-snapshot-v1.schema.json",
     ]
     return {
-        "profile_id": "watch_square_240",
+        "profile_id": NativeHost.PROFILE_ID,
         "locale": "en-US",
         "timezone": "America/Los_Angeles",
         "font_scale_milli": 1000,

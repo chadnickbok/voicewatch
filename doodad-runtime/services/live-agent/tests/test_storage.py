@@ -42,4 +42,6 @@ def test_v2_schema_and_first_cores3_connection_relink_legacy_rows(
     assert store.connection.execute(
         "SELECT 1 FROM sqlite_master WHERE type='table' AND name='codex_sessions'"
     ).fetchone() is not None
+    assert "approved_plan_sha256" in store._columns("codex_sessions")
+    assert "design_target_sha256" in store._columns("codex_sessions")
     store.close()

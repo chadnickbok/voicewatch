@@ -12,5 +12,5 @@
   ],
   "mock_provider": "deterministic",
   "provider": "workout.store",
-  "implementation_status": "wave2-functional"
+  "implementation_status": "wave3-functional"
 }

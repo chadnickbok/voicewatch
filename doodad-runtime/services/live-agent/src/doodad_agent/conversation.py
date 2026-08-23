@@ -77,7 +77,10 @@ requests one or the subject genuinely requires it. You may operate only through 
 tools. Never pretend a mutation succeeded before its tool result. Start durable jobs and
 keep conversing; do not wait for them. A system policy, not you, schedules background
 questions and completions. The current selected entity is resolved by deterministic host
-code. Do not expose IDs unless the user asks."""
+code. Use get_task_status whenever the user asks what an agent or background task is
+doing; do not rely on conversational memory for task state. Research reports and
+presentation-delivery requests are durable general background work, not app builds.
+Do not expose IDs unless the user asks."""
 
 
 class TracedSileroVADAnalyzer(SileroVADAnalyzer):
@@ -457,6 +460,23 @@ class LiveConversation:
         if self.worker is not None:
             await self.worker.queue_frame(InputAudioRawFrame(pcm, 16_000, 1))
 
+    async def submit_text(self, text: str) -> None:
+        """Inject one final user turn after capture, bypassing only the microphone/STT."""
+
+        bounded = " ".join(text.split())[:500]
+        if not bounded or self.worker is None:
+            return
+        await self.begin_listening()
+        await self.worker.queue_frame(
+            TranscriptionFrame(
+                text=bounded,
+                user_id="watch-text",
+                timestamp="",
+                language="en",
+                finalized=False,
+            )
+        )
+
     async def begin_listening(self) -> None:
         self._cancel_transcript_watchdog()
         self.user_text = ""
@@ -683,6 +703,31 @@ class LiveConversation:
             await params.result_callback(result)
             self.trace.mark("tool.end", tool="start_app_build", job_id=result["job_id"])
 
+        async def background_work(params: FunctionCallParams) -> None:
+            arguments = params.arguments
+            kind = str(arguments["kind"])
+            self.trace.mark("tool.start", tool="start_background_work", work_kind=kind)
+            result = self.controller.start_background_work(
+                kind,
+                str(arguments["brief"]),
+                recipient=(
+                    str(arguments["recipient"])
+                    if arguments.get("recipient") else None
+                ),
+            )
+            await params.result_callback(result)
+            self.trace.mark(
+                "tool.end", tool="start_background_work", job_id=result["job_id"]
+            )
+
+        async def task_status(params: FunctionCallParams) -> None:
+            self.trace.mark("tool.start", tool="get_task_status")
+            result = self.controller.task_status(
+                str(params.arguments.get("query", "")) or None
+            )
+            await params.result_callback(result)
+            self.trace.mark("tool.end", tool="get_task_status", count=result["count"])
+
         return [
             FunctionSchema(
                 "record_missed_set",
@@ -711,5 +756,26 @@ class LiveConversation:
                 {"brief": {"type": "string"}},
                 ["brief"],
                 handler=build,
+            ),
+            FunctionSchema(
+                "start_background_work",
+                "Start durable research or presentation work and return immediately.",
+                {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["research_report", "presentation_delivery"],
+                    },
+                    "brief": {"type": "string"},
+                    "recipient": {"type": "string"},
+                },
+                ["kind", "brief"],
+                handler=background_work,
+            ),
+            FunctionSchema(
+                "get_task_status",
+                "Read durable current status for all tasks or a named matching task.",
+                {"query": {"type": "string"}},
+                [],
+                handler=task_status,
             ),
         ]

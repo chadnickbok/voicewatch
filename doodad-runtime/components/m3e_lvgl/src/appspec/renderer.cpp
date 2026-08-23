@@ -2125,11 +2125,32 @@ bool powerlifting_bounds(
         const char* id;
         PowerliftingBounds bounds;
     };
-    static constexpr std::array<Entry, 57> entries{{
+    static constexpr std::array<Entry, 78> entries{{
         {"powerlifting.today.kicker", {8, 4, 176, 18}},
         {"powerlifting.today.hero", {8, 26, 176, 76}},
         {"powerlifting.today.volume", {8, 106, 176, 30}},
         {"powerlifting.today.start", {8, 140, 176, 48}},
+        {"powerlifting.training-hub.title", {8, 4, 176, 18}},
+        {"powerlifting.training-hub.plan", {8, 24, 176, 48}},
+        {"powerlifting.training-hub.goal", {8, 76, 176, 56}},
+        {"powerlifting.training-hub.progress", {16, 132, 160, 5}},
+        {"powerlifting.training-hub.done", {8, 140, 176, 48}},
+        {"powerlifting.workout-builder.title", {8, 2, 130, 20}},
+        {"powerlifting.workout-builder.count", {140, 4, 44, 18}},
+        {"powerlifting.workout-builder.squat", {8, 26, 176, 48}},
+        {"powerlifting.workout-builder.remaining", {8, 76, 176, 14}},
+        {"powerlifting.workout-builder.add", {8, 92, 176, 48}},
+        {"powerlifting.workout-builder.save", {8, 140, 176, 48}},
+        {"powerlifting.exercise-prescription.title", {8, 2, 176, 18}},
+        {"powerlifting.exercise-prescription.sets", {8, 24, 176, 48}},
+        {"powerlifting.exercise-prescription.reps", {8, 74, 176, 48}},
+        {"powerlifting.exercise-prescription.context", {8, 124, 176, 14}},
+        {"powerlifting.exercise-prescription.done", {8, 140, 176, 48}},
+        {"powerlifting.strength-goal.title", {8, 2, 176, 18}},
+        {"powerlifting.strength-goal.lift", {8, 24, 176, 30}},
+        {"powerlifting.strength-goal.target", {8, 58, 176, 64}},
+        {"powerlifting.strength-goal.context", {8, 126, 176, 12}},
+        {"powerlifting.strength-goal.save", {8, 140, 176, 48}},
         {"powerlifting.session.title", {8, 2, 176, 18}},
         {"powerlifting.session.count", {8, 20, 176, 32}},
         {"powerlifting.session.progress", {8, 52, 176, 4}},
@@ -2425,13 +2446,22 @@ void configure_powerlifting_node(
             px(std::max(20, static_cast<int>(bounds.width) - 20)),
             px(compact ? bounds.height : std::max(16, bounds.height / 2)));
         lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, 0);
+        const auto is_compact_detail =
+            std::strcmp(
+                id,
+                "powerlifting.workout-builder.remaining") == 0 ||
+            std::strcmp(
+                id,
+                "powerlifting.exercise-prescription.context") == 0;
         lv_obj_set_style_text_font(
             title,
             std::strcmp(id, "powerlifting.active-set.target") == 0 ||
                     std::strcmp(id, "powerlifting.missed-set.actual") == 0 ||
                     std::strcmp(id, "powerlifting.resume.state") == 0
                 ? &m3e_live_action_font_32
-                : &lv_font_montserrat_16,
+                : is_compact_detail
+                    ? &lv_font_montserrat_12
+                    : &lv_font_montserrat_16,
             0);
         lv_obj_set_style_text_color(
             title,

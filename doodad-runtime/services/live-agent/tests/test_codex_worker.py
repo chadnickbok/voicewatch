@@ -47,60 +47,83 @@ class ScriptedClient:
                 "thread_id": arguments["thread_id"],
                 "prompt": arguments["prompt"],
                 "workspace": arguments["workspace"],
+                "collaboration_mode": arguments.get("collaboration_mode", "default"),
             }
         )
         result = self.result
-        if result == "needs_input" and "Plan and implement" in str(arguments["prompt"]):
-            answer = arguments["on_question"](
-                {
-                    "questions": [
-                        {
-                            "id": "layout",
-                            "header": "Layout",
-                            "question": "Should progress use a ring or a horizontal bar?",
-                            "options": [
-                                {"label": "ring", "description": "Circular progress."},
-                                {"label": "bar", "description": "Linear progress."},
-                            ],
-                        }
-                    ]
-                }
-            )
-            if answer is None:
-                return CodexTurnResult(thread_id, turn_id, "failed", "", "stopped")
-            result = "ready"
-        elif result == "needs_input":
-            result = "ready"
-        if result == "ready":
-            workspace = Path(arguments["workspace"])
-            (workspace / "BUILD_PLAN.json").write_text(
-                json.dumps(
+        prompt = str(arguments["prompt"])
+        if "Work strictly in Codex plan mode" in prompt:
+            if result == "needs_input":
+                answer = arguments["on_question"](
                     {
-                        "schema_version": 1,
-                        "product_summary": "A generated rest timer.",
-                        "app_id": "dev.doodad.generated-rest",
-                        "name": "Lift Rest",
-                        "version": "0.1.0",
-                        "identity": {"icon": "timer", "theme_seed": "#20BFF4"},
-                        "capabilities": ["ui.mount", "timer.schedule"],
-                        "interactions": ["Start the timer"],
-                        "scenarios": [
+                        "questions": [
                             {
-                                "id": "timer.baseline",
-                                "kind": "timer",
-                                "required_ops": ["action.dispatch", "assert.state", "clock.advance"],
+                                "id": "layout",
+                                "header": "Layout",
+                                "question": "Should progress use a ring or a horizontal bar?",
+                                "options": [
+                                    {"label": "ring", "description": "Circular progress."},
+                                    {"label": "bar", "description": "Linear progress."},
+                                ],
                             }
-                        ],
+                        ]
                     }
-                ),
-                encoding="utf-8",
-            )
+                )
+                if answer is None:
+                    return CodexTurnResult(thread_id, turn_id, "failed", "", "stopped")
+            final = {
+                "status": "planned",
+                "summary": "Plan ready for approval.",
+                "plan": self.plan(),
+            }
+        else:
+            if "$imagegen" in prompt:
+                workspace = Path(arguments["workspace"])
+                target = workspace / "design" / "targets" / "primary.png"
+                target.write_bytes(b"scripted-imagegen-target")
+                (workspace / "design" / "DESIGN_MANIFEST.json").write_text(
+                    json.dumps(
+                        {
+                            "screens": [
+                                {
+                                    "id": "timer.initial",
+                                    "target": "targets/primary.png",
+                                    "primary": True,
+                                }
+                            ]
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+            if result == "needs_input":
+                result = "ready"
+            final = {"status": result, "summary": f"{result} summary"}
         return CodexTurnResult(
             thread_id,
             turn_id,
             "completed",
-            json.dumps({"status": result, "summary": f"{result} summary"}),
+            json.dumps(final),
         )
+
+    @staticmethod
+    def plan() -> dict[str, object]:
+        return {
+            "schema_version": 1,
+            "product_summary": "A generated rest timer.",
+            "app_id": "dev.doodad.generated-rest",
+            "name": "Lift Rest",
+            "version": "0.1.0",
+            "identity": {"icon": "timer", "theme_seed": "#20BFF4"},
+            "capabilities": ["ui.mount", "timer.schedule"],
+            "interactions": ["Start the timer"],
+            "scenarios": [
+                {
+                    "id": "timer.baseline",
+                    "kind": "timer",
+                    "required_ops": ["action.dispatch", "assert.state", "clock.advance"],
+                }
+            ],
+        }
 
     def close(self) -> None:
         return None
@@ -109,6 +132,21 @@ class ScriptedClient:
 class FakeVerifier:
     def __init__(self) -> None:
         self.calls: list[tuple[Path, str]] = []
+        self.design_calls: list[tuple[Path, dict[str, object]]] = []
+
+    def validate_plan(self, plan: dict[str, object]) -> None:
+        assert plan["name"] == "Lift Rest"
+
+    def validate_design(
+        self, workspace: Path, plan: dict[str, object]
+    ) -> tuple[dict[str, object], Path]:
+        self.design_calls.append((workspace, plan))
+        design = json.loads(
+            (workspace / "design" / "DESIGN_MANIFEST.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        return design, workspace / "design" / "targets" / "primary.png"
 
     def verify(self, workspace: Path, layout: str) -> VerifiedArtifact:
         self.calls.append((workspace, layout))
@@ -212,12 +250,30 @@ def test_codex_job_persists_question_resumes_thread_and_becomes_review_ready(
         assert controller.route_focused("the ring", "answer-layout").handled
         assert not controller.route_focused("ring", "answer-layout").handled
 
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        observe_all(jobs, broker, job_id)
+        approval = broker.natural_pause(int(time.time() * 1000))
+        assert approval is not None
+        assert approval.question_id is not None
+        assert approval.question_id.startswith("plan-approval-")
+        assert controller.route_focused("approve", "approve-plan").handled
+
         builder.tick(int(time.time() * 1000))
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
-        assert [call["thread_id"] for call in calls] == [None]
+        assert [call["thread_id"] for call in calls] == [
+            None,
+            "thread-rest-timer",
+            "thread-rest-timer",
+        ]
+        assert [call["collaboration_mode"] for call in calls] == [
+            "plan",
+            "default",
+            "default",
+        ]
         assert verifier.calls[0][1]["name"] == "Lift Rest"
+        assert len(verifier.design_calls) == 1
         events = jobs.events(job_id)
-        assert [event.kind for event in events].count("needs_input") == 1
+        assert [event.kind for event in events].count("needs_input") == 2
         artifact = events[-1].payload["artifact"]
         assert artifact["artifact_id"] == "dev.doodad.generated-rest@0.1.0"
         assert artifact["sha256"] == "a" * 64
@@ -234,7 +290,9 @@ def test_codex_job_persists_question_resumes_thread_and_becomes_review_ready(
         store.close()
 
 
-def test_complete_brief_builds_without_interrupting_for_input(tmp_path: Path) -> None:
+def test_complete_brief_skips_clarification_but_requires_plan_approval(
+    tmp_path: Path,
+) -> None:
     store = Store(tmp_path / "agent.sqlite3")
     jobs = JobManager(store, "t-watch-no-question")
     calls: list[dict[str, object]] = []
@@ -251,10 +309,69 @@ def test_complete_brief_builds_without_interrupting_for_input(tmp_path: Path) ->
         job_id = builder.start(
             "Build a blue hydration tracker with a water-drop icon", 1
         )
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        assert len(jobs.open_questions()) == 1
+        approval = jobs.open_questions()[0]
+        assert approval["question_id"].startswith("plan-approval-")
+        jobs.focus(job_id, approval["question_id"])
+        assert jobs.answer(job_id, approval["question_id"], "approve", "approval", 2)
+        builder.tick(3)
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
         assert jobs.open_questions() == []
-        assert len(calls) == 1
+        assert len(calls) == 3
         assert len(verifier.calls) == 1
+    finally:
+        builder.close()
+        store.close()
+
+
+def test_spoken_plan_revision_returns_to_plan_mode_before_design(
+    tmp_path: Path,
+) -> None:
+    store = Store(tmp_path / "agent.sqlite3")
+    jobs = JobManager(store, "t-watch-plan-revision")
+    calls: list[dict[str, object]] = []
+    builder = CodexAppBuilder(
+        jobs,
+        RUNTIME_ROOT,
+        tmp_path / "workspaces",
+        binary="unused",
+        client_factory=lambda: ScriptedClient("ready", calls),
+        verifier=FakeVerifier(),  # type: ignore[arg-type]
+    )
+    try:
+        job_id = builder.start("Build a quiet rest timer", 1)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        first = jobs.open_questions()[0]
+        jobs.focus(job_id, first["question_id"])
+        assert jobs.answer(
+            job_id,
+            first["question_id"],
+            "Use a calmer blue primary action.",
+            "revision-feedback",
+            2,
+        )
+        builder.tick(3)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        second = jobs.open_questions()[0]
+        assert second["question_id"].startswith("plan-approval-2-")
+        jobs.focus(job_id, second["question_id"])
+        assert jobs.answer(
+            job_id, second["question_id"], "approve", "revision-approval", 4
+        )
+        builder.tick(5)
+        wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
+        assert [call["collaboration_mode"] for call in calls] == [
+            "plan",
+            "plan",
+            "default",
+            "default",
+        ]
+        workspace = Path(str(calls[0]["workspace"]))
+        approval = json.loads(
+            (workspace / "PLAN_APPROVAL.json").read_text(encoding="utf-8")
+        )
+        assert approval["voice_answer"] == "approve"
     finally:
         builder.close()
         store.close()
@@ -277,9 +394,14 @@ def test_hello_world_brief_has_a_deterministic_no_question_product_shape(
     )
     try:
         job_id = builder.start("Build me a hello world app", 1)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        approval = jobs.open_questions()[0]
+        jobs.focus(job_id, approval["question_id"])
+        assert jobs.answer(job_id, approval["question_id"], "approve", "approval", 2)
+        builder.tick(3)
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
         assert jobs.open_questions() == []
-        workspace = Path(calls[0]["workspace"])
+        workspace = Path(str(calls[0]["workspace"]))
         brief = (workspace / "BUILD_BRIEF.md").read_text(encoding="utf-8")
         assert "Hello World" in brief
         assert "ask no follow-up question" in brief
@@ -319,6 +441,14 @@ def test_codex_job_resumes_after_restart_while_waiting_for_layout(tmp_path: Path
     )
     try:
         second.tick(3)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        approval = jobs.open_questions()[0]
+        assert approval["question_id"].startswith("plan-approval-")
+        jobs.focus(job_id, approval["question_id"])
+        assert jobs.answer(
+            job_id, approval["question_id"], "approve", "restart-approval", 4
+        )
+        second.tick(5)
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
         assert calls[-1]["thread_id"] == "thread-rest-timer"
         assert verifier.calls[0][1]["name"] == "Lift Rest"
@@ -346,11 +476,15 @@ def test_independent_failure_gets_one_bounded_codex_repair(tmp_path: Path) -> No
         wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
         jobs.focus(job_id, "layout")
         jobs.answer(job_id, "layout", "ring", "repair-answer", 2)
-        builder.tick(3)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        approval = jobs.open_questions()[0]
+        jobs.focus(job_id, approval["question_id"])
+        jobs.answer(job_id, approval["question_id"], "approve", "repair-approval", 3)
+        builder.tick(4)
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
-        assert len(calls) == 2
+        assert len(calls) == 4
         assert "independent Doodad verifier rejected" in str(calls[-1]["prompt"])
-        assert [event.kind for event in jobs.events(job_id)].count("progress") == 2
+        assert [event.kind for event in jobs.events(job_id)].count("progress") == 4
     finally:
         builder.close()
         store.close()
@@ -383,7 +517,13 @@ def test_verified_output_is_outer_packaged_and_persisted_before_review_ready(
         wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
         jobs.focus(job_id, "layout")
         assert jobs.answer(job_id, "layout", "ring", "package-answer", 2)
-        builder.tick(3)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        approval = jobs.open_questions()[0]
+        jobs.focus(job_id, approval["question_id"])
+        assert jobs.answer(
+            job_id, approval["question_id"], "approve", "package-approval", 3
+        )
+        builder.tick(4)
         wait_for(lambda: jobs.job(job_id)["state"] == "ready_for_review")
 
         session = store.fetch_one(
@@ -435,7 +575,13 @@ def test_packaging_failure_is_a_controlled_terminal_gate(tmp_path: Path) -> None
         wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
         jobs.focus(job_id, "layout")
         assert jobs.answer(job_id, "layout", "ring", "package-fail-answer", 2)
-        builder.tick(3)
+        wait_for(lambda: jobs.job(job_id)["state"] == "needs_input")
+        approval = jobs.open_questions()[0]
+        jobs.focus(job_id, approval["question_id"])
+        assert jobs.answer(
+            job_id, approval["question_id"], "approve", "package-fail-approval", 3
+        )
+        builder.tick(4)
         wait_for(lambda: jobs.job(job_id)["state"] == "failed")
         terminal = jobs.events(job_id)[-1]
         assert terminal.payload == {"reason_code": "packaging_failed"}

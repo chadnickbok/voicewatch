@@ -22,6 +22,21 @@ bool contains_label(lv_obj_t* object, const char* expected) {
     return false;
 }
 
+bool contains_clock_label(lv_obj_t* object) {
+    if (object == nullptr) return false;
+    if (lv_obj_check_type(object, &lv_label_class)) {
+        const auto* text = lv_label_get_text(object);
+        if (text != nullptr && std::strlen(text) == 5 && text[2] == ':') {
+            return true;
+        }
+    }
+    const auto count = lv_obj_get_child_count(object);
+    for (std::uint32_t index = 0; index < count; ++index) {
+        if (contains_clock_label(lv_obj_get_child(object, index))) return true;
+    }
+    return false;
+}
+
 void assert_action(lv_obj_t* object, const char* expected) {
     assert(object != nullptr);
     assert(lv_obj_check_type(object, &lv_button_class));
@@ -35,7 +50,7 @@ void assert_action(lv_obj_t* object, const char* expected) {
 
 int main() {
     lv_init();
-    auto* display = lv_display_create(240, 240);
+    auto* display = lv_display_create(410, 502);
     assert(display != nullptr);
     auto* screen = lv_screen_active();
     assert(screen != nullptr);
@@ -47,10 +62,11 @@ int main() {
     assert_action(home_view.apps_action, "system.apps");
     assert_action(home_view.voice_action, "system.voice");
     assert_action(home_view.agents_action, "system.agents");
-    assert(contains_label(screen, "10:09"));
-    assert(contains_label(screen, "JUL 30"));
+    assert(home.live_clock);
+    assert(contains_clock_label(screen));
+    assert(!contains_label(screen, home.time));
     assert(contains_label(screen, "APPS"));
-    assert(contains_label(screen, "VOICE"));
+    assert(contains_label(screen, "CHAT"));
     assert(contains_label(screen, "3"));
 
     constexpr m3e_system_shell_launcher_item_t items[] = {
@@ -114,6 +130,32 @@ int main() {
     assert(contains_label(screen, "BUILDING APP"));
     assert(contains_label(screen, "HYDRATION TRACKER"));
     assert(contains_label(screen, "UPDATES AUTOMATICALLY"));
+
+    m3e_system_shell_voice_view_t voice_view{};
+    m3e_system_shell_show_voice_overlay(
+        screen,
+        M3E_SYSTEM_SHELL_VOICE_LISTENING,
+        "Find me a quiet walking route home...",
+        nullptr,
+        &voice_view);
+    assert(contains_label(screen, "LISTENING"));
+    assert(contains_label(screen, "Find me a quiet walking route home..."));
+    assert_action(voice_view.primary_action, "voice.primary");
+    assert_action(voice_view.cancel_action, "voice.cancel");
+
+    m3e_system_shell_show_voice_overlay(
+        screen,
+        M3E_SYSTEM_SHELL_VOICE_READY,
+        "Find me a quiet walking route home.",
+        "A calmer route is ready.",
+        &voice_view);
+    assert(contains_label(screen, "READY"));
+    assert(contains_label(screen, "Find me a quiet walking route home."));
+    assert(contains_label(screen, "A calmer route is ready."));
+    assert(contains_label(screen, "SHOW MAP"));
+    assert(contains_label(screen, "HOLD TO TALK"));
+    assert_action(voice_view.primary_action, "voice.primary");
+    assert(voice_view.cancel_action == nullptr);
 
     auto* controller = m3e_system_shell_controller_create();
     assert(controller != nullptr);

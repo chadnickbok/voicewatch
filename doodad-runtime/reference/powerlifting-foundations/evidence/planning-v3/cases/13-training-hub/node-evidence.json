@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "snapshot_sha256": "ea139673a92f148ebb7d32c11eb08d10071c29d4c34ceeea58613487f8b4b430",
+  "capture_phase": {
+    "id": "resting",
+    "state": "resting",
+    "animation_fraction_milli": 0
+  },
+  "renderer": {
+    "kind": "lvgl",
+    "mode": "simulator",
+    "version": "9.5.0",
+    "build_sha256": "858d0558cbcdba7d655438a9379e3e9300ec8e553580509b519e3e1c7c2b6fb2"
+  },
+  "profile_id": "watch_square_240",
+  "physical_width_px": 240,
+  "physical_height_px": 240,
+  "nodes": [
+    {
+      "id": "powerlifting.training-hub",
+      "parent_id": null,
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 0,
+        "y": 0,
+        "width": 240,
+        "height": 240
+      },
+      "bounds_dp_q8_8": {
+        "x": 0,
+        "y": 0,
+        "width": 49152,
+        "height": 49152
+      },
+      "token_roles": {
+        "background": "background"
+      }
+    },
+    {
+      "id": "powerlifting.training-hub.title",
+      "parent_id": "powerlifting.training-hub",
+      "role": "heading",
+      "label": "TRAINING",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 10,
+        "y": 5,
+        "width": 220,
+        "height": 23
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 1024,
+        "width": 45056,
+        "height": 4710
+      },
+      "token_roles": {
+        "typography": "title"
+      }
+    },
+    {
+      "id": "powerlifting.training-hub.plan",
+      "parent_id": "powerlifting.training-hub",
+      "role": "list_item",
+      "label": "HEAVY DAY",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.plan.edit"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 30,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 6144,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "container": "surface_container",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.training-hub.goal",
+      "parent_id": "powerlifting.training-hub",
+      "role": "list_item",
+      "label": "142.5 / 150 KG",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.goal.edit"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 95,
+        "width": 220,
+        "height": 70
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 19456,
+        "width": 45056,
+        "height": 14336
+      },
+      "token_roles": {
+        "container": "surface_container",
+        "content": "on_surface"
+      }
+    },
+    {
+      "id": "powerlifting.training-hub.progress",
+      "parent_id": "powerlifting.training-hub",
+      "role": "progress",
+      "label": "Strength goal progress",
+      "value": "95 of 100",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [],
+      "bounds_px": {
+        "x": 20,
+        "y": 165,
+        "width": 200,
+        "height": 6
+      },
+      "bounds_dp_q8_8": {
+        "x": 4096,
+        "y": 33792,
+        "width": 40960,
+        "height": 1229
+      },
+      "token_roles": {
+        "indicator": "secondary"
+      }
+    },
+    {
+      "id": "powerlifting.training-hub.done",
+      "parent_id": "powerlifting.training-hub",
+      "role": "button",
+      "label": "DONE",
+      "value": "",
+      "state_description": "",
+      "visible": true,
+      "enabled": true,
+      "actions": [
+        {
+          "kind": "tap",
+          "action_id": "workout.training.done"
+        }
+      ],
+      "bounds_px": {
+        "x": 10,
+        "y": 175,
+        "width": 220,
+        "height": 60
+      },
+      "bounds_dp_q8_8": {
+        "x": 2048,
+        "y": 35840,
+        "width": 45056,
+        "height": 12288
+      },
+      "token_roles": {
+        "container": "primary",
+        "content": "on_surface"
+      }
+    }
+  ]
+}

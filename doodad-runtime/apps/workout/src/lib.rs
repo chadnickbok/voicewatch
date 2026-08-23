@@ -18,11 +18,19 @@ const EXERCISE_SWITCHER: &[u8] = include_bytes!("../screens/exercise-switcher.cb
 const MISSED_SET: &[u8] = include_bytes!("../screens/missed-set.cbor");
 const SUMMARY: &[u8] = include_bytes!("../screens/summary.cbor");
 const RESUME: &[u8] = include_bytes!("../screens/resume.cbor");
+const TRAINING_HUB: &[u8] = include_bytes!("../screens/training-hub.cbor");
+const WORKOUT_BUILDER: &[u8] = include_bytes!("../screens/workout-builder.cbor");
+const EXERCISE_PRESCRIPTION: &[u8] = include_bytes!("../screens/exercise-prescription.cbor");
+const STRENGTH_GOAL: &[u8] = include_bytes!("../screens/strength-goal.cbor");
 
 struct Runtime {
     weight: u32,
     reps: u32,
     rpe: u32,
+    planned_sets: u32,
+    planned_reps: u32,
+    goal_weight: u32,
+    planning: bool,
     commands: UiCommandBuffer<256>,
 }
 
@@ -32,6 +40,10 @@ impl Runtime {
             weight: 140,
             reps: 5,
             rpe: 8,
+            planned_sets: 5,
+            planned_reps: 5,
+            goal_weight: 150,
+            planning: false,
             commands: UiCommandBuffer::new(),
         }
     }
@@ -49,7 +61,14 @@ impl Runtime {
     }
 
     fn persist(&self, action: &str) -> bool {
-        let payload = [self.weight as u8, self.reps as u8, self.rpe as u8];
+        let payload = [
+            self.weight as u8,
+            self.reps as u8,
+            self.rpe as u8,
+            self.planned_sets as u8,
+            self.planned_reps as u8,
+            self.goal_weight as u8,
+        ];
         request_workout(action, &payload).is_ok()
     }
 }
@@ -80,13 +99,88 @@ pub unsafe extern "C" fn handle_event(pointer: *const u8, length: u32) -> u64 {
     };
     let runtime = unsafe { &mut *RUNTIME.0.get() };
     match event.action_id {
+        "workout.manage" => mount(TRAINING_HUB),
+        "workout.training.done" => mount(TODAY),
+        "workout.plan.edit" => mount(WORKOUT_BUILDER),
+        "workout.plan.exercise" => mount(EXERCISE_PRESCRIPTION),
+        "workout.plan.add" => {
+            runtime.planning = true;
+            mount(EXERCISE_PICKER)
+        }
+        "workout.plan.sets" => {
+            if let EventValue::Integer(value) = event.value {
+                if (1..=10).contains(&value) {
+                    runtime.planned_sets = value as u32;
+                    if !runtime.persist("workout.adjust_plan") {
+                        return 0;
+                    }
+                    return runtime.set_value(
+                        "powerlifting.exercise-prescription.sets",
+                        runtime.planned_sets,
+                    );
+                }
+            }
+            0
+        }
+        "workout.plan.reps" => {
+            if let EventValue::Integer(value) = event.value {
+                if (1..=20).contains(&value) {
+                    runtime.planned_reps = value as u32;
+                    if !runtime.persist("workout.adjust_plan") {
+                        return 0;
+                    }
+                    return runtime.set_value(
+                        "powerlifting.exercise-prescription.reps",
+                        runtime.planned_reps,
+                    );
+                }
+            }
+            0
+        }
+        "workout.plan.prescription.done" => mount(WORKOUT_BUILDER),
+        "workout.plan.save" => {
+            if !runtime.persist("workout.save_plan") {
+                return 0;
+            }
+            runtime.planning = false;
+            mount(TRAINING_HUB)
+        }
+        "workout.goal.edit" => mount(STRENGTH_GOAL),
+        "workout.goal.weight" => {
+            if let EventValue::Integer(value) = event.value {
+                if (50..=300).contains(&value) && value % 5 == 0 {
+                    runtime.goal_weight = value as u32;
+                    if !runtime.persist("workout.adjust_goal") {
+                        return 0;
+                    }
+                    return runtime
+                        .set_value("powerlifting.strength-goal.target", runtime.goal_weight);
+                }
+            }
+            0
+        }
+        "workout.goal.save" => {
+            if !runtime.persist("workout.save_goal") {
+                return 0;
+            }
+            mount(TRAINING_HUB)
+        }
         "workout.start" => mount(SESSION),
         "workout.resume.preview" => mount(RESUME),
-        "workout.choose.exercise" => mount(EXERCISE_PICKER),
+        "workout.choose.exercise" => {
+            runtime.planning = false;
+            mount(EXERCISE_PICKER)
+        }
         "workout.exercise.back-squat"
         | "workout.exercise.front-squat"
         | "workout.exercise.paused-squat"
-        | "workout.exercise.custom" => mount(SESSION),
+        | "workout.exercise.custom" => {
+            if runtime.planning {
+                mount(WORKOUT_BUILDER)
+            } else {
+                mount(SESSION)
+            }
+        }
         "workout.begin" => {
             if !runtime.persist("workout.start") {
                 return 0;

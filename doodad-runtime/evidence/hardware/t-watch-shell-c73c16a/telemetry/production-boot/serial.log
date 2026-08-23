@@ -1,0 +1,298 @@
+I (240) esp_image: segment 1: paddr=0011f35c vaddr=3fca1100 size=00cbch (  3260) load
+I (241) esp_image: segment 2: paddr=00120020 vaddr=42000020 size=1896a4h (1611428) map
+I (535) esp_image: segment 3: paddr=002a96cc vaddr=3fca1dbc size=05680h ( 22144) load
+I (540) esp_image: segment 4: paddr=002aed54 vaddr=40374000 size=1d088h (118920) load
+I (567) esp_image: segment 5: paddr=002cbde4 vaddr=50000000 size=00020h (    32) load
+I (579) boot: Loaded app from partition at offset 0x10000
+I (579) boot: Disabling RNG early entropy source...
+I (581) octal_psram: vendor id    : 0x0d (AP)
+I (581) octal_psram: dev id       : 0x02 (generation 3)
+I (581) octal_psram: density      : 0x03 (64 Mbit)
+I (582) octal_psram: good-die     : 0x01 (Pass)
+I (582) octal_psram: Latency      : 0x01 (Fixed)
+I (582) octal_psram: VCC          : 0x01 (3V)
+I (582) octal_psram: SRF          : 0x01 (Fast Refresh)
+I (583) octal_psram: BurstType    : 0x01 (Hybrid Wrap)
+I (583) octal_psram: BurstLen     : 0x01 (32 Byte)
+I (583) octal_psram: Readlatency  : 0x02 (10 cycles@Fixed)
+I (583) octal_psram: DriveStrength: 0x00 (1/1)
+I (583) MSPI Timing: Enter psram timing tuning
+I (584) esp_psram: Found 8MB PSRAM device
+I (585) esp_psram: Speed: 80MHz
+I (585) cpu_start: Multicore app
+I (1011) esp_psram: SPI SRAM memory test OK
+I (1020) cpu_start: Pro cpu start user code
+I (1020) cpu_start: cpu freq: 240000000 Hz
+I (1020) app_init: Application information:
+I (1020) app_init: Project name:     doodad_runtime
+I (1020) app_init: App version:      c73c16a-dirty
+I (1020) app_init: Compile time:     Aug  5 2026 14:23:12
+I (1020) app_init: ELF file SHA256:  25940f554...
+I (1020) app_init: ESP-IDF:          v5.5.5
+I (1021) efuse_init: Min chip rev:     v0.0
+I (1021) efuse_init: Max chip rev:     v0.99 
+I (1021) efuse_init: Chip rev:         v0.2
+I (1021) heap_init: Initializing. RAM available for dynamic allocation:
+I (1021) heap_init: At 3FCD2B48 len 00016BC8 (90 KiB): RAM
+I (1021) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (1022) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (1022) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (1022) esp_psram: Adding pool of 8192K of PSRAM memory to heap allocator
+I (1023) spi_flash: detected chip: winbond
+I (1023) spi_flash: flash io: dio
+W (1023) i2c: This driver is an old driver, please migrate your application code to adapt `driver/i2c_master.h`
+I (1024) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1024) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1025) main_task: Started on CPU0
+I (1026) esp_psram: Reserving pool of 32K of internal memory for DMA/internal allocations
+I (1026) main_task: Calling app_main()
+I (1026) doodad: [host] boot
+I (1328) twatch_s3: board ready device_id=t-watch-s3-a0f262e11e18
+I (1363) doodad: [display] LVGL draw buffers caps=0x80c (19200 bytes each)
+I (1425) doodad: [host] display ready
+W (1434) package-service: personal installs disabled; configure owner and 32-byte HMAC key
+I (1437) package-service: package storage mounted: 10052 KiB free / 10060 KiB apps=0
+I (1437) weather-provider: ESP-IDF network provider enabled
+I (1446) doodad: [host] runtime pthread started
+I (1447) pp: pp rom version: e7ae62f
+I (1449) net80211: net80211 rom version: e7ae62f
+I (1451) wifi:wifi driver task: 3fce2cfc, prio:23, stack:6656, core=0
+I (1455) wifi:wifi firmware version: b9f67df
+I (1455) wifi:wifi certification version: v7.0
+I (1455) wifi:config NVS flash: enabled
+I (1455) wifi:config nano formatting: disabled
+I (1455) wifi:Init data frame dynamic rx buffer num: 5
+I (1456) wifi:Init static rx mgmt buffer num: 4
+I (1456) wifi:Init management short buffer num: 8
+I (1456) wifi:Init static tx buffer num: 6
+I (1456) wifi:Init tx cache buffer num: 8
+I (1457) wifi:Init static tx FG buffer num: 2
+I (1457) wifi:Init static rx buffer size: 1600
+I (1457) wifi:Init static rx buffer num: 5
+I (1457) wifi:Init dynamic rx buffer num: 5
+I (1458) wifi_init: rx ba win: 5
+I (1459) wifi_init: accept mbox: 6
+I (1459) wifi_init: tcpip mbox: 32
+I (1459) wifi_init: udp mbox: 6
+I (1459) wifi_init: tcp mbox: 6
+I (1459) wifi_init: tcp tx win: 5760
+I (1460) wifi_init: tcp rx win: 5760
+I (1460) wifi_init: tcp mss: 1440
+I (1460) wifi_init: WiFi/LWIP prefer SPIRAM
+I (1460) wifi_init: WiFi IRAM OP enabled
+I (1461) wifi_init: WiFi RX IRAM OP enabled
+W (1461) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+I (1462) phy_init: phy_version 712,87e8c20e,Apr 13 2026,18:51:10
+I (1502) wifi:mode : sta (a0:f2:62:e1:1e:18)
+I (1502) wifi:enable tsf
+I (1503) wifi:Set ps type: 0, coexist: 0
+
+I (1504) network-service: shared Wi-Fi station initialized
+I (1506) voice-service: agent journal restored revision=1 food=0 missed=0
+I (1511) voice-service: audio DMA reserved bytes=4096 free=543 largest=448
+I (1515) doodad: [visual] device_id=t-watch-s3-a0f262e11e18 scene=boot-shell revision=1 frame_hash=2664f9b8
+I (1516) doodad: [host] WAMR ready (interpreter, stack=16384, heap=16384)
+I (1519) doodad: [host] no legacy onboard package at /packages/active.wasm
+I (1520) doodad: [host] board has no microSD fallback
+I (1520) doodad: [host] using embedded recovery app
+I (1520) doodad: [host] EMBEDDED app size: 445 bytes
+I (1525) doodad: [host] module loaded
+I (1527) doodad: [host] module instantiated
+I (1527) doodad: [host] invoking app_start
+I (1576) wifi:state: init -> auth (0xb0)
+W (1576) wifi:m f auth
+
+I (1593) doodad: [guest] ui_mount: 151 bytes, 3 nodes
+I (1593) doodad: [host] app started; instance remains resident
+I (1596) doodad: [host] steady state; free heap: 8059903 bytes
+I (1741) doodad: [visual] device_id=t-watch-s3-a0f262e11e18 scene=home revision=6 frame_hash=42fbdc0c
+I (2577) wifi:state: auth -> init (0x200)
+W (2579) wifi:m f probe req l=0
+
+W (2652) wifi:m f probe req l=0
+
+W (2773) wifi:m f probe req l=0
+
+W (2894) wifi:m f probe req l=0
+
+W (3015) wifi:m f probe req l=0
+
+W (3136) wifi:m f probe req l=0
+
+I (3225) wifi:new:<6,0>, old:<1,0>, ap:<255,255>, sta:<6,0>, prof:1, snd_ch_cfg:0x0
+I (3226) wifi:state: init -> auth (0xb0)
+W (3226) wifi:m f auth
+
+I (3373) doodad: [display] fps=2.0 frames=4 flushes=14 pixels=116655 avg_render_us=63801 max_render_us=86540 avg_flush_us=5406 max_flush_us=6613 touch_presses=0 objects=37 internal_free=7875 internal_min=3668 internal_largest=7680 psram_free=8051988 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+I (4226) wifi:state: auth -> init (0x200)
+W (4229) wifi:m f probe req l=0
+
+W (4248) wifi:m f probe req l=0
+
+W (4296) wifi:m f probe req l=0
+
+W (4417) wifi:m f probe req l=0
+
+W (4538) wifi:m f probe req l=0
+
+W (4659) wifi:m f probe req l=0
+
+W (4780) wifi:m f probe req l=0
+
+W (4902) wifi:m f probe req l=0
+
+W (5023) wifi:m f probe req l=0
+
+W (5144) wifi:m f probe req l=0
+
+W (5265) wifi:m f probe req l=0
+
+I (5345) wifi:new:<11,0>, old:<6,0>, ap:<255,255>, sta:<11,0>, prof:1, snd_ch_cfg:0x0
+I (5346) wifi:state: init -> auth (0xb0)
+W (5346) wifi:m f auth
+
+I (5373) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7875 internal_min=3668 internal_largest=7680 psram_free=8051740 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+I (6347) wifi:state: auth -> init (0x200)
+W (6350) wifi:m f probe req l=0
+
+W (6368) wifi:m f probe req l=0
+
+W (6441) wifi:m f probe req l=0
+
+W (6562) wifi:m f probe req l=0
+
+W (6683) wifi:m f probe req l=0
+
+W (6804) wifi:m f probe req l=0
+
+W (6925) wifi:m f probe req l=0
+
+W (7013) wifi:m f probe req l=0
+
+W (7135) wifi:m f probe req l=0
+
+W (7256) wifi:m f probe req l=0
+
+I (7373) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7911 internal_min=3668 internal_largest=7680 psram_free=8051720 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+W (7377) wifi:m f probe req l=0
+
+I (8580) wifi:state: init -> auth (0xb0)
+W (8581) wifi:m f auth
+
+I (9374) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7875 internal_min=3668 internal_largest=7680 psram_free=8051780 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+I (9581) wifi:state: auth -> init (0x200)
+W (9584) wifi:m f probe req l=0
+
+W (9646) wifi:m f probe req l=0
+
+I (9718) wifi:new:<1,0>, old:<11,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0
+I (9719) wifi:state: init -> auth (0xb0)
+W (9720) wifi:m f auth
+
+I (10720) wifi:state: auth -> init (0x200)
+W (10723) wifi:m f probe req l=0
+
+W (10742) wifi:m f probe req l=0
+
+W (10863) wifi:m f probe req l=0
+
+W (10984) wifi:m f probe req l=0
+
+W (11105) wifi:m f probe req l=0
+
+W (11226) wifi:m f probe req l=0
+
+I (11315) wifi:new:<6,0>, old:<1,0>, ap:<255,255>, sta:<6,0>, prof:1, snd_ch_cfg:0x0
+I (11316) wifi:state: init -> auth (0xb0)
+W (11316) wifi:m f auth
+
+I (11375) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7875 internal_min=3668 internal_largest=7680 psram_free=8051740 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+I (12316) wifi:state: auth -> init (0x200)
+W (12328) wifi:m f probe req l=0
+
+W (12338) wifi:m f probe req l=0
+
+W (12380) wifi:m f probe req l=0
+
+W (12502) wifi:m f probe req l=0
+
+W (12623) wifi:m f probe req l=0
+
+W (12744) wifi:m f probe req l=0
+
+W (12865) wifi:m f probe req l=0
+
+W (12986) wifi:m f probe req l=0
+
+W (13107) wifi:m f probe req l=0
+
+W (13228) wifi:m f probe req l=0
+
+W (13350) wifi:m f probe req l=0
+
+I (13376) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7911 internal_min=3668 internal_largest=7680 psram_free=8051720 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+I (14517) wifi:state: init -> auth (0xb0)
+W (14517) wifi:m f auth
+
+I (15376) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7875 internal_min=3668 internal_largest=7680 psram_free=8051780 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+I (15518) wifi:state: auth -> init (0x200)
+W (15520) wifi:m f probe req l=0
+
+W (15615) wifi:m f probe req l=0
+
+I (15658) wifi:new:<1,0>, old:<6,0>, ap:<255,255>, sta:<1,0>, prof:1, snd_ch_cfg:0x0
+I (15659) wifi:state: init -> auth (0xb0)
+W (15659) wifi:m f auth
+
+I (16660) wifi:state: auth -> init (0x200)
+W (16662) wifi:m f probe req l=0
+
+W (16681) wifi:m f probe req l=0
+
+W (16802) wifi:m f probe req l=0
+
+W (16924) wifi:m f probe req l=0
+
+W (17045) wifi:m f probe req l=0
+
+W (17166) wifi:m f probe req l=0
+
+W (17254) wifi:m f probe req l=0
+
+W (17375) wifi:m f probe req l=0
+
+I (17376) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7911 internal_min=3668 internal_largest=7680 psram_free=8051740 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+W (17496) wifi:m f probe req l=0
+
+W (17617) wifi:m f probe req l=0
+
+W (17738) wifi:m f probe req l=0
+
+I (17838) wifi:new:<11,0>, old:<1,0>, ap:<255,255>, sta:<11,0>, prof:1, snd_ch_cfg:0x0
+I (17839) wifi:state: init -> auth (0xb0)
+W (17840) wifi:m f auth
+
+I (18840) wifi:state: auth -> init (0x200)
+W (18843) wifi:m f probe req l=0
+
+W (18862) wifi:m f probe req l=0
+
+W (18934) wifi:m f probe req l=0
+
+W (19055) wifi:m f probe req l=0
+
+W (19177) wifi:m f probe req l=0
+
+W (19298) wifi:m f probe req l=0
+
+I (19377) doodad: [display] fps=0.0 frames=0 flushes=0 pixels=0 avg_render_us=0 max_render_us=0 avg_flush_us=0 max_flush_us=0 touch_presses=0 objects=37 internal_free=7911 internal_min=3668 internal_largest=7680 psram_free=8051720 psram_min=8040628 psram_largest=7995392 total_frames=4 total_flushes=14 total_pixels=116655 total_avg_render_us=63801 total_max_render_us=86540 total_avg_flush_us=5406 total_max_flush_us=6613 transfer=synchronous
+W (19419) wifi:m f probe req l=0
+
+W (19506) wifi:m f probe req l=0
+
+W (19628) wifi:m f probe req l=0
+
+W (19749) wifi:m f probe req l=0
+
+W (19870) wifi:m f probe req l=0
+

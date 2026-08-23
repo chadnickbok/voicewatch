@@ -6,6 +6,7 @@ namespace m3e {
 namespace {
 
 constexpr DensityQ8_8 kWatchDensity = density_q8_8(5, 4);
+constexpr DensityQ8_8 kUltraDensity = density_q8_8(2, 1);
 constexpr InsetsDp kNoInsets{0, 0, 0, 0};
 
 std::int32_t round_q8_8(std::int64_t value) {
@@ -32,6 +33,24 @@ const DisplayProfile watch_square_192{
     InputKind::touch,
     kNoInsets,
     false,
+    false,
+};
+
+const DisplayProfile twatch_ultra_portrait{
+    "twatch_ultra_410x502",
+    410,
+    502,
+    410,
+    502,
+    0,
+    0,
+    205,
+    251,
+    kUltraDensity,
+    ScreenShape::square,
+    InputKind::touch,
+    kNoInsets,
+    true,
     false,
 };
 
@@ -153,6 +172,7 @@ const DisplayProfile* find_display_profile(const char* id) {
         return nullptr;
     }
     const DisplayProfile* profiles[] = {
+        &twatch_ultra_portrait,
         &watch_square_192,
         &cores3_watch_preview,
         &wear_round_192_reference,

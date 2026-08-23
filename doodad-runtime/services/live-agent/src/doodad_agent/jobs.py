@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import uuid
 from dataclasses import dataclass
 from datetime import UTC, datetime
@@ -24,6 +25,51 @@ EVENT_STATE = {
     "cancelled": "cancelled",
 }
 TERMINAL = {"completed", "failed", "cancelled"}
+
+TASK_PRESENTATION = {
+    "codex_app_build": {
+        "kind": "app_build",
+        "title": "BUILDING APP",
+        "icon": "app_builder",
+        "color": "#7241FF",
+        "detail_label": "REQUEST",
+        "stages": ["PLAN", "DESIGN", "BUILD", "VERIFY"],
+    },
+    "fake_app_build": {
+        "kind": "app_build",
+        "title": "BUILDING APP",
+        "icon": "app_builder",
+        "color": "#7241FF",
+        "detail_label": "REQUEST",
+        "stages": ["PLAN", "DESIGN", "BUILD", "VERIFY"],
+    },
+    "research_report": {
+        "kind": "research_report",
+        "title": "RESEARCH REPORT",
+        "icon": "research",
+        "color": "#20BFF4",
+        "detail_label": "TOPIC",
+        "stages": ["BRIEF", "RESEARCH", "DRAFT", "REVIEW"],
+    },
+    "presentation_delivery": {
+        "kind": "presentation_delivery",
+        "title": "SLIDE DECK",
+        "icon": "presentation",
+        "color": "#B9FF24",
+        "detail_label": "DELIVERY",
+        "stages": ["BRIEF", "CREATE", "REVIEW", "SEND"],
+    },
+}
+
+
+def _bounded_text(value: object, maximum: int) -> str:
+    return " ".join(str(value or "").split())[:maximum]
+
+
+def _elapsed_text(start_ms: int, now_ms: int) -> str:
+    seconds = max(0, (now_ms - start_ms) // 1000)
+    minutes, seconds = divmod(seconds, 60)
+    return f"{min(minutes, 99)}:{seconds:02d}"
 
 
 def iso_time(milliseconds: int) -> str:
@@ -224,6 +270,165 @@ class JobManager:
             (self.device_id, job_id),
         )
         return [self._event(row) for row in rows]
+
+    def task_snapshots(
+        self,
+        now_ms: int,
+        *,
+        active_only: bool = True,
+        limit: int = 3,
+    ) -> list[dict[str, Any]]:
+        """Project the durable ledger into a bounded, device-safe task feed."""
+
+        if limit <= 0:
+            return []
+        state_clause = (
+            "AND state NOT IN ('ready_for_review','completed','failed','cancelled')"
+            if active_only else ""
+        )
+        rows = self.store.fetch_all(
+            "SELECT * FROM jobs WHERE device_id=? " + state_clause +
+            " ORDER BY updated_at_ms DESC,created_at_ms DESC,job_id LIMIT ?",
+            (self.device_id, limit),
+        )
+        return [self._task_snapshot(row, now_ms) for row in rows]
+
+    def task_status(
+        self,
+        now_ms: int,
+        query: str | None = None,
+        *,
+        limit: int = 8,
+    ) -> list[dict[str, Any]]:
+        """Return recent task status, optionally narrowed by natural text."""
+
+        snapshots = self.task_snapshots(
+            now_ms, active_only=False, limit=max(limit, 24)
+        )
+        normalized = " ".join((query or "").casefold().split())
+        if normalized:
+            generic = {
+                "agent", "agents", "are", "current", "doing", "going",
+                "how", "progress", "status", "task", "tasks", "the", "what",
+            }
+            terms = {
+                term for term in re.findall(r"[a-z0-9]+", normalized)
+                if len(term) > 2 and term not in generic
+            }
+            if terms:
+                snapshots = [
+                    snapshot for snapshot in snapshots
+                    if terms.intersection(
+                        set(re.findall(
+                            r"[a-z0-9]+",
+                            " ".join(
+                                str(snapshot.get(key, ""))
+                                for key in ("job_id", "kind", "title", "detail", "summary")
+                            ).casefold(),
+                        ))
+                    )
+                ]
+        return snapshots[:limit]
+
+    def _task_snapshot(self, row: Any, now_ms: int) -> dict[str, Any]:
+        request = json.loads(row["request_json"])
+        presentation = TASK_PRESENTATION.get(str(row["kind"]), {
+            "kind": "background_work",
+            "title": "BACKGROUND TASK",
+            "icon": "monitoring",
+            "color": "#B9FF24",
+            "detail_label": "REQUEST",
+            "stages": ["BRIEF", "WORK", "REVIEW", "DONE"],
+        })
+        events = self.events(str(row["job_id"]))
+        latest = events[-1] if events else None
+        progress_event = next(
+            (event for event in reversed(events) if event.kind == "progress"),
+            None,
+        )
+        payload = progress_event.payload if progress_event is not None else {}
+        stages = list(presentation["stages"])
+        stage_index = self._stage_index(
+            str(row["kind"]), str(row["state"]), payload, stages
+        )
+        progress = payload.get("progress")
+        if not isinstance(progress, int):
+            progress = min(95, round(stage_index * 100 / max(1, len(stages) - 1)))
+        if row["state"] in {"completed", "ready_for_review"}:
+            progress = 100
+        detail = (
+            request.get("recipient")
+            if presentation["kind"] == "presentation_delivery"
+            else request.get("topic") or request.get("brief")
+        )
+        summary = latest.summary if latest is not None else "Background work accepted."
+        return {
+            "job_id": str(row["job_id"]),
+            "kind": presentation["kind"],
+            "title": presentation["title"],
+            "status": self._status_text(str(row["state"]), payload, summary),
+            "state": str(row["state"]),
+            "summary": _bounded_text(summary, 160),
+            "elapsed": _elapsed_text(int(row["created_at_ms"]), now_ms),
+            "progress": max(0, min(int(progress), 100)),
+            "detail_label": presentation["detail_label"],
+            "detail": _bounded_text(detail or "IN PROGRESS", 48).upper(),
+            "stages": stages,
+            "active_stage": min(stage_index, len(stages) - 1),
+            "completed_stages": min(stage_index, len(stages)),
+            "color": presentation["color"],
+            "icon": presentation["icon"],
+            "updated_at_ms": int(row["updated_at_ms"]),
+        }
+
+    @staticmethod
+    def _stage_index(
+        job_kind: str,
+        state: str,
+        payload: dict[str, Any],
+        stages: list[str],
+    ) -> int:
+        if state in {"completed", "ready_for_review"}:
+            return len(stages) - 1
+        explicit = payload.get("stage_index")
+        if isinstance(explicit, int):
+            return max(0, min(explicit, len(stages) - 1))
+        stage = str(payload.get("stage", "")).casefold()
+        if job_kind in {"codex_app_build", "fake_app_build"}:
+            if stage in {"design", "designing"}:
+                return 1
+            if stage in {"implementation", "implementing", "build"}:
+                return 2
+            if stage in {"verification", "repair", "verifying", "repairing"}:
+                return 3
+            if stage in {"packaging", "install"}:
+                return 3
+            return 0
+        return 1 if state in {"running", "needs_input"} else 0
+
+    @staticmethod
+    def _status_text(state: str, payload: dict[str, Any], summary: str) -> str:
+        if state == "needs_input":
+            return "NEEDS INPUT"
+        if state == "ready_for_review":
+            return "READY TO INSTALL"
+        if state == "completed":
+            return "COMPLETED"
+        if state == "failed":
+            return "FAILED"
+        if state == "cancelled":
+            return "CANCELLED"
+        value = payload.get("status") or payload.get("stage")
+        if value:
+            return _bounded_text(value, 24).replace("_", " ").upper()
+        if state == "queued":
+            return "QUEUED"
+        lowered = summary.casefold()
+        if "research" in lowered:
+            return "RESEARCHING"
+        if "slide" in lowered or "deck" in lowered:
+            return "CREATING SLIDES"
+        return "WORKING"
 
     def rebuild_state(self, job_id: str) -> str:
         state = "new"

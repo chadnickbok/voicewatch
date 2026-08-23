@@ -1,4 +1,5 @@
 :root {
+  --surface-aspect: 410 / 502;
   color-scheme: dark;
   font-family:
     Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI",
@@ -22,9 +23,9 @@ body {
 }
 
 main {
-  width: min(980px, calc(100vw - 40px));
+  width: min(920px, calc(100vw - 40px));
   display: grid;
-  grid-template-columns: minmax(520px, 1fr) minmax(280px, 360px);
+  grid-template-columns: minmax(410px, 1fr) minmax(280px, 360px);
   gap: 56px;
   align-items: center;
 }
@@ -45,12 +46,12 @@ main {
 
 .watch {
   position: relative;
-  width: 520px;
-  height: 520px;
+  width: 450px;
+  height: 542px;
   display: grid;
   place-items: center;
   border: 1px solid #24344c;
-  border-radius: 112px;
+  border-radius: 92px;
   background: linear-gradient(145deg, #1d2939, #0d131d);
   box-shadow:
     0 40px 100px rgb(0 0 0 / 55%),
@@ -58,8 +59,9 @@ main {
 }
 
 #screen {
-  width: 480px;
-  height: 480px;
+  width: 410px;
+  aspect-ratio: var(--surface-aspect);
+  height: auto;
   display: block;
   background: #080b12;
   border: 1px solid #2b405e;
@@ -166,12 +168,13 @@ pre {
   }
 
   .watch {
-    width: min(520px, calc(100vw - 40px));
-    height: min(520px, calc(100vw - 40px));
+    width: min(450px, calc(100vw - 40px));
+    height: auto;
+    aspect-ratio: 450 / 542;
   }
 
   #screen {
-    width: calc(min(520px, 100vw - 40px) - 40px);
-    height: calc(min(520px, 100vw - 40px) - 40px);
+    width: calc(min(450px, 100vw - 40px) - 40px);
+    height: auto;
   }
 }

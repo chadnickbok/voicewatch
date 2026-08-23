@@ -274,8 +274,9 @@ def _validate_node(
         raise DoodadError(f"{identifier} uses an unsupported semantic event")
     for action in events.values():
         _identifier(action, f"{identifier} action")
-    if node_type in INTERACTIVE_TYPES:
+    if node_type in INTERACTIVE_TYPES or events:
         _text(semantics.get("label"), f"{identifier} semantics.label", 128)
+    if node_type in INTERACTIVE_TYPES:
         if not events:
             raise DoodadError(f"{identifier} is interactive but has no event")
     if node_type in {"image", "chart"}:

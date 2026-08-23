@@ -7,10 +7,11 @@ shipping framebuffer goldens.
 
 ## Product boundary
 
-The watch is the workout execution surface. Routine construction, long-term
-analytics, and program authoring may live on a phone or be voice-generated,
-but the complete active workout must remain usable and recoverable without a
-phone connection.
+The watch is primarily the workout execution surface. It supports bounded
+editing of the current routine and measurable goal; free-form program
+authoring, long-term analytics, and imports may live on a phone or be
+voice-generated. The complete planning and active-workout flow remains usable
+and recoverable without a phone connection.
 
 The first reference scenario is a heavy squat, bench, and deadlift session.
 It exercises exercise selection, planned and actual values, set types, RPE,
@@ -37,6 +38,9 @@ recovery.
 
 ```text
 Today
+  -> Training hub
+       -> Workout builder -> Exercise prescription
+       -> Strength goal
   -> Session overview
   -> Exercise picker
   -> Active set
@@ -59,6 +63,10 @@ Any active state
 | Board | Screen | Purpose | Dominant component |
 | --- | --- | --- | --- |
 | `01-start-and-plan` | Today | Start the prescribed session without setup friction | `SessionHero` |
+| `concepts-v3` | Training hub | Review the current routine and measurable goal | `GoalProgress` |
+| | Workout builder | Edit the current lift order and prescriptions | `ExerciseQueue` |
+| | Exercise prescription | Set work sets, reps, load, rest, and warmups | `NumericEditor` |
+| | Strength goal | Set a lift-specific target and timeframe | `HeroValue` |
 | | Session overview | See lift order and progress | `ExerciseQueue` |
 | | Exercise picker | Add or substitute an exercise | `ExercisePickerList` |
 | `02-perform-and-log` | Active set | Execute the current prescription | `SetTargetHero` |
@@ -83,6 +91,24 @@ PowerliftingApp
 |  |- SessionHero
 |  |- ExercisePreviewStrip
 |  `- PrimaryAction
+|- TrainingHubScreen
+|  |- CurrentPlanCard
+|  |- GoalProgress
+|  `- DoneAction
+|- WorkoutBuilderScreen
+|  |- ExerciseQueue
+|  |- AddExerciseAction
+|  `- SavePlanAction
+|- ExercisePrescriptionScreen
+|  |- SetStepper
+|  |- RepStepper
+|  |- PrescriptionContext
+|  `- DoneAction
+|- StrengthGoalScreen
+|  |- GoalLiftCard
+|  |- TargetStepper
+|  |- GoalContext
+|  `- SaveGoalAction
 |- SessionOverviewScreen
 |  |- SessionProgress
 |  `- ExerciseQueue
@@ -244,7 +270,7 @@ workout-only display typeface are not.
 The V2 direction is now implemented as a dual-renderer app rather than a
 concept-only board.
 
-- All twelve screens are deterministic AppSpecs generated from
+- All sixteen screens are deterministic AppSpecs generated from
   `tools/powerlifting_foundations/generate_appspecs.py`.
 - `apps/workout/src/lib.rs` executes the complete decisive flow in Wasm.
 - Wear Compose and LVGL implement the same bounded Powerlifting composition on
@@ -263,3 +289,15 @@ Evidence and the detailed result live in `evidence/` and
 The individual screens were generated with the built-in image tool from the
 checked-in Weather visual master. The flow boards are mechanical montages;
 they do not introduce a second visual interpretation.
+
+## V3 planning pass
+
+The 2026-08-10 second pass closes the setup and goal gap without turning the
+watch into a program-authoring workstation. Four new screens cover the current
+training hub, Heavy Day builder, Back Squat prescription, and measurable 5RM
+goal. Their generated references and exact 240px targets live under
+`generated/concepts-v3/`; the semantic implementation is compared against
+those targets under `evidence/planning-v3/`.
+
+The full product, state, persistence, failure, rest, and resume contract is in
+`WORKOUT-FLOWS.md`.

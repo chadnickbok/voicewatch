@@ -7,6 +7,8 @@ const message = document.querySelector("#message");
 const engine = document.querySelector("#engine");
 const renderer = document.querySelector("#renderer");
 const packagePath = document.querySelector("#package");
+const surfaceNote = document.querySelector("#surface-note");
+const surfaceSize = document.querySelector("#surface-size");
 
 let displayedRevision = -1;
 
@@ -22,6 +24,15 @@ async function refresh() {
     engine.textContent = state.engine;
     renderer.textContent = state.renderer;
     packagePath.textContent = state.package ?? "";
+    if (state.surface) {
+      const { width, height } = state.surface;
+      document.documentElement.style.setProperty("--surface-aspect", `${width} / ${height}`);
+      screen.width = width;
+      screen.height = height;
+      screen.alt = `${width} by ${height} Doodad preview`;
+      surfaceNote.textContent = `${width} × ${height} T-Watch Ultra surface`;
+      surfaceSize.textContent = `Portrait, ${width} × ${height}`;
+    }
 
     if (state.revision !== displayedRevision && state.revision > 0) {
       displayedRevision = state.revision;

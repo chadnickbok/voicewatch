@@ -36,7 +36,7 @@ void assert_action(lv_obj_t* object, const char* expected) {
 
 int main() {
     lv_init();
-    auto* display = lv_display_create(240, 240);
+    auto* display = lv_display_create(410, 502);
     assert(display != nullptr);
     auto* screen = lv_screen_active();
     assert(screen != nullptr);
@@ -45,38 +45,29 @@ int main() {
     m3e_catalog_show_voice_runtime(
         screen, 6, nullptr, nullptr, &view);
     assert_action(view.primary_action, "voice.primary");
-    assert_action(view.cancel_action, "voice.cancel");
-    assert(view.level_ring == view.primary_action);
+    assert(view.cancel_action == nullptr);
+    assert(view.level_ring == nullptr);
     for (auto* bar : view.level_bars) {
-        assert(bar != nullptr);
-        assert(lv_obj_get_height(bar) == 7);
+        assert(bar == nullptr);
     }
-    lv_obj_update_layout(screen);
-    const auto bar_group_left = lv_obj_get_x(view.level_bars[0]);
-    const auto bar_group_right =
-        lv_obj_get_x(view.level_bars[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT - 1]) +
-        lv_obj_get_width(
-            view.level_bars[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT - 1]);
-    assert(
-        bar_group_left + bar_group_right ==
-        lv_obj_get_width(view.level_ring));
-    const auto bar_group_top = lv_obj_get_y(view.level_bars[0]);
-    const auto bar_group_bottom =
-        bar_group_top + lv_obj_get_height(view.level_bars[0]);
-    const auto vertical_center_error =
-        bar_group_top + bar_group_bottom - lv_obj_get_height(view.level_ring);
-    assert(vertical_center_error >= -1 && vertical_center_error <= 1);
     assert(contains_label(screen, "READY"));
+    assert(contains_label(screen, "HOLD TO TALK"));
 
     m3e_catalog_show_voice_runtime(
         screen, 1, "Hello Doodad", nullptr, &view);
     assert_action(view.primary_action, "voice.primary");
+    assert_action(view.cancel_action, "voice.cancel");
+    assert(view.level_ring == view.primary_action);
+    for (auto* bar : view.level_bars) {
+        assert(bar != nullptr);
+        assert(lv_obj_get_height(bar) == 8);
+    }
     assert(contains_label(screen, "LISTENING"));
 
     m3e_catalog_show_voice_runtime(
         screen, 2, "What's the weather?", nullptr, &view);
     assert(view.primary_action == nullptr);
-    assert_action(view.cancel_action, "voice.cancel");
+    assert(view.cancel_action == nullptr);
     assert(contains_label(screen, "THINKING"));
 
     m3e_catalog_show_voice_runtime(
@@ -87,7 +78,7 @@ int main() {
     m3e_catalog_show_voice_runtime(
         screen, 5, nullptr, "Voice connection lost", &view);
     assert(view.primary_action == nullptr);
-    assert_action(view.cancel_action, "voice.cancel");
+    assert(view.cancel_action == nullptr);
     assert(contains_label(screen, "UNAVAILABLE"));
 
     lv_display_delete(display);

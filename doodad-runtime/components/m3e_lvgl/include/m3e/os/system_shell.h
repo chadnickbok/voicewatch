@@ -57,6 +57,7 @@ enum {
     M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER = 0,
     M3E_SYSTEM_SHELL_AGENT_ICON_RESEARCH = 1,
     M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING = 2,
+    M3E_SYSTEM_SHELL_AGENT_ICON_PRESENTATION = 3,
 };
 
 enum {
@@ -77,6 +78,7 @@ typedef struct {
     const char* battery;
     uint8_t agent_count;
     bool agent_status_changed;
+    bool live_clock;
 } m3e_system_shell_home_model_t;
 
 typedef struct {

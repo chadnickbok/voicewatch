@@ -6,12 +6,17 @@
 #include <cstddef>
 #include <cstdint>
 #include <cstdio>
+#include <cstring>
+#include <ctime>
 #include <new>
 
 #include "m3e/foundation/display_profile.hpp"
 #include "m3e/os/shell_state.hpp"
 
 LV_FONT_DECLARE(m3e_home_time_font_114);
+LV_FONT_DECLARE(m3e_home_time_font_148);
+LV_FONT_DECLARE(m3e_shell_stat_font_38);
+LV_FONT_DECLARE(m3e_weather_font_55);
 LV_FONT_DECLARE(m3e_launcher_font_26);
 LV_FONT_DECLARE(m3e_agent_title_font_20);
 LV_FONT_DECLARE(m3e_voice_display_font_44);
@@ -25,6 +30,83 @@ constexpr char kAgentsAction[] = "system.agents";
 constexpr char kAgentBackAction[] = "system.agent.back";
 constexpr char kVoicePrimaryAction[] = "voice.primary";
 constexpr char kVoiceCancelAction[] = "voice.cancel";
+
+constexpr std::time_t kEarliestValidWallClock = 946684800;  // 2000-01-01
+
+struct HomeClockState {
+    lv_obj_t* time;
+    lv_obj_t* weekday;
+    lv_obj_t* calendar_date;
+    lv_timer_t* timer;
+};
+
+bool current_clock_text(
+    char* time_text,
+    std::size_t time_size,
+    char* weekday_text,
+    std::size_t weekday_size,
+    char* date_text,
+    std::size_t date_size) {
+    static constexpr const char* kWeekdays[]{
+        "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT",
+    };
+    static constexpr const char* kMonths[]{
+        "JAN", "FEB", "MAR", "APR", "MAY", "JUN",
+        "JUL", "AUG", "SEP", "OCT", "NOV", "DEC",
+    };
+    const auto now = std::time(nullptr);
+    std::tm local{};
+    if (now < kEarliestValidWallClock || localtime_r(&now, &local) == nullptr ||
+        local.tm_wday < 0 || local.tm_wday > 6 ||
+        local.tm_mon < 0 || local.tm_mon > 11) {
+        std::snprintf(time_text, time_size, "%s", "--:--");
+        std::snprintf(weekday_text, weekday_size, "%s", "---");
+        std::snprintf(date_text, date_size, "%s", "--- --");
+        return false;
+    }
+    std::snprintf(
+        time_text, time_size, "%02d:%02d", local.tm_hour, local.tm_min);
+    std::snprintf(
+        weekday_text, weekday_size, "%s", kWeekdays[local.tm_wday]);
+    std::snprintf(
+        date_text, date_size, "%s %d", kMonths[local.tm_mon], local.tm_mday);
+    return true;
+}
+
+void refresh_home_clock(HomeClockState& state) {
+    char time_text[6]{};
+    char weekday_text[4]{};
+    char date_text[7]{};
+    current_clock_text(
+        time_text, sizeof(time_text),
+        weekday_text, sizeof(weekday_text),
+        date_text, sizeof(date_text));
+    if (std::strcmp(lv_label_get_text(state.time), time_text) != 0) {
+        lv_label_set_text(state.time, time_text);
+    }
+    if (std::strcmp(lv_label_get_text(state.weekday), weekday_text) != 0) {
+        lv_label_set_text(state.weekday, weekday_text);
+    }
+    if (std::strcmp(
+            lv_label_get_text(state.calendar_date), date_text) != 0) {
+        lv_label_set_text(state.calendar_date, date_text);
+    }
+}
+
+void home_clock_timer(lv_timer_t* timer) {
+    auto* state = static_cast<HomeClockState*>(lv_timer_get_user_data(timer));
+    if (state != nullptr) refresh_home_clock(*state);
+}
+
+void home_clock_deleted(lv_event_t* event) {
+    auto* state = static_cast<HomeClockState*>(lv_event_get_user_data(event));
+    if (state == nullptr) return;
+    if (state->timer != nullptr) {
+        lv_timer_delete(state->timer);
+        state->timer = nullptr;
+    }
+    lv_free(state);
+}
 
 lv_color_t rgb(
     std::uint8_t red, std::uint8_t green, std::uint8_t blue) {
@@ -197,6 +279,54 @@ void battery_icon_pixels(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
     pixel_surface(parent, x + 14, y + 2, 2, 4, 1, lime);
 }
 
+void ultra_battery_icon(lv_obj_t* parent, std::int32_t x, std::int32_t y) {
+    const auto lime = rgb(185, 255, 36);
+    auto* body = pixel_surface(parent, x, y, 20, 10, 3, lime);
+    lv_obj_set_style_bg_opa(body, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(body, 2, 0);
+    lv_obj_set_style_border_color(body, lime, 0);
+    pixel_surface(parent, x + 4, y + 3, 12, 4, 2, lime);
+    pixel_surface(parent, x + 20, y + 3, 3, 4, 1, lime);
+}
+
+void ultra_header(lv_obj_t* screen, const char* state) {
+    char time_text[6]{};
+    char weekday_text[4]{};
+    char date_text[7]{};
+    current_clock_text(
+        time_text, sizeof(time_text),
+        weekday_text, sizeof(weekday_text),
+        date_text, sizeof(date_text));
+    auto* time = label(
+        screen, time_text, &lv_font_montserrat_12, rgb(185, 255, 36));
+    lv_obj_set_pos(time, 28, 25);
+
+    auto* battery = label(
+        screen, "82%", &lv_font_montserrat_12, rgb(185, 255, 36));
+    lv_obj_set_pos(battery, 326, 25);
+    ultra_battery_icon(screen, 364, 28);
+
+    auto* back = pixel_surface(screen, 26, 52, 42, 42, 21, rgb(0, 0, 0), true);
+    lv_obj_set_style_border_width(back, 1, 0);
+    lv_obj_set_style_border_color(back, rgb(58, 56, 64), 0);
+    lv_obj_set_user_data(back, const_cast<char*>(kVoiceCancelAction));
+    auto* arrow = label(back, "<", &lv_font_montserrat_18, rgb(185, 255, 36));
+    lv_obj_align(arrow, LV_ALIGN_CENTER, 0, -1);
+
+    auto* title = label(
+        screen, "DOODAD", &m3e_voice_label_font_26, rgb(250, 249, 255));
+    lv_obj_set_size(title, 210, 34);
+    lv_obj_set_pos(title, 100, 58);
+    lv_obj_set_style_text_align(title, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_letter_space(title, 1, 0);
+
+    auto* live = label(
+        screen, state, &lv_font_montserrat_10, rgb(185, 255, 36));
+    lv_obj_set_size(live, 60, 16);
+    lv_obj_set_pos(live, 324, 68);
+    lv_obj_set_style_text_align(live, LV_TEXT_ALIGN_RIGHT, 0);
+}
+
 void calculator_icon(lv_obj_t* parent) {
     const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
     auto* body = pixel_surface(parent, 5, 2, 26, 32, 5, white);
@@ -304,6 +434,19 @@ void monitoring_icon(lv_obj_t* parent) {
     pixel_surface(parent, 17, 17, 6, 6, 3, white);
 }
 
+void presentation_icon(lv_obj_t* parent) {
+    const auto white = lv_obj_get_style_text_color(parent, LV_PART_MAIN);
+    auto* frame = pixel_surface(parent, 5, 6, 30, 23, 3, white);
+    lv_obj_set_style_bg_opa(frame, LV_OPA_TRANSP, 0);
+    lv_obj_set_style_border_width(frame, 2, 0);
+    lv_obj_set_style_border_color(frame, white, 0);
+    pixel_surface(parent, 10, 21, 5, 5, 1, white);
+    pixel_surface(parent, 18, 16, 5, 10, 1, white);
+    pixel_surface(parent, 26, 11, 5, 15, 1, white);
+    pixel_surface(parent, 19, 29, 2, 5, 1, white);
+    pixel_surface(parent, 13, 34, 14, 2, 1, white);
+}
+
 void agent_icon(lv_obj_t* parent, std::uint8_t icon) {
     auto* glyph = pixel_surface(parent, 2, 2, 36, 36, 0, rgb(0, 0, 0));
     lv_obj_set_style_bg_opa(glyph, LV_OPA_TRANSP, 0);
@@ -313,6 +456,9 @@ void agent_icon(lv_obj_t* parent, std::uint8_t icon) {
             break;
         case M3E_SYSTEM_SHELL_AGENT_ICON_MONITORING:
             monitoring_icon(glyph);
+            break;
+        case M3E_SYSTEM_SHELL_AGENT_ICON_PRESENTATION:
+            presentation_icon(glyph);
             break;
         case M3E_SYSTEM_SHELL_AGENT_ICON_APP_BUILDER:
         default:
@@ -409,7 +555,7 @@ void set_voice_bar_height(void* object, std::int32_t height) {
     auto* bar = static_cast<lv_obj_t*>(object);
     if (bar == nullptr) return;
     lv_obj_set_height(bar, height);
-    lv_obj_set_y(bar, (124 - height) / 2);
+    lv_obj_set_y(bar, (142 - height) / 2);
 }
 
 void start_voice_bar_animation(
@@ -440,7 +586,9 @@ struct m3e_system_shell_controller {
 extern "C" void m3e_system_shell_default_home_model(
     m3e_system_shell_home_model_t* model) {
     if (model == nullptr) return;
-    *model = {"10:09", "THU", "JUL 30", "72°  SF", "82%", 3, true};
+    *model = {
+        "--:--", "---", "--- --", "72°", "82%", 3, true, true,
+    };
 }
 
 extern "C" void m3e_system_shell_show_home(
@@ -453,83 +601,162 @@ extern "C" void m3e_system_shell_show_home(
     m3e_system_shell_default_home_model(&fallback);
     const auto& model = supplied_model == nullptr ? fallback : *supplied_model;
 
+    char current_time[6]{};
+    char current_weekday[4]{};
+    char current_date[7]{};
+    if (model.live_clock) {
+        current_clock_text(
+            current_time, sizeof(current_time),
+            current_weekday, sizeof(current_weekday),
+            current_date, sizeof(current_date));
+    }
+    const auto* time_text = model.live_clock ? current_time : model.time;
+    const auto* weekday_text =
+        model.live_clock ? current_weekday : model.weekday;
+    const auto* date_text =
+        model.live_clock ? current_date : model.calendar_date;
+
+    const auto white = rgb(250, 249, 255);
+    const auto purple = rgb(115, 65, 255);
+    const auto purple_dark = rgb(78, 44, 218);
+    const auto lime = rgb(185, 255, 36);
+    const auto coral = rgb(255, 69, 82);
+
     lv_obj_clean(screen);
     reset(screen);
-    lv_obj_set_size(screen, 240, 240);
+    lv_obj_set_size(screen, 410, 502);
     lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
 
-    auto* time = label(
-        screen, model.time, &m3e_home_time_font_114, rgb(250, 249, 255));
-    lv_obj_set_size(time, 240, 88);
-    lv_obj_set_pos(time, 0, 16);
-    lv_obj_set_style_text_align(time, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_letter_space(time, -3, 0);
-
-    auto* date_column = transparent_container(screen, 0, 97, 48, 42);
-    auto* weekday = label(
-        date_column, model.weekday, &lv_font_montserrat_14,
-        rgb(115, 65, 255));
-    lv_obj_align(weekday, LV_ALIGN_TOP_MID, 0, dp(3));
-    auto* calendar_date = label(
-        date_column, model.calendar_date, &lv_font_montserrat_14,
-        rgb(250, 249, 255));
-    lv_obj_align(calendar_date, LV_ALIGN_TOP_MID, 0, dp(21));
-
-    auto* weather_column = transparent_container(screen, 48, 97, 48, 42);
-    sun_icon(weather_column, 16, 1);
-    auto* weather = label(
-        weather_column, model.weather, &lv_font_montserrat_14,
-        rgb(115, 65, 255));
-    lv_obj_align(weather, LV_ALIGN_BOTTOM_MID, 0, -dp(3));
-
-    auto* battery_column = transparent_container(screen, 96, 97, 48, 42);
-    battery_icon(battery_column, 16, 4);
+    pixel_surface(screen, 28, 29, 7, 7, 4, lime);
+    auto* gps = label(screen, "GPS", &lv_font_montserrat_12, lime);
+    lv_obj_set_pos(gps, 41, 25);
     auto* battery = label(
-        battery_column, model.battery, &lv_font_montserrat_14,
-        rgb(185, 255, 36));
-    lv_obj_align(battery, LV_ALIGN_BOTTOM_MID, 0, -dp(3));
+        screen, model.battery, &lv_font_montserrat_12, lime);
+    lv_obj_set_pos(battery, 326, 25);
+    ultra_battery_icon(screen, 364, 28);
 
-    auto* agents_column = surface(
-        screen, 144, 97, 48, 42, 0, rgb(0, 0, 0), true);
+    auto* time = label(
+        screen, time_text, &m3e_home_time_font_148, white);
+    lv_obj_set_size(time, 410, 158);
+    lv_obj_set_pos(time, 0, 62);
+    lv_obj_set_style_text_align(time, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_letter_space(time, -5, 0);
+
+    auto* weekday = label(
+        screen, weekday_text, &lv_font_montserrat_14, purple);
+    lv_obj_set_pos(weekday, 126, 176);
+    lv_obj_set_width(weekday, 58);
+    lv_obj_set_style_text_align(weekday, LV_TEXT_ALIGN_CENTER, 0);
+    lv_obj_set_style_text_letter_space(weekday, 2, 0);
+    auto* date_divider = pixel_surface(
+        screen, 195, 183, 10, 2, 1, rgb(68, 37, 171));
+    (void)date_divider;
+    auto* calendar_date = label(
+        screen, date_text, &lv_font_montserrat_14, purple);
+    lv_obj_set_pos(calendar_date, 213, 176);
+    lv_obj_set_style_text_letter_space(calendar_date, 2, 0);
+
+    if (model.live_clock) {
+        auto* clock_state = static_cast<HomeClockState*>(
+            lv_malloc(sizeof(HomeClockState)));
+        if (clock_state != nullptr) {
+            *clock_state = {time, weekday, calendar_date, nullptr};
+            clock_state->timer = lv_timer_create(
+                home_clock_timer, 1000, clock_state);
+            if (clock_state->timer != nullptr) {
+                lv_obj_add_event_cb(
+                    time,
+                    home_clock_deleted,
+                    LV_EVENT_DELETE,
+                    clock_state);
+            } else {
+                lv_free(clock_state);
+            }
+        }
+    }
+
+    auto* weather_card = pixel_surface(
+        screen, 22, 219, 178, 125, 28, purple_dark);
+    lv_obj_set_style_bg_grad_color(weather_card, rgb(102, 55, 244), 0);
+    lv_obj_set_style_bg_grad_dir(weather_card, LV_GRAD_DIR_HOR, 0);
+    auto* weather_kicker = label(
+        weather_card, "WEATHER", &lv_font_montserrat_12, white);
+    lv_obj_set_pos(weather_kicker, 17, 16);
+    lv_obj_set_style_text_letter_space(weather_kicker, 1, 0);
+    auto* weather = label(
+        weather_card, model.weather, &m3e_weather_font_55, white);
+    lv_obj_set_pos(weather, 16, 32);
+    auto* city = label(
+        weather_card, "San Francisco", &lv_font_montserrat_12, white);
+    lv_obj_set_pos(city, 17, 96);
+
+    auto* agents_column = pixel_surface(
+        screen, 210, 219, 178, 125, 28, rgb(18, 17, 22), true);
+    lv_obj_set_style_border_width(agents_column, 2, 0);
+    lv_obj_set_style_border_color(agents_column, rgb(55, 53, 62), 0);
     lv_obj_set_user_data(agents_column, const_cast<char*>(kAgentsAction));
-    home_agent_icon(
-        agents_column, 14, 3, model.agent_status_changed);
+    auto* agents_kicker = label(
+        agents_column, "AGENTS", &lv_font_montserrat_12, white);
+    lv_obj_set_pos(agents_kicker, 17, 16);
+    lv_obj_set_style_text_letter_space(agents_kicker, 1, 0);
     char agent_count[4]{};
     std::snprintf(
         agent_count,
         sizeof(agent_count),
         "%u",
         static_cast<unsigned>(model.agent_count));
+    char agent_live[12]{};
+    std::snprintf(agent_live, sizeof(agent_live), "%s LIVE", agent_count);
     auto* agents = label(
-        agents_column, agent_count, &lv_font_montserrat_14,
-        rgb(115, 65, 255));
-    lv_obj_align(agents, LV_ALIGN_BOTTOM_MID, 0, -dp(3));
+        agents_column, agent_live, &m3e_shell_stat_font_38, lime);
+    lv_obj_set_pos(agents, 17, 34);
+    auto* route = label(
+        agents_column, "Route ready\nBuild needs review",
+        &lv_font_montserrat_12, white);
+    lv_obj_set_pos(route, 17, 76);
+    pixel_surface(
+        agents_column, 146, 15, 17, 17, 9, rgb(38, 48, 19));
+    pixel_surface(
+        agents_column, 151, 20, 7, 7, 4,
+        model.agent_status_changed ? lime : rgb(102, 104, 106));
 
-    constexpr std::int32_t kDividerX[] = {47, 95, 143};
-    for (const auto x : kDividerX) {
-        surface(screen, x, 101, 1, 34, 1, rgb(54, 54, 62));
-    }
-
-    auto* apps = surface(
-        screen, 10, 150, 83, 36, 12, rgb(83, 53, 218), true);
-    lv_obj_set_style_bg_grad_color(apps, rgb(104, 66, 255), 0);
+    auto* apps = pixel_surface(
+        screen, 22, 414, 178, 68, 22, rgb(78, 44, 218), true);
+    lv_obj_set_style_bg_grad_color(apps, rgb(108, 59, 250), 0);
     lv_obj_set_style_bg_grad_dir(apps, LV_GRAD_DIR_HOR, 0);
     lv_obj_set_user_data(apps, const_cast<char*>(kAppsAction));
-    nine_dot_icon(apps, 10, 10);
+    constexpr std::int32_t kDot = 5;
+    for (std::int32_t row = 0; row < 3; ++row) {
+        for (std::int32_t column = 0; column < 3; ++column) {
+            pixel_surface(
+                apps, 48 + column * 8, 22 + row * 8,
+                kDot, kDot, 2, white);
+        }
+    }
     auto* apps_title = label(
-        apps, "APPS", &lv_font_montserrat_16, rgb(255, 255, 255));
-    lv_obj_align(apps_title, LV_ALIGN_RIGHT_MID, -dp(8), 0);
+        apps, "APPS", &lv_font_montserrat_18, white);
+    lv_obj_set_pos(apps_title, 84, 24);
 
-    auto* voice = surface(
-        screen, 99, 150, 83, 36, 12, rgb(255, 65, 80), true);
-    lv_obj_set_style_bg_grad_color(voice, rgb(255, 92, 71), 0);
+    auto* voice = pixel_surface(
+        screen, 210, 414, 178, 68, 22, coral, true);
+    lv_obj_set_style_bg_grad_color(voice, rgb(255, 113, 78), 0);
     lv_obj_set_style_bg_grad_dir(voice, LV_GRAD_DIR_HOR, 0);
     lv_obj_set_user_data(voice, const_cast<char*>(kVoiceAction));
-    voice_bar_icon(voice, 9, 9);
+    constexpr std::int32_t kChatHeights[] = {12, 22, 32, 42, 32, 22, 12};
+    for (std::size_t index = 0; index < 7; ++index) {
+        pixel_surface(
+            voice,
+            44 + static_cast<std::int32_t>(index) * 6,
+            13 + (42 - kChatHeights[index]) / 2,
+            3,
+            kChatHeights[index],
+            2,
+            white);
+    }
     auto* voice_title = label(
-        voice, "VOICE", &lv_font_montserrat_16, rgb(255, 255, 255));
-    lv_obj_align(voice_title, LV_ALIGN_RIGHT_MID, -dp(6), 0);
+        voice, "CHAT", &lv_font_montserrat_18, white);
+    lv_obj_set_pos(voice_title, 86, 24);
 
     if (view != nullptr) {
         view->apps_action = apps;
@@ -548,7 +775,7 @@ extern "C" void m3e_system_shell_show_launcher(
 
     lv_obj_clean(screen);
     reset(screen);
-    lv_obj_set_size(screen, 240, 240);
+    lv_obj_set_size(screen, 410, 502);
     lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
 
@@ -632,7 +859,7 @@ extern "C" void m3e_system_shell_show_agents(
 
     lv_obj_clean(screen);
     reset(screen);
-    lv_obj_set_size(screen, 240, 240);
+    lv_obj_set_size(screen, 410, 502);
     lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
 
@@ -721,7 +948,7 @@ extern "C" void m3e_system_shell_show_agent_detail(
 
     lv_obj_clean(screen);
     reset(screen);
-    lv_obj_set_size(screen, 240, 240);
+    lv_obj_set_size(screen, 410, 502);
     lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
 
@@ -832,105 +1059,151 @@ extern "C" void m3e_system_shell_show_voice_overlay(
     m3e_system_shell_voice_view_t* view) {
     if (screen == nullptr) return;
     if (view != nullptr) *view = {};
-    (void)transcript;
-    (void)response;
+    const auto white = rgb(250, 249, 255);
+    const auto lime = rgb(185, 255, 36);
+    const auto coral = rgb(255, 69, 82);
+    const auto purple = rgb(78, 44, 218);
+    const auto* prompt = transcript == nullptr || transcript[0] == '\0'
+        ? "Find me a quiet walking route home..."
+        : transcript;
+    const auto* answer = response == nullptr || response[0] == '\0'
+        ? "I found a calmer 1.8 mile route through the park. Want to start navigation?"
+        : response;
+    const bool listening = phase == M3E_SYSTEM_SHELL_VOICE_LISTENING;
 
     lv_obj_clean(screen);
     reset(screen);
-    lv_obj_set_size(screen, 240, 240);
+    lv_obj_set_size(screen, 410, 502);
     lv_obj_set_style_bg_color(screen, rgb(0, 0, 0), 0);
     lv_obj_set_style_bg_opa(screen, LV_OPA_COVER, 0);
+    ultra_header(screen, listening ? "LIVE" : voice_status(phase));
 
-    auto* status = label(
-        screen,
-        voice_status(phase),
-        &m3e_voice_display_font_44,
-        rgb(250, 249, 255));
-    lv_obj_set_size(status, 190, 48);
-    lv_obj_align(status, LV_ALIGN_TOP_MID, 0, 12);
-    lv_obj_set_style_text_align(status, LV_TEXT_ALIGN_CENTER, 0);
-    lv_obj_set_style_text_letter_space(status, -1, 0);
-    lv_obj_set_style_transform_pivot_x(status, 95, 0);
-    lv_obj_set_style_transform_pivot_y(status, 24, 0);
-    lv_obj_set_style_transform_scale_x(status, 129, 0);
+    if (listening) {
+        auto* status = label(
+            screen, "LISTENING", &m3e_voice_display_font_44, white);
+        lv_obj_set_size(status, 410, 54);
+        lv_obj_set_pos(status, 0, 112);
+        lv_obj_set_style_text_align(status, LV_TEXT_ALIGN_CENTER, 0);
+        lv_obj_set_style_text_letter_space(status, -1, 0);
 
-    battery_icon_pixels(screen, 195, 10);
-    auto* battery = label(
-        screen, "82%", &lv_font_montserrat_12, rgb(185, 255, 36));
-    lv_obj_align(battery, LV_ALIGN_TOP_RIGHT, -9, 7);
+        auto* prompt_label = label(
+            screen, prompt, &lv_font_montserrat_18, white);
+        lv_obj_set_size(prompt_label, 306, 60);
+        lv_obj_set_pos(prompt_label, 52, 174);
+        lv_label_set_long_mode(prompt_label, LV_LABEL_LONG_WRAP);
+        lv_obj_set_style_text_align(prompt_label, LV_TEXT_ALIGN_CENTER, 0);
 
-    auto* level = pixel_surface(
-        screen,
-        12,
-        57,
-        216,
-        124,
-        LV_RADIUS_CIRCLE,
-        rgb(81, 48, 229),
-        true);
-    lv_obj_set_style_bg_grad_color(level, rgb(84, 52, 234), 0);
-    lv_obj_set_style_bg_grad_dir(level, LV_GRAD_DIR_HOR, 0);
-    lv_obj_set_user_data(level, const_cast<char*>(kVoicePrimaryAction));
+        auto* level = pixel_surface(
+            screen, 24, 247, 362, 142, 71, purple, true);
+        lv_obj_set_style_bg_grad_color(level, rgb(111, 59, 250), 0);
+        lv_obj_set_style_bg_grad_dir(level, LV_GRAD_DIR_HOR, 0);
+        lv_obj_set_user_data(level, const_cast<char*>(kVoicePrimaryAction));
 
-    constexpr std::int32_t kBarX[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
-        48, 74, 100, 126, 152,
-    };
-    constexpr std::int32_t kPeak[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
-        43, 69, 92, 69, 43,
-    };
-    constexpr std::uint32_t kDuration[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
-        390, 470, 520, 450, 410,
-    };
-    constexpr std::uint32_t kDelay[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
-        100, 165, 225, 135, 195,
-    };
-    const bool listening = phase == M3E_SYSTEM_SHELL_VOICE_LISTENING;
-    for (std::size_t index = 0;
-         index < M3E_SYSTEM_SHELL_VOICE_BAR_COUNT;
-         ++index) {
-        auto* bar = pixel_surface(
-            level,
-            kBarX[index],
-            58,
-            16,
-            7,
-            4,
-            rgb(255, 255, 255));
-        if (listening) {
+        constexpr std::int32_t kBarX[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+            102, 137, 172, 207, 242,
+        };
+        constexpr std::int32_t kPeak[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+            38, 73, 96, 73, 38,
+        };
+        constexpr std::uint32_t kDuration[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+            390, 470, 520, 450, 410,
+        };
+        constexpr std::uint32_t kDelay[M3E_SYSTEM_SHELL_VOICE_BAR_COUNT] = {
+            100, 165, 225, 135, 195,
+        };
+        for (std::size_t index = 0;
+             index < M3E_SYSTEM_SHELL_VOICE_BAR_COUNT;
+             ++index) {
+            auto* bar = pixel_surface(
+                level, kBarX[index], 67, 19, 8, 5, white);
             start_voice_bar_animation(
                 bar, kPeak[index], kDuration[index], kDelay[index]);
+            if (view != nullptr) view->level_bars[index] = bar;
         }
-        if (view != nullptr) view->level_bars[index] = bar;
+
+        auto* cancel = pixel_surface(
+            screen, 112, 418, 186, 56, 20, coral, true);
+        lv_obj_set_style_bg_grad_color(cancel, rgb(255, 113, 78), 0);
+        lv_obj_set_style_bg_grad_dir(cancel, LV_GRAD_DIR_HOR, 0);
+        lv_obj_set_user_data(cancel, const_cast<char*>(kVoiceCancelAction));
+        auto* cancel_label = label(
+            cancel, "CANCEL", &m3e_voice_label_font_26, white);
+        lv_obj_align(cancel_label, LV_ALIGN_CENTER, 0, 0);
+
+        if (view != nullptr) {
+            view->primary_action = level;
+            view->cancel_action = cancel;
+            view->level_ring = level;
+        }
+        return;
     }
 
-    auto* cancel = pixel_surface(
-        screen, 61, 198, 118, 32, 16, rgb(249, 82, 77), true);
-    lv_obj_set_style_bg_grad_color(cancel, rgb(249, 102, 77), 0);
-    lv_obj_set_style_bg_grad_dir(cancel, LV_GRAD_DIR_HOR, 0);
-    lv_obj_set_user_data(cancel, const_cast<char*>(kVoiceCancelAction));
-    auto* cancel_label = label(
-        cancel,
-        "CANCEL",
-        &m3e_voice_label_font_26,
-        rgb(255, 255, 255));
-    lv_obj_update_layout(cancel_label);
-    lv_obj_set_style_transform_pivot_x(
-        cancel_label, lv_obj_get_width(cancel_label) / 2, 0);
-    lv_obj_set_style_transform_pivot_y(
-        cancel_label, lv_obj_get_height(cancel_label) / 2, 0);
-    lv_obj_align(cancel_label, LV_ALIGN_CENTER, 0, 1);
-    lv_obj_set_style_text_letter_space(cancel_label, -1, 0);
-    lv_obj_set_style_transform_scale_x(cancel_label, 128, 0);
+    auto* user_bubble = pixel_surface(
+        screen, 81, 174, 307, 71, 18, purple);
+    lv_obj_set_style_bg_grad_color(user_bubble, rgb(111, 59, 250), 0);
+    lv_obj_set_style_bg_grad_dir(user_bubble, LV_GRAD_DIR_HOR, 0);
+    auto* prompt_label = label(
+        user_bubble, prompt, &lv_font_montserrat_16, white);
+    lv_obj_set_size(prompt_label, 274, 48);
+    lv_obj_set_pos(prompt_label, 16, 14);
+    lv_label_set_long_mode(prompt_label, LV_LABEL_LONG_WRAP);
+
+    auto* response_card = pixel_surface(
+        screen, 22, 257, 366, 140, 24, rgb(18, 17, 22));
+    lv_obj_set_style_border_width(response_card, 1, 0);
+    lv_obj_set_style_border_color(response_card, rgb(55, 53, 62), 0);
+    pixel_surface(response_card, 0, 0, 4, 140, 2, lime);
+    auto* kicker = label(
+        response_card, "ROUTE READY     34 MIN", &lv_font_montserrat_12, lime);
+    lv_obj_set_pos(kicker, 21, 17);
+    lv_obj_set_style_text_letter_space(kicker, 1, 0);
+    pixel_surface(response_card, 111, 24, 3, 3, 2, lime);
+    auto* answer_label = label(
+        response_card, answer, &lv_font_montserrat_16, white);
+    lv_obj_set_size(answer_label, 322, 48);
+    lv_obj_set_pos(answer_label, 21, 40);
+    lv_label_set_long_mode(answer_label, LV_LABEL_LONG_WRAP);
+
+    auto* start = pixel_surface(
+        response_card, 21, 94, 64, 30, 15, rgb(47, 42, 61));
+    auto* start_label = label(
+        start, "START", &lv_font_montserrat_12, white);
+    lv_obj_center(start_label);
+    auto* show_map = pixel_surface(
+        response_card, 93, 94, 96, 30, 15, rgb(47, 42, 61));
+    auto* map_label = label(
+        show_map, "SHOW MAP", &lv_font_montserrat_12, white);
+    lv_obj_center(map_label);
+
+    auto* composer = pixel_surface(
+        screen, 22, 413, 366, 68, 24, coral, true);
+    lv_obj_set_style_bg_grad_color(composer, rgb(255, 113, 78), 0);
+    lv_obj_set_style_bg_grad_dir(composer, LV_GRAD_DIR_HOR, 0);
+    lv_obj_set_user_data(composer, const_cast<char*>(kVoicePrimaryAction));
+    constexpr std::int32_t kComposerHeights[] = {12, 20, 30, 42, 30, 20, 12};
+    for (std::size_t index = 0; index < 7; ++index) {
+        pixel_surface(
+            composer,
+            98 + static_cast<std::int32_t>(index) * 6,
+            13 + (42 - kComposerHeights[index]) / 2,
+            3,
+            kComposerHeights[index],
+            2,
+            white);
+    }
+    auto* composer_label = label(
+        composer, "HOLD TO TALK", &lv_font_montserrat_18, white);
+    lv_obj_set_pos(composer_label, 147, 24);
 
     const bool primary_enabled =
         phase != M3E_SYSTEM_SHELL_VOICE_THINKING &&
         phase != M3E_SYSTEM_SHELL_VOICE_CLARIFYING &&
         phase != M3E_SYSTEM_SHELL_VOICE_ERROR;
-    if (!primary_enabled) lv_obj_add_state(level, LV_STATE_DISABLED);
+    if (!primary_enabled) lv_obj_add_state(composer, LV_STATE_DISABLED);
     if (view != nullptr) {
-        view->primary_action = primary_enabled ? level : nullptr;
-        view->cancel_action = cancel;
-        view->level_ring = level;
+        view->primary_action = primary_enabled ? composer : nullptr;
+        view->cancel_action = nullptr;
+        view->level_ring = nullptr;
     }
 }
 

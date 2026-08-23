@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://doodad.dev/schemas/generated-app-design-v1.schema.json",
+  "title": "Doodad generated app design review v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "app_id",
+    "plan_sha256",
+    "generation_method",
+    "prompt",
+    "source_references",
+    "screens"
+  ],
+  "properties": {
+    "schema_version": {"const": 1},
+    "app_id": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9]*(\\.[a-z0-9][a-z0-9-]*)+$",
+      "maxLength": 64
+    },
+    "plan_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "generation_method": {"const": "imagegen"},
+    "prompt": {"type": "string", "minLength": 40, "maxLength": 6000},
+    "source_references": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "maxLength": 240}
+    },
+    "screens": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "target", "primary"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_.-]{0,63}$"},
+          "description": {"type": "string", "minLength": 1, "maxLength": 240},
+          "target": {
+            "type": "string",
+            "pattern": "^targets/[a-zA-Z0-9_.-]+\\.png$",
+            "maxLength": 120
+          },
+          "primary": {"type": "boolean"}
+        }
+      }
+    }
+  }
+}

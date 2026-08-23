@@ -61,6 +61,7 @@ std::int32_t logical_y_to_physical_px(const DisplayProfile& profile,
 bool profile_is_valid(const DisplayProfile& profile);
 
 extern const DisplayProfile watch_square_192;
+extern const DisplayProfile twatch_ultra_portrait;
 extern const DisplayProfile cores3_watch_preview;
 extern const DisplayProfile wear_round_192_reference;
 extern const DisplayProfile wear_large_225_reference;

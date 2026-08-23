@@ -1,0 +1,83 @@
+{
+  "app": "workout",
+  "nodes": [
+    {
+      "id": "powerlifting.training-hub",
+      "role": "screen",
+      "label": "workout",
+      "value": "",
+      "text": "",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": null,
+      "children": 5
+    },
+    {
+      "id": "powerlifting.training-hub.title",
+      "role": "heading",
+      "label": "TRAINING",
+      "value": "",
+      "text": "TRAINING",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.training-hub.plan",
+      "role": "list_item",
+      "label": "HEAVY DAY",
+      "value": "",
+      "text": "HEAVY DAY",
+      "secondary": "14 SETS / 3 LIFTS",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.training-hub.goal",
+      "role": "list_item",
+      "label": "142.5 / 150 KG",
+      "value": "",
+      "text": "142.5 / 150 KG",
+      "secondary": "SQUAT 5RM / 95% TO GOAL",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.training-hub.progress",
+      "role": "progress",
+      "label": "Strength goal progress",
+      "value": "95 of 100",
+      "text": "Strength goal progress",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    },
+    {
+      "id": "powerlifting.training-hub.done",
+      "role": "button",
+      "label": "DONE",
+      "value": "",
+      "text": "DONE",
+      "secondary": "",
+      "state": 0,
+      "visible": true,
+      "enabled": true,
+      "parent": 0,
+      "children": 0
+    }
+  ]
+}
