@@ -134,6 +134,8 @@ async def cancel_capture_to_conversation(conversation, session) -> None:
 
 
 async def serve(arguments: argparse.Namespace) -> None:
+    from .moq_supervision import ParentLink
+    parent_link = ParentLink.inherited()
     moq_config = None
     if arguments.transport == 'moq':
         from .moq_config import MoqHostConfig
@@ -428,8 +430,12 @@ async def serve(arguments: argparse.Namespace) -> None:
         except NotImplementedError:
             pass
     try:
+        if parent_link is not None:
+            await parent_link.ready(stopped)
         await stopped.wait()
     finally:
+        if parent_link is not None:
+            await parent_link.close()
         trace.mark("shutdown.started")
         try:
             await asyncio.wait_for(

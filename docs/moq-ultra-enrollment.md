@@ -56,6 +56,14 @@ when it stops; its test host is then unavailable. Run a new bench or deliberatel
 provision the permanent service profile to reconnect. Certificates expire after
 six hours. Do not use this temporary PKI as a deployment procedure.
 
+For continued local use, the [supervised MoQ host](moq-supervised-host.md) has a
+separate persistent profile. A bench still replaces watch enrollment for its
+own isolated host. To reconnect the persistent service afterward, read `info`,
+advance that private profile's revision above the reported value, and install
+it again with the same service CA/device key. Do not reuse an older revision or
+copy a bench key into the permanent service. This changes only enrollment;
+firmware restoration is not part of that procedure.
+
 Default mode checks startup without recording, forced WSS replacement, distinct
 fresh grants, and automatic reconnection after a 45-second lease. `--audio`
 explicitly captures 1.2 seconds from the watch microphone, counts and discards the

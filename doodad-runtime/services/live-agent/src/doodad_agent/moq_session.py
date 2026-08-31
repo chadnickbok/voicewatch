@@ -315,6 +315,7 @@ class MoqSession(ControlSession):
     def _ready(self) -> None:
         if self._identified and self._native_ready and self._watch_ready and not self.connected.is_set():
             self.connected.set()
+            self.trace.mark('moq.session_ready')
             self._event('connected', {})
 
     async def receive(self, document: dict) -> None:
@@ -388,6 +389,7 @@ class MoqSession(ControlSession):
             capture = Capture(identity, first, asyncio.get_running_loop().time() + 33,
                               start_id=start_id, stop_requested=stop_requested)
             self._capture = capture
+            self.trace.mark('moq.capture_started')
             self._ipc('capture.begin', {**identity.fields(), 'first_group': str(first)})
             self._event(kind, payload, capture)
         elif kind == 'capture.stopped':

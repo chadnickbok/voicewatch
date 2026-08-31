@@ -5,8 +5,9 @@ conversation callbacks. This is a development mode, not the accepted replacement
 release. Host-initiated physical provider turns now pass through microphone,
 STT, model/tools, TTS and speaker receipt, including two turns in one session
 and a fresh session reconnect. Another repeated-turn run still fails at the
-capture reorder deadline; deployed service restart and full physical interaction
-remain open. See the [current progress](moq-implementation-progress.md).
+capture reorder deadline. A separate supervised local MoQ deployment now has
+startup/restart coverage; full physical interaction remains open. See the
+[current progress](moq-implementation-progress.md).
 The installed
 Ultra now runs the authenticated full-shell firmware; a private local host bench
 has verified startup, audio, response replacement and reconnection.
@@ -18,7 +19,7 @@ and [enrollment/run instructions](moq-ultra-enrollment.md) for the exact scope.
 
 ## Service selection
 
-WebRTC remains the default and the existing deployed mode. MoQ selection is explicit:
+WebRTC remains the default and its existing service is preserved. MoQ selection is explicit:
 
 ```sh
 cd doodad-runtime/services/live-agent
@@ -61,8 +62,9 @@ already exist with owner-only permissions. Errors do not echo configuration valu
 Start the native `server/voice_agent` process after Python creates the IPC socket,
 using its separate private config. Both processes must agree on socket, endpoint,
 certificate identity and trust. See the library README for native commands.
-Supervisor installation/restart policy and automatic enrollment remain open;
-the current installer still deploys WebRTC. HTTPS artifact routes are mounted
+Alternatively use the [paired supervisor and explicit Mac installer](moq-supervised-host.md).
+Automatic enrollment remains open; the default installer still selects WebRTC.
+HTTPS artifact routes are mounted
 on the same application, with announcements using the configured public host.
 MoQ mDNS explicitly advertises TLS/control/bootstrap routes; discovery is not trust.
 

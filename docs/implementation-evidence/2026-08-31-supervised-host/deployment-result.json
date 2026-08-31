@@ -1,0 +1,23 @@
+{
+  "pass_": true,
+  "final_moq_service_running": true,
+  "legacy_service_pid_unchanged": true,
+  "endpoint_sha256": "71031dd3a7fd107b47de45aa8ec7be2f1d666142b80277e4502ae29de3740e94",
+  "endpoint_bytes": 10998736,
+  "deployed_runtime_files_match": 7,
+  "private_generation_manifest_verified": true,
+  "codec_notices_present": true,
+  "root_signing_key_deployed": false,
+  "aiortc_installed": false,
+  "av_installed": false,
+  "ready_sessions_observed": 3,
+  "capture_starts_observed": 0,
+  "control_port": 8766,
+  "time_port": 8767,
+  "media_port": 4443,
+  "final_reinstall_pass": true,
+  "firmware_written": false,
+  "firmware_restoration_required": false,
+  "local_development_profile": true,
+  "full_product_accepted": false
+}

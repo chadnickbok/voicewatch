@@ -1,0 +1,29 @@
+{
+  "python_tests_passed": 342,
+  "existing_python_warnings": 4,
+  "native_integration_cases_passed": 8,
+  "rust_debug_tests_passed": 28,
+  "rust_release_tests_passed": 28,
+  "clippy_warnings_denied_pass": true,
+  "release_build_pass": true,
+  "shell_syntax_pass": true,
+  "plist_argument_escaping_pass": true,
+  "remote_ci_verified": false,
+  "sanitizers_rerun_this_checkpoint": false,
+  "logs_sha256": {
+    "all-python": "f218a2ae6af0146a4f4886317f6c319e14fb25ea2a9cba12fcce0d7b3a950116",
+    "integration": "d22b231aea32e2831fbdc67d39338f734c40c33833fa8fae281186cfccfb56f9",
+    "native-tests": "bd1049c003c4401abee07ac9c9e2ce17dde3e25e420f89ed77e8c1bec12b0632",
+    "native-clippy": "5ea73d35bc2eef85916b8d12d0d8463ba1a5f0709ec2d1157f647d2703ef1387",
+    "native-build": "2b34696728dc82b03cbf6311d7e3a6a41658bbde097834c3010a78bc82842c1a",
+    "release-build": "650f8508a529771f8d2d590aac91e1bb4b24b9d709e8d1d1952f3c3628a1d930",
+    "release-tests": "62b65fbb87a2af2e53d8c2a6e92982fc54a47cf053f14fab6d34c81adfc2c323"
+  },
+  "scope": {
+    "full_replacement_accepted": false,
+    "physical_ptt_provider_turn_on_deployed_release": false,
+    "impaired_speech_accepted": false,
+    "local_supervised_host_installed": true,
+    "firmware_restoration_required": false
+  }
+}

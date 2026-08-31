@@ -1,0 +1,14 @@
+{
+  "native_crash_injected": true,
+  "pass_": true,
+  "firmware_written": false,
+  "restoration_required": false,
+  "watch_ready_after_kill_ms": 13569,
+  "pair_ready_after_kill_ms": 6652,
+  "ready_sessions_added": 1,
+  "capture_starts_added": 0,
+  "old_children_exited": true,
+  "old_supervisor_exited": true,
+  "legacy_pid_unchanged": true,
+  "final_supervisor_running": true
+}

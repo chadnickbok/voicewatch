@@ -38,6 +38,11 @@ if [ -z "${DOODAD_PERSONAL_HMAC_KEY_HEX:-}" ] && command -v security >/dev/null 
   unset personal_hmac_key
 fi
 
+if [ "${1:-}" = supervise-moq ] && [ -x "$SERVICE_DIR/.venv/bin/python" ]; then
+  shift
+  exec "$SERVICE_DIR/.venv/bin/python" -m doodad_agent.moq_supervisor "$@"
+fi
+
 if [ -x "$SERVICE_DIR/.venv/bin/doodad-live-agent" ]; then
   exec "$SERVICE_DIR/.venv/bin/doodad-live-agent" "$@"
 fi

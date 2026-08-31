@@ -1,0 +1,33 @@
+{
+  "root_base": "02c0d1c1d3a70ba01df2e3c2569c3beb55548e8a",
+  "library_base": "53377076ecba6f15f633e7683fcd0d1e82efa578",
+  "uncommitted_checkpoint": true,
+  "files": {
+    "docs/moq-implementation-progress.md": "0ceb38046d51027061ffd591a10c9530f9a8f7ca762a09da99eeede4af89a89a",
+    "docs/moq-product-session.md": "4debbd2a7a4e7f93b6a756ea1f4ba14e49acf2e2e100ac685d07cb3debed4548",
+    "docs/moq-supervised-host.md": "f68487fb1ec33fffe59be1a113e61b39decb132293c5db946afc2985383a0337",
+    "docs/moq-ultra-enrollment.md": "075e66a3e02999f004e18c47e02719858c0239ba517844dbb338c358a2c98881",
+    "doodad-runtime/scripts/live-agent-service.sh": "d0f24490abaaefa13885e56b62400e2fffd07b4a903ff8cc60c7bae6b775078b",
+    "doodad-runtime/scripts/run-live-agent.sh": "753de8181a61bc8903f361b1f1d49ba1b8be22d04304955944a0a9b6f25ffc60",
+    "doodad-runtime/services/live-agent/README.md": "52ed827512c995f2c8d3278e37bfd360f243f945beadab38126c0c193b310dce",
+    "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "844bd44e7800faa5bdf77d59334739eb258369bcf08434ba8aa3f221f83b6847",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_deploy.py": "e58be85596d917d1f7d43f3889bebebce1338016b27b0c1091b8904dec4f0c82",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "a5c1019f027e975f91fd9d083f26ff4d320c77351ad554abfbdf64976673f808",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_supervision.py": "41bf9fad68c5b0d623daf8cdf6069c46447e199dfc6e493cf19147cc4bee7f09",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_supervisor.py": "262dbff8da3548e44cc87973f6fd3ca3ff9dd4ad1b8b0301693af0e2911f4bdc",
+    "doodad-runtime/services/live-agent/tests/moq_supervisor_integration.py": "b42abbb1dd3685412bd75c597d3329c1c71ec501c41f8f51f4b024e51e145ce1",
+    "doodad-runtime/services/live-agent/tests/test_moq_deploy.py": "58357697629522186cc2d6fdb6ee06261043ca0a70a39ba3d68dbff572a5a110",
+    "doodad-runtime/services/live-agent/tests/test_moq_supervisor.py": "1d435af3d94b07203feda5508df2c2972035c48ddd622c6bbe74a9ae36281099",
+    "libs/moq-esp32/server/voice_agent/.cargo/config.toml": "8a1501985637c7f9ec66d294590c15d439e3ca158b31a2844a2fe8b2ac27e768",
+    "libs/moq-esp32/server/voice_agent/Cargo.lock": "f8e1620bb136d6cda56d90f3b64bc989b7b517ae618715e9d9522a6568a537dc",
+    "libs/moq-esp32/server/voice_agent/Cargo.toml": "9246f93c5b7b0c54952b529408c1e47df01d574d9d010f81a79d06af8b0a0c60",
+    "libs/moq-esp32/server/voice_agent/README.md": "e38f9c8e5a90712173a0bced11e4109f5df81320787619a462a9bffcaf5854fe",
+    "libs/moq-esp32/server/voice_agent/build.rs": "5fdd73ee4ab7e75ce3ba0688e122951516bed3e9669af752c3246674240ae8dc",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "d8123191ed048d07f98a40e2922a6d3a66ecc474fb118a559052ce885eacd52f",
+    "libs/moq-esp32/server/voice_agent/src/opus.rs": "9dd3dca08df9bde7941fa328aef5d75f84d3a05c165b14d22a60d9cdf9d13f9d",
+    "libs/moq-esp32/server/voice_agent/src/supervision.rs": "724bc9f6208e404bdd942d7992af3d42ea0d7748510007a8c72ba079fb25f938"
+  },
+  "endpoint_release_sha256": "71031dd3a7fd107b47de45aa8ec7be2f1d666142b80277e4502ae29de3740e94",
+  "moq_reference": "eb5776e21eeaecba8e844be53c821895c178bcaf",
+  "firmware_unchanged_from": "2026-08-31-pacing-batch/flash34"
+}

@@ -14,7 +14,10 @@ full-shell Ultra startup, audio and response replacement now pass a private
 hardware bench. A host-initiated physical microphone/STT/tool/TTS turn and fresh
 session reconnect also pass; physical PTT interaction and release acceptance
 remain open.
-WebRTC remains the default and deployed mode. See the
+WebRTC remains the default and its existing deployment is preserved. An explicit
+paired Mac MoQ service is now available through `live-agent-service.sh --moq`;
+see [supervision and local deployment](../../../docs/moq-supervised-host.md).
+See the
 [MoQ product session contract](../../../docs/moq-product-session.md) for private
 configuration, tests and limitations. `aiortc` is an optional `webrtc` extra; install with
 `uv sync --extra webrtc` for the existing service. Development tests also include

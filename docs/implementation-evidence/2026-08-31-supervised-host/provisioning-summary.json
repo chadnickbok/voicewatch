@@ -1,0 +1,9 @@
+{
+  "root_valid_days": 365,
+  "leaf_valid_days": 30,
+  "leaf_expires_utc": "2026-09-30T12:51:25+00:00",
+  "endpoint_sha256": "71031dd3a7fd107b47de45aa8ec7be2f1d666142b80277e4502ae29de3740e94",
+  "endpoint_bytes": 10998736,
+  "profile_revision": 107,
+  "root_key_deployed": false
+}

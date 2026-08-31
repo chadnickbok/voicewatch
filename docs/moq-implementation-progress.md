@@ -5,7 +5,70 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: media admission and QUIC pacing
+## Latest checkpoint: bounded QUIC allocation (integration validation incomplete)
+
+The watch adapter now gives ngtcp2 a per-connection allocation budget, defaulting
+to 128 KiB, with no unlimited fallback. Accounting includes aligned headers and
+both allocations during realloc growth; shrinking retains its charged capacity.
+Endpoint snapshots and firmware diagnostics expose live/peak bytes, allocation
+counts, budget denials and system allocation failures. This budget does not cover
+wolfSSL/crypto-provider allocations, socket buffers, fixed adapter pools or the
+native Rust host; those remaining memory gates are still open.
+
+Adapter and seven host test suites pass, including Linux ASan/UBSan runs. A test
+using the real pinned ngtcp2 constructor sweeps all seven allocation failure
+points and 77 insufficient budgets, checking complete cleanup. Native QUIC
+turnover passes 10,000 streams in each direction and 65 bidirectional replies
+for hostname, IPv4 and IPv6, with no budget denials. The Ultra firmware builds,
+but this allocator has not yet been flashed or measured on the watch.
+
+The latest interoperability matrix remains **failed** at `moq-service-plain`:
+all eight media groups complete in each direction, but the expected plain-catalog
+fallback counter stays zero. Later matrix cases were not reached. An earlier
+group-order failure also reproduced with the committed pre-allocator adapter;
+the reference test receiver now uses `recv_group()` to validate every arrival
+instead of `next_group()`, which discards late groups. It still requires every
+expected group exactly once with its correct payload and timestamp. Engine and
+normal service cases pass after that correction; the plain fallback failure
+remains to be investigated. This is a work-in-progress checkpoint, not acceptance
+of the memory cap or the complete interoperability matrix.
+
+The installed watch remains on flash34 and the supervised local MoQ service is
+unchanged. No firmware restoration is required for subsequent tests.
+
+## Previous checkpoint: paired host supervision and local deployment
+
+The explicit Mac MoQ installer now deploys a pinned release endpoint alongside
+the Python service, under its own launchd label and data directory. Python starts
+HTTPS/WSS/private IPC before native QUIC starts; inherited readiness/lifetime
+channels coordinate the two processes. Either child dying retires the pair,
+including old grants, and parent death is detectable without relying on PID
+files. Native children do not inherit provider or personal signing keys.
+
+The local service is installed with a separate maintained-development trust
+profile and higher-revision watch enrollment. The existing WebRTC service and
+default selection remain unchanged. Physical fault injection kills the deployed
+native endpoint: both old children exit, launchd starts a fresh pair, and the
+Ultra reaches full media readiness 13,569 ms after the kill, or approximately
+6,917 ms after the pair reports listening. No capture starts. This is session
+recovery evidence, not a new physical PTT/provider-turn acceptance result.
+
+Reinstall testing also exposed asynchronous launchd shutdown: a stopped job may
+still hold its profile lock. Installation now waits at most 40 seconds before
+replacing Python files, and refuses to bypass a live lock. Binary hashes, private
+config generations and codec notices are checked/copied; temporary IPC paths are
+unique per invocation. The local leaf certificate expires September 30, 2026;
+renewal remains explicit and the CA signing key is not deployed.
+
+Verification passes 342 Python tests, eight native integration cases, 28 Rust
+tests in debug and release, Clippy and the optimized endpoint build. The new full-process tests check
+crashes of either child, bounded startup/shutdown, parent SIGKILL, and rejection
+of old WSS/MoQ grants after restart. Installed-app/UI interaction, impaired speech,
+long responses across renewal, native allocation limits and release soaks remain
+open. See [host supervision](moq-supervised-host.md) and the
+[deployment evidence](implementation-evidence/2026-08-31-supervised-host/README.md).
+
+## Previous checkpoint: media admission and QUIC pacing
 
 Two scheduling regressions are fixed: obsolete media is retired before fresh
 TX admission, and ngtcp2's pacing timer advances once per bounded packet batch

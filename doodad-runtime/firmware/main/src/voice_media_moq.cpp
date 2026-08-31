@@ -134,6 +134,11 @@ void log_publisher_stats(Owner& o) {
             static_cast<unsigned long long>(endpoint.open_local_blocked),
             static_cast<unsigned long long>(endpoint.open_credit_blocked),
             static_cast<unsigned long long>(endpoint.write_blocks_blocked),endpoint.blocked_stopped_high);
+        ESP_LOGI(kTag,"QUIC heap live=%u peak=%u limit=%u blocks=%u allocations=%llu frees=%llu denied=%llu failures=%llu",
+            static_cast<unsigned>(endpoint.quic_heap_live),static_cast<unsigned>(endpoint.quic_heap_peak),
+            static_cast<unsigned>(endpoint.quic_heap_limit),static_cast<unsigned>(endpoint.quic_heap_blocks),
+            static_cast<unsigned long long>(endpoint.quic_heap_allocations),static_cast<unsigned long long>(endpoint.quic_heap_frees),
+            static_cast<unsigned long long>(endpoint.quic_heap_denied),static_cast<unsigned long long>(endpoint.quic_heap_failures));
     }
 }
 void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
@@ -416,7 +421,7 @@ void poll_service(Owner& o) {
             if (!usable) g_ready.store(false);
         }
     }
-    if (became_ready) emit(o,EventKind::ready);
+    if (became_ready) { log_publisher_stats(o); emit(o,EventKind::ready); }
 }
 
 esp_moq_result_t publish_group(void* context,std::uint64_t connection,std::uint64_t media,
