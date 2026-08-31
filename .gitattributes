@@ -1,3 +1,6 @@
+*.rgb565le binary
+*.rgb888 binary
+
 # Captured evidence is hash-bound; do not normalize its bytes on checkout.
 docs/implementation-evidence/** -text
 docs/review-evidence/** -text
