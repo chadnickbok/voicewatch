@@ -17,7 +17,7 @@ from collections.abc import Callable
 
 from aiohttp import WSMsgType
 
-from .audio import PcmSpool
+from .audio import PacingOverrun, PcmSpool
 from .moq_auth import GrantRegistry
 from .moq_bridge import BridgePeer
 from .moq_ipc import Packet, _unique_object
@@ -132,7 +132,7 @@ class MoqSession(ControlSession):
         self.device_id = registry.identity(session_id, owner)
         if not 1 <= max_spool_seconds <= 600:
             raise ValueError('MoQ response spool must be between 1 and 600 seconds')
-        self.downlink = PcmSpool(trace, max_spool_seconds=max_spool_seconds)
+        self.downlink = PcmSpool(trace, max_spool_seconds=max_spool_seconds, continuous_timeline=True)
         self.peer: BridgePeer | None = None
         self._hello = self._identified = self._native_ready = self._watch_ready = False
         self._received = self._highest_capture = self._highest_response = 0
@@ -745,6 +745,12 @@ class MoqSession(ControlSession):
             await self._ipc('playback.end', response.fields(), response=response, receipt=True)
             await asyncio.wait_for(response.encoded.wait(), 5)
             await asyncio.wait_for(response.finished.wait(), 5)
+        except PacingOverrun:
+            # A media starvation budget failure cancels this response, not its
+            # authenticated session or the next response's fresh pacing clock.
+            self.trace.mark('moq.playback_pacing_overrun')
+            if self._response is response:
+                self.clear_downlink()
         finally:
             response.done.set()
 

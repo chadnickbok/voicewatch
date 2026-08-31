@@ -1,5 +1,13 @@
 # Doodad live-agent service
 
+The MoQ host now selects the reviewed terminal-reader fix through the library's
+pinned, hash-verified vendored Rust dependency. Wire formats and the independent
+unchanged reference peer/oracle are preserved. The provider bench's explicit
+`--session-seconds 600 --capture-rounds 3` checks three spaced ordinary turns,
+monitored idle, credential renewal and final reconnect. It rejects induced
+network impairment and playout stalls in that mode. This is a ten-minute session
+check including idle, not ten minutes of continuous speech or physical buttons.
+
 This service is the Phase 0–6 foreground conversation, durable-control, and
 personal-app delivery vertical slice. It uses the firmware's Opus WebRTC seam,
 resamples uplink/downlink audio at the process boundary, and runs a Pipecat
@@ -23,6 +31,44 @@ configuration, tests and limitations. `aiortc` is an optional `webrtc` extra; in
 `uv sync --extra webrtc` for the existing service. Development tests also include
 that dependency to preserve legacy coverage.
 
+Service startup now owns listener cleanup even when mDNS registration fails.
+Discovery uses the asynchronous Zeroconf API and closes its resources on a
+registration error or cancellation. `serve --no-discovery` disables advertisement
+for clients with explicit endpoints; the private provider bench uses it to avoid
+colliding with a running permanent service. Normal deployments still advertise
+by default. The bench requires `service.ready`, a live service owner throughout
+the run, and `shutdown.completed`; a listening socket alone is insufficient.
+
+The private provider bench supports `--packet-reorder-ms 80` (also 40 or 250)
+and `--packet-duplicate-every 7` (also 16). Reordering adds that delay to every
+eighth received UDP datagram that survives loss. Duplication resends each selected
+datagram unchanged five milliseconds later. Both directions must record actual
+out-of-order delivery or duplication, respectively; merely scheduling a fault
+does not pass. Originals and copies share the existing 256-packet pending bound,
+and scheduled replies retain their original destination across a client-port
+change. These are QUIC packet tests, not substitutes for application-group
+ordering or a deliberately flow-control-blocked stream. No ambient audio is
+persisted, and the speech policy remains unchanged.
+
+`--playout-stall-ms 350` pauses only the first response's media pump after eight
+packets. It must trigger the unchanged 200 ms pacing-debt limit, cancel that
+response without committing unheard speech, and return the conversation to
+Ready. Fresh provider turns must then complete on the same authenticated session.
+The sink fences failed output, ends bot-speaking state and interrupts the failed
+provider turn; a late failed drain cannot reset a replacement turn. Undelivered
+durable announcements remain pending. This recovery case does not count the
+deliberately cancelled response as successfully played.
+
+`--group-delay-ms 250 --endpoint /tmp/moq-group-delay-host/debug/voicewatch-moq-endpoint`
+instead holds one standard Hang audio group while later groups continue. Build
+that separate endpoint with the library's `group-delay-fixture` feature; normal
+binaries reject the diagnostic configuration. The bench requires one observed
+hold/release and fresh groups before release, plus its unchanged provider,
+speech, exact playback and reconnect checks. This fault runs separately from
+cancellation fixtures. It does not change the permanent service or firmware,
+and permanent enrollment must be reapplied afterward. It is an application-group
+delay, not a deliberate QUIC byte-credit block or a calibrated latency test.
+
 Firmware advertising `moq_renewal_v1` can renew an active session at half its
 authorization lease. The host sends one bounded nonce; the watch proves its
 enrollment key in a session-bound signing domain. The host extends only that
@@ -37,10 +83,22 @@ host; this work does not update an already-running supervised service.
 `tools/moq_ultra_bench.py --long-response-seconds 600` exercises generated paced
 output with a non-frame-aligned tail across repeated short leases. It leaves the
 microphone closed unless `--audio` is explicitly supplied, requires one continuous
-session and the exact speaker receipt, and checks numeric loss/underflow counters.
+session and the exact speaker receipt, and checks player PLC, late-packet,
+queue-pressure and fallback-silence counters. These are not acoustic or DMA
+underrun measurements. It also requires the final endpoint timing/heap snapshot
+and records bounded host pacing diagnostics, without retaining PCM.
 This is a synthetic long-playback gate, not a 600-second provider speech or full
 product acceptance claim. The bench temporarily changes enrollment; reapply the
 permanent enrollment afterward, without restoring firmware.
+
+MoQ response pacing preserves the contiguous sample clock across scheduler
+slips. It recovers at no more than one packet per 10 ms (twice nominal rate),
+rather than shifting every later deadline. Falling more than 200 ms behind
+cancels the current response through normal media cancellation while preserving
+its authenticated session. Each new response gets a fresh clock after media
+readiness; a retired pacing await cannot move that replacement clock. WebRTC
+retains its existing wall-time reanchoring behavior. This is a local source
+change, not an update to either running supervised host.
 
 The CoreS3 uses a shared microphone/speaker codec and an explicit push-to-talk
 lifecycle. Connecting the watch leaves the microphone off and the active app or

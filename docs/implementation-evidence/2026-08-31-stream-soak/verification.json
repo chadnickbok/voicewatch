@@ -1,0 +1,40 @@
+{
+  "rust_all_features": {
+    "log_sha256": "807ab2c818453feae125e018af47db090bbc213feaebeaee0a5be9bb89b14148",
+    "passed": 39,
+    "failed": 0
+  },
+  "rust_default": {
+    "log_sha256": "c663100b6cd6b1adf70091ee19f9736a0d1cb05abce4720b89e71154de50769e",
+    "passed": 31,
+    "failed": 0
+  },
+  "python": {
+    "log_sha256": "cda2c4a682345863eae695ca323ea9503357e59b070a1b028fbabfc54f04b7dc",
+    "passed": 384,
+    "warnings": 4
+  },
+  "native_contracts": {
+    "log_sha256": "c6289128a51e304251f4258a1b1a923fa4b8a6dbdc596d186deb48677dd92b1f",
+    "passed": 46,
+    "warnings": 0
+  },
+  "clippy": {
+    "log_sha256": "350df4cadfe68be0a76a6aeddf6f29f14a2b84ce2b6edac192a9baf243a04129",
+    "passed": true,
+    "warnings_denied": true
+  },
+  "normal_firmware": {
+    "log_sha256": "4d83594ddcbce2e85de74f7621bdbdd577551b04852b831966e4549c5022bbbb",
+    "build_passed": true
+  },
+  "soak_firmware": {
+    "log_sha256": "aab0038389e0556a09199ce4890dd3d4dfa9a667d201a09275e8036003488d4c",
+    "build_passed": true
+  },
+  "preserved_development_failures": [
+    "initial_non_send_actor_compile",
+    "initial_clippy_style_warning"
+  ],
+  "ordinary_build_excludes_soak": true
+}

@@ -1,0 +1,1813 @@
+{
+  "native": [
+    {
+      "heap_self_test": true,
+      "constructor_allocations": 7,
+      "constructor_peak": 19556,
+      "budget_trials": 77,
+      "live_after_delete": 0
+    },
+    {
+      "mode": "tls-heap",
+      "host": "localhost",
+      "elapsed_seconds": 0.335,
+      "client": {
+        "tls_heap_self_test": true,
+        "constructor_allocations": 128,
+        "constructor_peak": 43046,
+        "allocation_failures": 117,
+        "tolerated_optional_failures": 11,
+        "budget_trials": 43,
+        "clean_restarts": 25,
+        "live_after_delete": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 43046,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 128,
+        "frees": 128,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "tls-low-budget",
+      "host": "localhost",
+      "elapsed_seconds": 0.004,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 0,
+        "limit": 1,
+        "blocks": 0,
+        "allocations": 0,
+        "frees": 0,
+        "denied": 1,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "tls-handshake-budget",
+      "host": "localhost",
+      "elapsed_seconds": 0.039,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 63653,
+        "limit": 65536,
+        "blocks": 0,
+        "allocations": 276,
+        "frees": 276,
+        "denied": 1,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "blocked-resume",
+      "host": "localhost",
+      "elapsed_seconds": 0.419,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": false,
+        "old_error": 0,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 132,
+        "blocked_attempts": 2,
+        "wakeups": 2,
+        "idle_extra_attempts": 0,
+        "done": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98538,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 1998,
+        "frees": 1998,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "blocked-reset",
+      "host": "localhost",
+      "elapsed_seconds": 0.407,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": true,
+        "old_error": 77,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 133,
+        "blocked_attempts": 1,
+        "wakeups": 0,
+        "idle_extra_attempts": 0,
+        "done": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98534,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 2032,
+        "frees": 2032,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "localhost",
+      "elapsed_seconds": 2.473,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98545,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 44102,
+        "frees": 44102,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 2.451,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98403,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 44358,
+        "frees": 44358,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "::1",
+      "elapsed_seconds": 2.439,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98436,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 43906,
+        "frees": 43906,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-audio",
+      "host": "localhost",
+      "elapsed_seconds": 0.995,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "sent": 3,
+        "received": 3,
+        "input_samples": 537,
+        "output_samples": 537,
+        "publish_end": true,
+        "receive_end": true,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98550,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 664,
+        "frees": 664,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "unknown-ca",
+      "host": "localhost",
+      "elapsed_seconds": 0.041,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98235,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 287,
+        "frees": 287,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "localhost",
+      "elapsed_seconds": 0.044,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98294,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 354,
+        "frees": 354,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.043,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98157,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 351,
+        "frees": 351,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "::1",
+      "elapsed_seconds": 0.044,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98195,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 351,
+        "frees": 351,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "expired",
+      "host": "localhost",
+      "elapsed_seconds": 0.044,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98547,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 353,
+        "frees": 353,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "alpn",
+      "host": "localhost",
+      "elapsed_seconds": 0.024,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 43683,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 151,
+        "frees": 151,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-setup",
+      "host": "localhost",
+      "elapsed_seconds": 0.283,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": true,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98552,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 486,
+        "frees": 486,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-engine",
+      "host": "localhost",
+      "elapsed_seconds": 0.606,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "groups": 9,
+        "track_infos": 4,
+        "peer_ack": true,
+        "audio_end": true,
+        "ack_end": true,
+        "result": 0,
+        "catalog_plain_frames": 3,
+        "catalog_compressed_frames": 3
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98553,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 716,
+        "frees": 716,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-service",
+      "host": "localhost",
+      "elapsed_seconds": 0.963,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98548,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 654,
+        "frees": 654,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-service-plain",
+      "host": "localhost",
+      "elapsed_seconds": 0.978,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98549,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 656,
+        "frees": 656,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-endpoint",
+      "host": "localhost",
+      "elapsed_seconds": 0.961,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98558,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 656,
+        "frees": 656,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-endpoint-plain",
+      "host": "localhost",
+      "elapsed_seconds": 0.988,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98553,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 658,
+        "frees": 658,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "numeric-dns",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.047,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98292,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 453,
+        "frees": 453,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "numeric-dns",
+      "host": "::1",
+      "elapsed_seconds": 0.046,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98329,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 453,
+        "frees": 453,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "tls-low-budget",
+      "host": "localhost",
+      "elapsed_seconds": 0.004,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 0,
+        "limit": 1,
+        "blocks": 0,
+        "allocations": 0,
+        "frees": 0,
+        "denied": 1,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "tls-handshake-budget",
+      "host": "localhost",
+      "elapsed_seconds": 0.038,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 63655,
+        "limit": 65536,
+        "blocks": 0,
+        "allocations": 276,
+        "frees": 276,
+        "denied": 1,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "blocked-resume",
+      "host": "localhost",
+      "elapsed_seconds": 0.412,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": false,
+        "old_error": 0,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 132,
+        "blocked_attempts": 2,
+        "wakeups": 2,
+        "idle_extra_attempts": 0,
+        "done": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98539,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 2106,
+        "frees": 2106,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "blocked-reset",
+      "host": "localhost",
+      "elapsed_seconds": 0.387,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": true,
+        "old_error": 77,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 133,
+        "blocked_attempts": 1,
+        "wakeups": 0,
+        "idle_extra_attempts": 0,
+        "done": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98546,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 2054,
+        "frees": 2054,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "localhost",
+      "elapsed_seconds": 2.829,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98545,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 43396,
+        "frees": 43396,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 3.138,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98407,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 42408,
+        "frees": 42408,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "::1",
+      "elapsed_seconds": 3.139,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98438,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 43386,
+        "frees": 43386,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-audio",
+      "host": "localhost",
+      "elapsed_seconds": 0.98,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "sent": 3,
+        "received": 3,
+        "input_samples": 537,
+        "output_samples": 537,
+        "publish_end": true,
+        "receive_end": true,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98556,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 660,
+        "frees": 660,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "unknown-ca",
+      "host": "localhost",
+      "elapsed_seconds": 0.062,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98245,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 287,
+        "frees": 287,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "localhost",
+      "elapsed_seconds": 0.047,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98299,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 354,
+        "frees": 354,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.044,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98153,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 351,
+        "frees": 351,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "::1",
+      "elapsed_seconds": 0.043,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98191,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 351,
+        "frees": 351,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "expired",
+      "host": "localhost",
+      "elapsed_seconds": 0.044,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98547,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 353,
+        "frees": 353,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "alpn",
+      "host": "localhost",
+      "elapsed_seconds": 0.025,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 43683,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 151,
+        "frees": 151,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-setup",
+      "host": "localhost",
+      "elapsed_seconds": 0.297,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": true,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98543,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 488,
+        "frees": 488,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-engine",
+      "host": "localhost",
+      "elapsed_seconds": 0.635,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "groups": 9,
+        "track_infos": 4,
+        "peer_ack": true,
+        "audio_end": true,
+        "ack_end": true,
+        "result": 0,
+        "catalog_plain_frames": 3,
+        "catalog_compressed_frames": 3
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98549,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 698,
+        "frees": 698,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-service",
+      "host": "localhost",
+      "elapsed_seconds": 0.984,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98548,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 650,
+        "frees": 650,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-service-plain",
+      "host": "localhost",
+      "elapsed_seconds": 0.96,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98546,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 660,
+        "frees": 660,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-endpoint",
+      "host": "localhost",
+      "elapsed_seconds": 1.01,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98556,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 666,
+        "frees": 666,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-endpoint-plain",
+      "host": "localhost",
+      "elapsed_seconds": 1.0,
+      "iteration": 1,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98552,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 656,
+        "frees": 656,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "numeric-dns",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.059,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98297,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 453,
+        "frees": 453,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "numeric-dns",
+      "host": "::1",
+      "elapsed_seconds": 0.048,
+      "iteration": 1,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98327,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 453,
+        "frees": 453,
+        "denied": 0,
+        "failures": 0
+      }
+    }
+  ],
+  "ubsan": [
+    {
+      "heap_self_test": true,
+      "constructor_allocations": 7,
+      "constructor_peak": 19556,
+      "budget_trials": 77,
+      "live_after_delete": 0
+    },
+    {
+      "mode": "tls-heap",
+      "host": "localhost",
+      "elapsed_seconds": 0.668,
+      "client": {
+        "tls_heap_self_test": true,
+        "constructor_allocations": 128,
+        "constructor_peak": 43046,
+        "allocation_failures": 117,
+        "tolerated_optional_failures": 11,
+        "budget_trials": 43,
+        "clean_restarts": 25,
+        "live_after_delete": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 43046,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 128,
+        "frees": 128,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "tls-low-budget",
+      "host": "localhost",
+      "elapsed_seconds": 0.008,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 0,
+        "limit": 1,
+        "blocks": 0,
+        "allocations": 0,
+        "frees": 0,
+        "denied": 1,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "tls-handshake-budget",
+      "host": "localhost",
+      "elapsed_seconds": 0.057,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 63658,
+        "limit": 65536,
+        "blocks": 0,
+        "allocations": 276,
+        "frees": 276,
+        "denied": 1,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "blocked-resume",
+      "host": "localhost",
+      "elapsed_seconds": 0.437,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": false,
+        "old_error": 0,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 132,
+        "blocked_attempts": 2,
+        "wakeups": 2,
+        "idle_extra_attempts": 0,
+        "done": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98539,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 1796,
+        "frees": 1796,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "blocked-reset",
+      "host": "localhost",
+      "elapsed_seconds": 0.426,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": true,
+        "old_error": 77,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 133,
+        "blocked_attempts": 1,
+        "wakeups": 0,
+        "idle_extra_attempts": 0,
+        "done": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98538,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 1828,
+        "frees": 1828,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "localhost",
+      "elapsed_seconds": 3.164,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98549,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 39700,
+        "frees": 39700,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 3.164,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98413,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 39678,
+        "frees": 39678,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "valid",
+      "host": "::1",
+      "elapsed_seconds": 3.281,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98444,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 40762,
+        "frees": 40762,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-audio",
+      "host": "localhost",
+      "elapsed_seconds": 0.98,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "sent": 3,
+        "received": 3,
+        "input_samples": 537,
+        "output_samples": 537,
+        "publish_end": true,
+        "receive_end": true,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98557,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 656,
+        "frees": 656,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "unknown-ca",
+      "host": "localhost",
+      "elapsed_seconds": 0.084,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98235,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 287,
+        "frees": 287,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "localhost",
+      "elapsed_seconds": 0.065,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98302,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 354,
+        "frees": 354,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.063,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98156,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 351,
+        "frees": 351,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "wrong-host",
+      "host": "::1",
+      "elapsed_seconds": 0.063,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98185,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 351,
+        "frees": 351,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "expired",
+      "host": "localhost",
+      "elapsed_seconds": 0.064,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98542,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 353,
+        "frees": 353,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "alpn",
+      "host": "localhost",
+      "elapsed_seconds": 0.036,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 43683,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 151,
+        "frees": 151,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-setup",
+      "host": "localhost",
+      "elapsed_seconds": 0.329,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": true,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": true,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98545,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 484,
+        "frees": 484,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-engine",
+      "host": "localhost",
+      "elapsed_seconds": 0.638,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "groups": 9,
+        "track_infos": 4,
+        "peer_ack": true,
+        "audio_end": true,
+        "ack_end": true,
+        "result": 0,
+        "catalog_plain_frames": 3,
+        "catalog_compressed_frames": 3
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98556,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 694,
+        "frees": 694,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-service",
+      "host": "localhost",
+      "elapsed_seconds": 0.993,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98556,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 652,
+        "frees": 652,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-service-plain",
+      "host": "localhost",
+      "elapsed_seconds": 1.031,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98550,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 668,
+        "frees": 668,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-endpoint",
+      "host": "localhost",
+      "elapsed_seconds": 0.997,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98550,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 664,
+        "frees": 664,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "moq-endpoint-plain",
+      "host": "localhost",
+      "elapsed_seconds": 0.986,
+      "iteration": 0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98545,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 656,
+        "frees": 656,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "numeric-dns",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.097,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98290,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 453,
+        "frees": 453,
+        "denied": 0,
+        "failures": 0
+      }
+    },
+    {
+      "mode": "numeric-dns",
+      "host": "::1",
+      "elapsed_seconds": 0.071,
+      "iteration": 0,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "tls_heap": {
+        "live": 0,
+        "peak": 98316,
+        "limit": 262144,
+        "blocks": 0,
+        "allocations": 453,
+        "frees": 453,
+        "denied": 0,
+        "failures": 0
+      }
+    }
+  ]
+}

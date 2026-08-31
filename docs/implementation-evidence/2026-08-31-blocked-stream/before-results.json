@@ -1,0 +1,46 @@
+{
+  "cases": [
+    {
+      "mode": "blocked-resume",
+      "client": {
+        "pass": false,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": false,
+        "old_error": 0,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 132,
+        "blocked_attempts": 701,
+        "wakeups": 2,
+        "idle_extra_attempts": 401,
+        "done": true,
+        "result": 0
+      }
+    },
+    {
+      "mode": "blocked-reset",
+      "client": {
+        "pass": false,
+        "blocked_proven": true,
+        "old_closed": true,
+        "reset": true,
+        "old_error": 77,
+        "sent": 129,
+        "received": 129,
+        "control_replies": 133,
+        "blocked_attempts": 693,
+        "wakeups": 0,
+        "idle_extra_attempts": 401,
+        "done": true,
+        "result": 0
+      }
+    }
+  ],
+  "idle_hold_ms": 250,
+  "client_sha256": "2f8509bde33d2e361e636e7fe53edb07d100c59e4d7642a738cc107014ef51e7",
+  "log_sha256": "a39b047cd27ecdd7d7fdaff79143c81b78455c639c8ea72eb5d4cc7f31267179",
+  "adapter_failure_log_sha256": "1aadcbe235d4c61c09df8dbfdd4ee9f0f103fec94fd094fab18ffc879764920d",
+  "exact_before_source_snapshot_available": false,
+  "instrumented_before_binary_preserved": true
+}

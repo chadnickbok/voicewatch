@@ -1,0 +1,4750 @@
+[
+  {
+    "path": "doodad-runtime/Cargo.lock",
+    "sha256": "8aea148cd7dd6f48cdc622e03334c204d4e60172f1470e8143515a442ab68507"
+  },
+  {
+    "path": "doodad-runtime/Cargo.toml",
+    "sha256": "301ab7e220f533b0dc8b699f059d275f03f6edde4f3cd56b1f9e96ae2c8b62e9"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/Cargo.toml",
+    "sha256": "b3b98e47480e34ca24fc5d515993fe0a0ac66484d38b39ad5e3c938abc086eb1"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/appspec.cbor",
+    "sha256": "2eb133c5ce285f8ceac423562146d0652c2b33462c6f643c1d97c2943cefd194"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/appspec.json",
+    "sha256": "01a17efce692db5c2ecc0471f70dee7b625b3cefb08c48c279ef1d34bc041f33"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/interaction.cbor",
+    "sha256": "7ca8025982cda202356f0bfc986ef930e96e2e008c8f482a75bd69adcdb1161f"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/manifest.json",
+    "sha256": "ed3d035b35108aa81f32ff51f36fe35b1ee061d16302615de65b85a0b1fc0773"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/package.json",
+    "sha256": "30a75f97694ac69c6e8029087bcabc5ff3dcd0a8671337fb0dbea605dc714983"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/scenarios/baseline.scenario.json",
+    "sha256": "53f548b06264745b1836c9cc72a4c3efb42e49c834ad84c71f3ced004609421c"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "baf254d37b9d39c0b6f2a98faa56317dc99aceeb69a22d91dff919b188933369"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/src/lib.rs",
+    "sha256": "d51b49bc41b54315d3316361a1aa63a971ef0cd628232b91b630e38d5f4fb752"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/surfaces/baseline.surface.json",
+    "sha256": "870b1eaf60155dbf61733c98ac7e5363e7aee3ee3faa3bd708a396d48e0ec56a"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/surfaces/recovered.surface.json",
+    "sha256": "465a57447eade06c03a24e80f5a0080572cbb54e7b62b4ead242050e9dfaddfc"
+  },
+  {
+    "path": "doodad-runtime/apps/calculator/surfaces/stale.surface.json",
+    "sha256": "c9229069c98a0a1c2ad1e58fbe07794d3d6904b8d076b6839f0818cfbd947834"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/Cargo.toml",
+    "sha256": "77841e0421e3fcee5484846688256aa159c80a33a508f79fd271051d3a8964d5"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/README.md",
+    "sha256": "56b474831df0e911e255ca4a7cf11e2c10ef4b0952bf97e79bce389192eade03"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/appspec.cbor",
+    "sha256": "d70c630a7bff199e83e3a573bab7ef5026ea6625b447c77ba97d30d99ca3a85d"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/appspec.json",
+    "sha256": "59a25cbafc57f04031ef6728113dfa7be344e7ee3da1acbcfcdef1a82d6d9cbc"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/interaction.cbor",
+    "sha256": "6745920637cdb42ce785604756e52b741e6076ceb3f49f83cb40da28efeafaca"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/manifest.json",
+    "sha256": "a8435bb66ecf54f9115da39a3ac28be92c6318f1ffb456b70961c45f6dbaec22"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/package.json",
+    "sha256": "3b549d796e9859409209889348abbeeea840262b9c3fdee02736b1e808142130"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/scenarios/baseline.scenario.json",
+    "sha256": "72e5feebb4b33ff49a2640e1bd3ced37ccaf5710ffea9b4f7a7fa0251bcc538b"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "e3da880b6e38ed98c8c36c09b6a1f608b239893c9cc778352991ac935959e46d"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/agenda.cbor",
+    "sha256": "d70c630a7bff199e83e3a573bab7ef5026ea6625b447c77ba97d30d99ca3a85d"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/agenda.json",
+    "sha256": "59a25cbafc57f04031ef6728113dfa7be344e7ee3da1acbcfcdef1a82d6d9cbc"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/confirmed.cbor",
+    "sha256": "34fb9c2461f8d6590c842d0a78b770ce478d6e15bcde9cd0cd5001b834689086"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/confirmed.json",
+    "sha256": "5a96db875d1befc503b0b763c89cbb828d37183e997f362b2aaf6fc4bccdf28f"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/detail.cbor",
+    "sha256": "d0716df8fe123ae617798ce0c40c972c1d839d368f740e0f25af8e698c448935"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/detail.json",
+    "sha256": "a256589e87e9aba82e2345c8432d58b14e388265763bd580b7ee0a2a10e7e0de"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/travel.cbor",
+    "sha256": "7514c10de978f3f3369e5ee429c1b3d8eb282e219c351b7a2cd4b25448f8c629"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/screens/travel.json",
+    "sha256": "405cef9d3f74c1fcf5164d76c028cf329f5336a18e26731bc925f411121d9a2a"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/src/lib.rs",
+    "sha256": "97d10a7b302b7afe16d5f88f57991b2358dd0b7c4f7d193e3cb56cbac758245a"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/surfaces/baseline.surface.json",
+    "sha256": "84016150c70d1c912af9900b9cf3f99542103c08dbec8bb97dc5eff331be8901"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/surfaces/recovered.surface.json",
+    "sha256": "b432c5e199af592c666431bc5ed93ea5b2c439de08dd153e4bd889d950488d42"
+  },
+  {
+    "path": "doodad-runtime/apps/calendar/surfaces/stale.surface.json",
+    "sha256": "19c7435773f6b980fd8a6166c7c923358f71bd0cfccef501054f4af06c96ca73"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/Cargo.toml",
+    "sha256": "c15438a919b0ccf0eb93fd868d03e33f49a8ccdf5b33a2b076f82550f574e5ae"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/agent.json",
+    "sha256": "bde882f74d80879e6038136b29be561ff937871546c617107871e5fa94cd98b7"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/appspec.cbor",
+    "sha256": "37a861911154ba683936bc647e8813d2422edd5da5f68fba171a3d83357996f9"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/appspec.json",
+    "sha256": "c72605d4fce79851856b62d77048bd567d50e02967a4c3a663e9a0cb26dfec19"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/interaction.cbor",
+    "sha256": "4ed05fa06f981f8a0bcc45b13149b19b062e3b819da8a38562f6365c69027ee8"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/manifest.json",
+    "sha256": "ec51420ec45a77892c08bf94ca7177e5e5f6a307177ef68e0e5fdef2426a4342"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/package.json",
+    "sha256": "83ad20538f8b8f6645e11d3fa720fb26a635d4aa4e20b53acdcf60751f41bfba"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/scenarios/baseline.scenario.json",
+    "sha256": "edb66a067fd8098423f5dd7a7039dd9ebc3602942664dd90eede2449f251bc44"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "d4e2b01cc1ed0932388d0479df5968d3dbe7c8ee600d82d43323f5e10264b165"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/screens/quick-add.cbor",
+    "sha256": "a37c05c9700a51e5f21ee769cca0808a23d2c384d43592bb34735e54b1679a72"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/screens/quick-add.json",
+    "sha256": "a7a366823cada6427028b6af5b3f04dadeaa6b4d9b22d46c6283284a7cca3523"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/screens/voice-review.cbor",
+    "sha256": "c7ef1cdbd1fc85bf24feb43e2216bacb5a2eb06e280131b39df7f864e983542d"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/screens/voice-review.json",
+    "sha256": "b8c72ee986a0c8bb4b8e6226a0179a2ad3ff1f8fc3d503cb28dcad3430e477cc"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/src/lib.rs",
+    "sha256": "8b325cfbee6f1b52785f029b33a73d865b686bea6c1b0cfac5c05bbae1fd04bb"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/surfaces/baseline.surface.json",
+    "sha256": "fe58a90a9f10dac6d9bb05c0e78f8bc2aa68e016e61ca7a3d1f0ba9bbf9744ed"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/surfaces/recovered.surface.json",
+    "sha256": "af7daabd9cf18207f56a802c04c81662694fd493c79b4e944db96c0c4298cae3"
+  },
+  {
+    "path": "doodad-runtime/apps/calories/surfaces/stale.surface.json",
+    "sha256": "d87184dedaf763324aab7f5cfe8a5fcf75592945e10eaf42e3bf3687c34925b9"
+  },
+  {
+    "path": "doodad-runtime/apps/conformance-flows.json",
+    "sha256": "f361e45ff973468f05ba5cd57a008ae9efb4df9ea0a256b818bf2467a60ad1c4"
+  },
+  {
+    "path": "doodad-runtime/apps/conformance-suite.json",
+    "sha256": "597fdb2b0444cd7f64dc85baf99dc7f2baf21b98bd5b8bb722d232a5805a17e2"
+  },
+  {
+    "path": "doodad-runtime/apps/hello/Cargo.toml",
+    "sha256": "4d3008eb0a4ff0698f8ae2ad342f67687c41753c455d7f4f5a1ed950d6873512"
+  },
+  {
+    "path": "doodad-runtime/apps/hello/appspec.json",
+    "sha256": "71b858a85b721fc7e051986b1554330d82c76766b1f87cbd14fc2185b82524ff"
+  },
+  {
+    "path": "doodad-runtime/apps/hello/manifest.json",
+    "sha256": "83ce82e4da95c7d9ad37ac81c897ebf075db604079d7ba0d4d4730808ca4f194"
+  },
+  {
+    "path": "doodad-runtime/apps/hello/src/lib.rs",
+    "sha256": "2ed4e7016dcddca2d6ff7ee4a7165913a2aee98937af2e1198449c7ac15e4ec7"
+  },
+  {
+    "path": "doodad-runtime/apps/hello/success.appspec.json",
+    "sha256": "562280cc1d7c7187f141fd0fb336136f3eecda738e0a4e2b35133bc1a0f5f42a"
+  },
+  {
+    "path": "doodad-runtime/apps/hello/ui.json",
+    "sha256": "872609454da961a1afef1211c0c952029ed7018eb3b011d7ee97d6aa78ae2593"
+  },
+  {
+    "path": "doodad-runtime/apps/media/Cargo.toml",
+    "sha256": "885f464cc248c8a8656e02f56c27675a7fd88fe0bfc7b807ce4d2300f8066a53"
+  },
+  {
+    "path": "doodad-runtime/apps/media/README.md",
+    "sha256": "cd374f200721bcc87dcfc98c39d89fc09a4b1e80c3c2f24081b0b91c9a768c18"
+  },
+  {
+    "path": "doodad-runtime/apps/media/appspec.cbor",
+    "sha256": "1555e5712177da792f1809c115299eb9d335f55480087ae6089cef39207c5103"
+  },
+  {
+    "path": "doodad-runtime/apps/media/appspec.json",
+    "sha256": "dce11a4e8507463b9bed63ed22a83e05776463f1e5ab5e71e0e314dc97bf6fe8"
+  },
+  {
+    "path": "doodad-runtime/apps/media/assets/2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028.dimg",
+    "sha256": "2fb9cd65b78719989e685e43a7179cb69f97e1dfb4604ebfad420cfb91d81028"
+  },
+  {
+    "path": "doodad-runtime/apps/media/assets/media-assets.json",
+    "sha256": "a7d75faddaca1b880150a9b8fb37f004584512cbe00926e61ed313b964e0e37d"
+  },
+  {
+    "path": "doodad-runtime/apps/media/assets/night-drive.png",
+    "sha256": "ff76c521427b0b10905e58bacb20dcfb5c4e79ec8d5c32553c5b9787e1bfb53d"
+  },
+  {
+    "path": "doodad-runtime/apps/media/interaction.cbor",
+    "sha256": "349bdcd206922fbd742d3340ecdf0eecc5610bad95c259fcb70a2ac0edf2f070"
+  },
+  {
+    "path": "doodad-runtime/apps/media/manifest.json",
+    "sha256": "33ecb66dfb87a7d4ea4a690c60729919c8ee8a7c17f070d7f2726e812ea4a643"
+  },
+  {
+    "path": "doodad-runtime/apps/media/package.json",
+    "sha256": "fabd6876283b5c7f6754efad04ca899234accea4bfafbf036b2b8aaf843f9bb8"
+  },
+  {
+    "path": "doodad-runtime/apps/media/scenarios/baseline.scenario.json",
+    "sha256": "97ef30c674fb7e8d7ba150908465b3944a7ad46f0900c1074d820f6b81a41feb"
+  },
+  {
+    "path": "doodad-runtime/apps/media/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "7c6f96dbc618a37596345cab34a886497b8da4cb417198b732439edbf02b156b"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/offline.cbor",
+    "sha256": "104c83933d91d96bb8bbb4be82e03aabc91ef0b9728ccdc4cd45bd874d1be421"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/offline.json",
+    "sha256": "129c498a0883d406fda8bad4100fa3e2e736a836d1041fc811cd0791d7bd9768"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/paused.cbor",
+    "sha256": "1d27f3891d57f61fa7033bf1c0d60207b34826f4bb26deb580cf44797b9102bb"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/paused.json",
+    "sha256": "1d34ca02391e081a8891cceca1c1c28e6045a0acf25101cb5e843c791614ea05"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/playing.cbor",
+    "sha256": "2fc908791732660f243544d90cd6564e10a39797d3db2bfebda7c1b9bab7daa4"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/playing.json",
+    "sha256": "646816e647b385bdf2e2aedb28dc4d7e895db8373a5df39a494b2092afa2920d"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/reconciled.cbor",
+    "sha256": "1037728107022fa70d83bf17ede23e3034e4d75636a33b4450ea4f0c5cc0f23b"
+  },
+  {
+    "path": "doodad-runtime/apps/media/screens/reconciled.json",
+    "sha256": "9c3ef80c1ec4fc29eef1e564f7cf831c9ece2fb63f4709824ed44383bc6e2835"
+  },
+  {
+    "path": "doodad-runtime/apps/media/src/lib.rs",
+    "sha256": "cc16e499c88b44b0f57f47c73fb13262ca17715e7734965657bf891be40a5e90"
+  },
+  {
+    "path": "doodad-runtime/apps/media/surfaces/baseline.surface.json",
+    "sha256": "23d164ac94a58571dcb7e6ec6a8953718a81a56eeb9287ae6f53358c7d855123"
+  },
+  {
+    "path": "doodad-runtime/apps/media/surfaces/recovered.surface.json",
+    "sha256": "65eacf0f6ce080a7c7df4dc428faa6ec220076113883a6071d783d263c40a520"
+  },
+  {
+    "path": "doodad-runtime/apps/media/surfaces/stale.surface.json",
+    "sha256": "1a2fe01a0556d843054a9acf2564e19f2e48ef3f6c62b016d234cbb4a5ec945a"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/Cargo.toml",
+    "sha256": "b0bcc7e32043a4804a06d1780af90b34b569886c76f27be18e7df5c3e9509529"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/README.md",
+    "sha256": "722bf1ff89ee755d1562e890937138bf013faea7256dc74ab218bf753cdb82fe"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/appspec.cbor",
+    "sha256": "0a502c185a4edda4026ebd864844324cb440dd5eaabaef2de746a76b5e747f11"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/appspec.json",
+    "sha256": "a50552c17d3bda3917111bacd2114d526f10e1f5ca0e3368f029d608b0f48bd0"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/interaction.cbor",
+    "sha256": "32dab091eeb322bb1b921ea71fe86c3406c57c90f0938b890a4739a964e4832a"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/manifest.json",
+    "sha256": "d70720e6ac8b3d5e5cb54e3675b5a461199250ee746abd5f56163033224e7f74"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/package.json",
+    "sha256": "4634566642359e05bb741c47ede6a94e211f150c77faa5f2099213eeaa7666e1"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/scenarios/baseline.scenario.json",
+    "sha256": "3ba416922abba59e101c1c1bdce79430bc1cd85f6d0cede3ef81a8365605a989"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "24dc1fe1634eb1f954196af35bf9ebb30f7e0d1dfb78845a23edf6eedb9376f6"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/due.cbor",
+    "sha256": "8710d2afc2bbf3c11f85ad520164e84e4a2e5da760a1e49aa37a6eff1cb2fd8b"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/due.json",
+    "sha256": "5342d8c4e8c9e929138ca59b99fcb9bf8d55dfe051ad5c734982e8819a730726"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/editor.cbor",
+    "sha256": "e6f5ad300613c8d91fa77f89eef0bee8b4e412f3dc7828e2aa65a3dfd32473c8"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/editor.json",
+    "sha256": "56d47f5245bceac4b4b19427bce2f48899420e4a393fcf445d8ec3998e6d48ac"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/snoozed.cbor",
+    "sha256": "7bc80159b60444eb2733b87e4243ff3bacdbb525f960221ad55c50eab92a4e9b"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/snoozed.json",
+    "sha256": "3a78d8c4e717a46a9155c8a644d8dcfe4b3aa5bd6b40376bed9f9941805839dc"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/taken.cbor",
+    "sha256": "86f97e8465bb8c393e8818b044a72ec6ef5de1acf700f4a656178b60514cd26a"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/screens/taken.json",
+    "sha256": "458b053c884c199d0f2da9dacbc18292762559ae396e136e1d649376508c460e"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/src/lib.rs",
+    "sha256": "41fd4001f49a20f31cc5b317f92526cf7d26f94694c0a921a7bd0d6fd7ff71aa"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/surfaces/baseline.surface.json",
+    "sha256": "5f79864d7c6b429f3953a0016bbda442bc2242887d2ba3b707105f682b280a5d"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/surfaces/recovered.surface.json",
+    "sha256": "81e85ce59b20d18a2979338ef3dc1fdd2840a958e78b67a8c9093e32b5a21a71"
+  },
+  {
+    "path": "doodad-runtime/apps/medication/surfaces/stale.surface.json",
+    "sha256": "1d434ad206cda7086a40a9769cf27a8d4c227a6ba3206e36105d802959232f10"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/Cargo.toml",
+    "sha256": "a69fc6abede322d00b7593087c6408f1a55fd0bd30c9e38c93f55ccde737b5dd"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/README.md",
+    "sha256": "96f5d43e2a1ab07b3dde493ea6ed4195ba994c029e133669526973b5c0901e7f"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/appspec.cbor",
+    "sha256": "610fd0b0dbb240e45f12986c4f9718fbc8a1b74b23eb49542368b06c4981d18e"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/appspec.json",
+    "sha256": "1bfad74f1ea0e115bf7580c0996ffc529d8cd7deb9c3afacc6a3689f0f3782d4"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/interaction.cbor",
+    "sha256": "3b9ce9980ddc52b289ed9804d3e1fa0e8f03d42856d7290cd9c6d6b69c767740"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/manifest.json",
+    "sha256": "067d3a80b0a8876ef6676e7a96d7ec1c2c214fb5f4cfd22b98cbd97d2da416f0"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/package.json",
+    "sha256": "c73083e626e625c5a81a8b1767e2efc3e366afd00d717ebb85b77bf9f4b3ae5b"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/scenarios/baseline.scenario.json",
+    "sha256": "7ac1ad535d75760f35504ee74fba36734e5b1517acf8931befd32800631cc135"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "2f21f5a0bf2462628e05d013243f06893780eff3d121fd59cbe24cea86b43f13"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/cached.cbor",
+    "sha256": "e72e7287c7fa8d668d518087cf16bbad5f2ec617f69b47daef168b87aa3ee0a0"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/cached.json",
+    "sha256": "d7dce1929f797da597ddc3ed274e0859612f91aa5946c0b27294a9cafed4c619"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/maneuver.cbor",
+    "sha256": "9e8b15e7e175f9cf76bfb8610edfc931d8b27bf84d1f99edb21936c2767e881b"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/maneuver.json",
+    "sha256": "85081cd8fae44d90f44c9016027c74adf5eb1e360b345ef2b4688ad9275adf2d"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/overview.cbor",
+    "sha256": "1edd8492574b5176897f0f7ef5372dc9f1fdb6bb9c31869ea91b8b085554942c"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/overview.json",
+    "sha256": "df929175824149e36b49a3e7b93080cbf10a81985a9bd0a044f28994d67c235f"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/recovered.cbor",
+    "sha256": "05ec23ee75b0c5d743889c4b36a7b4cafd6ac13dfe32bcec6c78d1f445628dc9"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/screens/recovered.json",
+    "sha256": "ac2f6a2a6c3cc108b3785cb9bc71eb4c193e68835a686b89628521e70cf28128"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/src/lib.rs",
+    "sha256": "700a48032c9c90f80fab448a4b5cd2865c31745f4591a6e941ba5d5894699064"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/surfaces/baseline.surface.json",
+    "sha256": "ed01da71e39ebe4b785ed66455213dbe68bd13c57d5d323f815b6e55cd0b2e53"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/surfaces/recovered.surface.json",
+    "sha256": "d5be663f272ec9553bb45091eb64bb71f92f8c219919acc10e8a33dea68a2bcf"
+  },
+  {
+    "path": "doodad-runtime/apps/navigation/surfaces/stale.surface.json",
+    "sha256": "1b5940532b1baace8f091c4989331126b580739d2215689df6db7c14fdaba195"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/Cargo.toml",
+    "sha256": "725de5c5dd19a6567fc5f9405970c5401ddbf833f05cfe1a31504b5420c8a3f0"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/appspec.cbor",
+    "sha256": "61317f24b9766c55668fbcb9e241afd3577dfac3c6528fdf60685d292ad1ee99"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/appspec.json",
+    "sha256": "dab253ed086fe3bbd1a394b674470f048eba84b9c9dfddc5195414fed451fdb8"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/interaction.cbor",
+    "sha256": "3fccd02d24b11db803ecd92071a62dd8c0efb7f0881c8a6b2dcdbaf8f12eb154"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/manifest.json",
+    "sha256": "51e3ef4a56abdfea17b2da61281b96cb5d810bcec4496d900820f2f91b104a02"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/package.json",
+    "sha256": "635f58623a656456f5570e8365d816cc6f7e1e89f30622cf5b087b907f88ff75"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/scenarios/baseline.scenario.json",
+    "sha256": "10f814e8678f7fd267f495f456e7d1f42452d93e974c50fd854e49aede097898"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "9cb8cae0492fec6305c09be66c18de7b86df0e86bc4c9febf31574129a703f29"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/detail.cbor",
+    "sha256": "d363233832c5a92b05a3ff47d8d08bd1a8939c84a3d4b609db19ef6c1ed91e21"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/detail.json",
+    "sha256": "7ef3821c2297a5794a438db07d3df15163137074666b4bf371bcf784d6254e12"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/inbox-empty.cbor",
+    "sha256": "bdc979623760554379041509fca567b66086866c69ba45f114f77d666985c31e"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/inbox-empty.json",
+    "sha256": "e0739a767675ab59d5ccf405382bfb61bf4761a55bbc80dd67acae3a3c8dcc81"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/inbox-one.cbor",
+    "sha256": "d542be0c709c6d33def0837b3520abc713d4b77b89d02e804a00c531291b0a56"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/inbox-one.json",
+    "sha256": "5fea651bd22173ba668641ac00987e86869ac384b3d064f44e7d643e70706bad"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/replied-sounds.cbor",
+    "sha256": "1e4a2fe854f4282e6d9ff944025befb50531916fa069d0319d3ce888bbcdc815"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/replied-sounds.json",
+    "sha256": "b731997b2f3d63743e6d901cfa4ee244378c2c11db9ff4c8ac10f17a89ca170c"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/replied.cbor",
+    "sha256": "7379154c9a151523e6adceadb9f78f564bd7f4ed978c4ec24806314a54900930"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/replied.json",
+    "sha256": "1e0e9d7ac69dd4b35f35d65ef4ba0fc1141291bcdfd64614ac54600e68aafcfb"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/reply.cbor",
+    "sha256": "52cd8e4b0af7265ab789c5812a350122690528720f584442582861e736ca2152"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/screens/reply.json",
+    "sha256": "9e1e5a4183fd9a7d83ebdef2f02e7625b733c690250681c94e56342afe26a4a6"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/src/lib.rs",
+    "sha256": "5fcf95e9867d2fc52a8b2157f14df2b3c7d6c14d0094664bfc360e90c55a10a8"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/surfaces/baseline.surface.json",
+    "sha256": "6168285de4a9c6c8ee2bed38839e06c34a93fa69ec58183016b4d92299dafa98"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/surfaces/recovered.surface.json",
+    "sha256": "f05858aa2a370a241d4c758fae4007989582eb89e06e86b006ccb1dee1b2ffac"
+  },
+  {
+    "path": "doodad-runtime/apps/notifications/surfaces/stale.surface.json",
+    "sha256": "716a90a7bc525d90393f1232f101da0b825ed86ba9f15654b68bf71c823f8027"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/Cargo.toml",
+    "sha256": "e484c83f21272678d0fb561b27e1b4996f2283bae19e762f6fbc6c5e9d5dc1fa"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/README.md",
+    "sha256": "3d249b366b8b5cd9a69f5b24dc6f2be7e341c5c6a2327357b577502f1418e45a"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/appspec.cbor",
+    "sha256": "776fa518e487b31e4a4e15eb9ba87c5a41ca3670056d849c9e3262b0b38167b5"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/appspec.json",
+    "sha256": "575110ac8c8e43cc5f52043732090ef5a9d56fa44840b6b9d04e6fa6c59fc8d2"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/assets/777d468ea847318acd22e2eb79f108e75e2674448e8b53fa8fba0bc08fd7b522.dimg",
+    "sha256": "777d468ea847318acd22e2eb79f108e75e2674448e8b53fa8fba0bc08fd7b522"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/assets/desert-viewfinder-source.png",
+    "sha256": "60fbc1d24e59245dea40b13426afdc20d5e1074067998976fca114d75004f489"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/assets/desert-viewfinder.png",
+    "sha256": "5df990c2340cfe79faa14f0625063596f1f72541373aa592269d06beb2d3e4cc"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/assets/remote-control-assets.json",
+    "sha256": "381c123e43e42feea2fb51fa49433aeadb8ad522bc6380778b71db37264e1850"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/interaction.cbor",
+    "sha256": "5419cf981032236ad47815d38a9c08a89e08891cec9e0bad9576b81c20b304be"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/manifest.json",
+    "sha256": "588bcf2e070c66786798499ee4a364ee6200789c0a8ace826dc7d5d7f7811ac4"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/package.json",
+    "sha256": "0f2e60e60a2869f9c1e03929c4a0a2697a525a84b776e147cb1643f2af809754"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/scenarios/baseline.scenario.json",
+    "sha256": "b2ce04318fa8edbc25b8e625d8ab728bcbab5496a7f332f250c59edfa76b9b1f"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "ed8258b1718d2ce48fc8f31c425d2ced9dd57692eaea2a90c4f03c8d85ba8cb1"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/done.cbor",
+    "sha256": "de5cd35ed04410aaa646f93662a6193cf86980d23f84f9aab015b1a1e4969284"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/done.json",
+    "sha256": "26e2b3e77c2db9591fc7de8297eccd5037ae6145b3fd09383c86fe3c457c9e8d"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/offline.cbor",
+    "sha256": "d03e88fbad1198ea118ff3a548512838c553b82637cd4cf0f565ca712f86977b"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/offline.json",
+    "sha256": "99590ce5e52b47fb5e6d8f8db7b3b12bebcaa90e98d4cb3f1bc03aa9c9eff1c1"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/pending.cbor",
+    "sha256": "45ec472464b3aa31b328bf89306a5fa8c4d1036d414895bc097e123f8bedabaa"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/pending.json",
+    "sha256": "513d1f3c5ed4184dba29f7e85c1b763975e9e249b81d87a0789c1de8412a7086"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/targets.cbor",
+    "sha256": "7bb198c86544d6938b25b710248694132bd0cbaa4b221eecce83d1fbd0691a33"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/screens/targets.json",
+    "sha256": "ea46f7f79b82203f00032088bc17302549999f0690f0ab7e3217fc3e37234bcf"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/src/lib.rs",
+    "sha256": "e3545b792298609da87307574fb1d3e427442996b1d950fb4c8400debfa7eb78"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/surfaces/baseline.surface.json",
+    "sha256": "8d51c0f055285dc6830469a9c35ea150811665cb0dff658f8210b291e8dea441"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/surfaces/recovered.surface.json",
+    "sha256": "2696a70438785512999940013ec937d9aa82971232ffc90f4d8dfc040c379c15"
+  },
+  {
+    "path": "doodad-runtime/apps/remote-control/surfaces/stale.surface.json",
+    "sha256": "b5892388166f2f47d7815b1b703ae92e77470e5f98bda29d9b57868ae5e32e36"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/Cargo.toml",
+    "sha256": "9f3a1bebf342dd05a23de1d8b54a74ddf85884710ab86625ad85ac36fea766bd"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/README.md",
+    "sha256": "9c02f1078587f713241162d7698b45c0dceb73ba40ac3df0bf98f387a7fba238"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/appspec.cbor",
+    "sha256": "694be74a2acaba3e27e9a844ca6822759f2eb4eca0b7f11b58de078bd0d5b40c"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/appspec.json",
+    "sha256": "a4d8dcd8b92e355704cbe33cbea5b11be1808c595d4949d5d256fb713ba6e88f"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/interaction.cbor",
+    "sha256": "983d907b1175c48ad1357bb8b50a246b69379e29c352b4ef9264b784c25ca49a"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/manifest.json",
+    "sha256": "e9bcb65abe7e1b3d888c583b45ca5698fc14c9a766f4831fc0b05bbdf9334258"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/package.json",
+    "sha256": "9da089620bacf7d27b3c94b9d1748a753655ba19b081c6856e7e2d2c2043a400"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/scenarios/baseline.scenario.json",
+    "sha256": "5837ac6e20deaeb47fe8c63b70247d01edde2442b7d9e33cca6a3c1b64f21201"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "a26fecd1be0b90d90151b605cefbbe81d46ac4a2ae32c38a8b24b4a00e2bf1fa"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/export.cbor",
+    "sha256": "1f18a130528da5ff8b59e7474d07e5bd28f1c130e78d02fa8f0baf93aa14950f"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/export.json",
+    "sha256": "614868fe47de72cd7950caedbde14611184e63b0b87f7c6fcab89375029c7dae"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/exported.cbor",
+    "sha256": "ed70da3ffbdac372b15c4124c933fd8666c1ef15168f49a824447d95dd36c4c3"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/exported.json",
+    "sha256": "af6e68d76cbe66dfaedc34ffc2a32f0d65b038beb0af0c775bc97c39254ad767"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/paused.cbor",
+    "sha256": "0cadd654814676ca78d89ca206fe95f99fda2286d004ddc56edfb6415d04c18f"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/paused.json",
+    "sha256": "3cdf1a3e1793132635a891b10980549f81e65398909b4a8b14acb6740c86ecd3"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/recording.cbor",
+    "sha256": "aa26dcb5305a03abfc2e820e0450770c115203b0f3fcb95b43dc27d9f3cd876c"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/screens/recording.json",
+    "sha256": "e125bbc74b8426cf852b6e419d99e43696ec28df9455e86645e423eec90c8ad1"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/src/lib.rs",
+    "sha256": "ef30f26373f66a241420fb4576bad74de42a477669f31403d580025523673c1f"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/surfaces/baseline.surface.json",
+    "sha256": "f48b26c8d8afc51777c36df7f134f047543f8f4db8dd90e992f1ecb5b97fc146"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/surfaces/recovered.surface.json",
+    "sha256": "84b3b5a137cb6f882f89181f7c176171a7266104682095d1a1f733936de0f62d"
+  },
+  {
+    "path": "doodad-runtime/apps/sensor-recorder/surfaces/stale.surface.json",
+    "sha256": "836ba46e9fa0c8c6fcc90a2a20c38cdb07106ba731240eb077a0dc9b4556c43e"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/Cargo.toml",
+    "sha256": "11cc6f631e9f06d2bfa85741b5dbcacb3f252af2c9b7c21d4f9e7b6ba9db2745"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/README.md",
+    "sha256": "5a46299ffcbd6f6897ba9f2c74e667f2d0fa5bdd085938a5dcf5d1032529bc09"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/appspec.cbor",
+    "sha256": "13a28ddb8080756d5531a3fe3ead7fd3ac964279f75b683acc3b873ca3347e59"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/appspec.json",
+    "sha256": "d94829789fd4a0bcad4217fd4bd6b9a56f15e2231b6dd19f28fb79f40a05e825"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/interaction.cbor",
+    "sha256": "9e8122c85126c99de49936ab9877a498f59188aad35657f7f19e138f72841f59"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/manifest.json",
+    "sha256": "f5bc05cfe210d99e8bdf6996402a1f2bac593a4e9139559519f9b0b256ce84e1"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/package.json",
+    "sha256": "96d8852df99a8ddc79596ce379882a2646144ad78c1536f329ced0e18a72b4d0"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/scenarios/baseline.scenario.json",
+    "sha256": "78273dbf57160c36cd1bb69308c31ca20f117f1c14c9a54942e675a36b781100"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "fb33c73dc4701f3c012f7613b0b21e088cf88994538e01e86b6ee2b023edbd03"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/history.cbor",
+    "sha256": "a82c6fbc139a6e855d6574a1e76591917332f15fd14758b0ffe951001d878364"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/history.json",
+    "sha256": "a6304c01b1cba334bf5ea15c67e0b82f1aceb79eaa2b1d7b62a61634d818afec"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/overnight.cbor",
+    "sha256": "74e36ecc5a5833734f50ac4f68f17728b8fec77a230d1e50351c43471f17b838"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/overnight.json",
+    "sha256": "863fc8290675fc3a42ad9fd90e353dc51184da6195da9ab579e02d4325d9d233"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/stages.cbor",
+    "sha256": "b3f0188781994866067f473049fb512f9f90792029082c988206e85b24140ed4"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/stages.json",
+    "sha256": "a69dfa20569c0bb7b7850eca5b6fef00a744c56734b2de7798a88f2ab8cffbc6"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/summary.cbor",
+    "sha256": "1f4306585d0d0cf276dc927e8d2307407ade7f3a6c4e4768e2c5b55549021d35"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/screens/summary.json",
+    "sha256": "67c6c42d1189cbc09f2ebdcd138690ad64815f90569e421699c2e57569a31ed3"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/src/lib.rs",
+    "sha256": "5c35a046af49ad2d5f5154fc7c6d3e6e4fade50a8798a70d1a4643aabf1ff2ce"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/surfaces/baseline.surface.json",
+    "sha256": "52ef690371bed4858e805874d552f5ea04640cd925b79774bb96e8c87e854eb9"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/surfaces/recovered.surface.json",
+    "sha256": "b657fee80251082949378769d4648546f08ec2961e475f2d0e304d63fc5847fa"
+  },
+  {
+    "path": "doodad-runtime/apps/sleep/surfaces/stale.surface.json",
+    "sha256": "2a50b1f5bab0c284c548cff2206205d414e25a29240c63e3128b1efefc30fd77"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/Cargo.toml",
+    "sha256": "922b99b1f51d2fc36aa2b93ff7dea609fe23f4b350f08b8de8eb4d6809f34381"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/README.md",
+    "sha256": "2ac234502bdfae23cf1112f1e923523ba253b3e881059a0defa94ad6e4f5749c"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/appspec.cbor",
+    "sha256": "11bfdf80aed548a61802e4a2690669b752dce98bcb98ed51d21c796f9b12c295"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/appspec.json",
+    "sha256": "0ef59c70e2e926ac3f6460aead7c8b22ff1b8d72b4a9e23892af84bc05a9e6fa"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/interaction.cbor",
+    "sha256": "1b67fc391353f9e990f7f4242dec59b7806655376a7598907da0e057805c01f9"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/manifest.json",
+    "sha256": "b225d0172259d3af8cf5e7de562d48ad04ac36fbeb3555a89ebb3eb7892011d2"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/package.json",
+    "sha256": "6aa2f0eeaf313995bc22921c6b06c0a873840960525129566d5a5a4928bb67fa"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/scenarios/baseline.scenario.json",
+    "sha256": "d3716a80130902eb184be4cd05a29bf5cfd248867d81bce1a602110bc9fb902d"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "2b849fa12f82c507a71c8b08a9530192f4787e6ba0d1e74fe7aea09f8fdf0dc0"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/confirm.cbor",
+    "sha256": "9fbe54228d54e16ae236e9680ca66628c87135cca3150b63237d264da7d2538b"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/confirm.json",
+    "sha256": "122ab84775a2fb17091717c5d96417cd51a29fc1c8776a1b3e33a8e68b2c45e3"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/light.cbor",
+    "sha256": "131ae47c9557dc3cd03d52398a6184da40fd2f46090c630181b7599a60d15e0f"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/light.json",
+    "sha256": "38c2cb72c151f1294c6fb0e7b44987fa90d86b4f7f8be3c3c813dc420fc72883"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/rollback.cbor",
+    "sha256": "43d0234a34cc523259a15084d71c1f1a896ea4003a9a089005f8918bc6d74085"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/rollback.json",
+    "sha256": "2413e10d63dacbb143fbfeabd1e52e7a51fd16eea4cb99df1787c9d213cbc341"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/unlocked.cbor",
+    "sha256": "3de00a25a3094b39022eceaaa78150ba150fa3e1dcf4398e8955ca8e278dd4de"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/screens/unlocked.json",
+    "sha256": "d30d704b7c74f7180e52fa524b9e366b0ca5e05a34617aa2aa458410467442cf"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/src/lib.rs",
+    "sha256": "55812eef251bb45d9e14374f10ea75756f7ca04b0a82beca27ecc74627d102be"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/surfaces/baseline.surface.json",
+    "sha256": "3fd599db824032d260481f5bd48298d94170155cbb54a87905ca12f302fb9aaa"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/surfaces/recovered.surface.json",
+    "sha256": "72a24c6f0b6c32aa3438319be4e11573a388984ea401905d1e997ff99af00d6a"
+  },
+  {
+    "path": "doodad-runtime/apps/smart-home/surfaces/stale.surface.json",
+    "sha256": "d0a0a06913ad1c0bd4d6bb51be728db73cbb8bce0789ad9a6e94aa29656911b2"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/Cargo.toml",
+    "sha256": "31fae5457e367937713c197c62401ada1ecee79b7461108a38bfae42ca771332"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/appspec.cbor",
+    "sha256": "1c7306b7994862de350566cae0aeaacc35cb18b091350bea0d80348193623bb8"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/appspec.json",
+    "sha256": "b8a5b8ec421b21e34fc3653403289c1a6ad9e89e525db3a420e631708ceddd9a"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/interaction.cbor",
+    "sha256": "8713eec79681ba30fdba60951b008b3e1df86a039da11aeaf343010eea14e5a4"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/manifest.json",
+    "sha256": "90e99e7efbf23af1393e708982887bf21e840777b2faa50d6b47c3beb70faf9e"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/package.json",
+    "sha256": "a3823de7c95ccc6a2631dc6abd0251bdc44839b691ef529055d2a07049574a8b"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/scenarios/baseline.scenario.json",
+    "sha256": "21b8d7c893e77664dd2037a223b8857b25b869d97cd622f9044d87ac4c48963b"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "952a84881f934677c80ed59bf8de9b4a269a9fc268a9f0ec1e84a2b5af34c9b3"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/screens/game.cbor",
+    "sha256": "1c7306b7994862de350566cae0aeaacc35cb18b091350bea0d80348193623bb8"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/screens/game.json",
+    "sha256": "b8a5b8ec421b21e34fc3653403289c1a6ad9e89e525db3a420e631708ceddd9a"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/src/lib.rs",
+    "sha256": "90a9ef2c52fc2efb1f1abea4a89334ae85d52ac7b9c4b2e9b20ba34bf8ab8842"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/surfaces/baseline.surface.json",
+    "sha256": "2f886fe3683973f6bbafd3e75ed8a8c485112276ea7fdc5c9a089f0e94e9725a"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/surfaces/recovered.surface.json",
+    "sha256": "fee2355716a36142800ce8e35a97f1ed5facb143ce5f8b2e05024c512f35237e"
+  },
+  {
+    "path": "doodad-runtime/apps/snake/surfaces/stale.surface.json",
+    "sha256": "d78390e93dfe634c13c8bf77a54a87f3df1dfaf7572b110591dc986a595363af"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/Cargo.toml",
+    "sha256": "c7d9db38d1b9ea86d65ae62cd3fc23d3914d843e1cfe1b81bd17c7ef48f3c774"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/README.md",
+    "sha256": "0bbfd5ac0ee1f26b8ee257f583c5bf2074dffc51738fcc6a430ec353ce2cf527"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/appspec.cbor",
+    "sha256": "ea8383420520f4665465751917384ceff4ff25f58f2953bb5d61fa87a5e87694"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/appspec.json",
+    "sha256": "8cc3dd450bfed8ca7846f93965573072b13efbd9a71eb8fe74efccb259b472e3"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/interaction.cbor",
+    "sha256": "0d83104d1e078c79e3f8f9756f9deea7a470a9328505318e9c023dc9accf6ebb"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/manifest.json",
+    "sha256": "37a09d68830944f67bb7ae089782f2a6e798c663659e1aa514fcb80b33f486e0"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/package.json",
+    "sha256": "9122d3fe7c10822b1d8ead7dacee3fb2addd3771ba9ede24cbcda23de90fb581"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/scenarios/baseline.scenario.json",
+    "sha256": "6254b94b03ce549d70fa61eb0bc75bc44cea0c393cc2483f1ecbd4807ad23eb0"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "cd827f5381d814ea1f77d3738b111b9d0967bacd4c4f6f44ccb34c15fb6b88ea"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/burst.cbor",
+    "sha256": "d6865dd32c9a27a070282769bb95600d5108f061726653b7ebcf8f307f46275f"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/burst.json",
+    "sha256": "518c3a9f6a10d1e55cf7ffbd97eb2abf1395894c2c313b8292736861a3eab9c9"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/final.cbor",
+    "sha256": "a28599562ec57279e5ad1d397c820a69f5d1df9f67af1b5c425d3a16ccafafb7"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/final.json",
+    "sha256": "2b2343e09fdb23d848a3a14ecbd4d99859a4561595f6cc873f19d1f900c8230c"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/live.cbor",
+    "sha256": "6b464edc7b1578fa574892fb050c0eb885e21db4060c4130726a2410acc00f64"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/live.json",
+    "sha256": "ce83497acbe4475d77556c936c7c40595755261ce6333ebcaf3dac1e4c923f2d"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/timeline.cbor",
+    "sha256": "93819671d125f82805df31fa4dd42d26e47407965bf48c831a1d6fe4adc852b2"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/screens/timeline.json",
+    "sha256": "94d3e5f5e6b81e6e5f4e0ef43c1001fd834637a9701b3f1f46d47d204a24c3a3"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/src/lib.rs",
+    "sha256": "912ba25bd49b41a4235fb703285f9cd202c81a7a0618e25249e8c204fc223c9c"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/surfaces/baseline.surface.json",
+    "sha256": "3ea9b8df9db636c5431f57775f0cf057eabdadcbb66150ffcaf1d59483d683b9"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/surfaces/recovered.surface.json",
+    "sha256": "c9500cf88612c80c5a66bcc5417adb847d3f523c49cdac6bf95e50b814081702"
+  },
+  {
+    "path": "doodad-runtime/apps/sports/surfaces/stale.surface.json",
+    "sha256": "cf3c6b3a070d85b84fe7bb49bb09082440eb0725a2f98d0ae6cfd0a8e7016ac3"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/Cargo.toml",
+    "sha256": "10a61bd892a17f6c0026d858221dfbf14b2e38e70799e24a97883d42914bef75"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/appspec.cbor",
+    "sha256": "a11fa82f6dbb107cffd47c4c3d500f209f8126ff88a2b6c51e8f6687a5800844"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/appspec.json",
+    "sha256": "1369c405d2dc421028753a265ad2f639561678c3fd1173ab205a63cd3367e758"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/interaction.cbor",
+    "sha256": "a0624f03d46fa80e570d38c9b9a963a3eb1162299e04915289238e9772e0033e"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/manifest.json",
+    "sha256": "e2abb79fef52baa94eff2b6ea732b65e0945cb7df602d74758bb71c03fe21ca7"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/package.json",
+    "sha256": "b6b00b905ceb25640089034ef625871497ac6681917035720fd317490ce7842f"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/scenarios/baseline.scenario.json",
+    "sha256": "611d8f0cc967e1e460307792897bbaac62f6b070cecd38b596991b169399d6e4"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "fa1769405373e3747d1f832fd0be8e287ef34bdb138b4cdf8d87a244be473d03"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/screens/list-milk-done.cbor",
+    "sha256": "cab1a7f748f80f9c599e65616563d5021d0995fe298b112dc41a7888f7cf994e"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/screens/list-milk-done.json",
+    "sha256": "5a0fb0d61c415cd6cc59d7d8d8cee13df6115dd67938b5cdcbb459a2692ffdc2"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/screens/list-three.cbor",
+    "sha256": "7d1c2308624ba3c9c908dc6ef03b2ea8a5968fc15be4ed3f1e0a1352537f2b35"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/screens/list-three.json",
+    "sha256": "060785045c0915b7def0a2a2d6088c465389da1adddf20a34695f809ef78be53"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/screens/list.cbor",
+    "sha256": "a11fa82f6dbb107cffd47c4c3d500f209f8126ff88a2b6c51e8f6687a5800844"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/screens/list.json",
+    "sha256": "1369c405d2dc421028753a265ad2f639561678c3fd1173ab205a63cd3367e758"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/src/lib.rs",
+    "sha256": "ba90bd78e14fed45bd756b5b38ac8bb5a33cd644368a2b4dc27e726f84218d8b"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/surfaces/baseline.surface.json",
+    "sha256": "f1388393d31941b04a3bdfd66f14befc3acf136f2b790201b207aee70bc3664c"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/surfaces/recovered.surface.json",
+    "sha256": "6630ced1c8d085388d2c29b7671fe8574b24624161ab26f8528e0cb683570c2f"
+  },
+  {
+    "path": "doodad-runtime/apps/tasks/surfaces/stale.surface.json",
+    "sha256": "ec45016e5cd6f8e621501d210842cb03f98e9b3ae062c65df2ddb2a2e145802c"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/Cargo.toml",
+    "sha256": "a4c99920714cc2b4efeb99b6b380f0f4d8f2cd35053f38f6993f2343e208af90"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/agent.json",
+    "sha256": "65909950aacb0b8574681d9047cd3c9cae2d24e83f38493199a0268a3774cdce"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/appspec.cbor",
+    "sha256": "16cc2bf4a5123165e45b27241ef95a29cc3f1d9b4e5d258826d97770a668ad67"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/appspec.json",
+    "sha256": "930bb5f4fc159b5457d402a562830e28b2075269a5cfc8d96d57bd2b10d65c90"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/interaction.cbor",
+    "sha256": "c8a34690e141fb3c3cf29f17d72bc94bcde671605783fa8d7f1d465a0ce4fe79"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/manifest.json",
+    "sha256": "b36c512a4558e4dcf31176f1ad705073a4b3e247282733b6004fcf73aad08196"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/package.json",
+    "sha256": "5b42ece26197f661be8240d8c8765b047661df26d09043c13740ea19f852d4b3"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/scenarios/baseline.scenario.json",
+    "sha256": "3a5127af00493aa57c774f47d2adf603dd6060bff2d41eed3cc396157e83f95f"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "5ae858c2b303798755df232fbd1133151605fb48c6650d3b95213f1c87de8383"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/src/lib.rs",
+    "sha256": "792a873431a0b431e92d7d3f9a55aab5cf64562fda216baa7f25a8c20b4a9a73"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/surfaces/baseline.surface.json",
+    "sha256": "9b3ccd5ed9ce5cad8f02d6cb5d70fdcb75af5a24a7bab6caf9694378a50924c4"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/surfaces/recovered.surface.json",
+    "sha256": "af23ae5611605f639269bb8389db79d085f3ba59e2ac6869a92a6c8f974f04e2"
+  },
+  {
+    "path": "doodad-runtime/apps/timer/surfaces/stale.surface.json",
+    "sha256": "c72d39b84a7b4fe21e2ea8d98e7a6a3a1c514b13f942c2729e9474646858788a"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/Cargo.toml",
+    "sha256": "15c66d53c4a5129f640e8733e2073a234ea8d864cd9c7867869af494e0c71aa8"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/README.md",
+    "sha256": "1e65aa7b772cc7c873256f9b9e3fccfe1b261548785a4315e532baa824694082"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/appspec.cbor",
+    "sha256": "b0634d454319c041d8fd349f1950ef8400a3729493230cfb468068e45b582e86"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/appspec.json",
+    "sha256": "4621198fb9113423a4fe262c49cc240f66a5f4506f3bd7616bd750dde0d853f9"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/interaction.cbor",
+    "sha256": "8e491a6a85c618ab5f51e1422f9e0e84793d2fac1417ed4170d62376e0abecc1"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/manifest.json",
+    "sha256": "2eca5807c81d666b22550062129c1aef754ac1ebd5e9af7d4f32a5ea8d70c498"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/package.json",
+    "sha256": "e1955563bbc1c8fd092c2c300f970ecf33e74f7f78180f121e65e897a24b4e32"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/scenarios/baseline.scenario.json",
+    "sha256": "5fba5b8d205cb90373f0c3d32ac4a810d462826e7923e6a09e46a337babc2ec8"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "6d8edb936b9b37cdea68c9e3faf53ea2dd7c4eabb703e3ff46d1a8dd79cc8db1"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/alert.cbor",
+    "sha256": "df0010111a8feaa0a97dac46b7c1b8d1a3dbbfcf3fb5f27864b4e42d70f5d5f6"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/alert.json",
+    "sha256": "05c65088426b8f08e7240696556f90d917f9203ee84ed1e310d82544f340d9e1"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/departures.cbor",
+    "sha256": "85b87b171d998655873bc298446ac835f83780838d771e0b8392567ac075c3cc"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/departures.json",
+    "sha256": "4f4438e82e5419d94622ddd88e3c852f7d42d708f0648572aaf3b9724e8b91ca"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/recovered.cbor",
+    "sha256": "893421f55cad0b1a48b6ea868cdeddc8e84c2e10f3bafd7b144aa772f1f03738"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/recovered.json",
+    "sha256": "1d55c39730ff87269c909091e16842b9813da4e94f463050aaa7b198b54a8979"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/stale.cbor",
+    "sha256": "a965fcd8f4b9605c2691666f93af6bf7403308509ff8295790d2c7cc524ae963"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/screens/stale.json",
+    "sha256": "f2d335a968dd88bd0400b9159c79725a2c45fa2bfd59420d2733916e19b33aa4"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/src/lib.rs",
+    "sha256": "9b49b4a62170025505d4c008881b95c936a6a0c652a695d4a36ba2c30052ed63"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/surfaces/baseline.surface.json",
+    "sha256": "280dfd79f7a65de523b1c554712beed4450492ea1e5e1707aceaabc03b333635"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/surfaces/recovered.surface.json",
+    "sha256": "eb2623b7814db198bf8e7222769cb9a10fe9c5e5bbc5502442e551c007b8a9bf"
+  },
+  {
+    "path": "doodad-runtime/apps/transit/surfaces/stale.surface.json",
+    "sha256": "38eddfe487346115988e521f7e51851457ec1102942d2c493379bcf679353e19"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/Cargo.toml",
+    "sha256": "0f49ccebc697943670958d695de21dc6923c0b883b9c7ca9d1495606fa8188b9"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/README.md",
+    "sha256": "8b6443c1739c04df7c24a41df191c7dde08cd20d2999aead2209350c5ffaa2cc"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/appspec.cbor",
+    "sha256": "b494f505ab8ad8321bcec6113c0be5ba00440dd05c1123b49b2ad988908f1075"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/appspec.json",
+    "sha256": "2cd3ad4c67673e7753b7438bdee5446f1accefccb94f333d12120e2aaf8cfb44"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/interaction.cbor",
+    "sha256": "aaf7d7aaccaa50bc1ca3052e8f355591b6d36736f86c1036ebb931621524ee45"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/manifest.json",
+    "sha256": "0033f1e2195c440eae278b0deaddce9f5b1f07f40188a2dc6a1a773c8bbf7e64"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/package.json",
+    "sha256": "31a12d993d99aeb7e2b6d30d1b83a3dbc269c0733d3b7c4f098cfe290a6ab057"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/scenarios/baseline.scenario.json",
+    "sha256": "37567ad542658c61e95cc78d8d2c36ecf501a8614504b5d8a4144c2ef9f5515a"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "8de8d0c9ef58144a0d1d1c80bb88088e710181ad39718d8d9a038ea2d3c5d16d"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/buffered.cbor",
+    "sha256": "b1ddb0e424b11584b424e59e3463bc58110bbb13cce3fad7ed91912780d8a473"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/buffered.json",
+    "sha256": "1f683571924618032808cff95cb5463b6ad1efd3e6af809e1e8a3059d0c60b75"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/recording.cbor",
+    "sha256": "e266907aeae276203bb23ade2c92d24f6f19ace402ecfb7873486183f2fb2526"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/recording.json",
+    "sha256": "b3f48095665f67a23ae6d50eedfe17d344d06ee480bef7d7c690e83d752d3270"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/saved.cbor",
+    "sha256": "c865e7dc239ab9becbd530f8f9aed926af633dadff30e4ecc17dd9328020cbe0"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/saved.json",
+    "sha256": "21675ea4c3f2112b95432249f016f1d6641ef5ca03acf4bd0758f1a00b622e09"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/transcript.cbor",
+    "sha256": "fdc64c5fe0b2adec0b6a2e65c4d4cc268dcfad632f4b176074718dac94e02e29"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/screens/transcript.json",
+    "sha256": "568e7c8f25023d27dfb0316b82fc6e1ec5b6d7cef4c091ca3ba3d18cc0dea0ab"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/src/lib.rs",
+    "sha256": "2e2b5a64711c1b15972a0eb130da9dbb1286c44ad1acd80cf6a27bd81ee9e400"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/surfaces/baseline.surface.json",
+    "sha256": "e8b0d3b11a5791e9a75dcbc46cc096f88e4d5ac60b013a893b04044e7867e247"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/surfaces/recovered.surface.json",
+    "sha256": "1ad5e1cfd7a031278a459a06636c827d81c81cd91f8866cb24e9bd5cde00a7a2"
+  },
+  {
+    "path": "doodad-runtime/apps/voice-notes/surfaces/stale.surface.json",
+    "sha256": "b063aceaffa99abac035c28cb9a0ab17b742f2c077194c5b3bc35d1c217d1079"
+  },
+  {
+    "path": "doodad-runtime/apps/voice/appspec.json",
+    "sha256": "01e6ce7f6a64e6f4d5fd7aed6a0ccdab58524a25f197b598bb51c7920adfb491"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/Cargo.toml",
+    "sha256": "31a3b51e1b9527eb49f88771d8fbc71291bbd1ce721d0f2d372914d13898b252"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/README.md",
+    "sha256": "d94012be35dcd339b6747b70a3737ba7a86d976217412129efa52ee45fc8c9ce"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/appspec.cbor",
+    "sha256": "333ce1a70db349d1924118694df0d590e88efdc72eee215977daf2abb78a771c"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/appspec.json",
+    "sha256": "3c8491a8b309debb9fc7d4c832a855396fa4716c255c00e3e280f9650c80d3e3"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/assets/29ee6d97e8928b49fbbaa49c20a439a1930c4d82de2217490abbe5235a798254.dimg",
+    "sha256": "29ee6d97e8928b49fbbaa49c20a439a1930c4d82de2217490abbe5235a798254"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/assets/boarding-pass-qr.png",
+    "sha256": "78458d70590ecaf12faa70263f1fa051b9cc814794141e62c05aeae1eceb9b94"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/assets/wallet-assets.json",
+    "sha256": "a369bc13da07e91b4c4f7e6aaae166b63873cbdc3ad946b0f780e4a25d827136"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/interaction.cbor",
+    "sha256": "f0299d7a54cf3c67d0720ad3ab3873efe699b5e945a3e07179d92668ec956cc5"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/manifest.json",
+    "sha256": "8772a8500f642d580386a50a5e8e1059a79aea325beb53cc597c63c9c040adb3"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/package.json",
+    "sha256": "1114f9a7821ef0c271f996a6ec948a93c764494f2b60688d0767409a3a631128"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/scenarios/baseline.scenario.json",
+    "sha256": "cd043656495140162e867a745b410348dc5690c315d4a5e296a4316243a4d357"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "4c008f831c042e0799f8958ea791d79d4d4cb5b0fa1b384ebfc48cd613d438a3"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/pass.cbor",
+    "sha256": "268a36c411bd789c27a3634ad6a07fea5d860aec29770682390e1675e8e071ca"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/pass.json",
+    "sha256": "8d6741642c5275f22efb1eb059682887a31f96528cc3cf92ebad2da638df6ed3"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/qr.cbor",
+    "sha256": "9297c95cc9329776d29ede6037a2a5ad900f08142b29d4acf237cd3ddabc0060"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/qr.json",
+    "sha256": "968dc1e83b548f69fe2c5aec57f53cdec869bebca652a448dcef0e956c2a681b"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/rejected.cbor",
+    "sha256": "0316990fa34f0aceed3e3d8e0964da92131ee9ccdb28ea8e1a8b93780c215694"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/rejected.json",
+    "sha256": "fbf8de412a63a8ef716da858b64d8a33018fa66e1764f4c6617bbe672ee65df9"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/review.cbor",
+    "sha256": "c75eb3f3250e0add99d4935878c0eff633333b42a6a30949023ed3d0d5b61b57"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/screens/review.json",
+    "sha256": "c86704a622970ec494933cc6403712a9534ed2a3c9f7442897c4619659222ae4"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/src/lib.rs",
+    "sha256": "3c4dab581672a6f6e3a1e2285b3a0a79612d79382d7dc6af2bb1108e25226255"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/surfaces/baseline.surface.json",
+    "sha256": "938c5ec672fa3fc11c4cd9e17b7569061d8e37ae6516168ec5463ac2369f3637"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/surfaces/recovered.surface.json",
+    "sha256": "251a712ac6c6dfe2d26a726e972ffd246a5ef0e78de47590e5284d831a579509"
+  },
+  {
+    "path": "doodad-runtime/apps/wallet/surfaces/stale.surface.json",
+    "sha256": "4c566c1182adfd35b4c93246d461ea378931ac8966712866f6d1704955b37354"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/Cargo.toml",
+    "sha256": "e1e14476ae7ce59e7f4e1e6907fa9a1ddb3e9237628e87f673e3f0519e7dadad"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/appspec.cbor",
+    "sha256": "4573efc58a2ea8ef7078e618de97837ef4923841b35395035c6965a2cbd54ec8"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/appspec.json",
+    "sha256": "116517cb66a13c1b1211b8df40de9c14127e58b9155520a5067291d8aa441925"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/interaction.cbor",
+    "sha256": "6a28ffdc10ae04278e9b28fae7ccfd2f6fdc480d28f0c1b3dc4231680d889992"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/manifest.json",
+    "sha256": "cd3ba58ac1efd7f4553fcac622aeba2f5e0bdba3bd9b20ae00f8e33ed56b95d5"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/package.json",
+    "sha256": "e680adb9c10bb753b97c6d7960c0fbc8a9ab7462750e45f43f6f9a92b8267c6d"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/scenarios/baseline.scenario.json",
+    "sha256": "9db74b6a852fa3ab21c96f222705f7c094569f408f06d27821fb63a6e63a033f"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "1519e2570b11b33a903b1f34f773f17887c422b6a2e00527b8197dfdc1c1be91"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/daily.cbor",
+    "sha256": "599bf3436470abfe0dbadc4c1ce53f419cfbb7ecc46a77f414333619fc0598be"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/daily.json",
+    "sha256": "f5dac739eb15eb9fd1428ebe7a1deb56289a4bcb2ca8a58f756cc2ce1f4354ed"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/details.cbor",
+    "sha256": "c3d317a060e5bea39fbf60384ea06b5224e040b896c427e790724125e86be412"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/details.json",
+    "sha256": "fa6116fdf176b5ffd81a679e41c5891b7dfbf0f544b701fb96c19baf7479c6b4"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/hourly.cbor",
+    "sha256": "529bdaea0e1599a3133b3229ab457170016677ce7c53c1c0ea48d9fe23bfb8ab"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/hourly.json",
+    "sha256": "d6fbfb8ec0670a836dc8b64e68c566eca065fa4b7a1b44b46977bdaa803a7f69"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/rain.cbor",
+    "sha256": "99a1dd023b33a2f35b1131995e4016d11c9da725a452324aa3fe8ac1136d2431"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/screens/rain.json",
+    "sha256": "81412f22f3df1d23abc641799780f182c5310fd8aa26a8271faeaef54b5e984e"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/src/lib.rs",
+    "sha256": "bb9c1d6f0f72499351633af01a560f538a62f2d917b09888c945496425cee26d"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/surfaces/baseline.surface.json",
+    "sha256": "a75b6a3bca590097de0b6e03c311d74a36db821480a9f1ac73cce4f6e1b80c6b"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/surfaces/recovered.surface.json",
+    "sha256": "c212bde3420c89036ef3eedb75d1d10e0a6d5afe6ffbf4567a7b6ea935048aaf"
+  },
+  {
+    "path": "doodad-runtime/apps/weather/surfaces/stale.surface.json",
+    "sha256": "d50db24e1bed141c8f983ddd1b37f46306f206cbe1333704247a01aa091de1f4"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/Cargo.toml",
+    "sha256": "cda54a7dc6116de52a786ea2fb17367acc64b183c474f2f4c1ca046528dd4b62"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/agent.json",
+    "sha256": "01226385933eefca907a0a3894b29757b216034458b75ee6b48c5baf08723f56"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/appspec.cbor",
+    "sha256": "93a244194be3e52a43d720c4a39e8e29517008e2ccd91061672724e393977e14"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/appspec.json",
+    "sha256": "09d561b2c56a3842cb2ab236f7f33c8e97269a1d6642bbeed5e66d8bd6db4d20"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/interaction.cbor",
+    "sha256": "80e2479ea9cb13a826f82390bf3b27cf7899b980ccc81c0eef2ad4f0f8582aae"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/manifest.json",
+    "sha256": "72a65b7d41f76fb03e8f7b0e649be9dba32ebc8462595d1bcc12b388a599201c"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/package.json",
+    "sha256": "375149313866619c212947b6f1b9525278b3883e1c3896290a1ab445f8876541"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/scenarios/baseline.scenario.json",
+    "sha256": "dc729b80ce82e37e47d46c5318546f9b259c8d03b6311cb4fd80da3a3fafe269"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/scenarios/surface-lifecycle.scenario.json",
+    "sha256": "a297672511a2ffea8cb452bf5e2182291a4cbe98d64fdafe25094aa9e92c2ea8"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/active-set.cbor",
+    "sha256": "ef995faf20db24abe973ca9b073d699720265daf72115731af718a2a79ea23fd"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/active-set.json",
+    "sha256": "6e489d2dc7a39a0e67856da0d3c311e7c474a6a3c8f5c5703c2952b77289ebbf"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/exercise-picker.cbor",
+    "sha256": "2c45a5c7fe0d1b546b61dbe49c40c9848f70eff29b53e0ec147c46b8a487607b"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/exercise-picker.json",
+    "sha256": "7a84d2e84cbdb709b6dff7311e3bc20cb2726ef91426e8558e96cc591e9d17f6"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/exercise-prescription.cbor",
+    "sha256": "ef5f154ba850f7bf96f62068c96929385d031f35f7d5955658672f4cc4c4d82a"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/exercise-prescription.json",
+    "sha256": "796214382a3c364803957febdd732e37dfc1551959069510648c8c0c79840eed"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/exercise-switcher.cbor",
+    "sha256": "8af7b3c9d6610e3358ed86e1a5c29f07062f98fc957a6a5de816aa8d29039a38"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/exercise-switcher.json",
+    "sha256": "a703069425c71ec967c08bbd37b33193bea731165e43da08678bf274d97e6a94"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/missed-set.cbor",
+    "sha256": "c88e0eedf19f876f3dcdc6c8180e8f5ef120d98421497e7d67931aa639ae74fa"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/missed-set.json",
+    "sha256": "71dd8cf7d01869ea255a0c0c17952c8982c1ba0c16f99b74c893444dc54a7ce6"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/plate-loading.cbor",
+    "sha256": "55c48e3bbe978887e4b26dc156d08b5039f065126485f3005fa3c45d2f862695"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/plate-loading.json",
+    "sha256": "78f4af0744ac6e04ac6a533360fd111eb9aae4282a7d194f3a6a13129ca9462c"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/rest.cbor",
+    "sha256": "451e94e132bf8436d4468ae1a33d75183cfc255a09e2db5881b6ad997443411d"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/rest.json",
+    "sha256": "3da7aa920b80bc274e1f05b7ba92848c2ba9be1d8055051bbb211ee295a95483"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/resume.cbor",
+    "sha256": "ff2d5144c5b4c4e012e34e23d5534dcb9735cee9b38d2ecd9ce1303f31a7569f"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/resume.json",
+    "sha256": "599ee4c2a87d6985aa7503d8b0e80cf77a46c579e96bc7459933d250239cc3c2"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/session.cbor",
+    "sha256": "24a2bf52c4901edd02df52f459c89c292dda897a197d4fd4b01e39570a3074a1"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/session.json",
+    "sha256": "dff2cd4b73dbf4cd9901ad1e63768da1996ad77012a7b789f689c755c860e999"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/set-result.cbor",
+    "sha256": "ee8573add557864837e50c32c0ea8a4e8832b3e7b42ae8672c7f841a1b939b80"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/set-result.json",
+    "sha256": "9905d0582f56c3e4f97fd0038b54eb307502635f1fe8378175f0f9e065d3fe26"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/strength-goal.cbor",
+    "sha256": "2315a77913ce7f0a49d800e134440ff5c231b097ff5c3ab862cd0af1c3dbc10d"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/strength-goal.json",
+    "sha256": "21c8df85e7ecfdf86f1180688d22de2062d8be5790e5095fea8c0a7abc712836"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/summary.cbor",
+    "sha256": "dfc37793ec355c54cd92180c547ef0e6da3d0b959cc2779dde93f0bee184468b"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/summary.json",
+    "sha256": "1fa7f81cafcd849790d731e488165efea7ffb2323efa3c3b8ba5c6042e730363"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/training-hub.cbor",
+    "sha256": "cc2454135f2959aec7d66a2f033118fbc984828eda3d2a257e6b9ece8657a3b7"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/training-hub.json",
+    "sha256": "f91a50c78bffd5477f122c5656719a22a736d82997a1525426a5b29779c192e2"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/weight-editor.cbor",
+    "sha256": "e52d82d737f858bc52d6cfe031ae808e335a4b4a1bb25833d04213c75deb9f1b"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/weight-editor.json",
+    "sha256": "1ebef2aba0d461c2a3705fe4e0f39fd8e4d999842960743100056da2cb1ad763"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/workout-builder.cbor",
+    "sha256": "f0c243aae90a27a9d3f0f570ad923c9b59bbaadf54ca895ff9abd3f9047773ad"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/screens/workout-builder.json",
+    "sha256": "03ab867dc55ea38606a2844fe5827357c7c648395f238bfab893f61ab38c4168"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/src/lib.rs",
+    "sha256": "daeb5f57090fb19be9f4d73eec42d9a1a42620016ca03176f4d6bf4835fb83f0"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/surfaces/baseline.surface.json",
+    "sha256": "64fd919ea2d96d94cea9d371a7972f60c4e6492abbff717e3188b8dc6ad0b33b"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/surfaces/recovered.surface.json",
+    "sha256": "54ee8bab9059c57982101fb059b36d4811b5703936cc33660964c3730712e47e"
+  },
+  {
+    "path": "doodad-runtime/apps/workout/surfaces/stale.surface.json",
+    "sha256": "d8930c1ab7769073b3559becf092a1c8fbd9096afbf7204e7457a9c9e22ac24c"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/CMakeLists.txt",
+    "sha256": "c4c3a2f893ff91d7c79cc1f220c322136a8a27e3f89c7a76df308adcf72e8829"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/appspec/c_api.h",
+    "sha256": "fb228166204ae65ab79eba65a63fe1fdc15bdb2d8aa4ee6db9e8d234b2203998"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/appspec/canvas_display_list.hpp",
+    "sha256": "640dce51ee899d073d7e3e306c9630cc33838bd22a9871a2930f0cf9e4fe9e46"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/appspec/command_batch.hpp",
+    "sha256": "04852ee72d710901637bc6ca8d58bf8630c58654dac16fe9bc9e5756adcf9090"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/appspec/renderer.hpp",
+    "sha256": "5c30237c0ef9be517ce6ad93ee185416321fa82ab6cf56b2f6c398b172a8fd71"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/appspec/runtime.hpp",
+    "sha256": "5683afa6a5a9d9cd789b583e9974f34c1971a4f23586f8acbca7cd2e62aa2d45"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/appspec/scene_snapshot.hpp",
+    "sha256": "d4f323fad5ff97f323d53fdc1bec5c12951f342a90b1b7d5e15329dd5152556e"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/appspec/wire.hpp",
+    "sha256": "fd057bfd2518aee8c30800f930da5cef56929013b2f5284cb040a48fd590763e"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/assets/image_assets.hpp",
+    "sha256": "dd560fdee487b046bdeddf7e6f2cfbb24d20430f19513bc89f98dc78802bd630"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/assets/weather_fonts.hpp",
+    "sha256": "44b72e7109b5f2373c45330a2c0ef59bdd51406c2977dcc866d2011b0e7d7807"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/assets/weather_icon_assets.hpp",
+    "sha256": "cbd53ec84cf56776bb2fb1b2d64e32429344d6fcb3ab8b77ca2be56e9e80cba3"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/catalog/catalog.h",
+    "sha256": "c6e81204080e8f16267efc33d5140919cc75ae4e7476384670deca590c61e797"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/components/components.hpp",
+    "sha256": "73b90d0002611fd8c60a8bf24cb9c220673f07cf726e72f629f8f24f91b87c1b"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/components/transforming_list.hpp",
+    "sha256": "d4072aafb562f645508248ebf3b6de045a25b7787281e76b655dbadb8c725028"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/conformance/deterministic_system.hpp",
+    "sha256": "8f37466cdd934cf88ecb6d422fe5858d01e9ea6faa72b61bafd07b8dfa429ed2"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/foundation/color.hpp",
+    "sha256": "d18f79195c86b59b27eb34a97128847b3ce2cc0ae805bf43acc670b53dd02393"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/foundation/display_profile.hpp",
+    "sha256": "647cfefdb05e10a816b471c3595984ac884d2b891581269b4a2499ef1ff9d796"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/foundation/geometry.hpp",
+    "sha256": "37b80f6631f74ea506734ea1f08ee2b3067df5b563aa263a240b23d4656865e8"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/foundation/semantic_tokens.hpp",
+    "sha256": "ed1e7d36bec2782c8c3b585a01048d962c3d29ed8c8daf443d10f26579e4f2d9"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/generated/core_tokens.hpp",
+    "sha256": "67b1b585ca4efe9560e6208ab97397468228f202364d2814c2dd1241b7e82511"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/generated/weather_icons.hpp",
+    "sha256": "ebe81b3c5a0ee8e85db9c17074d4ab2cbc7212956c033faad026bab6b985972b"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/generated/weather_tokens.hpp",
+    "sha256": "b45086f6763d3a5b0dc8b5f39892f5e242892a23393a5229deb41fa86ca0b8c2"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/navigation/route_stack.hpp",
+    "sha256": "db4ef4eeef9908f5e302c1173b0c8ce279579abe8de47297e6bddf1ba4b55cf1"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/os/shell_state.hpp",
+    "sha256": "a3dc84dca241fd24699a1bc2c2ce5b6c5262cea47639f86b4482ff67bac80428"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/os/surface_registry.hpp",
+    "sha256": "e2aab5d3ade42c644d663d4e18398f1f06abc24ced3d54659ceac347b3c9584f"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/os/system_shell.h",
+    "sha256": "a987fecfb3fa74bc3332ec38256fb67e9f24903f73f7cf74430b8e95af367a26"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/semantics/semantic_tree.hpp",
+    "sha256": "f4b12910e0184e04ce6467e8aff7395be52c67b1f9b4505cb329a042b1a146f7"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/services/exact_scheduler.hpp",
+    "sha256": "e0e51fcca778d2612f1b1aa6bdc9d20baa366b0f890d15058038238d9dab7e14"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/services/exact_scheduler_c.h",
+    "sha256": "3f88f3091614365515aa6cfce1241af95bf741d64c1743fe1330c4ceba10575a"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/services/provider_event_c.h",
+    "sha256": "405767c22ae3e1e59844d3e020182d292d61394d3486acced2ad8c4ea11b7270"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/state/binding_hub.hpp",
+    "sha256": "2df7e77d8b094d8bde861d63a4124c31fdb89ce27b76f6315e626bd1a790bd12"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/state/store.hpp",
+    "sha256": "99cad6a2806bafcf3c94ddc90e75b99f0bfdd0b79770c5bdf3be6114238487a0"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/theme/resolved_theme.hpp",
+    "sha256": "912701cf6b29380f61ffca2af68159b735b486383cd66a7567188859fedbc0c9"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/include/m3e/theme/style_registry.hpp",
+    "sha256": "90187da658107bc7fa06c78d995e665205de01d4c55a183ec66aa7613a96c502"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/appspec/c_api.cpp",
+    "sha256": "0f373b156b8217e90486add7247ed1c23fbf20c4f68802db1d564f77f7793388"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/appspec/canvas_display_list.cpp",
+    "sha256": "25e07b5116f9ff11fe67e5d85d538895b26f2b1b6732e99201a0886c6e413969"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/appspec/command_batch.cpp",
+    "sha256": "7d5c5c2c9bd2a87a1c07eabb60e7c82e43614d8d0c0ad9a5793f7012428182fd"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/appspec/renderer.cpp",
+    "sha256": "bd9752614aa49455778dedf824da88e10dc942813c08ea318f1fc18b30b3765e"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/appspec/runtime.cpp",
+    "sha256": "dc255c06afded6988640068f395d8a6766b14c0daedd3d48afe7a02fedba8bf1"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/appspec/scene_snapshot.cpp",
+    "sha256": "10ba1db16aac7c74228072a0bcd1aa4288f51df5eac354b4b55212255ef57e25"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/appspec/wire.cpp",
+    "sha256": "dbeab61c91f405a236b6681ff1b255788405e890259171d799ac9d332a240dc0"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/agent_title_font_20.c",
+    "sha256": "397228a2bf2c2749de180aafaedd362ddbb61d75929c1dc377f029c8f7c0b97a"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/calculator_font_20.c",
+    "sha256": "2fa295b5debba44fa498c48ee4e5af18fdc928c0afe21681c256a960e01b5c04"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/calculator_result_font_40.c",
+    "sha256": "3594ae2d55f88ee8fd0d1134d77f5dd63ba91353d46aebfaf6b98e9f5a6e2add"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/home_time_font_114.c",
+    "sha256": "d43d9a185a1cd2cf5a2a80083650929550c5a37acffaf565560e699d80698fd8"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/home_time_font_148.c",
+    "sha256": "5b18fbe7408205b129ddfa3508e69c5bfc9894a7e491d77649c9771050955efe"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/image_assets.cpp",
+    "sha256": "9bc1a480a849418b37c3e8900657cc41ad63c22658da9ae6e41e79e6c99fa6f8"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/launcher_font_26.c",
+    "sha256": "0a8480492fdec307649759b87bbbd166803f7265a69601abe801ca3d4b3cfc1f"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/live_action_font_32.c",
+    "sha256": "b49947dd026a1d4b9dbe8b004f315c556d93df68e339851ed574c2e48caf1660"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/media_art_asset.c",
+    "sha256": "82816d22e213e0b1853fad0dbfca8d3fcc479e89eec566bc2eaebfd8778181e2"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/nutrition_font_32.c",
+    "sha256": "9a88716e44a5bd1698453dbdca25a12d4be400ea88b52fcfe48ea19eeb33303a"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/remote_viewfinder_asset.c",
+    "sha256": "99cd6c7be665d455352e4e7772734a72b0f56ef972c4560ccb90ba4844dbe273"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/shell_stat_font_38.c",
+    "sha256": "2991cf1332f5cb76db1f5a3921061709b68574d6928fbb9b265f7ff6c60eca41"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/timer_font_55.c",
+    "sha256": "ac50e62fe1d294a311064c2876192d91bd533c511b173a90f982e3e01e5442e4"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/timer_value_font_28.c",
+    "sha256": "b3a886f2a4862b4cac8599baf22d3122c6404bf19ee15b4ce42982a459f9b927"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/voice_display_font_44.c",
+    "sha256": "5ffebbf28398c4a455692da079f3aa934f14f0c114b1664aa9e950e00e329047"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/voice_label_font_26.c",
+    "sha256": "e22fb86220899b98dc319fe4d10bbd0568442ef13c2870d1d0a36a5c14b5e82f"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/wallet_qr_asset.c",
+    "sha256": "cd7db37942c373d3456078c1c3fd844c5c1b3dad6a940cb66275c030eff7d1d8"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_font_55.c",
+    "sha256": "4b739ebcc3f238c10261142f9d034f109936a66c17d61e6c906a17e7f1bebdb3"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_headline_32.c",
+    "sha256": "200aa9ed2281cc4d45585b54d4f599efb6389a6efc4e051507dd97650ed14516"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_headline_42.c",
+    "sha256": "24ffa1f82eed1b2228c2e30af5157647c411a292f288a5ea7d0a94b8bd47e6e3"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_hero_68.c",
+    "sha256": "41e2ed0012267bc9dfca712a78d89a607269ad7e1c4e3dfcf3b30bb3702617a1"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_icon_assets.cpp",
+    "sha256": "3b8aee7669fd50deb8cb09c6812e9f0ccf60877249b19e4a0ad779ca785d62b2"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_icon_data.c",
+    "sha256": "506a16257ebc9432793b980cd92ba24b9f888d6aae500fa685448e623ba841ee"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_label_14.c",
+    "sha256": "59b85138d300e8a1e01352e93925def647ab692373e22094666adac87dfcb1ad"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_label_18.c",
+    "sha256": "0310ca0a861cd30a21a1e817d4c97be02510a3f47191d1f41a98b65004d270da"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_metric_28.c",
+    "sha256": "02e210767aeef64150e3f6cf267c2e08064786880ce9edeb53f6c5350d73212c"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_metric_36.c",
+    "sha256": "ad6386c812d9d612b294ff835afcb1ab35d0ae0512cd19d1a168f6fb52dcc75f"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_micro_10.c",
+    "sha256": "1783c61cc3fcef97fd2d5905f24a0122c1434bcc2b0975bb1ef86a27b654a9c5"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_micro_13.c",
+    "sha256": "59f1a394a29e146e7e0dfb22780c94c063e55b0f277c3e95611414d82dc1ab9c"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_row_18.c",
+    "sha256": "0fe05e386af3790e52701f3d7907317950df8039aeef71d3cf753df4d4827f21"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/assets/weather_row_23.c",
+    "sha256": "d25b2f3cfe26bdc5c3552c53018b9d4d24ac901255ecab9823393207d4d26465"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/catalog/catalog.cpp",
+    "sha256": "1c7d07a93c1283c615af2552d6b7e184cc99c616e96e95a4cd2db1df8871f5d4"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/components/components.cpp",
+    "sha256": "4f94a6f9a4a2971386835936f2a63f463a12ac23d88bccd40475a62cf3b0e698"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/components/transforming_list.cpp",
+    "sha256": "dc2bd60944d4741e9f288e3754f06fc0e0edc01136aab1bcf8df515b28710de2"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/conformance/deterministic_system.cpp",
+    "sha256": "fd1c5de8af4c7d0044430d731abacd3e6a467636578f3748c21ac9c4dcdaccee"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/foundation/color.cpp",
+    "sha256": "08c6f557e80fcc97c3fd83d5c224c87a7a740e3da8d9a4712dc56e9fc650f662"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/foundation/display_profile.cpp",
+    "sha256": "e2d3a4b007dd425113e3ecc81cea6f55eda35c6f25eb336d57eb4f58a5dad72a"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/foundation/geometry.cpp",
+    "sha256": "84d1801d79eee9b793e2035278a280d8c4024bfcf654cde17cb0b784a0ca84a2"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/foundation/semantic_tokens.cpp",
+    "sha256": "58d63f1d5485724fca207f14ecb2b05ad8483c33816f0907b680802460fcb5af"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/navigation/route_stack.cpp",
+    "sha256": "5fdeea8d5016e4874f80980347e301b185eda0fc9c2c16b5fec253082dae6342"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/os/shell_state.cpp",
+    "sha256": "7fa73303115e8227e285709131e49e4829ce6449b76e348d325d28bb0d973942"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/os/surface_registry.cpp",
+    "sha256": "b880eeacefe62dda762845e8abb57b456a63ea7a05e0bbbf7aae4affca832786"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/os/system_shell.cpp",
+    "sha256": "0d6431b34d6141a6066d2de560cedc2e9937050faf97eafe299c6bb79ec0b960"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/semantics/semantic_tree.cpp",
+    "sha256": "def1a850dbca69cca8862ecb8a9016341a91c1b27a259a6544da799d80933372"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/services/exact_scheduler.cpp",
+    "sha256": "74aeba65eb438b52af0a83a187f09e52a02aea10e0e845d03b952f82861adab4"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/services/exact_scheduler_c.cpp",
+    "sha256": "5d1413b7aac0da482173d632c1e9505983b9c0d806377ea025d5baec3a3ea42b"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/services/provider_event_c.cpp",
+    "sha256": "cb741a2deb1bed0a2a3d028c6df9093da2ba00405cbc92376247ed133307c7f2"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/state/binding_hub.cpp",
+    "sha256": "2fc3b82c5ff872e329bd9400857bdfeb57b29c7b6bf3da4e05cbb2764e5df5d5"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/state/store.cpp",
+    "sha256": "2d3f79564db0bfb048524832b4c7f8db44abc94107b5ff3e46224edd86b4c241"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/theme/resolved_theme.cpp",
+    "sha256": "550650749cfeaa2156b796e60b15bc4424239c881d63dd1893225d75fe5a95a9"
+  },
+  {
+    "path": "doodad-runtime/components/m3e_lvgl/src/theme/style_registry.cpp",
+    "sha256": "ee8af19a4189c169f2326f1e0440d80bf0388ada9f0056e9d7861ca16d889f16"
+  },
+  {
+    "path": "doodad-runtime/firmware/CMakeLists.txt",
+    "sha256": "43cac4b0efc6f54cb34a82a2af87276fe91a37d4313fbd05edaaba8f7431d1e2"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/cores3/sdkconfig.defaults",
+    "sha256": "ac33e399156ae0fcd41aaaff43e28dfbfad79df749a95ef1080c8ba840e5c9a2"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/t-watch-s3/sdkconfig.defaults",
+    "sha256": "89fb114c53818de484fdd50ea5e292982d4b8037927b4b2f28c4736d4f15cc84"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/t-watch-s3/sdkconfig.quad-probe",
+    "sha256": "5f9061375cac109ed3854fbcc0ec643f5be84c7afadf9d6771fb8dbc366c4a3b"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/t-watch-ultra/README.md",
+    "sha256": "3a7060a32bc9adb9042a55340f05ce93e7263e25230ab96c2c0836d52bfd2196"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/t-watch-ultra/lvgl_psram.h",
+    "sha256": "be6a285247424f71e955a42765e078ad4ae8ba34db97cc996c8c4acc8e7718d4"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/t-watch-ultra/partitions.csv",
+    "sha256": "a96f43ea557f90570cc49887f9fce590c33778190b370a84be703414649a66ef"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/t-watch-ultra/sdkconfig.defaults",
+    "sha256": "eb65a367db6cf9ac884fd777c5926e90fcb8ac56bee1cc3aa1c21057d54779d5"
+  },
+  {
+    "path": "doodad-runtime/firmware/boards/t-watch-ultra/sdkconfig.moq-ci.defaults",
+    "sha256": "d7d5ed168e5a14a80a1c32db73bd3bfb4530b23b5ca297956ccc38d53a3ea888"
+  },
+  {
+    "path": "doodad-runtime/firmware/dependencies.lock",
+    "sha256": "38234e5f299c5147d703eac6f0e0196e543e22f64540bc3b6a0aca1e7bf55b28"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/CMakeLists.txt",
+    "sha256": "9a125b393c44bf62d848dec82cd31727d43e80fd43c3526d4e3d7752ebeab6e8"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/Kconfig.projbuild",
+    "sha256": "d3a81f8791bbfa2946bcd45eed211e9363a58701fbdf4bfe85a94951a0571f31"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/embedded/.gitkeep",
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/idf_component.yml",
+    "sha256": "33c36c6228e1d964c243d83bebb1d64c08e0573c4c427fd58e24c7320795d595"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/app_image.hpp",
+    "sha256": "3303fc2242145e57150e90225341aab2ed728ca05ad4d9932671c67cb937f540"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/app_runner.hpp",
+    "sha256": "ffed216f0e31cecb767aab5ff9b7259035af5a52c8572268c1b494d2c751dfa1"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/app_sources.hpp",
+    "sha256": "e4ba1e1333149f5862d4c4869daeb3c9ca9712f8243ce53be593aa879bf6d0d7"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/board.hpp",
+    "sha256": "ae9713e7a0ab23799880a2aba500100e6f665f1a7122f92c2dfe6199705ae7ec"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/board_ultra.hpp",
+    "sha256": "fce14c132349a82619ba225acc7149680757f27f406898c3961755ad6dc7e954"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/display.hpp",
+    "sha256": "b1775c9a04d9f27382b7f70d114912036dbad20d9eacec02c50ca4eb57617b35"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/network_service.hpp",
+    "sha256": "3f552cd90a29fd1232a6533bdde7c806f925b42f5f126776d604ed5d4d515acb"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/package_registry.hpp",
+    "sha256": "b779345d3e5296394216f6142577034d9204677f4812d824fb22ff5ba1627701"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/package_service.hpp",
+    "sha256": "925360410000be558dce73e12a40b1f66b7f0489e24eab8734d8411df2cd2026"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/personal_bundle.hpp",
+    "sha256": "34c24d6358209b42726cb35cf763bb67d3740b7c9b71f29fa1123651bbb62239"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/voice_media_transport.hpp",
+    "sha256": "d011ebf28d15047bde840b91ab5ac3bf7581496b7826857e363e82b0e468a514"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/voice_moq_bootstrap.hpp",
+    "sha256": "991046dc212d6b27f526e9b8834fca93ebd3e2fda94eadd1a59d8f0c165480d8"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/voice_moq_protocol.hpp",
+    "sha256": "6137b6b50e119fd148b33a5b1d575b7d4e7bdcaf91c443e3a2e11e5c102b7c3b"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/voice_service.hpp",
+    "sha256": "0fce268351c583926ad29d2658977d017c56fbbdbef6d8d16bec4db8d6e9b54d"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/weather_provider.hpp",
+    "sha256": "1b0c55f13d11cd1e565e256085de811e2789907a11fe5b8c90bf155f036782a6"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/include/weather_provider_model.hpp",
+    "sha256": "84521112408c74b348982c3f5b6e4960bcac9a8c3ca191671b6dece447b45db0"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/app_runner.cpp",
+    "sha256": "e8cb49369a9bb188646647cacfd10302e8b10289724808485e23563813279705"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/app_sources.cpp",
+    "sha256": "470b87433a61c7019fafbcc87dab02706bc25a45ffa6a08d2045058cef53a033"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/board_cores3.cpp",
+    "sha256": "8109f7c46ee52a7c29f0747d5936fbe5a10677a0d029fbe35e69bed0374eb7e1"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/board_twatch_s3.cpp",
+    "sha256": "5adc5d1ade66e90dd9e8c08cdc0d1b9473422fb5a9172dc1cfba0d5fe3cf48c9"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/board_twatch_ultra.cpp",
+    "sha256": "636b45cc96c59425cad45f469ea29218346228b4431fcb8b2efaaec35cb343fa"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/display.cpp",
+    "sha256": "63c3ed15440d48c515ec109860fb30b4db44913d54ff1361c9f082216e319a55"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/main.cpp",
+    "sha256": "766fe139caa190db90e0719ba0087d7d0bac39298b3a4208d364431d63e59d98"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/network_service.cpp",
+    "sha256": "d711c75ad99f197eff8e91df8541e3b56df18bde12b46058e8c027c272feeca9"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/package_registry.cpp",
+    "sha256": "dca54eb2a58b9fbc817bbf4e0ac62ff0752b789220f9b8572bda740af463ea3d"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/package_service.cpp",
+    "sha256": "5c5a055c7f0b57ffea1449cf36d2d9a58e603162a83a8a4b1005674b55e458f7"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/personal_bundle.cpp",
+    "sha256": "e8abf2d076f23090699c2ec4a2e96e47f1959ba60cf8a81c9893abdaa9f43307"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/voice_media_moq.cpp",
+    "sha256": "a5f5d1459a875acaf067c5e7968b6a3ccbca630bcc8a9b0eeb6d79c8438ee3da"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/voice_media_webrtc.cpp",
+    "sha256": "978f8539edef671f2c53fcbb82265fe858e15cddf074ac8cfd3790ea9e8b06cc"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/voice_moq_bootstrap.cpp",
+    "sha256": "9ea0b9baa19805dcf79042027ecbd00e162986e1640f04233ec5cd41e17ea9a8"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/voice_moq_diagnostic.cpp",
+    "sha256": "07bdce9ee984a9682cd6e9fdee8ccd8aba3101f703ddc7bbc9650f40a6cf4f37"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/voice_moq_protocol.cpp",
+    "sha256": "147ccc21699c4cffdf0da4a9a6ef2c8006a3d661c4822a743b9022dde87d7357"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/voice_service.cpp",
+    "sha256": "9bbb47a694dbf30176ad0126cce76b61a2c5ba2eec1abb586cfeb9c17ab93d9c"
+  },
+  {
+    "path": "doodad-runtime/firmware/main/src/weather_provider.cpp",
+    "sha256": "bab75cedab27486a3754f90f26e2f870455dc7fa2dda02a763b551f87f1cf974"
+  },
+  {
+    "path": "doodad-runtime/firmware/partitions.csv",
+    "sha256": "8df841ce7ba2e22141b96a50fce5a9fd32e4f930256c0acc7ed6b4cc6161148a"
+  },
+  {
+    "path": "doodad-runtime/firmware/sdkconfig.defaults",
+    "sha256": "4aba9070bca449499b951e1612ef82d15e5dde1af33b93b63e5c43c310f07342"
+  },
+  {
+    "path": "doodad-runtime/rust-toolchain.toml",
+    "sha256": "92d5d2a9e415ada6c5959ddf40deecb8e3dde0319f377b285ddcb8f2267bb0ee"
+  },
+  {
+    "path": "doodad-runtime/scripts/backup-factory-flash.sh",
+    "sha256": "1c959e38737107758169b28895c62824a08f46662087a01e756c0fabd7c2e488"
+  },
+  {
+    "path": "doodad-runtime/scripts/bootstrap-macos.sh",
+    "sha256": "6653f3a080951e104f04582f0486df2b7862ff7036f75c11fb3e70955242f66d"
+  },
+  {
+    "path": "doodad-runtime/scripts/build-firmware.sh",
+    "sha256": "3a35b63c2a68faf16e78532d2ee61d8477f219b390720eecb2d6f9b9da223eca"
+  },
+  {
+    "path": "doodad-runtime/scripts/build-guest.sh",
+    "sha256": "1d64cb45d67db70fc22ed86f4a7b67c9e33f86e4caddccc41c44fb0227e663f6"
+  },
+  {
+    "path": "doodad-runtime/scripts/build-native-host.sh",
+    "sha256": "c29593ecadb68c674f4ad4429cdd39beaad3b09ae4ad78810d739a4473e56f34"
+  },
+  {
+    "path": "doodad-runtime/scripts/capture-color-bars.sh",
+    "sha256": "65baabdbf2ff9e30994d1cdb0f7ae3e3bd7d6ca119e968172e3aa20c8524abc1"
+  },
+  {
+    "path": "doodad-runtime/scripts/capture-hardware-suite.sh",
+    "sha256": "cc4e9057ae1ffbcd40fa3751c946df279dd935ec58e1a3e64f03a7bda1968478"
+  },
+  {
+    "path": "doodad-runtime/scripts/env.sh",
+    "sha256": "6387298d78184cd034cbdb63351d90a09743c865d797c568d23e76e200eb8575"
+  },
+  {
+    "path": "doodad-runtime/scripts/erase-package-partition.sh",
+    "sha256": "ef95185eaee0d6469a0fd8d5c313a9deec75bcba1a8b6341ffd11ccd30684d8e"
+  },
+  {
+    "path": "doodad-runtime/scripts/flash.sh",
+    "sha256": "c3fa622d62f9f14f254b6013bb1b7892653f9eb3d4a24cdad87578224987bb8e"
+  },
+  {
+    "path": "doodad-runtime/scripts/inspect-wasm.py",
+    "sha256": "3f7efa082cecf9ba4292f64bd351fb688ca2cc19b780613a4ab0a070a76327f9"
+  },
+  {
+    "path": "doodad-runtime/scripts/install-sd-app.sh",
+    "sha256": "f5a3e9bd9f0b6c1667c389001efe1bad144eee767bd6e24ce25d50cdb162f07d"
+  },
+  {
+    "path": "doodad-runtime/scripts/inventory-esp32s3.sh",
+    "sha256": "a4c6b246e7d9c8d2b99c3f596f572d20ecd475c7b414dde1612bc161569d3e33"
+  },
+  {
+    "path": "doodad-runtime/scripts/live-agent-service.sh",
+    "sha256": "d0f24490abaaefa13885e56b62400e2fffd07b4a903ff8cc60c7bae6b775078b"
+  },
+  {
+    "path": "doodad-runtime/scripts/monitor.sh",
+    "sha256": "d6085717b2096ad75d0eeab8df4fd638bdc694e653afe01f3536d3c7d4fc511a"
+  },
+  {
+    "path": "doodad-runtime/scripts/run-live-agent.sh",
+    "sha256": "753de8181a61bc8903f361b1f1d49ba1b8be22d04304955944a0a9b6f25ffc60"
+  },
+  {
+    "path": "doodad-runtime/scripts/test-all.sh",
+    "sha256": "745c7e96ffbae47a04abae9177cfb5e6ff44c3bbacac493b35084de7f14c034e"
+  },
+  {
+    "path": "doodad-runtime/scripts/test-conformance-suite.sh",
+    "sha256": "8c2cad0473b4e87369fb9b422311456167850e9e54fdc39aede0fff3ceb0df31"
+  },
+  {
+    "path": "doodad-runtime/scripts/test-live-agent.sh",
+    "sha256": "994601907bd0e85cbe1cb9dd6aa3042568d925e9c9fba4ead40266a44d166f5d"
+  },
+  {
+    "path": "doodad-runtime/scripts/test-reference-oracle.sh",
+    "sha256": "fa0d0961e6f41cd6bab4e9c70c4418b864b18eb740f901e7d5a23322d1959d44"
+  },
+  {
+    "path": "doodad-runtime/sdk/rust/doodad-sdk/Cargo.toml",
+    "sha256": "c8bcb4111f71e93f420ead591ee7adea40140a281ad07617d534db5d73f0b397"
+  },
+  {
+    "path": "doodad-runtime/sdk/rust/doodad-sdk/src/lib.rs",
+    "sha256": "e625575554246bfc1a734becc8e617f94cbccad7f13d0b1e64fdd76f7f39452f"
+  },
+  {
+    "path": "doodad-runtime/ui/doodad_lvgl_ui.c",
+    "sha256": "3b0259354ed9e97946cb80edfbeb3251013b40b8705827b6676f123ebf76f30c"
+  },
+  {
+    "path": "doodad-runtime/ui/doodad_lvgl_ui.h",
+    "sha256": "191aaaac217673fc203c4ef51be922fb8613ca0183aee5349ea34828733ac730"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/README.md",
+    "sha256": "c9f2045a552a947ac260b11ebd2869afa36df0238601f06fd39072642e61eb48"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra/CMakeLists.txt",
+    "sha256": "327b360e7bae37d6d19faa3d0dccd9ed75bb7c85e7e97ac0438fb4f5a871810e"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra/include/twatch_ultra.h",
+    "sha256": "872dae553bd852690cf1361565a899b7039d236035f5d9577dd5ab4cc728817b"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra/twatch_ultra.c",
+    "sha256": "483b1947276170ea19dbcc6959ee8cf476357ea894d3927bd3b1a6237417bb8f"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra_ui/CMakeLists.txt",
+    "sha256": "0adad6ddbccdc25514a5004b8a44f288b084fe5ed1522d7c35cedf817048a685"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra_ui/NOTICE",
+    "sha256": "dd803c91c9e7f015234f897eab149c4d6934bf47d57c302a800d3a18c91f7543"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra_ui/include/twatch_ultra_ui.h",
+    "sha256": "34dd3e4b7bde88b83d1ca26dd314a2ed5072b8b292b49b71d0ae87d5b9435a28"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra_ui/touch_report.h",
+    "sha256": "58a3542b495f27c67f491e35c9d8f93462934633a1040672f48b5d00ba900061"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/components/twatch_ultra_ui/twatch_ultra_ui.c",
+    "sha256": "296d42ec5a25b42e314b1ceb225d1075c6ec8b110bbe3da48d070b4024c8e56f"
+  },
+  {
+    "path": "libs/moq-esp32/boards/twatch_ultra/hardware.lock.json",
+    "sha256": "d6740d207fedf1f27aafdd074903e6d052db2e0cc45d43c8d4c906dbc5caea1f"
+  },
+  {
+    "path": "libs/moq-esp32/compatibility/moq-dev.lock.json",
+    "sha256": "b269c0f189cab611b4aefefda8878ef77a2d861b26cb9391be04de7762927b40"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/CMakeLists.txt",
+    "sha256": "5b64d64dd4ede607fc0664ab684dc5ec5fcd9cb1391d560ddb032d7ef7150d62"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/README.md",
+    "sha256": "5f7162c9daee2a1d819c85785661f445ed0d173533811ba4e8d9e3952595a66c"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq.h",
+    "sha256": "c8edfec445b6049ce3217c90ab3600fd6d9271604ce883f4305be5ad3527d80b"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/catalog.h",
+    "sha256": "d89bf33c1e8b75f78a13b4d6dae6e690a68ecbc03ef03ce49c00380d08761c6a"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/client.h",
+    "sha256": "5b4ed1d4465c282e8f1523698deefc34c65987721580a01d0970a62431ff3b9d"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/codec.h",
+    "sha256": "00c508e60e72b123070a728fa26bdbabca3ac9fba24aa65e92778efc37d5dcac"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/dispatch.h",
+    "sha256": "2a0b27695571b691a6a56b874b7220fea239474a8d33ea5435bf502479ba8a70"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/engine.h",
+    "sha256": "6b2c51fbe075a56a2411ae99ec3b4c6561c19254e999788e14aed85a7e444ad3"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/error.h",
+    "sha256": "2d7ead23fd9982916ac29b2c8957f7c06f508716ec5646bb4808146d5ec4412f"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/flate.h",
+    "sha256": "4dcdffd463f96dc12576c448fbd53f94f924084f0af0e7ae42706777688f7b64"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/hang.h",
+    "sha256": "377637da66033b7fd254a4563256a90aa885edc884895a834707cb47d7121b05"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/lite05.h",
+    "sha256": "72418a389755a95c6c1679c06a3aed0164716d093faf6d2fedf179cc89a17147"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/native.h",
+    "sha256": "5a60e29e7e0ea757e5563eaf3e2d7e51ddb00b78e43d4b01cc26ebf4b5f97b39"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/opus.h",
+    "sha256": "1d77fd4a1e7a6e469ea934adf29e510a1604db432ee102a8bdcd20919da60241"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/receive.h",
+    "sha256": "72f44038297349815e1f4a102f70859ec98fb6c78111dfb01dd93a5eab5f5c27"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/service.h",
+    "sha256": "ca6d250f9fb29444b7a96a978959286d51a8afaa1a538b9d5899433ab1ae9466"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/session.h",
+    "sha256": "18e4728e5e8fc343cc3806063bfc0ffbb55389b8867a249b777facd01cde3055"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/transmit.h",
+    "sha256": "d79b21952e25b40564c9735885d8127cd869f5dac67c72c03bcfb3bc8ae52d1a"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/include/esp_moq/transport.h",
+    "sha256": "4d22d9ea1247738a1833ecd52b5e860b06e6b132d29eeae2bc701c1237d696bd"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/catalog.c",
+    "sha256": "f152cccb8a1071811a4acded7b720159ad83e3d26cfb30fe6969c670a143ebc0"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/catalog_json.c",
+    "sha256": "8fdb925a7e5a0cef2618f17ad32450bb52958fd9aa41d72b91234d1e9672d147"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/catalog_json.h",
+    "sha256": "32ffea2691962f60eb0b32eb58003c5a53570734156ed32a9d0ae3f3892a3739"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/client.c",
+    "sha256": "e26608fb3b461c237e470cd492f8a505ace4bfb2c2510f8a5d283f3680b65fbd"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/codec.c",
+    "sha256": "c1f4f84ad2bc75fb559879b228294effee0836e053f20a20a04588ac37c2ac73"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/dispatch.c",
+    "sha256": "bb74379b4f23649755ed80a0bd973394fdd03d88878cac257facdca97c564f42"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/engine.c",
+    "sha256": "2a2717a9a24197dda521c472fa3806abfcd05404ee61138d676b9e2558de9b74"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/error.c",
+    "sha256": "14e783099d28a7e96082ae609720564491e31d475303b59461c53a92676d53c4"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/flate.c",
+    "sha256": "b9765b2bef22009152d1af9a460ae2b969808d7a82e94b81b3122c12ad561874"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/hang.c",
+    "sha256": "bf25cb519fd7020278f8d43316eb73e8fe429ecbf9f8d154e224061a7cc01f0c"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/lite05.c",
+    "sha256": "fc3d5678067240f0b4b81b4267e313f9742f06956af0be53d09c3c85d49e7866"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/lite05_control.c",
+    "sha256": "025c378c0490816bf4b2fb40913d12fcbd75321b4615810e495178f9c76af597"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/native.c",
+    "sha256": "5d034d033ad160012309380f32ec87e3d5da763cca5859de32fac294f60674cb"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/opus.c",
+    "sha256": "6c9605b190ede81a5d13722afe7a22b436bd58db707aaf84350bca26a47874e4"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/receive.c",
+    "sha256": "dc89248f0e64efe84d74c90a794df6228de612d7b669f3fcfb2a888ec3bc99e3"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/service.c",
+    "sha256": "461fd293ffa6d30c6a2f700498c8a5c050e02ab7b85b69f7b8035e453f472b74"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/session.c",
+    "sha256": "e922f1ab0a8cc6498640f3568c80b7dd864dd4cb69e4bc71f5ae4f6e3eb150ad"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/transmit.c",
+    "sha256": "9461879c7caf27e2c06fc66a105f82d9fe1e98e6f450ac3383e1b96575690fb5"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq/src/transport.c",
+    "sha256": "f84b2ce34fadd138db7828ea56f4bfa6ed8cd763210912f1cfc391ad8a00a838"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/CMakeLists.txt",
+    "sha256": "7b827be0becdcca316af3482bdd5032eba83c31c97bfc6e9490a68b219daac8c"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/README.md",
+    "sha256": "1518220632cfab6971f134c80cb9067fcd8e517791a6b8ab54e200e3f448ee4b"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/idf_component.yml",
+    "sha256": "caafc8890205a83860ad99bd6ac3ce3ea4a992f91198b8885e2a746ecc3aae21"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/include/esp_moq/audio.h",
+    "sha256": "ee2cf9db99bc9d0c72d21d1e8036591289a456fa04ab804194738775b2f13958"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/include/esp_moq/audio_esp.h",
+    "sha256": "b21cf2c2d475129edf6d3761ec01e94afe42eb1d505c859b8525e3f5dab9deb1"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/include/esp_moq/capture.h",
+    "sha256": "af711840a75fd33707eae14f1746419c05db0bc14797f5c64bc2072479cdb09f"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/src/capture.c",
+    "sha256": "557e26e89b580b16eee93ffa76f6afd2d2b514ddd21c51b80a4cecab111a47ac"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/src/capture_service.c",
+    "sha256": "725f7f7308eb5775e1e343c75db84a93b6f81005afa8a1d472db85e35080b770"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/src/decoder_esp.c",
+    "sha256": "3d428288bc67fff65f5fd82bed72c03c2f7496a867d089c0783c5f08e050c425"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/src/encoder_esp.c",
+    "sha256": "44f339ca14cab0d4d1d2bb5812cef1d15933c9dc565dda6497946389e07397e8"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_audio/src/player.c",
+    "sha256": "841f20875e29892a35d23cd442de24d3c0a2ad1e25d2b8b92170cdb2968eaaab"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_endpoint/CMakeLists.txt",
+    "sha256": "569ce675e76c973577d99605d1d49d4f2a39a81b89e18bc0b95baabbb11eaa36"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_endpoint/README.md",
+    "sha256": "04f54a626d67fff510a61fbaea5f82f289641b22676a3295917b4b548677505f"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_endpoint/include/esp_moq/endpoint.h",
+    "sha256": "0acb129793a2309dff9efdb46aac00928e87eb8bb018e53c18d744d2f7d80ddf"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_endpoint/src/endpoint.c",
+    "sha256": "262929e369d0203d7a6a49020cc41a29df5d4babc226d1d365a24a96a94e3e87"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/CMakeLists.txt",
+    "sha256": "d066821f7aa3daab771e27815da4a97fde497fe6c59e864fadf6f1ffd99bc4e6"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/idf_component.yml",
+    "sha256": "bce0ff1a9de773fa96c9ab4edd15deebd7b1b0e741185f88485a5190bba28988"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h",
+    "sha256": "a1fa8f80469efbbf2db101f720a3473dfd4e1752c8f85b4984297e556258c068"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/tls_memory.h",
+    "sha256": "5111cfc46d6171d7536e4c6fe8cf0822f4736c6ff9cfc657469f1e1a5e4c0d51"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/ngtcp2/version.h",
+    "sha256": "269b327f3b4c70985c1edc7fa4af13f7417e5990223d73d6e0fdc6bc244b72d1"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/wolfssl/options.h",
+    "sha256": "375526ba7224a2021880439fe8de92524feb811270022b8c6ec75a26924c7399"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c",
+    "sha256": "f9debf876c08015a8e978202af2b945a36f2f69c4f44975a71220124ad39e131"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/ngtcp2_memory.h",
+    "sha256": "ce93c65734106bc936334a081361de81677ceddde8eb67491533ec4d3803af08"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/tls_memory.c",
+    "sha256": "ee97eac395c4d6575c6cea57b8dcfe3eb56c260102445eb9fa84fe09da7d713f"
+  },
+  {
+    "path": "libs/moq-esp32/components/esp_moq_zlib/CMakeLists.txt",
+    "sha256": "7b6d0da4dd2fff6a8abb3a3ef7b2f946ef286a2c971dce91556cb4e37e43331f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/LICENSE",
+    "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/README",
+    "sha256": "4026d921213bb2e311d8d42b44ef53361c102d5d45ae32f93f8e52eaee8d068f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/adler32.c",
+    "sha256": "9cd1443a24ff2a3053961695bd432035c58347386a420d3388232376ebabe211"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/crc32.c",
+    "sha256": "da37f3483e77c20f64c28cf55d62d7bed9d62af33eb401be906835d84539b9c9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/crc32.h",
+    "sha256": "9a2223575183ac2ee8a247f20bf3ac066e8bd0140369556bdbdffc777435749e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/deflate.c",
+    "sha256": "ea9ca4eb51b1a71aaf214b99f4a9fab177253d6268cae8e4c26d44d1812e52c2"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/deflate.h",
+    "sha256": "21f4ea0973dab272fb26e93305ccf8628c8dc07e6c5df09a9861825b1920ba5d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/inffast.c",
+    "sha256": "f96787a11bb7131ffd2221fb40db27f6a5a1dfb12f59c0bc388807010749c34a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/inffast.h",
+    "sha256": "05cc5dc9ff1da7b8b52a4bd8bda0d8a5c236a2f39efe84b941516ea13857e6c5"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/inffixed.h",
+    "sha256": "fd7c4b1dbdacb283421d0675744aaecda44e840e183b5131448bac94564f6adb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/inflate.c",
+    "sha256": "90221ea7d762e7044057f6ad5013e969086c6ba3d3051716b7aa786d7a6362ec"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/inflate.h",
+    "sha256": "e6a43bd0e24ab2cf5fa1dca630859e9a2f6a721f033f75faf179f5c0299e4fe2"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/inftrees.c",
+    "sha256": "f7ee9ce5925fc9d1579c76e574feed85f5ca4ccddc446a7795578854bbc65743"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/inftrees.h",
+    "sha256": "d3a7ea301d8ec514823d052a2e42af4636bc81a0cf07052f526030f208068fb8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/provenance.json",
+    "sha256": "da07c372031200af142c7fdc9b65beb3c189a50a83fb5191092bb024f661bb70"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/trees.c",
+    "sha256": "a16217d5ea6d8342ff08afe5207b1dab620f05610e121dda55b4f9aae9de4f68"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/trees.h",
+    "sha256": "bb0a9d3ca88ee00c81adb7c636e73b97085f6ef1b52d6d58edbe2b6dc3adeb4d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/zconf.h",
+    "sha256": "cb7c2c84211473b4699223edd363d3207b43b9578e739b5bf638f42204ea6e0f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/zlib.h",
+    "sha256": "818667d6ab6a37fe7469cb06a7f0cb2c2cb2f2c948a03e5accf1a4a74bf3020a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/zutil.c",
+    "sha256": "1279908a15580224a2c1f377555ffdd150327fed71801aa77fc35978dcb741c8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/zlib/zutil.h",
+    "sha256": "a12243cc6d338ffad0c8e3500fbc05bc7fdcdc25a469393b1c2f7e5df307fff3"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/Cargo.lock",
+    "sha256": "6df93e6a2c6925ca8445cfb7a9fd02980a8e8a64df8c34931bba2d11c0cbb545"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/Cargo.toml",
+    "sha256": "b156ac70568fece4ee6523334c9277bb61965ccbe0611c567180e3aa558cbe60"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/README.md",
+    "sha256": "ceb0da6bd7fdc68435d8eb58879ada6dcc5b3fb5e7e87f82803b3094534af429"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/c_codec.py",
+    "sha256": "cf06288ce10b97bb3b79e534c24b6b8589e33cbd402b3883331a72c1d21a7a8b"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/cases.json",
+    "sha256": "274c7fcb9152f0170788d883584560c9dd1289bb565c25cb4040d2ee715fc23c"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/check.py",
+    "sha256": "dadb29be585b3145de46e66407529a9a343ce68004b9d6e27d6f8b2128c4c8c9"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/fixtures.json",
+    "sha256": "a7bc3cf1a29f449ba48ea490f63e8382dd27ae3ee275043fbd540b269357ea6d"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/prepare.py",
+    "sha256": "8fe12544bb75ea88d728853849e1ffbec7f94cd837d42ba675b4e957bb3ce1cd"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/provenance.json",
+    "sha256": "78382733c49258500c075420d19926f609ee5c680ead038a15f1e5f1d6bfae0e"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/receive_bridge.c",
+    "sha256": "a016b7c206c12b54f98bb59d37378a0fa9348f658c6a07d6858a07976e1af33b"
+  },
+  {
+    "path": "libs/moq-esp32/tools/moq_reference_oracle/src/main.rs",
+    "sha256": "9df09b7e9c40654758e8e0b805a21246201fd7de3a9cc25243698eab2efb0871"
+  },
+  {
+    "path": "libs/moq-esp32/tools/prepare_ultra_transport.py",
+    "sha256": "03cbbf5c24cb3b7404987efae703fcbe63adc3f6d383cd77b51d5dc133decd7a"
+  },
+  {
+    "path": "libs/moq-esp32/tools/run_ultra_transport.py",
+    "sha256": "5921abc350f7a68366b3e7c946e1a710090e276e1e00d7fa41466a004cfa69f0"
+  },
+  {
+    "path": "libs/moq-esp32/tools/verify_active_handshake.py",
+    "sha256": "4fda8450da62c567c1bff9ba2d64fe92bff7f0786e08875346a3085a5d8ba27a"
+  },
+  {
+    "path": "libs/moq-esp32/tools/verify_ultra_echo.py",
+    "sha256": "628b995813e7faec0e8f5645b616170dd20807b4fd22413a6b6e7a357c75fc8f"
+  },
+  {
+    "path": "libs/moq-esp32/tools/verify_ultra_io.py",
+    "sha256": "a168332a3599566f4b516f6695b30d4a7df2093ba697c15240ae243955a97539"
+  },
+  {
+    "path": "libs/moq-esp32/tools/verify_zlib.py",
+    "sha256": "c11af92ba24bede3b43320d1002ae44615ad2a39294c0c4ed50041ff428c61f6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.clang-format",
+    "sha256": "e51d49cf628902c77d5279b3370296890d1e51f57d5d7533c166143281e41f9c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.clusterfuzzlite/Dockerfile",
+    "sha256": "88dc03786470f77b8e21c0896fde262dc97758aa2c812916861ae791d5436e59"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.clusterfuzzlite/build.sh",
+    "sha256": "3351a566af852e5cba2d2287ea6386a2406c5813c06c7e4b9344dd4b7fec7040"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.clusterfuzzlite/build_fuzzer.sh",
+    "sha256": "3fded0e227b3cbe6c0ff7e442cb1a908aef0b6e0a92d7888a14d59ecfe57e4a1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.clusterfuzzlite/project.yaml",
+    "sha256": "a57904411fc1d453b090c462711ed431fc35e0daf4f5970a029d648533f0946c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/dependabot.yml",
+    "sha256": "d7a6ebade35cce0dd8a3535417c877eb711b0e14a3bd56ec6cb71a5e4c2340f1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/build.yml",
+    "sha256": "01dd1f28c684f8e25eff3d96c8dd37fd84e9a5411bd5ea3f4ebab682b49baa1f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/cflite_batch.yaml",
+    "sha256": "6fc2b251ec9e5c9306bc7089120dcda132f16a46c2808ac246ebbd76b347b38d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/cflite_cron.yaml",
+    "sha256": "2b968e891f5f9f5b292edcaff31e54dd6873d3a4682041e017acf411d01d7b2d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/codeql-analysis.yml",
+    "sha256": "2fadaae620aad9b45b549f6c0c8f8363181c059a61e2fd9b78636e430f36bfb0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/docker.yaml",
+    "sha256": "719e8584ade1231ea7d8aa142ae1d579f421bfb324b8b4a1d21cbcface740b40"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/interop-build.yml",
+    "sha256": "3f7c6adb3ba8d45b32ad51ce18f00557a36aeeb368b8f9a6c6f43b94a17ad24e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/interop.yml",
+    "sha256": "79c69e3d6b80bbf5ec4de7f7e177335be75e926ae2c84dff6b726ed34cfc2b0d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/quic-interop-runner.yml",
+    "sha256": "a6ec7ee8055cef1ff0575fdf01dcd78e76de4b015978fe6727d77c49aa171281"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.github/workflows/stale.yaml",
+    "sha256": "68a26ee9043dbc6ff3bb19b66ddb3029784437c642999e142e2de88398c617fc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.gitignore",
+    "sha256": "7d3544e85e6af40d649ff36c428cfed3487d6e88bd81a767f060979c5d60f873"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/.gitmodules",
+    "sha256": "e1fe179aed16da393828cc3db367d4999bd73f4cdc586f3bec3cbf47575e1247"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/AUTHORS",
+    "sha256": "e934ef5660872a6172cc2481b8545148dd278bd2389008ee3ea1122c00336d99"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/CMakeLists.txt",
+    "sha256": "b967570e6916c65e5023929f7dd6186060ee5755474dae8ed2cf277c2e925ae0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/CMakeOptions.txt",
+    "sha256": "1baac85a45d183307421a9833c6d54aaca4044775cdb8dd59aefb0b4a3041bfc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/COPYING",
+    "sha256": "542dd526d2ea23565f0571cc68df6f05ed11248a90ff0f32de19d8ba589db513"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ChangeLog",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/Makefile.am",
+    "sha256": "cf6bc138de17e021459a540cfa9c6a818b6627006bce13063253e62f34ceffd4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/NEWS",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/README",
+    "sha256": "f3c22082da5ff8b5313d36e2b8a1a83d28ff1d379a9dfd3f18582ce933b9159c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/README.rst",
+    "sha256": "37c6d5d25c3ca74e0110465b3aeab657a47c7ebb7f267ed0a1d4445b2bc58378"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/SECURITY.md",
+    "sha256": "1df1520d014a18518f42de3d6f42dcddc87ca163664fbf0547f190a6ba4831b7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_aws-lc.sh",
+    "sha256": "9208a22d10fb297859a0d020735e86119fe602b65920bafc9477b1d1d34db18f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_boringssl.sh",
+    "sha256": "30a8186bb8357c7a30706354d5abad090ba0bd4f0c6b0f27302769b85824bcb6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_libressl.sh",
+    "sha256": "44d272b8ea960482c7dca9c37b871a94cfd9aa7272c8c1600c7578ebd927652d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_nghttp3.sh",
+    "sha256": "2d7ae40bd5ebbc05703d24d211265ef0fc7d115fdc002b04fb8a1bc1a8a26835"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_openssl.sh",
+    "sha256": "d6e04b8a757674c1d8308b119340b7066ae7ff657ab14f971b5ad8b8e133821f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_openssl1_cross.sh",
+    "sha256": "d4cea7a522c596ff2688ad5abcac72dd902bad51480d332ab4cf4c82dee7d8fd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_picotls.sh",
+    "sha256": "74955108ba463198fd65952f72381abe7b37ffd7adb9e858704a887a3d0b6834"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/build_wolfssl.sh",
+    "sha256": "f79747d20682fd16590f6b03c2edd43ac5102c83b10606ff72547edffc49d9b4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/ci/gen-certificate.sh",
+    "sha256": "c572557e1ef3d1688ac6ef1173ac8cfa5e32b677a423bcf30a49a9f7d3a05b78"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/FindJemalloc.cmake",
+    "sha256": "c0b3a060d93c989d217ebb661eee873d1292a1012bc11a5761f894ef8100543b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/FindLibbrotlidec.cmake",
+    "sha256": "a03ad2860baeb0e03be2d7fde14036e22862f1a4e604020d5ea9d5146b5f262e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/FindLibbrotlienc.cmake",
+    "sha256": "5ac2772633b1522c67b5deb70804069052bed2fea4e0dfc4d8329c5719d2a2cc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/FindLibev.cmake",
+    "sha256": "3d0eaf26c2c10b6e5b5c93ad81287bd97baec8c41c29cf6f4cb96605bf7cf17e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/FindLibnghttp3.cmake",
+    "sha256": "24b677e718fc583978ccc9ec71a849a14788c34ea26af80b62b130ba7ed9b65d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/Findwolfssl.cmake",
+    "sha256": "dbfec3d9f881029575afb626c0493f89723883d34df470381b488d73c5d65570"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/PickyWarningsC.cmake",
+    "sha256": "3df97d0e637e63a97a6f0c1460c6a9aba363c1d801e16f18dd0ad550e7bb4088"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/PickyWarningsCXX.cmake",
+    "sha256": "1875a85284f52de428038f2d9a2056560ec66bb489354cf93bf28f8584fae28b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmake/Version.cmake",
+    "sha256": "f6c4cf4eea346e01a2456d749b543d5be161f5f5706763c7c8ea641ada3afd19"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/cmakeconfig.h.in",
+    "sha256": "0bd4098be290cbbd30c8736a1751cf4c710192bb2b61180205b98d1fdc7ec53e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/configure.ac",
+    "sha256": "4f53f43e60e7c620a2597d7efbb758d55bd8fe1ded84fe93d33336e875efffeb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/CMakeLists.txt",
+    "sha256": "9f811ab052e0e4d57b87dabdafefa0fc8a1c0adfefa74cb3b88f3a438a38606d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/Makefile.am",
+    "sha256": "8018088a68b34f87e7c6f317b022befb7abbf608a0d98a45c0a6d58d60ec16ee"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/boringssl/.gitignore",
+    "sha256": "2e58c200a8a6a4fac4465f32436d7257bbf0c8ab117cee0a6dd77565292bfe93"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/boringssl/CMakeLists.txt",
+    "sha256": "ce01032e4ab959a07893824434e4ac06d6394d7c41062ad5878a15bd65f81113"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/boringssl/Makefile.am",
+    "sha256": "46d2b4f3277889563b97e829e82d4107bf931a32d801e25f6f6b81e88bdd8468"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/boringssl/boringssl.c",
+    "sha256": "5ff70ce7f7d0093c6f861620d30cfb343199ff2a6620d5ade49969468444e3e1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/boringssl/libngtcp2_crypto_boringssl.pc.in",
+    "sha256": "32da8e02d197cb22d17250866a624ab85a40fa2999190495c87ed485995cad01"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/cryptotest.c",
+    "sha256": "ea7bed2cd057469aed4503ed501631a74eb6ffc40ff8d3a7fbc0b5f2701c48ed"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/gnutls/.gitignore",
+    "sha256": "c40e8672360d37b24433bf6c962256af8dc80c82567f600a766d777b0460828b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/gnutls/CMakeLists.txt",
+    "sha256": "288c57131d157ac8084afbf0a4ed297bd3f64ca6b0901366dd9cc4655f8024c3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/gnutls/Makefile.am",
+    "sha256": "bead9e656bf4df172f7a35b164bb97497238261147a8c84e2f60b6f3386ee518"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/gnutls/gnutls.c",
+    "sha256": "6cf0abdd14334faa50fdd8f1bd05723a4295b7abb2d34f457de9510e80746d11"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/gnutls/libngtcp2_crypto_gnutls.pc.in",
+    "sha256": "7ddd0b92f440fcbc1bf2d773d5a246009472d4fb2b20d18aa34d8da75e82c06b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/CMakeLists.txt",
+    "sha256": "d312537392aef04c5cc10dbf0637ca3fa09f492793697c0900752725d0ec3ec0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/Makefile.am",
+    "sha256": "c908954085b7035bf0bf10366e704914e6c9235df991877d538b5c34e2acacef"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/ngtcp2/ngtcp2_crypto.h",
+    "sha256": "b1080676523d3106baad3cd402ad124a26e8d8d771b5b55b7c3cc8d91b0ab988"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/ngtcp2/ngtcp2_crypto_boringssl.h",
+    "sha256": "00033b5b3d2e932e02c9cc6dbba83c2197d7217788c6afc4b4f6538ffaf06927"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/ngtcp2/ngtcp2_crypto_gnutls.h",
+    "sha256": "c353876e09f7bbf83fa7309ebf93f8b6c23078198bfdb7cf65d76e233728f18a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/ngtcp2/ngtcp2_crypto_ossl.h",
+    "sha256": "2c506d46176e47dd3865bcf8145f9e321b517974dedee02230c89a7c3c78a406"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/ngtcp2/ngtcp2_crypto_picotls.h",
+    "sha256": "3a15f23c877ec13583a99d07d55448b3da2c403f207af463543abb6dded469f6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/ngtcp2/ngtcp2_crypto_quictls.h",
+    "sha256": "1790e0356644fe51c2239839c68cd1ded53cd729b4730c6f7068db14845216b2"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/includes/ngtcp2/ngtcp2_crypto_wolfssl.h",
+    "sha256": "77e95d1c7b874de63f9c0f2f9e347bdfe20e30822dd53bdeb8d305c69cdd799b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/ossl/.gitignore",
+    "sha256": "b4136f84dd6b2b76bc4e01f500338f02d8d5f5b72234b7ee2fb566a281d1a4a4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/ossl/CMakeLists.txt",
+    "sha256": "c91e72745debd11016dba8dc6b842fe37102f305985cacc02c5ce27b2f10cc70"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/ossl/Makefile.am",
+    "sha256": "ff122076c317f1eed3a5fadf32b596e6472e7765c35f578cb635f6c4b774264d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/ossl/libngtcp2_crypto_ossl.pc.in",
+    "sha256": "0548e4966da8558125b6a3ce328648036144d9957bb958b9357a7ac2bf34a755"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/ossl/ossl.c",
+    "sha256": "3b2f0cdef2d22bd9b553a7b42418a0f91a4158b57bb66445553ab87b2fab38a8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/picotls/.gitignore",
+    "sha256": "bbfecd596843ea02079f5a53576d54736464b24d33e350d1c503907f0060a6f9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/picotls/CMakeLists.txt",
+    "sha256": "041b4cd6718e6e1f77f59dd42efd6e8899bb78f6d679060292ab430fe1a6a1f4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/picotls/Makefile.am",
+    "sha256": "9eb617ea9e17e30deb3ba236f99431a91091cf62d9bd800b49ee029403fe401c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/picotls/libngtcp2_crypto_picotls.pc.in",
+    "sha256": "380318c5310a4d00b3847b803ffe21947a4dc41e69b9f84a91509fc9d80a7e41"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/picotls/picotls.c",
+    "sha256": "5f8f55fbdef09b28ce1145e62043e7a80ee90a69540dd31390d545bc2c714886"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/quictls/.gitignore",
+    "sha256": "564c28378c6c504301195d350ebdf3f808a3707a33151d92e98d6b77c90cc0b6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/quictls/CMakeLists.txt",
+    "sha256": "41641e39e6fb5f32e789a9a770cad19db47970df738f7cd49539bebd961c493a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/quictls/Makefile.am",
+    "sha256": "258479e57e6ab81d3695e94615085861f4866a3b00e9e963eb94fc56e3fd353c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/quictls/libngtcp2_crypto_libressl.pc.in",
+    "sha256": "7f6307c9204755ddd612e1bef1fdedec2b12fbe1eb46b3b0e849817d7d8e3ef3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/quictls/libngtcp2_crypto_quictls.pc.in",
+    "sha256": "4ae540fb537b009eda1f6358eb77aea1280c1be5ec391520bd2eb828dc076dce"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/quictls/quictls.c",
+    "sha256": "d867ec1064a15dbd833fb2f8237b3c4e26b3f813d3533b79c90dee437aa3782e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/shared.c",
+    "sha256": "1a2b76d038fe2dd0ff445b12444d276552692e05f42c2c5863a81ddab74f015e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/shared.h",
+    "sha256": "c0ada5ac87856747135c9d80ae722e88719df219a45c12920f9455552f618ab9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/shared_test.c",
+    "sha256": "a027dfd25f9d8d8a7f4ff2d165c96e3933c998d50f7ab4dd5d23c711f5c4477c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/shared_test.h",
+    "sha256": "138cf1d5f53eb6e1bbe36f34c7d24ac82fe05a48bc7409dae7f8187227594cd9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/wolfssl/.gitignore",
+    "sha256": "6e101fd46ce542187a5dbf157c8f2aa76970d026877894996824add9b1ba0f8b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/wolfssl/CMakeLists.txt",
+    "sha256": "cf9f9c97929c4e81386977c9417096640256802464d1e0fdda0a5bceb57f0bca"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/wolfssl/Makefile.am",
+    "sha256": "0a68054d1093fd2672080e189dee0250e9488ac58f41acc1a644d0625bf97c66"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/wolfssl/libngtcp2_crypto_wolfssl.pc.in",
+    "sha256": "1958419d2799823a65ffb45738e73d5d7fc4200d18d6d0a9e0fe9cfd765cad9a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/crypto/wolfssl/wolfssl.c",
+    "sha256": "bf506369b954593ac571a0b4c3738ac5241a4b2f7b06967c1fb7e37a709cdb55"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/.gitignore",
+    "sha256": "5b46eb48d96e8571e8c93e4ef4f6ffbe6807b6d7350664a36a064e1167a32718"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/Makefile.am",
+    "sha256": "508bf21bc9c7d22fec5376de1c68924c92983523505e5557aaa4b059f3c34721"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/make.bat",
+    "sha256": "b593cd1da19314a43db9a0854f6f92f2c59217571502da3321f9498c02fa16c8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/mkapiref.py",
+    "sha256": "daa20426ead1f0061c74a967ac566787c723411a7d726f5dec75faa2e2ee926e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/source/.gitignore",
+    "sha256": "abeb91a75e4d2c5615c2849279b08c4cdcb8f220491a6357b4ed435d9a52049a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/source/conf.py.in",
+    "sha256": "7b9c84707a0f5aaf836368d6f1dc4a17f16f1adfa441ed1a22b8407f5fb95911"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/source/index.rst",
+    "sha256": "7b399eee49aea00d96c0dda004de62eb2b5e9058097da08474f66c3efae951cb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/doc/source/programmers-guide.rst",
+    "sha256": "06a15976b2a76a4e507580540881d6a89df6de79ba38f533586c3f68bdcea314"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/docker/Dockerfile",
+    "sha256": "be06c778ad38ed3995051e5278d4e08c370b3b57ece59b1d30495723e17d94fc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/.gitignore",
+    "sha256": "8f27c941167a3ba5047ae1baf6cbbdae58b7547aa1f8507cbbe162bf12ae24d4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/CMakeLists.txt",
+    "sha256": "3048c7080e35e6ba545d972a579fd653d529e14b8b9c622fb5720bd0c72bb1d1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/Makefile.am",
+    "sha256": "3d2fe8ee20525beed6e53c8c431998b89f0200a529dffec82162990969e100b6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/client.cc",
+    "sha256": "c4406dabf0a6f947cbc1a85bfd39e6a69d001659c8bb7e565837cc0944ed07f8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/client.h",
+    "sha256": "29ab5f902416adf6ecc51cddf27d4e0b410c8a35d8c9149bbe5e5185ba3ffc40"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/client_base.cc",
+    "sha256": "63b2d50e636018a44c55533b936b4eb913e56c52e90c895240a56df3120c2275"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/client_base.h",
+    "sha256": "c9f596e9d331811c83b9e7279d5c46408a65ee871fecf42c63b22b5c1b2d7c8b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/debug.cc",
+    "sha256": "f20008fb134023796d7e0a35a8f75c10b338c9f568c7009084a498f3bf9247e7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/debug.h",
+    "sha256": "1a2d84be18bff25e81ff6e50ec34669dd28678882d6d7ee29563c11865d4819c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/examplestest.cc",
+    "sha256": "cd41575354787df262186aae95e48c008be36e6dcaf9df749c402fcd70ead0bb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/gtlssimpleclient.c",
+    "sha256": "0eef1a6600873a51d1e5f1814d1b82b4faa9d2f695ecb9b5b8dd45425f8befd1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/hq_client_proto_codec.cc",
+    "sha256": "81ed6ea98f731e812e00fa6040b9371c3fc444fd107218753dbc65a7f443c393"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/hq_client_proto_codec.h",
+    "sha256": "aa8f34572f1ef58d8ed6954d09da4772bfcea7c30ff5b9785ad0c28db820c58d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/hq_server_proto_codec.cc",
+    "sha256": "90fff3f362dea287e09f65898a635a9b731d64bd70c9b5e981713213bc23e00c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/hq_server_proto_codec.h",
+    "sha256": "89dab46b70a4cecae56ebba4692ab486fb3e058f4680507b002d4722c6dfd903"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/http.cc",
+    "sha256": "a7f9bee0b73ac118d123293631d87e2656da228c5ed75d94eac5d5c08088f900"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/http.h",
+    "sha256": "f8463eab758c05e310c02108f372bf60ea0585db9259b73392a06134dce76fad"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/http3_client_proto_codec.cc",
+    "sha256": "aa27058e48c62e69084e567de31811ecedce206c7c757d88fc44941cb9742e29"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/http3_client_proto_codec.h",
+    "sha256": "853cd3e398a50999404d8899a6e96750c2c95c7c7c1337f64dd6668fe077b20e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/http3_server_proto_codec.cc",
+    "sha256": "2b1463b13050470205401d090cc1a105706d521a12283f5e47a37568f1e68043"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/http3_server_proto_codec.h",
+    "sha256": "98bbc0c6ce9bae5ae2ba37793a164ad23ca272e6fe025c8b99e5cac0837c03fc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/network.h",
+    "sha256": "73cd31c0c205b09f1fc48a2a4d5d17a8d5b4976a765c17827b03deb5a024550f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/server.cc",
+    "sha256": "f1b8a0289cde44ed17ff753438d404897b0f7597b3c7bc3394be5149c8bfde1f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/server.h",
+    "sha256": "00891e25c1841f56fdda69b32b739ceea0e18edd331accbedaf3490a21fbeff3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/server_base.cc",
+    "sha256": "144bae1025e34ee144378450584ded8e0cc0aa1cdfc4b367e05ed7f9b8dc3716"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/server_base.h",
+    "sha256": "bdc59f016a9db7fff1535c93035bcb7a241dacd06a51e7794707f009db31db86"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/shared.cc",
+    "sha256": "5314225c6c7f30ac72c065b55ea5a380ee667014cf4e9f8f1ee4ac100864c913"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/shared.h",
+    "sha256": "e2bd89c12f478b9a972f86535891dc7099637a4cdf5bbe5c8ee66c22c8857129"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/sim.cc",
+    "sha256": "93809fb7e3f4b5ff026d0280200cc2c3d70bdc8a53447b23f1000d1a5e5e22ff"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/sim.h",
+    "sha256": "e5f6ab1547deda4f9b6384c9f129626ea9c39ce2c0657e93921a3d26622ab638"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/sim_test.cc",
+    "sha256": "7a1badf90030c6e73af6eaa932aa8595a7b6f3c404e07158cdab74436a335af7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/sim_test.h",
+    "sha256": "1b7acafbe8a3c9c44ba600153edbd835efa65fb8cfe4f4333ce8b240fb47452e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/simpleclient.c",
+    "sha256": "1087d9247820cd27f4068d66ee7e29e141f41034ad1be13b37d28d952f6506cf"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/siphash.cc",
+    "sha256": "328e0865b419d14ad6ad65f4a7e96991708f477d40c35bd526b6ad3bec8d384a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/siphash.h",
+    "sha256": "2eb13f3a0c3208ea35f41f7c91b127bb9fe4984776a9448c46a4412d169dfdb7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/siphash_test.cc",
+    "sha256": "6934b13b8252a0d08484e2562450430a8c126255d295b5ddf7a3c5d4d8395aef"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/siphash_test.h",
+    "sha256": "7d53b0fc21d7290651b06599cac4ce5dd9db1d0d13fa407afacf38c48e8b94a4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/siphash_vector.h",
+    "sha256": "da668ab72facae9fc4c8f79ddf99467e2ce847f8b6d5a0526eeeee098672ce45"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/template.h",
+    "sha256": "b438bbdb94980595eed172fae7681d0991bc9c7a9f09107899432e8380c287f0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/.gitignore",
+    "sha256": "b674b85022686c2762decba75d6007bba95f8863046c5856621ec532f09034b1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/README.rst",
+    "sha256": "5a3eaf6817a85d0bb7217bcebb8afd80eb4fbb3d7df5ca52fbaef9a26e0e20d8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/__init__.py",
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/config.ini.in",
+    "sha256": "4f735be204688645dc4c270ebcaba89b6dc93e9e7d87cb0548f24962a47c2b63"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/conftest.py",
+    "sha256": "729301c1645109350a999d3b56af177ec22bab02d4575aacaaa7ea67866f7965"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/ngtcp2test/__init__.py",
+    "sha256": "dabdb57e13f13f6d6e62f771edc3e30710ca6ca059f34907caa9bd3725f7fcbc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/ngtcp2test/certs.py",
+    "sha256": "46bcca38a2df296d947e615137c407322fc0f41c4c76c701ca6ab887050a77ab"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/ngtcp2test/client.py",
+    "sha256": "4424bad0144a2481e79723d681fa25752883913eb20b82d211907c8b0a46dd5a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/ngtcp2test/env.py",
+    "sha256": "00aa22a05f72f48dde033f574374c9003098edaf50b940e61ad0c7be17654e82"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/ngtcp2test/log.py",
+    "sha256": "1765b0d048770794e8ea33abdf10711a6468ff2b7a7795ce1daa51fc31d5bb30"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/ngtcp2test/server.py",
+    "sha256": "543b8e1c8759cc7cd48a467011b64f558e3e317ba322ca4e96b97d3fde086fbe"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/ngtcp2test/tls.py",
+    "sha256": "133215d51e9b18480006bceef76dc4674f0e4ba61cb920c57aaa89c35ee4b2d7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/test_01_handshake.py",
+    "sha256": "384a3eaaf6256c2d65709a502f02fe365a3b7407d1356180aa42916d23f46a5e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/test_02_resume.py",
+    "sha256": "811e14cd738b97561168c33d873be872c7cbd32f1fb0ceb442a31cfa96900e5c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/test_03_earlydata.py",
+    "sha256": "90b37d87c31c531ee2d9d9a5d6a71d1c14209221f36e6a5a872c7480a0ba17dd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/test_04_clientcert.py",
+    "sha256": "5065a7df503b7538e2f938da4b4282b6e418d3a2ed25518eced7a0a3d9829aa0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tests/test_05_ciphers.py",
+    "sha256": "28bb3cbb3d03a4c0adf704c4365a9f8c92ace15d4b4eadfaf711512f24886e0b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context.h",
+    "sha256": "31f392308b6619c820e5a9a9c4ae071bd42aee54c038387e0da043e2681422c4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_boringssl.cc",
+    "sha256": "19308758aacf3bb511237e968d64bac56b1c51d4deb397c81720f63897dd83f5"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_boringssl.h",
+    "sha256": "ca2120088dc5f02ad6e34730f0f44c1642eb8db4c62d79d7c51e3f6e0a2cf759"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_gnutls.cc",
+    "sha256": "19ec60197f9b1ce167fc763c54c431a15421251349b18dfafeff4b3879e06f85"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_gnutls.h",
+    "sha256": "461297739c7f3666392a2dce3f3ae850197bddab42926dce6ddb90f6b7341b8c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_ossl.cc",
+    "sha256": "dce1a137e3b1ed3d35b0f08705817fc20535c8e0c39355b5385a94eef1e1ede1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_ossl.h",
+    "sha256": "825448100aa3f7bbacd209e92d6ef53369a91877ac2f749f126b9cf006516982"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_picotls.cc",
+    "sha256": "175703c4b2f03c561224eb8021976aa65858fee920914ebc432f6de49189449d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_picotls.h",
+    "sha256": "3419dfdac7b246b6a4394fdda522961903f993ef490892249684c604e6e0a463"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_quictls.cc",
+    "sha256": "d4ef9b92ee53744ea754b77de7ad1fef0e2a02fd614a00051dbc18f36e09fee9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_quictls.h",
+    "sha256": "0ee51863f13199af9facc2b82e4dfb15821146f4313c60355eb580d7c2cbd07a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_wolfssl.cc",
+    "sha256": "6ee5d432dc168a32bb14f3600641acc203c7a6aec34a01c6180f42a18da47927"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_context_wolfssl.h",
+    "sha256": "3eb4f1fa7bdb2f46ab3faa2b212f1d2b024ccc1f791ec21aa2a021af34eddf1e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session.h",
+    "sha256": "99a851f30a1502be02ad216a68673df01172e8c52d0e1f4a31a653da8c086dc9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_boringssl.cc",
+    "sha256": "56036f2a5163eba996b51aec4c94a19889480dc0d4bad08b3786c24352ada20b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_boringssl.h",
+    "sha256": "e7b9f35e1081d7a695faa8e07daa3edd1c93b410a3f89a0f87e4b20ac7c99171"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_gnutls.cc",
+    "sha256": "dffb3ab5dbc231f483f6adbeb58bfede4e2a8b81630d04eb919c7857b6672c5d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_gnutls.h",
+    "sha256": "59aeb6a1c46b3d83844e6fca1291f285c4075c626ff24fb4185d69436b65cee3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_ossl.cc",
+    "sha256": "a7b6dfa2ba5ec2d3c4b7387180643d5f45df19b8e2cae3c3f7d0ebb872f3eac5"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_ossl.h",
+    "sha256": "4cbf84b6b8e969c678d0f731f17a21e107ab9ba6b77e4040cf3623d5a2e08e75"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_picotls.cc",
+    "sha256": "4b77f13309d04cbdc3d00b35df0cbbe4bebc8a7a36f61f6ff9aea4dd2972b3b6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_picotls.h",
+    "sha256": "85a26eca06cf16987d57668b85487dcc1c94d35ff5d215e5122ac545acb24a06"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_quictls.cc",
+    "sha256": "dbb8b676350312f93985b08587715e4d5ee5deaaefc73fa9ce358ee8f5afc4aa"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_quictls.h",
+    "sha256": "a81951a412c86f7efc9c386ab415f06d3eb65f587af3e0fe69f7051dd858e8e4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_wolfssl.cc",
+    "sha256": "96468f8be690d79e96e497ef7a0b3f26ef734506afe83b6e229dc93ad685ac4d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_client_session_wolfssl.h",
+    "sha256": "100193fcf839fa26f91151fe3e7e5c69df1c104bf2901b30644ba911d49ff4e0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context.h",
+    "sha256": "25d00343845d8c781f0b60e327fdb2220835e8fbf52b67506c4eba691e3ec9c3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_boringssl.cc",
+    "sha256": "67f50967f8c071e713e0df56516ff8d43484e9ed0a1c9fb17a68d93626726f90"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_boringssl.h",
+    "sha256": "985882425b2cfd012f5f4f30ee59fae16c1f113d65a254de7d14acd048bf7387"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_gnutls.cc",
+    "sha256": "ff15e01c271732aca5e9e0b0b79239605d78af89480c76a12235a2085b98aa94"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_gnutls.h",
+    "sha256": "9bc1956e50c0cd1d7ec8de6900d8e8d97c0f9462be965aa729ea815702b7183d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_ossl.cc",
+    "sha256": "755cf123dabfc14f38ce0172ded601e123a80f9a2b88591a6bc5acc2ce6b27fd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_ossl.h",
+    "sha256": "fc24c10133f83153700f71bb1933eb616c57180ccf4b64dbc010da4c4011fda8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_picotls.cc",
+    "sha256": "5d70ac0cb4e284699101880a47e907135cb75d7cb4d40b40459492e2058ee15f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_picotls.h",
+    "sha256": "37da7bc13eab012f5a783027fa162c8b714600c5991128d00f2e9b479e212b77"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_quictls.cc",
+    "sha256": "4f38535a3de413a3a27090ecdc73575db1167ed49e5a8fbc7d7ffd91fb0ab2c1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_quictls.h",
+    "sha256": "63aae93bd67cea10cd3a640cab2cff9b08a8cd7cd1dedf69781a2d348d282d23"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_wolfssl.cc",
+    "sha256": "32664f1cf45482b4e049610b3ba376d9929058b22948cf817bf928107e183656"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_context_wolfssl.h",
+    "sha256": "fec4bfba1ef4f4fe095c4909072db1da0c51cfe49f0b87e3e140b05f0690d182"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session.h",
+    "sha256": "c4d582660162b614270360c886d8b82afa78ba1d74da8eb8d47f76e7e703206f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_boringssl.cc",
+    "sha256": "1e9ab37be1c9258bd69a7df9904691e66b47c7718db9fc0d227e61357f1db795"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_boringssl.h",
+    "sha256": "7205e8cd6239aa93d22989fc11d18a0a2183a859a7cc9f57aace983e706f5bae"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_gnutls.cc",
+    "sha256": "333a2c32a1f94699708601b216cb10afa15e6b9dc99b41306b249a6ebce44d15"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_gnutls.h",
+    "sha256": "03096ab7c69f90fa5523d18fee89ba755314960c3a6072bed092b7197a3b4cd0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_ossl.cc",
+    "sha256": "8c240519d947b5dfa72b3582663d4ec6e56f4f32d8d003c59b97227111bca055"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_ossl.h",
+    "sha256": "5be0abce43e2919ba51f655b6b671e89eac13354ee5ab2f9db6d8a1cda9813fa"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_picotls.cc",
+    "sha256": "41f15816da3afcb2c871458bc68c31d9af0d6818a4a5f21436d705916a11fc7d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_picotls.h",
+    "sha256": "f8a18ddaf1413c294fcd994dac89103a93219f0d58c8adfec340d2862ce47bf5"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_quictls.cc",
+    "sha256": "e65d870eed269afca378a59024714638ec6d11038b3709934f5e3c6b9cb44c9f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_quictls.h",
+    "sha256": "537552d5f288d51c27507df825f2bf91497a27df86049515219540080e16ff11"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_wolfssl.cc",
+    "sha256": "58b6c372749158fc476b73c057138750c13514a6e49cc1fc90fb7e8ebb986413"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_server_session_wolfssl.h",
+    "sha256": "ae091f47987e31e29d203096d83bec97a0ac0ae96593975fd22c824c97351fdd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_gnutls.cc",
+    "sha256": "8e8916333489b7bbdcde892926b05820aba2357e966c04419c6a7f2b28303f63"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_gnutls.h",
+    "sha256": "6c2f92ff0430c5e2033304d1fc81a42e1255433abe371b2fe70fe47aacf2dfbf"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_ossl.cc",
+    "sha256": "0e3da9a04f852b1d07ddc7e568bf97476c9cb3c0ffa8946955d036c72cf7e016"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_ossl.h",
+    "sha256": "63725c92f0b86528f73d3c0063c4bc09679aaf289e2d5378e60f02de31fd6c95"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_picotls.cc",
+    "sha256": "0545904ca035b4d63ab200f2e6392f008953835a31d8d3bd8baaf80dac79e415"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_picotls.h",
+    "sha256": "31597808e978f34160a419ed75a2c42c98e2c058acab052740de4d2d3b5f9dcd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_quictls.cc",
+    "sha256": "05f22d83cbdb6788b0f61814129b15244b381875b5641fa2829ba8b39179e22b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_quictls.h",
+    "sha256": "aa730c956374fad7b5870c3afe2903208c97e43e9135ebb1cf5d078b51fb7348"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_wolfssl.cc",
+    "sha256": "1b50604098e50da58a68f551add86972514cb94b094d503617602cea36a33788"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_session_base_wolfssl.h",
+    "sha256": "a7786ad68b0666fe83892763530dfbfcca5c54fbd9f8bb08455babc0333279dd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_shared_boringssl.cc",
+    "sha256": "1e2d4dbf2bf276bac570327fe9813fdd0b3c96a0803739264e5daf71d344b64f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_shared_boringssl.h",
+    "sha256": "b17484eb87e842274601f94bf2b958b610f2c7f4cf95dc84966c01e2e60ed10c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_shared_picotls.cc",
+    "sha256": "ae0cb4487c9f233cc3fc7d65de3b49a5fd6459e92bf6ba1c04360768a80c80ef"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/tls_shared_picotls.h",
+    "sha256": "a30402f50007fe825b769ebb441b07dfd2798c654ddd0618bd544e8a874d37e1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/util.cc",
+    "sha256": "8b7288792e8c97a0f858b64a5b00a792b359d941ff6a05a7811d1a0de1209345"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/util.h",
+    "sha256": "21500b0e6ee336f091517c00437eb7d707fc66e8d338fa8abed2ed27071f8cbe"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/util_gnutls.cc",
+    "sha256": "32bdfe2721f18eee69c7a5162657a22a9e99c69a33ab91fba5f05cff591f1adf"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/util_openssl.cc",
+    "sha256": "d0fa75a3c48e1c3c817acc68de370707d8d4fe5f7f57d240c38d243d2ebb9724"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/util_test.cc",
+    "sha256": "8a15f539aa09b7ff1699140b6f5524527d11c0a4eada59b142c23b6a54b2eeea"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/util_test.h",
+    "sha256": "33025988ae2b775ec5d538f2843c4959fe1fa20148c5f66433da4c233cb6abfd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/examples/util_wolfssl.cc",
+    "sha256": "7a5933c8faa32a059386d61c4a4d460fb768b35262398a85afd395c0c0607e9f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fmtgen.py",
+    "sha256": "2aeacf12ef748b5320632c06b16e40fd19c8fa38f16159c22503aff6d3527aa0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/ack",
+    "sha256": "52721fdf08b7df6f751451faff3eb05316e61ffffb31aa4ef50a329fe3c18836"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/ack_ecn",
+    "sha256": "aa7241e036f1da6e06509b2992881ba440db86bd1b8c8757483165892e0660d3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/connection_close",
+    "sha256": "7a918e765325bab74766c9a4b4e3de9470edc2ead22b56bdc8dff30bb505b18d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/crypto",
+    "sha256": "e416c6a16c8d0330bb8ff10a983373ab04e2e66f72aec778d1b1125cb10fa085"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/data_blocked",
+    "sha256": "a098b40b15e325c7fa135adb2f6ea3cbd686f4cce474a45ee7c7d39914a57be2"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/datagram",
+    "sha256": "1b2ce1aa31b4d8b121f2c627c6bacc96d4d43b6ff33a2781b5f0e80e39cdbfda"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/datagram_len",
+    "sha256": "26b1aa12f1343986e5bcf856cc9c5cfbe538efa6fb230f57f188f8bec27fc0b6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/max_data",
+    "sha256": "0eee1a3190c1817099b633168a24437a737262a7b6a30b482e395b605b56aa0a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/max_stream_data",
+    "sha256": "38cb382f7549ff3b3a2bd5fed36d069e9ecc5194f86059f3e7f5f59b2dee1847"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/max_streams",
+    "sha256": "b47f019a3308ba695e56a14b2dc790ae74911c73ec3916cb16632abe13bcd120"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/new_connection_id",
+    "sha256": "30181473f2a2bc6dd38d37a1c5f4e71109c84cfc92cab805e6e43c64e590b923"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/new_token",
+    "sha256": "4a39fd89fc24e93c72d0c1175c109a03f45b89a76376f663c8caf4f8df2e3441"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/path_challenge",
+    "sha256": "9313ed8ce1d9ef691436c6e586908ad029a92dd5273c80cddaac70c498c15d19"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/path_response",
+    "sha256": "665dfe2937a9adb7fe2d7e361702a744302a2b30473ad073b1a717f20e37b481"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/reset_stream",
+    "sha256": "7b743e7fbbb6446d9ca415b2098b2813de831da5e44ff46ddf7ea5cb3008fe8b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/retire_connection_id",
+    "sha256": "7c1579d7c853dc4751415b15b145301014603eef5eedec4d22a701b6a8355a50"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/stop_sending",
+    "sha256": "764512e83d05c75ee9aa0bb3326cf9963511ac14d027836bebee99207cc197a6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/stream",
+    "sha256": "421734afacbce7a01015f4e7d4f90d513d04f4bf0906686b425ee7c9db45edec"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/stream_data_blocked",
+    "sha256": "3fc7c7521cf65c199d979485f6992b0404f601268d6f2ddd3458df433c63ec2a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/stream_len",
+    "sha256": "04b0ed2fb223527c71bf54480b50f76e45d34087de44bd9b49f8f8d925091c91"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/decode_frame/streams_blocked",
+    "sha256": "688b69e110ad69ac26c2b322a579d5cf7b4d053767fdaa0dfa0b65ff2ecf8ead"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/ksl/random",
+    "sha256": "3e298a4c6b777b041479ece4f927dd6646d50cef24dbf93d31636fc116437354"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_handshake_pkt/packet-0",
+    "sha256": "1612f891c9ab5803b77291dfee3f4abb26061804f6fea5858daa4dcaa2b863b7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_handshake_pkt/packet-1",
+    "sha256": "7e5e14723827f7a90f7c5786a21664e56b0caf60b5ed555a64c6444990e422a7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-0",
+    "sha256": "9163c75b39c25295b00f7429a6a0e9f966ba6e7dd259c6962fc005098ee9d2ee"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-1",
+    "sha256": "820b6c74d2894d8b3e6e752a277a79b59f4c050903f63ad526930995294298d3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-2",
+    "sha256": "fd3ccb764b412a5b3103fab480330ad58f9c7fa82d377f10ce068115a0923df9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-3",
+    "sha256": "3e7c5ebaa4ad0386ea8347e4d3f4a0254ac8dd84f5a64743ea9c142a531188fb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-4",
+    "sha256": "444fa70f4c9cf67d8ad51de598ac54cc57b0fc4aa39d38a7e10ab6df00be1955"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-5",
+    "sha256": "ba0063380f917ed868aa634ce285600d91708f8b7e4d3ff94274ec0735047ea1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-6",
+    "sha256": "199ecc7d7395dd37b1706d1ccab8390c65f7215b9ca883a9bb05a7163253d764"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-7",
+    "sha256": "4b45cbe4709eae654eead2af153ed94f1982e5170f0ca2a4b76022daad3b2bb6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/corpus/read_write_pkt/packet-8",
+    "sha256": "8383f2264b89dce6a4f280e9972b8e5c93433516b182555096c8f2dff8a0415e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/decode_frame.cc",
+    "sha256": "acb3a2d2708c9fec11e918faf26a6af3ceec314a63f15bb5ce92171854cb515d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/ksl.cc",
+    "sha256": "e742f2ab7a4ce121939dfa2dabc493163e9074ce818dd9d243e3126a7e4a3704"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/read_write_handshake_pkt.cc",
+    "sha256": "52969a0926ca1ad739b8a7928db16ac6bc2416f83acc669d7e35833350bce8dc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/read_write_pkt.cc",
+    "sha256": "6861924c575c01955926550ba003aea70a1045171778e3049bbb1c0ba327d609"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/fuzz/rob.cc",
+    "sha256": "fe79b0bbac1bc2496c4c9cc3b04841b4edac07d9023cd5e41da9e411566a091f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/interop/Dockerfile",
+    "sha256": "7b9f99446aa4aa8bf0923df719000b3c780518656ab1b204c8ce1854c00b0591"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/interop/run_endpoint.sh",
+    "sha256": "eb52cb2cd882980e2c5ecf615a4b8e5c7855d3696eb0bc487f828effc89ef4fc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/.gitignore",
+    "sha256": "b7d0a6a38296321c7a8ff2a28e21a781e77f8713d2af4e6b6725e56db1354517"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/CMakeLists.txt",
+    "sha256": "e6528344063b6993a49320a71cf274748bdb594519ee12f8f2d1dbbfcbc099bc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/Makefile.am",
+    "sha256": "f5815e7972c816e28e7d2fc73d7db399628622d80617cebfe7714d0931da90ec"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/config.cmake.in",
+    "sha256": "c6f602ed37e3a82e52a885282dfa8b775e1dcf21b608019dca4230119d190b70"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/includes/CMakeLists.txt",
+    "sha256": "3d8093a45894e8d30a5451fefd862a252d946af84bd66f36cfd760005af4789c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/includes/Makefile.am",
+    "sha256": "70f7ca98422d57286a00792fd84affeccc1209b3977d8ee301f616a19d984bac"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/includes/ngtcp2/ngtcp2.h",
+    "sha256": "7ce1c48908e52b0769207e761d4ba5ac4b8741f900ac6849ae2e44b2f9c1163e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/includes/ngtcp2/version.h.in",
+    "sha256": "ab72b28622145e0c00cf07947bdd5b13eb118f0d8ffa1bf8d48c3509abe4321a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/libngtcp2.pc.in",
+    "sha256": "6439955db0e68643c1b70d902341ddeeb1fed7b9a037b30a2fce3f151c2d1e2a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_acktr.c",
+    "sha256": "00e78eea4abfe69b262b3fb059e5d6cf1de3311680862ecd1c275443908df0cb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_acktr.h",
+    "sha256": "5c7bfcd454187973e9abb8b08844f74f7dfdebde9d0a3b46b6ec6354b22ae63c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_addr.c",
+    "sha256": "c58a5ff89b01b70a5d19d76ee87fa8f92aaabceb2a1681500c22f47d2b77b037"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_addr.h",
+    "sha256": "3bfb231cb92e085875484605e02483c0db7bc2d1f4f65aefc03f3b239f09d768"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_balloc.c",
+    "sha256": "097a642a28e61199d2ff12c59685707de27bafd5c7197295513f28717204c20e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_balloc.h",
+    "sha256": "4565d1cfda7ff5225626fdeba2971c230a7fd663172e7390e87cac0da03557b9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_bbr.c",
+    "sha256": "a7756ee62944e2ad9e7a03ba66892cbfe9c7163b8cb92aa0bcf96114ce151729"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_bbr.h",
+    "sha256": "02c709e9b8f394119e28dee107a8b03016afdb491407f4cbcae3d5792c217f59"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_buf.c",
+    "sha256": "964312ba6d97537548c2075f59d7e41a7a3dd57949e2d55f29d7d84b6fedc1ff"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_buf.h",
+    "sha256": "03e91fc5ef2512e045460b336be803af878d75f7db501e7bb406fa2451d8c0e6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_callbacks.c",
+    "sha256": "085f2ef330d23553e5571dc10df65971800b8025033d84829318aa70b7fbb9fc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_callbacks.h",
+    "sha256": "99675abcc7d69e16bbf77156646e250cc9f96bae937c6e9fa8015a74f0d18301"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_cc.c",
+    "sha256": "f3e18b88375992a76a43e41f3d2548bf680f2d66e736d9c72e77ca96bc7ea7d0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_cc.h",
+    "sha256": "9167550cca15cb7a778e9f35f6a315275557661d7e9cb7705f31f686a18c4f40"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_cid.c",
+    "sha256": "c8461e2ca4c9b3c03335c208d878f97c4c43f3d63a7e01663c1d0d91c34c216d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_cid.h",
+    "sha256": "f38bb9185242b65c5cff3fbe814d52b582ecfbbe18088f17844a8805f11d5222"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_conn.c",
+    "sha256": "c7c2515c1944d2316858d9d7b11813b8b0cc9f1857fef9f0b6298ce13b9e146a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_conn.h",
+    "sha256": "84e1ecc8b78cb7f0fd9f5e9c5f374f5a860199fb8a4375ee0f5baf9e259013df"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_conn_info.c",
+    "sha256": "4367f6eea9a8377185acc11145b6c68aebf48e33c8a947c34e21adb6272070b8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_conn_info.h",
+    "sha256": "7e92463a669d7c38820c0ed4686f2033ee2d2f66eae77a109f73b7cfba0f9155"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_conn_stat.h",
+    "sha256": "09a996f79d22699a48c2eb61ee49560ff9429481d19975aee1edfe272b707e04"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_conv.c",
+    "sha256": "d2e6daa0f16a07bb5cb8f00e338a711fe799b2d8bb4885bcf47979ba024b0eaa"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_conv.h",
+    "sha256": "1ff89a77131be1659c91593bb87f81134613f4ee4100e9f8c84426b06b06e209"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_crypto.c",
+    "sha256": "2fc20aabeb67b7ed7b20466a0b9f30d936bb63e9652efd2e8e660b8dc2e06bd9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_crypto.h",
+    "sha256": "169a7f13866f8753391b6354b8a383a7739edc24dac283ba7e3da6db2e660073"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_dcidtr.c",
+    "sha256": "4e352eb3d450cbb78e9ba7e16d3ae5347d51aa4971e45221989ebdf8a7dc7b99"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_dcidtr.h",
+    "sha256": "c6602ec128230e355f8eb02477e056edc2a04c3d73caf5715234f3adb1c9b8ed"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_err.c",
+    "sha256": "efc1dcdec3b5ab111bf6838fd09e8cbb0470d8c9163dc908f36f0300b60ee60b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_err.h",
+    "sha256": "125aa420ec102ded3eca05cb8789f20f5a6895fe0d687e55a7fc03ceb8539465"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_fmt.c",
+    "sha256": "0df72958e8d171bc738306d45bcbc1b815acbf039c53e248a9f01140049543c1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_fmt.h",
+    "sha256": "cc4f1a5a506af9cd53fa07263b32f686bf5f17d821cfd9e13843a5722d4c642e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_frame_chain.c",
+    "sha256": "0f0c6bbe212bc07bc4fdab9f3cc6d9ffbad3d22cd5046887193eb12c5ccfb912"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_frame_chain.h",
+    "sha256": "66f000220e97da8857df1ff4b77265f05ee610946c892236943d13b7793f5429"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_gaptr.c",
+    "sha256": "4a7b262eb3edf86b3aa9d242b7c65364a1bdc2bbf83c252378958d73ccf37bb6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_gaptr.h",
+    "sha256": "97ec340ffef7071ec16e0b43f4af1e76dd0912a1f8b50c796e65ffd330714d26"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_idtr.c",
+    "sha256": "1c392c35a6fd653475bd74c0df9576001fc5572248c237a21b7da7061970e76b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_idtr.h",
+    "sha256": "bca0b97fd5b4a3165fbb8b08b7bc164a63b248a59129c4d6f8d11c05c5bc74fe"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ksl.c",
+    "sha256": "1ee91c1a6f46b630014d33b8314529e95d8ee4b5183afd09f35f8d0c2b706a6f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ksl.h",
+    "sha256": "e566806f4ed2f7b175eb31f70fac6c4a66b824c74d282a4d3c63421c2a03fac9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_log.c",
+    "sha256": "64333ea2f86ebf028d78fc29862f9fa47d4a0ff023eda7e598b3aaa0e8d08ddc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_log.h",
+    "sha256": "21625f8ac7f648f9eb57f6b992ed2da33225e4f3049eb47a604886abfd88dae7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_macro.h",
+    "sha256": "855a45731c900088668f3406370a69211bc0923c6452e4d011296a7fbb8894b0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_map.c",
+    "sha256": "2094e88d4d7dc2aed1d6b414b2077bffc3118928823b41d4884020976a1a6fd8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_map.h",
+    "sha256": "8f8629413bf25495ea67f8d469233990f04895885a0ea6ec9aa605976c1c9bd3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_mem.c",
+    "sha256": "8f2abf8ab6a3e69f501cfc578b2029eba318ad007a3f36b6a41c82d47834482d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_mem.h",
+    "sha256": "4a98b97ca955ff224beb5a63b5d9c3fc0de57eafa386d8d80195605d0a764be0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_net.h",
+    "sha256": "1abeae0b40816e31609ca1a931dc2f79ff586b4e0a7b4f2237dac8986aa54db2"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_objalloc.c",
+    "sha256": "613b63ac566387515432eb23557f1ae5f3d858d224dd486191454fb8742b00dc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_objalloc.h",
+    "sha256": "26b60dd07f840fd2e2ae4e071c2a69fa82da6d459c8dfc98a800dedfe658cf70"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_opl.c",
+    "sha256": "76eb7ddf4b15a96cb648b44e301197b6199e64ddf6a7e97317c4335d309eee08"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_opl.h",
+    "sha256": "2494f084e6da274e4a09aba5ba7dac63093c3813385e88cf9f028eb7a4dd0ec1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_path.c",
+    "sha256": "41eba1c46faf31081b730f17df7641190f3a2ddc24878d41f24b06877f882a21"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_path.h",
+    "sha256": "5563df58fd5525a166663ba752370db54691e80aa5a9b027cf1f5e1753184e72"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pcg.c",
+    "sha256": "b5ce77b38200850a3c8dcfb7b2eb0e2e8ea4dadf4c67188afe5e1619b61da085"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pcg.h",
+    "sha256": "58fcc8b7d30a651b5fc34523822ab668b4c09e3d842dfd8de141133ecbfcb84d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pkt.c",
+    "sha256": "68251ebe70adcd77b2753012d336b0b9b53cc2c70ca0d8985b73c33095e5d7b3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pkt.h",
+    "sha256": "0512e9cdde43bb6d7e12f059f2f8e69aaf7b914076e69d5f810a59acc61466b5"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pktns_id.h",
+    "sha256": "7c8ef718fd116e62826f6f938b4412adcf9e2bcf5958b1a3bc3ef46b3586918e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pmtud.c",
+    "sha256": "2a7e35c31b1841df204316ff836216e9ab479263c317589c88f5d6e548a66f74"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pmtud.h",
+    "sha256": "1da1d09f0e3f4b6c8cc4d19289b7f0139f0698f7331b392ec0b0d114deaa6cd4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ppe.c",
+    "sha256": "ba0ddf8875a1901585d1554f53c73084e80d38c252af94e3b8e17917378ab6d6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ppe.h",
+    "sha256": "4c7bd0de678f9a9520da5bf32b2a15c8d9b27eb7943fa87780021b70368a0d08"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pq.c",
+    "sha256": "0cbe928cb19a1742a86290cc7a8632ff43700e8890b06fa0de3777ca748cc4bb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pq.h",
+    "sha256": "53b7aa586e5c2a547527fd7186c238be2b3eee352d9501bae192dedb811cc494"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pv.c",
+    "sha256": "130725b5e8cce9ab1f72f368ece33068c13a971656398753812c071aaf56154f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_pv.h",
+    "sha256": "f2b463260ad57e651e8a035768c458c3e8a44c3b0e9def54b1a42becab56dede"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_qlog.c",
+    "sha256": "caa06268ad169e53dff034d3731e4b56c37c4df7fc8a1775e1ebbd3388a8eb1c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_qlog.h",
+    "sha256": "dcc37fc4503dd917cab3032c4331c5b4618b5709926528db90dd8be4b8116401"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_range.c",
+    "sha256": "05143e2e73fa1c21486b793fea32a7ad5c890710c4f55fda3d4496fbeb305d95"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_range.h",
+    "sha256": "83848e894a2f2dce14583a2ecc47517ace7a66990e6bc8a267ceb83619635d82"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ratelim.c",
+    "sha256": "99e3505986c6c0bd8b56bdca2ff3af5c2ecf24cffcfb02631547ad329ab0be43"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ratelim.h",
+    "sha256": "c68e9d10236512698970fff1f0ae4294f83e9c555fd31dca163d78d0da6f1f33"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_rcvry.h",
+    "sha256": "a23cc04a6ac846e20760b3400ae9f706cf11441c4192a9861ce897accb046375"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ringbuf.c",
+    "sha256": "df6c5a05b1fa459f72e473cfec71bca8e0224261d9567a94d466d49a110634d1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_ringbuf.h",
+    "sha256": "86d4351f25527ef4bb182185ea4d592fd0b80f4587c54ac8f53e62601b43a7bd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_rob.c",
+    "sha256": "7809311ea1d2d5ecf9a8f5526debe29c4dfd6a3d2e4f48b69ce637192217dd68"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_rob.h",
+    "sha256": "6f411262da36447e57736deebf72dcbd19e965cf41f64b93b1d772d7ce748b32"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_rst.c",
+    "sha256": "b117416e2b7bef6007ac8ba9bd703845da1a6024d27bf3168af29df39a4c063e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_rst.h",
+    "sha256": "6c015a95431a937e2b3963776f98f50c6c207c6a95d56f5f04883adf1c460301"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_rtb.c",
+    "sha256": "5c2defb3266b582580bdaad86dfad5b99c271d4fa814909da67af8f7cbf03902"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_rtb.h",
+    "sha256": "af0244e850c02c7105dcfc6e62875aef41047bbd552d19773182f265f0dd3b78"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_settings.c",
+    "sha256": "f282b9f4100275cedcdd0025dcec7d40e2796bee5d5e46915eeed7990a7d5a89"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_settings.h",
+    "sha256": "dd6bd2b2bf78e19387c1b0372113095a2f5f794d2d241dfa0f84c715ea3990a0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_str.c",
+    "sha256": "147ca6b61caf22496da58baed42a2a5ae510616311a493dfea2a3670c908e68f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_str.h",
+    "sha256": "86e301cf05ccb6aed9dc0406f4216b5f4d6562cbebe4b1ad0d70820c6f5574ab"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_strm.c",
+    "sha256": "019db3c85fd3bb3507b4e41aef0d9234009eac8366b4a9f227beaa11d52eb846"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_strm.h",
+    "sha256": "b6e579a846d320a015077fd9f9dc84463b3f874e0632667d75edcd44913263f9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_transport_params.c",
+    "sha256": "5f6f417371213492ab14f20a3f4e77b8795d42ee7d7fe1b518b05719c6fd13aa"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_transport_params.h",
+    "sha256": "0e47353c7cff06f650cdaf345ca7082390aadf3ab82a7b8bd6a0dac64c59498d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_tstamp.h",
+    "sha256": "06298871b2368ef81bb88a7a1894435303fed4b975a4cbfdfa1261315a8fb5ad"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_unreachable.c",
+    "sha256": "f9153404e31a39e98cdd777e002ff86fd16f931605b84db3d42a927279cc0a00"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_unreachable.h",
+    "sha256": "70ac97f478572a7c458df988666b19778f5b23e4951284f2dcd6cc63346e5c10"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_vec.c",
+    "sha256": "d1ad5ad80831e4a05878c6aae92c199c6409e3beedb13283a6b023ad8b8f3a55"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_vec.h",
+    "sha256": "6546551e3dd2e7d5322d7442c8eca866508334aea48a789a22f50b77b1a92d6d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_version.c",
+    "sha256": "3e7e28307f4ffbf779321e1fc287a8aadcc3b344f4d6b990e844c5b25387f03f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_wf.c",
+    "sha256": "97ae8941f39909eea02df095176865c863f1e9b19a433a9afb59f3176a3ad8ec"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/lib/ngtcp2_wf.h",
+    "sha256": "2c840eee5d2ccb5e5e9b7bb853f315040aac1f0cc4d47b5859d923f56655eae3"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/m4/ax_check_compile_flag.m4",
+    "sha256": "75f03045fde15ef1e901f17246812fcc751c1a5b070f7f88d482ef336435da87"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/m4/ax_cxx_compile_stdcxx.m4",
+    "sha256": "1e24c1f746afeec93a9a1b49e515271de574091024098169233cc62e9423bf5f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/makerelease.sh",
+    "sha256": "275d257b11123d947a32cfe49b79d112e89ccb5c034f1de6347dac36dcf15fd0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/.gitignore",
+    "sha256": "6403203dd5a0867eb14d104ee8a73730bd72dd9ad92e78d996a6dba0a5dcfc01"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/CMakeLists.txt",
+    "sha256": "bf1a215bd53872737c5bc1d8857be1c48886988a9afb1270b0ab1a24cd32826f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/Makefile.am",
+    "sha256": "c591b45fed267d974fa3c2ece6b0d8b2eb99a36981c46233c63348ec128286a5"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/main.c",
+    "sha256": "1ad2c1d7f2e66ede8a2a38f17c983045829462058ffc2b48b1fad715a1849981"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_acktr_test.c",
+    "sha256": "0ce04ee5cdf3e323de062116225b20cbe0d95020f54bf6ed0554cd220c33546d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_acktr_test.h",
+    "sha256": "86fb2217aa6fb77bac0cca0aac7348bc82244d49778f07ad91bb0100d9a32e91"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_addr_test.c",
+    "sha256": "606983ebcdb3efa36a357e0217bc3084389a3b4a8feac31293272ee13ae5ba2b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_addr_test.h",
+    "sha256": "1a1c6f6aa648ff7f7b159f981cd61773c5684f14dc568278dccb98c14f0bf2d8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_callbacks_test.c",
+    "sha256": "6e0a908dd55f9a246ba3f15813894d14e227f716b318d7464c0b2fcacc3aa560"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_callbacks_test.h",
+    "sha256": "d4a0cb790e49acac927f1c772e1cae723e44762c3d203d076d7f2482fb369bfb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_cc_test.c",
+    "sha256": "1e4660ce094dd704ee062aa80377046cc63665be1f14345dcdfdf6dd0a6d7f00"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_cc_test.h",
+    "sha256": "862b58697f803f44efa11a1b36217c2f857566383f7af3cfdbb39d0b73e49924"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_cid_test.c",
+    "sha256": "9bbb882796dc9c1d43d0fb08bfe52f67424ebdb74aeb65d148c276447d883b39"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_cid_test.h",
+    "sha256": "6f04797500cdd65fc7ef52aaa01a4ea6140b2f766d7d634d4df6c43fc60008f6"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_conn_info_test.c",
+    "sha256": "fda9f81ea3685ef7b2be706c558668a148e461e458cd9ced9555d9305437b5fd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_conn_info_test.h",
+    "sha256": "993ffe0fad720add9f0820094f7b197d506c44eabcf52f9f9a8d20240fb211c0"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_conn_test.c",
+    "sha256": "ad9f25f8d9a25cc02bc122cc69a1c0029ba32ae5bde0f30e47ee3b63b9311e23"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_conn_test.h",
+    "sha256": "a037fef44abd33bb5ed688b5907386f88194465dadd195cf96d2456d3708452b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_conv_test.c",
+    "sha256": "2046252d16f078c4490e051cc69849503ebd34465300cdec563a349eeda88ef7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_conv_test.h",
+    "sha256": "20f03cd44756201e0e26bda4c0ca333291ef3f3ed35600742b7d8fa76a16877e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_dcidtr_test.c",
+    "sha256": "75d9845118ac90ceba3aa7758d4ce531a94c226841dd61cfd6bec10cd9928caf"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_dcidtr_test.h",
+    "sha256": "959605a7bb9d05a7c2b1b78e1ea4836aad85991152d2c0d884fec0f60542dc0e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_fmt_test.c",
+    "sha256": "9547daf8301f788ab9d5d0fec0905edee3b41d9b050a7eace8c8df0092b0a83f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_fmt_test.h",
+    "sha256": "326c6ca386a9ebfe807f23ce39553cca1300e9474881de16cb91ede0824ffb97"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_gaptr_test.c",
+    "sha256": "102a60528dfd856e08205612bfa69e941f359b00aef931455d7346e39558bc49"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_gaptr_test.h",
+    "sha256": "33a44c475a6f6fd956351492b3c2a89af1b8b86a9d2100c10dd1c1638d795bb4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_idtr_test.c",
+    "sha256": "e019901e14652a16464fd304b87999df452ae8e234a861a88c19097a36fd22ea"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_idtr_test.h",
+    "sha256": "3ac44d6837d0c9d5c7103ec2e681d13214a29354e57437ec70f27c21753c1c90"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ksl_test.c",
+    "sha256": "75a946dec38fb688646e85d301ed807fcdcda0def05f666ebc7926e62bf0a299"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ksl_test.h",
+    "sha256": "c52c89d38e5c46c0f45c064cdcd3ba70ca3f98133b4bf26fd2c82f8e0fb35189"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_log_test.c",
+    "sha256": "e3626ea94123a471bdfb9aa2c3d2f86cc74b2cfc521c82f224bf87f439fd52d8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_log_test.h",
+    "sha256": "e3f6f855a6bbf25f37794ba4d93e22193dc51287d50bb65a580a87662c30d9ec"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_macro_test.c",
+    "sha256": "83145e32f5aedda25b361b27472fb9060b55c1fd64940c0d1d8d9ebfe357b007"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_macro_test.h",
+    "sha256": "44e902322b5a55570e80da6d62231f41f5107fb06fb621d46a885d37096e7aac"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_map_test.c",
+    "sha256": "fc8bb68271e64109a5a2ee3722c068f255ba2aa11603783a0c0134b65d975ee7"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_map_test.h",
+    "sha256": "68b1e20e791e6314d6ff1a21b34fd51b312dfe37e0517b835aa090d2c8db5365"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pcg_test.c",
+    "sha256": "0321f7122d35a605b1a3ee08ce806cf8eb4f9e9ec1b639793c434cbdef176df9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pcg_test.h",
+    "sha256": "e8bf5c2cd9835767a7e84574d0062e32a749eca0ae1b2c3ae4f43707ab79f2d9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pkt_test.c",
+    "sha256": "51493b7d4fcbc68ef9b4fdcc990d60588d7e7f868c795e1a11c7ef9c357de462"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pkt_test.h",
+    "sha256": "259a373a7b56c9bd85bde443165b2623221c1eb3d85a09ef8395f57ce74905c4"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pmtud_test.c",
+    "sha256": "7aa25e274f64511c99b5144fc4e7208deae624eefd7827a6b239f43ccc7cdaf9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pmtud_test.h",
+    "sha256": "9b3ecaf8a3c7005aebc76ea3e5e47838314c4456d641997112f148371827e42a"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ppe_test.c",
+    "sha256": "af499b9c4cceea41290d0c95a1ccf7ae691ffb02dda0dd6d0311b9cff4ac5e76"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ppe_test.h",
+    "sha256": "3e645fb3ed09c20661691fbf29fe99b670e3329f3dce67151594d3e46fe742b1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pv_test.c",
+    "sha256": "cdb1ac3ea2c35f1e666f4d8e1b2afc960b781460ac2b0a7d2ac305b872c00165"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_pv_test.h",
+    "sha256": "1ea0bc5bcf98fd3f112e739f4ad95a9e77d85a3b1fc476421491fe7d0d2f52f8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_qlog_test.c",
+    "sha256": "656b806a2dac5675953f492114b916cb04a0414e900ebd0f9b3bb9fd24d27293"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_qlog_test.h",
+    "sha256": "dcddcdc5a7b848bf2f369fdb611b5ae4923fdc10c60f16a1093a4008810ddb51"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_range_test.c",
+    "sha256": "2b3548b2376cd7b234ca66bd4a833e2fafedbaa146fd8830e09b1b2823210b04"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_range_test.h",
+    "sha256": "34a93a5bcef7e268eeaee3ad9a5b0651db4a4a8895f53e74d94a5fad93f32157"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ratelim_test.c",
+    "sha256": "e3e60ab82a583141c87f4e415c1544562777c7b64d9e9421dce809873a621f54"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ratelim_test.h",
+    "sha256": "f40473b0abafa62657cb2a11cca9806ce0d81d0dcb7853c644233c1756dadedb"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ringbuf_test.c",
+    "sha256": "e65436535e9c1c29d1913fecc9dfb52bdcbbefb0cb397ebb3bc17a99d9d6fb6e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_ringbuf_test.h",
+    "sha256": "dd07384a03cbf29126d42008dd973d99e337d50f273714f4bc36032f9338e745"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_rob_test.c",
+    "sha256": "4cb361a0aaa8af5d962ca3022d652d284c7534eea2a997609168482b2ea1a40e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_rob_test.h",
+    "sha256": "b24d3d159f1518dcade91abce3170bc99e5f066177530b6816201ef0bf644b2f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_rtb_test.c",
+    "sha256": "e40d6a9390464b361b47623a42b45541e036ead46f1980c0a6f6d46d4f6a804c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_rtb_test.h",
+    "sha256": "d1a955bc77d117f08f1f555f8f1f02f2d6474460412e34c3e8270b7adb5b7003"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_settings_test.c",
+    "sha256": "604d2a815195ce851c55991aaec697c3762d219f714451d7793829ba3985bec8"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_settings_test.h",
+    "sha256": "492d64497a2319f526e580595a058b17fd06200febb13e6aebbd49b6028db154"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_str_test.c",
+    "sha256": "2e6e666b523ff95a397c8ebe2e5975aad8520f4555dad8de63ed675288f66341"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_str_test.h",
+    "sha256": "d67754ed83981df582b147514fcc59f4cc07554ec5bc0437dbb107043e5c2526"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_strm_test.c",
+    "sha256": "12ec21c399e0b1bd068f9e0aa50d8f76f5d55999e5b8acce197d3fb588db7e83"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_strm_test.h",
+    "sha256": "1c4fa4f6189e82fc88ce1a568db8096c8ea75ffb89c882d7bee72f9f6d34f42d"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_test_helper.c",
+    "sha256": "3926bdc908f79953c647afbe7a729b59e1681e3e6db1a99a51bd07d21b486094"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_test_helper.h",
+    "sha256": "bd7ba7f030d9f2ade920a4cdff8db62702ee283e75d1150db16b50ed472c5fb9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_transport_params_test.c",
+    "sha256": "450f75fd8c62be5e4055723b1d4e0511a83bb029bcb727ef2899739202f2eb90"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_transport_params_test.h",
+    "sha256": "af76f675ec7349ee44229ecaf7ddaca635cfb4b15e13b1ba7de7948fcd07ea9f"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_tstamp_test.c",
+    "sha256": "b2fafb7ada26e1246ea991c3c8e0ea379edb63d413b962d8bc620c2d6a3c6aa1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_tstamp_test.h",
+    "sha256": "713d1998cab1c689ece6532974de3a1aa9a69f073bbdfff9b7adaf857bb78e57"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_vec_test.c",
+    "sha256": "1debed662f537e17de863c31717ce9d80dce4c6fa05ef83cae808c3ebaebc0ac"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_vec_test.h",
+    "sha256": "1b30956c9cdd58fb6c18c553291621020df6d30121a251151d1a2fc40bdf6777"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_wf_test.c",
+    "sha256": "bad5addf2a992b90f653adb5de15d5385367e1f9d56fcf72a5f5835562139759"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/tests/ngtcp2_wf_test.h",
+    "sha256": "45a62d885d2d6bba7a7a4d5f258f0beea0c7a9bb98267deccd1f5741d5a9e281"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/CMakeLists.txt",
+    "sha256": "873e08fe4319fdf73599eb68fd2cef6fb9f54ce3da5363bc484e3b03b03cac02"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/Makefile.am",
+    "sha256": "b3d3630ed94aa6224e5f9218972ab2040c2931cd5dead05ad4453c15932b573c"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/.gitignore",
+    "sha256": "dab0ca2be8414bda45a41cf6a2487d5cab63a50392348d8b3132a9c0d412b0e5"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/.mailmap",
+    "sha256": "68ab05997dc95f09f1ddbfdb6e5e7f9fdb2453bf19eff80185772617eee3e985"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/.travis.yml",
+    "sha256": "03f98481bdc8e32b7cd899e61d1fdcf10f55c305965dfed04286a5810bfc82b9"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/AUTHORS",
+    "sha256": "d1a15fcf0453796ee31e900dd5edff35ae86fb6ae4375c2afda8bde0f6fd2f03"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/LICENSE-MIT",
+    "sha256": "2996a1c43ee757f9c997a829d82bdd584052323e73cf02ff8126c6fbd95c2d87"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/Makefile",
+    "sha256": "f76fd875d1832f07fcabea26d30be8d7ee96b9c0f92191f45c394b863546ccd1"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/README.md",
+    "sha256": "700a217680af01cf7a898c772722771fb97e81d76453e43d603ca597eaaa5dcd"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/bench.c",
+    "sha256": "5aacc86830ebc212f70d5d7895dbca19d36db772788a99cb6c7876b01a1269fc"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/contrib/parsertrace.c",
+    "sha256": "429cce7d6941912b926f9c479d7af2824d2eb7f4f76df9ccd6d16ab93ac9b045"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/contrib/url_parser.c",
+    "sha256": "ecc24f95707866de11b4b6588cbd0bb0728b1def6e95387cedbef98a73a0acf2"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/http_parser.c",
+    "sha256": "3bf8660b791bd081537af28eeeed3f5b99736c14c615fa5a5410b25313fe446e"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/http_parser.gyp",
+    "sha256": "ca7cc55cc2a81c5a5b3795171e3a953e5c7b10ec2923ec1560e60f914ca18ece"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/http_parser.h",
+    "sha256": "8438f975da5d5f5df4fc86a342eedf582b3eeb9d3e823d44eeef7a9b89deef5b"
+  },
+  {
+    "path": "libs/moq-esp32/third_party/ngtcp2/third-party/http-parser/test.c",
+    "sha256": "9e18f2bfeeb032a76f35b72a5c2738ca89a7f4a72e336fa788f84c2fdd1c174f"
+  },
+  {
+    "path": ".tool-versions",
+    "sha256": "05b269ed3aacf4d195fd0a8804f2f9681e0033a40f0485645c1c05c392c74a7d"
+  },
+  {
+    "path": "doodad-runtime/.cargo/config.toml",
+    "sha256": "6b557c8db97ab5ac186a8faf3fe52f66f1e4ff0ef73c953bc7790c83dd85e6e0"
+  }
+]

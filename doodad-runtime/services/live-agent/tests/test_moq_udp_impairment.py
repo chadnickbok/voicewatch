@@ -113,3 +113,98 @@ async def test_bounded_outage_drops_only_selected_direction_and_expires():
             with pytest.raises(ValueError): proxy.blackout(direction,duration)
     finally:
         proxy.close()
+
+
+@pytest.mark.asyncio
+async def test_reordering_delivers_original_datagrams_out_of_order_in_both_directions():
+    loop = asyncio.get_running_loop()
+    server, incoming = await loop.create_datagram_endpoint(Receiver, local_addr=('127.0.0.1', 0))
+    client, replies = await loop.create_datagram_endpoint(Receiver, local_addr=('127.0.0.1', 0))
+    proxy = None
+    try:
+        proxy = UdpImpairment(0, 0, 44, reorder_every=2, reorder_delay_ms=40)
+        address = await proxy.start(('127.0.0.1', 0), server.get_extra_info('sockname'))
+        for payload in (b'a', b'b', b'c'): client.sendto(payload, address)
+        upstream = [await asyncio.wait_for(incoming.received.get(), 1) for _ in range(3)]
+        assert [data for data, _ in upstream] == [b'a', b'c', b'b']
+        for payload in (b'd', b'e', b'f'): server.sendto(payload, upstream[0][1])
+        downstream = [await asyncio.wait_for(replies.received.get(), 1) for _ in range(3)]
+        assert [data for data, _ in downstream] == [b'd', b'f', b'e']
+        assert all(row['reordered'] == 1 and row['reorder_scheduled'] == 1
+                   for row in proxy.snapshot()['packet_faults'].values())
+        assert all(row['dropped'] == 0 and row['forwarded'] == 3 for row in proxy.stats.values())
+    finally:
+        if proxy: proxy.close()
+        server.close(); client.close()
+
+
+@pytest.mark.asyncio
+async def test_duplicate_is_byte_exact_and_counted_separately_in_both_directions():
+    loop = asyncio.get_running_loop()
+    server, incoming = await loop.create_datagram_endpoint(Receiver, local_addr=('127.0.0.1', 0))
+    client, replies = await loop.create_datagram_endpoint(Receiver, local_addr=('127.0.0.1', 0))
+    proxy = None
+    try:
+        proxy = UdpImpairment(0, 0, 44, duplicate_every=2, duplicate_delay_ms=5)
+        address = await proxy.start(('127.0.0.1', 0), server.get_extra_info('sockname'))
+        for payload in (b'first', b'\x00\xff\x01', b'last'): client.sendto(payload, address)
+        upstream = [await asyncio.wait_for(incoming.received.get(), 1) for _ in range(4)]
+        assert sorted(data for data, _ in upstream) == sorted([b'first', b'\x00\xff\x01', b'last', b'\x00\xff\x01'])
+        for payload in (b'one', b'\xff\x00', b'three'): server.sendto(payload, upstream[0][1])
+        downstream = [await asyncio.wait_for(replies.received.get(), 1) for _ in range(4)]
+        assert sorted(data for data, _ in downstream) == sorted([b'one', b'\xff\x00', b'three', b'\xff\x00'])
+        assert all(row['duplicated'] == 1 and row['duplicate_scheduled'] == 1
+                   for row in proxy.snapshot()['packet_faults'].values())
+        assert all(row['received'] == 3 and row['forwarded'] == 4 for row in proxy.stats.values())
+    finally:
+        if proxy: proxy.close()
+        server.close(); client.close()
+
+
+@pytest.mark.asyncio
+async def test_duplicate_reservation_shares_the_original_pending_bound_and_close_discards_both():
+    class Transport:
+        def __init__(self): self.sent = []
+        def sendto(self, data, target): self.sent.append((data, target))
+    proxy = UdpImpairment(0, 120, 44, duplicate_every=1, duplicate_delay_ms=20)
+    output = Transport()
+    for _ in range(proxy.MAX_PENDING // 2 + 1):
+        proxy._schedule('downlink', b'payload', output, ('127.0.0.1', 1234), proxy.random[1])
+    assert len(proxy.pending) == proxy.MAX_PENDING
+    assert proxy.stats['downlink']['pressure'] == 1
+    assert proxy.snapshot()['packet_faults']['downlink']['duplicate_scheduled'] == proxy.MAX_PENDING // 2
+    proxy.close()
+    await asyncio.sleep(.1)
+    assert not proxy.pending and not output.sent
+
+
+@pytest.mark.asyncio
+async def test_delayed_original_and_duplicate_keep_their_original_client_port():
+    class Transport:
+        def __init__(self): self.sent = []
+        def sendto(self, data, target): self.sent.append((data, target))
+    output = Transport()
+    proxy = UdpImpairment(0, 60, 44, duplicate_every=1, duplicate_delay_ms=5)
+    proxy.transports = [None, output]
+    try:
+        proxy.client = ('127.0.0.1', 1234)
+        proxy._downlink(b'old-connection', None)
+        proxy.client = ('127.0.0.1', 5678)
+        proxy._downlink(b'new-connection', None)
+        await asyncio.sleep(.06)
+        assert len(output.sent) == 4
+        assert all(target == ('127.0.0.1', 1234 if data == b'old-connection' else 5678)
+                   for data, target in output.sent)
+    finally:
+        proxy.transports = []
+        proxy.close()
+
+
+@pytest.mark.parametrize('options', [
+    {'reorder_every': 2}, {'reorder_delay_ms': 40},
+    {'duplicate_every': True, 'duplicate_delay_ms': 5},
+    {'duplicate_every': 2, 'duplicate_delay_ms': 501},
+    {'reorder_every': -1, 'reorder_delay_ms': 40},
+])
+def test_packet_fault_configuration_rejects_unbounded_or_partial_profiles(options):
+    with pytest.raises(ValueError): UdpImpairment(0, 0, 44, **options)

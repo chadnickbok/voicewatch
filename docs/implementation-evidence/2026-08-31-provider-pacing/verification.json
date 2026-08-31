@@ -1,0 +1,45 @@
+{
+  "before_fix_regressions_failed": 2,
+  "final_python_tests_passed": 369,
+  "final_python_warnings": 4,
+  "final_native_integration_cases_passed": 6,
+  "final_firmware_protocol_cases_passed": 40,
+  "final_complete_voice_turns": 9,
+  "final_output_only_responses": 2,
+  "final_played_samples": 445379,
+  "final_fixture_word_errors": 0,
+  "final_service_startup_and_shutdown_verified": true,
+  "corrected_runs_process_exit_codes": {
+    "p91": 0,
+    "p92": 0,
+    "p93": 0
+  },
+  "earlier_provider_runs_service_lifecycle_verified": false,
+  "p90_matrix_process_completion_verified": false,
+  "p90_matrix_driver_exit_code": 143,
+  "p90_child_absent_after_driver_termination": true,
+  "full_impairment_matrix_complete": false,
+  "full_physical_product_complete": false,
+  "remote_ci_run": false,
+  "sanitizers_refreshed": false,
+  "full_goal_complete": false,
+  "permanent_enrollment": {
+    "permanent_enrollment_revision": 143,
+    "fresh_permanent_ready_observed": true,
+    "permanent_ready_monotonic_ms": 12586809.781,
+    "persistent_service_pids": {
+      "moq": 45731,
+      "moq_child": 45739,
+      "legacy": 2759
+    },
+    "production_host_updated": false,
+    "firmware_written": false,
+    "firmware_restoration_required": false
+  },
+  "logs_sha256": {
+    "before_fix": "bfb33cc9651167c0d4505bede13d070ff73563b0f173dcb950e4f9d90852e708",
+    "final_python": "31553de210efefb436d0da99a3af328444be5b1f4a1eb1347139f07d9b578e38",
+    "final_native_and_firmware_protocol": "c79d72269080968a7dc12720db25bd445a010c6c14014e64d40dfcff621b4105"
+  },
+  "p90_process_sample_sha256": "276e302ecbd4ca9aa247929d9354e1c40ce5de79dd689fd12c78e96f9bdb9f0c"
+}

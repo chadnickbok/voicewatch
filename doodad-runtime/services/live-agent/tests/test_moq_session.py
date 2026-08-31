@@ -6,6 +6,7 @@ import pytest
 import pytest_asyncio
 
 from doodad_agent.metrics import LatencyTrace
+from doodad_agent.audio import PacingOverrun
 from doodad_agent.moq_auth import AuthorizationError, GrantRegistry, bootstrap_proof, renewal_proof
 from doodad_agent.moq_ipc import Packet
 from doodad_agent.moq_session import MoqSession, MoqSessionError
@@ -310,6 +311,31 @@ async def test_playback_receipts_cannot_invent_completion(harness, fault):
     with pytest.raises(MoqSessionError):
         await h.watch('playback.finished', receipt)
     assert not h.session._response.finished.is_set()
+
+
+@pytest.mark.asyncio
+async def test_pacing_overrun_cancels_only_response_and_allows_fresh_clock(harness):
+    h = harness
+    await h.capture()
+    h.session.begin_downlink()
+    h.session.enqueue_downlink(b'\x04\x00'*320, 16000)
+    h.session.end_downlink()
+    async def overdue(): raise PacingOverrun()
+    h.session.downlink._pacer.wait = overdue
+    await h.prepare()
+    await h.bind()
+    await h.next_ipc('playback.cancel')
+    await h.next_control('playback.cancel')
+    assert await h.session.resume_after_downlink() is False
+    assert h.session.connected.is_set() and not h.session._fault.is_set()
+    h.session.begin_downlink()
+    h.session.enqueue_downlink(b'\x05\x00'*217, 16000)
+    h.session.end_downlink()
+    await h.prepare('2', '1')
+    await h.bind('2', '1')
+    _, _, pcm = await h.next_ipc('playback.pcm')
+    assert pcm == b'\x05\x00'*217
+    assert not h.session._fault.is_set()
 
 
 @pytest.mark.asyncio

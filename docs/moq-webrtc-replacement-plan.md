@@ -4,6 +4,37 @@ Created 2026-08-30 against library revision `f827391b839ef60d4d197bf0bc5fa135a0f
 
 Inputs: [integration-readiness review](moq-integration-readiness.md), [technical review](moq-esp32-technical-review.md), and [reproductions](review-evidence/moq-esp32-f827391/README.md). This document defines the complete scope and acceptance gates against the reviewed baseline. It is not a completion report: consult [implementation progress](moq-implementation-progress.md) for implemented changes, measured results, and remaining work.
 
+**Acceptance update, 2026-08-31 (explicit user direction):** ten minutes of
+successful operation is sufficient for the current replacement decision.
+Eight-hour endurance and 1,000-cycle tests are optional future hardening, not
+integration or cutover gates. Do not require a longer rerun merely because an
+older section or historical result used a longer duration. Completed longer
+tests remain useful evidence. Work resumed on 2026-08-31 at the user's request.
+Induced impaired-network testing is out of scope for initial replacement
+acceptance, including loss, delay, reordering, duplication and network-outage
+matrices. Existing failures remain recorded as deferred hardening; they are not
+relabelled as passes. Normal-network audio, security, lifecycle, physical
+controls/apps/sleep-wake, interoperability and release checks remain in scope.
+Nonzero Wi-Fi concealment/late counters alone are not failures. This update
+supersedes impaired-network gates elsewhere in this plan and older reports.
+See the [optional longer-test outline](moq-optional-endurance-tests.md).
+
+**Reference adoption update, 2026-08-31:** the user authorized the reviewed
+terminal-reader fix in the Rust host. The library-candidate requirement below
+now permits the exact pinned upstream revision plus this documented,
+hash-verified patch. This is an explicit exception to the earlier unmodified
+reference requirement, not a wire-protocol change or a claimed upstream fix.
+Retain the independent unchanged-reference peer/oracle and its known-failure
+reproduction. Patch and source provenance live in
+`libs/moq-esp32/third_party/moq-rust`; initial acceptance does not wait for an
+upstream merge. Ten-minute normal-network testing remains sufficient.
+
+Current resumed-work evidence: [initial acceptance checkpoint](implementation-evidence/2026-08-31-initial-acceptance/README.md).
+Physical signed app delivery now passes. Controls, actual app interaction and
+display sleep/wake still need hands-on observation. The remaining unchanged
+reference defect is receiver scheduling/terminal ownership, not the deferred
+network impairment matrix.
+
 The recorded foundation includes build/core/adapter corrections, an executable reference oracle, native QUIC and SETUP interoperability, and a physical Ultra memory probe. These results do not establish operational publication/subscription, audio, production authentication, or full-shell readiness. Preserve those results as regression coverage; close each remaining gate below without repeating completed work unnecessarily.
 
 ## 1. Objective and scope
@@ -12,7 +43,7 @@ Deliver a bounded, interoperable native MoQ/Hang client that carries bidirection
 
 Use two explicit acceptance milestones:
 
-- **Library candidate:** the Ultra publishes and consumes standard Hang/Opus through an unmodified pinned reference relay and peer, passes security and sustained-stream tests, and exposes a usable application API. This permits integration work, not automatic production cutover.
+- **Library candidate:** the Ultra publishes and consumes standard Hang/Opus through the pinned reference relay and peer, with the explicitly authorized terminal-reader patch permitted, passes security and sustained-stream tests, and exposes a usable application API. Unmodified-reference results remain separately identified. This permits integration work, not automatic production cutover.
 - **VoiceWatch replacement:** the complete Ultra shell, Wasm apps, control channel, live-agent audio, cancellation, reconnect, and package delivery pass together. This permits making MoQ the default for that board.
 
 Keep these decisions stable during the first migration:
@@ -148,11 +179,11 @@ Add a separate Ultra example profile with verified quad-PSRAM configuration and 
 Use two distinct tests:
 
 1. **Real relay handshake:** verify TLS/ALPN and native authenticated SETUP against the intended deployment and pinned-compatible relay. Include invalid certificate/hostname/ALPN cases against a controlled test endpoint.
-2. **Raw-QUIC stress peer:** open/complete/reset streams at 50 per second in each direction for 30 minutes, plus long-lived bidirectional control streams. This isolates transport turnover before full MoQ exists. It is not called MoQ interoperability evidence.
+2. **Raw-QUIC stress peer:** open/complete/reset streams at 50 per second in each direction for ten minutes, plus long-lived bidirectional control streams. This isolates transport turnover before full MoQ exists. It is not called MoQ interoperability evidence. The completed 30-minute run exceeds this duration requirement; repeating it is not required.
 
 Record internal free/minimum/largest block, PSRAM, task-stack watermarks, adapter pool use, backend allocations, loop latency, packet counts, RTT/loss, stream credits, and reset causes. Repeat failed/expired handshakes and reconnect cleanup.
 
-**Exit:** valid active firmware, successful verified handshake, at least 90,000 synthetic streams per direction without credit exhaustion/leaks, and measured resource headroom sufficient to proceed. If QUIC cannot meet that gate, fix its allocator/configuration/architecture before expanding into VoiceWatch.
+**Exit:** valid active firmware, successful verified handshake, at least 30,000 synthetic streams per direction over ten minutes without credit exhaustion or observed accumulating resource loss, and measured resource headroom sufficient to proceed. Existing 90,000-stream evidence exceeds the turnover count. If QUIC cannot meet that gate, fix its allocator/configuration/architecture before expanding into VoiceWatch.
 
 ## 6. Stage 4 — complete the MoQ client and freeze the application contract
 
@@ -296,13 +327,13 @@ These thresholds are proposed acceptance targets, not measurements. Freeze their
 | --- | --- |
 | Builds | Clean checkout, pinned submodules/dependencies, real nonempty-config firmware; default and negative configuration tests; recorded release binary hashes |
 | Protocol | Reproducible generated fixtures and both-direction reference decode; real standard relay/peer interoperability; no private framing or patched relay |
-| Stream turnover | 30 minutes at 50 audio groups/s **each direction**, at least 90,000 groups/direction plus catalogs/control; use synthetic encoded traffic for simultaneous network load without requiring acoustic full duplex |
-| Cycles/soak | 1,000 PTT/echo cycles plus eight-hour idle/reconnect run; no leaked slots, cumulative heap loss, watchdogs, crashes, or stale playback |
-| Loss/reordering | 0%, 1%, 3%, 5% induced packet loss at 30/60/120 ms RTT; also burst loss, delayed old groups, reorder, duplicates, and one stream deliberately flow-control-blocked |
+| Stream turnover | Ten minutes at 50 audio groups/s **each direction**, at least 30,000 groups/direction plus catalogs/control; the completed 30-minute/90,000-group run exceeds this requirement |
+| Short operational validation | Ten minutes of successful operation, including repeated voice turns, normal credential renewal and a deliberate reconnect; no crashes, watchdogs, stale playback, stuck media resources or observed accumulating resource loss. Eight-hour and 1,000-cycle tests are optional follow-up, not gates |
+| Loss/reordering (deferred) | Induced loss, delay, burst loss, reordering, duplication, outages and on-device blocked-stream network scenarios are optional hardening, outside initial replacement acceptance. Preserve existing protocol regression tests and failed-run evidence. |
 | Audio | Known speech/tone fixtures decode correctly; complete long response and final tail; expected timing and duration; impairment produces counted concealment/drops rather than stalled control or unbounded buffering |
 | Latency | Warm ready-session PTT-to-first-published-frame p95 <100 ms; first complete usable received frame to speaker start p95 <250 ms; local cancel-to-silence target <100 ms |
 | Connection latency | With Wi-Fi associated and credentials cached, initial QUIC+SETUP p95 target <500 ms; report media-ready separately and account for relay distance; first network provisioning measured separately |
-| Recovery | After an injected network restoration, usable media within 10 seconds when the configured relay/auth services are reachable; terminal auth failures visible instead of endless retries |
+| Recovery | Normal deliberate reconnect and sleep/wake recover without unintended recording or stale playback; terminal auth failures are visible. Injected network-outage recovery is deferred with impaired-network testing. |
 | Security | Certificate/hostname/ALPN and identity/scope negative tests reject correctly; token expiry/rotation and clock faults; no credential logs or anonymous fallback |
 | Memory | Start with 96 KiB minimum free internal SRAM and 32 KiB largest free internal block under full-shell stress; record every pool and stack high-water mark; re-budget explicitly if hardware feasibility disproves the target |
 | Allocation | No general-heap allocation in capture/encode/application packet handoff after warmup; backend allocation/reassembly is instrumented, bounded, and fails gracefully; no blanket zero-allocation claim based only on the TX pool |
@@ -311,6 +342,21 @@ These thresholds are proposed acceptance targets, not measurements. Freeze their
 | Full product | Watch face/launcher/app/Agents/Voice Orb, trusted actions, package download/install/launch and rollback work during/after media sessions; persistent data survives firmware rollback |
 
 At the impaired-network cells, reliability means bounded degradation and successful recovery, not an impossible promise of zero audible loss. Set a reference speech-quality threshold from measured baseline fixtures before accepting the audio candidate; packet counts alone are not an audio-quality metric. Under no induced impairment, no unexplained media loss, missing response tail, or underflow is acceptable after warmup.
+
+Interpretation clarified 2026-08-31 after the user's Wi-Fi question: no injected
+impairment does not imply a loss-free or jitter-free wireless path. Nonzero PLC
+and late-arrival counters alone neither establish an implementation defect nor
+fail product readiness. A concealed frame can subsequently arrive late, so
+those counters must not be added as independent losses. Keep a zero-concealment
+check as a strict delivery diagnostic, preserve its historical results, and
+separate it from speech quality, response integrity, bounded latency and recovery
+acceptance. Do not silently reclassify an existing failed run as a product pass.
+Investigate internal queue drops, growing delay, missing tails, prolonged gaps or
+quality regressions against the measured network baseline. Ordinary bounded
+network recovery is expected; eliminating every Wi-Fi concealment event is not
+the migration objective. The frozen speech-fixture requirements below remain
+unchanged. See [Opus PLC](https://www.rfc-editor.org/rfc/rfc6716.html#section-4.4)
+and [real-time media delay requirements](https://www.rfc-editor.org/rfc/rfc8836.html#section-2).
 
 Speech-fixture policy v1 is now frozen from the measured six-word baseline:
 “Please read my next exercise set.” requires zero word errors without induced
@@ -332,7 +378,7 @@ Store sanitized serial logs, metrics, fixture hashes, packet captures when appro
 | --- | --- | --- |
 | R1 configured link failure | Stage 1 TLS settings and active-path CI | Actual populated-config ELF links and contains handshake path |
 | R2 peer bidi replies | Stage 2 stream registry/send halves | Reply on the original peer stream; control request/response interop |
-| R3 credit exhaustion | Stage 2 per-stream retirement accounting | Concurrent cap preserved across 90,000+ remote groups |
+| R3 credit exhaustion | Stage 2 per-stream retirement accounting | Concurrent cap preserved across the ten-minute turnover test; existing 90,000-group evidence exceeds the required count |
 | R4 blocked-stream starvation | Stage 2 eligible-stream scheduler | New media/control progresses while old stream blocks/resets |
 | R5 receive mismatch | Stage 2 negotiated datagram bound and truncation handling | Oversize/probe input never parsed as a complete truncated datagram |
 | R6 callback reentrancy | Stage 2 deferred operations/events | No ngtcp2 writer inside a callback; safe immediate reply/reset/close requests |

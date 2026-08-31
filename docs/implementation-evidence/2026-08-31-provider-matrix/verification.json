@@ -1,0 +1,64 @@
+{
+  "configured_cells_exercised": 12,
+  "cells_passed": 11,
+  "cells_failed": [
+    "p101"
+  ],
+  "matrix_acceptance_pass": false,
+  "accepted_speech_turns": 33,
+  "failed_speech_turns": 1,
+  "complete_played_responses": 34,
+  "played_samples": 1435383,
+  "all_speaker_receipts_match": true,
+  "all_service_lifecycles_pass": true,
+  "all_component_shutdown_timeouts": 0,
+  "verified_idle_reconnects": 11,
+  "ngtcp2_peak_bytes": 42192,
+  "ngtcp2_denials": 0,
+  "ngtcp2_system_failures": 0,
+  "python_tests_passed": 369,
+  "python_warnings": 4,
+  "native_or_firmware_contracts_rerun": false,
+  "original_matrix_driver_exit_code": 1,
+  "remaining_cells_driver_exit_code": 0,
+  "bench_exit_codes": {
+    "p94": 0,
+    "p95": 0,
+    "p96": 0,
+    "p97": 0,
+    "p98": 0,
+    "p99": 0,
+    "p100": 0,
+    "p101": 1,
+    "p102": 0,
+    "p103": 0,
+    "p104": 0,
+    "p105": 0
+  },
+  "failed_cell_retried": false,
+  "freeze_policy_changed": false,
+  "permanent_enrollment": {
+    "permanent_enrollment_revision": 156,
+    "fresh_permanent_ready_observed": true,
+    "permanent_ready_monotonic_ms": 13579116.845,
+    "persistent_service_pids": {
+      "moq": 45731,
+      "moq_child": 45739,
+      "legacy": 2759
+    },
+    "production_host_updated": false,
+    "firmware_written": false,
+    "firmware_restoration_required": false
+  },
+  "full_goal_complete": false,
+  "remaining_reorder_duplicate_blocked_stream_gates_complete": false,
+  "full_physical_product_complete": false,
+  "source_snapshot_verified": true,
+  "logs_sha256": {
+    "python": "e3e120d0ce3c5f0163d70762a1c140e741315b96708d2db09d18a76de83f17d7"
+  },
+  "driver_sources_sha256": {
+    "voicewatch_provider_matrix_v2.py": "0a2c9365f824e64e58add5c5b797551759b725eb01a9cc00bc17875b0db420ae",
+    "voicewatch_provider_matrix_remaining.py": "2ba82b1b43fe09c995f1a6ce06915642dac0be9022996b98dec3b012699c4472"
+  }
+}

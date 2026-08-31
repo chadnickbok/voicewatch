@@ -17,6 +17,9 @@
 #include <atomic>
 #include <cstring>
 #include <new>
+#ifdef DOODAD_MOQ_STREAM_SOAK
+#include "stream_soak.h"
+#endif
 
 #ifdef DOODAD_MOQ_DIAGNOSTIC
 void voice_moq_diagnostic_pcm(const std::int16_t*, std::size_t);
@@ -36,7 +39,11 @@ struct CopiedSession {
     char host[254]{}, roots[8193]{}, path[3073]{};
     char local[257]{}, remote[257]{};
 };
-enum class Operation { connect, start, finish, receive, receive_end, context };
+enum class Operation { connect, start, finish, receive, receive_end, context
+#ifdef DOODAD_MOQ_STREAM_SOAK
+    , stream_soak, diagnostic_status
+#endif
+};
 struct Command {
     Operation operation{};
     std::uint64_t revision = 0;
@@ -60,6 +67,16 @@ Response g_latest_response{}, g_preserve_capture{};
 std::uint64_t g_preserve_revision=0;
 bool g_disconnect = false;
 std::atomic<bool> g_ready{false}, g_recording{false}, g_overflow{false}, g_initialization_failed{false};
+#ifdef DOODAD_MOQ_STREAM_SOAK
+std::atomic<bool> g_soak_active{false};
+#endif
+bool diagnostic_busy() {
+#ifdef DOODAD_MOQ_STREAM_SOAK
+    return g_soak_active.load();
+#else
+    return false;
+#endif
+}
 class Lock {
 public:
     Lock() { xSemaphoreTake(g_mutex, portMAX_DELAY); }
@@ -67,6 +84,11 @@ public:
 };
 
 struct Owner {
+    struct PlayoutFault {
+        std::uint64_t elapsed_us, samples, since_frame_us, frame_pts_us, step_gap_us;
+        std::uint64_t concealed, late, silence;
+        unsigned queued;
+    };
     twatch_ultra_t* board = nullptr; // Borrowed; the UI retains its shared I2C bus.
     esp_moq_endpoint_t* endpoint = nullptr;
     esp_moq_service_t* service = nullptr;
@@ -80,6 +102,10 @@ struct Owner {
     std::uint64_t publish = 0, receive = 0, first = 0, started_us = 0;
     std::uint64_t response_started_us = 0, received_frames = 0;
     bool reported_pressure = false;
+    std::uint64_t last_frame_us=0, last_frame_pts_us=0, max_frame_gap_us=0;
+    std::uint64_t last_playback_step_us=0, max_playback_step_gap_us=0;
+    std::uint64_t quality_events=0, last_quality_count=0;
+    PlayoutFault playout_faults[8]{};
     std::uint64_t expected_sample = 0, microphone_generation = 0;
     std::uint64_t response_floor = 0, capture_floor = 0;
     std::uint64_t samples = 0, finish_deadline = 0, last_level_us = 0;
@@ -100,6 +126,11 @@ struct Owner {
     std::int16_t pcm[ESP_MOQ_AUDIO_SAMPLES]{};
     twatch_ultra_microphone_chunk_t microphone{};
     bool have_microphone = false;
+#ifdef DOODAD_MOQ_STREAM_SOAK
+    esp_moq_stream_soak_t soak{};
+    std::uint64_t soak_report_us=0;
+    bool soak_reported=false;
+#endif
 };
 Owner* g_owner = nullptr;
 
@@ -130,10 +161,13 @@ void log_publisher_stats(Owner& o) {
         static_cast<unsigned long long>(s.control_deadlines),static_cast<unsigned long long>(s.control_tx_expired));
     if(o.endpoint) {
         esp_moq_endpoint_status_t endpoint{}; esp_moq_endpoint_status(o.endpoint,&endpoint);
-        ESP_LOGI(kTag,"transport pressure local=%llu credit=%llu blocks=%llu stopped=%u",
+        ESP_LOGI(kTag,"transport pressure local=%llu credit=%llu blocks=%llu stopped=%u flow=%llu wakes=%llu flow_stream=%llu",
             static_cast<unsigned long long>(endpoint.open_local_blocked),
             static_cast<unsigned long long>(endpoint.open_credit_blocked),
-            static_cast<unsigned long long>(endpoint.write_blocks_blocked),endpoint.blocked_stopped_high);
+            static_cast<unsigned long long>(endpoint.write_blocks_blocked),endpoint.blocked_stopped_high,
+            static_cast<unsigned long long>(endpoint.flow_control_blocked),
+            static_cast<unsigned long long>(endpoint.flow_control_wakeups),
+            static_cast<unsigned long long>(endpoint.last_flow_control_blocked_stream));
         ESP_LOGI(kTag,"owner timing at_ms=%llu gap_us=%llu service_us=%llu transport_us=%llu other_us=%llu wait_us=%llu rx_us=%llu tx_us=%llu dispatch_us=%llu",
             static_cast<unsigned long long>(endpoint.slowest_at_ms),static_cast<unsigned long long>(endpoint.slowest_gap_us),
             static_cast<unsigned long long>(endpoint.slowest_service_us),static_cast<unsigned long long>(endpoint.slowest_transport_us),
@@ -145,6 +179,12 @@ void log_publisher_stats(Owner& o) {
             static_cast<unsigned>(endpoint.quic_heap_limit),static_cast<unsigned>(endpoint.quic_heap_blocks),
             static_cast<unsigned long long>(endpoint.quic_heap_allocations),static_cast<unsigned long long>(endpoint.quic_heap_frees),
             static_cast<unsigned long long>(endpoint.quic_heap_denied),static_cast<unsigned long long>(endpoint.quic_heap_failures));
+        ESP_LOGI(kTag,"TLS heap valid=%u live=%u peak=%u limit=%u blocks=%u allocations=%llu frees=%llu denied=%llu failures=%llu",
+            static_cast<unsigned>(endpoint.tls_heap_valid),
+            static_cast<unsigned>(endpoint.tls_heap_live),static_cast<unsigned>(endpoint.tls_heap_peak),
+            static_cast<unsigned>(endpoint.tls_heap_limit),static_cast<unsigned>(endpoint.tls_heap_blocks),
+            static_cast<unsigned long long>(endpoint.tls_heap_allocations),static_cast<unsigned long long>(endpoint.tls_heap_frees),
+            static_cast<unsigned long long>(endpoint.tls_heap_denied),static_cast<unsigned long long>(endpoint.tls_heap_failures));
     }
 }
 void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
@@ -205,6 +245,16 @@ void fail(Owner& o, int result) {
 }
 
 void cancel_audio(Owner& o) {
+#ifdef DOODAD_MOQ_STREAM_SOAK
+    const bool interrupted=o.soak.started && !o.soak.done;
+    esp_moq_stream_soak_cancel(&o.soak);
+    if(interrupted) {
+        ESP_LOGE(kTag,"SOAK_FINAL pass=0 result=%d sent=%u received=%u would_block=%u microphone=0 speaker=0",
+            o.soak.result,o.soak.sent,o.soak.received,o.soak.tx_would_block);
+        o.soak_reported=true;
+    }
+    g_soak_active.store(false);
+#endif
     // API cancellation has already invalidated service commits and the board
     // FIFO. Stop/clear on the one audio owner before processing any new command.
     const bool had_capture=o.publish!=0;
@@ -246,6 +296,9 @@ void close_step(Owner& o) {
     emit(o,EventKind::disconnected);
 }
 void open_session(Owner& o, CopiedSession& copied) {
+#ifdef DOODAD_MOQ_STREAM_SOAK
+    o.soak={}; o.soak_reported=false; g_soak_active.store(false);
+#endif
     auto& s=copied.value;
     o.session=s.generation; o.failed=false; o.identity={}; o.response={}; o.response_floor=0;
     esp_moq_endpoint_config_t config{};
@@ -330,6 +383,9 @@ bool begin_response(Owner& o,const Response& response) {
     if (result) { fail(o,result); return true; }
     o.response=response; o.response_floor=response.response_id; o.samples=0;
     o.response_started_us=now_us(); o.received_frames=0; o.reported_pressure=false;
+    o.last_frame_us=o.last_frame_pts_us=o.max_frame_gap_us=0;
+    o.last_playback_step_us=o.max_playback_step_gap_us=0;
+    o.quality_events=o.last_quality_count=0;
     if (o.next_speaker_owner==UINT64_MAX) { fail(o,ESP_MOQ_ERR_VALUE_TOO_LARGE); return true; }
     o.speaker_owner=o.next_speaker_owner++;
     // The native producer primes an empty reset group. Acknowledge only after
@@ -345,6 +401,9 @@ void poll_service(Owner& o) {
         if (result==ESP_MOQ_ERR_WOULD_BLOCK) break;
         if (result) { fail(o,result); return; }
         if (e.type==ESP_MOQ_SERVICE_CONNECTED) o.connection=e.connection;
+#ifdef DOODAD_MOQ_STREAM_SOAK
+        if(esp_moq_stream_soak_event(&o.soak,&e,now_us())) continue;
+#endif
         if (e.type==ESP_MOQ_SERVICE_MEDIA_READY && e.media==o.receive && !e.cancelled) {
             ESP_LOGI(kTag,"response ready id=%llu elapsed_us=%llu first=%llu pts=%llu",
                 static_cast<unsigned long long>(o.response.response_id),
@@ -352,6 +411,9 @@ void poll_service(Owner& o) {
                 static_cast<unsigned long long>(o.response.first_group),
                 static_cast<unsigned long long>(o.response.pts_us));
             result=esp_moq_audio_player_begin(o.player,e.connection,e.media,&e.format);
+            // Use the upper end of the planned 60..80 ms startup range. This
+            // is fixed before the first frame; never stretch active playback.
+            if (!result) result=esp_moq_audio_player_prebuffer(o.player,80000);
             if (!result && o.response.has_timeline) {
                 result=esp_moq_audio_player_timeline(o.player,o.response.pts_us);
                 if (!result && o.response.has_end)
@@ -365,6 +427,9 @@ void poll_service(Owner& o) {
             if (e.type!=ESP_MOQ_SERVICE_FRAME || esp_moq_service_lease_valid(o.service,e.lease))
                 result=esp_moq_audio_player_push(o.player,&e,now_us());
             if (e.type==ESP_MOQ_SERVICE_FRAME) {
+                const auto arrived=now_us();
+                if (o.last_frame_us) o.max_frame_gap_us=std::max(o.max_frame_gap_us,arrived-o.last_frame_us);
+                o.last_frame_us=arrived; o.last_frame_pts_us=e.timestamp_us;
                 ++o.received_frames;
                 esp_moq_audio_stats_t audio{}; esp_moq_audio_player_stats(o.player,&audio);
                 if (o.received_frames<=3 || (!o.reported_pressure && audio.pressure)) {
@@ -517,6 +582,10 @@ bool commit(void* context) {
 }
 void playback_step(Owner& o) {
     if (!o.playing || !o.receive) return;
+    const auto stepped=now_us();
+    const auto step_gap=o.last_playback_step_us ? stepped-o.last_playback_step_us : 0;
+    o.max_playback_step_gap_us=std::max(o.max_playback_step_gap_us,step_gap);
+    o.last_playback_step_us=stepped;
     if (!o.pending) {
         const auto result=esp_moq_audio_player_render(o.player,now_us(),&o.chunk);
         if (!result) {
@@ -539,6 +608,17 @@ void playback_step(Owner& o) {
         }
     }
     esp_moq_audio_stats_t stats{}; esp_moq_audio_player_stats(o.player,&stats);
+    const auto quality=stats.concealed+stats.late+stats.silence;
+    if (quality!=o.last_quality_count) {
+        // Retain only eight numeric snapshots. No logging or allocation while
+        // audio is active; emit after speaker drainage so diagnostics do not
+        // themselves perturb the first failing packet deadline.
+        if (o.quality_events<8) o.playout_faults[o.quality_events]={
+            stepped-o.response_started_us,o.samples,
+            o.last_frame_us ? stepped-o.last_frame_us : 0,
+            o.last_frame_pts_us,step_gap,stats.concealed,stats.late,stats.silence,stats.packets};
+        ++o.quality_events; o.last_quality_count=quality;
+    }
     twatch_ultra_audio_stats_t io{}; twatch_ultra_audio_stats(o.board,&io);
     if (io.callback_fault) { fail(o,ESP_MOQ_ERR_INVALID_STATE); return; }
     if (stats.drained && !o.pending && o.receiving_end && (!o.speaker || io.speaker_drained)) {
@@ -554,6 +634,19 @@ void playback_step(Owner& o) {
             static_cast<unsigned long long>(stats.silence),
             static_cast<unsigned>(uxTaskGetStackHighWaterMark(nullptr)),static_cast<unsigned>(endpoint.network_stack_free),
             static_cast<unsigned>(endpoint.resolver_stack_free));
+        ESP_LOGI(kTag,"playout timing frames=%llu max_frame_gap_us=%llu max_step_gap_us=%llu quality_events=%llu",
+            static_cast<unsigned long long>(o.received_frames),static_cast<unsigned long long>(o.max_frame_gap_us),
+            static_cast<unsigned long long>(o.max_playback_step_gap_us),static_cast<unsigned long long>(o.quality_events));
+        for (unsigned i=0;i<8 && i<o.quality_events;++i) {
+            const auto& f=o.playout_faults[i];
+            ESP_LOGI(kTag,"playout fault elapsed_us=%llu samples=%llu since_frame_us=%llu frame_pts_us=%llu step_gap_us=%llu concealed=%llu late=%llu silence=%llu queued=%u",
+                static_cast<unsigned long long>(f.elapsed_us),static_cast<unsigned long long>(f.samples),
+                static_cast<unsigned long long>(f.since_frame_us),static_cast<unsigned long long>(f.frame_pts_us),
+                static_cast<unsigned long long>(f.step_gap_us),static_cast<unsigned long long>(f.concealed),
+                static_cast<unsigned long long>(f.late),static_cast<unsigned long long>(f.silence),f.queued);
+        }
+        log_publisher_stats(o);
+        ESP_LOGI(kTag,"playout diagnostics complete samples=%llu",static_cast<unsigned long long>(o.samples));
         o.receive=0; o.playing=o.speaker=o.receiving_end=false;
         { Lock lock; g_receive=0; }
     }
@@ -611,6 +704,39 @@ void audio_task(void*) {
                 }
                 if (command.revision!=revision) { wipe_free(command.config); continue; }
                 switch (command.operation) {
+#ifdef DOODAD_MOQ_STREAM_SOAK
+                case Operation::diagnostic_status: {
+                    twatch_ultra_audio_stats_t io{}; twatch_ultra_audio_stats(o.board,&io);
+                    esp_moq_service_stats_t stats{};
+                    if(o.service)esp_moq_service_stats(o.service,&stats);
+                    esp_moq_endpoint_status_t endpoint{};
+                    if(o.endpoint)esp_moq_endpoint_status(o.endpoint,&endpoint);
+                    ESP_LOGI(kTag,"MOQ_STATUS uptime_ms=%llu ready=%d microphone=%d speaker=%d publish=%d receive=%d leased=%u tx_queued=%u internal_free=%u internal_min=%u internal_largest=%u psram_free=%u audio_stack=%u network_stack=%u dns_stack=%u rx_owned=%u rx_high=%u tx_high=%u",
+                        static_cast<unsigned long long>(now_us()/1000),g_ready.load(),
+                        io.microphone_running,io.speaker_running,o.publish!=0,o.receive!=0,
+                        stats.rx_leased,stats.tx_queued,
+                        heap_caps_get_free_size(MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT),
+                        heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT),
+                        heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT),
+                        heap_caps_get_free_size(MALLOC_CAP_SPIRAM),static_cast<unsigned>(uxTaskGetStackHighWaterMark(nullptr)),
+                        static_cast<unsigned>(endpoint.network_stack_free),static_cast<unsigned>(endpoint.resolver_stack_free),
+                        stats.rx_owned,stats.rx_high_water,stats.tx_high_water);
+                    log_publisher_stats(o);
+                    break;
+                }
+                case Operation::stream_soak: {
+                    twatch_ultra_audio_stats_t io{}; twatch_ultra_audio_stats(o.board,&io);
+                    if(!g_ready.load() || o.publish || o.receive || io.microphone_running || io.speaker_running) {
+                        g_soak_active.store(false); ESP_LOGE(kTag,"SOAK_START denied=1"); break;
+                    }
+                    o.soak_reported=false; o.soak_report_us=now_us();
+                    const auto r=esp_moq_stream_soak_begin(&o.soak,o.service,o.connection,command.duration_ms,now_us());
+                    { Lock lock; g_publish=o.soak.publish; g_receive=o.soak.receive; }
+                    if(r)g_soak_active.store(false);
+                    ESP_LOGI(kTag,"SOAK_START groups=%u result=%d",command.duration_ms,r);
+                    break;
+                }
+#endif
                 case Operation::connect:
                     if (!o.endpoint) {
                         { Lock lock; g_disconnect=false; }
@@ -663,6 +789,29 @@ void audio_task(void*) {
             if (status.state==ESP_MOQ_ENDPOINT_CLOSED) fail(o,status.result ? status.result : ESP_MOQ_ERR_TRANSPORT);
             else {
                 poll_service(o);
+#ifdef DOODAD_MOQ_STREAM_SOAK
+                if(o.soak.started) {
+                    esp_moq_stream_soak_step(&o.soak,now_us());
+                    if((o.soak.done && !o.soak_reported) || (!o.soak.done && now_us()-o.soak_report_us>=30000000)) {
+                        esp_moq_service_stats_t stats{}; esp_moq_service_stats(o.service,&stats);
+                        ESP_LOGI(kTag,"SOAK_PROGRESS sent=%u received=%u next=%llu elapsed_ms=%llu internal_free=%u internal_min=%u internal_largest=%u psram_free=%u rx_high=%u tx_high=%u leased=%u",
+                            o.soak.sent,o.soak.received,static_cast<unsigned long long>(o.soak.rx_next),
+                            static_cast<unsigned long long>((now_us()-o.soak.started_us)/1000),
+                            heap_caps_get_free_size(MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT),heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT),
+                            heap_caps_get_largest_free_block(MALLOC_CAP_INTERNAL|MALLOC_CAP_8BIT),heap_caps_get_free_size(MALLOC_CAP_SPIRAM),
+                            stats.rx_high_water,stats.tx_high_water,stats.rx_leased);
+                        log_publisher_stats(o);o.soak_report_us=now_us();
+                        if(o.soak.done) {
+                            twatch_ultra_audio_stats_t io{}; twatch_ultra_audio_stats(o.board,&io);
+                            const bool pass=!o.soak.result && !stats.rx_leased && !io.microphone_running && !io.speaker_running;
+                            ESP_LOGI(kTag,"SOAK_FINAL pass=%d result=%d sent=%u received=%u would_block=%u microphone=%d speaker=%d",
+                                pass,o.soak.result,o.soak.sent,o.soak.received,o.soak.tx_would_block,io.microphone_running,io.speaker_running);
+                            o.soak_reported=true;g_soak_active.store(false);
+                            { Lock lock; g_publish=g_receive=0; }
+                        }
+                    }
+                }
+#endif
                 // Each DMA chunk is 10 ms, also one RTOS tick. Reading only one
                 // per tick cannot catch up after Opus/network work misses a tick.
                 // Drain at most the four board slots before yielding; command
@@ -751,7 +900,7 @@ bool renew(std::uint64_t session,std::uint64_t authorization_until,std::uint64_t
 }
 bool signal(Signal,const char*,std::size_t) { return false; }
 bool capture_begin(Identity identity,std::uint32_t duration_ms) {
-    if (!g_ready.load() || !identity.capture_id) return false;
+    if (!g_ready.load() || !identity.capture_id || diagnostic_busy()) return false;
     cancel();
     Command command{}; command.operation=Operation::start; command.identity=identity; command.duration_ms=duration_ms;
     return enqueue(command);
@@ -761,14 +910,14 @@ bool capture_finish() {
     return enqueue(command);
 }
 bool response_context_begin(Identity identity) {
-    if (!g_ready.load() || !identity.capture_id) return false;
+    if (!g_ready.load() || !identity.capture_id || diagnostic_busy()) return false;
     cancel();
     Command command{}; command.operation=Operation::context; command.identity=identity;
     return enqueue(command);
 }
 void cancel() { if (g_mutex) { Lock lock; invalidate_locked(); } }
 bool receive_begin(const Response& response) {
-    if (!g_ready.load() || !response.response_id || !response.identity.capture_id ||
+    if (!g_ready.load() || diagnostic_busy() || !response.response_id || !response.identity.capture_id ||
         (response.has_end && response.end_group<response.first_group)) return false;
     Command command{}; command.operation=Operation::receive; command.response=response;
     Lock lock;
@@ -796,4 +945,22 @@ void tick() {}
 bool poll(Event& event) { return g_events && xQueueReceive(g_events,&event,0)==pdTRUE; }
 bool ready() { return g_ready.load(); }
 bool recording() { return g_recording.load(); }
+#ifdef DOODAD_MOQ_STREAM_SOAK
+bool diagnostic_status_request() {
+    if(!g_mutex || !g_commands)return false;
+    Lock lock;
+    if(!g_ready.load() || g_disconnect || !g_service || g_soak_active.load())return false;
+    Command command{};command.operation=Operation::diagnostic_status;command.revision=g_revision;
+    return xQueueSend(g_commands,&command,0)==pdTRUE;
+}
+bool diagnostic_stream_soak_begin(std::uint32_t groups) {
+    if((groups!=500 && groups!=3000 && groups!=90000) || !g_mutex || !g_commands)return false;
+    Lock lock;
+    if(!g_ready.load() || g_disconnect || !g_service || g_publish || g_receive ||
+       g_soak_active.load() || uxQueueMessagesWaiting(g_commands))return false;
+    Command command{};command.operation=Operation::stream_soak;command.duration_ms=groups;command.revision=g_revision;
+    if(xQueueSend(g_commands,&command,0)!=pdTRUE)return false;
+    g_soak_active.store(true);return true;
+}
+#endif
 } // namespace doodad::voice_media

@@ -1,0 +1,12 @@
+{
+  "deployment_pass": true,
+  "endpoint_sha256": "c1ad00fec8f364ce1968a1e81f231f96620e513b4b6d83490d82efcbf5c9255e",
+  "fresh_watch_ready": true,
+  "startup_capture_events": 0,
+  "legacy_service_unchanged": true,
+  "firmware_changed": false,
+  "permanent_revision": 187,
+  "supervisor_pid": 83816,
+  "native_pid": 83827,
+  "previous_generation_retained": true
+}

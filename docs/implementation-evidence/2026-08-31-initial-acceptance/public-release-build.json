@@ -1,0 +1,13 @@
+{
+  "build_checks_pass": true,
+  "public_compile_profile": true,
+  "hardware_acceptance": false,
+  "image_bytes": 3363648,
+  "app_partition_bytes": 4194304,
+  "free_app_bytes": 830656,
+  "hashes": {
+    "doodad_runtime.bin": "7a65a063c2e16bb8b7c5a2629c9bff687da4648cad1345ec0177144819fce7a1",
+    "doodad_runtime.elf": "9ba0d82e9d4dfd86d12b20d434f0a8e7a204da910e1805bf4717129ee09bc2d6",
+    "doodad_runtime.map": "51fdfade5cd2e6d3c2b0037b06ae660bace63518098c2ef664a131d404843ec2"
+  }
+}

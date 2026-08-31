@@ -1,0 +1,122 @@
+{
+  "pass_": true,
+  "microphone_samples": 0,
+  "capture_events": 0,
+  "artifact_gets": 1,
+  "physical_launch_verified": false,
+  "generated_app_acceptance": false,
+  "firmware_restoration_required": false,
+  "permanent_enrollment_recovered": true,
+  "signed_private_https_install": true,
+  "duplicate_offer_no_fetch": true,
+  "telemetry": {
+    "display": [
+      {
+        "frames": 0,
+        "flushes": 0,
+        "avg_render_us": 0,
+        "max_render_us": 0,
+        "avg_flush_us": 0,
+        "max_flush_us": 0,
+        "touch_presses": 0,
+        "internal_free": 197727,
+        "internal_min": 86756,
+        "internal_largest": 96256,
+        "psram_free": 7674268
+      },
+      {
+        "frames": 0,
+        "flushes": 0,
+        "avg_render_us": 0,
+        "max_render_us": 0,
+        "avg_flush_us": 0,
+        "max_flush_us": 0,
+        "touch_presses": 0,
+        "internal_free": 134227,
+        "internal_min": 86756,
+        "internal_largest": 61440,
+        "psram_free": 7019560
+      },
+      {
+        "frames": 1,
+        "flushes": 6,
+        "avg_render_us": 109652,
+        "max_render_us": 109652,
+        "avg_flush_us": 4570,
+        "max_flush_us": 5533,
+        "touch_presses": 0,
+        "internal_free": 121631,
+        "internal_min": 86756,
+        "internal_largest": 49152,
+        "psram_free": 7014384
+      },
+      {
+        "frames": 1,
+        "flushes": 13,
+        "avg_render_us": 129585,
+        "max_render_us": 129585,
+        "avg_flush_us": 4861,
+        "max_flush_us": 6571,
+        "touch_presses": 0,
+        "internal_free": 151855,
+        "internal_min": 86756,
+        "internal_largest": 67584,
+        "psram_free": 7048032
+      },
+      {
+        "frames": 1,
+        "flushes": 0,
+        "avg_render_us": 0,
+        "max_render_us": 0,
+        "avg_flush_us": 0,
+        "max_flush_us": 0,
+        "touch_presses": 0,
+        "internal_free": 151855,
+        "internal_min": 86756,
+        "internal_largest": 67584,
+        "psram_free": 7048032
+      },
+      {
+        "frames": 0,
+        "flushes": 0,
+        "avg_render_us": 0,
+        "max_render_us": 0,
+        "avg_flush_us": 0,
+        "max_flush_us": 0,
+        "touch_presses": 0,
+        "internal_free": 151855,
+        "internal_min": 86756,
+        "internal_largest": 67584,
+        "psram_free": 7048032
+      },
+      {
+        "frames": 0,
+        "flushes": 0,
+        "avg_render_us": 0,
+        "max_render_us": 0,
+        "avg_flush_us": 0,
+        "max_flush_us": 0,
+        "touch_presses": 0,
+        "internal_free": 151855,
+        "internal_min": 86756,
+        "internal_largest": 67584,
+        "psram_free": 7048032
+      }
+    ],
+    "tls_heap": [
+      {
+        "valid": 1,
+        "live": 16595,
+        "peak": 49292,
+        "limit": 262144,
+        "blocks": 51,
+        "allocations": 151895,
+        "frees": 151844,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "firmware_fault": false
+  },
+  "permanent_revision": 185
+}

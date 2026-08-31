@@ -16,6 +16,10 @@ class AudioInterrupted(Exception):
     """The caller's audio generation was cancelled or replaced."""
 
 
+class PacingOverrun(AudioInterrupted):
+    """A contiguous media timeline fell beyond its 200 ms recovery budget."""
+
+
 @dataclass(frozen=True)
 class PcmPacket:
     generation: int
@@ -33,12 +37,14 @@ class _PacketPacer:
         frame_samples: int = 320,
         clock: Callable[[], float] | None = None,
         sleep: Callable[[float], Awaitable[None]] | None = None,
+        continuous_timeline: bool = False,
     ) -> None:
         self.sample_rate = sample_rate
         self.frame_samples = frame_samples
         self.frame_period = frame_samples / sample_rate
         self._clock = clock or time.monotonic
         self._sleep = sleep or asyncio.sleep
+        self._continuous_timeline = continuous_timeline
         self._last_emit_at: float | None = None
         self._last_pts: int | None = None
         self._next_deadline: float | None = None
@@ -58,15 +64,25 @@ class _PacketPacer:
         else:
             assert self._last_pts is not None
             assert self._next_deadline is not None
-            if now < self._next_deadline:
-                await self._sleep(self._next_deadline - now)
+            deadline = self._next_deadline
+            if self._continuous_timeline:
+                # MoQ carries contiguous PCM sample timestamps. Reanchoring
+                # after each scheduler slip would permanently consume receiver
+                # prebuffer. Recover at no more than two packets per 20 ms,
+                # without changing the original sample clock or replaying a
+                # large backlog after a provider/IPC/scheduler stall.
+                deadline = max(deadline, self._last_emit_at + self.frame_period / 2)
+            if now < deadline:
+                await self._sleep(deadline - now)
                 now = self._clock()
+            if self._continuous_timeline and now-self._next_deadline > .2:
+                raise PacingOverrun('continuous audio pacing deadline exceeded')
 
             # A scheduler slip under half a packet still leaves at least 10 ms
             # before the following deadline. Larger gaps are idle periods: move
             # the sample clock forward by wall time and start a fresh cadence rather
             # than emitting a catch-up burst.
-            reanchored = now - self._next_deadline >= self.frame_period / 2
+            reanchored = not self._continuous_timeline and now - self._next_deadline >= self.frame_period / 2
             if reanchored:
                 elapsed_samples = max(
                     self.frame_samples,
@@ -107,10 +123,12 @@ class PcmSpool:
         *,
         max_spool_seconds: int = _DEFAULT_MAX_SPOOL_SECONDS,
         pad_final_frame: bool = False,
+        continuous_timeline: bool = False,
     ) -> None:
         if max_spool_seconds <= 0:
             raise ValueError("max_spool_seconds must be positive")
         self._pad_final_frame = pad_final_frame
+        self._continuous_timeline = continuous_timeline
         self._changed = asyncio.Event()
         self._ended = False
         self._queued_samples = 0
@@ -126,6 +144,7 @@ class PcmSpool:
         self._pacer = _PacketPacer(
             sample_rate=self._SAMPLE_RATE,
             frame_samples=self._FRAME_SAMPLES,
+            continuous_timeline=continuous_timeline,
         )
         self._generation = 0
         self._pending_pcm = bytearray()
@@ -148,6 +167,11 @@ class PcmSpool:
         if not self._frames.empty() or self._inflight_generation == self._generation:
             raise RuntimeError("previous downlink utterance has not drained")
         self._generation += 1
+        if self._continuous_timeline:
+            # A new response owns a fresh clock, anchored on its first actual
+            # read after media readiness. A retired read may still be awaiting
+            # its old pacer; replacing the object fences that clock too.
+            self._pacer = _PacketPacer(continuous_timeline=True)
         self._ended = False
         self._utterance_active = True
         self._changed.set()

@@ -1,0 +1,55 @@
+{
+  "binaries": {
+    "firmware.bin": {
+      "sha256": "1836956cf1ff226a1255bdc6b19927b967cebb7b39808961bf315ddb52003739",
+      "bytes": 3429776
+    },
+    "host": {
+      "sha256": "509867ce858433ab1fbe85c2f0e91b92802aab754939aa9851c26231b73c42c4",
+      "bytes": 33770296
+    }
+  },
+  "p117_source_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "496b79085eb1f3f3776e114bb7fd74e3cac649d1a047e86a559c429c9b50fcf0",
+    "doodad-runtime/tools/moq_enroll.py": "2670ce46f7ebfc54443e533789264040ae58f0a5906ac1df3cfeb6af4931c6b4",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "0bd4ad295081d83e5b89a6c2443680107c73c667e572cccc08f7145790cf6b05",
+    "doodad-runtime/firmware/main/src/voice_moq_bootstrap.cpp": "9f12c61c887c0b3baa8a1e5c9753e739d1c0b0585864501da7e48dc51b1aa5c9",
+    "doodad-runtime/firmware/main/include/voice_media_transport.hpp": "88f053c41849b75073c35022325a31e25e6c763446caa755b8d5a6f0dde6f5e2",
+    "doodad-runtime/firmware/main/CMakeLists.txt": "9a125b393c44bf62d848dec82cd31727d43e80fd43c3526d4e3d7752ebeab6e8",
+    "libs/moq-esp32/tests/interop/stream_soak.c": "0fff173d7f164c9f06d5154aa1aeccb0347ad5ccb8ba7d18b1ca71c4696d2f55",
+    "libs/moq-esp32/tests/interop/stream_soak.h": "4495a5b9a7b62a40c1e18517166fda5536d7ec30f7a4c7f818e557c2d4a038b3",
+    "libs/moq-esp32/server/voice_agent/src/stream_soak.rs": "8d38d0c2a11a63ab1a124143558d2082307263083ec2864fcf5f1f0b7a96c11c",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "43fd79b889a46ef59bc09498708ad9eea460735597535dd4867a4afed4e5a448",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "2167849e2637f60e248251b531c70aab38763038f467b317e72d364188c35290",
+    "libs/moq-esp32/server/voice_agent/Cargo.toml": "6257dc2ebfc35fa866cac75952337fa2c7cca434df57a304bd4a3ccef6162ee4"
+  },
+  "p119_source_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "98aeef1a314eda87e8895d46a4aa7943b9d237fb243af4795b9a7c354ff95ad9",
+    "doodad-runtime/tools/moq_enroll.py": "2670ce46f7ebfc54443e533789264040ae58f0a5906ac1df3cfeb6af4931c6b4",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "0bd4ad295081d83e5b89a6c2443680107c73c667e572cccc08f7145790cf6b05",
+    "doodad-runtime/firmware/main/src/voice_moq_bootstrap.cpp": "9f12c61c887c0b3baa8a1e5c9753e739d1c0b0585864501da7e48dc51b1aa5c9",
+    "doodad-runtime/firmware/main/include/voice_media_transport.hpp": "88f053c41849b75073c35022325a31e25e6c763446caa755b8d5a6f0dde6f5e2",
+    "doodad-runtime/firmware/main/CMakeLists.txt": "9a125b393c44bf62d848dec82cd31727d43e80fd43c3526d4e3d7752ebeab6e8",
+    "libs/moq-esp32/tests/interop/stream_soak.c": "0fff173d7f164c9f06d5154aa1aeccb0347ad5ccb8ba7d18b1ca71c4696d2f55",
+    "libs/moq-esp32/tests/interop/stream_soak.h": "4495a5b9a7b62a40c1e18517166fda5536d7ec30f7a4c7f818e557c2d4a038b3",
+    "libs/moq-esp32/server/voice_agent/src/stream_soak.rs": "8d38d0c2a11a63ab1a124143558d2082307263083ec2864fcf5f1f0b7a96c11c",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "43fd79b889a46ef59bc09498708ad9eea460735597535dd4867a4afed4e5a448",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "2167849e2637f60e248251b531c70aab38763038f467b317e72d364188c35290",
+    "libs/moq-esp32/server/voice_agent/Cargo.toml": "6257dc2ebfc35fa866cac75952337fa2c7cca434df57a304bd4a3ccef6162ee4"
+  },
+  "current_source_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "ed250ceff90f2b9d966292be2f1bbab71c4eb7d38a0a0447d1d77449bef900ea",
+    "doodad-runtime/tools/moq_enroll.py": "2670ce46f7ebfc54443e533789264040ae58f0a5906ac1df3cfeb6af4931c6b4",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "a5f5d1459a875acaf067c5e7968b6a3ccbca630bcc8a9b0eeb6d79c8438ee3da",
+    "doodad-runtime/firmware/main/src/voice_moq_bootstrap.cpp": "70caff92efffa6d2afb8cff294cd63fa11fe1903a9981b3c58fb73481313630e",
+    "doodad-runtime/firmware/main/include/voice_media_transport.hpp": "d011ebf28d15047bde840b91ab5ac3bf7581496b7826857e363e82b0e468a514",
+    "doodad-runtime/firmware/main/CMakeLists.txt": "9a125b393c44bf62d848dec82cd31727d43e80fd43c3526d4e3d7752ebeab6e8",
+    "libs/moq-esp32/tests/interop/stream_soak.c": "0fff173d7f164c9f06d5154aa1aeccb0347ad5ccb8ba7d18b1ca71c4696d2f55",
+    "libs/moq-esp32/tests/interop/stream_soak.h": "4495a5b9a7b62a40c1e18517166fda5536d7ec30f7a4c7f818e557c2d4a038b3",
+    "libs/moq-esp32/server/voice_agent/src/stream_soak.rs": "8d38d0c2a11a63ab1a124143558d2082307263083ec2864fcf5f1f0b7a96c11c",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "43fd79b889a46ef59bc09498708ad9eea460735597535dd4867a4afed4e5a448",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "2167849e2637f60e248251b531c70aab38763038f467b317e72d364188c35290",
+    "libs/moq-esp32/server/voice_agent/Cargo.toml": "6257dc2ebfc35fa866cac75952337fa2c7cca434df57a304bd4a3ccef6162ee4"
+  },
+  "normal_host_sha256": "010cde30df80663c58fe26fca0b32d46f4092f0671bc59044ad2989b730ca880"
+}

@@ -82,6 +82,65 @@ async def nothing(): pass
 
 
 @pytest.mark.asyncio
+async def test_failed_playout_stops_bot_discards_history_and_recovers_once():
+    calls, pushed, audio = [], [], []
+    async def failed_drain(): return False
+    async def failed(): calls.append('failed')
+    async def pause(): calls.append('pause')
+    sink = ConversationSink(lambda pcm, _: audio.append(pcm), LatencyTrace(),
+                            nothing, nothing, nothing, failed_drain, pause)
+    sink.on_playout_failed = failed
+    async def push(frame, direction=FrameDirection.DOWNSTREAM): pushed.append(frame)
+    sink.push_frame = push
+    direction = FrameDirection.DOWNSTREAM
+    await sink.process_frame(TTSStartedFrame(context_id='failed'), direction)
+    await sink.process_frame(TTSAudioRawFrame(b'first', 16000, 1, context_id='failed'), direction)
+    await sink.process_frame(TTSTextFrame('unheard', aggregated_by='sentence', context_id='failed'), direction)
+    await sink.process_frame(TTSStoppedFrame(context_id='failed'), direction)
+    await sink.process_frame(TTSStoppedFrame(context_id='failed'), direction)
+    await sink.process_frame(TTSAudioRawFrame(b'late', 16000, 1, context_id='failed'), direction)
+    assert calls == ['failed']
+    assert not sink._tts_active and not sink._bot_speaking
+    assert not sink._pending_tts_text
+    assert audio == [b'first']
+    assert not any(isinstance(frame, (TTSTextFrame, TTSStoppedFrame)) for frame in pushed)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('replacement', ['new_tts', 'interruption', 'retirement'])
+async def test_late_failed_drain_cannot_recover_a_replacement(replacement):
+    from pipecat.frames.frames import InterruptionFrame
+    entered, release = asyncio.Event(), asyncio.Event()
+    calls = []
+    async def drain(): entered.set(); await release.wait(); return False
+    async def failed(): calls.append('failed')
+    sink = ConversationSink(lambda *_: 0, LatencyTrace(), nothing, nothing, nothing, drain, nothing)
+    sink.on_playout_failed = failed
+    async def push(*_): pass
+    sink.push_frame = push
+    direction = FrameDirection.DOWNSTREAM
+    await sink.process_frame(TTSStartedFrame(context_id='old'), direction)
+    task = asyncio.create_task(sink.process_frame(TTSStoppedFrame(context_id='old'), direction))
+    await asyncio.wait_for(entered.wait(), 1)
+    if replacement == 'new_tts':
+        await sink.process_frame(TTSStartedFrame(context_id='new'), direction)
+        await sink.process_frame(TTSTextFrame('new words', aggregated_by='sentence', context_id='new'), direction)
+    elif replacement == 'interruption':
+        # This component harness has no Pipecat task manager. Exercise the sink's
+        # interruption path without spawning the framework's processing worker.
+        sink._start_interruption = nothing
+        await sink.process_frame(InterruptionFrame(), direction)
+    else:
+        sink.retire()
+    release.set()
+    await task
+    assert not calls
+    if replacement == 'new_tts':
+        assert sink._tts_active
+        assert [frame.text for frame, _ in sink._pending_tts_text] == ['new words']
+
+
+@pytest.mark.asyncio
 async def test_sink_rejects_retired_provider_context_audio_text_and_stop():
     output, pushed = [], []
     sink = ConversationSink(lambda pcm, rate: output.append(pcm), LatencyTrace(),

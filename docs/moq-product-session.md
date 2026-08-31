@@ -1,5 +1,26 @@
 # MoQ product session checkpoint — 2026-08-30
 
+Latest update (2026-08-31): the reviewed terminal-reader patch is adopted and
+deployed in the Rust host. A ten-minute normal-network physical provider session
+passes three turns, cancellation, renewal and reconnect. Normal flash49 is
+unchanged; permanent enrollment is revision 187. See the
+[adoption evidence](implementation-evidence/2026-08-31-terminal-adoption/README.md)
+for exact coverage and remaining physical/resource limitations.
+
+Current acceptance direction (2026-08-31): work has resumed on physical
+controls/apps/sleep-wake, interoperability and release checks. Ten minutes is
+sufficient; longer endurance and induced impaired-network testing are deferred
+and do not gate initial replacement. Historical pause/failure notes below are
+retained without relabelling incomplete or failed tests as passes.
+
+Latest installed state: normal full-shell **flash49**, personal app installation
+enabled, permanent enrollment **185**. Signed private-CA HTTPS installation of
+the test Timer and duplicate-offer handling pass on the watch. Physical app
+interaction, button/touch behavior and sleep/wake still need observation.
+The current reference candidate passes but is not adopted; unchanged-reference,
+resource and release limitations are documented in the
+[initial acceptance checkpoint](implementation-evidence/2026-08-31-initial-acceptance/README.md).
+
 The live-agent service now has an explicit MoQ adapter connected to the existing
 conversation callbacks. This is a development mode, not the accepted replacement
 release. Host-initiated physical provider turns now pass through microphone,
@@ -17,7 +38,48 @@ HTTPS bootstrap and session-bound WSS control. It has been flashed and tested on
 the Ultra; see [hardware evidence](implementation-evidence/2026-08-30-ultra-authenticated-session/README.md)
 and [enrollment/run instructions](moq-ultra-enrollment.md) for the exact scope.
 
+The 2026-08-31 TLS checkpoint adds a 256 KiB aggregate wolfSSL request cap,
+including null-hint crypto allocations, alongside the separate ngtcp2 cap.
+Flash45 passes text/background output and clean/impaired physical provider
+turns with valid TLS snapshots and no allocation failure. This does not cover
+mbedTLS HTTPS/WSS, system/stack/UI memory or the complete product acceptance
+gate. See [allocation evidence](implementation-evidence/2026-08-31-tls-memory/README.md).
+
 ## Service selection
+
+The subsequent [stream-credit checkpoint](implementation-evidence/2026-08-31-blocked-stream/README.md)
+fixes unnecessary retries while a QUIC stream lacks byte credit. Flash46 passes
+five real-provider responses and reconnect, with exact completion receipts and
+final serial sample markers. One detailed serial statistics block is incomplete;
+complete quality counters and deliberately blocked on-device media are not
+claimed. Permanent enrollment is revision 169; host processes are unchanged.
+
+The later [delayed-group test](implementation-evidence/2026-08-31-group-delay/README.md)
+holds one Hang group for about 258 ms while fresh groups continue. The same
+flash46 image completes three real-provider turns with exact sample receipts,
+one concealed/late chunk and no queue-pressure drop or fallback silence.
+Permanent enrollment is now revision 171; firmware and persistent hosts are
+unchanged. This verifies one application-group delay case, not the full release
+matrix or physical QUIC byte-credit blocking.
+
+The [operational duplex soak](implementation-evidence/2026-08-31-stream-soak/README.md)
+adds a USB-started test workload to the full flash47 shell. Short 500/3,000-group
+exchanges pass with renewal, exact totals and permanent-host recovery. p119 then
+passes 90,000 groups each way over 30 minutes with 82 renewals and fresh-grant
+reconnect. The test opens neither microphone nor speaker and does not establish
+full product readiness. Permanent enrollment is verified at revision 177;
+persistent hosts remain unchanged.
+
+The [idle/reconnect checkpoint](implementation-evidence/2026-08-31-idle-soak/README.md)
+adds read-only owner status on flash48. Corrected smoke run p121 passes two
+minutes, renewal, planned/final reconnect and permanent-host recovery at
+revision 181. The independent audit retains an unexplained 16-byte internal-heap
+difference; cumulative recovery is not yet verified. The eight-hour p122 run
+was stopped at the user's request. Ten minutes is sufficient for current
+acceptance; longer endurance and 1,000-cycle testing are optional follow-up,
+not replacement gates. Further work is paused. No microphone or speaker was
+opened, no firmware was restored, and persistent hosts are unchanged. See the
+[optional longer-test outline](moq-optional-endurance-tests.md).
 
 WebRTC remains the default and its existing service is preserved. MoQ selection is explicit:
 
@@ -207,7 +269,14 @@ field, but starts no capture reader, decoder, microphone, synthetic PCM or STT
 commit. Text waits for authorization before entering the model pipeline. Idle
 background output uses the same path and retries pending attention when busy.
 
-The shared begin/enqueue/end API preserves the exact-tail PCM spool. Native
+The shared begin/enqueue/end API preserves the exact-tail PCM spool. MoQ uses
+a fresh contiguous pacing clock for each response, anchored on the first PCM
+read after media readiness. Small scheduler slips do not reanchor subsequent
+deadlines: catch-up is limited to one packet per 10 ms. More than 200 ms of
+pacing debt cancels that response through `playback.cancel` on both channels,
+without revoking the authenticated session. Retired awaits retain their old
+pacer object and cannot shift the next response's clock. WebRTC retains its
+existing wall-time pacing mode. Native
 response startup waits for capture validation or an acknowledged output-only
 context. Native `playback.prepared`
 supplies the response ID, first group and `pts_us`, the exact start timestamp of
@@ -253,6 +322,15 @@ releases the old wait. Native playback cancellation preserves the completed
 capture for a later, higher response ID. Stale receipts cannot activate/finish a
 replacement. Shared binding cleanup also cannot detach a newer utterance when
 an old playback wait returns.
+
+A failed transport drain also ends the sink's speaking lifecycle without
+committing unheard text or taking the successful natural-pause path. The owned
+MoQ failure callback fences the failed provider turn, queues interruption and
+returns Ready; generation and turn checks prevent stale recovery from resetting
+a replacement. Durable announcements remain pending. A controlled physical
+pacing stall plus three fresh turns verifies this recovery, while the combined
+packet-fault speech case remains failed; see
+[packet/recovery evidence](implementation-evidence/2026-08-31-packet-order/README.md).
 
 ## Scheduling, ownership and limits
 

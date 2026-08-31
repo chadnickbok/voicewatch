@@ -1,0 +1,31 @@
+{
+  "label": "p122",
+  "status": "interrupted_at_user_request",
+  "optional_test": true,
+  "requested_seconds": 28800,
+  "completed_requested_duration": false,
+  "last_idle_progress_ms": 574472,
+  "last_host_snapshot_ms": 574458,
+  "renewals_observed": 26,
+  "planned_reconnects_completed": 0,
+  "serial_snapshots": 114,
+  "microphone_samples": 0,
+  "internal_free_min": 164603,
+  "internal_free_max": 164603,
+  "firmware_written": false,
+  "firmware_restoration_required": false,
+  "permanent_recovery": {
+    "permanent_enrollment_revision": 183,
+    "fresh_permanent_ready_observed": true,
+    "permanent_ready_monotonic_ms": 21843182.757,
+    "persistent_services_alive": true,
+    "production_host_updated": false,
+    "firmware_restoration_required": false
+  },
+  "result_sha256": "fce583ab12eeaa03a7780c1dbe572f180b93f526aa1bc2cbc2a69e54ca26d385",
+  "classification": "user_interruption_not_product_failure",
+  "replacement_acceptance_seconds": 600,
+  "eight_hour_required": false,
+  "thousand_cycles_required": false,
+  "work_paused": true
+}

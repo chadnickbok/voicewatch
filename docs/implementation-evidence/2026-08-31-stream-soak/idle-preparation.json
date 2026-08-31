@@ -1,0 +1,21 @@
+{
+  "unit_tests_passed": 23,
+  "unit_log_sha256": "0b2d60910038563d9c68f9904c6be07577cdfc7b0f66acf2a1c6887d1d8e0358",
+  "firmware_built": false,
+  "hardware_validated": false,
+  "eight_hour_pass": false,
+  "scope": "Prepared after p119 started; not part of its installed image or running host",
+  "source_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_idle_soak.py": "5569274eb73c1be9d041c1d54d5b84a46589edf8d0892419ab576e71a234e4be",
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "ed250ceff90f2b9d966292be2f1bbab71c4eb7d38a0a0447d1d77449bef900ea",
+    "doodad-runtime/services/live-agent/tests/test_moq_idle_bench.py": "bdc959df879c4830fc8b0006f1ae1669d50053b129e0007e1e68ee653a146c3f",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "a5f5d1459a875acaf067c5e7968b6a3ccbca630bcc8a9b0eeb6d79c8438ee3da",
+    "doodad-runtime/firmware/main/src/voice_moq_bootstrap.cpp": "70caff92efffa6d2afb8cff294cd63fa11fe1903a9981b3c58fb73481313630e",
+    "doodad-runtime/firmware/main/include/voice_media_transport.hpp": "d011ebf28d15047bde840b91ab5ac3bf7581496b7826857e363e82b0e468a514"
+  },
+  "schedule_model_covers_seconds": [
+    120,
+    28800
+  ],
+  "schedule_model_is_hardware_evidence": false
+}

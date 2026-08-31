@@ -13,7 +13,8 @@ import time
 from pathlib import Path
 from typing import Any
 
-from zeroconf import IPVersion, ServiceInfo, Zeroconf
+from zeroconf import IPVersion, ServiceInfo
+from zeroconf.asyncio import AsyncZeroconf
 
 from .attention import AttentionBroker
 from .app_delivery import AppArtifactServer, AppReadyPublisher
@@ -83,10 +84,10 @@ def personal_trust_from_environment() -> PersonalTrustProfile | None:
     return PersonalTrustProfile.from_hex(owner_id, signer_key_id, key_hex)
 
 
-def advertise(ip: str, port: int, transport: str = 'webrtc') -> tuple[Zeroconf, ServiceInfo]:
+async def advertise(ip: str, port: int, transport: str = 'webrtc') -> tuple[AsyncZeroconf, ServiceInfo]:
     service = ServiceInfo(
         "_doodad-voice._tcp.local.",
-        ("Doodad MoQ Live Agent" if transport == 'moq' else "Doodad Live Agent") + "._doodad-voice._tcp.local.",
+        (f"Doodad MoQ Live Agent ({ip}:{port})" if transport == 'moq' else "Doodad Live Agent") + "._doodad-voice._tcp.local.",
         addresses=[socket.inet_aton(ip)],
         port=port,
         properties=({"path": "/v1/moq/control", "bootstrap": "/v1/moq/bootstrap",
@@ -94,8 +95,15 @@ def advertise(ip: str, port: int, transport: str = 'webrtc') -> tuple[Zeroconf, 
                     if transport == 'moq' else {"path": "/ws", "v": "1", "mode": "live-agent"}),
         server="doodad-live-agent.local.",
     )
-    zeroconf = Zeroconf(ip_version=IPVersion.V4Only)
-    zeroconf.register_service(service)
+    zeroconf = AsyncZeroconf(ip_version=IPVersion.V4Only)
+    try:
+        announcement = await zeroconf.async_register_service(service)
+        await announcement
+    except BaseException:
+        # Registration can reject a duplicate name or be cancelled at startup.
+        # Keep its socket/tasks owned until registration is complete.
+        await zeroconf.async_close()
+        raise
     return zeroconf, service
 
 
@@ -411,42 +419,51 @@ async def serve(arguments: argparse.Namespace) -> None:
             trace, on_audio, on_event, arguments.port,
             artifact_server=artifact_server,
         )
-    await transport.start()
-    zeroconf, service = await asyncio.to_thread(advertise, ip, arguments.port, arguments.transport)
-    print("Doodad Live Agent listening with authenticated MoQ/WSS" if moq_config is not None
-          else f"Doodad Live Agent listening at ws://{ip}:{arguments.port}/ws", flush=True)
-    print("Foreground model and provider keys loaded (values hidden).", flush=True)
-    print(
-        "Personal app delivery enabled."
-        if personal_trust is not None
-        else "Personal app delivery disabled; owner and key are not configured.",
-        flush=True,
-    )
+    zeroconf = service = None
     stopped = asyncio.Event()
     loop = asyncio.get_running_loop()
-    for sig in (signal.SIGINT, signal.SIGTERM):
-        try:
-            loop.add_signal_handler(sig, stopped.set)
-        except NotImplementedError:
-            pass
+    installed_signals = []
     try:
+        # Startup owns cleanup too: discovery can fail after listeners start.
+        await transport.start()
+        if not arguments.no_discovery:
+            zeroconf, service = await advertise(ip, arguments.port, arguments.transport)
+        print("Doodad Live Agent listening with authenticated MoQ/WSS" if moq_config is not None
+              else f"Doodad Live Agent listening at ws://{ip}:{arguments.port}/ws", flush=True)
+        print("Foreground model and provider keys loaded (values hidden).", flush=True)
+        print(
+            "Personal app delivery enabled."
+            if personal_trust is not None
+            else "Personal app delivery disabled; owner and key are not configured.",
+            flush=True,
+        )
+        for sig in (signal.SIGINT, signal.SIGTERM):
+            try:
+                loop.add_signal_handler(sig, stopped.set)
+                installed_signals.append(sig)
+            except NotImplementedError:
+                pass
         if parent_link is not None:
             await parent_link.ready(stopped)
+        trace.mark('service.ready', discovery=zeroconf is not None)
         await stopped.wait()
     finally:
+        for sig in installed_signals:
+            loop.remove_signal_handler(sig)
         if parent_link is not None:
             await parent_link.close()
         trace.mark("shutdown.started")
-        try:
-            await asyncio.wait_for(
-                asyncio.to_thread(zeroconf.unregister_service, service), 3
-            )
-        except TimeoutError:
-            trace.mark("shutdown.timeout", component="zeroconf.unregister")
-        try:
-            await asyncio.wait_for(asyncio.to_thread(zeroconf.close), 3)
-        except TimeoutError:
-            trace.mark("shutdown.timeout", component="zeroconf.close")
+        if zeroconf is not None:
+            try:
+                async with asyncio.timeout(3):
+                    announcement = await zeroconf.async_unregister_service(service)
+                    await announcement
+            except TimeoutError:
+                trace.mark("shutdown.timeout", component="zeroconf.unregister")
+            try:
+                await asyncio.wait_for(zeroconf.async_close(), 3)
+            except TimeoutError:
+                trace.mark("shutdown.timeout", component="zeroconf.close")
         try:
             await asyncio.wait_for(transport.close(), 8)
         except TimeoutError:
@@ -560,6 +577,8 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
     serve_parser.add_argument("--trace", type=Path, default=DEFAULT_TRACE)
     serve_parser.add_argument('--transport', choices=('webrtc', 'moq'), default='webrtc')
     serve_parser.add_argument('--moq-config', type=Path, help='owner-private MoQ host JSON configuration')
+    serve_parser.add_argument('--no-discovery', action='store_true',
+                              help='Disable mDNS advertisement; clients must use explicit endpoints')
     demo_parser = subparsers.add_parser("fake-demo")
     demo_parser.add_argument("--database", type=Path, required=True)
     subparsers.add_parser("check-config")

@@ -1,0 +1,11 @@
+# Compile-only inputs. Never flash this profile as a configured personal watch.
+# Append after sdkconfig.defaults and boards/t-watch-ultra/sdkconfig.defaults.
+CONFIG_DOODAD_VOICE_UPLINK=y
+CONFIG_DOODAD_VOICE_TRANSPORT_MOQ=y
+# CONFIG_DOODAD_VOICE_TRANSPORT_WEBRTC is not set
+CONFIG_DOODAD_WIFI_SSID="voicewatch-public-build-only"
+CONFIG_DOODAD_WIFI_PASSWORD="not-a-network-password"
+CONFIG_DOODAD_PERSONAL_APPS=y
+CONFIG_DOODAD_PERSONAL_OWNER_ID="public-build-owner"
+CONFIG_DOODAD_PERSONAL_SIGNER_KEY_ID="public-build-only"
+CONFIG_DOODAD_PERSONAL_HMAC_KEY_HEX="000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f"

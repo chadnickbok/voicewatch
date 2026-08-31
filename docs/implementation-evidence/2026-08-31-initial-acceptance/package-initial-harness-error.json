@@ -1,0 +1,11 @@
+{
+  "pass_": false,
+  "microphone_samples": 0,
+  "capture_events": 0,
+  "artifact_gets": 0,
+  "physical_launch_verified": false,
+  "generated_app_acceptance": false,
+  "firmware_restoration_required": false,
+  "permanent_enrollment_recovered": false,
+  "error_type": "ValueError"
+}

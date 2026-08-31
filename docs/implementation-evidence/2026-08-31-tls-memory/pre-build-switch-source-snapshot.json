@@ -1,0 +1,27 @@
+{
+  "root_base_revision": "fdeb92f1317f9219c54c2b007592f83b8f7c8eac",
+  "library_base_revision": "7101187a08620b0db1adf815d8f61f3d68e1b7d2",
+  "dirty_worktree": true,
+  "root_files_sha256": {
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/tls_memory.c": "ee97eac395c4d6575c6cea57b8dcfe3eb56c260102445eb9fa84fe09da7d713f",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/tls_memory.h": "5111cfc46d6171d7536e4c6fe8cf0822f4736c6ff9cfc657469f1e1a5e4c0d51",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "260eed1bacb689647d1797de241488c4e97e1573d6d87ec67b99eb17679008c3",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "7ad6e0524328abc6b347a5c2a0515168056f82a8e3aa7dd9878036582a22fb3e",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/CMakeLists.txt": "d066821f7aa3daab771e27815da4a97fde497fe6c59e864fadf6f1ffd99bc4e6",
+    "libs/moq-esp32/components/esp_moq_endpoint/src/endpoint.c": "9d35df0adcd56489dfb989b3cb295d154d076a00ab80c8b015737dbebbeae1cd",
+    "libs/moq-esp32/components/esp_moq_endpoint/include/esp_moq/endpoint.h": "3dab50a2fb78d74be4583fddce9d49d406a00a424a3ebeb4b9cefdb9b691db4e",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "e907ae7b7fc92a2413fda677e0858b4c0d23023063d982b2e0da25ee25091285",
+    "libs/moq-esp32/tests/interop/build.py": "37c7a5d90934d608491f75b0a13bd6725ac2d561e2cfcd5b14ef71a5bed30501",
+    "libs/moq-esp32/tests/interop/run.py": "c08c0e87029a7ceda0ea8cd1f078c25a282edf289e92d35f8f959ac6041e2949",
+    "libs/moq-esp32/tests/interop/client.c": "d3065017e8d2515ec709b4aa4aab3cba995065510a948b04851d084934c291f0",
+    "libs/moq-esp32/tests/interop/tls_heap_client.c": "af9ee5bcd5430a8a532c992cdbc760e429f43c80dc2892e4d9fff58ce9691420",
+    "libs/moq-esp32/tests/adapter/Makefile": "10bc723d4c9f505b331ee9ad3f419668c668b158933ff604d4d7b1cde220e434",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "884d9718738bfe6a836e71c4dffe6dc95ecc6709f5651f8a582971edb78bf100",
+    "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "d0e8edb216415edeb1a516cc8782318a2f5a757154f85ec16ac8aa73a6bb8e96"
+  },
+  "image_bytes": 3425872,
+  "image_sha256": "b8c746edd23c2b0040e4d29d7963a082972fc9501d09f055dcace99072e72188",
+  "elf_sha256": "d6e89449107a0d015af67312ed70dcb168729237e6fe46bf706c2109b48d1568",
+  "native_client_sha256": "01c8c7e85e0d3cba8db0f0147ebaa8b7961a133f207f35bd02281d4d3fc5786b",
+  "firmware": "flash45"
+}

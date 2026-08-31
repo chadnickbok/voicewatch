@@ -1,0 +1,26 @@
+{
+  "binaries": {
+    "firmware.bin": {
+      "sha256": "238113c2785f1d01f336cc84df1c896227bf1b4891566c8c63358f4090cc969f",
+      "bytes": 3430992
+    },
+    "normal-firmware.bin": {
+      "sha256": "94fd4535b791ebf26eb7e08bc808906252d944a8a0e2efeb6d650c0fd2f2c130",
+      "bytes": 3426192
+    },
+    "host": {
+      "sha256": "010cde30df80663c58fe26fca0b32d46f4092f0671bc59044ad2989b730ca880",
+      "bytes": 33606456
+    }
+  },
+  "source_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "ed250ceff90f2b9d966292be2f1bbab71c4eb7d38a0a0447d1d77449bef900ea",
+    "doodad-runtime/services/live-agent/tools/moq_idle_soak.py": "753006d235171792526bef403b554ca4d5361724196d8bbfa6e3ae9225cadefa",
+    "doodad-runtime/services/live-agent/tests/test_moq_idle_bench.py": "5c2ef06aa537222c295209f37401e3fe3cfa9bf8c94aa73ca2cd0bcfc4ecb3c6",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "a5f5d1459a875acaf067c5e7968b6a3ccbca630bcc8a9b0eeb6d79c8438ee3da",
+    "doodad-runtime/firmware/main/src/voice_moq_bootstrap.cpp": "70caff92efffa6d2afb8cff294cd63fa11fe1903a9981b3c58fb73481313630e",
+    "doodad-runtime/firmware/main/include/voice_media_transport.hpp": "d011ebf28d15047bde840b91ab5ac3bf7581496b7826857e363e82b0e468a514",
+    "doodad-runtime/firmware/main/CMakeLists.txt": "9a125b393c44bf62d848dec82cd31727d43e80fd43c3526d4e3d7752ebeab6e8",
+    "doodad-runtime/tools/moq_enroll.py": "2670ce46f7ebfc54443e533789264040ae58f0a5906ac1df3cfeb6af4931c6b4"
+  }
+}

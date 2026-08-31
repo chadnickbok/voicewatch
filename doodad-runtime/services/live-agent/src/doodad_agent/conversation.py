@@ -250,6 +250,7 @@ class ConversationSink(FrameProcessor):
         on_playout_drain: AsyncCallback,
         on_tts_stopped: AsyncCallback,
         *, require_capture: bool = False,
+        on_playout_failed: AsyncCallback | None = None,
     ) -> None:
         super().__init__()
         self.audio_sink = audio_sink
@@ -259,6 +260,7 @@ class ConversationSink(FrameProcessor):
         self.on_tts_started = on_tts_started
         self.on_playout_drain = on_playout_drain
         self.on_tts_stopped = on_tts_stopped
+        self.on_playout_failed = on_playout_failed
         self._first_tts_audio = True
         self._bot_speaking = False
         self._utterance_generation = 0
@@ -373,9 +375,21 @@ class ConversationSink(FrameProcessor):
             self.trace.mark("tts.stopped")
             generation = self._utterance_generation
             played = await self.on_playout_drain()
-            if played is False or not self._current(turn) or self._utterance_interrupted or generation != self._utterance_generation:
+            if not self._current(turn) or self._utterance_interrupted or generation != self._utterance_generation:
                 if generation == self._utterance_generation:
                     self._pending_tts_text.clear()
+                return
+            if played is False:
+                # Transport cancellation can happen without a user interruption
+                # (for example, bounded pacing debt). Retire only this utterance,
+                # and never commit its unplayed words or announce a natural pause.
+                self._tts_active = False
+                self._pending_tts_text.clear()
+                await self._broadcast_bot_stopped()
+                if (self._current(turn) and not self._utterance_interrupted
+                        and generation == self._utterance_generation
+                        and self.on_playout_failed is not None):
+                    await self.on_playout_failed()
                 return
             self._tts_active = False
             pending_text = self._pending_tts_text
@@ -547,6 +561,7 @@ class LiveConversation:
             self._drain_downlink,
             self._at_natural_pause,
             require_capture=self.explicit_capture,
+            on_playout_failed=self._playout_failed if self.explicit_capture else None,
         )
         self._sink = sink
         pipeline = Pipeline(
@@ -862,6 +877,25 @@ class LiveConversation:
             if self.attention.acknowledge(pending[1], int(time.time() * 1000)):
                 self.trace.mark('attention.spoken', kind_detail=pending[1].kind, job_id=pending[1].job_id)
         return played is not False and self._provider_current()
+
+    async def _playout_failed(self) -> None:
+        """Recover a cancelled MoQ response without acknowledging unheard output."""
+        if not self._provider_current() or self.voice_phase != "speaking":
+            return
+        turn = self._capture_turn
+        # Fence provider callbacks before yielding to pipeline interruption. The
+        # durable attention item remains pending; _invalidate_capture only drops
+        # its association with this failed delivery attempt.
+        self._invalidate_capture()
+        self._cancel_transcript_watchdog()
+        self.trace.mark("downlink.playout_failed")
+        if self.worker is not None:
+            await self.worker.queue_frame(InterruptionFrame())
+        if self._retired or turn is not self._capture_turn:
+            return
+        self.user_text = ""
+        self.assistant_text = ""
+        await self._set_voice_phase("ready")
 
     async def _at_natural_pause(self) -> None:
         if not self._provider_current():

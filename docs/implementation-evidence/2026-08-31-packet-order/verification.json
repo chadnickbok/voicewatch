@@ -1,0 +1,56 @@
+{
+  "bench_exit_codes": {
+    "p106": 0,
+    "p107": 0,
+    "p108": 0,
+    "p109": 0,
+    "p110": 1,
+    "p111": 0,
+    "p112": 1
+  },
+  "speech_matrix_p101_failure_preserved": true,
+  "combined_packet_case_pass": false,
+  "controlled_pacing_cancellation_recovery_pass": true,
+  "controlled_recovery_fresh_turns": 3,
+  "speech_policy_changed": false,
+  "firmware_changed": false,
+  "all_service_lifecycles_pass": true,
+  "all_completed_speaker_receipts_match": true,
+  "ngtcp2_peak_bytes": 37960,
+  "python_tests_passed": 384,
+  "python_warnings": 4,
+  "native_or_firmware_contract_tests_passed": 46,
+  "regression_before_failed": 3,
+  "regression_before_passed": 3,
+  "regression_after_tests_passed": 67,
+  "full_goal_complete": false,
+  "application_group_and_blocked_stream_complete": false,
+  "full_physical_product_complete": false,
+  "source_snapshot_verified": true,
+  "permanent_enrollment": {
+    "permanent_enrollment_revision": 164,
+    "fresh_permanent_ready_observed": true,
+    "permanent_ready_monotonic_ms": 14684350.447,
+    "persistent_service_pids": {
+      "moq": 45731,
+      "moq_child": 45739,
+      "legacy": 2759
+    },
+    "production_host_updated": false,
+    "firmware_written": false,
+    "firmware_restoration_required": false
+  },
+  "logs_sha256": {
+    "regression_before": "781492c429a34907b1118385f5fed63ba5d4aa17c3fdc9b3cf041a1d7b98cd58",
+    "regression_after": "938ffc5703ad2c7375f1612d231e40e193bead84bfb0087b83b4dea882e2ac45",
+    "python": "8de70754eb8397771e57ded43f616505125f9f7f25033a8736e85e8f92b55ec7",
+    "native_and_firmware_protocol": "c1eb63e3268020514b5ffff8a686fb31c48d2e2ceb18d2d23059ba985cdd8ce6",
+    "udp_regression_before": "17d47b6e599f83c4a7b12bb708424391136d147c5323b81cbb6879edb37e1872",
+    "udp_and_speech_regression_after": "7b5fe790ab62126aacb6727a1eefc4f7ba4f7c4fb32d71012ec85fe757b74927"
+  },
+  "driver_sources_sha256": {
+    "voicewatch_provider_packet_order.py": "73340faf6950a76115f35cca920bcde26ee4a7f936ff3c01facd3adb37893e94",
+    "voicewatch_packet_order_evidence.py": "b450fb39bd0d16472145ee43403fc35f6d9bbce12464987a6c022fe62a3671db",
+    "voicewatch_packet_order_reenroll.py": "7a6b2628c8bc50486dcdb5df66d57bf6062f43c6925a7115f6141d46a1d76403"
+  }
+}

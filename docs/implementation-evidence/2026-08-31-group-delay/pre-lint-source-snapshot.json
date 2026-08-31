@@ -1,0 +1,27 @@
+{
+  "dirty_worktree": true,
+  "root_base_revision": "fdeb92f1317f9219c54c2b007592f83b8f7c8eac",
+  "library_base_revision": "7101187a08620b0db1adf815d8f61f3d68e1b7d2",
+  "current_root_files_sha256": {
+    "libs/moq-esp32/server/voice_agent/Cargo.toml": "3f2021254cf0144d8d21ec5901007942cf2f33ef6f59633cf18e052c47f878fb",
+    "libs/moq-esp32/server/voice_agent/Cargo.lock": "f8e1620bb136d6cda56d90f3b64bc989b7b517ae618715e9d9522a6568a537dc",
+    "libs/moq-esp32/server/voice_agent/src/lib.rs": "d8568608b671e82e6ddfb423d0f7f06464bbb9cadefefe3dc970cbdae7b1d03f",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "95a9912fee9c46d3f29987a706e2688ea3468cf7d0f4cbc2e5f1b5521b1605aa",
+    "libs/moq-esp32/server/voice_agent/src/media.rs": "95473e84587cd80b7f1d295b342873c2bbc7bed0662b11f3e4e5210351707d7c",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "12727e0ad2f09aac412967a687184160d9e342582155506f8b448e9a0812a021",
+    "libs/moq-esp32/server/voice_agent/src/group_delay.rs": "a57007480af4d611365d084ea0030b7f2f20de1402f762596e1e7b28d6813d19",
+    "libs/moq-esp32/server/voice_agent/src/group_delay/tests.rs": "e30d6809d6111d3e672ed68b49efec256b4f6406df3db1f3f6d86a5a0963d0d1",
+    "libs/moq-esp32/server/voice_agent/src/capture_tests.rs": "1795e6dda261326bd0e0103092609cb2371375c8151d454b9302a6693ab7b5e9",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "95eaf81b723650af975e19fe733a04a7a248a1151792babe989bc141bc0ebae9",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "a7834454e4b46c6cc5365db39fb65be617a99931e8ca1cd0377e48cbeee85573"
+  },
+  "physical_endpoint_sha256": "435cd48054ef25400f6748c0904655e24bb85c3c5dfd147e5af88b255bf929bb",
+  "rebuilt_diagnostic_endpoint_sha256": "a78f7723370a5284139ee1ceaf916243a0f4b419b4f9fc8bfa5ce94dcbf4ab9a",
+  "default_endpoint_sha256": "8a04ca39f3aea11d4f25b96ff154b3c26432dfa957c0b799ff1cf707b393f393",
+  "physical_endpoint_equals_rebuilt": false,
+  "post_physical_build_cfg_test_added": true,
+  "post_run_missing_log_guard_added": true,
+  "physical_firmware": "flash46",
+  "firmware_sha256": "ed54ab69fb6b46b77c891739ec3c59251a60c98af0296d2e464d87d6d2445ef6",
+  "firmware_written_this_checkpoint": false
+}

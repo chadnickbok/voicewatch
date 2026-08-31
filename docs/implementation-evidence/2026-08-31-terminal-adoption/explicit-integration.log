@@ -1,0 +1,14 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/nickchadwick/Documents/voicewatch/doodad-runtime/services/live-agent
+configfile: pyproject.toml
+plugins: asyncio-1.1.0, anyio-4.14.2
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 62 items
+
+tests/moq_firmware_protocol.py ......................................... [ 66%]
+.............                                                            [ 87%]
+tests/moq_native_integration.py ......                                   [ 96%]
+tests/moq_supervisor_integration.py ..                                   [100%]
+
+============================= 62 passed in 11.73s ==============================

@@ -5,13 +5,13 @@ Board dependencies live in `libs/moq-esp32/boards/twatch_ultra/components` from
 the VoiceWatch workspace root. Pins and register-source revisions are locked
 there; the older T-Watch S3 driver is not used.
 
-The full native shell and WAMR recovery app now boot on the connected Ultra.
-The first offline image passed a one-minute heartbeat with package storage
-mounted without formatting. The internal media seam now has a MoQ audio owner
-and a private full-shell reference-echo diagnostic. Production authenticated
-control/host integration is still missing; the initial profile keeps voice disabled.
-Microphone capture never starts at boot. No voice-replacement acceptance claim
-is implied by a successful shell build or heartbeat.
+The full native shell, WAMR recovery app and authenticated MoQ voice path run
+on the connected Ultra. HTTPS bootstrap, WSS control, native QUIC, credential
+renewal and real provider voice turns have hardware evidence. The board defaults
+still leave voice disabled; enabling voice selects MoQ for the Ultra. Microphone
+capture never starts at boot. Physical controls/apps/sleep-wake and final release
+acceptance remain separate from a successful shell build or heartbeat. See the
+workspace's `docs/moq-implementation-progress.md` for current evidence and limits.
 
 Build from `doodad-runtime/firmware` with an isolated configuration:
 
@@ -26,6 +26,21 @@ idf.py -B "$BUILD_DIR" -D SDKCONFIG="$PRIVATE_DIR/sdkconfig" \
 
 Wi-Fi credentials belong in a private configuration, never in these defaults.
 The generated image then contains credentials and must stay outside Git.
+
+For a compile-only active MoQ path with populated public dummy Wi-Fi and personal
+package settings, append `boards/t-watch-ultra/sdkconfig.moq-ci.defaults` to
+`SDKCONFIG_DEFAULTS`, using a fresh build directory and SDKCONFIG. This exercises
+the configured application path without reading a developer's private sdkconfig.
+Do not flash the dummy profile. Keep diagnostic/stream-soak options off for the
+normal release build and inspect the ELF to confirm that MoQ, rather than
+`esp_peer`, supplies media.
+
+`python3 ../tools/verify_moq_release_build.py "$BUILD_DIR" --public-ci` checks
+this public profile, required linkage, certificate-time checking, size and the
+absence of synthetic diagnostics. It reads SDKCONFIG from the build directory
+and emits only build hashes/status, never its credential values. The root
+`.github/workflows/moq-ultra-release.yml` runs this complete-shell compile lane;
+its artifacts are compile-only and must not be flashed as a personal watch.
 
 The partition CSV matches the inspected connected board: app0/app1 are 4 MiB,
 NVS stays at 0x9000, OTA metadata at 0xe000 and existing `ffat` at 0x810000.

@@ -1,0 +1,20 @@
+[
+  {
+    "label": "public-source-export",
+    "image_sha256": "7a65a063c2e16bb8b7c5a2629c9bff687da4648cad1345ec0177144819fce7a1",
+    "elf_sha256": "9ba0d82e9d4dfd86d12b20d434f0a8e7a204da910e1805bf4717129ee09bc2d6",
+    "image_bytes": 3363648,
+    "partition_bytes": 4194304,
+    "esp_peer_symbols": false,
+    "synthetic_diagnostics": false
+  },
+  {
+    "label": "private-product",
+    "image_sha256": "48b2f30b6bd526b1c68e2e39a6ad7ee8ee6bcaa9070916533ad16f7540ec353e",
+    "elf_sha256": "b7cc0c2518f1eb82cab077aa3743d05bfc17dca286d331f5b360fa50e4f015d5",
+    "image_bytes": 3455344,
+    "partition_bytes": 4194304,
+    "esp_peer_symbols": false,
+    "synthetic_diagnostics": false
+  }
+]

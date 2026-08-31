@@ -1,0 +1,238 @@
+{
+  "p120": {
+    "requested_seconds": 120,
+    "elapsed_ms": 0,
+    "operational_checks_pass": false,
+    "findings": [
+      "runner_failed",
+      "duration_incomplete",
+      "missing_phase_events",
+      "reconnect_count",
+      "renewal_coverage",
+      "final_reconnect_coverage",
+      "missing_serial_snapshots",
+      "snapshot_duration_incomplete",
+      "missing_session_resource_snapshot"
+    ],
+    "eight_hour_protocol_verified": false,
+    "serial_snapshots": 1,
+    "host_snapshots": 1,
+    "maximum_serial_gap_ms": 0,
+    "reconnects": [],
+    "renewals_per_session": [],
+    "epochs": [],
+    "session_baseline_deltas": {},
+    "heaps": {
+      "quic": {
+        "samples": 2,
+        "peak": 30344,
+        "final_live": 24092
+      },
+      "tls": {
+        "samples": 2,
+        "peak": 49290,
+        "final_live": 16590
+      }
+    },
+    "cumulative_heap_recovery_verified": false,
+    "eight_hour_gate_complete": false,
+    "full_replacement_ready": false
+  },
+  "p121": {
+    "requested_seconds": 120,
+    "elapsed_ms": 120039,
+    "operational_checks_pass": true,
+    "findings": [],
+    "eight_hour_protocol_verified": false,
+    "serial_snapshots": 31,
+    "host_snapshots": 6,
+    "maximum_serial_gap_ms": 10127,
+    "reconnects": [
+      {
+        "at_ms": 60122,
+        "duration_ms": 6265
+      }
+    ],
+    "renewals_per_session": [
+      2,
+      2
+    ],
+    "epochs": [
+      {
+        "index": 0,
+        "samples": 2,
+        "first_elapsed_ms": 3031,
+        "last_elapsed_ms": 33088,
+        "resources": {
+          "internal_free": {
+            "first": 164635,
+            "last": 164635,
+            "minimum": 164635,
+            "maximum": 164635,
+            "last_minus_first": 0
+          },
+          "internal_min": {
+            "first": 99264,
+            "last": 99264,
+            "minimum": 99264,
+            "maximum": 99264,
+            "last_minus_first": 0
+          },
+          "internal_largest": {
+            "first": 79872,
+            "last": 79872,
+            "minimum": 79872,
+            "maximum": 79872,
+            "last_minus_first": 0
+          },
+          "psram_free": {
+            "first": 7014316,
+            "last": 7014980,
+            "minimum": 7014316,
+            "maximum": 7014980,
+            "last_minus_first": 664
+          },
+          "audio_stack": {
+            "first": 61172,
+            "last": 61172,
+            "minimum": 61172,
+            "maximum": 61172,
+            "last_minus_first": 0
+          },
+          "network_stack": {
+            "first": 6700,
+            "last": 6700,
+            "minimum": 6700,
+            "maximum": 6700,
+            "last_minus_first": 0
+          },
+          "dns_stack": {
+            "first": 2916,
+            "last": 2916,
+            "minimum": 2916,
+            "maximum": 2916,
+            "last_minus_first": 0
+          },
+          "native_rss_kib": {
+            "first": 18400,
+            "last": 18416,
+            "minimum": 18400,
+            "maximum": 18416,
+            "last_minus_first": 16
+          },
+          "service_rss_kib": {
+            "first": 62096,
+            "last": 62160,
+            "minimum": 62096,
+            "maximum": 62160,
+            "last_minus_first": 64
+          }
+        }
+      },
+      {
+        "index": 1,
+        "samples": 4,
+        "first_elapsed_ms": 72391,
+        "last_elapsed_ms": 120026,
+        "resources": {
+          "internal_free": {
+            "first": 164619,
+            "last": 164619,
+            "minimum": 164619,
+            "maximum": 164619,
+            "last_minus_first": 0
+          },
+          "internal_min": {
+            "first": 99264,
+            "last": 99264,
+            "minimum": 99264,
+            "maximum": 99264,
+            "last_minus_first": 0
+          },
+          "internal_largest": {
+            "first": 79872,
+            "last": 79872,
+            "minimum": 79872,
+            "maximum": 79872,
+            "last_minus_first": 0
+          },
+          "psram_free": {
+            "first": 7014996,
+            "last": 7015632,
+            "minimum": 7014996,
+            "maximum": 7015632,
+            "last_minus_first": 636
+          },
+          "audio_stack": {
+            "first": 61172,
+            "last": 61172,
+            "minimum": 61172,
+            "maximum": 61172,
+            "last_minus_first": 0
+          },
+          "network_stack": {
+            "first": 6908,
+            "last": 6908,
+            "minimum": 6908,
+            "maximum": 6908,
+            "last_minus_first": 0
+          },
+          "dns_stack": {
+            "first": 2916,
+            "last": 2916,
+            "minimum": 2916,
+            "maximum": 2916,
+            "last_minus_first": 0
+          },
+          "native_rss_kib": {
+            "first": 18848,
+            "last": 18848,
+            "minimum": 18848,
+            "maximum": 18848,
+            "last_minus_first": 0
+          },
+          "service_rss_kib": {
+            "first": 62336,
+            "last": 62544,
+            "minimum": 62336,
+            "maximum": 62544,
+            "last_minus_first": 208
+          }
+        }
+      }
+    ],
+    "session_baseline_deltas": {
+      "internal_free": [
+        0,
+        -16
+      ],
+      "psram_free": [
+        0,
+        652
+      ],
+      "native_rss_kib": [
+        0,
+        448
+      ],
+      "service_rss_kib": [
+        0,
+        240
+      ]
+    },
+    "heaps": {
+      "quic": {
+        "samples": 34,
+        "peak": 30344,
+        "final_live": 24092
+      },
+      "tls": {
+        "samples": 34,
+        "peak": 49413,
+        "final_live": 16596
+      }
+    },
+    "cumulative_heap_recovery_verified": false,
+    "eight_hour_gate_complete": false,
+    "full_replacement_ready": false
+  }
+}

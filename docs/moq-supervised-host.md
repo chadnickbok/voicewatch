@@ -11,6 +11,7 @@ Build the native endpoint from `libs/moq-esp32/server/voice_agent` with the pinn
 Rust toolchain and bundled C Opus configuration:
 
 ```sh
+python3 ../../tools/verify_moq_rust.py
 cargo test --locked
 cargo clippy --locked --all-targets -- -D warnings
 cargo build --locked --release --bin voicewatch-moq-endpoint
@@ -69,6 +70,11 @@ map into a new immutable configuration generation, then atomically replaces the
 supervisor profile. Previous native/config generations remain for deliberate
 rollback; there is no automatic rollback or garbage collection. These notices
 do not replace the full third-party license/distribution audit.
+
+The normal binary now selects the reviewed terminal-reader patch through the
+vendored Rust dependency and locked host build. Deployment also includes both
+upstream Rust licenses. Its wire reference remains unchanged; retaining the
+older binary/configuration generation permits a deliberate host rollback.
 
 MoQ has its own `dev.doodad.live-agent.moq` label, runtime/data beneath
 `~/Library/Application Support/Doodad/moq`, and logs beneath

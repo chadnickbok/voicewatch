@@ -1,0 +1,29 @@
+{
+  "root_base_revision": "fdeb92f1317f9219c54c2b007592f83b8f7c8eac",
+  "library_base_revision": "7101187a08620b0db1adf815d8f61f3d68e1b7d2",
+  "dirty_worktree": true,
+  "root_files_sha256": {
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "c1cba22af1379c655b7b5946a92c713918b94f86dac97582164932bd08f16170",
+    "doodad-runtime/services/live-agent/src/doodad_agent/audio.py": "63959d32eeea17e894af21273fd65e97ce54d1bd8bd710c0e4e40e1ee34af48e",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "b11f643be4192dd818e1c8a53b1ff1d10b1e36b4de7bba3c13f7e54467178f15",
+    "doodad-runtime/services/live-agent/tests/test_moq_pacing.py": "883633a97ccce1e8f27a9a4f0dd6a3159c2231e9d7113d3174ce50576424d7c6",
+    "doodad-runtime/services/live-agent/tests/test_moq_session.py": "95b6adcd6f9b442861178c4929505bd5c2d26d0626189cf67b5f24080d54a4e9",
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "509f8b158952fe8a77fd2f5ef44f8305db3c0084c4980b7be9db3d42d0557d44",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "6ae8b2c2962974b81099c8204f1880b9300584e12bbb8510528ec0a2326be45c",
+    "doodad-runtime/services/live-agent/tools/moq_speech_quality.py": "2266ba66621af92f37e682a974507beeab3ee5dd0cd5811c18c39fb9fdf32ac5",
+    "doodad-runtime/services/live-agent/tools/moq_udp_impairment.py": "19e432cda8ba9be5bbc6525cec86f89420275058b240231a64d7e07b31363043",
+    "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "79f6c20da9498f946b647cba6809a4e7167f1d2f9c9e1d2306c4dd8a547eb96d",
+    "doodad-runtime/services/live-agent/tests/test_service_lifecycle.py": "ca5c3403806383dd2248469c467602b5691d6aea9807bb1fedbe1f1f04557f31"
+  },
+  "library_files_sha256": {
+    "components/esp_moq_audio/include/esp_moq/audio.h": "ee2cf9db99bc9d0c72d21d1e8036591289a456fa04ab804194738775b2f13958",
+    "components/esp_moq_audio/src/player.c": "841f20875e29892a35d23cd442de24d3c0a2ad1e25d2b8b92170cdb2968eaaab",
+    "tests/audio/test_player.c": "cf43dbea25472b001dc3ed432dbf3a71c41a2ec94e8bd4225f7a70383c6b7b8e"
+  },
+  "native_endpoint_sha256": "6a4d12c2ce80ce1f3aa42aaaa8f93b8ad470d7567ccc35d7f7ab5735d9191df9",
+  "runs": [
+    "p91",
+    "p92",
+    "p93"
+  ]
+}

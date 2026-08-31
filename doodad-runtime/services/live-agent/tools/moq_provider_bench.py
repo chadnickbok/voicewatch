@@ -132,7 +132,8 @@ async def run(args):
                 event.get('transcript', ''), re.IGNORECASE))
                 for word in ('please', 'read', 'my', 'next', 'exercise', 'set')}
             quality = score_speech(event.get('transcript', ''),
-                                  impaired=bool(args.loss_percent or args.added_rtt_ms or args.capture_outage_ms))
+                                  impaired=bool(args.loss_percent or args.added_rtt_ms or args.capture_outage_ms
+                                                or args.packet_reorder_ms or args.packet_duplicate_every))
             result['fixture_quality'].append(quality)
             result['fixture_quality_pass'] = speech_quality_pass(result['fixture_quality'])
             mark('fixture_quality', **quality)
@@ -280,19 +281,27 @@ async def run(args):
         key = secrets.token_bytes(32)
         control, clock, media = port(socket.SOCK_STREAM), port(socket.SOCK_STREAM), port(socket.SOCK_DGRAM)
         backend_media = media
-        if args.loss_percent or args.added_rtt_ms or args.capture_outage_ms:
+        if (args.loss_percent or args.added_rtt_ms or args.capture_outage_ms
+                or args.packet_reorder_ms or args.packet_duplicate_every):
             from moq_udp_impairment import UdpImpairment
             backend_media = port(socket.SOCK_DGRAM)
             while backend_media == media: backend_media = port(socket.SOCK_DGRAM)
-            impairment = UdpImpairment(args.loss_percent, args.added_rtt_ms, args.loss_seed)
+            impairment = UdpImpairment(args.loss_percent, args.added_rtt_ms, args.loss_seed,
+                reorder_every=8 if args.packet_reorder_ms else 0,
+                reorder_delay_ms=args.packet_reorder_ms,
+                duplicate_every=args.packet_duplicate_every,
+                duplicate_delay_ms=5 if args.packet_duplicate_every else 0)
             await impairment.start(('0.0.0.0', media), ('127.0.0.1', backend_media))
         write(output/'devices.json', {device['device_id']: key.hex()})
         write(output/'host.json', dict(certificate=str(output/'server.pem'), private_key=str(output/'server.key'),
             device_keys=str(output/'devices.json'), ipc_socket=str(output/'media.sock'),
             public_host=args.host, media_port=media, time_port=clock))
-        write(output/'endpoint.json', dict(listen=f'0.0.0.0:{backend_media}', certificate=str(output/'server.pem'),
-            private_key=str(output/'server.key'), ipc_socket=str(output/'media.sock')))
-        arguments = main.parse_arguments(['serve', '--transport', 'moq', '--moq-config', str(output/'host.json'),
+        endpoint_config = dict(listen=f'0.0.0.0:{backend_media}', certificate=str(output/'server.pem'),
+            private_key=str(output/'server.key'), ipc_socket=str(output/'media.sock'))
+        if args.group_delay_ms:
+            endpoint_config['diagnostic_group_delay_ms'] = args.group_delay_ms
+        write(output/'endpoint.json', endpoint_config)
+        arguments = main.parse_arguments(['serve', '--transport', 'moq', '--no-discovery', '--moq-config', str(output/'host.json'),
             '--port', str(control), '--database', str(output/'bench.sqlite3'), '--trace', str(output/'trace.jsonl')])
         server_task = asyncio.create_task(main.serve(arguments))
         done, _ = await asyncio.wait({server_task, server_started}, timeout=15,
@@ -301,14 +310,59 @@ async def run(args):
             await server_task  # Preserve an actual startup failure instead of a misleading timeout.
             raise RuntimeError('provider service exited before readiness')
         server = await asyncio.wait_for(server_started, 15)
-        native = await child(ENDPOINT, '--config', output/'endpoint.json', logfile='native.log')
+        # A listening transport is not a fully started service. In particular,
+        # a discovery failure after start must not leave a bench using orphaned
+        # listeners while the owning serve task has already failed.
+        async with asyncio.timeout(15):
+            while True:
+                if server_task.done():
+                    await server_task
+                    raise RuntimeError('provider service exited before full readiness')
+                trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()] if (output/'trace.jsonl').exists() else []
+                if any(item['kind'] == 'service.ready' for item in trace):
+                    break
+                await asyncio.sleep(.02)
+        result['service_startup_completed'] = True
+        native = await child(args.endpoint or ENDPOINT, '--config', output/'endpoint.json', logfile='native.log')
         write(output/'profile.json', dict(v=1, revision=device['revision']+1, device_id=device['device_id'],
             host=args.host, control_port=control, time_port=clock, roots_pem=roots, key_hex=key.hex()))
         await usb('install', 'installed.json', '--profile', output/'profile.json')
-        await child(args.idf_python, ENROLL, 'monitor', '--port', args.port,
-                    '--output', output/'serial.log', '--seconds', '240', logfile='monitor.log')
+        monitor = await child(args.idf_python, ENROLL, 'monitor', '--port', args.port,
+                    '--output', output/'serial.log', '--seconds', str(max(240,args.session_seconds+180)), logfile='monitor.log')
         mark('enrolled')
         session = await asyncio.wait_for(ready.get(), 45)
+        session_started = time.monotonic()
+        renewal_base = session.renewals_completed
+        async def wait_in_session(until):
+            idle_samples = result['microphone_samples']
+            idle_captures = result['capture_started_events']
+            while time.monotonic() < until:
+                if (server_task.done() or native.returncode is not None or monitor.returncode is not None
+                        or server.sessions.get(device['device_id']) is not session
+                        or session._closed or session._fault.is_set()
+                        or result['microphone_samples'] != idle_samples
+                        or result['capture_started_events'] != idle_captures):
+                    raise RuntimeError('normal session observation invariant failed')
+                await asyncio.sleep(min(1,until-time.monotonic()))
+        if args.playout_stall_ms:
+            original_read = session.downlink.read
+            packets_read = 0
+            stall_pending = True
+            async def stalled_read(generation):
+                nonlocal packets_read, stall_pending
+                if stall_pending and packets_read == 8:
+                    stall_pending = False
+                    result['playout_stall_injected'] = True
+                    result['playout_stall_ms'] = args.playout_stall_ms
+                    mark('playout_pump_deliberately_stalled', delay_ms=args.playout_stall_ms)
+                    # Suspend only the media pump, keeping WSS, providers and
+                    # cleanup live. No microphone PCM is retained by this fault.
+                    await asyncio.sleep(args.playout_stall_ms / 1000)
+                packet = await original_read(generation)
+                if packet is not None:
+                    packets_read += 1
+                return packet
+            session.downlink.read = stalled_read
         # Provider start frames and STT session configuration are asynchronous.
         await asyncio.sleep(3)
         async def output_only_turn(kind):
@@ -393,7 +447,8 @@ async def run(args):
                     raise RuntimeError('fixture PCM format')
                 if source.getnframes() > 31 * 16000: raise RuntimeError('fixture PCM bound')
                 fixture_pcm = source.readframes(source.getnframes())
-        async def provider_turn(round_number, *, cancel_at_stt=False, cancel_at_tool=False, cancel_at_tts=False):
+        async def provider_turn(round_number, *, cancel_at_stt=False, cancel_at_tool=False, cancel_at_tts=False,
+                                expect_pacing_cancel=False):
             nonlocal saved_output, held_stt_final, held_tool_result
             captured.clear()
             capture_loss.clear()
@@ -488,6 +543,30 @@ async def run(args):
                         raise RuntimeError('spoken fixture produced an empty final transcript')
                     response = session._response
                     if (response is not None and response.number > previous_response
+                            and response.cancelled and response.done.is_set()):
+                        if not expect_pacing_cancel:
+                            raise RuntimeError('provider response was cancelled before completion')
+                        conversation = conversations[-1]
+                        if conversation.voice_phase != 'ready':
+                            await asyncio.sleep(.1)
+                            continue
+                        trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()[trace_base:]]
+                        overruns = [item for item in trace if item['kind'] == 'moq.playback_pacing_overrun']
+                        recoveries = [item for item in trace if item['kind'] == 'downlink.playout_failed']
+                        if (not result.get('playout_stall_injected') or len(overruns) != 1 or len(recoveries) != 1
+                                or session._fault.is_set() or response.finished.is_set()
+                                or server.sessions.get(device['device_id']) is not session
+                                or conversation._capture_open or conversation._capture_turn.live
+                                or spoken_history_count() != history_base or not result['fixture_quality_pass']
+                                or not any(item['kind'] == 'tool.end' and item.get('tool') == 'get_next_set' for item in trace)):
+                            raise RuntimeError('pacing cancellation did not retire only the failed response')
+                        result['playout_cancellation_recovered'] = True
+                        result['playout_cancellation_recovery_ms'] = round(recoveries[0]['monotonic_ms'] - overruns[0]['monotonic_ms'], 3)
+                        result['cancelled_turn_fixture_quality'] = list(result['fixture_quality'])
+                        result['cancelled_response_submitted_samples'] = response.samples
+                        mark('playout_cancellation_recovered_without_history')
+                        return
+                    if (response is not None and response.number > previous_response
                             and response.finished.is_set() and response.done.is_set()
                             and spoken_history_count() > history_base):
                         result['speaker_samples'] = response.samples
@@ -510,6 +589,10 @@ async def run(args):
             turn['spoken_history_messages_added'] = spoken_history_count() - history_base
             result['turns'].append(turn)
             mark('provider_turn_completed', **turn)
+            if expect_pacing_cancel:
+                raise RuntimeError('requested pacing cancellation was not observed')
+        if args.playout_stall_ms:
+            await provider_turn(0, expect_pacing_cancel=True)
         if args.cancel_first_stt:
             await provider_turn(0, cancel_at_stt=True)
         if args.cancel_first_tool:
@@ -543,6 +626,10 @@ async def run(args):
             loss_restored_at=restoration
             mark('provider_capture_loss_aborted_session_preserved')
         for round_number in range(1, args.capture_rounds + 1):
+            if args.session_seconds:
+                # Ordinary turns near the beginning, middle and end; no network
+                # manipulation. Idle time remains monitored and is labelled.
+                await wait_in_session(session_started+(round_number-1)*(args.session_seconds-60)/2)
             await provider_turn(round_number)
             if args.capture_outage_ms and result.get('capture_recovery_ms',10001)>10000:
                 raise RuntimeError('provider capture recovery exceeded ten seconds')
@@ -552,6 +639,13 @@ async def run(args):
             raise RuntimeError('missing tool cancellation evidence')
         if args.cancel_first_tts and not result.get('delayed_tts_frames_rejected'):
             raise RuntimeError('missing TTS cancellation evidence')
+        if args.session_seconds:
+            await wait_in_session(session_started+args.session_seconds)
+            result['normal_session'] = dict(elapsed_ms=round((time.monotonic()-session_started)*1000),
+                renewals=session.renewals_completed-renewal_base, turns=len(result['turns']),
+                includes_monitored_idle=True, network_impairment=False, physical_button_verified=False)
+            if result['normal_session']['renewals'] < 1:
+                raise RuntimeError('normal session did not renew')
         old_id = session.session_id
         await session.close(code=4000, message=b'provider bench replacement')
         replacement = await asyncio.wait_for(ready.get(), 25)
@@ -587,11 +681,23 @@ async def run(args):
             result['pass_'] = False
             mark('fixture_audio_restore_failed')
         if server_task is not None:
+            result['service_running_before_shutdown'] = not server_task.done()
             server_task.cancel()
             try:
-                await asyncio.wait_for(asyncio.gather(server_task, return_exceptions=True), 25)
+                outcomes = await asyncio.wait_for(asyncio.gather(server_task, return_exceptions=True), 25)
+                if any(isinstance(outcome, BaseException) and not isinstance(outcome, asyncio.CancelledError)
+                       for outcome in outcomes):
+                    result['service_shutdown_error'] = True
+                    result['pass_'] = False
             except TimeoutError:
                 result['shutdown_timeout'] = True
+                result['pass_'] = False
+            trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()] if (output/'trace.jsonl').exists() else []
+            result['service_shutdown_completed'] = any(item['kind'] == 'shutdown.completed' for item in trace)
+            result['service_shutdown_timeouts'] = sum(item['kind'] == 'shutdown.timeout' for item in trace)
+            if (not result['service_running_before_shutdown'] or not result['service_shutdown_completed']
+                    or result['service_shutdown_timeouts']):
+                result['pass_'] = False
         for process in reversed(children): await stop(process)
         if impairment is not None:
             impairment.close()
@@ -599,7 +705,27 @@ async def run(args):
             if any(v['pressure'] for v in impairment.stats.values()):
                 result['pass_'] = False
                 mark('impairment_fixture_pressure')
+            if ((args.packet_reorder_ms and not all(v['reordered'] for v in impairment.packet_faults.values()))
+                    or (args.packet_duplicate_every and not all(v['duplicated'] for v in impairment.packet_faults.values()))):
+                result['pass_'] = False
+                mark('requested_packet_fault_not_observed')
         for stream in streams: stream.close()
+        if args.group_delay_ms:
+            native_log = output/'native.log'
+            lines = native_log.read_text(errors='replace').splitlines() if native_log.exists() else []
+            diagnostics = [{key:int(n) for key,n in re.findall(r'\b([a-z_]+)=(\d+)',line)}
+                           for line in lines if line.startswith('MoQ group delay: ')]
+            result['group_delay_diagnostics'] = diagnostics
+            held = [d for d in diagnostics if d.get('held')]
+            released = [d for d in diagnostics if d.get('released')]
+            result['group_delay_verified'] = bool(len(held)==len(released)==1
+                and held[0].get('delay_ms') == args.group_delay_ms
+                and 0 < held[0].get('bytes', 0) <= 1275
+                and released[0].get('elapsed_us', 0) >= args.group_delay_ms * 1000
+                and released[0].get('fresh', 0) > 0
+                and any(d.get('fresh_before_release') and d.get('elapsed_us', args.group_delay_ms*1000) < args.group_delay_ms*1000 for d in diagnostics)
+                and not any(d.get('cancelled') for d in diagnostics))
+            if not result['group_delay_verified']: result['pass_'] = False
         try:
             if args.acoustic_analysis and acoustic_pcm and fixture_pcm:
                 from moq_acoustic_analysis import analyze
@@ -632,6 +758,10 @@ def main():
     parser.add_argument('--port', required=True)
     parser.add_argument('--host', required=True)
     parser.add_argument('--idf-python', type=Path, required=True)
+    parser.add_argument('--endpoint', type=Path,
+                        help='Explicit private test endpoint binary; the persistent service is unchanged')
+    parser.add_argument('--group-delay-ms', type=int, choices=(0, 250), default=0,
+                        help='Requires group-delay-fixture endpoint build; hold the eighth encoded group while fresh groups continue')
     parser.add_argument('--fixture-volume', type=int, help='Temporarily set Mac output volume for the spoken fixture, then restore it')
     parser.add_argument('--acoustic-analysis', action='store_true',
                         help='Compare bounded microphone PCM in memory with the synthetic fixture; save only numeric diagnostics')
@@ -639,16 +769,24 @@ def main():
                         help='Bench-only provider noise reduction experiment; does not change production defaults')
     parser.add_argument('--capture-rounds', type=int, default=1,
                         help='Repeat 1..3 complete provider turns in the same authenticated session')
+    parser.add_argument('--session-seconds', type=int, choices=(0,600), default=0,
+                        help='Observe ten minutes with three spaced ordinary turns, renewal and idle checks')
     parser.add_argument('--loss-percent', type=int, choices=(0, 1, 3, 5), default=0,
                         help='Seeded QUIC packet loss in each direction; WSS remains intact')
     parser.add_argument('--added-rtt-ms', type=int, choices=(0, 30, 60, 120), default=0,
                         help='Add half this delay to each UDP direction')
     parser.add_argument('--loss-seed', type=int, default=44)
+    parser.add_argument('--packet-reorder-ms', type=int, choices=(0, 40, 80, 250), default=0,
+                        help='Delay every eighth received UDP datagram that survives loss, in each direction')
+    parser.add_argument('--packet-duplicate-every', type=int, choices=(0, 7, 16), default=0,
+                        help='Duplicate every Nth received UDP datagram that survives loss, five milliseconds later')
     parser.add_argument('--text-first', action='store_true',
                         help='Require a real text/tool/TTS turn with no capture before microphone tests')
     parser.add_argument('--background-first', action='store_true',
                         help='Require an idle completion announcement from an isolated test job before microphone tests')
     faults = parser.add_mutually_exclusive_group()
+    faults.add_argument('--playout-stall-ms', type=int, choices=(0, 350), default=0,
+                        help='Stall the first response media pump after eight packets; require cancellation, Ready, no unheard history and fresh turns')
     faults.add_argument('--capture-outage-ms',type=int,default=0,
                         help='Before provider turns, require a loss-budget abort with no STT commit and same-session recovery')
     faults.add_argument('--cancel-first-stt', action='store_true',
@@ -660,13 +798,22 @@ def main():
     faults.add_argument('--cancel-first-background', action='store_true',
                         help='With background-first, cancel held real TTS and require the idle loop to retry the pending announcement')
     args = parser.parse_args()
+    if args.session_seconds and (args.capture_rounds != 3 or args.loss_percent or args.added_rtt_ms
+            or args.packet_reorder_ms or args.packet_duplicate_every or args.group_delay_ms
+            or args.capture_outage_ms or args.playout_stall_ms):
+        parser.error('ten-minute acceptance requires three turns and no induced impairment/stall')
+    if args.group_delay_ms and args.endpoint is None:
+        parser.error('group-delay-ms requires an explicit diagnostic endpoint binary')
+    if args.group_delay_ms and (args.playout_stall_ms or args.capture_outage_ms or args.cancel_first_stt
+            or args.cancel_first_tool or args.cancel_first_tts or args.cancel_first_background):
+        parser.error('group delay must be exercised separately from cancellation fixtures')
     if args.capture_outage_ms and (not 1 <= args.capture_outage_ms <= 2000 or args.acoustic_analysis):
         parser.error('capture-outage-ms must be 1..2000 and cannot be combined with acoustic analysis')
     if args.cancel_first_background and not args.background_first:
         parser.error('cancel-first-background requires background-first')
     if args.cancel_first_background and args.text_first:
         parser.error('cancel-first-background must run before any text/provider turn')
-    if (args.text_first or args.background_first) and (args.cancel_first_stt or args.cancel_first_tool or args.cancel_first_tts):
+    if (args.text_first or args.background_first) and (args.cancel_first_stt or args.cancel_first_tool or args.cancel_first_tts or args.playout_stall_ms):
         parser.error('output-only cases cannot be combined with capture-provider faults')
     if not 1 <= args.capture_rounds <= 3:
         parser.error('capture-rounds must be 1..3')

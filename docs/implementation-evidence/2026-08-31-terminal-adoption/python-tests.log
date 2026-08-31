@@ -1,0 +1,64 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.12.12, pytest-8.4.2, pluggy-1.6.0
+rootdir: /Users/nickchadwick/Documents/voicewatch/doodad-runtime/services/live-agent
+configfile: pyproject.toml
+testpaths: tests
+plugins: asyncio-1.1.0, anyio-4.14.2
+asyncio: mode=Mode.STRICT, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 434 items
+
+tests/test_app_delivery.py ............                                  [  2%]
+tests/test_capabilities.py ....                                          [  3%]
+tests/test_capture_pipeline.py ............................              [ 10%]
+tests/test_capture_stt.py ...........................                    [ 16%]
+tests/test_codex_protocol.py ..                                          [ 16%]
+tests/test_codex_work_worker.py ..                                       [ 17%]
+tests/test_codex_worker.py ........                                      [ 19%]
+tests/test_contracts.py ...                                              [ 19%]
+tests/test_controller.py .....                                           [ 20%]
+tests/test_conversation.py .............                                 [ 23%]
+tests/test_jobs_attention.py ....                                        [ 24%]
+tests/test_main_config.py ........                                       [ 26%]
+tests/test_moq_acceptance_scope.py ........                              [ 28%]
+tests/test_moq_acoustic_analysis.py ......                               [ 29%]
+tests/test_moq_deploy.py ....                                            [ 30%]
+tests/test_moq_host.py .............................................     [ 41%]
+tests/test_moq_idle_audit.py ...................                         [ 45%]
+tests/test_moq_idle_bench.py .......................                     [ 50%]
+tests/test_moq_pacing.py ...                                             [ 51%]
+tests/test_moq_renewal.py .............                                  [ 54%]
+tests/test_moq_service.py ...................                            [ 58%]
+tests/test_moq_session.py .............................................. [ 69%]
+..                                                                       [ 70%]
+tests/test_moq_speech_quality.py ...............                         [ 73%]
+tests/test_moq_supervisor.py ..................                          [ 77%]
+tests/test_moq_time.py .........                                         [ 79%]
+tests/test_moq_udp_impairment.py ..............                          [ 82%]
+tests/test_parallel_agent_e2e.py .                                       [ 83%]
+tests/test_personal_bundle.py .................                          [ 87%]
+tests/test_provider_session.py ..........                                [ 89%]
+tests/test_ptt_boundaries.py ......                                      [ 90%]
+tests/test_response_context.py ................                          [ 94%]
+tests/test_service_lifecycle.py ......                                   [ 95%]
+tests/test_storage.py .                                                  [ 96%]
+tests/test_transport.py .................                                [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/pipecat/audio/utils.py:14
+  /Users/nickchadwick/Documents/voicewatch/doodad-runtime/services/live-agent/.venv/lib/python3.12/site-packages/pipecat/audio/utils.py:14: DeprecationWarning: 'audioop' is deprecated and slated for removal in Python 3.13
+    import audioop
+
+<frozen abc>:106
+  <frozen abc>:106: DeprecationWarning: `AudioContextTTSService` is deprecated since 0.0.105 and will be removed in 2.0.0. Use `WebsocketTTSService` instead.
+
+<frozen abc>:106
+  <frozen abc>:106: DeprecationWarning: `SpeechTimeoutUserTurnStopStrategy` overrides `reset`, which is deprecated since 1.6.0 and will be removed in 2.0.0. Override `handle_user_turn_started` and `handle_user_turn_stopped` instead.
+
+tests/test_jobs_attention.py::test_fake_worker_focus_restart_and_one_time_completion
+  /Users/nickchadwick/Documents/voicewatch/doodad-runtime/services/live-agent/src/doodad_agent/storage.py:347: RuntimeWarning: coroutine 'FrameProcessor.__process_frame_task_handler' was never awaited
+    self.connection.execute("BEGIN IMMEDIATE")
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+======================= 434 passed, 4 warnings in 11.25s =======================

@@ -1,0 +1,22 @@
+{
+  "flash42": {
+    "image_sha256": "dee2b08b573b028768821778b5b5770a1a74968cdd4d30eb25fcc0528a8022ec",
+    "changed_offset": 65536,
+    "changed_span": 3436544,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "prebuffer_us": 60000
+  },
+  "flash43": {
+    "image_sha256": "173e7de0b3df5e698b9adcdf143990f6c1bb89cbbb40caf01070300e6ca2b650",
+    "changed_offset": 65536,
+    "changed_span": 3436544,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "prebuffer_us": 80000,
+    "image_bytes": 3433664,
+    "elf_sha256": "2e7e292df2df3ddd8ceac21b3b20f3f9fef6884a4bf149db218c306ab36b6970"
+  }
+}

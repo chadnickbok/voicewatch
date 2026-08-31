@@ -1,0 +1,17 @@
+{
+  "image_sha256": "ed54ab69fb6b46b77c891739ec3c59251a60c98af0296d2e464d87d6d2445ef6",
+  "changed_offset": 65536,
+  "changed_span": 3428352,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "[host] uptime heartbeat; free heap:",
+  "image_bytes": 3426192,
+  "elf_sha256": "5cf99276a1e5beef0f10b76abf0c1dfc95fd1bf3da562d8d2d5f33792d637632",
+  "active_partition_bytes": 4194304,
+  "logs_sha256": {
+    "result.json": "5e00787d21ab59371562e4b2b23f28a0230f7be3d961fc70398c4d8997b7c8f6",
+    "serial.log": "0ca391967b615cc2f0b32428973a0d44d8339cc80abea54801a278a1f40dc8a2",
+    "flash.log": "3e7ce89e17529bac57bbdea21e9a153c8d2176436ba362c16836c2467a64f030"
+  }
+}

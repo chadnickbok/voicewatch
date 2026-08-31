@@ -1,4 +1,7 @@
 #include "voice_moq_bootstrap.hpp"
+#ifdef DOODAD_MOQ_STREAM_SOAK
+#include "voice_media_transport.hpp"
+#endif
 #include "board.hpp"
 #include "network_service.hpp"
 #include "driver/usb_serial_jtag.h"
@@ -143,6 +146,18 @@ void usb_enrollment(void* argument) {
                     const bool ok=install(line+11,used-11);
                     std::printf("\nVWMOQ1 %s revision=%u\n",ok?"OK":"DENIED",static_cast<unsigned>(revision.load()));
                 }
+#ifdef DOODAD_MOQ_STREAM_SOAK
+                else if(!overflow && std::strcmp(line,"VWMOQ1 STATS")==0) {
+                    const bool ok=doodad::voice_media::diagnostic_status_request();
+                    std::printf("\nVWMOQ1 STATS %s\n",ok?"OK":"DENIED");
+                }
+                else if(!overflow && std::strncmp(line,"VWMOQ1 SOAK ",12)==0) {
+                    const char* value=line+12;
+                    const unsigned groups=std::strcmp(value,"500")==0?500:std::strcmp(value,"3000")==0?3000:std::strcmp(value,"90000")==0?90000:0;
+                    const bool ok=groups && doodad::voice_media::diagnostic_stream_soak_begin(groups);
+                    std::printf("\nVWMOQ1 SOAK %s groups=%u\n",ok?"OK":"DENIED",groups);
+                }
+#endif
                 wipe(line,8193); used=0; overflow=false;
             } else if (!overflow && used<8192) line[used++]=c;
             else overflow=true;
@@ -199,6 +214,17 @@ bool init() {
 #endif
 }
 std::uint32_t profile_revision() { return revision.load(); }
+bool artifact_trust(const char* url,const char* digest,ArtifactTrust& out) {
+    wipe(&out,sizeof(out));
+    if (!saved || !mutex || xSemaphoreTake(mutex,pdMS_TO_TICKS(100))!=pdTRUE) return false;
+    const bool ok=revision.load()!=0 && clock_valid() && artifact_url(*saved,url,digest);
+    if (ok) {
+        std::memcpy(out.roots,saved->roots,sizeof(out.roots));
+        out.revision=revision.load();
+    }
+    xSemaphoreGive(mutex);
+    return ok;
+}
 bool authorization_rejected() { return rejected; }
 bool clock_valid() {
     const auto now=mono_ms(), since=clock_mono.load(), until=clock_until.load();

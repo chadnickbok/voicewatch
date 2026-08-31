@@ -3,6 +3,8 @@
 
 Never flashes or erases firmware. Profile/key material and raw serial stay in
 owner-private files, never arguments or terminal output. No firmware restore.
+The optional soak command explicitly starts synthetic duplex traffic in a test
+build and owns serial observation until completion; never pair it with monitor.
 """
 import argparse
 import json
@@ -73,16 +75,43 @@ def info(link):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('command', choices=('info', 'install', 'monitor'))
+    parser.add_argument('command', choices=('info', 'install', 'monitor', 'soak'))
     parser.add_argument('--port', required=True)
     parser.add_argument('--profile', type=Path)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--seconds', type=int, default=90)
+    parser.add_argument('--groups', type=int, choices=(500,3000,90000), default=500,
+                        help='Explicit synthetic duplex test; requires a stream-soak firmware build')
     args = parser.parse_args()
     if not 1 <= args.seconds <= 3600:
         parser.error('monitor duration out of range')
     os.umask(0o077)
     with connect(args.port) as link:
+        if args.command == 'soak':
+            send(link, f'VWMOQ1 SOAK {args.groups}\n'.encode('ascii'))
+            deadline = time.monotonic() + args.seconds
+            pending = bytearray()
+            accepted = False
+            with args.output.open('xb') as stream:
+                while time.monotonic() < deadline:
+                    chunk = link.read(4096)
+                    stream.write(chunk); stream.flush(); pending.extend(chunk)
+                    ack = re.search(rb'VWMOQ1 SOAK (OK|DENIED) groups=([0-9]+)', pending)
+                    if ack:
+                        if ack[1] != b'OK' or int(ack[2]) != args.groups:
+                            raise RuntimeError('USB synthetic test rejected')
+                        accepted = True
+                    final = re.search(rb'SOAK_FINAL pass=([01]) result=(-?[0-9]+) sent=([0-9]+) received=([0-9]+)', pending)
+                    if final:
+                        if (not accepted or final[1] != b'1' or int(final[3]) != args.groups
+                                or int(final[4]) != args.groups):
+                            raise RuntimeError('synthetic stream soak failed')
+                        print('USB synthetic stream soak completed', flush=True)
+                        return
+                    if any(marker in pending for marker in (b'Guru Meditation',b'abort() was called',b'assert failed')):
+                        raise RuntimeError('firmware fault during stream soak')
+                    del pending[:-8192]
+            raise TimeoutError('synthetic stream soak observation timed out')
         if args.command == 'monitor':
             with args.output.open('xb') as stream:
                 until = time.monotonic() + args.seconds

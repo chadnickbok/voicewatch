@@ -1,0 +1,22 @@
+{
+  "source_snapshot_not_commit": true,
+  "root_head": "fdeb92f1317f9219c54c2b007592f83b8f7c8eac",
+  "library_head": "7101187a08620b0db1adf815d8f61f3d68e1b7d2",
+  "ngtcp2_head": "f9e9ff01ad2c8116bc09de4f644b0028a61486a6",
+  "file_hashes": {
+    "doodad-runtime/firmware/dependencies.lock": "38234e5f299c5147d703eac6f0e0196e543e22f64540bc3b6a0aca1e7bf55b28",
+    "doodad-runtime/Cargo.lock": "8aea148cd7dd6f48cdc622e03334c204d4e60172f1470e8143515a442ab68507",
+    "doodad-runtime/services/live-agent/uv.lock": "cee4c3d923672a407aec281dd24adc0e2f6b8975c12fc3dce6b2eb08cbe888fc",
+    "libs/moq-esp32/server/voice_agent/Cargo.lock": "f8e1620bb136d6cda56d90f3b64bc989b7b517ae618715e9d9522a6568a537dc",
+    "libs/moq-esp32/compatibility/moq-dev.lock.json": "b269c0f189cab611b4aefefda8878ef77a2d861b26cb9391be04de7762927b40",
+    "libs/moq-esp32/third_party/zlib/provenance.json": "da07c372031200af142c7fdc9b65beb3c189a50a83fb5191092bb024f661bb70",
+    "libs/moq-esp32/tests/interop/dependencies.json": "4b328cd79cc6ef5268e6f6c2e21f5ea8dcf2b8ddec99af7595850501f155107c"
+  },
+  "clean_source_export_manifest_sha256": "987e8e1c10b3bc1835bd09c31b8b88bc935b86aec4fa6f2a343aa5f0fbab0b51",
+  "backend_license_decision": "GPL-3.0-or-later already recorded; no root/core license assigned",
+  "remote_ci_for_current_snapshot": false,
+  "private_image_published": false,
+  "library_root_license_selected": false,
+  "working_tree_changes_committed": false,
+  "full_native_ubsan_pass": true
+}

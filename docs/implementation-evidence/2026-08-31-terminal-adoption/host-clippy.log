@@ -1,0 +1,9 @@
+    Checking kio v0.5.6 (/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/third_party/moq-rust/rs/kio)
+   Compiling voicewatch-moq-endpoint v0.1.0 (/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/server/voice_agent)
+    Checking moq-net v0.2.15 (/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/third_party/moq-rust/rs/moq-net)
+    Checking hang v0.20.7 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+    Checking moq-loc v0.2.2 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+    Checking moq-json v0.3.6 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+    Checking moq-mux v0.9.10 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+    Checking moq-audio v0.0.20 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 4.11s

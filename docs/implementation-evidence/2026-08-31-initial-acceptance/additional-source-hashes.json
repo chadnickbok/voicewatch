@@ -1,0 +1,7 @@
+{
+  ".github/workflows/moq-ultra-release.yml": "c6a00fb1b9313410fae09a451b0ec3723c5aac20b59df20c219e6bfb06aeeb1f",
+  "doodad-runtime/tools/verify_moq_release_build.py": "1435af743d041b98518b048b1a090377e50769938e0955fa563ca9466fb0e9fe",
+  "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "d18e9d3a54154e4a47031c0d484a63705c989195d015c4fd7295ae5749dfafc1",
+  "doodad-runtime/services/live-agent/tests/test_service_lifecycle.py": "90d0329ff2622eecacf6c91491b32bf2c103eff86e5e43129162840d58ba0ae2",
+  "libs/moq-esp32/tests/interop/peer/src/blocked.rs": "5e5e456ae9f8cb723d8d9221c73ee986d34b4803f08aeb44ed031ce9880ede2c"
+}

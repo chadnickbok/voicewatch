@@ -89,5 +89,11 @@ void tick();
 bool poll(Event& event);
 bool ready();
 bool recording();
+#ifdef DOODAD_MOQ_STREAM_SOAK
+// Physical USB test only; existing authenticated endpoint, no acoustic I/O.
+bool diagnostic_stream_soak_begin(std::uint32_t groups);
+// Read-only owner snapshot for idle/endurance tests; never opens audio.
+bool diagnostic_status_request();
+#endif
 
 }  // namespace doodad::voice_media

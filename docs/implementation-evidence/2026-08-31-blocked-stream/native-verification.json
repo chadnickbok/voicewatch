@@ -1,0 +1,32 @@
+{
+  "native_peer_cases": 44,
+  "ubsan_peer_cases": 22,
+  "allocator_self_tests_per_suite": 2,
+  "blocked_cases_passed": 6,
+  "native_valid_streams_per_direction": 60000,
+  "ubsan_valid_streams_per_direction": 30000,
+  "native_tracked_tls_cleanup_verified": true,
+  "portable_host_adapter_audio_tests_pass": true,
+  "adapter_stream_lifetimes": 200000,
+  "python_tests_passed": 384,
+  "python_warnings": 4,
+  "native_firmware_protocol_tests_passed": 46,
+  "asan_gate_complete": false,
+  "application_group_delay_gate_complete": false,
+  "physical_blocked_stream_gate_complete": false,
+  "full_goal_complete": false,
+  "logs_sha256": {
+    "native_results": "234707b69e4f13512f1bb3f69a042f112feacb39ea9ae835e2dbccf401b84a9c",
+    "native_run": "1d3a348e619cd29d9d74bdd32f334526485f315df639228d3f84cf902d25ad50",
+    "ubsan_results": "e83c6d71ea7ff7e15e07a6f99cd24f817d38354b7be1fbd96411186201e4c788",
+    "ubsan_run": "1d3a348e619cd29d9d74bdd32f334526485f315df639228d3f84cf902d25ad50",
+    "adapter": "06fd2513c9f24ba7ff7b95481b49c23ffe90355971e32aa606ed77f35b797c4f",
+    "host": "012f20255c17b094de84fb9208828336c5fc5de9712d2020c0aa7006c6939d00",
+    "audio": "e1b91e6a3c419070fc4c9cc1944dab40b3ba120283c453457b35e28ee7d2792a",
+    "python": "2803033378cb3ecf958265a06800ca19b6670250dab21cbbe0fb6a9ab7e8e6ad",
+    "protocol": "fc1c7e89e879b3c7b2461a8c811c621bd2756accfc0f133725ad359a530107f5",
+    "native_build": "b65743776c47e93f0a3bdd6ee1a438bb86dac0b17e7172eb505d43bdff711df0",
+    "ubsan_build": "2ea8680b945b1529502185881107aa4fcf75bc527ef3533c2a680f3ac8b1972c",
+    "firmware_build": "b22e0e38f2e05371e5e71626e5197a861325e3d175121f42dd1ec061fcedcc1b"
+  }
+}

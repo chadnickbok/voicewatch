@@ -1,0 +1,27 @@
+{
+  "running_firmware_or_host_modified": false,
+  "clock_tests_are_hardware_evidence": false,
+  "tests": {
+    "moq-idle-audit-tests.log": {
+      "passed": 42,
+      "warnings": 0,
+      "log_sha256": "fbc4c3f218c85940bd658d4001984aed2771cc182b0080756f7cf07de51227bb"
+    },
+    "moq-idle-audit-full-tests.log": {
+      "passed": 426,
+      "warnings": 4,
+      "log_sha256": "9a711854002ccfbcd583c192596eca165d6733b6fc45ae7ec21c5419a184f0df"
+    }
+  },
+  "audit_source_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_idle_audit.py": "27bf7266812b4022cff663598872cca59b82ff6a2fae841bf7c493667c9720ba",
+    "doodad-runtime/services/live-agent/tests/test_moq_idle_audit.py": "f2b98a132f2f1c57d9480d5b89735ee61ed3eb34867af0ccec70525ebb44c715"
+  },
+  "sanitizer_environment_probe": {
+    "workload_started": false,
+    "asan_pass": false,
+    "probe_sha256": "7f279e3eea6e5468149ee0222608fbae38cd26a709584ef82bba331813dd091c",
+    "owned_probe_cancelled": true,
+    "unrelated_services_modified": false
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "firmware_fault": false,
+  "display_samples": 303,
+  "minimum_internal_bytes": 84604,
+  "speaker_samples": 127079,
+  "microphone_samples": 234240,
+  "physical_buttons_verified": false,
+  "pcm_saved": false
+}

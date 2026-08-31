@@ -1,0 +1,34 @@
+{
+  "c_host_suites": 7,
+  "real_opus_player_and_capture_pass": true,
+  "player_ubsan_pass": true,
+  "macos_asan_reached_main": false,
+  "linux_sanitizer_probe_started": false,
+  "linux_probe_container_removed": true,
+  "remote_ci_run": false,
+  "python_and_firmware_protocol_tests_passed": 242,
+  "real_native_product_cases_passed": 6,
+  "firmware_heartbeat_pass": true,
+  "continuous_600_second_receipt": true,
+  "long_clean_audio_pass": false,
+  "permanent_enrollment_revision": 135,
+  "fresh_permanent_ready_observed": true,
+  "persistent_service_pids": {
+    "moq": 45731,
+    "legacy": 2759
+  },
+  "production_host_updated": false,
+  "firmware_restoration_required": false,
+  "private_logs_sha256": {
+    "diagnostics-python": "9352925e5e271773731e7ca3a390daf15479f6b144d2d059ca8d677d62821619",
+    "prebuffer-audio-sanitize": "6ca24649107a63912cd92d5acc6c13b7bf4ced2e14db757a05e397aa435b5cc2",
+    "prebuffer-host": "46af52bb29e3b612d840930f8561723f4ab87b332688eaee24e104e1f5986c42",
+    "prebuffer-ubsan": "ded6600db39ab1aae7fe542af5761d45e2614d27681890d61ebf53d773962da1",
+    "pacing-python": "9ee20c71942e691226904f5b10ee3ec2cbef509fceddb28ac17de8dc7e2e5b55",
+    "pacing-full-python": "a54cfaefa3fafe059d4e211fa07d7792df3f417d108f9ab51e15f92503576fcf",
+    "pacing-native": "ede3105d5befab1d1bf057b75ad6492c485516cbaf7b315aa4b2876b0fba20b6",
+    "diagnostics-build": "2e4dd576fc1e1f8d22a8363700779367a8ca0a5a1c476a568122a7277d870f27",
+    "prebuffer-build": "ce65eb2adc9b2375a4dec069d44b6af84233167d61196fe878238f906248961c"
+  },
+  "asan_initialization_stack_sha256": "f0f7f0510bc420efd557ffed8a59d0560bf3539a5a0fb2341e56da77258c8c98"
+}

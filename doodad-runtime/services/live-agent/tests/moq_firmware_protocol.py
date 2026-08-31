@@ -64,6 +64,12 @@ int main(int argc,char** argv) {
         ok=m::renewal(data,profile,nonce->valuestring,1,150000,150000+delay,1800000150000ULL+delay,current,mac,renewed);
         std::cout<<"{\"ok\":"<<(ok?"true":"false")<<",\"until\":"<<renewed.until_ms
                  <<",\"trusted\":"<<renewed.trusted_until_ms<<",\"revision\":"<<renewed.revision<<"}";
+    } else if (ok && argc>1 && std::strcmp(argv[1],"artifact-url")==0) {
+        auto* url=cJSON_GetObjectItemCaseSensitive(data,"url");
+        auto* digest=cJSON_GetObjectItemCaseSensitive(data,"digest");
+        ok=cJSON_IsString(url) && cJSON_IsString(digest) &&
+            m::artifact_url(profile,url->valuestring,digest->valuestring);
+        std::cout<<"{\"ok\":"<<(ok?"true":"false")<<"}";
     } else if (ok && argc>1 && std::strcmp(argv[1],"grant")==0) {
         m::Grant grant{}; ok=m::grant(data,profile,1800000000000ULL,100,101,600100,grant);
         std::cout<<"{\"ok\":"<<(ok?"true":"false")<<"}";
@@ -93,6 +99,28 @@ def test_firmware_bootstrap_proof_matches_python_byte_contract(parser):
     assert parser()['ok']
     challenge='A'*43
     assert parser('proof',challenge)['proof']==bootstrap_proof(KEY,DEVICE,challenge)
+
+
+@pytest.mark.parametrize('fault', ['none', 'http', 'other-host', 'host-suffix',
+    'other-port', 'userinfo', 'redirect-path', 'traversal', 'query', 'fragment',
+    'wrong-digest', 'short-digest', 'uppercase-digest', 'escaped-path'])
+def test_artifact_private_ca_is_scoped_to_enrolled_https_bundle(parser, fault):
+    digest='a'*64
+    url=f'https://localhost:8766/apps/{digest}'
+    if fault=='http': url=url.replace('https:', 'http:')
+    elif fault=='other-host': url=url.replace('localhost', 'elsewhere.test')
+    elif fault=='host-suffix': url=url.replace('localhost', 'localhost.attacker.test')
+    elif fault=='other-port': url=url.replace(':8766', ':8767')
+    elif fault=='userinfo': url=url.replace('localhost', 'localhost@elsewhere.test')
+    elif fault=='redirect-path': url=url.replace('/apps/', '/redirect/')
+    elif fault=='traversal': url=url.replace('/apps/', '/apps/../')
+    elif fault=='query': url+='?next=https://elsewhere.test/'
+    elif fault=='fragment': url+='#ignored'
+    elif fault=='wrong-digest': digest='b'*64
+    elif fault=='short-digest': digest=digest[:-1]
+    elif fault=='uppercase-digest': digest=digest.upper();url=url[:-64]+digest
+    elif fault=='escaped-path': url=url.replace('/apps/', '/%61pps/')
+    assert parser('artifact-url',dict(url=url,digest=digest))['ok']==(fault=='none')
 
 
 def test_firmware_renewal_proof_has_distinct_session_bound_domain(parser):

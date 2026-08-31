@@ -80,6 +80,16 @@ if(DOODAD_MOQ_DIAGNOSTIC_CONFIG_DIR)
     target_compile_definitions(${COMPONENT_LIB} PRIVATE DOODAD_MOQ_DIAGNOSTIC=1)
 endif()
 
+option(DOODAD_MOQ_STREAM_SOAK "Enable explicit USB synthetic duplex benchmark" OFF)
+if(DOODAD_MOQ_STREAM_SOAK)
+    if(NOT CONFIG_DOODAD_VOICE_TRANSPORT_MOQ OR DOODAD_MOQ_DIAGNOSTIC_CONFIG_DIR)
+        message(FATAL_ERROR "Stream soak requires the normal authenticated MoQ shell")
+    endif()
+    target_sources(${COMPONENT_LIB} PRIVATE "../../../libs/moq-esp32/tests/interop/stream_soak.c")
+    target_include_directories(${COMPONENT_LIB} PRIVATE "../../../libs/moq-esp32/tests/interop")
+    target_compile_definitions(${COMPONENT_LIB} PRIVATE DOODAD_MOQ_STREAM_SOAK=1)
+endif()
+
 option(
     DOODAD_SHOW_APP_AT_BOOT
     "Keep the selected embedded app visible instead of entering system Home"

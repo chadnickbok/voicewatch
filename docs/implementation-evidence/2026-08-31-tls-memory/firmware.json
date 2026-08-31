@@ -1,0 +1,33 @@
+{
+  "flash44": {
+    "image_sha256": "163729456218616ee3da6b0613c33b35f725d08f0d51ab0350015ca694854501",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": false,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] uptime heartbeat; free heap:",
+    "logs_sha256": {
+      "result.json": "29a4141a343f9e807537bfbf3a2265f58687ef1aefdbec9c4ecfcb33ccf7b1f0",
+      "serial.log": "8a622e58270752196fca15ed12d6095ea54c3d563796dc710c5e5fa3e4a89673",
+      "flash.log": "96b3982ab0792c4f4a792a94e3646f38007a76e1d298187aa5b7a57d4c19e57d"
+    }
+  },
+  "flash45": {
+    "image_sha256": "b8c746edd23c2b0040e4d29d7963a082972fc9501d09f055dcace99072e72188",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] uptime heartbeat; free heap:",
+    "logs_sha256": {
+      "result.json": "3cf4bd25bd3e10b606ea36912621aa7969d92cf54b5c67a41664b02664025c90",
+      "serial.log": "6c34ae0175362ba34b16b8195213511b63151344316e7d8a62adea9d121fd360",
+      "flash.log": "b65257e4cdcd781140391067db3341e5a51eca19ee58c1f51f2e2ff1e220f31b"
+    },
+    "image_bytes": 3425872,
+    "elf_sha256": "d6e89449107a0d015af67312ed70dcb168729237e6fe46bf706c2109b48d1568",
+    "active_partition_bytes": 4194304
+  }
+}

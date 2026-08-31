@@ -1,0 +1,17 @@
+{
+  "build_checks_pass": true,
+  "public_compile_profile": true,
+  "hardware_acceptance": false,
+  "image_bytes": 3363648,
+  "app_partition_bytes": 4194304,
+  "free_app_bytes": 830656,
+  "hashes": {
+    "doodad_runtime.bin": "8044337a1b9a38df09e9e6c8b1f5f87f647646b9b90ebf2d496c2c4e05b59cf2",
+    "doodad_runtime.elf": "2dc40e667c2b6e01e88eee77c99d686bf355e04703210be5e1f9120fd17e56b8",
+    "doodad_runtime.map": "98117d1b2e5b18b42f0fbabbee509ddbd7156a0bf7a64d54d2241eecfa178170"
+  },
+  "library_commit": "379352323c18be1beff2ceb39b0e0070a749592e",
+  "flashed": false,
+  "source_scope": "Earlier clean public-source snapshot with allocator CMake correction applied; initial snapshot manifest remains historical",
+  "allocator_cmake_sha256": "fa3e084c67d372d2ef5dd28c9eb05e21c7f56636fad20b12e1bb9068ec52e419"
+}

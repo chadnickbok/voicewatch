@@ -1,0 +1,9 @@
+{
+  "endpoint_sha256": "c1ad00fec8f364ce1968a1e81f231f96620e513b4b6d83490d82efcbf5c9255e",
+  "firmware_changed": false,
+  "pcm_saved": false,
+  "permanent_recovered": true,
+  "bench_pass": true,
+  "permanent_revision": 187,
+  "binary_unchanged": true
+}

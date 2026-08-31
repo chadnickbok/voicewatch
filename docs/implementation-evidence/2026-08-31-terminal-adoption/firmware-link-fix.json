@@ -1,0 +1,18 @@
+[
+  {
+    "kind": "smoke",
+    "build_pass": true,
+    "elf_sha256": "5cdeac9582ce034345dc8396488fb9d542a0920be4e31e77b959befc6b465463",
+    "image_bytes": 403776,
+    "image_sha256": "cdffd74d407ede1948c1c001b1c444b2bade39884be8dea708cf1df0fcf820c3",
+    "flashed": false
+  },
+  {
+    "kind": "memory-probe",
+    "build_pass": true,
+    "elf_sha256": "a2c7c55ff2e43245d27c3b369cd7a3006b8510f9897e5afe512fc08d68bc244e",
+    "image_bytes": 387584,
+    "image_sha256": "b8d752224dcd446e9d1af9bdfe1477cebf6867fa26b5733d3cde19c88a0a83da",
+    "flashed": false
+  }
+]

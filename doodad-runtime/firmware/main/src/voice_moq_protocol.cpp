@@ -121,6 +121,16 @@ bool valid_profile(const Profile& p, const char* device) {
     unsigned any=0; for (auto byte:p.key) any|=byte;
     return any!=0;
 }
+bool artifact_url(const Profile& p, const char* url, const char* digest) {
+    if (!url || !digest || !p.control_port ||
+        !std::memchr(p.host,0,sizeof(p.host)) || !host(p.host) ||
+        !ascii(digest,64,64,hex)) return false;
+    char expected[384]{};
+    const int size=std::snprintf(expected,sizeof(expected),"https://%s:%u/apps/%s",
+                                p.host,p.control_port,digest);
+    return size>0 && static_cast<std::size_t>(size)<sizeof(expected) &&
+        std::strcmp(url,expected)==0;
+}
 bool profile(const cJSON* root, const char* device, Profile& out) {
     if (!fields(root,{"v","revision","device_id","host","control_port","time_port","roots_pem","key_hex"})) return false;
     std::uint64_t version=0, revision=0, control=0, time=0;

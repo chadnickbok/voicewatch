@@ -1,0 +1,82 @@
+   Compiling moq-net v0.2.15 (/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/third_party/moq-rust/rs/moq-net)
+   Compiling voicewatch-moq-endpoint v0.1.0 (/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/server/voice_agent)
+   Compiling hang v0.20.7 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+   Compiling moq-loc v0.2.2 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+   Compiling moq-json v0.3.6 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+   Compiling moq-mux v0.9.10 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+   Compiling moq-audio v0.0.20 (https://github.com/moq-dev/moq?rev=eb5776e21eeaecba8e844be53c821895c178bcaf#eb5776e2)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 8.22s
+     Running unittests src/lib.rs (target/debug/deps/voicewatch_moq_endpoint-40b68000d45c91ba)
+
+running 24 tests
+test group_delay::tests::diagnostic_bounds_are_fixed ... ok
+test server::capture_tests::discontinuous_capture_validates_exact_timeline_and_preserves_gap ... ok
+test server::capture_tests::capture_reorder_window_cannot_grow_without_bound ... ok
+test group_delay::tests::short_response_retires_delay_without_waiting ... ok
+test server::capture_tests::control_and_fresh_groups_progress_while_old_output_is_held ... ok
+test server::capture_tests::idle_and_active_capture_demand_use_the_live_recovery_budget ... ok
+test server::capture_tests::cancellation_discards_pending_reordered_groups ... ok
+test server::capture_tests::end_during_partial_group_read_cannot_release_unauthorized_pcm ... ok
+test server::capture_tests::malformed_complete_group_is_not_concealed_as_network_loss ... ok
+test server::capture_tests::late_end_rejects_buffered_groups_outside_authorized_boundary ... ok
+test server::capture_tests::queued_burst_with_one_missing_group_keeps_bounded_recovery ... ok
+test server::renewal_tests::renewal_deadline_is_absolute_bounded_and_non_revivable ... ok
+test stream_soak::tests::fixture_decodes_as_twenty_milliseconds_of_mono_opus ... ok
+test stream_soak::tests::malformed_uplink_fails_without_synthetic_success ... ok
+test server::capture_tests::reordered_capture_matches_in_order_pcm_and_exact_tail ... ok
+test server::capture_tests::blocked_group_cannot_hold_future_audio_for_two_seconds ... ok
+test server::capture_tests::lost_reset_and_tail_recover_only_authenticated_duration ... ok
+test server::capture_tests::late_abandoned_group_does_not_replay_or_poison_capture ... ok
+test server::capture_tests::excessive_loss_fails_instead_of_generating_unbounded_audio ... ok
+test group_delay::tests::cancelled_delay_cannot_publish_into_a_replacement ... ok
+test group_delay::tests::real_hang_group_waits_while_fresh_groups_decode ... ok
+test server::capture_tests::missing_initial_middle_and_tail_groups_preserve_exact_capture_length ... ok
+test server::capture_tests::capture_loss_aborts_only_its_turn_and_malformed_media_still_retires_session ... ok
+test stream_soak::tests::paced_duplex_counts_fences_and_keeps_ipc_alive ... ok
+
+test result: ok. 24 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 10.14s
+
+     Running unittests src/main.rs (target/debug/deps/voicewatch_moq_endpoint-226d8801af1ceb42)
+
+running 4 tests
+test diagnostic_tests::backend_categories_never_return_peer_text ... ok
+test diagnostic_tests::stream_soak_config_requires_explicit_build_feature ... ok
+test diagnostic_tests::group_delay_config_requires_explicit_build_feature ... ok
+test supervision::tests::ready_is_one_byte_and_parent_eof_retires_child ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+     Running tests/audio.rs (target/debug/deps/audio-2b240764cb4e1b8c)
+
+running 6 tests
+test cancelled_output_never_flushes_or_accepts_stale_samples ... ok
+test capture_reset_preserves_time_lost_with_codec_lookahead_and_partial_input ... ok
+test capture_rejects_unbounded_or_regressing_timestamp_gaps ... ok
+test prepared_response_exposes_only_reset_until_watch_binding ... ok
+test capture_decoder_matches_reference_consumer ... ok
+test persistent_output_matches_reference_producer_across_exact_tails ... ok
+
+test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.28s
+
+     Running tests/authorization.rs (target/debug/deps/authorization-7efd265b51f5ac21)
+
+running 4 tests
+test authorization_response_cannot_broaden_its_scope_or_lifetime ... ok
+test setup_path_is_exact_and_errors_never_echo_credentials ... ok
+test ipc_rejects_bad_lengths_duplicates_unknown_fields_and_oversize_pcm ... ok
+test scoped_origins_enforce_inverse_directions_and_device_isolation ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests/capture_signal.rs (target/debug/deps/capture_signal-6fdf5d70cd273bc5)
+
+running 1 test
+test low_level_signal_does_not_become_full_scale_after_packet_loss ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s
+
+   Doc-tests voicewatch_moq_endpoint
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s

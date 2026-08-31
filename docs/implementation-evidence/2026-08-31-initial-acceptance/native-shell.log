@@ -1,0 +1,41 @@
+Test project /Users/nickchadwick/Documents/voicewatch/doodad-runtime/tools/native-host/build
+      Start  1: m3e_display_profile
+ 1/18 Test  #1: m3e_display_profile .................   Passed    0.17 sec
+      Start  2: m3e_core_tokens
+ 2/18 Test  #2: m3e_core_tokens .....................   Passed    0.17 sec
+      Start  3: m3e_weather_foundations
+ 3/18 Test  #3: m3e_weather_foundations .............   Passed    0.18 sec
+      Start  4: m3e_weather_provider_v2
+ 4/18 Test  #4: m3e_weather_provider_v2 .............   Passed    0.16 sec
+      Start  5: m3e_voice_provider_event
+ 5/18 Test  #5: m3e_voice_provider_event ............   Passed    0.17 sec
+      Start  6: m3e_voice_runtime_ui
+ 6/18 Test  #6: m3e_voice_runtime_ui ................   Passed    0.18 sec
+      Start  7: m3e_weather_provider_model
+ 7/18 Test  #7: m3e_weather_provider_model ..........   Passed    0.17 sec
+      Start  8: m3e_framework
+ 8/18 Test  #8: m3e_framework .......................   Passed    0.21 sec
+      Start  9: m3e_deterministic_system
+ 9/18 Test  #9: m3e_deterministic_system ............   Passed    0.17 sec
+      Start 10: m3e_os_shell
+10/18 Test #10: m3e_os_shell ........................   Passed    0.17 sec
+      Start 11: m3e_system_shell_ui
+11/18 Test #11: m3e_system_shell_ui .................   Passed    0.03 sec
+      Start 12: m3e_exact_scheduler
+12/18 Test #12: m3e_exact_scheduler .................   Passed    0.17 sec
+      Start 13: m3e_surface_registry
+13/18 Test #13: m3e_surface_registry ................   Passed    0.17 sec
+      Start 14: m3e_personal_packages
+14/18 Test #14: m3e_personal_packages ...............   Passed    0.18 sec
+      Start 15: m3e_token_sync
+15/18 Test #15: m3e_token_sync ......................   Passed    0.08 sec
+      Start 16: m3e_weather_foundation_generation
+16/18 Test #16: m3e_weather_foundation_generation ...   Passed    3.18 sec
+      Start 17: m3e_weather_font_assets
+17/18 Test #17: m3e_weather_font_assets .............   Passed    0.04 sec
+      Start 18: m3e_weather_snapshot_fixtures
+18/18 Test #18: m3e_weather_snapshot_fixtures .......   Passed    0.03 sec
+
+100% tests passed, 0 tests failed out of 18
+
+Total Test time (real) =   5.62 sec

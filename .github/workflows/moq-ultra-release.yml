@@ -1,0 +1,44 @@
+name: MoQ Ultra release build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  full-shell:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build and inspect the embedded recovery guest
+        working-directory: doodad-runtime
+        run: |
+          rustup toolchain install 1.95.0 --profile minimal --target wasm32-unknown-unknown
+          ./scripts/build-guest.sh hello
+      - name: Build the complete Ultra shell with public dummy configuration
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: v5.5.5
+          target: esp32s3
+          path: doodad-runtime/firmware
+          command: >-
+            idf.py -B build-moq-ci -D SDKCONFIG=build-moq-ci/sdkconfig
+            -D "SDKCONFIG_DEFAULTS=sdkconfig.defaults;boards/t-watch-ultra/sdkconfig.defaults;boards/t-watch-ultra/sdkconfig.moq-ci.defaults"
+            -D DOODAD_MOQ_STREAM_SOAK=OFF build &&
+            python3 ../tools/verify_moq_release_build.py build-moq-ci --public-ci > build-moq-ci/release-build.json
+      # This job creates no enrollment profile and never reads owner credentials.
+      # Do not add sdkconfig, private build trees, or real watch binaries here.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ultra-moq-public-compile-only
+          path: |
+            doodad-runtime/firmware/build-moq-ci/doodad_runtime.bin
+            doodad-runtime/firmware/build-moq-ci/doodad_runtime.elf
+            doodad-runtime/firmware/build-moq-ci/doodad_runtime.map
+            doodad-runtime/firmware/build-moq-ci/release-build.json

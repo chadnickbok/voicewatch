@@ -1,0 +1,16 @@
+{
+  "root_files_sha256": {
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/tls_memory.c": "74fed155fa3062305e93af7599ae55652ada4b28caf39a76aa4ba9f6655309b0",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/tls_memory.h": "bea5568f240ab41a58755658b453190b1df51df9cbd275a15d858cecaeb14f08",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "a4862f83944b9053bf1f93e7baec060fd3e1c2e31919c5eabf1d6289d39b8600",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "b3939dbcb07dd2c6292010747e0ebc1799a0680bfa8a48ec270d4be7a4aafc85",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/CMakeLists.txt": "d066821f7aa3daab771e27815da4a97fde497fe6c59e864fadf6f1ffd99bc4e6",
+    "libs/moq-esp32/components/esp_moq_endpoint/src/endpoint.c": "95dd359edff96042141a99c9eea6b7d35cc9016f79f0abaa1d92253d99dd6327",
+    "libs/moq-esp32/components/esp_moq_endpoint/include/esp_moq/endpoint.h": "9b8af8852bde4968fea3be6c587a38982fd448903b9c914ae22ebbba7e636340",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "fbedd4593b09607ba4c77245313aa69b572374c3997794ebf38d5681a5de4229"
+  },
+  "image_sha256": "163729456218616ee3da6b0613c33b35f725d08f0d51ab0350015ca694854501",
+  "image_bytes": 3425824,
+  "firmware": "flash44",
+  "dirty_worktree": true
+}

@@ -1,0 +1,47 @@
+{
+  "stream_turnover_gate_pass": true,
+  "groups_per_direction": 90000,
+  "extra_receipt_groups_per_direction": 1,
+  "watch_elapsed_ms": 1800064,
+  "host_elapsed_ms": 1800002,
+  "same_session": true,
+  "renewals": 82,
+  "tx_would_block": 0,
+  "snapshots": 60,
+  "zero_leased_in_all_snapshots": true,
+  "internal_free_range": [
+    164535,
+    164635
+  ],
+  "workload_internal_delta": 0,
+  "reconnected_internal_delta": -32,
+  "native_workload_rss_kib": [
+    19136,
+    19264
+  ],
+  "publisher_final": {
+    "cache_drop": 0,
+    "expired": 0,
+    "failed": 0,
+    "cancelled": 0,
+    "submitted": 90002,
+    "retired": 90001
+  },
+  "all_tx_retirements_observed_at_final_marker": false,
+  "cumulative_memory_gate_complete": false,
+  "permanent_recovery": {
+    "permanent_enrollment_revision": 177,
+    "fresh_permanent_ready_observed": true,
+    "permanent_ready_monotonic_ms": 20327530.834,
+    "persistent_services_alive": true,
+    "production_host_updated": false,
+    "firmware_restoration_required": false
+  },
+  "full_replacement_ready": false,
+  "private_log_sha256": {
+    "serial.log": "862ffd90d01939f36644c89adc4d3927be5215217d716d9baf666c1d9acd692f",
+    "native.log": "e336fb954fc878a3d7e1c5481010914f0699b0528c0ca1b587df73a47f617276",
+    "events.jsonl": "3b4091564d6e3b000ca375b34de84fedad166640f5b1201bbcef0838fe2de530",
+    "result.json": "390501a6dcae605944b08de7212da7c916419878bc15b75ab495ec5182a992e6"
+  }
+}

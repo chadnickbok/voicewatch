@@ -1,0 +1,31 @@
+{
+  "python": {
+    "log_sha256": "9a7e44da71270a957519101801d08e1712736574e2308e0b5c57615075a6bf33",
+    "passed": 407,
+    "warnings": 4
+  },
+  "contracts": {
+    "log_sha256": "c79d72269080968a7dc12720db25bd445a010c6c14014e64d40dfcff621b4105",
+    "passed": 46,
+    "warnings": 0
+  },
+  "idle_regressions": {
+    "log_sha256": "000157e5dfe569bf3664c712195eeb1d4a9ed4bed7030ee7fa013c1240fa8b63",
+    "passed": 23,
+    "warnings": 0
+  },
+  "firmware_diagnostic": {
+    "log_sha256": "36a17426412d4c2723885c466144f83f0b817adada23708ae090cf99cce6a2a3",
+    "build_passed": true
+  },
+  "firmware_normal": {
+    "log_sha256": "bbe983bb7584b3299ce5e779981632f5f0b7c049f41a0c02870193d8ecce4dfc",
+    "build_passed": true
+  },
+  "preserved_logger_regression": {
+    "failed_before_fix": 2,
+    "passed_before_fix": 21,
+    "log_sha256": "57481162562feaeed6a7fa36379e431a9cf9bd16e97daa780d028d2ed12f77c3",
+    "physical_failure": "p120"
+  }
+}

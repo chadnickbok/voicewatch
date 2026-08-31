@@ -28,6 +28,8 @@ cJSON* json(const char* bytes, std::size_t size, std::size_t limit = 16384);
 bool decimal(const cJSON* value, std::uint64_t& out, bool zero = true);
 bool number(const cJSON* value, std::uint64_t& out, std::uint64_t max);
 bool valid_profile(const Profile& profile, const char* device);
+// The private enrollment CA is scoped to the exact HTTPS artifact origin/path.
+bool artifact_url(const Profile& profile, const char* url, const char* digest);
 bool profile(const cJSON* root, const char* device, Profile& out);
 bool time_proof(const cJSON* root, const Profile& profile, const char* nonce,
                 std::uint64_t round_trip_ms, Hmac hmac, std::uint64_t& unix_ms);

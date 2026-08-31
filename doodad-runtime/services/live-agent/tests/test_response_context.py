@@ -38,6 +38,46 @@ def no_microphone(frames):
 
 
 @pytest.mark.asyncio
+@pytest.mark.parametrize('replacement', [False, True])
+async def test_failed_playout_retires_only_its_own_turn(replacement):
+    from pipecat.frames.frames import InterruptionFrame
+    from doodad_agent.capture_stt import CaptureTurn
+    c, frames = conversation(nothing)
+    await c.capture_started()
+    c._capture_open = False
+    c.voice_phase = 'speaking'
+    c.user_text, c.assistant_text = 'fixture', 'unheard'
+    old = c._capture_turn
+    phases = []
+    async def state(phase, *_): phases.append(phase)
+    c.state_sink = state
+    async def queue(frame):
+        frames.append(frame)
+        assert not old.live
+        if replacement:
+            c._capture_turn = CaptureTurn()
+            c._capture_open = True
+            c.voice_phase = 'listening'
+            c.user_text = 'new input'
+    c.worker.queue_frame = queue
+    token = provider_turn.set(old)
+    try:
+        await c._playout_failed()
+        await c._playout_failed()  # A stale callback cannot fire twice.
+    finally:
+        provider_turn.reset(token)
+    assert not old.live
+    assert sum(isinstance(frame, InterruptionFrame) for frame in frames) == 1
+    if replacement:
+        assert c._capture_turn.live and c._capture_open
+        assert c.voice_phase == 'listening' and c.user_text == 'new input'
+        assert not phases
+    else:
+        assert c.voice_phase == 'ready' and phases == ['ready']
+        assert not c._capture_open and not c.assistant_text and not c.user_text
+
+
+@pytest.mark.asyncio
 async def test_text_waits_for_watch_then_routes_without_microphone():
     entered, release = asyncio.Event(), asyncio.Event()
     async def authorize(kind):
@@ -154,6 +194,21 @@ async def test_background_delivery_requires_matching_speaker_receipt(tmp_path, o
         played = await task
         assert played == (outcome == 'played')
         assert broker.background_snapshot()['completion_pending'] == (0 if played else 1)
+        if outcome == 'transport_cancelled':
+            failed_turn = c._capture_turn
+            c.voice_phase = 'speaking'
+            token = provider_turn.set(failed_turn)
+            try:
+                await c._playout_failed()
+            finally:
+                provider_turn.reset(token)
+            assert c.voice_phase == 'ready' and not failed_turn.live
+            assert broker.background_snapshot()['completion_pending'] == 1
+            assert c._pending_attention is None
+            await c._deliver_idle_attention()
+            assert c._capture_turn is not failed_turn and c._capture_turn.live
+            assert c._pending_attention[0] is c._capture_turn
+            assert broker.background_snapshot()['completion_pending'] == 1
     finally:
         store.close()
 

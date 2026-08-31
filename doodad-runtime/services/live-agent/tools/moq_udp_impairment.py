@@ -1,6 +1,6 @@
 """Bounded, single-watch UDP impairment fixture; never a production relay.
 
-Adds seeded independent packet loss and one-way delay to both directions.
+Adds seeded loss/delay and optional deterministic reordering/duplication.
 It cannot decrypt QUIC and does not alter WSS, certificates, ALPN or grants.
 Pending packets are held only in RAM and discarded on close.
 """
@@ -17,10 +17,18 @@ class UdpImpairment:
     MAX_PENDING = 256
     MAX_DATAGRAM = 2048
 
-    def __init__(self, loss_percent, rtt_ms, seed):
+    def __init__(self, loss_percent, rtt_ms, seed, *, reorder_every=0,
+                 reorder_delay_ms=0, duplicate_every=0, duplicate_delay_ms=0):
         if loss_percent not in {0, 1, 3, 5} or rtt_ms not in {0, 30, 60, 120}:
             raise ValueError('unsupported impairment cell')
+        for every, delay in ((reorder_every, reorder_delay_ms), (duplicate_every, duplicate_delay_ms)):
+            if (type(every) is not int or type(delay) is not int
+                    or not 0 <= every <= 1000 or not 0 <= delay <= 500
+                    or bool(every) != bool(delay)):
+                raise ValueError('unsupported packet fault profile')
         self.loss_percent, self.rtt_ms, self.seed = loss_percent, rtt_ms, seed
+        self.reorder_every, self.reorder_delay_ms = reorder_every, reorder_delay_ms
+        self.duplicate_every, self.duplicate_delay_ms = duplicate_every, duplicate_delay_ms
         self.random = [random.Random(seed), random.Random(seed ^ 0x937)]
         self.transports = []
         self.client = None
@@ -34,6 +42,9 @@ class UdpImpairment:
         self.high_water = 0
         self.outage_until = {d: 0.0 for d in self.stats}
         self.outage_dropped = {d: 0 for d in self.stats}
+        self.packet_faults = {d: dict(reorder_scheduled=0, reordered=0,
+                                      duplicate_scheduled=0, duplicated=0) for d in self.stats}
+        self.highest_forwarded = {d: 0 for d in self.stats}
 
     def blackout(self, direction, duration_ms):
         """Drop new datagrams for one bounded interval; never touch WSS."""
@@ -78,7 +89,11 @@ class UdpImpairment:
             return
         stats = self.stats[direction]
         stats['received'] += 1
-        if len(data) > self.MAX_DATAGRAM or len(self.pending) >= self.MAX_PENDING:
+        sequence = stats['received']
+        duplicate = bool(self.duplicate_every and sequence % self.duplicate_every == 0)
+        # Original and duplicate reserve from the same bound. A fixture that
+        # runs out of room reports pressure; it cannot silently under-inject.
+        if len(data) > self.MAX_DATAGRAM or len(self.pending) + 1 + duplicate > self.MAX_PENDING:
             stats['pressure'] += 1
             return
         if asyncio.get_running_loop().time() < self.outage_until[direction]:
@@ -90,6 +105,19 @@ class UdpImpairment:
             return
         loop=asyncio.get_running_loop()
         due=loop.time()+self.rtt_ms/2000
+        faults = self.packet_faults[direction]
+        if self.reorder_every and sequence % self.reorder_every == 0:
+            due += self.reorder_delay_ms/1000
+            faults['reorder_scheduled'] += 1
+        self._queue(direction, data, transport, target, due, sequence, duplicate=False)
+        if duplicate:
+            faults['duplicate_scheduled'] += 1
+            self._queue(direction, data, transport, target,
+                        due+self.duplicate_delay_ms/1000, sequence, duplicate=True)
+
+    def _queue(self, direction, data, transport, target, due, sequence, *, duplicate):
+        loop = asyncio.get_running_loop()
+        stats = self.stats[direction]
         def forward():
             self.pending.discard(handle)
             if not self.closed:
@@ -100,6 +128,12 @@ class UdpImpairment:
                 timing['late_over_100ms']+=int(late>100_000)
                 transport.sendto(data, target)
                 stats['forwarded'] += 1
+                if duplicate:
+                    self.packet_faults[direction]['duplicated'] += 1
+                else:
+                    if sequence < self.highest_forwarded[direction]:
+                        self.packet_faults[direction]['reordered'] += 1
+                    self.highest_forwarded[direction] = max(sequence, self.highest_forwarded[direction])
         handle = loop.call_at(due, forward)
         self.pending.add(handle)
         self.high_water = max(self.high_water, len(self.pending))
@@ -116,4 +150,7 @@ class UdpImpairment:
                     seed=self.seed, directions=self.stats, pending=len(self.pending),
                     pending_high_water=self.high_water, closed=self.closed,
                     timing=self.timing, event_loop_max_lag_us=self.loop_max_lag_us,
-                    outage_dropped=self.outage_dropped)
+                    outage_dropped=self.outage_dropped,
+                    reorder_every=self.reorder_every, reorder_delay_ms=self.reorder_delay_ms,
+                    duplicate_every=self.duplicate_every, duplicate_delay_ms=self.duplicate_delay_ms,
+                    packet_faults=self.packet_faults)

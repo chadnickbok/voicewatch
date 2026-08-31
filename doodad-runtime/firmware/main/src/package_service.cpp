@@ -26,6 +26,9 @@
 #include "package_registry.hpp"
 #include "personal_bundle.hpp"
 #include "sdkconfig.h"
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+#include "voice_moq_bootstrap.hpp"
+#endif
 
 namespace doodad::packages {
 namespace {
@@ -227,12 +230,31 @@ bool download(const AppReadyOffer& offer, const std::string& path) {
     configuration.url = offer.url.data();
     configuration.timeout_ms = 15'000;
     configuration.buffer_size = kDownloadBlockBytes;
+    configuration.disable_auto_redirect = true;
+    configuration.skip_cert_common_name_check = false;
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    // Only trust the enrolled CA for this host's exact immutable bundle route.
+    // Own the copy through TLS teardown; enrollment can change on another task.
+    using Trust=doodad::moq_control::ArtifactTrust;
+    std::unique_ptr<Trust, decltype(&heap_caps_free)> trust(
+        static_cast<Trust*>(heap_caps_calloc(1,sizeof(Trust),MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT)),
+        heap_caps_free);
+    if (!trust || !doodad::moq_control::artifact_trust(
+            offer.url.data(),offer.bundle_sha256.data(),*trust)) return false;
+    configuration.cert_pem=trust->roots;
+    const auto trust_current=[&] {
+        return trust->revision==doodad::moq_control::profile_revision() &&
+            doodad::moq_control::clock_valid();
+    };
+#else
     configuration.crt_bundle_attach = esp_crt_bundle_attach;
+    const auto trust_current=[] { return true; };
+#endif
     configuration.keep_alive_enable = false;
     auto* client = esp_http_client_init(&configuration);
     if (client == nullptr) return false;
 
-    bool ok = esp_http_client_open(client, 0) == ESP_OK;
+    bool ok = trust_current() && esp_http_client_open(client, 0) == ESP_OK;
     const auto content_length = ok ? esp_http_client_fetch_headers(client) : -1;
     ok = ok && esp_http_client_get_status_code(client) == 200 &&
         content_length == static_cast<std::int64_t>(offer.bundle_bytes);
@@ -241,6 +263,7 @@ bool download(const AppReadyOffer& offer, const std::string& path) {
     std::array<char, kDownloadBlockBytes> block{};
     std::uint32_t received = 0;
     while (ok && received < offer.bundle_bytes) {
+        if (!trust_current()) { ok=false; break; }
         const auto wanted = std::min<std::size_t>(
             block.size(), offer.bundle_bytes - received);
         const int count = esp_http_client_read(
@@ -253,7 +276,7 @@ bool download(const AppReadyOffer& offer, const std::string& path) {
             static_cast<std::size_t>(count);
         received += static_cast<std::uint32_t>(count);
     }
-    ok = ok && received == offer.bundle_bytes &&
+    ok = ok && trust_current() && received == offer.bundle_bytes &&
         std::fflush(output) == 0 && ::fsync(::fileno(output)) == 0;
     if (output != nullptr) ok = std::fclose(output) == 0 && ok;
     esp_http_client_close(client);

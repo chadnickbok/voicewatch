@@ -1,0 +1,10 @@
+{
+  "app_id": "dev.voicewatch.acceptance",
+  "bundle_sha256": "b0cd0e6f0193ff87357d1fab0f0c4ee76887e7491e59d50764af6eb83de6224e",
+  "bundle_bytes": 9357,
+  "payload_sha256": "a7ef9503ce2574f4a568a199cc8326709ef782734eccc9d1766d8d0fa84543be",
+  "payload_bytes": 8964,
+  "repository_timer": true,
+  "native_launch": true,
+  "generated_app_acceptance": false
+}

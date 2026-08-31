@@ -3,9 +3,343 @@
 Updated 2026-08-31. Objective remains the complete
 [implementation plan](moq-webrtc-replacement-plan.md), including all nine review
 findings, operational protocol/audio, security, host service, and the full Ultra
-shell. This checkpoint does not satisfy the library-candidate or product gates.
+shell. This checkpoint does not satisfy all library-candidate or product gates.
 
-## Latest checkpoint: live renewal survives 600 seconds; long clean audio still fails
+## Current direction: resumed; initial acceptance excludes induced impairment
+
+Latest: the user-approved terminal-reader fix is now selected by the Rust host
+and deployed to the permanent MoQ service. A ten-minute physical provider session
+passes three exact-fixture turns, cancellation isolation, four renewals and
+reconnect. Flash49 remains installed; permanent enrollment is revision 187.
+The committed library's Linux host CI passes, including full native ASan/UBSan.
+See [adoption and deployment evidence](implementation-evidence/2026-08-31-terminal-adoption/README.md).
+The earlier unchanged-reference rule is explicitly amended to permit this exact
+patch. Physical controls/apps/sleep-wake, the measured 82.6 KiB internal RAM
+minimum, and root/core licensing remain separate open work.
+
+On 2026-08-31 the user resumed work to verify physical controls/apps/sleep-wake
+and finish interoperability and release checks. Induced impaired-network tests
+are outside initial replacement acceptance. Their historical failures remain
+recorded as deferred hardening, not passes. Normal-network voice, security,
+lifecycle and release requirements remain; ten minutes is sufficient for now.
+The pause described below is historical and no longer prevents this work.
+
+### Previous checkpoint: normal firmware and physical signed app delivery
+
+Flash49 runs the normal full shell with personal-package installation enabled.
+An enrolled-host HTTPS trust fix passes a physical signed Timer installation and
+duplicate-offer check, without opening the microphone. Permanent enrollment is
+revision 185. Physical navigation/PTT/sleep-wake are still unobserved; the prior
+ten-minute idle window recorded no input and is not a physical acceptance pass.
+
+Fresh host/native checks and a public complete-shell build pass. The terminal
+reference candidate passes the current interoperability matrix and lifecycle
+suite; the unchanged reference still reproduces its terminal receive race.
+A full-shell CI workflow and release-image inspector are prepared, not remotely
+executed. Current ASan, root/core licensing and the 84.7 KiB measured internal
+RAM minimum remain release/resource limitations. See the
+[initial acceptance results and hands-on checklist](implementation-evidence/2026-08-31-initial-acceptance/README.md).
+
+## Previous direction: paused; ten minutes is sufficient for now
+
+On 2026-08-31 the user explicitly removed long endurance testing as a replacement
+gate. Ten minutes of successful operation is sufficient for now; eight hours
+and 1,000 repeated cycles are optional future hardening. The acceptance plan is
+updated accordingly, with a [longer-test outline](moq-optional-endurance-tests.md).
+Earlier statements below describing long endurance as mandatory are historical
+and superseded. The completed 30-minute transport test remains useful evidence.
+
+The p122 eight-hour run was interrupted at the user's request, with normal
+temporary-host cleanup and permanent-enrollment recovery. Its incomplete result
+is not an endurance pass or evidence of a product failure. Further tests and
+implementation are paused. A newly drafted echo-cycle helper is not integrated
+or validated and will not run automatically.
+Permanent enrollment recovery is verified at revision 183; flash48 and the
+existing host services are unchanged. See the [interruption receipt](implementation-evidence/2026-08-31-idle-soak/interrupted-run.json).
+
+## Previous checkpoint: idle/reconnect smoke passes; long run subsequently stopped
+
+Flash48 adds a read-only owner status command under the optional synthetic-test
+firmware flag. The corrected p121 smoke test completes 120,039 ms of idle,
+one planned reconnect in 6,265 ms, and a final reconnect in 6,262 ms. Both idle
+sessions renew twice; snapshots show no active microphone, speaker or retained
+media pools and pass the memory/stack floors. The initial p120 host logger
+failure is preserved and covered by a reproducing regression. Free internal
+RAM is 16 bytes lower after the planned reconnect; attribution and cumulative
+recovery remain open. Permanent readiness is verified at revision 181.
+
+The eight-hour p122 run reached authenticated idle readiness on the unchanged
+archived image before being stopped at the user's request. It requested only
+read-only USB status, used normal certificate checks and short credential leases,
+and recorded no microphone PCM. No firmware or persistent service was changed.
+The long-duration gate is now superseded; the default transport is unchanged.
+
+Latest verification passes 407 Python tests (four warnings), including 23 idle
+tests, 46 native/firmware contract checks and both firmware build modes. See
+[idle/reconnect evidence](implementation-evidence/2026-08-31-idle-soak/README.md).
+
+A separate read-only completion audit now checks serial observations, timing,
+renewal/reconnect evidence and allocator accounting independently of the runner's
+pass flag. It preserves failed p120 and passes p121's operational checks, while
+retaining the unexplained 16-byte internal-heap difference and withholding a
+cumulative leak-free verdict. Its 42 focused checks and 426-test full Python
+suite pass (four warnings). This checker was added after p122 started; it does
+not change the running firmware, host or harness. A Linux sanitizer probe never
+started and was cancelled without restarting Docker or unrelated services;
+ASan remains unpassed.
+
+## Previous checkpoint: 30-minute operational duplex soak passes
+
+Flash47 runs the complete Ultra shell with an optional USB-started synthetic
+workload, retaining ordinary authenticated bootstrap, scoped sessions, catalogs,
+WSS and credential renewal. The private host uses a separate diagnostic build;
+ordinary host/firmware builds exclude this path. Both directions exchange valid
+20 ms Opus silence at 50 groups/s with exact payload/timestamp/count checks and
+one final receipt group. No microphone, speaker or providers are started.
+
+p117 passes 500 groups each way in 10,033 ms; p118 passes 3,000 in 60,049 ms,
+including three same-session renewals. Both reconnect successfully, have zero
+send backpressure/final receive leases and pass tracked allocation gates.
+The subsequent p119 run passes **90,000 groups in each direction over 30 minutes**
+with 82 same-session renewals, exact receipt groups and a 6,274 ms fresh-grant
+reconnect. Permanent readiness is verified at revision 177. See
+[stream-soak evidence](implementation-evidence/2026-08-31-stream-soak/README.md).
+
+Verification passes 39 all-feature and 31 default Rust tests, 384 Python tests,
+46 native/firmware contract checks, Clippy and both firmware build modes. app0
+only was flashed; no factory restoration, persistent-host update, reference or
+default switch, commit or push occurs. Speech impairment failures, physical
+interaction/UI/package, complete resource/latency, endurance/reference/ASan/CI
+and rollout gates remain open. This is still not a verified WebRTC replacement.
+
+During p119, internal free RAM spans 164,535–164,635 bytes and returns to its
+starting value; native-host workload RSS stays within 19,136–19,264 KiB. All
+60 snapshots have zero receive leases. The post-test new connection has 32 fewer
+free internal bytes than the pre-test idle baseline; the cumulative reconnect
+audit remains open, and no blanket leak-free result is claimed.
+
+The next idle/reconnect harness and read-only USB status command were prepared
+while p119 ran on its unchanged image. Their subsequent flash48/smoke validation
+is recorded above; no eight-hour result is claimed.
+The idle fixture extends its private certificate lifetime from six to ten hours
+without changing certificate verification or credential lease limits.
+
+## Previous checkpoint: delayed Hang group passes on the full Ultra shell
+
+A separate diagnostic host holds one standard encoded group for 257,756 µs
+while 12 newer groups are published. On unchanged flash46, the watch receives
+a fresh 200,000 µs media timestamp before the old 140,000 µs timestamp; the
+affected response's maximum frame-arrival gap is 58,021 µs. Later audio therefore
+continues during the hold. One concealed chunk and one late chunk are counted,
+with zero pressure or fallback silence. All three real-provider voice turns
+have zero word errors and exact watch/serial completion totals: 124,658 samples.
+Startup, shutdown and idle reconnect pass. See
+[delayed-group evidence](implementation-evidence/2026-08-31-group-delay/README.md).
+
+The fixture is excluded from normal builds, which reject its config field.
+It retains one bounded packet and explicitly aborts it on early end/cancel or
+owner destruction. Native tests also prove control/fresh-group progress during
+the hold and cancellation before replacement. Final Rust suites pass 35 tests
+with the feature and 30 without it; 384 Python and 46 native/firmware checks pass.
+Executed and subsequently rebuilt diagnostic binaries are recorded separately.
+
+Permanent enrollment is revision 171 with fresh readiness verified. No firmware
+write/restoration, persistent-host update, default/reference switch or commit
+occurs. This adds a physical delayed application-group case; it does not close
+physical byte-credit blocking, all speech impairment cells, full UI/package,
+latency/memory/endurance/reference/ASan/CI gates. Prior failures and incomplete
+statistics remain preserved. The complete replacement goal is still active.
+
+## Previous checkpoint: blocked streams wait for credit; updated Ultra shell checked
+
+A real Quinn peer reproduces repeated retries of a stream with exhausted byte
+credit: 401 retries during a 250 ms unread hold. The adapter now keeps that
+stream dormant until its matching ngtcp2 credit callback. Fresh media/control
+continue; reset retains normal ownership and late credit cannot revive a
+retired send half. No media deadlines, buffering or pool limits change.
+
+Resume/reset cases pass across two native matrix iterations and one UBSan
+iteration. All 44 ordinary and 22 UBSan peer cases pass, along with allocator,
+portable host/audio/adapter, 384 Python and 46 native/firmware protocol checks.
+This is real raw-QUIC stream blocking, not MoQ application-group or physical
+blocked-audio proof. See [stream-blocking evidence](implementation-evidence/2026-08-31-blocked-stream/README.md).
+
+Flash46 passes the full-shell heartbeat and p115's real-provider text/background
+output, three zero-error voice turns and idle reconnect. Five watch completion
+receipts and five final serial markers match all 181,538 samples. Only four
+detailed playout summaries were captured, so full quality-counter coverage is
+explicitly incomplete; the original summary mismatch remains recorded. Ten
+transport snapshots show no flow block, and TLS/ngtcp2 bounds remain intact.
+Permanent enrollment is revision 169 with fresh readiness verified.
+
+Occasional Wi-Fi concealment remains a diagnostic, not an automatic product
+failure. Earlier critical-phrase failures, remaining application-group/physical
+interaction, latency, complete device-memory, endurance/reference and ASan/CI
+gates remain open. No production-host rollout, reference/default switch,
+commit/push or firmware restoration occurs. The complete goal remains active.
+
+## Previous checkpoint: wolfSSL heap requests bounded and tested on the Ultra
+
+The actual wolfSSL build now uses a shared 256 KiB request cap, covering TLS and
+null-hint crypto allocations separately from ngtcp2's 128 KiB per-connection
+cap. Headers, retained capacity and simultaneous realloc storage are charged.
+Allocation/lock failure is handled without an unlimited fallback; thread-safe
+snapshots distinguish unavailable data from zero use. Verification, hostname/IP,
+ALPN and authorization policy remain unchanged.
+
+Real-backend tests cover 128 constructor allocation sites, 43 smaller budgets,
+25 clean restarts, concurrent allocation, and constructor/handshake exhaustion.
+Two native-suite iterations and one fully instrumented UBSan iteration pass,
+including security rejection, stream turnover and Opus exchange. The C host,
+adapter/audio, 384 Python and 46 native/firmware-protocol checks also pass.
+
+Flash45 runs the full shell and passes eight real-provider responses: text,
+background speech and six zero-error microphone turns. The impaired run uses
+5% loss, 120 ms added RTT and an 800 ms outage; capture recovers in 1,000 ms.
+All speaker totals match, service lifecycles/reconnects pass, and TLS peak stays
+at 49,415 bytes with no tracked denial/system failure. See
+[TLS allocation and hardware evidence](implementation-evidence/2026-08-31-tls-memory/README.md).
+An earlier 60-second flash observation timeout is retained; the final image
+passes the unchanged heartbeat marker with enough time for its post-startup
+interval. Permanent enrollment is revision 167 with fresh readiness verified.
+
+This closes an unbounded active-provider allocation path, **not** the full
+device-memory or release gate. mbedTLS, system bookkeeping, stacks, full UI
+stress/headroom, physical interactions, remaining impairment/reference cases,
+latency, ASan/CI and endurance remain open. Earlier speech failures remain failed.
+No production-host rollout, reference-pin update, default switch or commit
+occurs; the complete replacement goal remains active. No firmware restoration
+is required.
+
+## Previous checkpoint: packet faults exercised; cancelled-response recovery fixed
+
+Separate 80 ms packet-reordering and duplicate-packet cases each pass three
+zero-error real-provider turns on the Ultra. A combined 250 ms reorder/duplicate
+case exposes a host defect: a pacing-cancelled response leaves the conversation
+Speaking. The sink now discards unheard output, ends its speaking state and
+retires only that provider turn before returning Ready. Stale drains cannot
+reset replacements; durable announcements remain pending.
+
+A controlled 350 ms media-pump stall takes the actual cancellation path, adds no
+unheard history, and then passes three fresh same-session turns plus reconnect.
+The subsequent combined-packet repeat completes its response and returns Ready,
+but fails the frozen critical-phrase speech check. **The combined case and full
+speech impairment gate remain unpassed.** Both failed runs are preserved. Two
+additional bounded acoustic diagnostics do not reproduce or explain the earlier
+p101 error, so they do not replace its failed result. No buffer, pacing, loss or
+speech criterion changes.
+
+See [packet and recovery evidence](implementation-evidence/2026-08-31-packet-order/README.md).
+The full Python suite passes 384 tests; 46 native/firmware-protocol checks also
+pass. Permanent enrollment is revision 164 with fresh readiness verified;
+flash43 and all persistent service processes remain unchanged. No firmware
+restoration, host rollout, reference-pin update, default switch or commit occurs.
+Application-group/blocked-stream, physical full-shell, security/allocation,
+latency, reference, sanitizer/CI and endurance gates remain open. The complete
+replacement goal is still active.
+
+## Previous checkpoint: twelve impairment cells run; one speech failure remains
+
+The corrected full-service bench now covers all twelve configured combinations
+of 0/1/3/5% packet loss and 30/60/120 ms added RTT on flash43. Eleven cells pass
+three zero-error voice turns each. The 3%/60 ms cell fails its first turn: one
+transcription error changes the frozen critical target phrase. Its watch read,
+TTS response, exact speaker receipt and service shutdown still complete. The
+failed cell is retained without retrying it into a pass; four untested cells
+then run separately. **The impairment matrix has not passed.**
+
+Across all cells, 34 responses finish with matching host/firmware sample totals;
+33 speech turns satisfy the fixture policy. Every host starts and shuts down
+cleanly, and all eleven passing cells verify idle reconnect. Concealment and
+brief fallback silence under loss remain diagnostics rather than automatic
+software-defect verdicts. The failed capture has seven lost groups and 140 ms
+of PLC; passing captures can have larger losses, so the failure's cause is not
+isolated by counters alone. No queue, buffer or speech threshold is relaxed.
+
+See [the complete matrix and failure evidence](implementation-evidence/2026-08-31-provider-matrix/README.md).
+The Python suite remains green. Permanent enrollment is revision 156 with fresh
+readiness verified; firmware and persistent services remain unchanged. The
+speech failure, remaining reorder/blocked-stream tests, physical product,
+security/allocation, latency, reference, sanitizer/CI and endurance gates remain
+open. No rollout, reference-pin update, default switch or firmware restoration
+occurs, and the complete replacement goal remains active.
+
+## Previous checkpoint: real provider pacing passes; service startup cleanup fixed
+
+Flash43 and contiguous host pacing now pass nine complete real-provider voice
+turns plus text/background speech in final runs p91–p93. All nine fixed-phrase
+transcripts have zero word errors; eleven firmware speaker totals match host
+receipts, and output-only speech/reconnect do not start capture. Delayed TTS from
+a cancelled turn is rejected during the replacement capture. With 5% loss,
+120 ms added RTT and an 800 ms outage, capture recovers on the same session in
+973 ms. Its 22 PLC and 22 late chunks are retained diagnostics, with no fallback
+silence; this is not a downlink audibility or complete impairment-matrix verdict.
+
+An attempted matrix expansion exposes a host startup/cleanup blind spot. Initial
+provider runs reach listening sockets without verified full service startup;
+p90 later hangs after writing its provider result. Two regressions reproduce
+discovery and transport resource leaks on startup failure. Startup now shares
+the cleanup scope and uses owned asynchronous discovery. The private bench
+disables advertisement and requires full service-ready/shutdown evidence rather
+than socket readiness. Final p91–p93 pass those checks and exit cleanly. Historical
+runs retain their narrower verdicts and the failed matrix attempt.
+
+The complete Python suite passes 369 tests; real-native and firmware-protocol
+checks also pass. See [provider and lifecycle evidence](implementation-evidence/2026-08-31-provider-pacing/README.md).
+Permanent enrollment is revision 143 with fresh readiness observed. Flash43 and
+both persistent hosts remain in place, with no firmware restoration, host rollout,
+reference-pin change or default switch. The rest of the matrix, physical full-shell,
+security/allocation, latency, reference, sanitizer/CI and endurance gates remain
+open; the full replacement goal is not complete.
+
+## Previous checkpoint: contiguous pacing fixed; three long-playback losses remain
+
+Interpretation clarified after the user's Wi-Fi question: the three PLC and late
+counts fail the bench's strict zero-concealment diagnostic, but do not by
+themselves prove a transport defect or a product-readiness failure. The same
+frames can contribute to both counters. Three 20 ms concealed chunks across
+roughly 30,000 frames is about 0.01%; audibility still needs assessment, and the
+quiet marker fixture does not establish speech quality. No injected loss is not
+the same as a loss-free Wi-Fi path. Preserve the recorded diagnostic failure;
+judge replacement readiness by response integrity, speech quality, bounded
+latency, recovery and the complete original acceptance matrix. Do not make
+eliminating every wireless concealment event the prerequisite for further
+integration work.
+
+The player now retains bounded first-failure timing snapshots and emits final
+endpoint timing/allocator evidence after speaker drainage. A two-minute repeat
+shows a responsive audio task and stable host pacing, but delivery gaps up to
+95.789 ms starve the 60 ms prebuffer. The library can select 60..80 ms only before
+playback starts; the Ultra uses the plan's 80 ms upper target. Its ten-packet/
+200 ms queue, stale-media bound, PLC limit and cancellation are unchanged.
+Real-Opus regression coverage reproduces the observed burst: 60 ms conceals,
+while 80 ms preserves exact PCM. An 80 ms physical repeat still fails once.
+
+That repeat also exposes a host pacing mismatch: scheduler slips permanently
+move later deadlines even though native MoQ timestamps remain contiguous. MoQ
+now retains the response clock and catches up at no more than two packets per
+20 ms. More than 200 ms of debt cancels only that response. Every replacement
+gets a fresh clock fenced from retired awaits. WebRTC pacing is unchanged.
+
+Flash43/r8 completes all 9,599,877 samples over 600 seconds and 27 renewals. The
+30,000 host packets span 599,981.998 ms, about 2 ms from nominal despite scheduling
+slips. **Clean long playback still fails:** three PLC chunks and three late
+packets, zero pressure/fallback silence. Delivery gaps still reach 107.010 ms
+while audio steps remain below 9.737 ms. Native-send/adapter-receive timing must
+localize the remaining stalls; no audio threshold or buffer limit is raised to
+claim a pass. The final ngtcp2 peak is 30,344 bytes with no allocation denial;
+this does not establish TLS/total-device bounds.
+
+242 combined Python/firmware-protocol tests, six real-native cases, C host/audio
+tests and player UBSan pass. macOS ASan stalls before main; the local Linux
+container never starts. Neither attempt is a sanitizer pass. See
+[the timing and pacing evidence](implementation-evidence/2026-08-31-playout-clock/README.md).
+Flash43 remains installed; permanent enrollment is reapplied at revision 135.
+No persistent host deployment/restart, reference pin update or default switch
+occurs. Physical product, impairment/security/allocation, latency, soak,
+release/CI and unchanged-reference gates remain open.
+
+## Previous checkpoint: live renewal survives 600 seconds; long clean audio still fails
 
 The library, native endpoint, Python host and firmware now support renewal of an
 existing authenticated session. A one-use enrollment-key proof binds device and
@@ -1118,19 +1452,25 @@ STT/model/tool/TTS turn remain outstanding. Firmware restoration is not required
 
 ## Original finding status
 
+Updated against the later hardware and native evidence on 2026-08-31. These are
+finding-level implementation states, not a claim that the final release image
+has passed every acceptance gate. The older foundation narrative below retains
+its historical limits; bootstrap, renewal and physical voice are no longer
+missing implementations.
+
 | Finding | Current implementation and evidence | Remaining gate |
 | --- | --- | --- |
-| R1 active-path link failure | One shared wolfSSL feature list; ngtcp2's client ticket API retained, unused server TLS excluded, no session cache added. Fresh ESP-IDF 5.5.5 populated-config build links and passes ELF symbol checks. CI separately builds empty and public-dummy configurations. Physical verified QUIC/SETUP now passes after the target AES correction below. | Actual GitHub CI execution; intended deployment authentication and latency |
+| R1 active-path link failure | Shared wolfSSL features and the required client-ticket API link with a populated ESP-IDF configuration. Ordinary and diagnostic full-shell images build, and verified TLS/QUIC plus authenticated bootstrap run on the Ultra. CI definitions cover empty/public-dummy configurations; definitions are not evidence of an executed CI job. | Final clean-checkout candidate/CI execution and measured connection latency |
 | R2 peer bidi replies | Peer-open callback allocates send halves; local opens reserve advertised peer bidi capacity. Actual-adapter tests reply on the same peer stream. Real TRACK/SUBSCRIBE/catalog exchanges pass natively and on Ultra. | Retain regression coverage in the final audio/product image |
-| R3 stream-credit exhaustion | Bounded peer registry returns credit exactly once only for observed remote opens. Tests simulate 100,000 uni plus 100,000 bidi lifetimes and reject duplicate/local credit returns. | Real native and 30-minute Ultra synthetic turnover pass; final operational/audio image must be revalidated |
-| R4 blocked-stream starvation | Scheduler skips blocked streams, preserves ACK-owned buffers, prioritizes control and subscriber track/group priority, and rotates ties. SUBSCRIBE_UPDATE changes queued/backend-owned unsent groups. Owned media deadlines and abandon/reset are implemented. | Real loss/congestion and final audio latency tests |
+| R3 stream-credit exhaustion | Bounded peer registry returns credit once for observed remote opens. Adapter tests cover 200,000 lifetimes; earlier real raw-QUIC turnover passes. Full-shell p119 completes 90,000 operational groups each way over 30 minutes, with exact receipts, 82 renewals and no final receive leases. | Retain final-candidate coverage; longer reconnect/endurance auditing is optional |
+| R4 blocked-stream starvation | Priority/fairness/deadline scheduling retains ACK-owned buffers. The subsequent credit-dormancy fix eliminates 401 redundant retries during a real blocked-stream hold; resume/reset, fresh streams and control progress pass. A delayed Hang group also permits later audio on the physical shell. | Deliberately byte-credit-blocked physical media, remaining impairment cells and calibrated audio latency |
 | R5 receive datagram mismatch | Advertises 1,350-byte receive maximum; reads one extra byte and drops oversized input, including truncated prefixes. Loopback UDP and bounded receive-drain tests pass. | Real peer packet/probe cases on lwIP |
-| R6 callback reentrancy | Deferred adapter events and the owned service isolate media/UI callers. The task endpoint exclusively owns QUIC and joins its DNS/network workers before freeing memory. Native producer/consumer concurrency and Linux sanitizers pass; target cleanup returns PSRAM to baseline. | Broader real-QUIC failure/reconnect races, decoder/DMA ownership in the audio layer |
-| R7 missing operational client | Engine, catalog negotiation, native error translation, owned TX/RX leases, explicit media range binding and task endpoint are implemented. Real native and Ultra synthetic exchanges pass against unmodified pinned Rust APIs. DNS is off the owner; copied authorization/time leases expire, stale DNS results are discarded, and close rejects old attempt IDs. Opus receive playout now passes host and standalone target fixtures. | Production bootstrap/scope/time policy, credential renewal/backoff, capture/tail publication, device audio, production host endpoint and full VoiceWatch integration |
+| R6 callback reentrancy | Deferred events and task ownership isolate QUIC, media and UI. DNS/network workers join before destruction; scoped audio cancellation and DMA-drain completion have native and physical coverage. Historical portable Linux sanitizers pass, and current real-backend UBSan passes; full-backend ASan remains unpassed. | Extended lifecycle/cycle/idle races, full physical ownership transitions and the outstanding ASan lane |
+| R7 missing operational client | Operational pub/sub, catalog/Hang, scoped leases, capture/Opus/playout, Ultra BSP and the full shell are implemented. USB enrollment, signed time, verified HTTPS/WSS/QUIC, directional authorization and same-session renewal run through the Rust/Python host. Real STT/model/tool/TTS turns and complete speaker receipts pass; p116 adds three zero-word-error turns. | Remaining speech failures, unchanged-reference interoperability, complete physical navigation/PTT/package/sleep-wake behavior, resource/latency/endurance gates and final rollout |
 | R8 duplicate-start corruption | Validate session transition before clearing client state. Tests preserve partial SETUP, blocked FIN, and partial peer input across invalid starts. Original source fails the new regression. | Closed at portable-core regression level |
 | R9 optional-bound overflow | Reject present values >= varint maximum before adding one. Tests cover legal/illegal start and end values, unchanged output on rejection, and irrelevant absent values. Original source fails the new regression. | Closed at portable-core regression level |
 
-Additional changes:
+Earlier foundation changes retained for provenance:
 
 - The active handshake example has a 2 MiB factory application partition. A
   fresh build exposed that the full image exceeds the old default 1 MiB
@@ -1142,7 +1482,7 @@ Additional changes:
   the existing backend GPLv3 decision is recorded without assigning a license
   to unrelated source files.
 
-## Verification at this checkpoint
+## Historical foundation verification
 
 - Portable core: 300,621 assertions passed on macOS and Linux. Approximately
   300,000 assertions are varint roundtrips, not distinct end-to-end scenarios.

@@ -10,4 +10,9 @@ bool commit_renewal(Grant& grant,const Renewal& renewal);
 bool clock_valid();
 bool authorization_rejected();
 std::uint32_t profile_revision();
+struct ArtifactTrust {
+    char roots[kRootsCapacity]{};
+    std::uint32_t revision=0;
+};
+bool artifact_trust(const char* url,const char* digest,ArtifactTrust& out);
 }

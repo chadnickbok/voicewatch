@@ -13,7 +13,8 @@ import time
 
 from .moq_supervisor import SupervisorError, load_profile, write_private
 
-LICENSES = ('audiopus_sys-LICENSE.md', 'libopus-COPYING')
+LICENSES = ('audiopus_sys-LICENSE.md', 'libopus-COPYING',
+            'moq-rust-LICENSE-MIT', 'moq-rust-LICENSE-APACHE')
 
 
 def profile_lock(path, wait_unlocked):

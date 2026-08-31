@@ -1,0 +1,10 @@
+{
+  "permanent_revision": 185,
+  "permanent_ready_monotonic_ms": 25199105.45,
+  "previous_ready_monotonic_ms": 25063444.29,
+  "latest_trace_monotonic_ms": 25199105.45,
+  "post_recovery_display_samples": 13,
+  "fault": false,
+  "firmware_restoration_required": false,
+  "persistent_host_updated": false
+}

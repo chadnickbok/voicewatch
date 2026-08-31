@@ -1,0 +1,18 @@
+{
+  "candidate_pass": true,
+  "unchanged_pin_conformance": false,
+  "matrix_exit_code": 0,
+  "concurrent_passed": 100,
+  "concurrent_total": 100,
+  "max_concurrent": 4,
+  "tokio_workers_per_peer": 2,
+  "delayed_passed": 27,
+  "delayed_total": 27,
+  "lifecycle_exercised": true,
+  "lifecycle_passed": 27,
+  "lifecycle_total": 27,
+  "fault_peer_sha256": "546ed1713d2c89627022d91c25cba25f07058a85be1b1dc80cf9b67808fb2c24",
+  "binaries_unchanged": true,
+  "client_sha256": "bd5056cd5735d84641b5f59d65670a1cfbdb346a18915665512b856590742138",
+  "peer_sha256": "985e3f5e3238c62c53b2e9e3211a98ef013d1bbd5f5356ee939e1502d2be46f8"
+}

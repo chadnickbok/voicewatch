@@ -19,6 +19,10 @@ requires a loss-budget abort, then successful capture on the same session.
 --long-response-seconds plays up to 600 seconds of generated, mostly quiet PCM
 with a non-frame-aligned tail. It needs no microphone and requires same-session
 renewal when playback exceeds the short bench lease. No provider is involved.
+--stream-soak-groups exercises 50 synthetic Opus groups/second in each direction
+using an explicitly selected test host and test firmware, without opening audio.
+--idle-seconds runs the 120-second smoke or 28,800-second idle/reconnect gate;
+its test firmware must support the read-only USB STATS command.
 No provider runs, deployed service changes, flash writes or restoration.
 """
 import argparse
@@ -59,14 +63,16 @@ def write(path, value):
         stream.write(raw)
 
 
-def pki(directory, host, fault=None):
+def pki(directory, host, fault=None, *, valid_for_hours=6):
+    if type(valid_for_hours) is not int or not 1<=valid_for_hours<=24:
+        raise ValueError('private bench certificate lifetime must be 1..24 hours')
     ca, leaf = ec.generate_private_key(ec.SECP256R1()), ec.generate_private_key(ec.SECP256R1())
     name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, 'VoiceWatch private hardware bench')])
     now = datetime.now(timezone.utc)
     def builder(public, subject, expired=False, future=False):
         return (x509.CertificateBuilder().subject_name(subject).issuer_name(name).public_key(public)
                 .serial_number(x509.random_serial_number()).not_valid_before(now+timedelta(hours=1) if future else now-timedelta(hours=2))
-                .not_valid_after(now-timedelta(hours=1) if expired else now+timedelta(hours=6)))
+                .not_valid_after(now-timedelta(hours=1) if expired else now+timedelta(hours=valid_for_hours)))
     root = (builder(ca.public_key(), name).add_extension(x509.BasicConstraints(ca=True, path_length=0), True)
             .sign(ca, hashes.SHA256()))
     leaf_name = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, host)])
@@ -96,6 +102,23 @@ def port(kind):
         return sock.getsockname()[1]
 
 
+def shell_telemetry(raw):
+    """Export only named numeric diagnostics, never arbitrary serial fields."""
+    keys = ('frames','flushes','avg_render_us','max_render_us','avg_flush_us','max_flush_us',
+            'touch_presses','internal_free','internal_min','internal_largest','psram_free')
+    display = []
+    for line in raw.splitlines():
+        if '[display] fps=' not in line:
+            continue
+        values = dict(re.findall(r'\b([a-z_]+)=(\d+)\b', line))
+        if all(key in values for key in keys):
+            display.append({key:int(values[key]) for key in keys})
+    tls = [dict(zip(('valid','live','peak','limit','blocks','allocations','frees','denied','failures'),map(int,values)))
+           for values in re.findall(r'TLS heap valid=(\d+) live=(\d+) peak=(\d+) limit=(\d+) blocks=(\d+) allocations=(\d+) frees=(\d+) denied=(\d+) failures=(\d+)',raw)]
+    return dict(display=display,tls_heap=tls,
+                firmware_fault=any(marker in raw for marker in ('Guru Meditation','abort() was called','assert failed')))
+
+
 async def stop(process):
     if process is not None and process.returncode is None:
         process.send_signal(signal.SIGINT)
@@ -120,7 +143,10 @@ async def run(args):
     began = time.monotonic()
     processes, streams = [], []
     server = None
+    monitor = None
     impairment = None
+    memory_task = None
+    sample_memory = None
     def mark(kind, **fields):
         event = dict(kind=kind, elapsed_ms=round((time.monotonic()-began)*1000), **fields)
         print(json.dumps(event), flush=True)
@@ -131,15 +157,24 @@ async def run(args):
             '--port', args.port, '--output', str(directory/output), *map(str, extra),
             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
         processes.append(process)
-        stdout, stderr = await asyncio.wait_for(process.communicate(), 15)
-        write(directory/('usb-'+command+'.log'), stdout+stderr)
+        timeout = args.stream_soak_groups/50+45 if command == 'soak' else 15
+        stdout, stderr = await asyncio.wait_for(process.communicate(), timeout)
+        label = command+'-'+Path(output).name if command == 'monitor' else command
+        write(directory/('usb-'+label+'.log'), stdout+stderr)
         if process.returncode:
             raise RuntimeError('USB ' + command + ' failed')
     try:
+        if args.idle_seconds and sys.platform=='darwin':
+            # Scoped to this bench process; no persistent power settings or
+            # display wake lock. Cleanup also stops this owned helper.
+            inhibitor=await asyncio.create_subprocess_exec('/usr/bin/caffeinate','-i','-w',str(os.getpid()),
+                stdout=asyncio.subprocess.DEVNULL,stderr=asyncio.subprocess.DEVNULL)
+            processes.append(inhibitor)
         await usb('info', 'device.json')
         device = json.loads((directory/'device.json').read_text())
         key = secrets.token_bytes(32)
-        context, roots = pki(directory, args.host, args.certificate_fault)
+        context, roots = pki(directory, args.host, args.certificate_fault,
+                             valid_for_hours=10 if args.idle_seconds else 6)
         control_port, time_port, media_port = port(socket.SOCK_STREAM), port(socket.SOCK_STREAM), port(socket.SOCK_DGRAM)
         backend_port = media_port
         if args.loss_percent or args.added_rtt_ms or args.capture_outage_ms:
@@ -185,24 +220,52 @@ async def run(args):
             # No transcripts, personal app state, IDs or audio in public output.
             if kind in {'identified', 'connected', 'disconnected', 'capture.started', 'capture.stopped', 'capture.failed'}:
                 mark(kind)
-        server = MoqTransportServer(LatencyTrace(), on_audio, on_event, control_port,
+        server = MoqTransportServer(LatencyTrace(directory/'latency.jsonl'), on_audio, on_event, control_port,
             registry=registry, context=context, ipc_path=directory/'media.sock', media_host=args.host,
             media_port=media_port, time_port=time_port)
         await server.start()
-        write(directory/'endpoint.json', dict(listen=f'0.0.0.0:{backend_port}',
+        endpoint_config = dict(listen=f'0.0.0.0:{backend_port}',
             certificate=str(directory/'server.pem'), private_key=str(directory/'server.key'),
-            ipc_socket=str(directory/'media.sock')))
+            ipc_socket=str(directory/'media.sock'))
+        if args.stream_soak_groups:
+            endpoint_config['diagnostic_stream_soak_groups'] = args.stream_soak_groups
+        write(directory/'endpoint.json', endpoint_config)
         native_log = (directory/'native.log').open('wb'); streams.append(native_log)
-        native = await asyncio.create_subprocess_exec(str(ENDPOINT), '--config', str(directory/'endpoint.json'),
+        native = await asyncio.create_subprocess_exec(str(args.endpoint or ENDPOINT), '--config', str(directory/'endpoint.json'),
             stdout=native_log, stderr=asyncio.subprocess.STDOUT)
         processes.append(native)
+        if args.stream_soak_groups:
+            result['native_memory'] = []
+            async def sample_memory():
+                probe = await asyncio.create_subprocess_exec('ps','-o','rss=','-p',str(native.pid),
+                    stdout=asyncio.subprocess.PIPE,stderr=asyncio.subprocess.DEVNULL)
+                try:
+                    raw,_ = await asyncio.wait_for(probe.communicate(),2)
+                finally:
+                    if probe.returncode is None:
+                        probe.kill()
+                        await probe.wait()
+                if probe.returncode or not raw.strip().isdigit() or len(result['native_memory'])>=128:
+                    raise RuntimeError('native memory observation failed')
+                result['native_memory'].append(dict(elapsed_ms=round((time.monotonic()-began)*1000),rss_kib=int(raw)))
+            async def observe_memory():
+                while True:
+                    await sample_memory()
+                    await asyncio.sleep(30)
+            memory_task=asyncio.create_task(observe_memory())
         write(directory/'profile.json', dict(v=1, revision=device['revision']+1, device_id=device['device_id'],
             host=args.host, control_port=control_port, time_port=time_port, roots_pem=roots, key_hex=key.hex()))
         await usb('install', 'enrollment.json', '--profile', directory/'profile.json')
-        monitor = await asyncio.create_subprocess_exec(str(args.idf_python), str(ENROLL), 'monitor',
-            '--port', args.port, '--output', str(directory/'serial.log'), '--seconds', str(lease_seconds+120+args.long_response_seconds),
-            stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
-        processes.append(monitor)
+        if args.idle_seconds:
+            monitor = await asyncio.create_subprocess_exec(str(args.idf_python),str(Path(__file__).with_name('moq_idle_soak.py')),
+                'monitor','--port',args.port,'--output',str(directory/'serial.log'),
+                '--seconds',str(args.idle_seconds+180),stdout=asyncio.subprocess.DEVNULL,stderr=asyncio.subprocess.DEVNULL)
+            processes.append(monitor)
+        elif not args.stream_soak_groups:
+            monitor = await asyncio.create_subprocess_exec(str(args.idf_python), str(ENROLL), 'monitor',
+                '--port', args.port, '--output', str(directory/'serial.log'), '--seconds', str(lease_seconds+120+args.long_response_seconds),
+                stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
+            processes.append(monitor)
         mark('enrolled')
         if args.certificate_fault:
             # The proof must succeed, then the real firmware HTTPS certificate
@@ -230,6 +293,51 @@ async def run(args):
         if result['microphone_samples']:
             raise RuntimeError('startup opened microphone')
         mark('idle_ready_without_capture')
+        if args.idle_seconds:
+            from moq_idle_soak import run_idle
+            first=await run_idle(seconds=args.idle_seconds,server=server,first=first,ready=ready,
+                device_id=device['device_id'],result=result,directory=directory,native=native,
+                monitor=monitor,capture_started=capture_started,mark=mark)
+        if args.stream_soak_groups:
+            count = args.stream_soak_groups
+            # One serial owner at a time. The soak command also records serial
+            # telemetry; a simultaneous monitor could steal its acknowledgement.
+            await usb('monitor', 'baseline-serial.log', '--seconds', 10)
+            mark('stream_soak_started', groups=count, groups_per_second=50)
+            await usb('soak', 'serial.log', '--groups', count, '--seconds', count//50+30)
+            async with asyncio.timeout(5):
+                while 'SOAK_HOST_FINAL ' not in (directory/'native.log').read_text(errors='replace'):
+                    if native.returncode is not None:
+                        raise RuntimeError('soak endpoint exited')
+                    await asyncio.sleep(.1)
+            raw = (directory/'serial.log').read_text(errors='replace')
+            host = (directory/'native.log').read_text(errors='replace')
+            finals = re.findall(r'SOAK_FINAL pass=(\d+) result=(-?\d+) sent=(\d+) received=(\d+) would_block=(\d+) microphone=(\d+) speaker=(\d+)', raw)
+            peer = re.findall(r'SOAK_HOST_FINAL pass=(\d+) sent=(\d+) received=(\d+) elapsed_ms=(\d+)', host)
+            progress = [dict(zip(('sent','received','next','elapsed_ms','internal_free','internal_min',
+                'internal_largest','psram_free','rx_high','tx_high','leased'),map(int,values))) for values in re.findall(
+                r'SOAK_PROGRESS sent=(\d+) received=(\d+) next=(\d+) elapsed_ms=(\d+) internal_free=(\d+) internal_min=(\d+) internal_largest=(\d+) psram_free=(\d+) rx_high=(\d+) tx_high=(\d+) leased=(\d+)',raw)]
+            if len(finals)!=1 or len(peer)!=1 or not progress:
+                raise RuntimeError('missing or ambiguous soak diagnostics')
+            passed,code,sent,received,would_block,microphone,speaker = map(int,finals[0])
+            peer_pass,peer_sent,peer_received,peer_elapsed = map(int,peer[0])
+            if (not passed or code or (sent,received,peer_sent,peer_received)!=(count,)*4
+                    or not peer_pass or microphone or speaker or progress[-1]['leased']
+                    or progress[-1]['next']!=count+1
+                    or min(peer_elapsed,progress[-1]['elapsed_ms'])<count*20):
+                raise RuntimeError('soak integrity or duration failed')
+            if (first._closed or first._fault.is_set() or not first.connected.is_set()
+                    or server.sessions.get(device['device_id']) is not first or not ready.empty()
+                    or result['ready_sessions']!=1 or result['microphone_samples'] or capture_started.is_set()):
+                raise RuntimeError('soak changed session or opened capture')
+            if count/50>=lease_seconds and first.renewals_completed<1:
+                raise RuntimeError('soak did not renew its lease')
+            result['stream_soak'] = dict(groups_per_direction=count,groups_per_second=50,
+                watch_sent=sent,watch_received=received,host_sent=peer_sent,host_received=peer_received,
+                host_elapsed_ms=peer_elapsed,watch_elapsed_ms=progress[-1]['elapsed_ms'],
+                would_block=would_block,renewals=first.renewals_completed,same_session=True,
+                microphone_opened=False,speaker_opened=False,progress=progress)
+            mark('stream_soak_finished',groups=count,renewals=first.renewals_completed)
         at = time.monotonic()
         await first.close(code=4000, message=b'bench reconnect')
         second = await asyncio.wait_for(ready.get(), 35)
@@ -237,6 +345,15 @@ async def run(args):
             raise RuntimeError('reconnect reused grant')
         result['forced_reconnect_ms'] = round((time.monotonic()-at)*1000)
         mark('fresh_grant_reconnect', duration_ms=result['forced_reconnect_ms'])
+        if args.stream_soak_groups:
+            await usb('monitor', 'reconnect-serial.log', '--seconds', 10)
+            if (second._closed or second._fault.is_set() or not second.connected.is_set()
+                    or result['ready_sessions']!=2 or result['microphone_samples'] or capture_started.is_set()
+                    or server.bridge.unexpected_failures or server.bootstrap.unexpected_failures
+                    or native.returncode is not None):
+                raise RuntimeError('post-soak recovery failed')
+            result['pass_'] = True
+            return result
         if args.audio:
             # Generated output only; microphone samples are counted/discarded.
             samples = 16037
@@ -310,6 +427,28 @@ async def run(args):
         if args.long_response_seconds:
             if not args.audio:
                 await second.authorize_response('text')
+            # Observe read completion without storing PCM or writing per packet.
+            # Preserve the real spool/pacer and its generation/cancellation path.
+            read_pcm=second.downlink.read
+            pacing=dict(packets=0,max_interval_ms=0.0,elapsed_ms=0.0,late_intervals=[])
+            first_pcm=last_pcm=None
+            async def observed_read(generation):
+                nonlocal first_pcm,last_pcm
+                packet=await read_pcm(generation)
+                if packet is not None:
+                    now=time.monotonic()
+                    if first_pcm is None: first_pcm=now
+                    if last_pcm is not None:
+                        interval=(now-last_pcm)*1000
+                        pacing['max_interval_ms']=max(pacing['max_interval_ms'],round(interval,3))
+                        if interval>=30 and len(pacing['late_intervals'])<8:
+                            pacing['late_intervals'].append(dict(at_ms=round((now-first_pcm)*1000,3),interval_ms=round(interval,3)))
+                    last_pcm=now
+                    pacing['packets']+=1
+                    pacing['elapsed_ms']=round((now-first_pcm)*1000,3)
+                return packet
+            second.downlink.read=observed_read
+            result['long_pacing']=pacing
             # A quiet 100 ms marker followed by 900 ms intentional silence.
             # Feed the normal bounded host spool; never allocate the full PCM.
             marker = b''.join(struct.pack('<h',round(300*math.sin(2*math.pi*500*n/16000))) for n in range(1600))
@@ -345,6 +484,13 @@ async def run(args):
                 playback_elapsed_ms=round((time.monotonic()-began_playback)*1000),
                 renewals=second.renewals_completed,exact_speaker_receipt=True,same_session=True)
             mark('long_playback_finished',**result['long_response'])
+            # Completion can reach WSS before the serial monitor drains the
+            # endpoint's final timing/allocator snapshot. Require that snapshot.
+            async with asyncio.timeout(3):
+                marker=f'playout diagnostics complete samples={count}'
+                while marker not in (directory/'serial.log').read_text(errors='replace'):
+                    await asyncio.sleep(.1)
+            result['long_final_diagnostics']=True
         if second._renewal_supported:
             async with asyncio.timeout(lease_seconds+15):
                 while second.renewals_completed<2:
@@ -369,6 +515,19 @@ async def run(args):
         mark('failed', failure_type=type(error).__name__)
         raise
     finally:
+        if args.idle_seconds:
+            result['idle_monitor_survived']=monitor is not None and monitor.returncode is None
+            result['pass_']=result['pass_'] and result['idle_monitor_survived']
+        if memory_task is not None:
+            memory_task.cancel()
+            observed = await asyncio.gather(memory_task,return_exceptions=True)
+            result['native_memory_observation_failed'] = any(
+                isinstance(value,BaseException) and not isinstance(value,asyncio.CancelledError) for value in observed)
+            try:
+                await sample_memory()
+            except Exception:
+                result['native_memory_observation_failed'] = True
+            result['pass_']=result['pass_'] and not result['native_memory_observation_failed']
         if server:
             await server.close()
         for process in reversed(processes):
@@ -382,6 +541,24 @@ async def run(args):
                 result['pass_']=False
         serial_path=directory/'serial.log'
         raw=serial_path.read_text(errors='replace') if serial_path.exists() else ''
+        if args.idle_seconds:
+            observed=shell_telemetry(raw)
+            result['idle_tls_heap']=observed['tls_heap']
+            result['idle_tls_gate']=bool(observed['tls_heap']) and all(
+                h['valid']==1 and 0<h['limit']<=262144 and h['live']<=h['peak']<=h['limit']
+                and not h['denied'] and not h['failures'] for h in observed['tls_heap'])
+            result['pass_']=result['pass_'] and result['idle_tls_gate'] and not observed['firmware_fault']
+        if args.stream_soak_groups:
+            result['shell_telemetry'] = {}
+            for label,filename in (('baseline','baseline-serial.log'),('soak','serial.log'),('reconnected','reconnect-serial.log')):
+                path=directory/filename
+                result['shell_telemetry'][label]=shell_telemetry(path.read_text(errors='replace') if path.exists() else '')
+            samples=result['shell_telemetry']['soak']['tls_heap']
+            result['soak_tls_gate']=bool(samples) and all(
+                h['valid']==1 and 0<h['limit']<=262144 and h['live']<=h['peak']<=h['limit']
+                and not h['denied'] and not h['failures'] for h in samples)
+            result['pass_']=result['pass_'] and result['soak_tls_gate'] and not any(
+                t['firmware_fault'] for t in result['shell_telemetry'].values())
         heap_fields=('live','peak','limit','blocks','allocations','frees','denied','failures')
         result['quic_heap']=[dict(zip(heap_fields,map(int,values))) for values in re.findall(
             r'QUIC heap live=(\d+) peak=(\d+) limit=(\d+) blocks=(\d+) allocations=(\d+) frees=(\d+) denied=(\d+) failures=(\d+)',raw)]
@@ -409,6 +586,7 @@ async def run(args):
             result['long_playout_gate']=len(matches)==1 and all(
                 not p['concealed'] and not p['late'] and not p['pressure'] and p['silence']==0 for p in matches)
             result['pass_']=result['pass_'] and result['long_playout_gate']
+            result['pass_']=result['pass_'] and result.get('long_final_diagnostics',False)
         write(directory/'result.json', result)
     return result
 
@@ -419,6 +597,9 @@ def main():
     parser.add_argument('--port', required=True)
     parser.add_argument('--host', required=True, help='LAN IPv4 address reachable from the Ultra')
     parser.add_argument('--idf-python', type=Path, required=True)
+    parser.add_argument('--endpoint', type=Path, help='Explicit native host binary; deployed services are unchanged')
+    parser.add_argument('--stream-soak-groups', type=int, choices=(0,500,3000,90000), default=0)
+    parser.add_argument('--idle-seconds',type=int,choices=(0,120,28800),default=0)
     parser.add_argument('--audio', action='store_true')
     parser.add_argument('--long-response-seconds',type=int,default=0)
     parser.add_argument('--voice-ui', action='store_true', help='Show the real listening shell during capture')
@@ -437,6 +618,12 @@ def main():
                         help='Require allocator snapshots, this maximum budget, and zero allocation failures')
     parser.add_argument('--certificate-fault', choices=('expired', 'not_yet_valid', 'hostname', 'untrusted'))
     args = parser.parse_args()
+    if args.idle_seconds and (args.audio or args.stream_soak_groups or args.long_response_seconds
+            or args.certificate_fault or args.loss_percent or args.added_rtt_ms or args.capture_outage_ms):
+        parser.error('idle-seconds cannot combine with audio, stream load, certificate faults or impairment')
+    if args.stream_soak_groups and (args.endpoint is None or args.audio or args.long_response_seconds
+            or args.certificate_fault or args.loss_percent or args.added_rtt_ms or args.capture_outage_ms):
+        parser.error('stream-soak-groups requires an explicit test endpoint and no audio, certificate fault or impairment mode')
     if not 0<=args.long_response_seconds<=600 or (args.long_response_seconds and
             (args.certificate_fault or args.max_playout_pressure is not None)):
         parser.error('long-response-seconds must be 0..600 and cannot combine with certificate faults or the short-tone gate')
