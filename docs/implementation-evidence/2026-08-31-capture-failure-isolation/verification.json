@@ -1,0 +1,82 @@
+{
+  "rust": {
+    "passed": 24,
+    "capture": 14,
+    "audio": 6,
+    "authorization": 4,
+    "clippy_warnings_denied": true,
+    "locked_offline_build": true
+  },
+  "python": {
+    "passed": 305,
+    "warnings": 4
+  },
+  "native_integration": {
+    "passed": 6
+  },
+  "firmware_cpp_protocol": {
+    "passed": 26
+  },
+  "firmware_build": true,
+  "c_suites": {
+    "adapter_normal": true,
+    "host_normal": true,
+    "linux_adapter_normal_and_asan_ubsan": true,
+    "linux_host_normal_and_asan_ubsan": true,
+    "sanitizer_process_exit_code": 0
+  },
+  "sanitizer_source_archive": {
+    "bytes": 2201600,
+    "sha256": "1aa0e51d16b4fe77e37733c477f46058ec74eddbce0a129c6b1df09949858266",
+    "execution": "Network disabled; source archive only, no host mount"
+  },
+  "log_sha256": {
+    "rust_and_clippy": "59561adaa7d0b7ac1a8b6776b060ca27d71b92f21defe9a827902294f0c2769d",
+    "python": "66c1e0837f74d4eddd21a1090ecf51069df79b77421c1f645a46a66cb899117b",
+    "native_and_firmware_parsers": "ed3158860030adc0852c19c8586eda1b5cf9d31bf336f7945edcd43292c61dc9",
+    "adapter": "1faf4bb65c92f716787efa12d54d3b54e737e189786b6657aa948ad34accf26f",
+    "host": "94e626482773b13aed6a8920974b9ffc3431b58dbdc407c5cdeb0489931d65fc",
+    "linux_sanitizers": "c8d205b1e3eb9399cdefee1adf221e713ecee77680223ddf2e54cd0b14962194",
+    "firmware_build": "02c0c74772d40932108109444bcffee99f58b5e5385dcb62b577deb15959c32d"
+  },
+  "latest_hardware_source_hashes_match": true,
+  "scope_notes": [
+    "Native integration/parser lane preceded the final Python conversation identity change; the final 305-test Python suite covers that change.",
+    "Hardware snapshots preserve the exact sources for each historical run.",
+    "Test counts and stream recovery do not establish speech quality or full product readiness."
+  ],
+  "physical": {
+    "passed": [
+      "t61",
+      "p58"
+    ],
+    "failed": [
+      "p57",
+      "p59",
+      "p60"
+    ],
+    "stopped_stream_fault_attributed": "p59",
+    "corrected_firmware": "flash26",
+    "latest_impaired_run": {
+      "run": "p60",
+      "overall_pass": false,
+      "capture_recovery_ms": 923,
+      "completed_provider_turns": 2,
+      "required_provider_turns": 3,
+      "capture_loss_failures": 2,
+      "stt_commits": 2,
+      "watch_endpoint_failure_observed": false
+    }
+  },
+  "privacy": {
+    "ambient_pcm_persisted": false,
+    "raw_logs_copied": false,
+    "credentials_copied": false
+  },
+  "firmware_restoration_required": false,
+  "original_p50_transport_failure_resolved": false,
+  "full_loss_matrix_pass": false,
+  "speech_quality_gate_pass": false,
+  "full_replacement_plan_complete": false,
+  "configured_default": "webrtc"
+}

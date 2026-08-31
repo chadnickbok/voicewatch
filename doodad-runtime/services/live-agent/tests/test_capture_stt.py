@@ -220,6 +220,37 @@ def conversation():
 
 
 @pytest.mark.asyncio
+async def test_fresh_capture_clears_unfinished_provider_audio_when_failure_callback_is_superseded(harness):
+    stt, socket, frames, failures = harness
+    c = conversation()
+    async def queue(frame): await stt.process_frame(frame,D)
+    c.worker = SimpleNamespace(queue_frame=queue)
+    await c.capture_started(identity=('1','2','3'))
+    await c.feed_audio(b'\1\0'*3200)
+    old_messages = len(socket.sent)
+    assert any(m['type']=='input_audio_buffer.append' for m in socket.sent)
+    old = c._capture_turn
+    # The session may suppress the old failure callback once a new capture is
+    # authorized. That must not leave the old STT capture open.
+    await c.capture_started(identity=('4','2','3'))
+    current = c._capture_turn
+    assert current is not old and not old.live and current.live
+    await c.capture_started(identity=('4','2','3'))  # Duplicate remains idempotent.
+    assert c._capture_turn is current
+    await stt.process_frame(old.stamp(VADUserStoppedSpeakingFrame(stop_secs=0)),D)
+    await c.feed_audio(b'\2\0'*320)
+    ending = asyncio.create_task(c.capture_completed())
+    await asyncio.wait_for(socket.committing.wait(),1)
+    await ack(stt,'fresh'); await ending
+    await final(stt,'fresh')
+    assert not any(m['type']=='input_audio_buffer.commit' for m in socket.sent[:old_messages])
+    assert [m['type'] for m in socket.sent[old_messages:]] == [
+        'input_audio_buffer.clear','input_audio_buffer.append','input_audio_buffer.commit']
+    assert all(frame_turn(frame) is current for frame in transcripts(frames))
+    assert not failures
+
+
+@pytest.mark.asyncio
 async def test_transcript_already_queued_before_cancel_cannot_route_after_new_capture():
     c = conversation()
     await c.capture_started()

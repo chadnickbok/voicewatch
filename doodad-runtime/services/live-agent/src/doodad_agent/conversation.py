@@ -447,6 +447,7 @@ class LiveConversation:
         self._retirement_task: asyncio.Task | None = None
         self.explicit_capture = explicit_capture
         self._capture_open = False
+        self._capture_identity: tuple[str, str, str] | None = None
         self._capture_turn: CaptureTurn | None = None
         self._authorize_response = authorize_response
         self._attention_retry_at = 0.0
@@ -613,9 +614,15 @@ class LiveConversation:
             if turn is self._capture_turn:
                 await self.stop_capture()
 
-    async def capture_started(self) -> None:
-        if self.explicit_capture and not self._retired and self.worker is not None and not self._capture_open:
+    async def capture_started(self, *, identity: tuple[str, str, str] | None = None) -> None:
+        if self.explicit_capture and not self._retired and self.worker is not None:
+            if self._capture_open and (identity is None or identity == self._capture_identity):
+                return
+            # A newer authenticated capture replaces an unfinished one even if
+            # its queued failure callback was superseded. Never append the new
+            # microphone turn to an old provider audio buffer.
             self._invalidate_capture()
+            self._capture_identity = identity
             self._capture_turn = CaptureTurn()
             self._capture_open = True
             await self.worker.queue_frame(self._capture_turn.stamp(VADUserStartedSpeakingFrame(start_secs=0.0)))

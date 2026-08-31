@@ -370,7 +370,11 @@ async def serve(arguments: argparse.Namespace) -> None:
         elif kind == "capture.started":
             runtime.downlink.cancel()
             if conversation is not None:
-                await conversation.capture_started()
+                if getattr(session, 'explicit_capture_completion', False):
+                    await conversation.capture_started(identity=tuple(payload[name] for name in
+                        ('capture_id','request_id','owner_token')))
+                else:
+                    await conversation.capture_started()
         elif kind == "capture.stopped":
             trace.mark(
                 "capture.stopped", device_id=device_id,

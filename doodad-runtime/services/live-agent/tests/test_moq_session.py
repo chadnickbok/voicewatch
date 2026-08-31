@@ -127,6 +127,70 @@ async def harness():
 
 
 @pytest.mark.asyncio
+async def test_native_capture_failure_discards_partial_turn_and_preserves_session(harness):
+    h = harness
+    await h.watch('capture.started', {**ID, 'first_group': '0'})
+    await h.next_ipc('capture.begin')
+    await h.native('capture.pcm', ID, b'\x03\x00' * 320)
+    # Do not yield: the PCM is queued but has not been delivered to STT.
+    h.session.begin_downlink()
+    h.session.enqueue_downlink(b'\x04\x00' * 537, 16000)
+    h.session.end_downlink()
+    await h.native('capture.failed', ID)
+    cancelled = await h.next_control('capture.cancel')
+    assert all(cancelled[k] == v for k, v in ID.items())
+    await h.next_ipc('cancel')
+    await asyncio.sleep(.01)
+    assert not any(kind in {'audio', 'capture.stopped', 'disconnected'} for kind, _ in h.events)
+    assert [payload.get('reason') for kind, payload in h.events if kind == 'capture.failed'] == ['loss_budget']
+    assert h.session.connected.is_set() and not h.ws.closed
+    # A new capture survives every late callback from the failed one.
+    fresh = {**ID, 'capture_id': '74'}
+    await h.watch('capture.started', {**fresh, 'first_group': '20'})
+    await h.next_ipc('capture.begin')
+    await h.watch('capture.failed', {**ID, 'start_id': '0'})
+    await h.watch('capture.stopped', {**ID, 'first_group': '0', 'end_group': '3', 'samples': '537'})
+    await h.native('capture.failed', ID)
+    await h.native('capture.pcm', ID, b'\x03\x00' * 320)
+    await h.native('capture.ended', {**ID, 'first_group': '0', 'end_group': '3', 'samples': '537'})
+    await h.native('capture.pcm', fresh, b'\x05\x00' * 320)
+    await h.watch('capture.stopped', {**fresh, 'first_group': '20', 'end_group': '22', 'samples': '320'})
+    await h.native('capture.ended', {**fresh, 'first_group': '20', 'end_group': '22', 'samples': '320'})
+    await asyncio.sleep(.01)
+    assert [pcm for kind, pcm in h.events if kind == 'audio'] == [b'\x05\x00' * 320]
+    assert len([1 for kind, _ in h.events if kind == 'capture.stopped']) == 1
+    assert len([1 for kind, _ in h.events if kind == 'capture.failed']) == 1
+    assert h.session._capture.validated.is_set() and not h.session._fault.is_set()
+
+
+@pytest.mark.asyncio
+async def test_queued_capture_failure_cannot_cancel_immediate_replacement(harness):
+    h = harness
+    await h.watch('capture.started', {**ID, 'first_group': '0'})
+    await h.native('capture.failed', ID)
+    fresh = {**ID, 'capture_id': '74'}
+    await h.watch('capture.started', {**fresh, 'first_group': '20'})
+    await asyncio.sleep(.01)
+    assert not any(kind == 'capture.failed' for kind, _ in h.events)
+    assert h.session._capture.identity.capture_id == '74'
+
+
+@pytest.mark.asyncio
+async def test_watch_failure_correlates_pending_start_and_rejects_unbound_failure(harness):
+    h = harness
+    await h.session.start_capture(1000)
+    start = await h.next_control('capture.start')
+    await h.watch('capture.failed', {**ID, 'start_id': '0'})
+    assert h.session._pending_start
+    await h.watch('capture.failed', {**ID, 'start_id': start['start_id']})
+    await asyncio.sleep(.01)
+    assert not h.session._pending_start
+    assert len([1 for kind, _ in h.events if kind == 'capture.failed']) == 1
+    with pytest.raises(MoqSessionError):
+        await h.watch('capture.failed', {})
+
+
+@pytest.mark.asyncio
 async def test_native_tail_precedes_stt_completion_and_bound_precedes_pcm(harness):
     h = harness
     await h.watch('capture.started', {**ID, 'first_group': '0'})

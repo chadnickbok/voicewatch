@@ -1,0 +1,14 @@
+{
+  "root_base": "01cfd20fd7509bc7e99d135d14a4a8ccdb66a2c7",
+  "library_base": "666f5a26514e50f9a1d5bb5ceabeaa687910e000",
+  "sha256": {
+    "doodad-runtime/firmware/main/src/voice_service.cpp": "753eaf34358329affff22253b46f3703e06e7ca57d817fe26e599f752f1b6a8f",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "feb41ce688ea176a8d1f394a0ad916d5a5d64d49471e6b46c2dd6fd232d2f2ab",
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "3fa1cdcabf45c6db7c278314fe5623e275aa98a8b2cabaedf9a072ff2e51e244",
+    "doodad-runtime/services/live-agent/tools/moq_udp_impairment.py": "19e432cda8ba9be5bbc6525cec86f89420275058b240231a64d7e07b31363043",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "ae00a1a5c74fa917e91036e284189e1012c03bd83f954e6d0b14f60fd41ae72d",
+    "libs/moq-esp32/server/voice_agent/src/media.rs": "717c74967cc6add166539d60997b540a16ada8ff0bbb44b5717db05dd4003a8a"
+  },
+  "firmware_sha256": "7f70fc1765eb87a2cfd9f00654320f242e299c0723923470b8b8d8d16f344068",
+  "native_sha256": "55df865469c1184ddb5784e01a0d4d1b66efe879115298b867bf3196da847d52"
+}

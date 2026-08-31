@@ -134,6 +134,25 @@ decoder. Intent epochs prevent a suspended, cancelled listen callback from
 rearming capture. Pending starts have a three-second deadline; active captures
 retain native/Python deadlines and a 31-second sample cap.
 
+Native `capture.failed` carries the capture/request/owner identity when live
+loss exceeds the unchanged 200 ms concealment budget. Python retires that
+capture, discards its queued PCM and response work, sends `capture.cancel` to
+the watch, and reports application `capture.failed` so STT cannot commit partial
+audio. Control and media sessions remain authorized for a fresh PTT attempt;
+capture never restarts automatically. Malformed media, invalid boundaries,
+authentication failure and IPC/transport faults still fail closed.
+
+Watch `capture.failed` now includes capture/request/owner identity and `start_id`,
+including failures before capture starts. Python matches either the active
+capture or the pending start. A late cancellation receipt, stale native PCM/end,
+or queued application failure cannot retire a newer capture. This receipt change
+requires coordinated firmware and host updates; uncorrelated failure payloads
+are rejected. Cancelled response tasks create their audio-pump coroutine only
+after starting, so immediate cancellation does not leak an unawaited coroutine.
+The conversation receives the authenticated capture identity too: a fresh start
+clears an unfinished provider buffer even when the old failure callback has been
+superseded. Duplicate starts for the same identity remain idempotent.
+
 ### Response binding and speaker completion
 
 Text and idle background speech use output-only authorization. Host

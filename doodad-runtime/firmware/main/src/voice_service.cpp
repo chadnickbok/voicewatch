@@ -1003,7 +1003,7 @@ void handle_command(Command& command) {
             if (!g_websocket_connected || !media::capture_begin(
                     {capture_id, request_id, command.owner_token}, command.duration_ms)) {
                 publish(VoiceEventKind::error, "Voice link is not ready");
-                send_simple("capture.failed");
+                send_capture_status("capture.failed",0);
             }
             break;
         }
@@ -1160,7 +1160,7 @@ bool secure_command(const char* kind,const cJSON* payload) {
         const auto capture=next_capture_id(); if (!capture) return false;
         g_active_capture_id=capture; g_active_owner_token=owner; g_active_request=owner?capture:0;
         if (!media::capture_begin({capture,g_active_request,owner},duration)) {
-            send_simple("capture.failed"); publish(VoiceEventKind::error,"Voice link is not ready");
+            send_capture_status("capture.failed",0); publish(VoiceEventKind::error,"Voice link is not ready");
         }
         return true;
     }
@@ -1600,7 +1600,7 @@ void poll_media() {
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
             g_turn_retired=true;
 #endif
-            publish(VoiceEventKind::error, "Audio capture failed"); send_simple("capture.failed"); break;
+            publish(VoiceEventKind::error, "Audio capture failed"); send_capture_status("capture.failed",event.elapsed_ms); break;
         case media::EventKind::disconnected:
         case media::EventKind::error:
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ

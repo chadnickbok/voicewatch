@@ -163,7 +163,9 @@ class MoqSession(ControlSession):
     def _spawn(self, work, *, critical: bool = False) -> asyncio.Task:
         async def guarded():
             try:
-                await work
+                # Create the coroutine only after this task starts. Immediate
+                # capture cancellation must not leak an unawaited audio pump.
+                await work()
                 if critical and not self._closed:
                     self._fail()
             except asyncio.CancelledError:
@@ -185,13 +187,13 @@ class MoqSession(ControlSession):
         if self._started:
             raise MoqSessionError()
         self._started = True
-        self._spawn(self._writer(), critical=True)
-        self._spawn(self._application(), critical=True)
-        self._spawn(self._watchdog(), critical=True)
+        self._spawn(self._writer, critical=True)
+        self._spawn(self._application, critical=True)
+        self._spawn(self._watchdog, critical=True)
 
     async def run(self) -> None:
         self.start()
-        self._spawn(self._read_control(), critical=True)
+        self._spawn(self._read_control, critical=True)
         try:
             await self._fault.wait()
         finally:
@@ -278,7 +280,7 @@ class MoqSession(ControlSession):
 
     def _event(self, kind: str, payload: Any, capture: Capture | None = None) -> None:
         try:
-            self._app.put_nowait((kind, payload, capture, self._intent if kind.startswith('listen.') or kind=='conversation.text' else None))
+            self._app.put_nowait((kind, payload, capture, self._intent if kind.startswith('listen.') or kind in {'conversation.text', 'capture.failed'} else None))
         except asyncio.QueueFull:
             self._fail()
             raise MoqSessionError() from None
@@ -291,6 +293,9 @@ class MoqSession(ControlSession):
                 continue
             if intent is not None and intent != self._intent:
                 continue
+            if kind == 'capture.failed' and (self._capture is not None or self._pending_start
+                    or self._response_context is not None or self._pending_context is not None):
+                continue  # A queued failure cannot cancel a newer turn.
             # Application/provider setup may take longer than an IPC callback.
             # It never blocks native framing, liveness or the bounded writer.
             token = _INTENT.set((self, intent) if intent is not None else None)
@@ -409,7 +414,19 @@ class MoqSession(ControlSession):
             future = self._pending_actions.get(request)
             if future is not None and not future.done():
                 future.set_result(payload)
-        elif kind in {'listen.requested', 'listen.cancelled', 'capture.failed'}:
+        elif kind == 'capture.failed':
+            identity = Identity.parse(payload)
+            start = decimal(payload.get('start_id'))
+            capture = self._capture
+            if capture is not None:
+                if capture.identity != identity or capture.start_id != start:
+                    return
+            elif not self._pending_start or start != self._pending_start:
+                return  # Includes the late acknowledgement of native cancellation.
+            self._intent += 1
+            self._retire_capture()
+            self._event(kind, payload)
+        elif kind in {'listen.requested', 'listen.cancelled'}:
             self._intent += 1
             self._retire_capture()
             self._event(kind, payload)
@@ -433,6 +450,7 @@ class MoqSession(ControlSession):
             'ping': set(), 'pong': set(), 'media.ready': set(),
             'cancelled': {'capture_id', 'request_id', 'owner_token'},
             'capture.pcm': {'capture_id', 'request_id', 'owner_token'},
+            'capture.failed': {'capture_id', 'request_id', 'owner_token'},
             'capture.ended': {'capture_id', 'request_id', 'owner_token', 'first_group', 'end_group', 'samples'},
             'playback.prepared': {'capture_id', 'request_id', 'owner_token', 'response_id', 'first_group', 'pts_us'},
             'playback.encoded': {'capture_id', 'request_id', 'owner_token', 'response_id', 'first_group', 'end_group', 'samples'},
@@ -454,7 +472,14 @@ class MoqSession(ControlSession):
             context = capture or self._response_context
             if context is None or identity != context.identity:
                 return
-            if kind == 'capture.pcm':
+            if kind == 'capture.failed':
+                if capture is None or capture.validated.is_set():
+                    raise MoqSessionError()
+                self.trace.mark('moq.capture_failed', reason='loss_budget')
+                self._intent += 1
+                self._retire_capture()
+                self._event('capture.failed', {**identity.fields(), 'reason': 'loss_budget'})
+            elif kind == 'capture.pcm':
                 if (capture is None or capture.validated.is_set() or not pcm or len(pcm) > 640 or len(pcm) % 2
                         or capture.received + len(pcm) // 2 > (capture.samples if capture.samples is not None else 31 * 16000)):
                     raise MoqSessionError()
@@ -642,7 +667,7 @@ class MoqSession(ControlSession):
         self._highest_response += 1
         response = Response(context, self._highest_response, self.downlink.generation)
         self._response = response
-        response.task = self._spawn(self._pump(response))
+        response.task = self._spawn(lambda: self._pump(response))
 
     def enqueue_downlink(self, pcm: bytes, sample_rate: int) -> int:
         self._check()

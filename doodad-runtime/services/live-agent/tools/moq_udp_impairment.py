@@ -32,6 +32,14 @@ class UdpImpairment:
         self.loop_max_lag_us = 0
         self.heartbeat = None
         self.high_water = 0
+        self.outage_until = {d: 0.0 for d in self.stats}
+        self.outage_dropped = {d: 0 for d in self.stats}
+
+    def blackout(self, direction, duration_ms):
+        """Drop new datagrams for one bounded interval; never touch WSS."""
+        if self.closed or direction not in self.stats or type(duration_ms) is not int or not 1 <= duration_ms <= 2000:
+            raise ValueError('unsupported media outage')
+        self.outage_until[direction] = asyncio.get_running_loop().time() + duration_ms / 1000
 
     async def start(self, listen, backend):
         loop = asyncio.get_running_loop()
@@ -73,6 +81,10 @@ class UdpImpairment:
         if len(data) > self.MAX_DATAGRAM or len(self.pending) >= self.MAX_PENDING:
             stats['pressure'] += 1
             return
+        if asyncio.get_running_loop().time() < self.outage_until[direction]:
+            self.outage_dropped[direction] += 1
+            stats['dropped'] += 1
+            return
         if rng.random() * 100 < self.loss_percent:
             stats['dropped'] += 1
             return
@@ -103,4 +115,5 @@ class UdpImpairment:
         return dict(loss_percent=self.loss_percent, added_rtt_ms=self.rtt_ms,
                     seed=self.seed, directions=self.stats, pending=len(self.pending),
                     pending_high_water=self.high_water, closed=self.closed,
-                    timing=self.timing, event_loop_max_lag_us=self.loop_max_lag_us)
+                    timing=self.timing, event_loop_max_lag_us=self.loop_max_lag_us,
+                    outage_dropped=self.outage_dropped)

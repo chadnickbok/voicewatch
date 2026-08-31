@@ -1,0 +1,26 @@
+{
+  "flash24": {
+    "image_sha256": "7f70fc1765eb87a2cfd9f00654320f242e299c0723923470b8b8d8d16f344068",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false
+  },
+  "flash25": {
+    "image_sha256": "8282601d7a83ba1c388f32fe61bc2770ed2adf3929b94a001cdaef533afbe615",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false
+  },
+  "flash26": {
+    "image_sha256": "4f257cfaaa91edaff4a636acf764698e4e6b3908326c020b9462f4a1efb909ac",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false
+  }
+}

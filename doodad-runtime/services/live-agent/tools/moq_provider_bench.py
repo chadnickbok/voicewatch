@@ -42,7 +42,7 @@ async def run(args):
     result = dict(pass_=False, provider_calls=True, control_source='host-test-driver',
                   microphone_samples=0, firmware_written=False, restoration_required=False,
                   capture_rounds_requested=args.capture_rounds, turns=[], output_only_turns=[],
-                  capture_started_events=0)
+                  capture_started_events=0, capture_loss_failures=0)
     start = time.monotonic()
     microphone_square_sum = 0
     level_samples = level_square_sum = level_peak = level_clipped = 0
@@ -64,6 +64,8 @@ async def run(args):
     children, streams = [], []
     server_task = None
     impairment = None
+    capture_loss = asyncio.Event()
+    loss_restored_at = None
     ready = asyncio.Queue()
     captured = asyncio.Event()
     server_started = asyncio.get_running_loop().create_future()
@@ -183,6 +185,8 @@ async def run(args):
                         raise RuntimeError('acoustic analysis capture bound')
                     acoustic_pcm.extend(pcm)
                 result['microphone_samples'] += len(pcm)//2
+                if loss_restored_at is not None and 'capture_recovery_ms' not in result:
+                    result['capture_recovery_ms'] = round((time.monotonic()-loss_restored_at)*1000)
                 for (sample,) in struct.iter_unpack('<h', pcm):
                     microphone_square_sum += sample*sample
                     result['microphone_peak'] = max(result['microphone_peak'], abs(sample))
@@ -209,6 +213,9 @@ async def run(args):
                 if kind == 'capture.started':
                     result['capture_started_events'] += 1
                     captured.set()
+                if kind == 'capture.failed' and payload.get('reason') == 'loss_budget':
+                    result['capture_loss_failures'] += 1
+                    capture_loss.set()
             super().__init__(trace, audio, event, *more, **kwargs)
 
         async def start(self):
@@ -266,7 +273,7 @@ async def run(args):
         key = secrets.token_bytes(32)
         control, clock, media = port(socket.SOCK_STREAM), port(socket.SOCK_STREAM), port(socket.SOCK_DGRAM)
         backend_media = media
-        if args.loss_percent or args.added_rtt_ms:
+        if args.loss_percent or args.added_rtt_ms or args.capture_outage_ms:
             from moq_udp_impairment import UdpImpairment
             backend_media = port(socket.SOCK_DGRAM)
             while backend_media == media: backend_media = port(socket.SOCK_DGRAM)
@@ -382,6 +389,7 @@ async def run(args):
         async def provider_turn(round_number, *, cancel_at_stt=False, cancel_at_tool=False, cancel_at_tts=False):
             nonlocal saved_output, held_stt_final, held_tool_result
             captured.clear()
+            capture_loss.clear()
             sample_base = result['microphone_samples']
             event_base = result['stt_completed_events']
             character_base = result['stt_completed_characters']
@@ -466,6 +474,7 @@ async def run(args):
             async with asyncio.timeout(90):
                 while True:
                     if session._closed: raise RuntimeError('session closed during provider turn')
+                    if capture_loss.is_set(): raise RuntimeError('provider capture exceeded live loss budget')
                     if result['stt_completed_events'] > event_base and result['stt_completed_characters'] == character_base:
                         raise RuntimeError('spoken fixture produced an empty final transcript')
                     response = session._response
@@ -497,8 +506,36 @@ async def run(args):
             await provider_turn(0, cancel_at_tool=True)
         if args.cancel_first_tts:
             await provider_turn(0, cancel_at_tts=True)
+        if args.capture_outage_ms:
+            captured.clear()
+            commit_base = result['stt_commits']
+            history_base = spoken_history_count()
+            trace_base = len((output/'trace.jsonl').read_text().splitlines())
+            await server.on_event(device['device_id'], 'listen.requested', {})
+            await asyncio.wait_for(captured.wait(),5)
+            await asyncio.sleep(.3)
+            impairment.blackout('uplink',args.capture_outage_ms)
+            restoration = time.monotonic()+args.capture_outage_ms/1000
+            mark('provider_capture_outage_started',duration_ms=args.capture_outage_ms)
+            await asyncio.wait_for(capture_loss.wait(),6)
+            await asyncio.sleep(max(0,restoration-time.monotonic()))
+            conversation = conversations[-1]
+            trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()[trace_base:]]
+            if (server.sessions.get(device['device_id']) is not session or session._closed
+                    or session._fault.is_set() or session._capture is not None
+                    or conversation.voice_phase != 'ready' or conversation._capture_open
+                    or conversation._capture_turn.live or result['stt_commits'] != commit_base
+                    or spoken_history_count() != history_base
+                    or any(item['kind'] in {'stt.final','tool.start','tts.first_audio','downlink.first_audio'} for item in trace)):
+                raise RuntimeError('capture loss did not retire only the failed provider turn')
+            result['capture_loss_aborted_without_commit']=True
+            result['capture_outage_ms']=args.capture_outage_ms
+            loss_restored_at=restoration
+            mark('provider_capture_loss_aborted_session_preserved')
         for round_number in range(1, args.capture_rounds + 1):
             await provider_turn(round_number)
+            if args.capture_outage_ms and result.get('capture_recovery_ms',10001)>10000:
+                raise RuntimeError('provider capture recovery exceeded ten seconds')
         if args.cancel_first_stt and not result.get('delayed_stt_final_rejected'):
             raise RuntimeError('missing STT cancellation evidence')
         if args.cancel_first_tool and not result.get('delayed_tool_result_rejected'):
@@ -602,6 +639,8 @@ def main():
     parser.add_argument('--background-first', action='store_true',
                         help='Require an idle completion announcement from an isolated test job before microphone tests')
     faults = parser.add_mutually_exclusive_group()
+    faults.add_argument('--capture-outage-ms',type=int,default=0,
+                        help='Before provider turns, require a loss-budget abort with no STT commit and same-session recovery')
     faults.add_argument('--cancel-first-stt', action='store_true',
                         help='First cancel a physical capture with a delayed real STT final; release that event during the next capture')
     faults.add_argument('--cancel-first-tool', action='store_true',
@@ -611,6 +650,8 @@ def main():
     faults.add_argument('--cancel-first-background', action='store_true',
                         help='With background-first, cancel held real TTS and require the idle loop to retry the pending announcement')
     args = parser.parse_args()
+    if args.capture_outage_ms and (not 1 <= args.capture_outage_ms <= 2000 or args.acoustic_analysis):
+        parser.error('capture-outage-ms must be 1..2000 and cannot be combined with acoustic analysis')
     if args.cancel_first_background and not args.background_first:
         parser.error('cancel-first-background requires background-first')
     if args.cancel_first_background and args.text_first:

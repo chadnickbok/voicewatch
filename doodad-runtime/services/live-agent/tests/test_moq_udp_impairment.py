@@ -91,3 +91,25 @@ async def test_proxy_reports_unrequested_event_loop_delay():
     finally:
         proxy.close()
     assert proxy.heartbeat is None and not proxy.pending
+
+
+@pytest.mark.asyncio
+async def test_bounded_outage_drops_only_selected_direction_and_expires():
+    class Transport:
+        def sendto(self, data, target): pass
+    proxy=UdpImpairment(0,0,1)
+    try:
+        proxy.blackout('uplink',50)
+        proxy._schedule('uplink',b'fixture',Transport(),None,proxy.random[0])
+        proxy._schedule('downlink',b'fixture',Transport(),None,proxy.random[1])
+        await asyncio.sleep(.07)
+        proxy._schedule('uplink',b'fixture',Transport(),None,proxy.random[0])
+        await asyncio.sleep(.01)
+        result=proxy.snapshot()
+        assert result['outage_dropped']=={'uplink':1,'downlink':0}
+        assert result['directions']['uplink']['forwarded']==1
+        assert result['directions']['downlink']['forwarded']==1
+        for direction,duration in [('both',50),('uplink',0),('uplink',2001)]:
+            with pytest.raises(ValueError): proxy.blackout(direction,duration)
+    finally:
+        proxy.close()

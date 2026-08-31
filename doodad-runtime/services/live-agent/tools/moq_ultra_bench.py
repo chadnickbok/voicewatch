@@ -12,6 +12,8 @@ repeated microphone-to-speaker transitions without providers or storing PCM.
 of providers. WSS remains intact; a seeded proxy is closed with the bench.
 --max-playout-pressure optionally fails on packet queue overflow. This is a
 transport regression gate, not a calibrated speech-quality measurement.
+--capture-outage-ms injects one uplink blackout during an extra capture and
+requires a loss-budget abort, then successful capture on the same session.
 No provider runs, deployed service changes, flash writes or restoration.
 """
 import argparse
@@ -135,7 +137,7 @@ async def run(args):
         context, roots = pki(directory, args.host, args.certificate_fault)
         control_port, time_port, media_port = port(socket.SOCK_STREAM), port(socket.SOCK_STREAM), port(socket.SOCK_DGRAM)
         backend_port = media_port
-        if args.loss_percent or args.added_rtt_ms:
+        if args.loss_percent or args.added_rtt_ms or args.capture_outage_ms:
             from moq_udp_impairment import UdpImpairment
             backend_port = port(socket.SOCK_DGRAM)
             impairment = UdpImpairment(args.loss_percent,args.added_rtt_ms,args.loss_seed)
@@ -145,7 +147,7 @@ async def run(args):
             private_key=str(directory/'server.key'), device_keys=str(directory/'devices.json'),
             ipc_socket=str(directory/'media.sock'), public_host=args.host,
             media_port=media_port, time_port=time_port))
-        lease_seconds = max(45, math.ceil((args.capture_ms/1000+1+2*args.reply_each_capture)*args.capture_rounds+20)) if args.audio else 45
+        lease_seconds = max(45, math.ceil((args.capture_ms/1000+1+2*args.reply_each_capture)*args.capture_rounds+20+10*bool(args.capture_outage_ms))) if args.audio else 45
         result['lease_seconds'] = lease_seconds
         registry = GrantRegistry({device['device_id']: key}, lease_seconds=lease_seconds)
         result['time_proofs_issued'] = 0
@@ -156,11 +158,15 @@ async def run(args):
             return proof
         registry.time_proof = observed_time
         ready, captured = asyncio.Queue(), asyncio.Event()
+        capture_started, capture_failed = asyncio.Event(), asyncio.Event()
+        recovery_started = None
         capture_sample_base = 0
         async def on_audio(_, pcm):
             result['microphone_samples'] += len(pcm)//2
             if not args.audio:
                 raise RuntimeError('unexpected microphone audio')
+            if recovery_started is not None and 'capture_recovery_ms' not in result:
+                result['capture_recovery_ms'] = round((time.monotonic()-recovery_started)*1000)
         async def on_event(_, kind, payload):
             if kind == 'connected':
                 result['ready_sessions'] += 1
@@ -169,6 +175,8 @@ async def run(args):
                 if int(payload['samples']) != result['microphone_samples']-capture_sample_base:
                     raise RuntimeError('capture sample count mismatch')
                 captured.set()
+            if kind == 'capture.started': capture_started.set()
+            if kind == 'capture.failed' and payload.get('reason') == 'loss_budget': capture_failed.set()
             # No transcripts, personal app state, IDs or audio in public output.
             if kind in {'identified', 'connected', 'disconnected', 'capture.started', 'capture.stopped', 'capture.failed'}:
                 mark(kind)
@@ -232,6 +240,24 @@ async def run(args):
                 second.begin_downlink(); second.enqueue_downlink(tone,16000); second.end_downlink()
                 if not await asyncio.wait_for(second.resume_after_downlink(),12):
                     raise RuntimeError('synthetic playback was cancelled or replaced')
+            if args.capture_outage_ms:
+                await second.start_capture(3000)
+                await asyncio.wait_for(capture_started.wait(),3)
+                await asyncio.sleep(.3)
+                impairment.blackout('uplink',args.capture_outage_ms)
+                restoration = time.monotonic()+args.capture_outage_ms/1000
+                mark('capture_outage_started',duration_ms=args.capture_outage_ms)
+                await asyncio.wait_for(capture_failed.wait(),6)
+                if captured.is_set():
+                    raise RuntimeError('failed capture committed partial audio')
+                await asyncio.sleep(max(0,restoration-time.monotonic()))
+                if (server.sessions.get(device['device_id']) is not second or second._closed
+                        or second._fault.is_set() or not second.connected.is_set()):
+                    raise RuntimeError('capture loss retired the session')
+                result['capture_loss_aborted']=True
+                result['capture_outage_ms']=args.capture_outage_ms
+                recovery_started=restoration
+                mark('capture_loss_aborted_session_preserved')
             for capture_round in range(args.capture_rounds):
                 capture_sample_base = result['microphone_samples']
                 captured.clear()
@@ -248,6 +274,9 @@ async def run(args):
                 if samples != ((max(1000, args.capture_ms)+9)//10)*160:
                     raise RuntimeError('incomplete microphone capture')
                 result['captures_completed'] += 1
+                if args.capture_outage_ms and (server.sessions.get(device['device_id']) is not second
+                        or result.get('capture_recovery_ms',10001)>10000):
+                    raise RuntimeError('capture recovery exceeded same-session ten-second gate')
                 mark('capture_round_completed', round=capture_round+1, samples=samples)
                 if args.reply_each_capture:
                     await play_tone()
@@ -328,6 +357,8 @@ def main():
     parser.add_argument('--capture-rounds', type=int, default=1)
     parser.add_argument('--reply-each-capture',action='store_true',
                         help='Play a generated response after every capture, retaining no microphone PCM')
+    parser.add_argument('--capture-outage-ms',type=int,default=0,
+                        help='Require bounded capture failure and same-session recovery after an uplink blackout')
     parser.add_argument('--loss-percent',type=int,choices=(0,1,3,5),default=0)
     parser.add_argument('--added-rtt-ms',type=int,choices=(0,30,60,120),default=0)
     parser.add_argument('--loss-seed',type=int,default=44)
@@ -339,12 +370,14 @@ def main():
         parser.error('certificate rejection tests never capture audio')
     if args.reply_each_capture and not args.audio:
         parser.error('reply-each-capture requires audio')
+    if args.capture_outage_ms and (not args.audio or not 1 <= args.capture_outage_ms <= 2000):
+        parser.error('capture-outage-ms requires audio and a duration from 1 to 2000')
     if args.max_playout_pressure is not None and (not args.audio or args.max_playout_pressure<0):
         parser.error('max-playout-pressure requires audio and a nonnegative limit')
     if not 100 <= args.capture_ms <= 30000 or (args.voice_ui and not args.audio):
         parser.error('capture-ms must be 100..30000; voice-ui requires audio')
     if (not 1 <= args.capture_rounds <= 100 or (args.capture_rounds != 1 and not args.audio)
-            or (args.capture_ms/1000+1+2*args.reply_each_capture)*args.capture_rounds+20 > 300):
+            or (args.capture_ms/1000+1+2*args.reply_each_capture)*args.capture_rounds+20+10*bool(args.capture_outage_ms) > 300):
         parser.error('capture-rounds requires audio, must be 1..100, and must fit a 300 second lease')
     ip_address(args.host)
     try:

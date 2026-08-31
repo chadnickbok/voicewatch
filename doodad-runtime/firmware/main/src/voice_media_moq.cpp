@@ -172,11 +172,12 @@ void fail(Owner& o, int result) {
     o.failed=true; g_ready.store(false);
     ESP_LOGE(kTag,"media failure result=%d",result); // Never a URI/token/PCM.
     esp_moq_endpoint_status_t endpoint{}; esp_moq_endpoint_status(o.endpoint,&endpoint);
-    ESP_LOGE(kTag,"endpoint failure=%u result=%d transport=%llu alert=%u library=%d site=%u detail=%d stream=%llu",
+    ESP_LOGE(kTag,"endpoint failure=%u result=%d transport=%llu alert=%u library=%d site=%u detail=%d stream=%llu protocol_site=%u protocol_stream=%llu",
         static_cast<unsigned>(endpoint.failure),static_cast<int>(endpoint.result),
         static_cast<unsigned long long>(endpoint.transport_error),static_cast<unsigned>(endpoint.tls_alert),
         endpoint.transport_library_error,endpoint.transport_site,endpoint.transport_detail,
-        static_cast<unsigned long long>(endpoint.transport_stream));
+        static_cast<unsigned long long>(endpoint.transport_stream),endpoint.protocol_site,
+        static_cast<unsigned long long>(endpoint.protocol_stream));
     emit(o,EventKind::error,result);
     Lock lock;
     invalidate_locked(); g_disconnect=true;

@@ -5,7 +5,39 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: response subscription readiness
+## Latest checkpoint: capture failure isolation and stopped-stream recovery
+
+Native capture loss beyond the unchanged 200 ms concealment budget now aborts
+only that turn. Identity-bound failure receipts cancel queued PCM, STT and reply
+work without retiring the authenticated session. A fresh PTT identity is required;
+capture never restarts automatically. Watch failure receipts include identity
+and start ID, preventing delayed cancellation from retiring a newer turn. Fresh
+identities also clear unfinished provider audio if an old failure callback was
+superseded. Firmware and host must be updated together.
+
+t61 passes an 800 ms uplink blackout followed by three capture/tone cycles on the
+same session; fresh audio resumes 231 ms after restoration, with zero playback
+pressure or silence. Provider p58 passes the blackout, three complete voice/tool/
+speech turns and reconnect, with 721 ms capture recovery.
+
+The harder p59 run identifies a separate watch bug: a write to a peer-stopped
+stream is misclassified as connection-fatal `INVALID_STATE`. The adapter now
+reports a terminal stream outcome and TX cancels only the affected job, retaining
+backend buffer ownership until ACK/close. Regressions fail before and pass after
+the correction. Flash26 is installed and boots the full shell.
+
+p60, with the fix, 5% loss, 120 ms added RTT and an 800 ms blackout, recovers in
+923 ms and completes two provider turns. Its third capture exceeds the loss
+budget and aborts without another STT commit or watch endpoint failure. The
+three-turn bench still fails; high-loss quality/reliability acceptance and the
+original p50 fault remain open. See the
+[capture-failure evidence](implementation-evidence/2026-08-31-capture-failure-isolation/README.md).
+Verification passes 305 Python tests (four warnings), 24 Rust tests and Clippy,
+six native integration cases, 26 firmware-parser cases, the firmware build,
+and normal plus Linux ASan/UBSan adapter/host suites. WebRTC remains the
+configured default and the full replacement plan is not complete.
+
+## Previous checkpoint: response subscription readiness
 
 Follow-up diagnostics reproduce the capture failure in p56 at 5% loss and
 120 ms added RTT: eleven consecutive unavailable audio groups exceed the
