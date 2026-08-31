@@ -40,7 +40,7 @@ def bootstrap_proof(key: bytes, device_id: str, challenge: str) -> str:
 
 def load_device_keys(path: Path) -> dict[str, bytes]:
     """Read a bounded, owner-only enrollment file without following symlinks."""
-    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW)
+    fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
     try:
         meta = os.fstat(fd)
         if (not stat.S_ISREG(meta.st_mode) or meta.st_uid != os.getuid()
@@ -162,6 +162,25 @@ class GrantRegistry:
         challenge = secrets.token_urlsafe(32)
         self._challenges[device_id] = (challenge, now + self._attach)
         return challenge
+
+    def time_proof(self, device_id: str, nonce: str) -> dict[str, object]:
+        """Authenticate cold-start time, without issuing any session capability.
+
+        The device generates a fresh 256-bit nonce, measures the round trip and
+        verifies this domain-separated MAC before changing its clock. A caller
+        cannot choose a timestamp, lifetime or signing domain.
+        """
+        self._now()
+        if (not isinstance(device_id, str) or device_id not in self._keys
+                or not isinstance(nonce, str) or not re.fullmatch('[0-9a-f]{64}', nonce)):
+            raise AuthorizationError()
+        unix_ms, validity = str(int(self._wall() * 1000)), 600
+        if not 1_700_000_000_000 <= int(unix_ms) <= 4_102_444_800_000:
+            raise AuthorizationError()
+        body = f'voicewatch-moq-time-v1\0{device_id}\0{nonce}\0{unix_ms}\0{validity}'.encode('ascii')
+        proof = hmac.new(self._keys[device_id], body, hashlib.sha256).hexdigest()
+        return dict(v=1, device_id=device_id, nonce=nonce, unix_ms=unix_ms,
+                    validity_seconds=validity, proof=proof)
 
     def issue(self, device_id: str, challenge: str, proof: str) -> IssuedGrant:
         now = self._now()

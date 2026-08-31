@@ -193,12 +193,55 @@ after cancellation. The separate native integration lane exercises real Python
 HTTPS/WSS/IPC and QUIC with synthetic bidirectional audio, invalid/replayed tokens
 and revocation teardown.
 
-This remains a development checkpoint: the integration control driver is a test
-fixture, normal `serve` still uses WebRTC, and production `MoqSession`, physical
+At this checkpoint the integration control driver was a test fixture and normal
+`serve` still used WebRTC. The following checkpoint adds `MoqSession`; physical
 watch bootstrap/control binding, provider turns and deployment remain open.
 Upstream model/cache allocation limits also need hardening; an origin eviction
 budget is not a hard memory cap. No service or watch firmware was changed.
 See [the native checkpoint and limitations](moq-host-boundary.md#native-endpoint-checkpoint).
+
+## Product adapter and service selection checkpoint
+
+`MoqSession` and `MoqTransportServer` now connect authenticated WSS/native IPC to
+the existing conversation callbacks, shared action futures and HTTPS artifact
+routes. `serve --transport moq --moq-config ...` selects this adapter explicitly;
+the default and current deployment remain WebRTC. Start/capture/response IDs,
+bounded queues, native capture completion and watch playback receipts prevent
+early STT termination or treating an empty host spool as speaker completion.
+
+Tests cover real product-adapter QUIC audio and pre-bind cancellation, WSS
+replay/identity/replacement, exact tails, stale receipts, action cleanup and
+PTT cancellation overtaking an application callback. An old playback wait cannot
+detach a newly bound utterance. Final counts and source hashes are in
+[product session evidence](implementation-evidence/2026-08-30-moq-product-session/README.md).
+
+Firmware control/bootstrap, provider turns and generation isolation, text-only/
+background response ownership, time/credential policy, deployment, native
+memory/loss hardening and full-shell release gates remain open. No service was
+deployed, actual credentials read or firmware changed. See
+[configuration and the firmware-facing contract](moq-product-session.md).
+
+## Authenticated firmware bootstrap checkpoint
+
+The Ultra firmware now implements physical USB enrollment into its own NVS
+namespace, nonce-bound authenticated time, verified HTTPS bootstrap and WSS
+control bound to the issued session. Capture/playback handlers validate start,
+owner, response, range and sample identities. Lease expiry, profile changes and
+control failures retire the media session; reconnection obtains fresh grants.
+The host has an optional, separate time-proof listener with no capability routes.
+
+Checkpoint verification: **191 default Python tests, 26 native C++ protocol
+tests, five native integration tests and seven Rust tests pass**. Four Python
+warnings remain. Native endpoint binaries/examples and the full Ultra firmware
+build successfully. The image is 3,416,848 bytes, within app0's 4 MiB limit;
+SHA-256 is `872524f1790ba155faa58e6908b50aec8beab70a41856905e85a3e19a2a99b20`.
+The firmware image, private configuration and raw build log stay outside Git.
+
+This new image has **not been flashed**. USB enrollment, authenticated startup,
+reconnection and full control/audio behavior still require hardware validation.
+The installed diagnostic image is unchanged. Provider turns, deployment,
+credential lifecycle, native memory/loss hardening and the full release matrix
+remain open. Firmware restoration is not required for future tests.
 
 ## Capture and network checkpoint (historical)
 

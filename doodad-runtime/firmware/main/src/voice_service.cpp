@@ -28,6 +28,10 @@
 #include "nvs.h"
 #include "package_service.hpp"
 #include "sdkconfig.h"
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+#include "voice_moq_bootstrap.hpp"
+#include "esp_random.h"
+#endif
 
 #ifdef DOODAD_MOQ_DIAGNOSTIC
 void voice_moq_diagnostic_tick();
@@ -49,6 +53,8 @@ constexpr std::size_t kVoiceTaskStackBytes = 64 * 1024;
 #endif
 
 enum class CommandKind : std::uint8_t {
+    connected,
+    secure_message,
     welcome,
     local_description,
     local_candidate,
@@ -73,6 +79,7 @@ struct Command {
     std::uint32_t duration_ms;
     std::uint8_t* data;
     std::size_t size;
+    std::uint64_t session = 0;
 };
 
 struct CaptureCorrelation {
@@ -91,7 +98,8 @@ esp_websocket_client_handle_t g_websocket = nullptr;
 std::atomic<bool> g_websocket_connected{false};
 std::atomic<bool> g_transport_reset_requested{false};
 bool g_mdns_initialized = false;
-std::uint64_t g_sequence = 0, g_control_generation = 0;
+std::uint64_t g_sequence = 0;
+std::atomic<std::uint64_t> g_control_generation{0};
 std::uint64_t g_active_request = 0, g_active_owner_token = 0, g_active_capture_id = 0;
 std::uint64_t g_capture_sequence = 0;
 std::array<CaptureCorrelation, kCaptureCorrelationCount> g_capture_correlations{};
@@ -101,6 +109,29 @@ std::uint64_t g_current_guest_owner_token = 0;
 std::uint32_t g_encoded_frames = 0, g_dropped_frames = 0, g_encoded_bytes = 0;
 std::uint64_t g_first_group = 0, g_end_group = 0;
 char* g_websocket_payload = nullptr;
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+namespace secure = doodad::moq_control;
+secure::Grant* g_grant = nullptr;
+std::uint64_t g_server_sequence=0, g_active_start=0, g_highest_start=0, g_capture_samples=0;
+std::uint64_t g_highest_response=0, g_response_samples=0, g_next_connect=0;
+media::Response g_response{};
+bool g_welcomed=false, g_response_ending=false, g_capture_complete=false;
+unsigned g_connect_failures=0;
+std::uint32_t g_denied_revision=0;
+std::uint64_t g_ready_deadline=0;
+std::size_t g_ws_received=0, g_ws_frame_received=0;
+bool g_ws_fragmented=false;
+bool secure_live() {
+    const auto now=static_cast<std::uint64_t>(esp_timer_get_time()/1000);
+    return g_grant && g_grant->session[0] && now<g_grant->until_ms && now<g_grant->trusted_until_ms &&
+        g_grant->profile_revision==secure::profile_revision() && secure::clock_valid();
+}
+void retire_control() {
+    media::cancel(); g_websocket_connected=false;
+    g_transport_reset_requested.store(true,std::memory_order_release);
+}
+void parse_message(const char*,std::size_t);
+#endif
 
 constexpr std::uint32_t kAgentStateMagic = 0x44414731;
 constexpr std::size_t kJournalCapacity = 8;
@@ -233,6 +264,9 @@ bool enqueue(
         duration_ms,
         nullptr,
         size};
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    command.session=g_control_generation.load();
+#endif
     if (size != 0) {
         command.data = static_cast<std::uint8_t*>(heap_caps_malloc(
             size + 1, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT));
@@ -250,13 +284,20 @@ bool enqueue(
 void add_envelope(cJSON* root, const char* type) {
     cJSON_AddNumberToObject(root, "v", 1);
     cJSON_AddStringToObject(root, "type", type);
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    cJSON_AddStringToObject(root,"session_id",g_grant?g_grant->session:"");
+#else
     cJSON_AddStringToObject(root, "session_id", "watch-uplink");
+#endif
     cJSON_AddStringToObject(
         root, "device_id", doodad::board::identity().device_id);
     cJSON_AddNumberToObject(root, "seq", ++g_sequence);
 }
 
 bool send_json(cJSON* root) {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    if (!secure_live()) { cJSON_Delete(root); return false; }
+#endif
     if (root == nullptr || !g_websocket_connected || g_websocket == nullptr) {
         cJSON_Delete(root);
         return false;
@@ -302,6 +343,9 @@ bool send_json(cJSON* root) {
     }
     if (sent != length) {
         ESP_LOGW(kTag, "signaling send failed sent=%d expected=%d", sent, length);
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+        retire_control();
+#endif
     }
     cJSON_free(encoded);
     return sent == length;
@@ -310,6 +354,9 @@ bool send_json(cJSON* root) {
 void send_simple(const char* type) {
     auto* root = cJSON_CreateObject();
     add_envelope(root, type);
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    cJSON_AddObjectToObject(root,"payload");
+#endif
     send_json(root);
 }
 
@@ -341,6 +388,11 @@ void send_capture_status(const char* type, std::uint32_t elapsed_ms) {
     if (std::strcmp(media::name(), "moq") == 0) {
         add_decimal_u64(payload, "first_group", g_first_group);
         add_decimal_u64(payload, "end_group", g_end_group);
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+        add_decimal_u64(payload,"owner_token",g_active_owner_token);
+        add_decimal_u64(payload,"start_id",g_active_start);
+        add_decimal_u64(payload,"samples",g_capture_samples);
+#endif
     }
     send_json(root);
 }
@@ -878,25 +930,42 @@ void send_local_peer_message(const Command& command) {
 }
 
 void handle_command(Command& command) {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    if (command.session!=g_control_generation.load()) return;
+#endif
     switch (command.kind) {
+        case CommandKind::connected:
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            if (secure_live()) send_hello(); else retire_control();
+#endif
+            break;
+        case CommandKind::secure_message:
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            if (secure_live() && command.data) parse_message(reinterpret_cast<const char*>(command.data),command.size);
+            else retire_control();
+#endif
+            break;
         case CommandKind::welcome:
             send_simple("welcome.ack");
             send_watch_snapshot();
             media::disconnect();
             g_capture_correlations = {};
+#if !CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
             if (g_control_generation == UINT64_MAX) break;
             ++g_control_generation;
-#if !CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
             if (media::connect(media::Session{.generation=g_control_generation})) {
                 send_simple("peer.created");
             } else {
                 publish(VoiceEventKind::error, "Voice transport failed");
             }
 #else
-            // Production MoQ requires an authenticated bootstrap grant, not
-            // merely a welcome message on an arbitrary WebSocket. The grant
-            // provider must call media::connect with its time/auth leases.
-            publish(VoiceEventKind::connecting, "Awaiting secure media session");
+            if (secure_live()) {
+                media::Session session{}; session.generation=g_control_generation.load();
+                session.host=g_grant->host; session.port=g_grant->port; session.roots_pem=g_grant->roots;
+                session.setup_path=g_grant->setup; session.local_broadcast=g_grant->publish; session.remote_broadcast=g_grant->subscribe;
+                session.authorization_valid_until_ms=g_grant->until_ms; session.trusted_time_valid_until_ms=g_grant->trusted_until_ms;
+                if (media::connect(session)) send_simple("peer.created"); else retire_control();
+            } else retire_control();
 #endif
             break;
         case CommandKind::local_description:
@@ -912,6 +981,11 @@ void handle_command(Command& command) {
             }
             break;
         case CommandKind::start: {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            // Local guest requests do not inherit a previous host start ID.
+            g_active_start=0;
+            g_capture_complete=false; g_response={};
+#endif
             const auto capture_id = next_capture_id();
             if (!capture_id) break;
             const auto request_id = command.request_id == 0 && command.owner_token != 0
@@ -967,6 +1041,9 @@ void handle_command(Command& command) {
             break;
         case CommandKind::cancel:
             media::cancel();
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            g_response={};
+#endif
             send_simple("listen.cancelled");
             break;
         case CommandKind::release_owner:
@@ -1008,9 +1085,97 @@ bool parse_decimal_u64(
     return true;
 }
 
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+const cJSON* field(const cJSON* root,const char* name) { return cJSON_GetObjectItemCaseSensitive(root,name); }
+bool identity(const cJSON* p,media::Identity& id) {
+    return secure::decimal(field(p,"capture_id"),id.capture_id,false) &&
+        secure::decimal(field(p,"request_id"),id.request_id) && secure::decimal(field(p,"owner_token"),id.owner_token);
+}
+bool owns(const media::Identity& id) {
+    return id.capture_id==g_active_capture_id && id.request_id==g_active_request && id.owner_token==g_active_owner_token &&
+        (!id.owner_token || id.owner_token==current_guest_owner_snapshot());
+}
+// Runs only on the control owner, after the complete authenticated envelope is
+// validated. Queued media operations also carry the local session generation.
+bool secure_command(const char* kind,const cJSON* payload) {
+    if (std::strcmp(kind,"welcome")==0) {
+        const auto* transport=field(payload,"transport");
+        if (g_welcomed || !cJSON_IsString(transport) || std::strcmp(transport->valuestring,"moq-lite-05")!=0) return false;
+        g_welcomed=true;
+        Command command{}; command.kind=CommandKind::welcome; command.session=g_control_generation.load(); handle_command(command);
+        return true;
+    }
+    if (!g_welcomed) return false;
+    if (std::strcmp(kind,"capture.start")==0) {
+        std::uint64_t start=0,duration=0,owner=0;
+        if (!secure::decimal(field(payload,"start_id"),start,false) ||
+            !secure::number(field(payload,"duration_ms"),duration,30000) || !duration) return false;
+        if (start<=g_highest_start) return true;
+        const auto* target=field(payload,"target");
+        if (target) {
+            if (!cJSON_IsString(target) || std::strcmp(target->valuestring,"current_guest")!=0 || !(owner=current_guest_owner_snapshot())) return false;
+        }
+        g_highest_start=start; g_active_start=start; g_capture_complete=false; g_response={};
+        const auto capture=next_capture_id(); if (!capture) return false;
+        g_active_capture_id=capture; g_active_owner_token=owner; g_active_request=owner?capture:0;
+        if (!media::capture_begin({capture,g_active_request,owner},duration)) {
+            send_simple("capture.failed"); publish(VoiceEventKind::error,"Voice link is not ready");
+        }
+        return true;
+    }
+    if (std::strcmp(kind,"capture.stop")==0 || std::strcmp(kind,"capture.cancel")==0) {
+        std::uint64_t start=0;
+        if (!secure::decimal(field(payload,"start_id"),start)) return false;
+        if (start!=g_active_start) return true;
+        if (field(payload,"capture_id")) {
+            media::Identity id{}; if (!identity(payload,id)) return false;
+            if (!owns(id)) return true;
+        } else if (!start) return false; // An unbound stop cannot target a guest.
+        if (std::strcmp(kind,"capture.cancel")==0) { media::cancel(); g_response={}; g_capture_complete=false; }
+        else if (!g_capture_complete && !media::capture_finish()) return false;
+        return true;
+    }
+    if (std::strncmp(kind,"playback.",9)==0) {
+        media::Identity id{}; std::uint64_t response=0;
+        if (!identity(payload,id) || !secure::decimal(field(payload,"response_id"),response,false)) return false;
+        if (!owns(id)) return true;
+        if (std::strcmp(kind,"playback.begin")==0) {
+            std::uint64_t first=0;
+            if (!secure::decimal(field(payload,"first_group"),first) || first>=(1ULL<<62) || !g_capture_complete) return false;
+            if (response<=g_highest_response) return true;
+            media::Response binding{}; binding.session=g_control_generation.load(); binding.response_id=response;
+            binding.identity=id; binding.first_group=first;
+            if (!media::receive_begin(binding)) return false;
+            g_highest_response=response; g_response=binding; g_response_ending=false; g_response_samples=0;
+            return true;
+        }
+        if (response!=g_response.response_id) return true;
+        if (std::strcmp(kind,"playback.cancel")==0) { media::cancel(); g_response={}; return true; }
+        if (std::strcmp(kind,"playback.end")==0) {
+            std::uint64_t first=0,end=0,samples=0;
+            if (g_response_ending || !secure::decimal(field(payload,"first_group"),first) || first!=g_response.first_group ||
+                !secure::decimal(field(payload,"end_group"),end) || end<=first || end-first>30002 ||
+                !secure::decimal(field(payload,"samples"),samples) || samples>600*16000) return false;
+            if (!media::receive_end(g_control_generation.load(),response,end)) return false;
+            g_response.end_group=end; g_response.has_end=true; g_response_ending=true; g_response_samples=samples;
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+#endif
+
 void parse_message(const char* bytes, std::size_t size) {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    auto* root=secure::json(bytes,size);
+    if (!root || !secure_live() || !secure::envelope(root,doodad::board::identity().device_id,g_grant->session,g_server_sequence)) {
+        cJSON_Delete(root); retire_control(); return;
+    }
+#else
     auto* root = cJSON_ParseWithLength(bytes, size);
     if (root == nullptr) return;
+#endif
     const auto* version = cJSON_GetObjectItemCaseSensitive(root, "v");
     const auto* type = cJSON_GetObjectItemCaseSensitive(root, "type");
     const auto* payload = cJSON_GetObjectItemCaseSensitive(root, "payload");
@@ -1019,6 +1184,18 @@ void parse_message(const char* bytes, std::size_t size) {
         cJSON_Delete(root);
         return;
     }
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    if (std::strcmp(type->valuestring,"welcome")==0 || std::strncmp(type->valuestring,"capture.",8)==0 ||
+        std::strncmp(type->valuestring,"playback.",9)==0) {
+        if (!secure_command(type->valuestring,payload)) retire_control();
+        cJSON_Delete(root); return;
+    }
+    if (!g_welcomed || (std::strcmp(type->valuestring,"transcript.final")!=0 &&
+        std::strcmp(type->valuestring,"action.invoke")!=0 && std::strcmp(type->valuestring,"agent.state")!=0 &&
+        std::strcmp(type->valuestring,"app.ready")!=0)) {
+        cJSON_Delete(root); retire_control(); return;
+    }
+#endif
     if (std::strcmp(type->valuestring, "welcome") == 0) {
         enqueue(CommandKind::welcome);
     } else if (std::strcmp(type->valuestring, "sdp") == 0) {
@@ -1141,7 +1318,11 @@ void websocket_event(
     void*, esp_event_base_t, std::int32_t event_id, void* event_data) {
     if (event_id == WEBSOCKET_EVENT_CONNECTED) {
         g_websocket_connected = true;
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+        if (!enqueue(CommandKind::connected)) retire_control();
+#else
         send_hello();
+#endif
     } else if (event_id == WEBSOCKET_EVENT_DISCONNECTED ||
                event_id == WEBSOCKET_EVENT_CLOSED) {
         g_websocket_connected = false;
@@ -1149,6 +1330,31 @@ void websocket_event(
         display_publish_agent_state(0, 0, false, false, false, 0, "", "");
     } else if (event_id == WEBSOCKET_EVENT_DATA) {
         const auto* event = static_cast<esp_websocket_event_data_t*>(event_data);
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+        // SDK events may split one frame across buffers and one message across
+        // continuation frames. Never parse stale bytes or a partial message.
+        if (!event || (event->op_code!=0 && event->op_code!=1)) return;
+        if (event->payload_offset==0) {
+            if (event->op_code==1) {
+                if (g_ws_fragmented) { retire_control(); return; }
+                g_ws_received=0;
+            } else if (!g_ws_fragmented) { retire_control(); return; }
+            g_ws_frame_received=0;
+        }
+        if (event->data_len<0 || event->payload_len<0 || event->payload_offset<0 ||
+            static_cast<std::size_t>(event->payload_offset)!=g_ws_frame_received ||
+            event->data_len>event->payload_len-event->payload_offset ||
+            g_ws_received+event->data_len>kMaximumSignalBytes) { retire_control(); return; }
+        std::memcpy(g_websocket_payload+g_ws_received,event->data_ptr,event->data_len);
+        g_ws_received+=event->data_len; g_ws_frame_received+=event->data_len;
+        if (g_ws_frame_received==static_cast<std::size_t>(event->payload_len)) {
+            g_ws_fragmented=!event->fin;
+            if (event->fin) {
+                if (!g_ws_received || !enqueue(CommandKind::secure_message,g_websocket_payload,g_ws_received)) retire_control();
+                g_ws_received=0;
+            }
+        }
+#else
         if (event == nullptr || event->payload_len <= 0 ||
             event->payload_len > static_cast<int>(kMaximumSignalBytes) ||
             event->payload_offset < 0 || event->data_len < 0 ||
@@ -1163,6 +1369,7 @@ void websocket_event(
             g_websocket_payload[event->payload_len] = 0;
             parse_message(g_websocket_payload, event->payload_len);
         }
+#endif
     }
 }
 
@@ -1216,6 +1423,29 @@ bool discover_url(char* destination, std::size_t capacity) {
 }
 
 void connect_websocket() {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    const auto now=static_cast<std::uint64_t>(esp_timer_get_time()/1000);
+    if (!g_grant || now<g_next_connect || !secure::profile_revision() || g_denied_revision==secure::profile_revision()) return;
+    g_next_connect=now+std::min(30000U,1000U<<std::min(g_connect_failures++,5U))+(esp_random()%501);
+    if (!secure::acquire(*g_grant)) {
+        if (secure::authorization_rejected()) {
+            g_denied_revision=secure::profile_revision();
+            publish(VoiceEventKind::error,"Secure voice enrollment rejected");
+        } else publish(VoiceEventKind::connecting,"Waiting for secure voice host");
+        return;
+    }
+    if (g_control_generation.load()==UINT64_MAX) { secure::wipe(g_grant,sizeof(*g_grant)); return; }
+    ++g_control_generation; g_sequence=0; g_server_sequence=0; g_welcomed=false;
+    g_active_capture_id=0; g_active_start=0; g_highest_start=0; g_highest_response=0;
+    g_capture_complete=false; g_response={}; g_ws_received=0; g_ws_frame_received=0; g_ws_fragmented=false;
+    esp_websocket_client_config_t configuration{};
+    configuration.uri=g_grant->websocket_url; configuration.cert_pem=g_grant->roots;
+    configuration.headers=g_grant->headers; configuration.skip_cert_common_name_check=false;
+    configuration.disable_auto_reconnect=true; // Tokens cannot be replayed by the SDK.
+    configuration.buffer_size=1024; configuration.task_stack=6144; configuration.task_prio=5;
+    configuration.network_timeout_ms=3000; configuration.ping_interval_sec=5;
+    g_ready_deadline=static_cast<std::uint64_t>(esp_timer_get_time()/1000)+15000;
+#else
     char url[160]{};
     if (!discover_url(url, sizeof(url))) return;
     ESP_LOGI(kTag, "signaling endpoint discovered");
@@ -1227,6 +1457,7 @@ void connect_websocket() {
     configuration.network_timeout_ms = 5'000;
     configuration.reconnect_timeout_ms = 2'000;
     configuration.ping_interval_sec = 5;
+#endif
     g_websocket = esp_websocket_client_init(&configuration);
     if (g_websocket == nullptr) return;
     esp_websocket_register_events(
@@ -1236,6 +1467,20 @@ void connect_websocket() {
         g_websocket = nullptr;
     }
 }
+
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+void close_control() {
+    g_websocket_connected=false; media::disconnect();
+    if (g_websocket) {
+        esp_websocket_client_stop(g_websocket);
+        esp_websocket_client_destroy(g_websocket); g_websocket=nullptr;
+    }
+    g_transport_reset_requested=false;
+    g_response={}; g_capture_complete=false; g_welcomed=false; g_capture_correlations={};
+    if (g_grant) secure::wipe(g_grant,sizeof(*g_grant));
+    display_publish_agent_state(0,0,false,false,false,0,"","");
+}
+#endif
 
 void poll_media() {
     media::Event event{};
@@ -1248,25 +1493,44 @@ void poll_media() {
         if (capture) {
             g_encoded_frames=event.encoded_frames; g_dropped_frames=event.dropped_frames;
             g_encoded_bytes=event.encoded_bytes; g_first_group=event.first_group; g_end_group=event.end_group;
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            g_capture_samples=event.samples;
+#endif
         }
         switch(event.kind) {
         case media::EventKind::ready:
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            g_connect_failures=0; g_ready_deadline=0;
+#endif
             send_simple("peer.ready"); publish(VoiceEventKind::ready, "Voice link ready"); break;
         case media::EventKind::capture_started:
             remember_capture({event.identity.capture_id,event.identity.request_id,event.identity.owner_token});
             publish(VoiceEventKind::recording, "Listening"); send_capture_status("capture.started",0); break;
         case media::EventKind::capture_stopped:
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            g_capture_complete=true;
+#endif
             publish(VoiceEventKind::stopped, "Processing",event.elapsed_ms);
             send_capture_status("capture.stopped",event.elapsed_ms); display_publish_voice_level(0); break;
         case media::EventKind::capture_failed:
             publish(VoiceEventKind::error, "Audio capture failed"); send_simple("capture.failed"); break;
         case media::EventKind::disconnected:
         case media::EventKind::error:
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            retire_control();
+#endif
             display_publish_agent_state(0,0,false,false,false,0,"","");
             publish(VoiceEventKind::error,"Voice transport disconnected"); break;
         case media::EventKind::playback_bound:
         case media::EventKind::playback_started:
         case media::EventKind::playback_finished: {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            if (event.response_id!=g_response.response_id || !owns(event.identity)) break;
+            if (event.kind==media::EventKind::playback_finished && !event.cancelled && !event.error &&
+                (!g_response_ending || event.samples!=g_response_samples || event.end_group!=g_response.end_group)) {
+                retire_control(); break;
+            }
+#endif
             auto* root=cJSON_CreateObject();
             const char* type=event.kind==media::EventKind::playback_bound ? "playback.bound" :
                 event.kind==media::EventKind::playback_started ? "playback.started" : "playback.finished";
@@ -1275,6 +1539,11 @@ void poll_media() {
             add_decimal_u64(payload,"response_id",event.response_id);
             add_decimal_u64(payload,"capture_id",event.identity.capture_id);
             add_decimal_u64(payload,"request_id",event.identity.request_id);
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            add_decimal_u64(payload,"owner_token",event.identity.owner_token);
+            add_decimal_u64(payload,"first_group",event.first_group);
+            add_decimal_u64(payload,"end_group",event.end_group);
+#endif
             add_decimal_u64(payload,"samples",event.samples);
             cJSON_AddBoolToObject(payload,"cancelled",event.cancelled);
             cJSON_AddNumberToObject(payload,"error",event.error);
@@ -1289,9 +1558,18 @@ void voice_task(void*) {
     std::uint32_t last_discovery = 0;
     while (true) {
         if (!network_service_connected()) {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            if (g_websocket) close_control();
+            g_next_connect=0;
+#endif
             network_service_connect();
         }
         const auto now = now_ms();
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+        if (g_websocket && (!secure_live() || (g_ready_deadline &&
+            static_cast<std::uint64_t>(esp_timer_get_time()/1000)>g_ready_deadline))) retire_control();
+        if (g_transport_reset_requested.exchange(false)) close_control();
+#endif
         if (network_service_connected() && g_websocket == nullptr &&
             now - last_discovery >= 3'000) {
             last_discovery = now;
@@ -1303,8 +1581,12 @@ void voice_task(void*) {
             free_command(command);
         }
         if (g_transport_reset_requested.exchange(false)) {
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            close_control();
+#else
             media::disconnect();
             g_capture_correlations = {};
+#endif
         }
         media::tick();
 #ifdef DOODAD_MOQ_DIAGNOSTIC
@@ -1324,6 +1606,11 @@ bool voice_service_init() {
 #else
     if (g_task != nullptr) return true;
     if (!network_service_init()) return false;
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    if (!secure::init()) return false;
+    g_grant=static_cast<secure::Grant*>(heap_caps_calloc(1,sizeof(secure::Grant),MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT));
+    if (!g_grant) return false;
+#endif
     if (!load_agent_state()) {
         ESP_LOGE(kTag, "agent journal initialization failed");
         return false;

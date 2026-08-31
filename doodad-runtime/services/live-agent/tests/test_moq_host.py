@@ -363,6 +363,9 @@ from doodad_agent.session import ControlSession, DownlinkUtteranceBinding
 from doodad_agent.moq_auth import GrantRegistry
 from doodad_agent.moq_bootstrap import MoqBootstrap
 from doodad_agent.moq_ipc import read_packet
+from doodad_agent.moq_session import MoqSession
+from doodad_agent.transport_moq import MoqTransportServer
+from doodad_agent.moq_config import MoqHostConfig
 from doodad_agent.main import parse_arguments
 '''
     # Only test the modules we deliberately make neutral; main may have other

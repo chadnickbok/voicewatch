@@ -31,7 +31,8 @@ class MoqBootstrap:
         self._sockets: set[web.WebSocketResponse] = set()
         self.unexpected_failures = 0
 
-    async def start(self, host: str, port: int, context: ssl.SSLContext) -> None:
+    async def start(self, host: str, port: int, context: ssl.SSLContext,
+                    *, configure: Callable[[web.Application], None] | None = None) -> None:
         if self._runner is not None:
             raise RuntimeError("bootstrap already started")
         if (context.protocol != ssl.PROTOCOL_TLS_SERVER
@@ -39,7 +40,10 @@ class MoqBootstrap:
             raise ValueError("bootstrap requires a TLS server context with TLS 1.2 or newer")
         # aiohttp's default request logs include query strings. Disable them at
         # the serving boundary rather than relying on callers to redact later.
-        runner = web.AppRunner(self.application(), access_log=None, shutdown_timeout=2)
+        application = self.application()
+        if configure is not None:
+            configure(application)
+        runner = web.AppRunner(application, access_log=None, shutdown_timeout=2)
         try:
             await runner.setup()
             await web.TCPSite(runner, host, port, ssl_context=context).start()

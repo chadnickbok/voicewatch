@@ -593,8 +593,8 @@ class LiveConversation:
                 self.trace.mark("pipeline.cleanup_timeout")
 
     async def _drain_downlink(self) -> None:
-        # Flush the stateful resampler, then wait for RTP, the ESP32 jitter
-        # cache, and the physical speaker tail. There is deliberately no fixed
+        # Flush the stateful resampler, then let the selected transport wait
+        # for playout (MoQ requires the matching watch receipt). There is no fixed
         # response-length timeout here; interruption clears the generation and
         # releases this wait.
         await self.end_downlink()

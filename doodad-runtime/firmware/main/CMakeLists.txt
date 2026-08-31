@@ -11,6 +11,7 @@ endif()
 
 if(CONFIG_DOODAD_VOICE_TRANSPORT_MOQ)
     set(DOODAD_MEDIA_SOURCE "src/voice_media_moq.cpp")
+    set(DOODAD_MOQ_CONTROL_SOURCES "src/voice_moq_protocol.cpp" "src/voice_moq_bootstrap.cpp")
 else()
     set(DOODAD_MEDIA_SOURCE "src/voice_media_webrtc.cpp")
 endif()
@@ -28,6 +29,7 @@ idf_component_register(
         "src/network_service.cpp"
         "src/voice_service.cpp"
         "${DOODAD_MEDIA_SOURCE}"
+        ${DOODAD_MOQ_CONTROL_SOURCES}
         "src/weather_provider.cpp"
         "../../ui/doodad_lvgl_ui.c"
     INCLUDE_DIRS

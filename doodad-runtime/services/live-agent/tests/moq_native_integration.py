@@ -26,6 +26,8 @@ from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 from doodad_agent.moq_auth import GrantRegistry, bootstrap_proof
 from doodad_agent.moq_bootstrap import MoqBootstrap
 from doodad_agent.moq_bridge import MoqBridgeServer
+from doodad_agent.metrics import LatencyTrace
+from doodad_agent.transport_moq import MoqTransportServer
 
 ROOT = Path(__file__).resolve().parents[4]
 BIN = ROOT/'libs/moq-esp32/server/voice_agent/target/debug'
@@ -191,3 +193,132 @@ async def test_native_authorized_session(mode):
             await stop(endpoint)
             await web_server.close()
             await bridge.close()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('cancel_before_bound', [False, True])
+async def test_product_session_over_real_native_boundary(cancel_before_bound):
+    """Real product adapter, synthetic application PCM, emulated watch receipts.
+
+    Unlike the framing fixture above, no test callback writes native IPC. This
+    exercises the production session's capture/response ownership and queues.
+    It still does not assert a physical DMA receipt or a live provider turn.
+    """
+    with tempfile.TemporaryDirectory(prefix='vw-session-', dir='/tmp') as temporary:
+        directory = Path(temporary)
+        registry = GrantRegistry({DEVICE: KEY})
+        server_context, client_context, roots, cert, key = trust(directory)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        sock.bind(('127.0.0.1', 0)); port = sock.getsockname()[1]; sock.close()
+        captured = bytearray()
+        ready, played = asyncio.Event(), asyncio.Event()
+        waits = []
+        events = []
+
+        async def audio(device, pcm):
+            assert device == DEVICE
+            captured.extend(pcm)
+            assert len(captured) <= 1074
+
+        def respond(session, pcm, *, finish=True):
+            session.begin_downlink()
+            session.enqueue_downlink(pcm, 16000)
+            if finish:
+                session.end_downlink()
+
+        async def event(device, kind, payload):
+            events.append(kind)
+            if kind == 'connected':
+                ready.set()
+            elif kind == 'listen.requested':
+                await transport.sessions[device].start_capture()
+            elif kind == 'capture.stopped':
+                assert payload['samples'] == '537' and len(captured) == 1074
+                session = transport.sessions[device]
+                respond(session, b'\x09\x00'*17 if cancel_before_bound else bytes(captured))
+                if not cancel_before_bound:
+                    async def wait():
+                        await session.resume_after_downlink()
+                        played.set()
+                    waits.append(asyncio.create_task(wait()))
+
+        transport = MoqTransportServer(LatencyTrace(), audio, event, 0, registry=registry,
+                    context=server_context, ipc_path=directory/'media.sock',
+                    media_host='127.0.0.1', media_port=port, host='127.0.0.1')
+        await transport.start()
+        # Port zero is only for the local test listener.
+        address = transport.bootstrap._runner.addresses[0]
+        base = f'https://127.0.0.1:{address[1]}'
+        config = directory/'endpoint.json'
+        write_private(config, json.dumps(dict(listen=f'127.0.0.1:{port}', certificate=str(cert),
+                                              private_key=str(key), ipc_socket=str(transport.bridge.path))).encode())
+        endpoint = child = None
+        try:
+            endpoint = await asyncio.create_subprocess_exec(str(BIN/'voicewatch-moq-endpoint'), '--config', str(config),
+                                             stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE)
+            assert b'listening' in await asyncio.wait_for(endpoint.stderr.readline(), 5)
+            async with ClientSession() as client:
+                async with client.post(base+'/v1/moq/challenge', json={'device_id': DEVICE}, ssl=client_context) as response:
+                    nonce = (await response.json())['challenge']
+                async with client.post(base+'/v1/moq/bootstrap', json=dict(device_id=DEVICE, challenge=nonce,
+                                proof=bootstrap_proof(KEY, DEVICE, nonce)), ssl=client_context) as response:
+                    grant = await response.json()
+                ws = await client.ws_connect(base+'/v1/moq/control', ssl=client_context,
+                                              headers={'Authorization': 'Bearer '+grant['control_token']})
+                seq = 0
+                async def send(kind, payload):
+                    nonlocal seq
+                    seq += 1
+                    await ws.send_json(dict(v=1, seq=seq, type=kind, device_id=DEVICE,
+                                            session_id=grant['session_id'], payload=payload))
+                await send('hello', dict(device_id=DEVICE, board='t-watch-ultra', transport='moq', capabilities={}))
+                welcome = await ws.receive_json(timeout=3)
+                assert welcome['type'] == 'welcome'
+                await send('peer.ready', {})
+                child = await probe(dict(address=f'127.0.0.1:{port}', roots=str(roots), setup_path=grant['setup_path'],
+                                          publish=grant['publish'], subscribe=grant['subscribe'], mode='audio'), directory)
+                await asyncio.wait_for(ready.wait(), 5)
+                await send('listen.requested', {})
+                start = await ws.receive_json(timeout=3)
+                assert start['type'] == 'capture.start'
+                await send('capture.started', {**IDENTITY, 'first_group': '0', 'start_id': start['payload']['start_id']})
+                await send('capture.stopped', {**IDENTITY, 'first_group': '0', 'end_group': '3', 'samples': '537'})
+                while not played.is_set():
+                    document = await ws.receive_json(timeout=5)
+                    payload = document['payload']
+                    assert document['session_id'] == grant['session_id'] and document['device_id'] == DEVICE
+                    if document['type'] == 'playback.begin':
+                        if cancel_before_bound and payload['response_id'] == '1':
+                            session = transport.sessions[DEVICE]
+                            session.clear_downlink()
+                            respond(session, bytes(captured))
+                            async def wait():
+                                await session.resume_after_downlink()
+                                played.set()
+                            waits.append(asyncio.create_task(wait()))
+                            # Delayed old bound receipt must not activate the
+                            # replacement response or kill this connection.
+                            await send('playback.bound', {**payload, 'samples': '0', 'cancelled': False, 'error': 0})
+                        else:
+                            await send('playback.bound', {**payload, 'samples': '0', 'cancelled': False, 'error': 0})
+                    elif document['type'] == 'playback.cancel':
+                        assert cancel_before_bound and payload['response_id'] == '1'
+                    elif document['type'] == 'playback.end':
+                        assert payload['samples'] == '537' and not played.is_set()
+                        await send('playback.finished', {**payload, 'cancelled': False, 'error': 0})
+                        await asyncio.wait_for(played.wait(), 2)
+                    else:
+                        pytest.fail('unexpected control kind')
+                stdout, stderr = await asyncio.wait_for(child.communicate(), 8)
+                assert child.returncode == 0, stderr.decode()
+                assert json.loads(stdout)['reference_pcm_match']
+                assert events.count('capture.stopped') == 1
+                assert not transport.bridge.unexpected_failures and not transport.bootstrap.unexpected_failures
+                await ws.close()
+        finally:
+            for task in waits:
+                task.cancel()
+            await asyncio.gather(*waits, return_exceptions=True)
+            await stop(child)
+            await stop(endpoint)
+            await transport.close()

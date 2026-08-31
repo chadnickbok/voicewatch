@@ -1,11 +1,12 @@
 # MoQ host audio, authorization and IPC boundary
 
-Status: implemented Python boundary and native Rust endpoint, 2026-08-30. This is **not yet the production
-MoQ live-agent transport**. The normal `serve` command still selects the legacy
-WebRTC adapter. No enrolled device, running service or watch firmware was changed
-by this checkpoint. The native worker now implements scoped origins and a media
-actor; the production application capture/response adapter and firmware bootstrap
-remain required. See the native endpoint checkpoint below for its limits.
+Status: implemented Python boundary, native Rust endpoint and explicit MoQ
+product adapter, 2026-08-30. Default `serve` still selects WebRTC; the new
+`--transport moq --moq-config ...` mode is a development checkpoint. No enrolled
+device, running service or firmware was changed. Firmware bootstrap/control,
+live provider turns and release gates remain open. The sections below record
+earlier checkpoints; see [the current product session contract](moq-product-session.md)
+for the adapter and its limits.
 
 ## Shared audio and product control
 
@@ -33,8 +34,9 @@ replacement session. `transport.py` preserves lazy compatibility imports.
 aiortc is an optional `webrtc` installation extra and a development dependency.
 The current service installer explicitly installs that extra, preserving the
 existing deployed mode. Importing the neutral modules or CLI does not load the
-legacy adapter. `serve` is still WebRTC until the real MoQ worker is wired; there
-is no advertised but nonfunctional `--transport moq` mode.
+legacy adapter. Default `serve` is still WebRTC; explicit MoQ mode now wires the
+worker through `MoqSession`, with separate configuration and remaining physical/
+provider acceptance requirements.
 
 ## Enrollment and grant issuance
 
@@ -145,8 +147,8 @@ neutral modules, CLI and existing conversation module with neither aiortc nor
 PyAV installed; this verifies imports, not a live provider turn.
 
 The subsequent native endpoint checkpoint implements scoped origins, standard
-Hang Opus workers and a bounded IPC actor. Next implement the production
-`MoqSession` and firmware control/bootstrap path, then run the complete
+Hang Opus workers and a bounded IPC actor. The following checkpoint adds
+`MoqSession`. Next implement the firmware control/bootstrap path, then run the complete
 STT/model/tools/TTS turn on the Ultra. The Python boundary tests alone do not
 prove those remaining end-to-end requirements. See the full replacement plan and
 [host boundary evidence](implementation-evidence/2026-08-30-host-boundary/README.md).
@@ -161,10 +163,10 @@ framing and grant validation. Rust formatting and Clippy checks pass.
 
 The separate `tests/moq_native_integration.py` lane exercises real Python
 HTTPS/WSS/IPC and native QUIC with generated test credentials and synthetic
-audio. It covers exact bidirectional 537-sample audio, invalid/replayed media
-tokens and WSS revocation closing QUIC. Its control driver is a fixture; it does
-not establish production `MoqSession`, physical watch binding/DMA completion or
-provider turns. The earlier evidence directory remains the historical Python
+audio. Its original three cases cover exact 537-sample audio, invalid/replayed
+tokens and WSS revocation using a fixture control driver. Two subsequent cases
+use the real `MoqSession` adapter; watch receipts remain emulated and provider
+turns untested. The earlier evidence directory remains the historical Python
 checkpoint, not evidence for this subsequent native implementation.
 
 The native actor waits for an authenticated capture end and matching terminal

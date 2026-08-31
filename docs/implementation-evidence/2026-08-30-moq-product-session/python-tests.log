@@ -1,0 +1,22 @@
+........................................................................ [ 39%]
+........................................................................ [ 79%]
+......................................                                   [100%]
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/pipecat/audio/utils.py:14
+  /workspace/voicewatch/doodad-runtime/services/live-agent/.venv/lib/python3.12/site-packages/pipecat/audio/utils.py:14: DeprecationWarning: 'audioop' is deprecated and slated for removal in Python 3.13
+    import audioop
+
+<frozen abc>:106
+  <frozen abc>:106: DeprecationWarning: `SpeechTimeoutUserTurnStopStrategy` overrides `reset`, which is deprecated since 1.6.0 and will be removed in 2.0.0. Override `handle_user_turn_started` and `handle_user_turn_stopped` instead.
+
+<frozen abc>:106
+  <frozen abc>:106: DeprecationWarning: `AudioContextTTSService` is deprecated since 0.0.105 and will be removed in 2.0.0. Use `WebsocketTTSService` instead.
+
+tests/test_jobs_attention.py::test_fake_worker_focus_restart_and_one_time_completion
+  /workspace/voicewatch/doodad-runtime/services/live-agent/src/doodad_agent/attention.py:41: RuntimeWarning: coroutine 'FrameProcessor.__process_frame_task_handler' was never awaited
+    connection.execute(
+  Enable tracemalloc to get traceback where the object was allocated.
+  See https://docs.pytest.org/en/stable/how-to/capture-warnings.html#resource-warnings for more info.
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+182 passed, 4 warnings in 6.00s

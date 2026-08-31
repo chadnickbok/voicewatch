@@ -7,11 +7,13 @@ cascade with local Silero VAD and Smart Turn, streaming OpenAI transcription,
 a persistent Responses WebSocket foreground model, and ElevenLabs Flash
 WebSocket TTS.
 
-The MoQ migration now has transport-neutral `audio.py`/`session.py`, an
-HTTPS/WSS grant issuer, and a bounded private Unix IPC listener. The Rust media
-worker and production MoQ session are not wired into `serve` yet. See the
-[host boundary contract](../../../docs/moq-host-boundary.md) for implemented
-behavior and remaining work. `aiortc` is an optional `webrtc` extra; install with
+The MoQ migration now has an explicit `serve --transport moq --moq-config ...`
+mode connecting the existing conversation callbacks to authenticated WSS and
+the native Rust worker over private IPC. It is a development mode: physical
+firmware control/bootstrap and live provider-turn acceptance remain open.
+WebRTC remains the default and deployed mode. See the
+[MoQ product session contract](../../../docs/moq-product-session.md) for private
+configuration, tests and limitations. `aiortc` is an optional `webrtc` extra; install with
 `uv sync --extra webrtc` for the existing service. Development tests also include
 that dependency to preserve legacy coverage.
 

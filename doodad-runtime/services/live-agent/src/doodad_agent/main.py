@@ -82,13 +82,15 @@ def personal_trust_from_environment() -> PersonalTrustProfile | None:
     return PersonalTrustProfile.from_hex(owner_id, signer_key_id, key_hex)
 
 
-def advertise(ip: str, port: int) -> tuple[Zeroconf, ServiceInfo]:
+def advertise(ip: str, port: int, transport: str = 'webrtc') -> tuple[Zeroconf, ServiceInfo]:
     service = ServiceInfo(
         "_doodad-voice._tcp.local.",
-        "Doodad Live Agent._doodad-voice._tcp.local.",
+        ("Doodad MoQ Live Agent" if transport == 'moq' else "Doodad Live Agent") + "._doodad-voice._tcp.local.",
         addresses=[socket.inet_aton(ip)],
         port=port,
-        properties={"path": "/ws", "v": "1", "mode": "live-agent"},
+        properties=({"path": "/v1/moq/control", "bootstrap": "/v1/moq/bootstrap",
+                     "v": "1", "mode": "live-agent", "transport": "moq-lite-05", "tls": "1"}
+                    if transport == 'moq' else {"path": "/ws", "v": "1", "mode": "live-agent"}),
         server="doodad-live-agent.local.",
     )
     zeroconf = Zeroconf(ip_version=IPVersion.V4Only)
@@ -109,8 +111,22 @@ def control_plane(database: Path, now_ms: int | None = None) -> tuple[
     return store, jobs, kernel, builder, attention, controller
 
 
+async def complete_capture_to_conversation(conversation, session, event: str) -> None:
+    """Keep the STT end padding after validated MoQ PCM, preserving legacy timing."""
+    completed_event = 'capture.stopped' if getattr(session, 'explicit_capture_completion', False) else 'listen.finished'
+    if conversation is not None and event == completed_event:
+        for _ in range(25):
+            await conversation.feed_audio(b'\0\0' * 160)
+
+
 async def serve(arguments: argparse.Namespace) -> None:
-    from .transport_webrtc import WatchTransportServer
+    moq_config = None
+    if arguments.transport == 'moq':
+        from .moq_config import MoqHostConfig
+        from .transport_moq import MoqTransportServer
+        moq_config = MoqHostConfig.load(arguments.moq_config)
+    else:
+        from .transport_webrtc import WatchTransportServer
 
     personal_trust = personal_trust_from_environment()
     if os.getenv("DOODAD_AIORTC_DEBUG") == "1":
@@ -144,7 +160,8 @@ async def serve(arguments: argparse.Namespace) -> None:
     )
     app_publisher = (
         AppReadyPublisher(
-            f"http://{ip}:{arguments.port}",
+            (f"https://{moq_config.public_host}:{arguments.port}" if moq_config is not None
+             else f"http://{ip}:{arguments.port}"),
             artifact_store,
             owner_id=personal_trust.owner_id,
             signer_key_id=personal_trust.signer_key_id,
@@ -152,7 +169,6 @@ async def serve(arguments: argparse.Namespace) -> None:
         if artifact_store is not None and personal_trust is not None
         else None
     )
-    transport: WatchTransportServer
 
     class DeviceRuntime:
         def __init__(
@@ -242,12 +258,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             runtime.downlink.end(current_session(device_id))
 
         async def wait_for_playback() -> None:
-            session = current_session(device_id)
-            try:
-                if session is not None:
-                    await session.resume_after_downlink()
-            finally:
-                runtime.downlink.release(current_session(device_id))
+            await runtime.downlink.wait_for_playback(lambda: current_session(device_id))
 
         async def invoke_action(
             capability: str, action_arguments: dict[str, Any], idempotency_key: str
@@ -332,9 +343,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             await session.start_capture()
         elif kind == "listen.finished" and session is not None:
             await session.stop_capture()
-            if conversation is not None:
-                for _ in range(25):
-                    await conversation.feed_audio(b"\0\0" * 160)
+            await complete_capture_to_conversation(conversation, session, kind)
         elif kind == "listen.cancelled" and session is not None:
             await session.stop_capture()
             runtime.downlink.cancel()
@@ -354,6 +363,7 @@ async def serve(arguments: argparse.Namespace) -> None:
                 "capture.stopped", device_id=device_id,
                 reason=payload.get("reason", "unknown"),
             )
+            await complete_capture_to_conversation(conversation, session, kind)
         elif kind == "disconnected":
             runtime.downlink.cancel()
             if conversation is not None:
@@ -363,13 +373,23 @@ async def serve(arguments: argparse.Namespace) -> None:
                 payload, int(time.time() * 1000)
             )
 
-    transport = WatchTransportServer(
-        trace, on_audio, on_event, arguments.port,
-        artifact_server=artifact_server,
-    )
+    if moq_config is not None:
+        transport = MoqTransportServer(
+            trace, on_audio, on_event, arguments.port,
+            registry=moq_config.registry, context=moq_config.context,
+            ipc_path=moq_config.ipc_path, media_host=moq_config.public_host,
+            media_port=moq_config.media_port, artifact_server=artifact_server,
+            time_port=moq_config.time_port,
+        )
+    else:
+        transport = WatchTransportServer(
+            trace, on_audio, on_event, arguments.port,
+            artifact_server=artifact_server,
+        )
     await transport.start()
-    zeroconf, service = await asyncio.to_thread(advertise, ip, arguments.port)
-    print(f"Doodad Live Agent listening at ws://{ip}:{arguments.port}/ws", flush=True)
+    zeroconf, service = await asyncio.to_thread(advertise, ip, arguments.port, arguments.transport)
+    print("Doodad Live Agent listening with authenticated MoQ/WSS" if moq_config is not None
+          else f"Doodad Live Agent listening at ws://{ip}:{arguments.port}/ws", flush=True)
     print("Foreground model and provider keys loaded (values hidden).", flush=True)
     print(
         "Personal app delivery enabled."
@@ -509,10 +529,18 @@ def parse_arguments(argv: list[str] | None = None) -> argparse.Namespace:
     serve_parser.add_argument("--port", type=int, default=8765)
     serve_parser.add_argument("--database", type=Path, default=DEFAULT_DATABASE)
     serve_parser.add_argument("--trace", type=Path, default=DEFAULT_TRACE)
+    serve_parser.add_argument('--transport', choices=('webrtc', 'moq'), default='webrtc')
+    serve_parser.add_argument('--moq-config', type=Path, help='owner-private MoQ host JSON configuration')
     demo_parser = subparsers.add_parser("fake-demo")
     demo_parser.add_argument("--database", type=Path, required=True)
     subparsers.add_parser("check-config")
-    return parser.parse_args(argv)
+    arguments = parser.parse_args(argv)
+    if arguments.command == 'serve':
+        if arguments.transport == 'moq' and arguments.moq_config is None:
+            parser.error('--transport moq requires --moq-config')
+        if arguments.transport != 'moq' and arguments.moq_config is not None:
+            parser.error('--moq-config requires --transport moq')
+    return arguments
 
 
 def cli(argv: list[str] | None = None) -> int:

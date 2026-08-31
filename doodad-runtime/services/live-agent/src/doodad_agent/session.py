@@ -30,6 +30,7 @@ class DownlinkUtteranceBinding:
     def __init__(self) -> None:
         self._session: DownlinkSession | None = None
         self._finalized = False
+        self._revision = 0
 
     def begin(self, session: DownlinkSession | None) -> None:
         self.cancel()
@@ -71,6 +72,7 @@ class DownlinkUtteranceBinding:
         """Detach a normally drained utterance without clearing its track."""
 
         session = self._session
+        self._revision += 1
         self._session = None
         self._finalized = False
         if session is not None and session is not current_session:
@@ -78,10 +80,25 @@ class DownlinkUtteranceBinding:
 
     def cancel(self) -> None:
         session = self._session
+        self._revision += 1
         self._session = None
         self._finalized = False
         if session is not None:
             session.clear_downlink()
+
+    async def wait_for_playback(self, current_session: Callable[[], DownlinkSession | None]) -> None:
+        """An old drain may finish after a new utterance has bound this object."""
+        session, revision = self._session, self._revision
+        if session is None:
+            return
+        if session is not current_session():
+            self.cancel()
+            return
+        try:
+            await session.resume_after_downlink()
+        finally:
+            if revision == self._revision:
+                self.release(current_session())
 
 
 

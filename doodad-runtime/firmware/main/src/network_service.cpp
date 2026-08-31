@@ -155,6 +155,11 @@ void network_service_sync_time(std::uint32_t timeout_ms) {
     tzset();
 #endif
     if (!network_service_connected()) return;
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    // The enrolled, nonce-bound time proof owns UTC in MoQ builds. Weather or
+    // another consumer must not overwrite it with unauthenticated SNTP.
+    return;
+#endif
     if (!g_sntp_initialized) {
         esp_sntp_config_t configuration =
             ESP_NETIF_SNTP_DEFAULT_CONFIG("pool.ntp.org");
