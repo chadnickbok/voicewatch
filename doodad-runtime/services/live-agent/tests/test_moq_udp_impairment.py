@@ -1,5 +1,6 @@
 import asyncio
 import importlib.util
+import time
 from pathlib import Path
 
 import pytest
@@ -67,3 +68,26 @@ async def test_proxy_memory_pressure_is_explicit_and_bounded():
     assert len(proxy.pending) == proxy.MAX_PENDING
     assert proxy.stats['uplink']['pressure'] == 1
     proxy.close()
+
+
+@pytest.mark.asyncio
+async def test_proxy_reports_unrequested_event_loop_delay():
+    class Transport:
+        def sendto(self, data, target): pass
+    loop=asyncio.get_running_loop()
+    proxy=UdpImpairment(0,60,1)
+    try:
+        # Deliberately block the loop, rather than adding network delay. The
+        # fixture must expose this extra delay independently of requested RTT.
+        proxy._heartbeat(loop)
+        proxy._schedule('uplink',b'fixture',Transport(),None,proxy.random[0])
+        time.sleep(.15)
+        await asyncio.sleep(.01)
+        result=proxy.snapshot()
+        assert result['timing']['uplink']['max_forward_lateness_us']>=100_000
+        assert result['timing']['uplink']['late_over_100ms']==1
+        assert result['event_loop_max_lag_us']>=100_000
+        assert result['directions']['uplink']['forwarded']==1
+    finally:
+        proxy.close()
+    assert proxy.heartbeat is None and not proxy.pending

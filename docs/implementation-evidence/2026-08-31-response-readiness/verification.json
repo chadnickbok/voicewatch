@@ -1,0 +1,57 @@
+{
+  "rust": {
+    "passed": 23,
+    "capture": 13,
+    "audio": 6,
+    "authorization": 4,
+    "clippy_warnings_denied": true,
+    "locked_offline_build": true
+  },
+  "python": {
+    "passed": 299,
+    "warnings": 4
+  },
+  "native_integration": {
+    "passed": 6
+  },
+  "firmware_cpp_protocol": {
+    "passed": 26
+  },
+  "firmware_build": true,
+  "log_sha256": {
+    "rust_and_clippy": "d5ccedd8f0280c89f19eea14f747da58dd138b914ec9a6e9f05dc516c882a943",
+    "python": "79a57f686548124a08288cfd0143883090807e3d2b13b04aab2f095d6009e03c",
+    "native_and_firmware_parsers": "5cba8a0d336f6301764b9e7cb54d2168880bd1238a4afa7c45b0666fad715409",
+    "firmware_build": "e8e60b7adcfaddf7acde305ff3c6e6205ab488b9efdcc3ebc448a3c71801169e"
+  },
+  "privacy": {
+    "ambient_pcm_persisted": false,
+    "raw_logs_copied": false,
+    "credentials_copied": false
+  },
+  "firmware_restoration_required": false,
+  "original_transport_failure_resolved": false,
+  "full_loss_matrix_pass": false,
+  "speech_quality_gate_pass": false,
+  "physical": {
+    "control_and_count_pass": [
+      "t56",
+      "t57",
+      "t58",
+      "p53"
+    ],
+    "failed_provider_run": "p54",
+    "startup_pressure_reproduced": "t56",
+    "corrected_zero_pressure_runs": [
+      "t57",
+      "t58",
+      "p53"
+    ],
+    "explicit_zero_pressure_gate_pass": "t58",
+    "original_transport_failure_reproduced": false
+  },
+  "mac_audio_after": {
+    "output_volume": 0,
+    "muted": true
+  }
+}

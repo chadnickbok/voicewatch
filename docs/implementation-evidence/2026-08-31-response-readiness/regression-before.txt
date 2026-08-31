@@ -1,0 +1,3 @@
+prepared_response_exposes_only_reset_until_watch_binding
+Before fix: FAIL; no reset group available to resolve subscription readiness (exit 101).
+After fix: PASS; only an empty reset before binding, no PCM accepted, cancellation consumes its group, one binding before audio.

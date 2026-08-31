@@ -159,6 +159,14 @@ the encoder's response epoch. WSS `playback.begin` carries
 capture/request/owner/response IDs, that group and timestamp; no PCM reaches the encoder
 before matching watch `playback.bound`.
 
+Native preparation publishes only a standard empty codec-reset group. The pinned
+Lite05 publisher needs this first group before it sends `SUBSCRIBE_START`.
+The watch emits `playback.bound` after `MEDIA_READY` initializes the player, not
+when a receive request is merely queued. Only then does paced PCM begin. This
+prevents subscription negotiation from accumulating an audio burst at startup.
+Cancelling an unbound preparation leaves only an empty reset group; group IDs
+are never reused. The native endpoint and firmware must be updated together.
+
 The player binds time zero to this authenticated timestamp, not to the first
 packet that happens to arrive. Missing initial packets therefore retain their
 duration. The authenticated `playback.end` sample count reaches the audio owner

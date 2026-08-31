@@ -1,0 +1,20 @@
+{
+  "flash22": {
+    "image_sha256": "4ea8e10561dd64441047fc82a7652055b3cd9ee2d97825c28ffa5ef7b1680742",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] steady state; free heap:"
+  },
+  "flash23": {
+    "image_sha256": "2d52fa754c6a7963300dbab4c663e0e6e61861545fe1a4da31f7451fdfa7b264",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] steady state; free heap:"
+  }
+}

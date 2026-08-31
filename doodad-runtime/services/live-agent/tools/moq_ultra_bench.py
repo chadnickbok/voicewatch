@@ -6,8 +6,12 @@ test real enrollment, WSS/QUIC readiness, forced reconnect and lease renewal.
 --audio additionally captures microphone PCM (1.2 seconds by default), discards
 it after counting, then plays a synthetic tone and checks the DMA receipt.
 --capture-rounds repeats completed captures within one authenticated session.
+--reply-each-capture plays a generated tone after every capture, exercising
+repeated microphone-to-speaker transitions without providers or storing PCM.
 --loss-percent/--added-rtt-ms exercise encrypted UDP loss and delay independently
 of providers. WSS remains intact; a seeded proxy is closed with the bench.
+--max-playout-pressure optionally fails on packet queue overflow. This is a
+transport regression gate, not a calibrated speech-quality measurement.
 No provider runs, deployed service changes, flash writes or restoration.
 """
 import argparse
@@ -16,6 +20,7 @@ import json
 import math
 import os
 from pathlib import Path
+import re
 import secrets
 import signal
 import socket
@@ -101,7 +106,8 @@ async def run(args):
     result = dict(pass_=False, audio_requested=args.audio, microphone_samples=0, ready_sessions=0,
                   firmware_written=False, restoration_required=False,
                   voice_ui=args.voice_ui, capture_ms=args.capture_ms if args.audio else 0,
-                  capture_rounds=args.capture_rounds if args.audio else 0, captures_completed=0)
+                  capture_rounds=args.capture_rounds if args.audio else 0, captures_completed=0,
+                  reply_each_capture=args.reply_each_capture, round_trips_completed=0)
     if args.certificate_fault:
         result['certificate_fault'] = args.certificate_fault
     began = time.monotonic()
@@ -139,7 +145,7 @@ async def run(args):
             private_key=str(directory/'server.key'), device_keys=str(directory/'devices.json'),
             ipc_socket=str(directory/'media.sock'), public_host=args.host,
             media_port=media_port, time_port=time_port))
-        lease_seconds = max(45, math.ceil((args.capture_ms/1000+1)*args.capture_rounds+20)) if args.audio else 45
+        lease_seconds = max(45, math.ceil((args.capture_ms/1000+1+2*args.reply_each_capture)*args.capture_rounds+20)) if args.audio else 45
         result['lease_seconds'] = lease_seconds
         registry = GrantRegistry({device['device_id']: key}, lease_seconds=lease_seconds)
         result['time_proofs_issued'] = 0
@@ -205,7 +211,7 @@ async def run(args):
             if result['time_proofs_issued'] != 1:
                 raise RuntimeError('terminal certificate failure was retried')
             result['pass_'] = True
-            return
+            return result
         first = await asyncio.wait_for(ready.get(), 45)
         await asyncio.sleep(1)
         if result['microphone_samples']:
@@ -219,6 +225,13 @@ async def run(args):
         result['forced_reconnect_ms'] = round((time.monotonic()-at)*1000)
         mark('fresh_grant_reconnect', duration_ms=result['forced_reconnect_ms'])
         if args.audio:
+            # Generated output only; microphone samples are counted/discarded.
+            samples = 16037
+            tone = b''.join(struct.pack('<h', round(1800*math.sin(2*math.pi*440*n/16000))) for n in range(samples))
+            async def play_tone():
+                second.begin_downlink(); second.enqueue_downlink(tone,16000); second.end_downlink()
+                if not await asyncio.wait_for(second.resume_after_downlink(),12):
+                    raise RuntimeError('synthetic playback was cancelled or replaced')
             for capture_round in range(args.capture_rounds):
                 capture_sample_base = result['microphone_samples']
                 captured.clear()
@@ -236,12 +249,14 @@ async def run(args):
                     raise RuntimeError('incomplete microphone capture')
                 result['captures_completed'] += 1
                 mark('capture_round_completed', round=capture_round+1, samples=samples)
+                if args.reply_each_capture:
+                    await play_tone()
+                    result['round_trips_completed'] += 1
+                    mark('capture_reply_completed', round=capture_round+1, speaker_samples=16037)
             # Deliberately non-frame-aligned tail, generated PCM only.
             samples = 16037
-            tone = b''.join(struct.pack('<h', round(1800*math.sin(2*math.pi*440*n/16000))) for n in range(samples))
-            second.begin_downlink(); second.enqueue_downlink(tone, 16000); second.end_downlink()
-            if not await asyncio.wait_for(second.resume_after_downlink(), 12):
-                raise RuntimeError('synthetic playback was cancelled or replaced')
+            if not args.reply_each_capture:
+                await play_tone()
             result['speaker_samples'] = samples
             mark('physical_audio_finished', microphone_samples=result['microphone_samples'], speaker_samples=samples)
             # Replace speech on the same completed capture. A response-only
@@ -283,8 +298,22 @@ async def run(args):
             result['impairment']=impairment.snapshot()
             if any(item['pressure'] for item in impairment.stats.values()):
                 result['pass_']=False
+        if args.audio:
+            serial_path=directory/'serial.log'
+            raw=serial_path.read_text(errors='replace') if serial_path.exists() else ''
+            result['playout']=[dict(samples=int(samples),concealed=int(concealed),late=int(late),
+                pressure=int(pressure),silence=int(silence) if silence else None)
+                for samples,concealed,late,pressure,silence in re.findall(
+                    r'playout samples=(\d+) concealed=(\d+) late=(\d+) pressure=(\d+)(?: silence=(\d+))?',raw)]
+            if args.max_playout_pressure is not None:
+                result['max_playout_pressure']=args.max_playout_pressure
+                expected=(args.capture_rounds if args.reply_each_capture else 1)+1
+                result['playout_pressure_gate']=(len(result['playout'])==expected and
+                    all(p['samples']==16037 and p['pressure']<=args.max_playout_pressure for p in result['playout']))
+                result['pass_']=result['pass_'] and result['playout_pressure_gate']
         result['elapsed_ms'] = round((time.monotonic()-began)*1000)
         write(directory/'result.json', result)
+    return result
 
 
 def main():
@@ -297,21 +326,31 @@ def main():
     parser.add_argument('--voice-ui', action='store_true', help='Show the real listening shell during capture')
     parser.add_argument('--capture-ms', type=int, default=1200)
     parser.add_argument('--capture-rounds', type=int, default=1)
+    parser.add_argument('--reply-each-capture',action='store_true',
+                        help='Play a generated response after every capture, retaining no microphone PCM')
     parser.add_argument('--loss-percent',type=int,choices=(0,1,3,5),default=0)
     parser.add_argument('--added-rtt-ms',type=int,choices=(0,30,60,120),default=0)
     parser.add_argument('--loss-seed',type=int,default=44)
+    parser.add_argument('--max-playout-pressure',type=int,
+                        help='Require all completed tones to have pressure no greater than this count')
     parser.add_argument('--certificate-fault', choices=('expired', 'not_yet_valid', 'hostname', 'untrusted'))
     args = parser.parse_args()
     if args.audio and args.certificate_fault:
         parser.error('certificate rejection tests never capture audio')
+    if args.reply_each_capture and not args.audio:
+        parser.error('reply-each-capture requires audio')
+    if args.max_playout_pressure is not None and (not args.audio or args.max_playout_pressure<0):
+        parser.error('max-playout-pressure requires audio and a nonnegative limit')
     if not 100 <= args.capture_ms <= 30000 or (args.voice_ui and not args.audio):
         parser.error('capture-ms must be 100..30000; voice-ui requires audio')
     if (not 1 <= args.capture_rounds <= 100 or (args.capture_rounds != 1 and not args.audio)
-            or (args.capture_ms/1000+1)*args.capture_rounds+20 > 300):
+            or (args.capture_ms/1000+1+2*args.reply_each_capture)*args.capture_rounds+20 > 300):
         parser.error('capture-rounds requires audio, must be 1..100, and must fit a 300 second lease')
     ip_address(args.host)
     try:
-        asyncio.run(run(args))
+        result=asyncio.run(run(args))
+        if not result['pass_']:
+            raise RuntimeError('physical bench acceptance gate failed')
     except Exception as error:
         raise SystemExit('Physical bench failed ('+type(error).__name__+'); inspect private evidence') from None
 

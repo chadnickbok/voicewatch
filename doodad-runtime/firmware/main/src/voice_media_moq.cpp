@@ -78,6 +78,8 @@ struct Owner {
     void* player_arena = nullptr;
     std::uint64_t revision = 1, session = 0, connection = 0, attempt = 0;
     std::uint64_t publish = 0, receive = 0, first = 0, started_us = 0;
+    std::uint64_t response_started_us = 0, received_frames = 0;
+    bool reported_pressure = false;
     std::uint64_t expected_sample = 0, microphone_generation = 0;
     std::uint64_t response_floor = 0, capture_floor = 0;
     std::uint64_t samples = 0, finish_deadline = 0, last_level_us = 0;
@@ -306,9 +308,12 @@ bool begin_response(Owner& o,const Response& response) {
     if (result==ESP_MOQ_ERR_WOULD_BLOCK) return false;
     if (result) { fail(o,result); return true; }
     o.response=response; o.response_floor=response.response_id; o.samples=0;
+    o.response_started_us=now_us(); o.received_frames=0; o.reported_pressure=false;
     if (o.next_speaker_owner==UINT64_MAX) { fail(o,ESP_MOQ_ERR_VALUE_TOO_LARGE); return true; }
     o.speaker_owner=o.next_speaker_owner++;
-    emit(o,EventKind::playback_bound);
+    // The native producer primes an empty reset group. Acknowledge only after
+    // SUBSCRIBE_START/MEDIA_READY, so paced PCM cannot accumulate while TRACK
+    // and SUBSCRIBE control are still negotiating on the impaired media path.
     return true;
 }
 
@@ -320,19 +325,37 @@ void poll_service(Owner& o) {
         if (result) { fail(o,result); return; }
         if (e.type==ESP_MOQ_SERVICE_CONNECTED) o.connection=e.connection;
         if (e.type==ESP_MOQ_SERVICE_MEDIA_READY && e.media==o.receive && !e.cancelled) {
+            ESP_LOGI(kTag,"response ready id=%llu elapsed_us=%llu first=%llu pts=%llu",
+                static_cast<unsigned long long>(o.response.response_id),
+                static_cast<unsigned long long>(now_us()-o.response_started_us),
+                static_cast<unsigned long long>(o.response.first_group),
+                static_cast<unsigned long long>(o.response.pts_us));
             result=esp_moq_audio_player_begin(o.player,e.connection,e.media,&e.format);
             if (!result && o.response.has_timeline) {
                 result=esp_moq_audio_player_timeline(o.player,o.response.pts_us);
                 if (!result && o.response.has_end)
                     result=esp_moq_audio_player_end(o.player,o.response.samples,now_us());
             }
-            if (!result) o.playing=true;
+            if (!result) { o.playing=true; emit(o,EventKind::playback_bound); }
         }
         if ((e.type==ESP_MOQ_SERVICE_FRAME || e.type==ESP_MOQ_SERVICE_AUDIO_END ||
              e.type==ESP_MOQ_SERVICE_DISCONTINUITY || e.type==ESP_MOQ_SERVICE_RECEIVE_END) &&
             e.media==o.receive && o.receive && !e.cancelled && !e.result) {
             if (e.type!=ESP_MOQ_SERVICE_FRAME || esp_moq_service_lease_valid(o.service,e.lease))
                 result=esp_moq_audio_player_push(o.player,&e,now_us());
+            if (e.type==ESP_MOQ_SERVICE_FRAME) {
+                ++o.received_frames;
+                esp_moq_audio_stats_t audio{}; esp_moq_audio_player_stats(o.player,&audio);
+                if (o.received_frames<=3 || (!o.reported_pressure && audio.pressure)) {
+                    ESP_LOGI(kTag,"response frame id=%llu elapsed_us=%llu frames=%llu group=%llu pts=%llu samples=%llu queued=%u pressure=%llu",
+                        static_cast<unsigned long long>(o.response.response_id),
+                        static_cast<unsigned long long>(now_us()-o.response_started_us),
+                        static_cast<unsigned long long>(o.received_frames),static_cast<unsigned long long>(e.group),
+                        static_cast<unsigned long long>(e.timestamp_us),static_cast<unsigned long long>(o.samples),
+                        audio.packets,static_cast<unsigned long long>(audio.pressure));
+                    if (audio.pressure) o.reported_pressure=true;
+                }
+            }
             if (e.type==ESP_MOQ_SERVICE_RECEIVE_END) {
                 o.receiving_end=true; o.response.end_group=e.end_group;
             }
@@ -500,9 +523,10 @@ void playback_step(Owner& o) {
         // empty server queue. Old replies retain the exact response identity.
         emit(o,EventKind::playback_finished);
         esp_moq_endpoint_status_t endpoint{}; esp_moq_endpoint_status(o.endpoint,&endpoint);
-        ESP_LOGI(kTag,"playout samples=%llu concealed=%llu late=%llu pressure=%llu audio_stack=%u network_stack=%u dns_stack=%u",
+        ESP_LOGI(kTag,"playout samples=%llu concealed=%llu late=%llu pressure=%llu silence=%llu audio_stack=%u network_stack=%u dns_stack=%u",
             static_cast<unsigned long long>(o.samples),static_cast<unsigned long long>(stats.concealed),
             static_cast<unsigned long long>(stats.late),static_cast<unsigned long long>(stats.pressure),
+            static_cast<unsigned long long>(stats.silence),
             static_cast<unsigned>(uxTaskGetStackHighWaterMark(nullptr)),static_cast<unsigned>(endpoint.network_stack_free),
             static_cast<unsigned>(endpoint.resolver_stack_free));
         o.receive=0; o.playing=o.speaker=o.receiving_end=false;

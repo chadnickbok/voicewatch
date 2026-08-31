@@ -5,7 +5,59 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: capture burst recovery and transport diagnostics
+## Latest checkpoint: response subscription readiness
+
+Follow-up diagnostics reproduce the capture failure in p56 at 5% loss and
+120 ms added RTT: eleven consecutive unavailable audio groups exceed the
+unchanged ten-frame concealment budget. Proxy forwarding timers are at most
+3.326 ms late, while the event loop's maximum measured lag is 54.349 ms; the
+source of the missing groups is still under investigation. p55 separately fails
+the required fresh watch-state read. Neither provider failure is resolved.
+
+The native-only bench now supports a generated reply after every capture.
+t59 and t60 pass ten 1.2-second and twenty 4-second capture/reply cycles,
+respectively, under the same impairment parameters, with zero playback pressure
+or silence. These are host-triggered synthetic replies, not physical PTT or
+acoustic echo tests; microphone PCM is counted and discarded. The new proxy
+timing counters distinguish requested network delay from forwarding-timer delay.
+Checkpoint verification passes all 300 Python tests (four warnings), 23 Rust
+tests and Clippy with warnings denied. The hardware/build evidence below records
+the earlier readiness-fix validation separately.
+
+Physical diagnostics reproduce playback queue pressure caused by subscription
+startup: paced host audio accumulates before TRACK/SUBSCRIBE completes, then
+arrives in a burst. t56 receives its first eleven packets in 6.7 ms, before any
+playout. Its two exact-count tones nevertheless contain 38 and 30 silence chunks.
+
+The native endpoint now primes only a standard empty reset group during response
+preparation; the watch acknowledges binding after `MEDIA_READY` initializes its
+player. Paced PCM starts after that acknowledgement. This avoids a readiness
+deadlock in the pinned Lite05 protocol and keeps PCM gated by watch authorization.
+The ten-packet queue, 60 ms prebuffer, codec and 200 ms loss bounds are unchanged.
+Host endpoint and firmware require coordinated updates. Flash23 is installed.
+
+t57 (3% loss, 60 ms added RTT) plays two exact tones without pressure, silence or
+concealment. t58 (5% loss, 120 ms added RTT) passes an explicit zero-pressure gate;
+its two tones have no silence and three concealed packets each. Both pass
+cancel/replace and forced/expiry reconnect checks. Provider baseline p53 passes
+text, background speech and three complete voice/tool/speech turns with five
+played history entries and no concealment, silence or pressure.
+
+The impaired provider run p54 does not pass: after one complete speech turn with
+zero pressure/silence, its second capture exceeds the existing concealment budget.
+The native failure is `capture loss budget`. This is distinct from the unresolved
+p50 watch transport fault; neither failure is waived. Prior intermittent missing
+fresh watch-state reads also remain open. Exact counts and zero queue pressure
+do not substitute for a calibrated speech-quality threshold or the full matrix.
+
+Verification passes 23 Rust tests, Clippy, 299 Python tests (four warnings), six
+native integration cases, 26 firmware-parser cases and the firmware build. See
+the [response-readiness evidence](implementation-evidence/2026-08-31-response-readiness/README.md).
+Mac audio is restored and new firmware stays installed; firmware restoration is
+not required. The complete acceptance plan remains open and WebRTC is still the
+configured default.
+
+## Previous checkpoint: capture burst recovery and transport diagnostics
 
 The host capture worker now handles a queued burst behind a missing group without
 prematurely rejecting the capture. A deterministic regression passes with exact

@@ -1,0 +1,15 @@
+{
+  "root_base": "a924616ae4f3592e0f4498e1725d8b6a8dac803a",
+  "library_base": "7555addf503fd4c9efa12a2f927b2169ad207bea",
+  "sha256": {
+    "docs/moq-implementation-progress.md": "60359eac254e27a3b8b86473c6892f4d4ff51a3548b156ea87ba60b312c61cfa",
+    "docs/moq-product-session.md": "32a958c2547f05acf9a69dd56338f4a096927f0a113103550c5dbc5c6318e503",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "691e7965c5c7cbe2aa54c4175647b74705e262294735cc49f321b20faa3cb4c6",
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "91e79598a7d4d5cb53f11130e27550b39fd69adc88e6e0156c701a427481f0f0",
+    "libs/moq-esp32/server/voice_agent/README.md": "ead6a2cf4535360e1ed4b1125b624671edef7b7a5b0c7f25288363cb1ba0d266",
+    "libs/moq-esp32/server/voice_agent/src/media.rs": "543f48778c251a8b0e6879c69d832f3ccc0e8671bcaf727df34c2166905efcff",
+    "libs/moq-esp32/server/voice_agent/tests/audio.rs": "553025ef57cf464ade4c24c44e0d92fbfc42fff43a4d93704da97b16f8ccca6f"
+  },
+  "firmware_sha256": "2d52fa754c6a7963300dbab4c663e0e6e61861545fe1a4da31f7451fdfa7b264",
+  "native_sha256": "45b94d0ae4321df4c9b1799a8c3bbd04b8fe0254ee3f59bdf16e0f822cc6e4d8"
+}

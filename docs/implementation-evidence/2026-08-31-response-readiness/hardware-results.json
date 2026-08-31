@@ -1,0 +1,716 @@
+{
+  "t56": {
+    "pass_": true,
+    "audio_requested": true,
+    "microphone_samples": 19200,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "voice_ui": false,
+    "capture_ms": 1200,
+    "capture_rounds": 1,
+    "captures_completed": 1,
+    "lease_seconds": 45,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 5732,
+    "speaker_samples": 16037,
+    "response_replacement_pass": true,
+    "impairment": {
+      "loss_percent": 3,
+      "added_rtt_ms": 60,
+      "seed": 50,
+      "directions": {
+        "uplink": {
+          "received": 329,
+          "dropped": 12,
+          "forwarded": 317,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 316,
+          "dropped": 5,
+          "forwarded": 311,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 8,
+      "closed": true
+    },
+    "elapsed_ms": 60492,
+    "playout": [
+      {
+        "samples": 16037,
+        "concealed": 3,
+        "late": 0,
+        "pressure": 41,
+        "silence": 38
+      },
+      {
+        "samples": 16037,
+        "concealed": 6,
+        "late": 0,
+        "pressure": 36,
+        "silence": 30
+      }
+    ],
+    "ready": [
+      {
+        "response": 1,
+        "elapsed_us": 304887,
+        "first": 0,
+        "pts": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 194800,
+        "first": 52,
+        "pts": 1022312
+      },
+      {
+        "response": 3,
+        "elapsed_us": 211471,
+        "first": 63,
+        "pts": 1222312
+      }
+    ],
+    "frames": [
+      {
+        "response": 1,
+        "elapsed_us": 319096,
+        "frames": 1,
+        "group": 1,
+        "pts": 0,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 1,
+        "elapsed_us": 320841,
+        "frames": 2,
+        "group": 2,
+        "pts": 20000,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 1,
+        "elapsed_us": 322241,
+        "frames": 3,
+        "group": 3,
+        "pts": 40000,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      },
+      {
+        "response": 1,
+        "elapsed_us": 325757,
+        "frames": 11,
+        "group": 11,
+        "pts": 200000,
+        "samples": 0,
+        "queued": 10,
+        "pressure": 1
+      },
+      {
+        "response": 2,
+        "elapsed_us": 208018,
+        "frames": 1,
+        "group": 53,
+        "pts": 1022312,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 209646,
+        "frames": 2,
+        "group": 54,
+        "pts": 1042312,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 211288,
+        "frames": 3,
+        "group": 55,
+        "pts": 1062312,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 221754,
+        "frames": 1,
+        "group": 64,
+        "pts": 1222312,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 223532,
+        "frames": 2,
+        "group": 65,
+        "pts": 1242312,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 224979,
+        "frames": 3,
+        "group": 66,
+        "pts": 1262312,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 267589,
+        "frames": 11,
+        "group": 74,
+        "pts": 1422312,
+        "samples": 0,
+        "queued": 10,
+        "pressure": 1
+      }
+    ],
+    "endpoint_failures": []
+  },
+  "t57": {
+    "pass_": true,
+    "audio_requested": true,
+    "microphone_samples": 19200,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "voice_ui": false,
+    "capture_ms": 1200,
+    "capture_rounds": 1,
+    "captures_completed": 1,
+    "lease_seconds": 45,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 5712,
+    "speaker_samples": 16037,
+    "response_replacement_pass": true,
+    "impairment": {
+      "loss_percent": 3,
+      "added_rtt_ms": 60,
+      "seed": 50,
+      "directions": {
+        "uplink": {
+          "received": 390,
+          "dropped": 12,
+          "forwarded": 378,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 357,
+          "dropped": 5,
+          "forwarded": 352,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 8,
+      "closed": true
+    },
+    "elapsed_ms": 60793,
+    "playout": [
+      {
+        "samples": 16037,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 16037,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "ready": [
+      {
+        "response": 1,
+        "elapsed_us": 163908,
+        "first": 0,
+        "pts": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 185935,
+        "first": 52,
+        "pts": 1022312
+      },
+      {
+        "response": 3,
+        "elapsed_us": 172729,
+        "first": 63,
+        "pts": 1222312
+      }
+    ],
+    "frames": [
+      {
+        "response": 1,
+        "elapsed_us": 232030,
+        "frames": 1,
+        "group": 1,
+        "pts": 0,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 1,
+        "elapsed_us": 252055,
+        "frames": 2,
+        "group": 2,
+        "pts": 20000,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 1,
+        "elapsed_us": 276052,
+        "frames": 3,
+        "group": 3,
+        "pts": 40000,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 253022,
+        "frames": 1,
+        "group": 53,
+        "pts": 1022312,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 274034,
+        "frames": 2,
+        "group": 54,
+        "pts": 1042312,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 297086,
+        "frames": 3,
+        "group": 55,
+        "pts": 1062312,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 239873,
+        "frames": 1,
+        "group": 64,
+        "pts": 1222312,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 261926,
+        "frames": 2,
+        "group": 65,
+        "pts": 1242312,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 284903,
+        "frames": 3,
+        "group": 66,
+        "pts": 1262312,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      }
+    ],
+    "endpoint_failures": []
+  },
+  "t58": {
+    "pass_": true,
+    "audio_requested": true,
+    "microphone_samples": 57600,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "voice_ui": false,
+    "capture_ms": 1200,
+    "capture_rounds": 3,
+    "captures_completed": 3,
+    "lease_seconds": 45,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 7436,
+    "speaker_samples": 16037,
+    "response_replacement_pass": true,
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 507,
+          "dropped": 29,
+          "forwarded": 478,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 491,
+          "dropped": 25,
+          "forwarded": 466,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 12,
+      "closed": true
+    },
+    "elapsed_ms": 62881,
+    "max_playout_pressure": 0,
+    "playout_pressure_gate": true,
+    "playout": [
+      {
+        "samples": 16037,
+        "concealed": 3,
+        "late": 3,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 16037,
+        "concealed": 3,
+        "late": 3,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "ready": [
+      {
+        "response": 1,
+        "elapsed_us": 297907,
+        "first": 0,
+        "pts": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 320328,
+        "first": 52,
+        "pts": 1022312
+      },
+      {
+        "response": 3,
+        "elapsed_us": 331345,
+        "first": 63,
+        "pts": 1222312
+      }
+    ],
+    "frames": [
+      {
+        "response": 1,
+        "elapsed_us": 397058,
+        "frames": 1,
+        "group": 1,
+        "pts": 0,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 1,
+        "elapsed_us": 420101,
+        "frames": 2,
+        "group": 2,
+        "pts": 20000,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 1,
+        "elapsed_us": 444056,
+        "frames": 3,
+        "group": 3,
+        "pts": 40000,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 419472,
+        "frames": 1,
+        "group": 53,
+        "pts": 1022312,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 443468,
+        "frames": 2,
+        "group": 54,
+        "pts": 1042312,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 2,
+        "elapsed_us": 460532,
+        "frames": 3,
+        "group": 55,
+        "pts": 1062312,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 432530,
+        "frames": 1,
+        "group": 64,
+        "pts": 1222312,
+        "samples": 0,
+        "queued": 1,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 457608,
+        "frames": 2,
+        "group": 65,
+        "pts": 1242312,
+        "samples": 0,
+        "queued": 2,
+        "pressure": 0
+      },
+      {
+        "response": 3,
+        "elapsed_us": 475498,
+        "frames": 3,
+        "group": 66,
+        "pts": 1262312,
+        "samples": 0,
+        "queued": 3,
+        "pressure": 0
+      }
+    ],
+    "endpoint_failures": []
+  },
+  "p53": {
+    "pass_": true,
+    "microphone_samples": 180640,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_error_count": 0,
+    "fixture_recognized": true,
+    "fixture_audio_restored": true,
+    "speaker_samples": 43570,
+    "read_tool_completed": true,
+    "spoken_history_messages": 5,
+    "elapsed_ms": 62490,
+    "final_voice_phase": "ready",
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds_requested": 3,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 60800,
+        "response_id": 3,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 58880,
+        "response_id": 4,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 3,
+        "microphone_samples": 60960,
+        "response_id": 5,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "output_only_turns": [
+      {
+        "source": "text",
+        "context_id": 5,
+        "response_id": 1,
+        "speaker_samples": 42360,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "source": "background",
+        "context_id": 6,
+        "response_id": 2,
+        "speaker_samples": 21784,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "playout": [
+      {
+        "samples": 42360,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 21784,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 42360,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 43570,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 43570,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "endpoint_failure_count": 0
+  },
+  "p54": {
+    "pass_": false,
+    "microphone_samples": 68376,
+    "stt_commits": 1,
+    "stt_completed_events": 1,
+    "stt_error_count": 0,
+    "fixture_recognized": false,
+    "fixture_audio_restored": true,
+    "speaker_samples": 33887,
+    "read_tool_completed": true,
+    "spoken_history_messages": 1,
+    "elapsed_ms": 28424,
+    "final_voice_phase": "idle",
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds_requested": 3,
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 451,
+          "dropped": 25,
+          "forwarded": 426,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 448,
+          "dropped": 22,
+          "forwarded": 426,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 13,
+      "closed": true
+    },
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 60480,
+        "response_id": 1,
+        "speaker_samples": 33887,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "playout": [
+      {
+        "samples": 33887,
+        "concealed": 8,
+        "late": 8,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 60480,
+        "concealed": 5120,
+        "plc": 5120,
+        "lost_groups": 16,
+        "late_groups": 8
+      }
+    ],
+    "endpoint_failure_count": 0,
+    "capture_loss_budget_rejection": true,
+    "transport_counters": [
+      {
+        "rx": 412,
+        "tx": 436,
+        "lost": 22,
+        "rtt_us": 142885,
+        "cwnd": 2700
+      }
+    ]
+  }
+}

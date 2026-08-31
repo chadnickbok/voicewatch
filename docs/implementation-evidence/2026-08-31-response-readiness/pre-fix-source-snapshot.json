@@ -1,0 +1,9 @@
+{
+  "root_base": "a924616ae4f3592e0f4498e1725d8b6a8dac803a",
+  "library_base": "7555addf503fd4c9efa12a2f927b2169ad207bea",
+  "sha256": {
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "bae8fe8a58dfd9430206211d0912216fd0a867b05702e4bc6bd55db493f3980c"
+  },
+  "firmware_sha256": "4ea8e10561dd64441047fc82a7652055b3cd9ee2d97825c28ffa5ef7b1680742",
+  "native_sha256": "290b1e3f1f62b3cb4cdd9d2bd0d3c3bda8aea71c32e5cedfba04f195bb8c6207"
+}

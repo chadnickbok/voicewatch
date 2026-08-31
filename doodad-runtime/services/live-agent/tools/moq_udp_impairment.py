@@ -27,6 +27,10 @@ class UdpImpairment:
         self.pending = set()
         self.closed = False
         self.stats = {d: dict(received=0, dropped=0, forwarded=0, pressure=0) for d in ['uplink', 'downlink']}
+        self.timing = {d: dict(max_forward_lateness_us=0, late_over_20ms=0, late_over_100ms=0)
+                       for d in ['uplink','downlink']}
+        self.loop_max_lag_us = 0
+        self.heartbeat = None
         self.high_water = 0
 
     async def start(self, listen, backend):
@@ -38,10 +42,18 @@ class UdpImpairment:
             frontend, _ = await loop.create_datagram_endpoint(
                 lambda: _Receiver(self._uplink), local_addr=listen)
             self.transports.append(frontend)
+            self._heartbeat(loop)
             return frontend.get_extra_info('sockname')
         except BaseException:
             self.close()
             raise
+
+    def _heartbeat(self, loop):
+        due = loop.time()+.01
+        def tick():
+            self.loop_max_lag_us=max(self.loop_max_lag_us,round(max(0,loop.time()-due)*1_000_000))
+            if not self.closed: self._heartbeat(loop)
+        self.heartbeat=loop.call_at(due,tick)
 
     def _uplink(self, data, address):
         if self.client is not None and self.client[0] != address[0]:
@@ -64,17 +76,25 @@ class UdpImpairment:
         if rng.random() * 100 < self.loss_percent:
             stats['dropped'] += 1
             return
+        loop=asyncio.get_running_loop()
+        due=loop.time()+self.rtt_ms/2000
         def forward():
             self.pending.discard(handle)
             if not self.closed:
+                late=round(max(0,loop.time()-due)*1_000_000)
+                timing=self.timing[direction]
+                timing['max_forward_lateness_us']=max(timing['max_forward_lateness_us'],late)
+                timing['late_over_20ms']+=int(late>20_000)
+                timing['late_over_100ms']+=int(late>100_000)
                 transport.sendto(data, target)
                 stats['forwarded'] += 1
-        handle = asyncio.get_running_loop().call_later(self.rtt_ms / 2000, forward)
+        handle = loop.call_at(due, forward)
         self.pending.add(handle)
         self.high_water = max(self.high_water, len(self.pending))
 
     def close(self):
         self.closed = True
+        if self.heartbeat: self.heartbeat.cancel(); self.heartbeat=None
         for handle in self.pending: handle.cancel()
         self.pending.clear()
         for transport in self.transports: transport.close()
@@ -82,4 +102,5 @@ class UdpImpairment:
     def snapshot(self):
         return dict(loss_percent=self.loss_percent, added_rtt_ms=self.rtt_ms,
                     seed=self.seed, directions=self.stats, pending=len(self.pending),
-                    pending_high_water=self.high_water, closed=self.closed)
+                    pending_high_water=self.high_water, closed=self.closed,
+                    timing=self.timing, event_loop_max_lag_us=self.loop_max_lag_us)
