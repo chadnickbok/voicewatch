@@ -1,0 +1,11 @@
+{
+  "image_sha256": "26fa1f7377b7479e1f779befaf7aa51f013c0a50ea29f53fcc2c990677df8484",
+  "changed_offset": 65536,
+  "changed_span": 3428352,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "boot_free_heap_bytes": [
+    7930103
+  ]
+}

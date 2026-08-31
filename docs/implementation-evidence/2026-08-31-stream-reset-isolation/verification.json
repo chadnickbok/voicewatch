@@ -1,0 +1,58 @@
+{
+  "host_suites": "pass: seven normal C host suites",
+  "linux_sanitizers": "pass: normal and ASan/UBSan adapter/host suites",
+  "firmware_build": "pass: ESP-IDF 5.5.5 Ultra MoQ app",
+  "before_fix": "partial receive-group reset yields a global service error instead of only GAP",
+  "limits": "No loss, storage or queue bounds enlarged; no Rust/Python production changes in this checkpoint.",
+  "log_sha256": {
+    "voicewatch-stream-scope-before.log": "e1a81dbf3c6b53ffcd93a948bacb7fbc9d0a6df9319b30371b93d98372811ebb",
+    "voicewatch-stream-scope-after.log": "1126679d184bee8f72ca187255927543b758525fc02ee82ac46e68b52ba644fb",
+    "voicewatch-stream-scope-host.log": "7236264055b062db8e17292fb8d565658118fe710a9016a7159207243c392bf5",
+    "voicewatch-stream-scope-sanitizer.log": "c450d8445e8a4afd3e87f829b641ad015fd4d05d6448e77759b38e706a92e4fc",
+    "voicewatch-stream-scope-build.log": "77b1e8b09b07afb082a4ac295bfcb2423a468885be2a69bf525b882cde90f702"
+  },
+  "pressure_followup": {
+    "normal_adapter_and_host": "pass",
+    "linux_adapter_and_host_asan_ubsan": "pass",
+    "firmware_build": "pass",
+    "log_sha256": {
+      "voicewatch-pressure-adapter.log": "1faf4bb65c92f716787efa12d54d3b54e737e189786b6657aa948ad34accf26f",
+      "voicewatch-pressure-host.log": "f08c6beb88fd4a0cf96b918e0fe387b846d7b855917c28cd61d5961916a3f423",
+      "voicewatch-pressure-sanitizer.log": "c450d8445e8a4afd3e87f829b641ad015fd4d05d6448e77759b38e706a92e4fc",
+      "voicewatch-pressure-build.log": "c265c263a63fd8b0e870e7d7b11f2e23cc03598343ee3d7622a7960a6986e5a1"
+    }
+  },
+  "retiring_reserve": {
+    "before_fix": "new capture epoch cannot open while stopped streams occupy the active limit; regression fails against flash30 source",
+    "normal_adapter_and_host": "pass",
+    "linux_adapter_and_host_asan_ubsan": "pass",
+    "firmware_build": "pass",
+    "host_abi_slot_bytes": 56,
+    "additional_slots": 16,
+    "additional_adapter_metadata_bytes": 896,
+    "active_slots": 16,
+    "total_slots": 32,
+    "payload_blocks": 64,
+    "payload_block_bytes": 256,
+    "log_sha256": {
+      "voicewatch-retiring-before.log": "02561e9bbf8f04b59076104d03002945298b151206e4469c414321be38fa08b8",
+      "voicewatch-retiring-reserve-adapter.log": "4c2f3b382cf9f4eb96c15d76f614e4c43ab777b075c8deef66753e9945e91309",
+      "voicewatch-retiring-reserve-host.log": "018089874828153119f3d4ef2c10215b242ca1be22a151210d1add6bffc574c5",
+      "voicewatch-retiring-sanitizer.log": "e213e29e80efdcb0b71a99f4529fc8e8ced946fcf5a52cf89c250a1947beb99f",
+      "voicewatch-retiring-build.log": "c861fe6d394934c3080c5999061a6e3a0b1a60aecc39a911386b3a43776bed1c"
+    }
+  },
+  "drop_batch": {
+    "before_fix": "twelve expired-group notices delay fresh media beyond the next two owner polls; regression fails",
+    "normal_host": "pass",
+    "linux_adapter_and_host_asan_ubsan": "pass",
+    "firmware_build": "pass",
+    "log_sha256": {
+      "voicewatch-drop-batch-before.log": "5edb75f54eb1be2f19337342100edc475f4044dd65db171cd4c4be9e680e5887",
+      "voicewatch-drop-batch-after.log": "77a3e60bc5e35cd818de5712b3adcb304157e9063ef15b1d954a4d1ca067043b",
+      "voicewatch-drop-batch-host.log": "da966ee018beedd39b11cde0589c34a6671eb79cbb1a42ac4fe0a50574403162",
+      "voicewatch-drop-batch-sanitizer.log": "df623eb0b08639c3ee23d27f8be0b7fa59b976c39f5798feb1109ca80f16e833",
+      "voicewatch-drop-batch-build.log": "0faeb29a8a9a0550a136d8fbe1d829d3c26e4d30b75052c589b7790359e3d1c2"
+    }
+  }
+}

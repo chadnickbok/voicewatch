@@ -1,0 +1,21 @@
+{
+  "voicewatch_base": "a3671f7a88cf3d6dc801efc040347fbecfe34a9b",
+  "moq_base": "d589dc9f393c2b0f167bff39035b84eea6b7cbe8",
+  "files": {
+    "libs/moq-esp32/components/esp_moq/src/service.c": "2acd743901d5e5ae7eb2876c4c7feb403121faded0eadf99af7be9fbc41a9859",
+    "libs/moq-esp32/components/esp_moq/src/engine.c": "35050378caf1d9f3c762ed707411ce8edca0a04ed2aba4cad6a6c25b334fe0b4",
+    "libs/moq-esp32/components/esp_moq/include/esp_moq/engine.h": "6b2c51fbe075a56a2411ae99ec3b4c6561c19254e999788e14aed85a7e444ad3",
+    "libs/moq-esp32/tests/host/test_service.c": "c4d53d897bdb382f88d4f0bdd344d4f9c8f19726f8317638ea0f09aff5635c07",
+    "libs/moq-esp32/tests/host/test_engine.c": "7488dda9f9547d806376b40f7ef3dc2827866b14bf81975b70eb1ff8c7543e81",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "4b596ffa84f39004aa9775ac2644245905c5bc50ad492ee6010830e16391a5f8",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "8a985f3b733eb5ccc707e334660e51700cab489cb8c67e04ddc5f95ec9ee70b5",
+    "libs/moq-esp32/server/voice_agent/src/capture_tests.rs": "8723f8afc8895a2e946e32fabc01640219a471d0456553ca5694aeb6c683e075",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "4c5d69eb9cb1974e2b23ec088dbc5ebd41fc95a038d1548148503dfa1eed61ba",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "ecd0b635defbb34d6d182e99a6ee0168c589a41e6ee02ee30b6da01e823be3c8",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "e903785bbb2a816dfc8aab11cc602ec3da07dde1a744d6c6837e6a52a264fb3e",
+    "libs/moq-esp32/components/esp_moq_endpoint/include/esp_moq/endpoint.h": "dc32228e96594985b71a341c5eba9b960a00c65f7f09df42f28c338a51e61a35",
+    "libs/moq-esp32/components/esp_moq_endpoint/src/endpoint.c": "e033da043a10fea7596b5fadab0d8b631c760fdf7042bf8f5506a2e3a5619dee",
+    "libs/moq-esp32/tests/adapter/test_adapter.c": "a1a5cf119ac30a727cabebee3a1ec72fa15d98c3325ad55b466dec41ca74fc80"
+  },
+  "firmware_sha256": "26fa1f7377b7479e1f779befaf7aa51f013c0a50ea29f53fcc2c990677df8484"
+}

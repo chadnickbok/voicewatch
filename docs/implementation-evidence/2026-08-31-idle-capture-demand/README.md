@@ -32,12 +32,15 @@ not total measured RTT. These runs do not establish capture recovery or speech
 quality acceptance.
 
 t64, on flash27, records `service event failure type=9 result=12 code=3`, followed
-by `media failure result=12`. The service's catalog operation termination path
-reports that timeout and the watch then retires the media session. Zero endpoint
-failure counters do not imply that the media service stayed healthy. This
-narrows the failure to catalog subscription termination, but does not distinguish
-a local control deadline, queued TX expiry or a peer termination. The original
-p50 failure is not proven to have the same cause.
+by `media failure result=12`. The watch then retires the media session. Zero
+endpoint failure counters do not imply that the media service stayed healthy.
+**Correction after t65:** this event did not identify the catalog operation.
+`esp_moq_service_retire` also emitted the same global service error for every
+nonzero stream reset, including ordinary media expiry. The earlier catalog
+attribution was incorrect. t65 records zero local control deadlines and zero
+control TX expiries; targeted regressions reproduce the global escalation of
+an individual media reset. The original p50 failure is not proven to have the
+same cause.
 
 The t64 bench fails after 23,012 ms with zero completed captures or round trips.
 It counts and discards 4,376 microphone samples. Two sessions become ready,
@@ -59,8 +62,9 @@ the final firmware build also passes. ASan/UBSan were not rerun for these latest
 counter changes; the preceding checkpoint's sanitizer results still apply only
 to its recorded source revision.
 
-Next, reproduce the catalog timeout with the new counters and fix its confirmed
-cause before accepting the transmission-budget change. The complete impairment
+The next investigation reproduced the stream-reset escalation with the new
+counters and corrected its operation scope. Hardware acceptance of the
+transmission-budget change still requires measured recovery. The complete impairment
 and speech-quality matrix, full physical shell interaction, allocation limits,
 deployment/default switch, latency and endurance gates remain open. WebRTC is
 still the default.

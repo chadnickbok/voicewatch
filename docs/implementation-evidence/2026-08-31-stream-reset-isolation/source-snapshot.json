@@ -1,0 +1,16 @@
+{
+  "voicewatch_base": "a3671f7a88cf3d6dc801efc040347fbecfe34a9b",
+  "moq_base": "d589dc9f393c2b0f167bff39035b84eea6b7cbe8",
+  "files": {
+    "libs/moq-esp32/components/esp_moq/src/service.c": "2acd743901d5e5ae7eb2876c4c7feb403121faded0eadf99af7be9fbc41a9859",
+    "libs/moq-esp32/components/esp_moq/src/engine.c": "eb32712aef6c9613cbe103da9075f4362876432f66654957510b92746d444ce3",
+    "libs/moq-esp32/components/esp_moq/include/esp_moq/engine.h": "6b2c51fbe075a56a2411ae99ec3b4c6561c19254e999788e14aed85a7e444ad3",
+    "libs/moq-esp32/tests/host/test_service.c": "c4d53d897bdb382f88d4f0bdd344d4f9c8f19726f8317638ea0f09aff5635c07",
+    "libs/moq-esp32/tests/host/test_engine.c": "edef5e77ab42b850fffeeb1709e92dc4063e96c6d1f27ebebd354a9912c97e7f",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "4b596ffa84f39004aa9775ac2644245905c5bc50ad492ee6010830e16391a5f8",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "8a985f3b733eb5ccc707e334660e51700cab489cb8c67e04ddc5f95ec9ee70b5",
+    "libs/moq-esp32/server/voice_agent/src/capture_tests.rs": "8723f8afc8895a2e946e32fabc01640219a471d0456553ca5694aeb6c683e075",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "11505ec3d78fa3e50e2ff59de3a059e6568b06e9441d8edc9c9da0da4768f8da"
+  },
+  "firmware_sha256": "e74b7fc3521ca0c238557c649f7a11b66cd75e4ea5f08bf2cdf06c0366ffa2a0"
+}

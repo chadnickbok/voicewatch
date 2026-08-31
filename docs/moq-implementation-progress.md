@@ -5,7 +5,60 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: idle capture demand and catalog timeout diagnostics
+## Latest checkpoint: stream reset isolation and recovery scheduling
+
+t65 reproduces the disconnect with zero local control deadlines and zero control
+TX expiries. Inspection finds that `esp_moq_service_retire` emitted a global
+SERVICE_ERROR for every reset, including an expired audio group. The previous
+catalog-timeout attribution was incorrect: the event did not identify a catalog
+operation. The service now routes retirement through the engine's operation
+handling. Receive-group loss yields GAP, outgoing groups retire their TX job,
+and catalog/discovery or receive-control failures remain visible at their proper
+scope. This error-scope fix does not increase queues or audio loss/storage limits.
+
+Targeted regressions fail before the correction and pass afterward, including
+raw and mapped errors, late TX reset acknowledgements, continued audio, and
+single terminal outcomes for failed controls. Normal C host suites and Linux
+normal/ASan/UBSan adapter and host suites pass. Flash29 builds, writes only app0
+and boots the full shell. Follow-up flash32 described below is now installed.
+
+t66 passes 5% loss, 120 ms added RTT and an 800 ms uplink blackout. The failed
+capture aborts while preserving the session; fresh audio resumes 1,193 ms after
+restoration. Three four-second captures and replies pass, followed by response
+replacement and fresh-grant lease renewal. Four 16,037-sample tones have zero
+playback pressure and silence, with 3/1/2/2 concealed packets. These are counted
+microphone captures and synthetic replies, not physical PTT or calibrated speech
+quality evidence.
+
+Provider p63 preserves the session and aborts the interrupted turn without an
+STT commit. Its next capture loses the first 20 groups and aborts as well; zero
+provider turns complete. No watch media-service failure occurs. That failure
+is not waived: high-loss speech recovery remains open. New adapter counters
+distinguish local stream-slot pressure, peer stream-credit pressure and payload
+block pressure without changing any pool limit.
+
+p64 measures local slot pressure with up to nine stopped send halves occupying
+slots. A bounded retirement reserve adds 16 metadata slots (896 bytes on the
+host ABI) while preserving the active limit, peer reply reserve, 64 payload
+blocks and ACK ownership. p65 still fails on a later 21-group gap. Another
+regression reproduces fresh-media starvation behind one DROP notice per owner
+poll. The engine now batches those standard messages into one existing owned
+control write, preserving every notice and backend backpressure handling.
+
+Flash32 contains both scheduling changes and boots the full shell. p66 recovers
+fresh audio in 710 ms and completes its next capture, one STT commit, the required
+watch-state read, and a 50,832-sample response with zero playback pressure and
+silence. However STT does not recognize the spoken fixture, so the provider
+bench fails before completing its three required turns. The completed capture
+contains 9,600 concealed samples out of 59,680 (16.1%). Capture loss and speech
+quality remain unaccepted; neither successful playback nor exact counts waive
+that failure. The final source passes normal and Linux ASan/UBSan adapter/host
+suites, targeted before/after regressions, and the firmware build. Mac audio is
+restored; firmware stays installed. See the
+[stream-reset evidence](implementation-evidence/2026-08-31-stream-reset-isolation/README.md).
+The full replacement plan remains open and WebRTC remains the configured default.
+
+## Previous checkpoint: idle capture demand and timeout diagnostics
 
 The native actor now polls its idle audio subscription before reporting media
 readiness, then maintains that demand without decoding or forwarding microphone
@@ -15,9 +68,10 @@ budget; this transmission-budget change remains experimental and has not passed
 hardware acceptance. Decoder concealment and storage bounds are unchanged.
 
 Follow-up provider and native benches with 5% loss, 120 ms added RTT and an
-800 ms uplink blackout fail. t64 identifies a watch catalog subscription ending
-with timeout code 3, which the media service escalates into a session failure.
-The source of that timeout remains unresolved. New engine counters distinguish
+800 ms uplink blackout fail. t64 records timeout code 3 escalated into a media
+service failure. Its initial attribution to a catalog subscription was incorrect;
+the stream-reset investigation above identifies the unscoped error path.
+New engine counters distinguish
 local control deadlines from queued control-transmission expiry; bounded native
 close diagnostics exclude arbitrary peer/backend text.
 

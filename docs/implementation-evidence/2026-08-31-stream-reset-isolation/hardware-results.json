@@ -1,0 +1,192 @@
+{
+  "t65": {
+    "pass_": false,
+    "elapsed_ms": 23542,
+    "captures_completed": 0,
+    "round_trips_completed": 0,
+    "microphone_samples": 4696,
+    "forced_reconnect_ms": 7168,
+    "playout": [],
+    "playout_pressure_gate": false,
+    "ready_sessions": 2,
+    "service_failures": [
+      "service event failure type=9 result=12 code=3"
+    ],
+    "control_timeouts": [
+      "control timeouts deadline=0 transmit=0"
+    ],
+    "publisher_counters": [
+      "publisher cache_drop=17 expired=24 failed=0 cancelled=0 submitted=27 retired=17 last_first=56 last_end=57 last_code=31"
+    ]
+  },
+  "t66": {
+    "pass_": true,
+    "elapsed_ms": 73124,
+    "captures_completed": 3,
+    "round_trips_completed": 3,
+    "microphone_samples": 196696,
+    "capture_recovery_ms": 1193,
+    "capture_loss_aborted": true,
+    "forced_reconnect_ms": 6333,
+    "playout": [
+      {
+        "samples": 16037,
+        "concealed": 3,
+        "late": 3,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 16037,
+        "concealed": 1,
+        "late": 1,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 16037,
+        "concealed": 2,
+        "late": 2,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 16037,
+        "concealed": 2,
+        "late": 2,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "playout_pressure_gate": true,
+    "ready_sessions": 3,
+    "service_failures": [],
+    "control_timeouts": [
+      "control timeouts deadline=0 transmit=0",
+      "control timeouts deadline=0 transmit=0",
+      "control timeouts deadline=0 transmit=0",
+      "control timeouts deadline=0 transmit=0"
+    ],
+    "publisher_counters": [
+      "publisher cache_drop=29 expired=24 failed=0 cancelled=0 submitted=36 retired=16 last_first=66 last_end=69 last_code=31",
+      "publisher cache_drop=35 expired=35 failed=0 cancelled=12 submitted=232 retired=193 last_first=233 last_end=234 last_code=3",
+      "publisher cache_drop=35 expired=45 failed=0 cancelled=12 submitted=434 retired=383 last_first=445 last_end=446 last_code=3",
+      "publisher cache_drop=35 expired=60 failed=0 cancelled=12 submitted=636 retired=572 last_first=663 last_end=664 last_code=3"
+    ]
+  },
+  "p63": {
+    "pass_": false,
+    "elapsed_ms": 21060,
+    "microphone_samples": 4056,
+    "stt_commits": 0,
+    "capture_loss_failures": 2,
+    "capture_started_events": 2,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "fixture_audio_restored": true,
+    "service_failures": [],
+    "publisher_counters": [
+      "publisher cache_drop=34 expired=25 failed=0 cancelled=0 submitted=33 retired=13 last_first=55 last_end=72 last_code=31",
+      "publisher cache_drop=52 expired=31 failed=0 cancelled=11 submitted=49 retired=19 last_first=105 last_end=106 last_code=3"
+    ],
+    "capture_gaps": [
+      "MoQ capture gap: next=0 available=1 oldest_ms=200 buffered=10 samples=0",
+      "MoQ capture gap: next=11 available=12 oldest_ms=202 buffered=2 samples=3096",
+      "MoQ capture gap: next=87 available=107 oldest_ms=202 buffered=10 samples=0"
+    ]
+  },
+  "p64": {
+    "pass_": false,
+    "elapsed_ms": 21068,
+    "microphone_samples": 18992,
+    "stt_commits": 0,
+    "capture_loss_failures": 2,
+    "capture_started_events": 2,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "fixture_audio_restored": true,
+    "capture_recovery_ms": 1153,
+    "transport_pressure": [
+      "transport pressure local=15 credit=0 blocks=0 stopped=9",
+      "transport pressure local=42 credit=0 blocks=0 stopped=9"
+    ],
+    "service_failures": [],
+    "capture_gaps": [
+      "MoQ capture gap: next=10 available=12 oldest_ms=202 buffered=1 samples=2776",
+      "MoQ capture gap: next=79 available=88 oldest_ms=201 buffered=11 samples=0",
+      "MoQ capture gap: next=94 available=95 oldest_ms=202 buffered=5 samples=4376",
+      "MoQ capture gap: next=98 available=99 oldest_ms=202 buffered=9 samples=5656",
+      "MoQ capture gap: next=108 available=113 oldest_ms=201 buffered=11 samples=8856",
+      "MoQ capture gap: next=128 available=144 oldest_ms=201 buffered=12 samples=15256"
+    ]
+  },
+  "p65": {
+    "pass_": false,
+    "elapsed_ms": 21709,
+    "microphone_samples": 35952,
+    "stt_commits": 0,
+    "capture_loss_failures": 2,
+    "capture_started_events": 2,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "fixture_audio_restored": true,
+    "capture_recovery_ms": 1579,
+    "transport_pressure": [
+      "transport pressure local=4 credit=73 blocks=0 stopped=0",
+      "transport pressure local=28 credit=73 blocks=0 stopped=1"
+    ],
+    "service_failures": [],
+    "capture_gaps": [
+      "MoQ capture gap: next=155 available=156 oldest_ms=202 buffered=9 samples=15256",
+      "MoQ capture gap: next=162 available=163 oldest_ms=202 buffered=7 samples=17496",
+      "MoQ capture gap: next=174 available=175 oldest_ms=201 buffered=1 samples=21336",
+      "MoQ capture gap: next=176 available=184 oldest_ms=201 buffered=12 samples=21976",
+      "MoQ capture gap: next=208 available=229 oldest_ms=202 buffered=10 samples=32216"
+    ]
+  },
+  "p66": {
+    "pass_": false,
+    "elapsed_ms": 29082,
+    "microphone_samples": 63416,
+    "stt_commits": 1,
+    "capture_loss_failures": 1,
+    "capture_started_events": 2,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "fixture_audio_restored": true,
+    "capture_recovery_ms": 710,
+    "stt_final": true,
+    "fixture_recognized": false,
+    "tts_audio": true,
+    "read_tool_completed": true,
+    "speaker_samples": 50832,
+    "microphone_peak": 32766,
+    "microphone_rms": 13684.75,
+    "transport_pressure": [
+      "transport pressure local=3 credit=374 blocks=0 stopped=4",
+      "transport pressure local=60 credit=374 blocks=0 stopped=4"
+    ],
+    "service_failures": [],
+    "playout": [
+      "playout samples=50832 concealed=10 late=10 pressure=0 silence=0"
+    ],
+    "capture_recovery": [
+      "MoQ capture recovery: samples=59680 concealed=9600 plc=9600 lost_groups=30 late_groups=3"
+    ],
+    "capture_gaps": [
+      "MoQ capture gap: next=10 available=11 oldest_ms=200 buffered=2 samples=2776",
+      "MoQ capture gap: next=97 available=98 oldest_ms=202 buffered=7 samples=5016",
+      "MoQ capture gap: next=99 available=100 oldest_ms=201 buffered=8 samples=5656",
+      "MoQ capture gap: next=117 available=118 oldest_ms=203 buffered=12 samples=11416",
+      "MoQ capture gap: next=128 available=129 oldest_ms=201 buffered=8 samples=14936",
+      "MoQ capture gap: next=138 available=144 oldest_ms=201 buffered=14 samples=18136",
+      "MoQ capture gap: next=163 available=167 oldest_ms=201 buffered=10 samples=26136",
+      "MoQ capture gap: next=173 available=174 oldest_ms=203 buffered=4 samples=29336",
+      "MoQ capture gap: next=182 available=192 oldest_ms=200 buffered=13 samples=32216",
+      "MoQ capture gap: next=212 available=214 oldest_ms=200 buffered=11 samples=41816",
+      "MoQ capture gap: next=228 available=229 oldest_ms=200 buffered=10 samples=46936",
+      "MoQ capture gap: next=232 available=233 oldest_ms=201 buffered=7 samples=48216",
+      "MoQ capture gap: next=248 available=249 oldest_ms=201 buffered=8 samples=53336"
+    ]
+  }
+}

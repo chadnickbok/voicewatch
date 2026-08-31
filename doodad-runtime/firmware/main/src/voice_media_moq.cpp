@@ -128,6 +128,13 @@ void log_publisher_stats(Owner& o) {
         static_cast<unsigned long long>(s.last_drop_code));
     ESP_LOGI(kTag,"control timeouts deadline=%llu transmit=%llu",
         static_cast<unsigned long long>(s.control_deadlines),static_cast<unsigned long long>(s.control_tx_expired));
+    if(o.endpoint) {
+        esp_moq_endpoint_status_t endpoint{}; esp_moq_endpoint_status(o.endpoint,&endpoint);
+        ESP_LOGI(kTag,"transport pressure local=%llu credit=%llu blocks=%llu stopped=%u",
+            static_cast<unsigned long long>(endpoint.open_local_blocked),
+            static_cast<unsigned long long>(endpoint.open_credit_blocked),
+            static_cast<unsigned long long>(endpoint.write_blocks_blocked),endpoint.blocked_stopped_high);
+    }
 }
 void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
     Event event{}; event.kind=kind; event.session=o.session;
