@@ -1,0 +1,133 @@
+{
+  "p3": {
+    "pass_": false,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 0,
+    "firmware_written": false,
+    "restoration_required": false,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 50182
+  },
+  "p4": {
+    "pass_": false,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 9496,
+    "firmware_written": false,
+    "restoration_required": false,
+    "failure_type": "RuntimeError",
+    "elapsed_ms": 17236
+  },
+  "p5": {
+    "pass_": false,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 8856,
+    "firmware_written": false,
+    "restoration_required": false,
+    "failure_type": "RuntimeError",
+    "elapsed_ms": 16760
+  },
+  "p6": {
+    "pass_": false,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 0,
+    "firmware_written": false,
+    "restoration_required": false,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 20826
+  },
+  "audio3": {
+    "pass_": true,
+    "audio_requested": true,
+    "microphone_samples": 19200,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 6557,
+    "speaker_samples": 16037,
+    "response_replacement_pass": true,
+    "elapsed_ms": 62685
+  },
+  "audio4-ui": {
+    "pass_": false,
+    "audio_requested": true,
+    "microphone_samples": 8856,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 6528,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 30024
+  },
+  "audio5-long": {
+    "pass_": true,
+    "audio_requested": true,
+    "microphone_samples": 48000,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 6539,
+    "speaker_samples": 16037,
+    "response_replacement_pass": true,
+    "elapsed_ms": 62677
+  },
+  "audio6-ui": {
+    "pass_": false,
+    "audio_requested": true,
+    "microphone_samples": 7576,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 6566,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 29985
+  },
+  "flash5": {
+    "image_sha256": "1d1adc62ae207260206d45c14a034149a6f10b7606687c6986f9b7ce8138f321",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] steady state; free heap:"
+  },
+  "flash6": {
+    "image_sha256": "0cfb35e408bc60856457e5cb35731c281073862e10683e55004c31987b4a2268",
+    "changed_offset": 65536,
+    "changed_span": 3428352,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] steady state; free heap:"
+  },
+  "flash7-perf": {
+    "image_sha256": "6d2bdacb14e4887e75690a115cbd5bc2f4abe4b822b0e40b96c1db6ebc4d4c0d",
+    "changed_offset": 65536,
+    "changed_span": 3424256,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] steady state; free heap:"
+  },
+  "audio7-perf-ui": {
+    "pass_": false,
+    "audio_requested": true,
+    "microphone_samples": 13656,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "voice_ui": true,
+    "capture_ms": 3000,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 5194,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 27340
+  }
+}

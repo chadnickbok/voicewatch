@@ -1,0 +1,5 @@
+{"kind": "enrolled", "elapsed_ms": 894}
+{"kind": "identified", "elapsed_ms": 3322}
+{"kind": "connected", "elapsed_ms": 7566}
+{"kind": "disconnected", "elapsed_ms": 14714}
+{"kind": "failed", "elapsed_ms": 16636, "error_type": "TimeoutError"}

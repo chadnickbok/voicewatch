@@ -1,9 +1,22 @@
 # MoQ replacement implementation progress
 
-Updated 2026-08-30. Objective remains the complete
+Updated 2026-08-31. Objective remains the complete
 [implementation plan](moq-webrtc-replacement-plan.md), including all nine review
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
+
+## Latest checkpoint: capture ordering and publisher throughput
+
+Native capture now handles bounded group reordering, and the C publisher sends
+bounded catch-up batches after delayed network polls. All seven C host test
+programs and thirteen Rust tests pass; the new Ultra application builds. The
+publisher fix still needs flashing and hardware validation. The currently
+installed optimized image predates that fix and still fails capture with the
+listening UI active. Three-second capture without that UI, exact-tail playback,
+response replacement and lease-expiry reconnection passed; a complete real
+provider voice turn has not passed. See the
+[checkpoint evidence](implementation-evidence/2026-08-31-capture-ordering/README.md).
+Older sections below retain their historical measurements and image identities.
 
 ## Implemented foundation
 

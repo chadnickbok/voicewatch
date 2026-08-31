@@ -96,7 +96,8 @@ async def run(args):
     directory.mkdir(mode=0o700, parents=True, exist_ok=False)
     os.umask(0o077)
     result = dict(pass_=False, audio_requested=args.audio, microphone_samples=0, ready_sessions=0,
-                  firmware_written=False, restoration_required=False)
+                  firmware_written=False, restoration_required=False,
+                  voice_ui=args.voice_ui, capture_ms=args.capture_ms if args.audio else 0)
     if args.certificate_fault:
         result['certificate_fault'] = args.certificate_fault
     began = time.monotonic()
@@ -204,8 +205,14 @@ async def run(args):
         result['forced_reconnect_ms'] = round((time.monotonic()-at)*1000)
         mark('fresh_grant_reconnect', duration_ms=result['forced_reconnect_ms'])
         if args.audio:
-            await second.start_capture(1200)
-            await asyncio.wait_for(captured.wait(), 10)
+            if args.voice_ui:
+                await second.send('agent.state', dict(schema_version=1, device_id=device['device_id'],
+                    voice_phase='listening', display=dict(transcript='', response=''),
+                    background=dict(running_count=0, focused_question=False, review_ready=False,
+                        completion_pending=False, status_changed=False, install_state=0, tasks=[])))
+                mark('listening_ui_requested')
+            await second.start_capture(args.capture_ms)
+            await asyncio.wait_for(captured.wait(), args.capture_ms/1000+10)
             if not result['microphone_samples']:
                 raise RuntimeError('empty microphone capture')
             # Deliberately non-frame-aligned tail, generated PCM only.
@@ -259,10 +266,14 @@ def main():
     parser.add_argument('--host', required=True, help='LAN IPv4 address reachable from the Ultra')
     parser.add_argument('--idf-python', type=Path, required=True)
     parser.add_argument('--audio', action='store_true')
+    parser.add_argument('--voice-ui', action='store_true', help='Show the real listening shell during capture')
+    parser.add_argument('--capture-ms', type=int, default=1200)
     parser.add_argument('--certificate-fault', choices=('expired', 'not_yet_valid', 'hostname', 'untrusted'))
     args = parser.parse_args()
     if args.audio and args.certificate_fault:
         parser.error('certificate rejection tests never capture audio')
+    if not 100 <= args.capture_ms <= 30000 or (args.voice_ui and not args.audio):
+        parser.error('capture-ms must be 100..30000; voice-ui requires audio')
     ip_address(args.host)
     try:
         asyncio.run(run(args))

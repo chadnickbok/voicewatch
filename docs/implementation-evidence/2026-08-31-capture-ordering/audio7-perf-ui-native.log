@@ -1,0 +1,14 @@
+MoQ endpoint listening; credentials and addresses suppressed
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ transport counters: rx=21 tx=29 lost=0 rtt_us=424145 cwnd=12000
+MoQ handshake started
+MoQ handshake completed
+MoQ capture reorder expired: next=44 last=68 buffered=10
+MoQ session retired: capture reorder deadline
+MoQ transport counters: rx=101 tx=87 lost=0 rtt_us=47898 cwnd=12000
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ transport counters: rx=23 tx=30 lost=0 rtt_us=374012 cwnd=12000

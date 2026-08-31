@@ -1,0 +1,8 @@
+{"kind": "enrolled", "elapsed_ms": 726}
+{"kind": "identified", "elapsed_ms": 3668}
+{"kind": "disconnected", "elapsed_ms": 17862}
+{"kind": "identified", "elapsed_ms": 22039}
+{"kind": "disconnected", "elapsed_ms": 34634}
+{"kind": "identified", "elapsed_ms": 38826}
+{"kind": "failed", "elapsed_ms": 45728, "error_type": "TimeoutError"}
+{"kind": "disconnected", "elapsed_ms": 45982}

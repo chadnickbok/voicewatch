@@ -1,0 +1,7 @@
+{"kind": "enrolled", "elapsed_ms": 749}
+{"kind": "identified", "elapsed_ms": 3143}
+{"kind": "connected", "elapsed_ms": 7387}
+{"kind": "capture.started", "elapsed_ms": 11283}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 11284}
+{"kind": "disconnected", "elapsed_ms": 12650}
+{"kind": "failed", "elapsed_ms": 14442, "error_type": "RuntimeError"}

@@ -1,0 +1,17 @@
+{"kind": "enrolled", "elapsed_ms": 715}
+{"kind": "identified", "elapsed_ms": 3054}
+{"kind": "connected", "elapsed_ms": 7295}
+{"kind": "idle_ready_without_capture", "elapsed_ms": 8297}
+{"kind": "disconnected", "elapsed_ms": 8298}
+{"kind": "identified", "elapsed_ms": 10579}
+{"kind": "connected", "elapsed_ms": 14837}
+{"kind": "fresh_grant_reconnect", "elapsed_ms": 14837, "duration_ms": 6539}
+{"kind": "capture.started", "elapsed_ms": 14881}
+{"kind": "capture.stopped", "elapsed_ms": 17912}
+{"kind": "physical_audio_finished", "elapsed_ms": 19100, "microphone_samples": 48000, "speaker_samples": 16037}
+{"kind": "cancelled_response_replaced_without_capture", "elapsed_ms": 20558}
+{"kind": "disconnected", "elapsed_ms": 54102}
+{"kind": "identified", "elapsed_ms": 56352}
+{"kind": "connected", "elapsed_ms": 60611}
+{"kind": "lease_renewed_with_fresh_grant", "elapsed_ms": 60611}
+{"kind": "disconnected", "elapsed_ms": 60612}

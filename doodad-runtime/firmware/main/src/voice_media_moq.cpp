@@ -123,6 +123,15 @@ void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
         esp_moq_audio_capture_stats(o.capture,&stats);
         event.encoded_frames=stats.encoded_packets;
     }
+    if (kind==EventKind::capture_failed && o.service) {
+        esp_moq_service_stats_t stats{}; esp_moq_service_stats(o.service,&stats);
+        esp_moq_endpoint_status_t endpoint{}; esp_moq_endpoint_status(o.endpoint,&endpoint);
+        ESP_LOGI(kTag,"capture retired encoded=%llu accepted=%llu sent=%llu stale=%llu queued=%u high=%u mic_drops=%u poll_gap_ms=%llu",
+            static_cast<unsigned long long>(event.encoded_frames),static_cast<unsigned long long>(stats.accepted_tx),
+            static_cast<unsigned long long>(stats.sent_tx),static_cast<unsigned long long>(stats.stale_tx),
+            stats.tx_queued,stats.tx_high_water,event.dropped_frames,
+            static_cast<unsigned long long>(endpoint.running_max_poll_gap_ms));
+    }
     if (kind==EventKind::playback_bound || kind==EventKind::playback_started || kind==EventKind::playback_finished) {
         event.identity=o.response.identity; event.response_id=o.response.response_id;
         event.samples=o.samples; event.first_group=o.response.first_group;

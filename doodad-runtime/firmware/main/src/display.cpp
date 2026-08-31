@@ -621,22 +621,26 @@ void launch_package(const PackageUiEvent& package) {
     doodad::board::haptic(1);
 }
 
+template <std::size_t Size>
+void copy_display_text(char (&destination)[Size], const char* source) {
+    std::size_t length = 0;
+    while (length + 1 < Size && source[length] != '\0') {
+        destination[length] = source[length];
+        ++length;
+    }
+    std::memset(destination + length, 0, Size - length);
+}
+
 void launch_catalog_entry(lv_event_t* event) {
     if (lv_event_get_code(event) != LV_EVENT_CLICKED) return;
     const auto* app = static_cast<const doodad::packages::CatalogEntry*>(
         lv_event_get_user_data(event));
     if (app == nullptr) return;
     PackageUiEvent package{};
-    std::strncpy(package.app_id, app->app_id.data(), sizeof(package.app_id) - 1);
-    std::strncpy(package.name, app->name.data(), sizeof(package.name) - 1);
-    std::strncpy(
-        package.semantic_version,
-        app->semantic_version.data(),
-        sizeof(package.semantic_version) - 1);
-    std::strncpy(
-        package.payload_sha256,
-        app->payload_sha256.data(),
-        sizeof(package.payload_sha256) - 1);
+    copy_display_text(package.app_id, app->app_id.data());
+    copy_display_text(package.name, app->name.data());
+    copy_display_text(package.semantic_version, app->semantic_version.data());
+    copy_display_text(package.payload_sha256, app->payload_sha256.data());
     launch_package(package);
 }
 
@@ -1221,10 +1225,8 @@ void agent_state_now(const UiCommand& command) {
         g_selected_agent_index = 0;
         g_selected_agent_id[0] = '\0';
     }
-    std::strncpy(
-        g_voice_transcript, command.primary, sizeof(g_voice_transcript) - 1);
-    std::strncpy(
-        g_voice_response, command.secondary, sizeof(g_voice_response) - 1);
+    copy_display_text(g_voice_transcript, command.primary);
+    copy_display_text(g_voice_response, command.secondary);
     const auto requested = command.voice_phase <=
             static_cast<std::uint8_t>(m3e::os::VoicePhase::ready)
         ? static_cast<m3e::os::VoicePhase>(command.voice_phase)
@@ -1283,10 +1285,7 @@ void agent_state_now(const UiCommand& command) {
 
 void install_state_now(const PackageUiEvent& event) {
     g_local_install_state = std::min<std::uint8_t>(event.phase, 4);
-    std::strncpy(
-        g_install_detail,
-        event.detail,
-        sizeof(g_install_detail) - 1);
+    copy_display_text(g_install_detail, event.detail);
     if (!g_shell_active) {
         if (!g_shell.initialize()) return;
         g_surface_registry->sync_shell_counts(g_shell);

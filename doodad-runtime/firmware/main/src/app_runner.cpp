@@ -1,5 +1,6 @@
 #include "app_runner.hpp"
 
+#include <algorithm>
 #include <array>
 #include <atomic>
 #include <cstddef>
@@ -289,8 +290,12 @@ void set_text(
     std::array<char, Size>& destination,
     const char* source) {
     if (source == nullptr) return;
-    std::strncpy(destination.data(), source, destination.size() - 1);
-    destination.back() = '\0';
+    std::size_t length = 0;
+    while (length + 1 < Size && source[length] != '\0') {
+        destination[length] = source[length];
+        ++length;
+    }
+    std::fill(destination.begin() + length, destination.end(), '\0');
 }
 
 bool publish_timer_surfaces(
