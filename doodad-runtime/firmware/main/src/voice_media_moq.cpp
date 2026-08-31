@@ -740,6 +740,15 @@ void disconnect() {
     if (!g_mutex) return;
     Lock lock; invalidate_locked(); g_ready.store(false); g_disconnect=true;
 }
+bool renew(std::uint64_t session,std::uint64_t authorization_until,std::uint64_t trusted_until) {
+    if (!g_mutex) return false;
+    Lock lock;
+    if (!g_ready.load() || g_disconnect || !g_endpoint || session!=g_last_session) return false;
+    esp_moq_endpoint_status_t status{};
+    esp_moq_endpoint_status(g_endpoint,&status);
+    // close_start removes this pointer under the same mutex before destruction.
+    return esp_moq_endpoint_renew(g_endpoint,status.attempt,authorization_until,trusted_until)==ESP_MOQ_OK;
+}
 bool signal(Signal,const char*,std::size_t) { return false; }
 bool capture_begin(Identity identity,std::uint32_t duration_ms) {
     if (!g_ready.load() || !identity.capture_id) return false;

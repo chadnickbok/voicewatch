@@ -38,6 +38,12 @@ def bootstrap_proof(key: bytes, device_id: str, challenge: str) -> str:
     return hmac.new(key, body, hashlib.sha256).hexdigest()
 
 
+def renewal_proof(key: bytes, device_id: str, session_id: str, nonce: str) -> str:
+    """A different signing domain; a bootstrap proof cannot renew a session."""
+    body = f'voicewatch-moq-renew-v1\0{device_id}\0{session_id}\0{nonce}'.encode('ascii')
+    return hmac.new(key, body, hashlib.sha256).hexdigest()
+
+
 def load_device_keys(path: Path) -> dict[str, bytes]:
     """Read a bounded, owner-only enrollment file without following symlinks."""
     fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK)
@@ -105,6 +111,8 @@ class _Grant:
     media_hash: bytes
     control_owner: object | None = None
     media_owner: object | None = None
+    renewal: tuple[str, float] | None = None
+    renewal_revision: int = 0
 
 
 def _digest(token: str) -> bytes:
@@ -244,6 +252,51 @@ class GrantRegistry:
         if control_owner is None or grant is None or grant.control_owner is not control_owner:
             raise AuthorizationError()
         return grant.device_id
+
+    def renewal_challenge(self, session_id: str, control_owner: object) -> str | None:
+        """One bounded challenge at half lease, only for the attached owner.
+
+        Sending/receiving a challenge does not extend anything. A timed-out
+        exchange fails closed instead of issuing unlimited retry challenges.
+        """
+        now = self._now()
+        grant = self._grants.get(session_id)
+        if control_owner is None or grant is None or grant.control_owner is not control_owner:
+            raise AuthorizationError()
+        if grant.media_owner is None:
+            raise AuthorizationError()
+        if grant.renewal is not None:
+            if now >= grant.renewal[1]:
+                raise AuthorizationError()
+            return None
+        if min(grant.until-now, grant.expires_unix-self._wall()) > self._lease / 2:
+            return None
+        nonce = secrets.token_hex(32)
+        grant.renewal = nonce, min(grant.until, now+10)
+        return nonce
+
+    def renew(self, session_id: str, control_owner: object, nonce: str, proof: str) -> dict[str, object]:
+        now = self._now()
+        grant = self._grants.get(session_id)
+        if control_owner is None or grant is None or grant.control_owner is not control_owner:
+            raise AuthorizationError()
+        pending = grant.renewal
+        if (grant.media_owner is None or pending is None or pending[1] <= now
+                or not isinstance(nonce, str) or not re.fullmatch('[0-9a-f]{64}', nonce)
+                or not hmac.compare_digest(pending[0], nonce)):
+            raise AuthorizationError()
+        grant.renewal = None  # Even a bad matching proof consumes its nonce.
+        if (not isinstance(proof, str) or not re.fullmatch('[0-9a-f]{64}', proof)
+                or not hmac.compare_digest(proof, renewal_proof(
+                    self._keys[grant.device_id], grant.device_id, session_id, nonce))
+                or grant.renewal_revision >= 2**53-1):
+            raise AuthorizationError()
+        time_proof = self.time_proof(grant.device_id, nonce)
+        expires = int(self._wall()) + self._lease
+        grant.until, grant.expires_unix = now+self._lease, expires
+        grant.renewal_revision += 1
+        return dict(nonce=nonce, revision=grant.renewal_revision,
+                    expires_unix=expires, lease_seconds=self._lease, time=time_proof)
 
     def valid(self, session_id: str, owner: object) -> bool:
         try:

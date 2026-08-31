@@ -5,7 +5,38 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: queue age uses current time; final impaired run passes
+## Latest checkpoint: live renewal survives 600 seconds; long clean audio still fails
+
+The library, native endpoint, Python host and firmware now support renewal of an
+existing authenticated session. A one-use enrollment-key proof binds device and
+session; native acknowledgment and signed fresh-time verification precede watch
+acceptance. Deadlines advance atomically without changing scope, media ownership,
+UTC or microphone state. Expired, replaced or revoked sessions cannot be revived.
+Rejection and replay tests, C/C++/Python byte-contract tests, 29 Rust tests, all
+18 ordinary native cases, six product/native integration cases and the full
+Ultra build pass. Full sanitizers and remote CI remain outstanding.
+
+Flash41 passes the shell heartbeat. Short r1 completes two renewals without
+capture or reconnect. Long r3 retains the same session through 27 renewals and
+plays the exact 9,599,877-sample terminal boundary in 600,186 ms. **It fails clean
+long-playback acceptance**: 91 PLC chunks, 111 late-frame counts and 20 fallback-
+silence chunks require investigation. The sample receipt alone does not prove
+lossless audio. No threshold or buffering policy was relaxed. Startup-only heap
+snapshots also do not prove the long-run allocation peak.
+
+The physical bad-time-proof test r5 passes: after native renewal acknowledgment,
+the firmware rejects at the expected verification site with zero accepted
+renewals and no microphone capture. Failed harness attempts r2 and r4 remain in
+[the renewal evidence](implementation-evidence/2026-08-31-session-renewal/README.md).
+Permanent enrollment is revision 131; flash41 remains installed. Neither persistent
+host is redeployed or restarted, and no firmware restoration occurs. The running
+permanent host retains its older behavior pending coordinated rollout.
+
+All remaining full-plan reference interoperability, long clean/impaired speech,
+security/allocation, physical UI/apps/package behavior, latency, soak, sanitizer,
+CI, distribution and default-cutover gates remain open. WebRTC is still the default.
+
+## Previous checkpoint: queue age uses current time; final impaired run passes
 
 The service previously stamped newly queued audio with its network owner's last
 tick. A deterministic 210 ms owner pause reproduces fresh Opus and terminal-tail

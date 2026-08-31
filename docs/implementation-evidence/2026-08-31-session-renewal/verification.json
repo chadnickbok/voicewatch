@@ -1,0 +1,40 @@
+{
+  "c_host_suites": 7,
+  "adapter_tests_pass": true,
+  "rust_tests_passed": 29,
+  "native_product_cases": 6,
+  "native_matrix_cases": 18,
+  "native_allocator_self_test": true,
+  "clippy_pass": true,
+  "firmware_build_pass": true,
+  "flash41_heartbeat_pass": true,
+  "short_same_session_renewal_pass": true,
+  "continuous_600_second_response_receipt": true,
+  "long_clean_audio_pass": false,
+  "full_asan_ubsan_refreshed": false,
+  "remote_ci_run": false,
+  "production_host_updated": false,
+  "firmware_restoration_required": false,
+  "logs_sha256": {
+    "final-host": "012f20255c17b094de84fb9208828336c5fc5de9712d2020c0aa7006c6939d00",
+    "native-tests": "4f89a4cfffdc3f7819215c3c40c3c31f590e1a3e6ad4e528f79f5c5816a15949",
+    "final-python": "f9d496c26bac98c384d561c0ed5a26951c5825fcea9dcd4340f7a3fbad6ea900",
+    "moq-suite": "09b0c1aae9ffa78d5139b045bcf792827c52fdf88ba38f2e0b991ffb34cfbb1d",
+    "native-interop": "700bc0322b00f8e8db3ce495047983b54ab27ab59ed1fedac05f3aeba47dae24",
+    "native-matrix": "ba5f735e5b46d144056d7375824cde223c24d71b49b8364bb6f28c0bc696b448",
+    "clippy": "175a0991918d29beeae8f55a5f669b42603432150c85b2903b3680caade5a4c6",
+    "build": "0f5678f6f9149cfbb67bb3dd0f5cbda8e53bc21d9e3680ede60c6e6f95640140",
+    "rejection_bench": "a5d1b902686ea3d83ec157bbb0c6a6a692ec9f70b15220f78682524efaec801c"
+  },
+  "moq_python_suite_passed": 181,
+  "firmware_protocol_and_scoped_python_passed": 154,
+  "invalid_time_proof_rejection_pass": true,
+  "permanent_enrollment_revision": 131,
+  "fresh_permanent_ready_observed": true,
+  "full_long_clean_audio_gate": false,
+  "permanent_ready_monotonic_ms": 9515754.654,
+  "persistent_service_pids": {
+    "moq": 45731,
+    "legacy": 2759
+  }
+}

@@ -236,6 +236,16 @@ Redact query strings and tokens from logs, errors, crash diagnostics, and teleme
 
 Use bounded exponential reconnect backoff with jitter and an upper limit. Reset it only after a meaningful stable connection. Refresh credentials before expiry, reestablish publication/subscription deliberately, and clear stale audio on every replacement. Surface terminal auth errors separately from transient network loss.
 
+Continuous-response decision (2026-08-31): a 600-second response must not be
+interrupted by the default 300-second authorization lease. Allow renewal of an
+existing session only after a fresh, one-use enrollment-key proof bound to that
+session, verified fresh time, and acknowledgment by both native endpoint and
+watch. Renewal cannot change identity, directional scope, roots, or media
+ownership, cannot revive any expired lease, and cannot begin capture. Renewal
+failure, changed enrollment, revocation or replacement still retires the whole
+session and requires the existing fresh bootstrap/reconnect path. This does not
+increase the grant lifetime or change the reference MoQ/Hang protocol.
+
 Add configurable warm-idle keepalive and eventual close/power policy. TLS session resumption must be measured and bounded before enabling by default. Do not send microphone audio or replayable control actions as zero-RTT data.
 
 ### 8.2 Reference and production host peers

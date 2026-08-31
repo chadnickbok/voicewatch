@@ -206,6 +206,33 @@ bool clock_valid() {
     const auto expected=clock_utc.load()+now-since, actual=utc_ms();
     return actual>=expected-2000 && actual<=expected+2000;
 }
+bool sign_renewal(const Grant& grant,const char* nonce,char (&proof)[65]) {
+    if (!saved || !clock_valid() || mono_ms()>=grant.until_ms ||
+        xSemaphoreTake(mutex,pdMS_TO_TICKS(100))!=pdTRUE) return false;
+    const bool ok=grant.profile_revision==revision.load() &&
+        renewal_proof(*saved,grant.session,nonce,hmac,proof);
+    xSemaphoreGive(mutex); return ok;
+}
+bool verify_renewal(const Grant& grant,const cJSON* payload,const char* nonce,
+                   std::uint64_t revision,std::uint64_t started,Renewal& out) {
+    if (!saved || !clock_valid() || xSemaphoreTake(mutex,pdMS_TO_TICKS(100))!=pdTRUE) return false;
+    const bool ok=renewal(payload,*saved,nonce,revision,started,mono_ms(),utc_ms(),grant,hmac,out);
+    xSemaphoreGive(mutex); return ok;
+}
+bool commit_renewal(Grant& grant,const Renewal& renewed) {
+    if (!saved || xSemaphoreTake(mutex,pdMS_TO_TICKS(100))!=pdTRUE) return false;
+    const auto now=mono_ms();
+    const bool ok=clock_valid() && grant.profile_revision==revision.load() && now<grant.until_ms &&
+        now<grant.trusted_until_ms && renewed.until_ms>grant.until_ms &&
+        renewed.trusted_until_ms>grant.trusted_until_ms;
+    if (ok) {
+        grant.until_ms=renewed.until_ms; grant.trusted_until_ms=renewed.trusted_until_ms;
+        // The signed fresh time was checked against UTC, which is unchanged.
+        // Preserve the original rollback/drift anchor and extend only its lease.
+        clock_until.store(renewed.trusted_until_ms);
+    }
+    xSemaphoreGive(mutex); return ok;
+}
 bool acquire(Grant& out) {
     rejected=false;
     wipe(&out,sizeof(out));

@@ -1,0 +1,257 @@
+{
+  "r1": {
+    "pass_": true,
+    "audio_requested": false,
+    "microphone_samples": 0,
+    "ready_sessions": 2,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds": 0,
+    "captures_completed": 0,
+    "round_trips_completed": 0,
+    "lease_seconds": 45,
+    "time_proofs_issued": 4,
+    "forced_reconnect_ms": 5513,
+    "renewals_completed": 2,
+    "elapsed_ms": 54180,
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "logs_sha256": {
+      "serial.log": "78b66ad2c95f38525c5eda24c98ee9d85adbfea7c9cfe124e2f0410dfc501690",
+      "native.log": "e259e80c5a0d5865783bf3fadd5d0fa846498f4b61ad31b2f3584c8bdfaff890",
+      "events.jsonl": "1ad3ee05670bd1ae0b783b2ae4bc4a56bd7c59921cc7aad950d9ba70c5a29a0d"
+    }
+  },
+  "r2": {
+    "pass_": false,
+    "audio_requested": false,
+    "microphone_samples": 0,
+    "ready_sessions": 2,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds": 0,
+    "captures_completed": 0,
+    "round_trips_completed": 0,
+    "lease_seconds": 45,
+    "time_proofs_issued": 2,
+    "forced_reconnect_ms": 5570,
+    "failure_type": "TypeError",
+    "playout": [],
+    "long_playout_gate": false,
+    "elapsed_ms": 28224,
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "logs_sha256": {
+      "serial.log": "809d4767a5c3d244cf702e7243c0f3ada257c45d03bf1287faef81d53bd77e49",
+      "native.log": "c45f57b7387b1402b042901b9767174b98ec860bd8693df0678ac53fd6bb9963",
+      "events.jsonl": "31483c7a45f2903f6d612c3dffd82b11605cf060f3c75eb47f023723163b00af"
+    }
+  },
+  "r3": {
+    "pass_": false,
+    "audio_requested": false,
+    "microphone_samples": 0,
+    "ready_sessions": 2,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds": 0,
+    "captures_completed": 0,
+    "round_trips_completed": 0,
+    "lease_seconds": 45,
+    "time_proofs_issued": 29,
+    "forced_reconnect_ms": 5503,
+    "renewals_completed": 27,
+    "long_response": {
+      "samples": 9599877,
+      "seconds": 600,
+      "playback_elapsed_ms": 600186,
+      "renewals": 27,
+      "exact_speaker_receipt": true,
+      "same_session": true
+    },
+    "playout": [
+      {
+        "samples": 9599877,
+        "concealed": 91,
+        "late": 111,
+        "pressure": 0,
+        "silence": 20
+      }
+    ],
+    "long_playout_gate": false,
+    "elapsed_ms": 613446,
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "logs_sha256": {
+      "serial.log": "e885a26267f11f4f2acb92a00ee8197d8cf00423cc240a3e9fe684eb69212525",
+      "native.log": "42f6b95a10c9e1b49f5fd1336c20ce830cbc4981b935cb40b5789e97ba9ec3fc",
+      "events.jsonl": "7ff1681a64d4531907b6e9f51e8d8b1caf2da4ba6f16c62a08fc36830ae661f7"
+    }
+  },
+  "r4": {
+    "pass_": false,
+    "audio_requested": false,
+    "microphone_samples": 0,
+    "ready_sessions": 2,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds": 0,
+    "captures_completed": 0,
+    "round_trips_completed": 0,
+    "lease_seconds": 45,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 5511,
+    "failure_type": "RuntimeError",
+    "elapsed_ms": 32374,
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "logs_sha256": {
+      "serial.log": "051bc870f9ffae866a61131fe314fd8a7bafc93809d73171cd1b02ae3b09a042",
+      "native.log": "5a441d6887fa498814cf1ab593687ada6745021923bdb37f9f9b7d69cd9c30f1",
+      "events.jsonl": "ef4abd89ba2a4db22da420c63428ea8f2a7b856d735e3341d9ec16dc90083299"
+    },
+    "renewal_rejection": {
+      "time_macs_corrupted": 1,
+      "native_renewal_acknowledgments": 1,
+      "firmware_rejection_site": 1260,
+      "firmware_rejected": false,
+      "accepted_renewals": 0,
+      "microphone_samples": 0,
+      "ready_sessions": 2,
+      "pass": false
+    }
+  },
+  "r5": {
+    "ready_sessions": 2,
+    "firmware_written": false,
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "elapsed_ms": 33614,
+    "failure_type": "RuntimeError",
+    "captures_completed": 0,
+    "lease_seconds": 45,
+    "forced_reconnect_ms": 5518,
+    "restoration_required": false,
+    "capture_rounds": 0,
+    "round_trips_completed": 0,
+    "audio_requested": false,
+    "time_proofs_issued": 4,
+    "pass_": false,
+    "microphone_samples": 0,
+    "logs_sha256": {
+      "serial.log": "da42465e5358ebc5163b2a74f451538787105ffb600280563cd0c8dd3c5bd8bb",
+      "native.log": "23480fb62d4142856e624b8c22338b916c4edafb7949164552ba5b3144d64a3b",
+      "events.jsonl": "5ef489f6873a53a407d3b4ab8414c65a24983aa65c4171db2b0dc9f8f790c473"
+    },
+    "renewal_rejection": {
+      "time_macs_corrupted": 1,
+      "native_renewal_acknowledgments": 1,
+      "firmware_rejection_site": 1260,
+      "firmware_rejected": true,
+      "accepted_renewals": 0,
+      "microphone_samples": 0,
+      "ready_sessions": 2,
+      "pass": true
+    }
+  }
+}

@@ -151,6 +151,29 @@ bool bootstrap_proof(const Profile& p,const char* challenge,Hmac hmac,char (&pro
     if (!ascii(challenge,43,43,token) || !sign(p,hmac,{"voicewatch-moq-bootstrap-v1",p.device,challenge},digest)) return false;
     tohex(digest,proof); wipe(digest,sizeof(digest)); return true;
 }
+bool renewal_proof(const Profile& p,const char* session,const char* nonce,Hmac hmac,char (&proof)[65]) {
+    std::uint8_t digest[32]{};
+    if (!ascii(session,32,32,hex) || !ascii(nonce,64,64,hex) ||
+        !sign(p,hmac,{"voicewatch-moq-renew-v1",p.device,session,nonce},digest)) return false;
+    tohex(digest,proof); wipe(digest,sizeof(digest)); return true;
+}
+bool renewal(const cJSON* root,const Profile& p,const char* nonce,std::uint64_t next_revision,
+             std::uint64_t start,std::uint64_t now,std::uint64_t utc,const Grant& current,Hmac hmac,Renewal& out) {
+    if (!fields(root,{"nonce","revision","expires_unix","lease_seconds","time"}) ||
+        !equals(get(root,"nonce"),nonce) || now<start || now-start>3000 ||
+        current.profile_revision!=p.revision || now>=current.until_ms || now>=current.trusted_until_ms ||
+        now>UINT64_MAX-900000) return false;
+    std::uint64_t revision=0,expires=0,lease=0,proof_utc=0;
+    if (!number(get(root,"revision"),revision,9007199254740991ULL) || !revision || revision!=next_revision ||
+        !number(get(root,"expires_unix"),expires,4102444800ULL) ||
+        !number(get(root,"lease_seconds"),lease,900) || !lease || expires*1000<=utc ||
+        expires*1000>utc+lease*1000 ||
+        !time_proof(get(root,"time"),p,nonce,now-start,hmac,proof_utc) ||
+        (utc>proof_utc ? utc-proof_utc : proof_utc-utc)>2000) return false;
+    Renewal candidate{revision,std::min(start+lease*1000,now+(expires*1000-utc)),start+600000};
+    if (candidate.until_ms<=current.until_ms || candidate.trusted_until_ms<=current.trusted_until_ms) return false;
+    out=candidate; return true;
+}
 bool grant(const cJSON* root,const Profile& p,std::uint64_t utc,std::uint64_t start,std::uint64_t now,
            std::uint64_t trust_until,Grant& out) {
     constexpr char setup_prefix[]="/voicewatch/v1?token=";

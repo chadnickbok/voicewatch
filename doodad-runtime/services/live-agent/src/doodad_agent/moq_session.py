@@ -151,6 +151,11 @@ class MoqSession(ControlSession):
         self._fault = asyncio.Event()
         self._started = False
         self._startup_deadline = asyncio.get_running_loop().time() + 30
+        self._renewal_supported = False
+        self._renewal_pending: dict | None = None
+        self._renewal_native_ack = False
+        self._renewal_deadline = 0.0
+        self.renewals_completed = 0
 
     def _check(self) -> None:
         if self._closed or self._fault.is_set() or not self.registry.valid(self.session_id, self.owner):
@@ -337,6 +342,7 @@ class MoqSession(ControlSession):
             self._hello = True
             self.board, self.capabilities = payload['board'], dict(payload['capabilities'])
             self._event('identified', payload)
+            self._renewal_supported = payload['capabilities'].get('moq_renewal_v1') is True
             await self.send('welcome', dict(mode='live-agent', transport='moq-lite-05',
                                            audio='opus-16000-hang-mono', barge_in='touch'))
             self._ready()
@@ -358,7 +364,25 @@ class MoqSession(ControlSession):
             return
         if not self.connected.is_set():
             raise MoqSessionError()
-        if kind in {'context.ready', 'context.rejected'}:
+        if kind == 'session.renew':
+            if (not self._renewal_supported or self._renewal_pending is not None
+                    or set(payload) != {'nonce', 'proof'}):
+                raise MoqSessionError()
+            renewed = self.registry.renew(self.session_id, self.owner, payload['nonce'], payload['proof'])
+            self._renewal_pending, self._renewal_native_ack = renewed, False
+            self._renewal_deadline = asyncio.get_running_loop().time()+3
+            self._ipc('session.renew', dict(renewal_revision=renewed['revision'],
+                      expires_unix_ms=renewed['expires_unix']*1000,
+                      lease_ms=renewed['lease_seconds']*1000))
+        elif kind == 'session.renewed':
+            if (set(payload) != {'revision'} or type(payload['revision']) is not int
+                    or self._renewal_pending is None or not self._renewal_native_ack
+                    or payload['revision'] != self._renewal_pending['revision']):
+                raise MoqSessionError()
+            self.renewals_completed += 1
+            self._renewal_pending = None
+            self.trace.mark('moq.session_renewed', revision=payload['revision'])
+        elif kind in {'context.ready', 'context.rejected'}:
             self._context_receipt(kind, payload)
         elif kind == 'conversation.text':
             text = payload.get('text')
@@ -450,6 +474,7 @@ class MoqSession(ControlSession):
             extras -= recovery_fields
         schemas = {
             'ping': set(), 'pong': set(), 'media.ready': set(),
+            'session.renewed': {'renewal_revision'},
             'cancelled': {'capture_id', 'request_id', 'owner_token'},
             'capture.pcm': {'capture_id', 'request_id', 'owner_token'},
             'capture.failed': {'capture_id', 'request_id', 'owner_token'},
@@ -459,7 +484,14 @@ class MoqSession(ControlSession):
         }
         if kind not in schemas or extras != schemas[kind] or (pcm and kind != 'capture.pcm'):
             raise MoqSessionError()
-        if kind == 'ping':
+        if kind == 'session.renewed':
+            if (type(header['renewal_revision']) is not int or self._renewal_pending is None
+                    or self._renewal_native_ack
+                    or header['renewal_revision'] != self._renewal_pending['revision']):
+                raise MoqSessionError()
+            self._renewal_native_ack = True
+            self._queue(Outbound('wss', 'session.renewed', self._renewal_pending))
+        elif kind == 'ping':
             self._ipc('pong')
         elif kind in {'pong', 'cancelled'}:
             return
@@ -773,6 +805,13 @@ class MoqSession(ControlSession):
                 raise MoqSessionError()
             if self._capture is not None and not self._capture.validated.is_set() and now >= self._capture.deadline:
                 raise MoqSessionError()
+            if self._renewal_pending is not None:
+                if now >= self._renewal_deadline:
+                    raise MoqSessionError()
+            elif self.connected.is_set() and self._renewal_supported:
+                nonce = self.registry.renewal_challenge(self.session_id, self.owner)
+                if nonce is not None:
+                    self._queue(Outbound('wss', 'session.challenge', {'nonce': nonce}))
             await asyncio.sleep(0.1)
 
     async def close(self, *, code: int = 1000, message: bytes = b'') -> None:
@@ -786,6 +825,7 @@ class MoqSession(ControlSession):
             self._pending_context[2].set_exception(ConnectionError('response context session closed'))
         self._pending_context = None
         self._response_context = None
+        self._renewal_pending = None
         tasks = self._tasks - {asyncio.current_task()}
         for task in tasks:
             task.cancel()

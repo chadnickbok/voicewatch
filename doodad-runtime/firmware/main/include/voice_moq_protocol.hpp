@@ -19,6 +19,9 @@ struct Grant {
     std::uint32_t profile_revision = 0;
     std::uint64_t until_ms = 0, trusted_until_ms = 0;
 };
+struct Renewal {
+    std::uint64_t revision=0, until_ms=0, trusted_until_ms=0;
+};
 using Hmac = bool (*)(const std::uint8_t*, const std::uint8_t*, std::size_t, std::uint8_t*);
 void wipe(void* bytes, std::size_t size);
 cJSON* json(const char* bytes, std::size_t size, std::size_t limit = 16384);
@@ -29,6 +32,10 @@ bool profile(const cJSON* root, const char* device, Profile& out);
 bool time_proof(const cJSON* root, const Profile& profile, const char* nonce,
                 std::uint64_t round_trip_ms, Hmac hmac, std::uint64_t& unix_ms);
 bool bootstrap_proof(const Profile& profile, const char* challenge, Hmac hmac, char (&proof)[65]);
+bool renewal_proof(const Profile& profile,const char* session,const char* nonce,Hmac hmac,char (&proof)[65]);
+bool renewal(const cJSON* root,const Profile& profile,const char* nonce,std::uint64_t next_revision,
+             std::uint64_t started_ms,std::uint64_t now_ms,std::uint64_t unix_ms,
+             const Grant& current,Hmac hmac,Renewal& out);
 bool grant(const cJSON* root, const Profile& profile, std::uint64_t unix_ms,
            std::uint64_t request_ms, std::uint64_t now_ms,
            std::uint64_t trusted_until_ms, Grant& out);

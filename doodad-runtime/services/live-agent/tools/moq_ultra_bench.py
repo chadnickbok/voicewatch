@@ -16,6 +16,9 @@ transport regression gate, not a calibrated speech-quality measurement.
 with zero denials/system failures; it does not measure TLS or total device heap.
 --capture-outage-ms injects one uplink blackout during an extra capture and
 requires a loss-budget abort, then successful capture on the same session.
+--long-response-seconds plays up to 600 seconds of generated, mostly quiet PCM
+with a non-frame-aligned tail. It needs no microphone and requires same-session
+renewal when playback exceeds the short bench lease. No provider is involved.
 No provider runs, deployed service changes, flash writes or restoration.
 """
 import argparse
@@ -197,7 +200,7 @@ async def run(args):
             host=args.host, control_port=control_port, time_port=time_port, roots_pem=roots, key_hex=key.hex()))
         await usb('install', 'enrollment.json', '--profile', directory/'profile.json')
         monitor = await asyncio.create_subprocess_exec(str(args.idf_python), str(ENROLL), 'monitor',
-            '--port', args.port, '--output', str(directory/'serial.log'), '--seconds', str(lease_seconds+120),
+            '--port', args.port, '--output', str(directory/'serial.log'), '--seconds', str(lease_seconds+120+args.long_response_seconds),
             stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
         processes.append(monitor)
         mark('enrolled')
@@ -304,10 +307,58 @@ async def run(args):
                 raise RuntimeError('cancelled response reported successful completion')
             result['response_replacement_pass'] = True
             mark('cancelled_response_replaced_without_capture')
-        third = await asyncio.wait_for(ready.get(), lease_seconds+15)
-        if third.session_id in {first.session_id, second.session_id}:
-            raise RuntimeError('lease renewal reused grant')
-        mark('lease_renewed_with_fresh_grant')
+        if args.long_response_seconds:
+            if not args.audio:
+                await second.authorize_response('text')
+            # A quiet 100 ms marker followed by 900 ms intentional silence.
+            # Feed the normal bounded host spool; never allocate the full PCM.
+            marker = b''.join(struct.pack('<h',round(300*math.sin(2*math.pi*500*n/16000))) for n in range(1600))
+            block = marker + bytes(14400*2)
+            count = args.long_response_seconds*16000-123
+            second.begin_downlink()
+            response = second._response
+            for offset in range(0,count,16000):
+                second.enqueue_downlink(block[:min(16000,count-offset)*2],16000)
+            second.end_downlink()
+            mark('long_playback_started',samples=count,seconds=args.long_response_seconds)
+            began_playback=time.monotonic()
+            completion=asyncio.create_task(second.resume_after_downlink())
+            processes_at_start=result['ready_sessions']
+            try:
+                async with asyncio.timeout(args.long_response_seconds+20):
+                    while not completion.done():
+                        await asyncio.wait({completion},timeout=min(15,args.long_response_seconds))
+                        mark('long_playback_progress',renewals=second.renewals_completed,
+                             playback_elapsed_ms=round((time.monotonic()-began_playback)*1000))
+                    if not await completion:
+                        raise RuntimeError('long playback cancelled')
+            finally:
+                if not completion.done(): completion.cancel()
+                await asyncio.gather(completion,return_exceptions=True)
+            if (server.sessions.get(device['device_id']) is not second or second._response is not response
+                    or result['ready_sessions']!=processes_at_start or response.samples!=count
+                    or not response.finished.is_set() or response.cancelled):
+                raise RuntimeError('long playback lost response/session ownership')
+            if args.long_response_seconds>=lease_seconds and second.renewals_completed<1:
+                raise RuntimeError('long playback did not cross a renewed lease')
+            result['long_response']=dict(samples=count,seconds=args.long_response_seconds,
+                playback_elapsed_ms=round((time.monotonic()-began_playback)*1000),
+                renewals=second.renewals_completed,exact_speaker_receipt=True,same_session=True)
+            mark('long_playback_finished',**result['long_response'])
+        if second._renewal_supported:
+            async with asyncio.timeout(lease_seconds+15):
+                while second.renewals_completed<2:
+                    if second._closed or second._fault.is_set(): raise RuntimeError('renewal session retired')
+                    await asyncio.sleep(.1)
+            if not ready.empty() or server.sessions.get(device['device_id']) is not second:
+                raise RuntimeError('renewal replaced session')
+            result['renewals_completed']=second.renewals_completed
+            mark('same_session_renewal_verified',count=second.renewals_completed)
+        else:
+            third = await asyncio.wait_for(ready.get(), lease_seconds+15)
+            if third.session_id in {first.session_id, second.session_id}:
+                raise RuntimeError('lease renewal reused grant')
+            mark('lease_renewed_with_fresh_grant')
         if server.bridge.unexpected_failures or server.bootstrap.unexpected_failures:
             raise RuntimeError('host boundary unexpected failures')
         if native.returncode is not None:
@@ -340,7 +391,7 @@ async def run(args):
                 0<h['limit']<=args.max_quic_heap_bytes and h['live']<=h['peak']<=h['limit']
                 and not h['denied'] and not h['failures'] for h in result['quic_heap'])
             result['pass_']=result['pass_'] and result['quic_heap_budget_gate']
-        if args.audio:
+        if args.audio or args.long_response_seconds:
             result['playout']=[dict(samples=int(samples),concealed=int(concealed),late=int(late),
                 pressure=int(pressure),silence=int(silence) if silence else None)
                 for samples,concealed,late,pressure,silence in re.findall(
@@ -352,6 +403,12 @@ async def run(args):
                     all(p['samples']==16037 and p['pressure']<=args.max_playout_pressure for p in result['playout']))
                 result['pass_']=result['pass_'] and result['playout_pressure_gate']
         result['elapsed_ms'] = round((time.monotonic()-began)*1000)
+        if args.long_response_seconds:
+            expected=args.long_response_seconds*16000-123
+            matches=[p for p in result.get('playout',[]) if p['samples']==expected]
+            result['long_playout_gate']=len(matches)==1 and all(
+                not p['concealed'] and not p['late'] and not p['pressure'] and p['silence']==0 for p in matches)
+            result['pass_']=result['pass_'] and result['long_playout_gate']
         write(directory/'result.json', result)
     return result
 
@@ -363,6 +420,7 @@ def main():
     parser.add_argument('--host', required=True, help='LAN IPv4 address reachable from the Ultra')
     parser.add_argument('--idf-python', type=Path, required=True)
     parser.add_argument('--audio', action='store_true')
+    parser.add_argument('--long-response-seconds',type=int,default=0)
     parser.add_argument('--voice-ui', action='store_true', help='Show the real listening shell during capture')
     parser.add_argument('--capture-ms', type=int, default=1200)
     parser.add_argument('--capture-rounds', type=int, default=1)
@@ -379,6 +437,9 @@ def main():
                         help='Require allocator snapshots, this maximum budget, and zero allocation failures')
     parser.add_argument('--certificate-fault', choices=('expired', 'not_yet_valid', 'hostname', 'untrusted'))
     args = parser.parse_args()
+    if not 0<=args.long_response_seconds<=600 or (args.long_response_seconds and
+            (args.certificate_fault or args.max_playout_pressure is not None)):
+        parser.error('long-response-seconds must be 0..600 and cannot combine with certificate faults or the short-tone gate')
     if args.audio and args.certificate_fault:
         parser.error('certificate rejection tests never capture audio')
     if args.reply_each_capture and not args.audio:

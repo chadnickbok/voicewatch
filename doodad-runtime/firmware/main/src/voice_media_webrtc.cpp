@@ -1143,6 +1143,7 @@ bool connect(const Session& session) {
     return true;
 }
 void disconnect() { stop_capture(false); close_peer(); }
+bool renew(std::uint64_t,std::uint64_t,std::uint64_t) { return false; }
 bool signal(Signal kind,const char* bytes,std::size_t size) {
     if (!g_peer || !bytes || !size || size>kMaximumSignalBytes) return false;
     esp_peer_msg_t message{kind==Signal::candidate?ESP_PEER_MSG_TYPE_CANDIDATE:ESP_PEER_MSG_TYPE_SDP,

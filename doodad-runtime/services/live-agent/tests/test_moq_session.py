@@ -6,7 +6,7 @@ import pytest
 import pytest_asyncio
 
 from doodad_agent.metrics import LatencyTrace
-from doodad_agent.moq_auth import GrantRegistry, bootstrap_proof
+from doodad_agent.moq_auth import AuthorizationError, GrantRegistry, bootstrap_proof, renewal_proof
 from doodad_agent.moq_ipc import Packet
 from doodad_agent.moq_session import MoqSession, MoqSessionError
 from doodad_agent.session import ACTION_CURRENT, DownlinkUtteranceBinding
@@ -46,6 +46,7 @@ class Harness:
         owner = object()
         self.registry.activate_control(grant.control_token, owner)
         self.ws, self.peer = Socket(), Peer(grant.session_id)
+        self.registry.attach_media(grant.media_token, self.peer)
         self.events, self.seq = [], 0
         self.event_gate = asyncio.Event()
         self.event_gate.set()
@@ -113,7 +114,7 @@ async def harness():
     h = Harness()
     h.session.start()
     await h.session.attach(h.peer)
-    await h.watch('hello', dict(device_id=DEVICE, board='t-watch-ultra', transport='moq', capabilities={}))
+    await h.watch('hello', dict(device_id=DEVICE, board='t-watch-ultra', transport='moq', capabilities={'moq_renewal_v1': True}))
     await h.watch('peer.ready')
     assert not h.session.connected.is_set()
     await h.native('media.ready')
@@ -124,6 +125,57 @@ async def harness():
     finally:
         await h.session.close()
         assert not h.session._tasks
+
+
+@pytest.mark.asyncio
+async def test_renewal_waits_for_native_then_watch_ack_without_retiring_response(harness):
+    h = harness
+    await h.capture()
+    capture = h.session._capture
+    h.session.begin_downlink()
+    response = h.session._response
+    mono, wall = h.registry._clock()+151, h.registry._wall()+151
+    h.registry._clock, h.registry._wall = lambda: mono, lambda: wall
+    challenge = await h.next_control('session.challenge')
+    await h.watch('session.renew', dict(nonce=challenge['nonce'], proof=renewal_proof(
+        KEY, DEVICE, h.session.session_id, challenge['nonce'])))
+    _, fields, pcm = await h.next_ipc('session.renew')
+    assert fields['renewal_revision'] == 1 and fields['lease_ms'] == 300000 and not pcm
+    assert not any(item['type']=='session.renewed' for item in list(h.ws.sent._queue))
+    assert h.session.renewals_completed == 0
+    await h.native('session.renewed', {'renewal_revision': 1})
+    renewed = await h.next_control('session.renewed')
+    assert renewed['nonce'] == challenge['nonce'] and renewed['revision'] == 1
+    assert h.session.renewals_completed == 0
+    await h.watch('session.renewed', {'revision': 1})
+    assert h.session.renewals_completed == 1
+    assert h.session._capture is capture and h.session._response is response and not response.cancelled
+    assert h.session.connected.is_set()
+    with pytest.raises(MoqSessionError):
+        await h.watch('session.renewed', {'revision': 1})
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('kind', ['session.renew', 'session.renewed'])
+async def test_unsolicited_renewal_or_ack_is_rejected(harness, kind):
+    with pytest.raises((MoqSessionError, AuthorizationError)):
+        await harness.watch(kind, {'nonce': '0'*64, 'proof': '0'*64} if kind=='session.renew' else {'revision': 1})
+    assert harness.session.renewals_completed == 0
+
+
+@pytest.mark.asyncio
+async def test_missing_native_renewal_ack_retires_session_without_success(harness):
+    h = harness
+    mono, wall = h.registry._clock()+151, h.registry._wall()+151
+    h.registry._clock, h.registry._wall = lambda: mono, lambda: wall
+    challenge = await h.next_control('session.challenge')
+    await h.watch('session.renew', dict(nonce=challenge['nonce'], proof=renewal_proof(
+        KEY, DEVICE, h.session.session_id, challenge['nonce'])))
+    await h.next_ipc('session.renew')
+    h.session._renewal_deadline = asyncio.get_running_loop().time()  # Exact deadline, without a three-second sleep.
+    await asyncio.wait_for(h.session._fault.wait(), 1)
+    assert h.session.renewals_completed == 0 and not h.registry.valid(h.session.session_id,h.session.owner)
+    assert not any(item['type']=='session.renewed' for item in list(h.ws.sent._queue))
 
 
 @pytest.mark.asyncio

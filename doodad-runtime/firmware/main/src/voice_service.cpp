@@ -122,6 +122,8 @@ unsigned g_connect_failures=0;
 std::atomic<std::uint32_t> g_denied_revision{0};
 std::uint32_t g_connect_revision=0;
 std::uint64_t g_ready_deadline=0;
+char g_renewal_nonce[65]{};
+std::uint64_t g_renewal_started=0, g_renewal_revision=0;
 std::size_t g_ws_received=0, g_ws_frame_received=0;
 bool g_ws_fragmented=false;
 bool secure_live() {
@@ -418,6 +420,9 @@ void send_hello() {
     cJSON_AddBoolToObject(capabilities, "touch", true);
     cJSON_AddBoolToObject(capabilities, "microphone", true);
     cJSON_AddBoolToObject(capabilities, "speaker", true);
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    cJSON_AddBoolToObject(capabilities, "moq_renewal_v1", true);
+#endif
     cJSON_AddBoolToObject(capabilities, "haptic",
         std::strcmp(identity.board, "t-watch-s3") == 0 ||
         std::strcmp(identity.board, "t-watch-ultra") == 0);
@@ -1231,6 +1236,38 @@ void parse_message(const char* bytes, std::size_t size) {
         return;
     }
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    if (std::strcmp(type->valuestring,"session.challenge")==0) {
+        const auto* nonce=cJSON_GetObjectItemCaseSensitive(payload,"nonce");
+        char proof[65]{};
+        const bool ok=g_welcomed && media::ready() && !g_renewal_nonce[0] &&
+            cJSON_GetArraySize(payload)==1 && cJSON_IsString(nonce) &&
+            secure::sign_renewal(*g_grant,nonce->valuestring,proof);
+        if (ok) {
+            std::memcpy(g_renewal_nonce,nonce->valuestring,sizeof(g_renewal_nonce));
+            g_renewal_started=static_cast<std::uint64_t>(esp_timer_get_time()/1000);
+            auto* reply=cJSON_CreateObject(); add_envelope(reply,"session.renew");
+            auto* body=cJSON_AddObjectToObject(reply,"payload");
+            cJSON_AddStringToObject(body,"nonce",g_renewal_nonce);
+            cJSON_AddStringToObject(body,"proof",proof); send_json(reply);
+        } else retire_control();
+        secure::wipe(proof,sizeof(proof)); cJSON_Delete(root); return;
+    }
+    if (std::strcmp(type->valuestring,"session.renewed")==0) {
+        secure::Renewal renewed{};
+        if (!g_renewal_nonce[0] || !secure::verify_renewal(*g_grant,payload,g_renewal_nonce,
+                g_renewal_revision+1,g_renewal_started,renewed) ||
+            !media::renew(g_control_generation.load(),renewed.until_ms,renewed.trusted_until_ms) ||
+            !secure::commit_renewal(*g_grant,renewed)) retire_control();
+        else {
+            g_renewal_revision=renewed.revision;
+            secure::wipe(g_renewal_nonce,sizeof(g_renewal_nonce)); g_renewal_started=0;
+            auto* reply=cJSON_CreateObject(); add_envelope(reply,"session.renewed");
+            auto* body=cJSON_AddObjectToObject(reply,"payload");
+            cJSON_AddNumberToObject(body,"revision",static_cast<double>(g_renewal_revision)); send_json(reply);
+            ESP_LOGI(kTag,"MoQ authorization renewed revision=%llu",static_cast<unsigned long long>(g_renewal_revision));
+        }
+        cJSON_Delete(root); return;
+    }
     if (std::strcmp(type->valuestring,"welcome")==0 || std::strncmp(type->valuestring,"capture.",8)==0 ||
         std::strncmp(type->valuestring,"playback.",9)==0 || std::strncmp(type->valuestring,"context.",8)==0) {
         if (!secure_command(type->valuestring,payload)) retire_control();
@@ -1503,6 +1540,7 @@ void connect_websocket() {
     }
     if (g_control_generation.load()==UINT64_MAX) { secure::wipe(g_grant,sizeof(*g_grant)); return; }
     ++g_control_generation; g_sequence=0; g_server_sequence=0; g_welcomed=false;
+    secure::wipe(g_renewal_nonce,sizeof(g_renewal_nonce)); g_renewal_started=g_renewal_revision=0;
     g_active_capture_id=0; g_active_start=0; g_highest_start=0; g_highest_response=0;
     g_context_request=g_highest_context_request=0; g_context_ready=false; g_turn_retired=true; g_response_complete=true;
     g_capture_complete=false; g_response={}; g_ws_received=0; g_ws_frame_received=0; g_ws_fragmented=false;
@@ -1547,6 +1585,7 @@ void close_control() {
     g_response={}; g_capture_complete=false; g_welcomed=false; g_capture_correlations={};
     g_context_ready=false; g_context_request=0; g_turn_retired=true;
     if (g_grant) secure::wipe(g_grant,sizeof(*g_grant));
+    secure::wipe(g_renewal_nonce,sizeof(g_renewal_nonce)); g_renewal_started=g_renewal_revision=0;
     display_publish_agent_state(0,0,false,false,false,0,"","");
 }
 #endif
@@ -1660,6 +1699,7 @@ void voice_task(void*) {
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
         if (g_websocket && (!secure_live() || (g_ready_deadline &&
             static_cast<std::uint64_t>(esp_timer_get_time()/1000)>g_ready_deadline))) retire_control();
+        if (g_renewal_nonce[0] && static_cast<std::uint64_t>(esp_timer_get_time()/1000)-g_renewal_started>3000) retire_control();
         if (g_transport_reset_requested.exchange(false)) close_control();
 #endif
         if (network_service_connected() && g_websocket == nullptr &&

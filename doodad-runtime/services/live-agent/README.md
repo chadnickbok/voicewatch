@@ -23,6 +23,25 @@ configuration, tests and limitations. `aiortc` is an optional `webrtc` extra; in
 `uv sync --extra webrtc` for the existing service. Development tests also include
 that dependency to preserve legacy coverage.
 
+Firmware advertising `moq_renewal_v1` can renew an active session at half its
+authorization lease. The host sends one bounded nonce; the watch proves its
+enrollment key in a session-bound signing domain. The host extends only that
+live grant, waits for native IPC acknowledgment, then returns a signed fresh-time
+proof and bounded expiry. The watch verifies those before updating the library
+and control deadlines and acknowledging completion. Replay, timeout, changed
+ownership and expired leases fail closed. No identity, scope, media generation,
+UTC value or microphone state changes during renewal. An older firmware session
+still expires and reconnects. Deploy the matching native binary with the Python
+host; this work does not update an already-running supervised service.
+
+`tools/moq_ultra_bench.py --long-response-seconds 600` exercises generated paced
+output with a non-frame-aligned tail across repeated short leases. It leaves the
+microphone closed unless `--audio` is explicitly supplied, requires one continuous
+session and the exact speaker receipt, and checks numeric loss/underflow counters.
+This is a synthetic long-playback gate, not a 600-second provider speech or full
+product acceptance claim. The bench temporarily changes enrollment; reapply the
+permanent enrollment afterward, without restoring firmware.
+
 The CoreS3 uses a shared microphone/speaker codec and an explicit push-to-talk
 lifecycle. Connecting the watch leaves the microphone off and the active app or
 watch face visible. Hold Button B to open the trusted Voice Orb and begin one

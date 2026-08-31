@@ -65,6 +65,8 @@ const char* name();
 const char* codec_description();
 // WebRTC uses only generation; MoQ requires all authenticated session fields.
 bool connect(const Session& session);
+// Authenticated same-session deadline extension; no media invalidation or capture.
+bool renew(std::uint64_t session,std::uint64_t authorization_until_ms,std::uint64_t trusted_until_ms);
 void disconnect();
 bool signal(Signal kind, const char* bytes, std::size_t size);
 bool capture_begin(Identity identity, std::uint32_t duration_ms);

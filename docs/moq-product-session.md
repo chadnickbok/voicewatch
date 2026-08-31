@@ -82,6 +82,41 @@ and `transport:"moq"`. `welcome` advertises native MoQ/Hang Opus. `welcome.ack`,
 requires runtime identification, watch `peer.ready` and native `media.ready`
 after catalog/subscription validation. None starts recording.
 
+### Live authorization renewal
+
+`hello.capabilities.moq_renewal_v1:true` opts into same-session renewal. At half
+the current lease the host sends `session.challenge` with exactly one `nonce`
+(64 lowercase hexadecimal characters). One challenge is retained per live
+grant for at most ten seconds. Challenge issuance does not change any deadline.
+The watch returns `session.renew` with `nonce` and a lowercase SHA-256 HMAC proof
+over the NUL-separated strings `voicewatch-moq-renew-v1`, device ID, session ID,
+and nonce, using its enrolled key. A matching bad proof consumes that challenge.
+An expired, revoked, replaced, unattached or differently owned grant cannot renew.
+
+The host extends the same directional grant and sends `session.renew` on its
+owner-private IPC, with integer `renewal_revision`, `lease_ms`, and
+`expires_unix_ms`. The native reader checks consecutive revisions, pre-expiry
+arrival, the 900-second maximum, strictly increasing deadlines and absolute UTC
+expiry before updating its monotonic timer. It acknowledges `session.renewed`
+with only `renewal_revision`; it never changes origins or media state.
+
+Only then does the host send WSS `session.renewed` with exactly `nonce`, integer
+`revision`, `lease_seconds`, `expires_unix`, and `time` (the existing signed time
+proof, bound to this nonce). The watch requires the pending nonce, next revision,
+a round trip of at most three seconds, matching enrollment revision, still-live
+old deadlines, a fresh valid time MAC within two seconds of UTC, and increasing
+bounded deadlines. It changes no UTC value. Its media endpoint updates atomically
+before control accepts the new lease. Finally, the watch acknowledges
+`session.renewed` with only integer `revision`. The host counts completion only
+after that receipt. Missing native/watch acknowledgment fails within three seconds.
+
+Neither SETUP nor one-use attachment tokens are reused. No capture, cancellation,
+response generation or scope changes as a side effect. Renewal failure retires
+the session; fresh bootstrap remains necessary for reconnect, changed identity,
+scope, roots or enrollment. Legacy peers that omit the capability continue to
+expire and reconnect. These application/IPC messages do not alter standard Hang
+audio or the pinned MoQ reference protocol.
+
 ### Capture and PTT
 
 The watch owns local guest/microphone authorization. Host `capture.start` includes
@@ -227,7 +262,8 @@ separate 64-item application queue cannot block IPC framing or liveness. Overflo
 retires the session instead of silently dropping audio. Native headers remain
 4,096 bytes, PCM 640 bytes, writes two seconds, pending actions at most 32.
 Application/startup callbacks have deadlines. The spool/native response limit
-is 600 seconds; a shorter authorization lease still takes precedence.
+is 600 seconds; every authorization lease must stay live through authenticated
+renewal, or playback is retired at expiry without a grace period.
 
 Closing/replacing sessions revokes both channels, cancels tasks/action futures
 and preserves the replacement's mapping. These bounds do not fix upstream

@@ -11,7 +11,7 @@ from pathlib import Path
 
 import pytest
 
-from doodad_agent.moq_auth import GrantRegistry, bootstrap_proof
+from doodad_agent.moq_auth import GrantRegistry, bootstrap_proof, renewal_proof
 
 ROOT=Path(__file__).resolve().parents[4]
 DEVICE='ultra-test-protocol'
@@ -51,6 +51,19 @@ int main(int argc,char** argv) {
     } else if (ok && argc>1 && std::strcmp(argv[1],"proof")==0) {
         char proof[65]{}; ok=m::bootstrap_proof(profile,data->valuestring,mac,proof);
         std::cout<<"{\"ok\":"<<(ok?"true":"false")<<",\"proof\":\""<<proof<<"\"}";
+    } else if (ok && argc>1 && std::strcmp(argv[1],"renewal-proof")==0) {
+        char proof[65]{};
+        ok=m::renewal_proof(profile,"0123456789abcdef0123456789abcdef",data->valuestring,mac,proof);
+        std::cout<<"{\"ok\":"<<(ok?"true":"false")<<",\"proof\":\""<<proof<<"\"}";
+    } else if (ok && argc>1 && std::strcmp(argv[1],"renewal")==0) {
+        auto* nonce=cJSON_GetObjectItemCaseSensitive(root,"nonce");
+        auto* elapsed=cJSON_GetObjectItemCaseSensitive(root,"elapsed");
+        uint64_t delay=elapsed?elapsed->valueint:100;
+        m::Grant current{}; current.profile_revision=1; current.until_ms=300000; current.trusted_until_ms=600000;
+        m::Renewal renewed{99,99,99};
+        ok=m::renewal(data,profile,nonce->valuestring,1,150000,150000+delay,1800000150000ULL+delay,current,mac,renewed);
+        std::cout<<"{\"ok\":"<<(ok?"true":"false")<<",\"until\":"<<renewed.until_ms
+                 <<",\"trusted\":"<<renewed.trusted_until_ms<<",\"revision\":"<<renewed.revision<<"}";
     } else if (ok && argc>1 && std::strcmp(argv[1],"grant")==0) {
         m::Grant grant{}; ok=m::grant(data,profile,1800000000000ULL,100,101,600100,grant);
         std::cout<<"{\"ok\":"<<(ok?"true":"false")<<"}";
@@ -80,6 +93,38 @@ def test_firmware_bootstrap_proof_matches_python_byte_contract(parser):
     assert parser()['ok']
     challenge='A'*43
     assert parser('proof',challenge)['proof']==bootstrap_proof(KEY,DEVICE,challenge)
+
+
+def test_firmware_renewal_proof_has_distinct_session_bound_domain(parser):
+    nonce='b'*64
+    assert parser('renewal-proof',nonce)['proof']==renewal_proof(KEY,DEVICE,'0123456789abcdef0123456789abcdef',nonce)
+    assert not parser('renewal-proof','b'*65)['ok']
+
+
+@pytest.mark.parametrize('fault', ['none','nonce','revision','bool','expired','too-long','time-proof',
+                                 'time-device','time-nonce','time-drift','slow','old-expired','extra'])
+def test_firmware_renewal_verifies_time_and_never_mutates_on_rejection(parser,fault):
+    registry=GrantRegistry({DEVICE:KEY},monotonic=lambda:150,wall_clock=lambda:1800000150)
+    nonce='b'*64
+    data=dict(nonce=nonce,revision=1,expires_unix=1800000450,lease_seconds=300,time=registry.time_proof(DEVICE,nonce))
+    elapsed=100
+    if fault=='nonce': data['nonce']='a'*64
+    if fault=='revision': data['revision']=2
+    if fault=='bool': data['revision']=True
+    if fault=='expired': data['expires_unix']=1800000150
+    if fault=='too-long': data['lease_seconds']=901
+    if fault=='time-proof': data['time']['proof']='0'*64
+    if fault=='time-device': data['time']['device_id']='other-watch'
+    if fault=='time-nonce': data['time']['nonce']='a'*64
+    if fault=='time-drift':
+        data['time']=GrantRegistry({DEVICE:KEY},wall_clock=lambda:1800000160).time_proof(DEVICE,nonce)
+    if fault=='slow': elapsed=3001
+    if fault=='old-expired': elapsed=150000
+    if fault=='extra': data['setup_path']='/replacement'
+    result=parser('renewal',data,nonce=nonce,elapsed=elapsed)
+    assert result['ok']==(fault=='none')
+    if fault=='none': assert result==dict(ok=True,until=450000,trusted=750000,revision=1)
+    else: assert result==dict(ok=False,until=99,trusted=99,revision=99)
 
 
 @pytest.mark.parametrize('fault',['none','nonce','device','timestamp','validity','proof','slow','nul'])
