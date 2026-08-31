@@ -5,7 +5,66 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: audio catch-up and discontinuity timelines
+## Latest checkpoint: bounded publisher catch-up and repeated capture
+
+Publisher diagnostics now distinguish cache-drop ranges, enqueued TX expiry,
+failure/cancellation and backend submission/retirement. A deterministic test
+reproduces a scheduling shortfall after a 160 ms network-owner pause: eight
+20 ms groups are ready, but the old four-group poll cap cannot drain them.
+Publisher polling now fills its existing bounded TX slots while retaining the
+control reserve, backpressure behavior, queue sizes and live-media deadlines.
+The 60 ms and 160 ms delayed-poll tests both pass.
+
+The updated full-shell image passes three complete physical provider turns and
+fresh-session reconnect: 181,600 microphone samples and 124,659 played samples.
+A separate test completes 100 one-second captures with the listening UI active,
+1,600,000 samples and no microphone drops/discards, publisher cache drops or
+TX expiries/failures. It then passes exact playback, cancellation/replacement
+and lease reconnect (5,371 ms). This is 100 captures, not 100 complete echo
+cycles, and does not satisfy the 1,000-cycle or eight-hour acceptance gates.
+
+Seven C host programs pass both normally and with ASan/UBSan in an isolated,
+network-disabled Linux container. The macOS ASan attempt stalled in sanitizer
+initialization before main and was terminated; it is not counted as a pass.
+The adapter/audio suites, 209 Python tests and five native integration cases
+also pass. See [publisher catch-up evidence](implementation-evidence/2026-08-31-publisher-catchup/README.md).
+
+The earlier intermittent missing-group run is not conclusively attributed to
+this scheduling defect: the new counters did not observe another failure.
+Controlled-loss recovery, broader repetition and the remaining provider,
+security, allocation, deployment and physical full-shell gates remain open.
+
+## Previous checkpoint: physical provider turns and filtering correction
+
+The full microphone → STT → model/read-only exercise tool → TTS → Ultra speaker
+path now passes with the real providers. An in-memory comparison confirms the
+microphone captures the generated fixture at the expected speed. The received
+signal has little energy above 1 kHz; the existing provider `near_field` filter
+misrecognizes it. Turning that filter off recognizes all six fixture keywords
+and completes `get_next_set`, playback and a fresh session reconnect.
+
+MoQ explicit push-to-talk now defaults to no provider noise filtering; WebRTC
+retains its existing `near_field` setting. `DOODAD_STT_NOISE_REDUCTION` permits
+an explicit `off`, `near_field` or `far_field` profile. A physical run without
+any bench/configuration override passes with 60,480 microphone samples and
+41,149 speaker samples. A subsequent two-turn run passes both tool calls and
+separate playback receipts, totaling 121,120 microphone and 81,088 speaker
+samples, then reconnects without recording. The installed image is unchanged.
+
+Repeated operation is not yet reliable: an earlier two-turn attempt passed its
+first turn but lost capture groups during the second. Native capture expired
+waiting for group 261 with group 288 already buffered; firmware reported no
+microphone drops and a maximum network-owner poll gap of 162 ms. This remains
+an open transport/scheduling failure, not a fixed issue or a passing loss test.
+The bench now requires fresh STT, tool and playback evidence for every turn.
+
+209 Python tests pass, including unchanged WebRTC filtering, explicit MoQ
+profiles and synthetic acoustic-analysis checks. No captured microphone PCM is
+written to disk. See the [physical provider evidence](implementation-evidence/2026-08-31-provider-turns/README.md).
+Physical PTT/navigation, provider generation isolation, transport loss recovery,
+deployment, long responses and the remaining release gates are still open.
+
+## Previous checkpoint: audio catch-up and discontinuity timelines
 
 The real-provider terminal failure is now identified: resetting Opus discarded
 lookahead, while the watch reported accepted-input samples as received PCM.

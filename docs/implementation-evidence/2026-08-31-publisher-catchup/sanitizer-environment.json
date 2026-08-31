@@ -1,0 +1,37 @@
+{
+  "linux": {
+    "image": "rust@sha256:6258907abe69656e41cd992e0b705cdcfabcbbe3db374f92ed2d47121282d4a1",
+    "compiler": "Debian GCC 12.2.0-14+deb12u1",
+    "network": "none",
+    "cpus": 2,
+    "memory_limit": "2g",
+    "pids_limit": 128,
+    "capabilities": "all dropped",
+    "privilege_escalation": false,
+    "host_mounts": false,
+    "source_archive_sha256": "a23f2fa631dc16acdb1ac8e1216c5f7e424bbc5c362aca97f5126eaa6a082896",
+    "command": "make -C tests/host test sanitize",
+    "timeout_seconds": 120,
+    "exit_code": 0,
+    "normal_test_programs": 7,
+    "asan_ubsan_test_programs": 7
+  },
+  "macos": {
+    "status": "not run: ASan runtime initialization stalled before main",
+    "sampled_stack": [
+      "dyld4::APIs::runAllInitializersForMain",
+      "libSystem_initializer",
+      "__malloc_init",
+      "__asan::AsanInitFromRtl",
+      "__asan::AsanInitInternal",
+      "__sanitizer::MemoryRangeIsAvailable",
+      "__sanitizer::get_dyld_hdr",
+      "_Block_copy",
+      "__sanitizer_mz_malloc",
+      "__asan::AsanInitFromRtl",
+      "__sanitizer::StaticSpinMutex::LockSlow"
+    ],
+    "stopped_signal": "SIGTERM",
+    "exit_code": 143
+  }
+}

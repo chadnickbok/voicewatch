@@ -1,0 +1,7 @@
+MoQ endpoint listening; credentials and addresses suppressed
+MoQ handshake started
+MoQ handshake completed
+MoQ capture reorder expired: next=261 last=288 buffered=20
+MoQ session retired: capture reorder deadline
+MoQ failure stage: session actor
+MoQ transport counters: rx=515 tx=484 lost=0 rtt_us=27549 cwnd=12000

@@ -1,0 +1,13 @@
+MoQ endpoint listening; credentials and addresses suppressed
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ failure stage: session IPC reader
+MoQ IPC failure: kind=UnexpectedEof
+MoQ transport counters: rx=396 tx=409 lost=1 rtt_us=9671 cwnd=8400
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ failure stage: session driver
+MoQ protocol failure: code=4
+MoQ transport counters: rx=19 tx=29 lost=0 rtt_us=513292 cwnd=12000

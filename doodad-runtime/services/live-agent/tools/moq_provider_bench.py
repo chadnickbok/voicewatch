@@ -17,6 +17,7 @@ import secrets
 import socket
 import struct
 import time
+import wave
 
 from moq_ultra_bench import ROOT, ENROLL, ENDPOINT, pki, port, stop, write
 
@@ -33,12 +34,15 @@ async def run(args):
         os.environ.pop(key, None)
     os.environ['DOODAD_CODEX_WORKSPACE_ROOT'] = str(output/'jobs')
     result = dict(pass_=False, provider_calls=True, control_source='host-test-driver',
-                  microphone_samples=0, firmware_written=False, restoration_required=False)
+                  microphone_samples=0, firmware_written=False, restoration_required=False,
+                  capture_rounds_requested=args.capture_rounds, turns=[])
     start = time.monotonic()
     microphone_square_sum = 0
     level_samples = level_square_sum = level_peak = level_clipped = 0
     result['microphone_peak'] = 0
     saved_output = None
+    acoustic_pcm = bytearray()
+    fixture_pcm = b''
     children, streams = [], []
     server_task = None
     ready = asyncio.Queue()
@@ -55,6 +59,22 @@ async def run(args):
             stream.write(json.dumps(event)+'\n')
 
     class ObservedSTT(real_stt):
+        def __init__(self, *values, **kwargs):
+            if args.stt_noise_reduction is not None:
+                kwargs['settings'].noise_reduction = (
+                    None if args.stt_noise_reduction == 'off' else args.stt_noise_reduction)
+                result['stt_noise_reduction_override'] = args.stt_noise_reduction
+            super().__init__(*values, **kwargs)
+
+        async def _handle_session_updated(self, event):
+            settings = event.get('session', {}).get('audio', {}).get('input', {})
+            reduction = settings.get('noise_reduction', 'unreported')
+            effective = reduction.get('type') if isinstance(reduction, dict) else reduction
+            result['stt_effective_noise_reduction'] = (
+                effective if effective is None or
+                (isinstance(effective, str) and effective in {'near_field', 'far_field'}) else 'unreported')
+            await super()._handle_session_updated(event)
+
         async def _send_audio(self, audio):
             await super()._send_audio(audio)
             result['stt_samples_submitted'] += len(audio)//2
@@ -69,6 +89,9 @@ async def run(args):
             result['stt_completed_characters'] += len(event.get('transcript', ''))
             result['fixture_recognized'] |= bool(re.search(r'\b(exercise|workout|set)\b',
                 event.get('transcript', ''), re.IGNORECASE))
+            result['fixture_keyword_matches'] = {word: bool(re.search(r'\b'+word+r'\b',
+                event.get('transcript', ''), re.IGNORECASE))
+                for word in ('please', 'read', 'my', 'next', 'exercise', 'set')}
             mark('stt_completion_received', characters=len(event.get('transcript', '')))
             await super()._handle_transcription_completed(event)
 
@@ -81,6 +104,10 @@ async def run(args):
         def __init__(self, trace, on_audio, on_event, *more, **kwargs):
             async def audio(device_id, pcm):
                 nonlocal microphone_square_sum, level_samples, level_square_sum, level_peak, level_clipped
+                if args.acoustic_analysis:
+                    if len(acoustic_pcm) + len(pcm) > 31 * 16000 * 2:
+                        raise RuntimeError('acoustic analysis capture bound')
+                    acoustic_pcm.extend(pcm)
                 result['microphone_samples'] += len(pcm)//2
                 for (sample,) in struct.iter_unpack('<h', pcm):
                     microphone_square_sum += sample*sample
@@ -175,44 +202,71 @@ async def run(args):
         phrase = 'Please read my next exercise set.'
         speech = await child('/usr/bin/say', '-o', output/'input.aiff', phrase, logfile='speech.log')
         if await asyncio.wait_for(speech.wait(), 15): raise RuntimeError('speech fixture failed')
-        captured.clear()
-        await server.on_event(device['device_id'], 'listen.requested', {})
-        await asyncio.wait_for(captured.wait(), 5)
-        volume = int(await audio_setting('output volume of (get volume settings)'))
-        muted = await audio_setting('output muted of (get volume settings)')
-        if not 0 <= volume <= 100 or muted not in {'true', 'false'}:
-            raise RuntimeError('invalid fixture audio setting')
-        if args.fixture_volume is not None:
-            saved_output = (volume, muted == 'true')
-            result['fixture_audio_restored'] = False
-            await audio_setting(f'set volume output volume {args.fixture_volume} output muted false')
-            result['fixture_volume'] = args.fixture_volume
-        elif muted == 'true' or volume == 0:
-            raise RuntimeError('fixture output is muted; choose --fixture-volume')
-        mark('speaking_fixture_to_watch')
-        player = await child('/usr/bin/afplay', output/'input.aiff', logfile='afplay.log')
-        if await asyncio.wait_for(player.wait(), 20): raise RuntimeError('fixture playback failed')
-        await restore_output()
-        await asyncio.sleep(.5)
-        await server.on_event(device['device_id'], 'listen.finished', {})
-        async with asyncio.timeout(90):
-            while True:
-                if session._closed: raise RuntimeError('session closed during provider turn')
-                if result['stt_completed_events'] and not result['stt_completed_characters']:
-                    raise RuntimeError('spoken fixture produced an empty final transcript')
-                response = session._response
-                if response is not None and response.finished.is_set() and response.done.is_set():
-                    result['speaker_samples'] = response.samples
-                    result['response_id'] = response.number
-                    break
-                await asyncio.sleep(.1)
-        trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()]
-        result['stt_final'] = any(item['kind']=='stt.final' for item in trace)
-        result['tts_audio'] = any(item['kind']=='tts.first_audio' for item in trace)
-        result['read_tool_completed'] = any(item['kind']=='tool.end' and item.get('tool')=='get_next_set' for item in trace)
-        if not all(result[key] for key in ('stt_final', 'fixture_recognized', 'tts_audio', 'read_tool_completed', 'microphone_samples', 'speaker_samples')):
-            raise RuntimeError('provider turn did not satisfy all required stages')
-        mark('provider_turn_completed', speaker_samples=result['speaker_samples'])
+        if args.acoustic_analysis:
+            converter = await child('/usr/bin/afconvert', '-f', 'WAVE', '-d', 'LEI16@16000',
+                                    '-c', '1', output/'input.aiff', output/'fixture.wav', logfile='convert.log')
+            if await asyncio.wait_for(converter.wait(), 15): raise RuntimeError('fixture conversion failed')
+            with wave.open(str(output/'fixture.wav'), 'rb') as source:
+                if (source.getnchannels(), source.getsampwidth(), source.getframerate()) != (1, 2, 16000):
+                    raise RuntimeError('fixture PCM format')
+                if source.getnframes() > 31 * 16000: raise RuntimeError('fixture PCM bound')
+                fixture_pcm = source.readframes(source.getnframes())
+        async def provider_turn(round_number):
+            nonlocal saved_output
+            captured.clear()
+            sample_base = result['microphone_samples']
+            event_base = result['stt_completed_events']
+            character_base = result['stt_completed_characters']
+            previous_response = session._response.number if session._response else 0
+            trace_base = len((output/'trace.jsonl').read_text().splitlines())
+            result['fixture_recognized'] = False
+            result['fixture_keyword_matches'] = {}
+            await server.on_event(device['device_id'], 'listen.requested', {})
+            await asyncio.wait_for(captured.wait(), 5)
+            volume = int(await audio_setting('output volume of (get volume settings)'))
+            muted = await audio_setting('output muted of (get volume settings)')
+            if not 0 <= volume <= 100 or muted not in {'true', 'false'}:
+                raise RuntimeError('invalid fixture audio setting')
+            if args.fixture_volume is not None:
+                saved_output = (volume, muted == 'true')
+                result['fixture_audio_restored'] = False
+                await audio_setting(f'set volume output volume {args.fixture_volume} output muted false')
+                result['fixture_volume'] = args.fixture_volume
+            elif muted == 'true' or volume == 0:
+                raise RuntimeError('fixture output is muted; choose --fixture-volume')
+            mark('speaking_fixture_to_watch')
+            player = await child('/usr/bin/afplay', output/'input.aiff', logfile='afplay.log')
+            if await asyncio.wait_for(player.wait(), 20): raise RuntimeError('fixture playback failed')
+            await restore_output()
+            await asyncio.sleep(.5)
+            await server.on_event(device['device_id'], 'listen.finished', {})
+            async with asyncio.timeout(90):
+                while True:
+                    if session._closed: raise RuntimeError('session closed during provider turn')
+                    if result['stt_completed_events'] > event_base and result['stt_completed_characters'] == character_base:
+                        raise RuntimeError('spoken fixture produced an empty final transcript')
+                    response = session._response
+                    if response is not None and response.number > previous_response and response.finished.is_set() and response.done.is_set():
+                        result['speaker_samples'] = response.samples
+                        result['response_id'] = response.number
+                        break
+                    await asyncio.sleep(.1)
+            trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()[trace_base:]]
+            result['stt_final'] = any(item['kind']=='stt.final' for item in trace)
+            result['tts_audio'] = any(item['kind']=='tts.first_audio' for item in trace)
+            result['read_tool_completed'] = any(item['kind']=='tool.end' and item.get('tool')=='get_next_set' for item in trace)
+            if (result['microphone_samples'] <= sample_base or
+                result['stt_completed_events'] <= event_base or
+                not all(result[key] for key in ('stt_final', 'fixture_recognized', 'tts_audio', 'read_tool_completed', 'speaker_samples'))):
+                raise RuntimeError('provider turn did not satisfy all required stages')
+            turn = dict(round=round_number, microphone_samples=result['microphone_samples']-sample_base,
+                        stt_characters=result['stt_completed_characters']-character_base,
+                        response_id=result['response_id'], speaker_samples=result['speaker_samples'],
+                        fixture_recognized=result['fixture_recognized'], read_tool_completed=result['read_tool_completed'])
+            result['turns'].append(turn)
+            mark('provider_turn_completed', **turn)
+        for round_number in range(1, args.capture_rounds + 1):
+            await provider_turn(round_number)
         old_id = session.session_id
         await session.close(code=4000, message=b'provider bench replacement')
         replacement = await asyncio.wait_for(ready.get(), 25)
@@ -242,11 +296,23 @@ async def run(args):
                 result['shutdown_timeout'] = True
         for process in reversed(children): await stop(process)
         for stream in streams: stream.close()
+        try:
+            if args.acoustic_analysis and acoustic_pcm and fixture_pcm:
+                from moq_acoustic_analysis import analyze
+                write(output/'acoustic-analysis.json', analyze(acoustic_pcm, fixture_pcm))
+        except Exception as error:
+            result['acoustic_analysis_failure_type'] = type(error).__name__
+            result['pass_'] = False
+        finally:
+            acoustic_pcm[:] = b'\0' * len(acoustic_pcm)
+            acoustic_pcm.clear()
         transport_moq.MoqTransportServer, LiveConversation._tools = real_transport, real_tools
         conversation_module.OpenAIRealtimeSTTService = real_stt
         result['microphone_rms'] = round((microphone_square_sum/max(1, result['microphone_samples']))**0.5, 2)
         result['elapsed_ms'] = round((time.monotonic()-start)*1000)
         write(output/'result.json', result)
+    if not result['pass_']:
+        raise RuntimeError('provider bench final verification failed')
 
 
 def main():
@@ -256,7 +322,15 @@ def main():
     parser.add_argument('--host', required=True)
     parser.add_argument('--idf-python', type=Path, required=True)
     parser.add_argument('--fixture-volume', type=int, help='Temporarily set Mac output volume for the spoken fixture, then restore it')
+    parser.add_argument('--acoustic-analysis', action='store_true',
+                        help='Compare bounded microphone PCM in memory with the synthetic fixture; save only numeric diagnostics')
+    parser.add_argument('--stt-noise-reduction', choices=('near_field', 'far_field', 'off'),
+                        help='Bench-only provider noise reduction experiment; does not change production defaults')
+    parser.add_argument('--capture-rounds', type=int, default=1,
+                        help='Repeat 1..3 complete provider turns in the same authenticated session')
     args = parser.parse_args()
+    if not 1 <= args.capture_rounds <= 3:
+        parser.error('capture-rounds must be 1..3')
     if args.fixture_volume is not None and not 1 <= args.fixture_volume <= 100:
         parser.error('fixture-volume must be 1..100')
     try:

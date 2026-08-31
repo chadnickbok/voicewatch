@@ -1,0 +1,3 @@
+Before changing the four-group poll cap, the eight-group/160 ms regression exited 134:
+Assertion failed: (t->next_uni-first_stream==groups*4U), function publisher_catches_up_after_delayed_owner_poll, file test_engine.c, line 345.
+The same regression passes after using the existing bounded TX capacity.

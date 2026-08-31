@@ -1,0 +1,36 @@
+[
+  {
+    "characters": 33,
+    "kind": "stt.final"
+  },
+  {
+    "kind": "llm.first_response"
+  },
+  {
+    "kind": "tool.end",
+    "tool": "get_next_set"
+  },
+  {
+    "kind": "llm.first_response"
+  },
+  {
+    "kind": "tts.first_audio"
+  },
+  {
+    "characters": 33,
+    "kind": "stt.final"
+  },
+  {
+    "kind": "llm.first_response"
+  },
+  {
+    "kind": "tool.end",
+    "tool": "get_next_set"
+  },
+  {
+    "kind": "llm.first_response"
+  },
+  {
+    "kind": "tts.first_audio"
+  }
+]

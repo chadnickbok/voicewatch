@@ -114,6 +114,17 @@ void wipe_free(CopiedSession* config) {
     for (std::size_t i=0; i<sizeof(*config); ++i) p[i]=0;
     heap_caps_free(config);
 }
+void log_publisher_stats(Owner& o) {
+    if (!o.service) return;
+    esp_moq_service_stats_t snapshot{}; esp_moq_service_stats(o.service,&snapshot);
+    const auto& s=snapshot.publisher;
+    ESP_LOGI(kTag,"publisher cache_drop=%llu expired=%llu failed=%llu cancelled=%llu submitted=%llu retired=%llu last_first=%llu last_end=%llu last_code=%llu",
+        static_cast<unsigned long long>(s.cache_drop_groups),static_cast<unsigned long long>(s.expired_groups),
+        static_cast<unsigned long long>(s.failed_groups),static_cast<unsigned long long>(s.cancelled_groups),
+        static_cast<unsigned long long>(s.submitted_groups),static_cast<unsigned long long>(s.retired_groups),
+        static_cast<unsigned long long>(s.last_drop_first),static_cast<unsigned long long>(s.last_drop_end),
+        static_cast<unsigned long long>(s.last_drop_code));
+}
 void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
     Event event{}; event.kind=kind; event.session=o.session;
     event.identity=o.identity; event.first_group=o.first;
@@ -126,6 +137,7 @@ void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
         event.encoded_frames=stats.encoded_packets;
     }
     if (kind==EventKind::capture_failed && o.service) {
+        log_publisher_stats(o);
         esp_moq_service_stats_t stats{}; esp_moq_service_stats(o.service,&stats);
         esp_moq_endpoint_status_t endpoint{}; esp_moq_endpoint_status(o.endpoint,&endpoint);
         ESP_LOGI(kTag,"capture retired encoded=%llu accepted=%llu sent=%llu stale=%llu queued=%u high=%u mic_drops=%u poll_gap_ms=%llu",
@@ -330,6 +342,7 @@ void poll_service(Owner& o) {
             event.elapsed_ms=(now_us()-o.started_us)/1000;
             event.dropped_frames=o.dropped_frames; event.encoded_bytes=o.encoded_bytes;
             esp_moq_audio_capture_stats_t stats{}; esp_moq_audio_capture_stats(o.capture,&stats);
+            log_publisher_stats(o);
             ESP_LOGI(kTag,"capture samples=%llu discarded=%llu resets=%llu dropped_chunks=%llu",
                 static_cast<unsigned long long>(stats.accepted_samples),
                 static_cast<unsigned long long>(stats.discarded_buffered_samples),

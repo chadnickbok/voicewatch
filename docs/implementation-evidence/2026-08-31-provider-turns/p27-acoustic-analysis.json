@@ -1,0 +1,54 @@
+{
+  "capture_samples": 60320,
+  "fixture_samples": 28549,
+  "microphone": {
+    "dc": 0.04,
+    "rms": 494.01,
+    "zero_crossing_fraction": 0.07515,
+    "0_80_hz_fraction": 0.01601,
+    "80_300_hz_fraction": 0.34407,
+    "300_1000_hz_fraction": 0.63189,
+    "1000_3000_hz_fraction": 0.0064,
+    "3000_8001_hz_fraction": 0.00164
+  },
+  "fixture": {
+    "dc": 31.88,
+    "rms": 3499.51,
+    "zero_crossing_fraction": 0.21382,
+    "0_80_hz_fraction": 0.00025,
+    "80_300_hz_fraction": 0.24969,
+    "300_1000_hz_fraction": 0.55482,
+    "1000_3000_hz_fraction": 0.1768,
+    "3000_8001_hz_fraction": 0.01844
+  },
+  "waveform": {
+    "correlation": 0.37514,
+    "offset_samples": 10255
+  },
+  "envelope": {
+    "correlation": 0.6992,
+    "offset_samples": 10080
+  },
+  "duration_scale": {
+    "0.5": {
+      "correlation": 0.47305,
+      "offset_samples": 27360
+    },
+    "0.75": {
+      "correlation": 0.53475,
+      "offset_samples": 23840
+    },
+    "1.25": {
+      "correlation": 0.41357,
+      "offset_samples": 9120
+    },
+    "1.5": {
+      "correlation": 0.44005,
+      "offset_samples": 3520
+    },
+    "2.0": {
+      "correlation": 0.37373,
+      "offset_samples": 640
+    }
+  }
+}

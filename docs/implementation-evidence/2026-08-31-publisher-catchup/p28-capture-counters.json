@@ -1,0 +1,20 @@
+[
+  {
+    "accepted_samples": 60640,
+    "discarded_buffered_samples": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  },
+  {
+    "accepted_samples": 59200,
+    "discarded_buffered_samples": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  },
+  {
+    "accepted_samples": 60800,
+    "discarded_buffered_samples": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  }
+]

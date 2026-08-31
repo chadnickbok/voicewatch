@@ -1,0 +1,35 @@
+[
+  {
+    "cache_drop_groups": 0,
+    "expired_groups": 0,
+    "failed_groups": 0,
+    "cancelled_groups": 0,
+    "submitted_groups": 191,
+    "retired_groups": 186,
+    "last_drop_first": 0,
+    "last_drop_end": 0,
+    "last_drop_code": 0
+  },
+  {
+    "cache_drop_groups": 0,
+    "expired_groups": 0,
+    "failed_groups": 0,
+    "cancelled_groups": 0,
+    "submitted_groups": 383,
+    "retired_groups": 379,
+    "last_drop_first": 0,
+    "last_drop_end": 0,
+    "last_drop_code": 0
+  },
+  {
+    "cache_drop_groups": 0,
+    "expired_groups": 0,
+    "failed_groups": 0,
+    "cancelled_groups": 0,
+    "submitted_groups": 574,
+    "retired_groups": 570,
+    "last_drop_first": 0,
+    "last_drop_end": 0,
+    "last_drop_code": 0
+  }
+]

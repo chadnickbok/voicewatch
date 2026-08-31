@@ -2,9 +2,11 @@
 
 The live-agent service now has an explicit MoQ adapter connected to the existing
 conversation callbacks. This is a development mode, not the accepted replacement
-release. No successful end-to-end provider turn or deployed service restart has
-been completed. Live-provider attempts currently fail during capture with
-`capture gap/range`; see the [current progress](moq-implementation-progress.md).
+release. Host-initiated physical provider turns now pass through microphone,
+STT, model/tools, TTS and speaker receipt, including two turns in one session
+and a fresh session reconnect. Another repeated-turn run still fails at the
+capture reorder deadline; deployed service restart and full physical interaction
+remain open. See the [current progress](moq-implementation-progress.md).
 The installed
 Ultra now runs the authenticated full-shell firmware; a private local host bench
 has verified startup, audio, response replacement and reconnection.
@@ -94,8 +96,11 @@ exclusive `end_group`, and exact `samples` count. Decimal strings preserve u64s.
 
 Only current native `capture.pcm` enters the application queue. `capture.ended`
 must match the authenticated range, expected count and received PCM. The product
-`capture.stopped` event follows that PCM; the service injects its existing 250 ms
-STT silence padding then, not on early PTT release. WebRTC keeps its old timing.
+`capture.stopped` event follows that PCM; the service commits STT at that validated
+boundary, not on early PTT release or a local VAD pause. WebRTC keeps its existing
+silence-padding/VAD behavior. MoQ defaults to no provider noise filter because
+`near_field` suppresses the Ultra acoustic fixture; the explicit
+`DOODAD_STT_NOISE_REDUCTION` option selects `off`, `near_field` or `far_field`.
 
 Cancellation retires pending start IDs, capture ownership, queued old PCM and
 response generation. A delayed start receipt is cancelled without opening a

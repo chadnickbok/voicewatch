@@ -1,0 +1,415 @@
+{"kind": "enrolled", "elapsed_ms": 742}
+{"kind": "identified", "elapsed_ms": 2661}
+{"kind": "connected", "elapsed_ms": 6165}
+{"kind": "idle_ready_without_capture", "elapsed_ms": 7168}
+{"kind": "disconnected", "elapsed_ms": 7168}
+{"kind": "identified", "elapsed_ms": 9053}
+{"kind": "connected", "elapsed_ms": 12538}
+{"kind": "fresh_grant_reconnect", "elapsed_ms": 12539, "duration_ms": 5371}
+{"kind": "listening_ui_requested", "elapsed_ms": 12539}
+{"kind": "capture.started", "elapsed_ms": 12577}
+{"kind": "capture.stopped", "elapsed_ms": 13615}
+{"kind": "capture_round_completed", "elapsed_ms": 13615, "round": 1, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 13615}
+{"kind": "capture.started", "elapsed_ms": 14441}
+{"kind": "capture.stopped", "elapsed_ms": 15467}
+{"kind": "capture_round_completed", "elapsed_ms": 15468, "round": 2, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 15468}
+{"kind": "capture.started", "elapsed_ms": 16273}
+{"kind": "capture.stopped", "elapsed_ms": 17308}
+{"kind": "capture_round_completed", "elapsed_ms": 17308, "round": 3, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 17308}
+{"kind": "capture.started", "elapsed_ms": 17975}
+{"kind": "capture.stopped", "elapsed_ms": 19016}
+{"kind": "capture_round_completed", "elapsed_ms": 19017, "round": 4, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 19017}
+{"kind": "capture.started", "elapsed_ms": 19064}
+{"kind": "capture.stopped", "elapsed_ms": 20125}
+{"kind": "capture_round_completed", "elapsed_ms": 20125, "round": 5, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 20125}
+{"kind": "capture.started", "elapsed_ms": 20179}
+{"kind": "capture.stopped", "elapsed_ms": 21211}
+{"kind": "capture_round_completed", "elapsed_ms": 21211, "round": 6, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 21211}
+{"kind": "capture.started", "elapsed_ms": 22034}
+{"kind": "capture.stopped", "elapsed_ms": 23075}
+{"kind": "capture_round_completed", "elapsed_ms": 23076, "round": 7, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 23076}
+{"kind": "capture.started", "elapsed_ms": 23128}
+{"kind": "capture.stopped", "elapsed_ms": 24175}
+{"kind": "capture_round_completed", "elapsed_ms": 24175, "round": 8, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 24175}
+{"kind": "capture.started", "elapsed_ms": 24227}
+{"kind": "capture.stopped", "elapsed_ms": 25268}
+{"kind": "capture_round_completed", "elapsed_ms": 25268, "round": 9, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 25268}
+{"kind": "capture.started", "elapsed_ms": 25322}
+{"kind": "capture.stopped", "elapsed_ms": 26376}
+{"kind": "capture_round_completed", "elapsed_ms": 26376, "round": 10, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 26376}
+{"kind": "capture.started", "elapsed_ms": 26424}
+{"kind": "capture.stopped", "elapsed_ms": 27473}
+{"kind": "capture_round_completed", "elapsed_ms": 27473, "round": 11, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 27474}
+{"kind": "capture.started", "elapsed_ms": 27527}
+{"kind": "capture.stopped", "elapsed_ms": 28575}
+{"kind": "capture_round_completed", "elapsed_ms": 28575, "round": 12, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 28575}
+{"kind": "capture.started", "elapsed_ms": 28630}
+{"kind": "capture.stopped", "elapsed_ms": 29668}
+{"kind": "capture_round_completed", "elapsed_ms": 29668, "round": 13, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 29668}
+{"kind": "capture.started", "elapsed_ms": 29722}
+{"kind": "capture.stopped", "elapsed_ms": 30764}
+{"kind": "capture_round_completed", "elapsed_ms": 30764, "round": 14, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 30764}
+{"kind": "capture.started", "elapsed_ms": 30815}
+{"kind": "capture.stopped", "elapsed_ms": 31853}
+{"kind": "capture_round_completed", "elapsed_ms": 31853, "round": 15, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 31854}
+{"kind": "capture.started", "elapsed_ms": 31905}
+{"kind": "capture.stopped", "elapsed_ms": 32952}
+{"kind": "capture_round_completed", "elapsed_ms": 32953, "round": 16, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 32953}
+{"kind": "capture.started", "elapsed_ms": 33001}
+{"kind": "capture.stopped", "elapsed_ms": 34036}
+{"kind": "capture_round_completed", "elapsed_ms": 34036, "round": 17, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 34036}
+{"kind": "capture.started", "elapsed_ms": 34467}
+{"kind": "capture.stopped", "elapsed_ms": 35513}
+{"kind": "capture_round_completed", "elapsed_ms": 35513, "round": 18, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 35513}
+{"kind": "capture.started", "elapsed_ms": 35916}
+{"kind": "capture.stopped", "elapsed_ms": 36944}
+{"kind": "capture_round_completed", "elapsed_ms": 36945, "round": 19, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 36945}
+{"kind": "capture.started", "elapsed_ms": 37323}
+{"kind": "capture.stopped", "elapsed_ms": 38380}
+{"kind": "capture_round_completed", "elapsed_ms": 38380, "round": 20, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 38380}
+{"kind": "capture.started", "elapsed_ms": 38437}
+{"kind": "capture.stopped", "elapsed_ms": 39468}
+{"kind": "capture_round_completed", "elapsed_ms": 39469, "round": 21, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 39469}
+{"kind": "capture.started", "elapsed_ms": 39525}
+{"kind": "capture.stopped", "elapsed_ms": 40571}
+{"kind": "capture_round_completed", "elapsed_ms": 40572, "round": 22, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 40572}
+{"kind": "capture.started", "elapsed_ms": 40626}
+{"kind": "capture.stopped", "elapsed_ms": 41661}
+{"kind": "capture_round_completed", "elapsed_ms": 41662, "round": 23, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 41662}
+{"kind": "capture.started", "elapsed_ms": 42008}
+{"kind": "capture.stopped", "elapsed_ms": 43042}
+{"kind": "capture_round_completed", "elapsed_ms": 43042, "round": 24, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 43043}
+{"kind": "capture.started", "elapsed_ms": 43388}
+{"kind": "capture.stopped", "elapsed_ms": 44433}
+{"kind": "capture_round_completed", "elapsed_ms": 44433, "round": 25, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 44433}
+{"kind": "capture.started", "elapsed_ms": 44483}
+{"kind": "capture.stopped", "elapsed_ms": 45538}
+{"kind": "capture_round_completed", "elapsed_ms": 45539, "round": 26, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 45539}
+{"kind": "capture.started", "elapsed_ms": 45591}
+{"kind": "capture.stopped", "elapsed_ms": 46639}
+{"kind": "capture_round_completed", "elapsed_ms": 46640, "round": 27, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 46640}
+{"kind": "capture.started", "elapsed_ms": 46694}
+{"kind": "capture.stopped", "elapsed_ms": 47738}
+{"kind": "capture_round_completed", "elapsed_ms": 47738, "round": 28, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 47738}
+{"kind": "capture.started", "elapsed_ms": 47792}
+{"kind": "capture.stopped", "elapsed_ms": 48821}
+{"kind": "capture_round_completed", "elapsed_ms": 48821, "round": 29, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 48821}
+{"kind": "capture.started", "elapsed_ms": 48873}
+{"kind": "capture.stopped", "elapsed_ms": 49928}
+{"kind": "capture_round_completed", "elapsed_ms": 49928, "round": 30, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 49928}
+{"kind": "capture.started", "elapsed_ms": 49980}
+{"kind": "capture.stopped", "elapsed_ms": 51029}
+{"kind": "capture_round_completed", "elapsed_ms": 51029, "round": 31, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 51029}
+{"kind": "capture.started", "elapsed_ms": 51077}
+{"kind": "capture.stopped", "elapsed_ms": 52131}
+{"kind": "capture_round_completed", "elapsed_ms": 52131, "round": 32, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 52131}
+{"kind": "capture.started", "elapsed_ms": 52182}
+{"kind": "capture.stopped", "elapsed_ms": 53228}
+{"kind": "capture_round_completed", "elapsed_ms": 53229, "round": 33, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 53229}
+{"kind": "capture.started", "elapsed_ms": 53274}
+{"kind": "capture.stopped", "elapsed_ms": 54315}
+{"kind": "capture_round_completed", "elapsed_ms": 54316, "round": 34, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 54316}
+{"kind": "capture.started", "elapsed_ms": 54369}
+{"kind": "capture.stopped", "elapsed_ms": 55394}
+{"kind": "capture_round_completed", "elapsed_ms": 55395, "round": 35, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 55395}
+{"kind": "capture.started", "elapsed_ms": 55688}
+{"kind": "capture.stopped", "elapsed_ms": 56736}
+{"kind": "capture_round_completed", "elapsed_ms": 56737, "round": 36, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 56737}
+{"kind": "capture.started", "elapsed_ms": 56791}
+{"kind": "capture.stopped", "elapsed_ms": 57840}
+{"kind": "capture_round_completed", "elapsed_ms": 57840, "round": 37, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 57840}
+{"kind": "capture.started", "elapsed_ms": 57885}
+{"kind": "capture.stopped", "elapsed_ms": 58939}
+{"kind": "capture_round_completed", "elapsed_ms": 58939, "round": 38, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 58939}
+{"kind": "capture.started", "elapsed_ms": 58987}
+{"kind": "capture.stopped", "elapsed_ms": 60021}
+{"kind": "capture_round_completed", "elapsed_ms": 60021, "round": 39, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 60021}
+{"kind": "capture.started", "elapsed_ms": 60318}
+{"kind": "capture.stopped", "elapsed_ms": 61357}
+{"kind": "capture_round_completed", "elapsed_ms": 61358, "round": 40, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 61358}
+{"kind": "capture.started", "elapsed_ms": 61410}
+{"kind": "capture.stopped", "elapsed_ms": 62458}
+{"kind": "capture_round_completed", "elapsed_ms": 62458, "round": 41, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 62458}
+{"kind": "capture.started", "elapsed_ms": 62510}
+{"kind": "capture.stopped", "elapsed_ms": 63538}
+{"kind": "capture_round_completed", "elapsed_ms": 63538, "round": 42, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 63539}
+{"kind": "capture.started", "elapsed_ms": 63589}
+{"kind": "capture.stopped", "elapsed_ms": 64638}
+{"kind": "capture_round_completed", "elapsed_ms": 64639, "round": 43, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 64639}
+{"kind": "capture.started", "elapsed_ms": 64687}
+{"kind": "capture.stopped", "elapsed_ms": 65733}
+{"kind": "capture_round_completed", "elapsed_ms": 65734, "round": 44, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 65734}
+{"kind": "capture.started", "elapsed_ms": 65783}
+{"kind": "capture.stopped", "elapsed_ms": 66837}
+{"kind": "capture_round_completed", "elapsed_ms": 66837, "round": 45, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 66838}
+{"kind": "capture.started", "elapsed_ms": 66891}
+{"kind": "capture.stopped", "elapsed_ms": 67935}
+{"kind": "capture_round_completed", "elapsed_ms": 67936, "round": 46, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 67936}
+{"kind": "capture.started", "elapsed_ms": 67983}
+{"kind": "capture.stopped", "elapsed_ms": 69020}
+{"kind": "capture_round_completed", "elapsed_ms": 69020, "round": 47, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 69021}
+{"kind": "capture.started", "elapsed_ms": 69081}
+{"kind": "capture.stopped", "elapsed_ms": 70115}
+{"kind": "capture_round_completed", "elapsed_ms": 70115, "round": 48, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 70115}
+{"kind": "capture.started", "elapsed_ms": 70164}
+{"kind": "capture.stopped", "elapsed_ms": 71219}
+{"kind": "capture_round_completed", "elapsed_ms": 71220, "round": 49, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 71220}
+{"kind": "capture.started", "elapsed_ms": 71277}
+{"kind": "capture.stopped", "elapsed_ms": 72314}
+{"kind": "capture_round_completed", "elapsed_ms": 72315, "round": 50, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 72315}
+{"kind": "capture.started", "elapsed_ms": 72369}
+{"kind": "capture.stopped", "elapsed_ms": 73399}
+{"kind": "capture_round_completed", "elapsed_ms": 73400, "round": 51, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 73400}
+{"kind": "capture.started", "elapsed_ms": 73685}
+{"kind": "capture.stopped", "elapsed_ms": 74735}
+{"kind": "capture_round_completed", "elapsed_ms": 74736, "round": 52, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 74736}
+{"kind": "capture.started", "elapsed_ms": 74788}
+{"kind": "capture.stopped", "elapsed_ms": 75822}
+{"kind": "capture_round_completed", "elapsed_ms": 75822, "round": 53, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 75822}
+{"kind": "capture.started", "elapsed_ms": 75874}
+{"kind": "capture.stopped", "elapsed_ms": 76923}
+{"kind": "capture_round_completed", "elapsed_ms": 76923, "round": 54, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 76923}
+{"kind": "capture.started", "elapsed_ms": 76976}
+{"kind": "capture.stopped", "elapsed_ms": 78003}
+{"kind": "capture_round_completed", "elapsed_ms": 78003, "round": 55, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 78003}
+{"kind": "capture.started", "elapsed_ms": 78057}
+{"kind": "capture.stopped", "elapsed_ms": 80113}
+{"kind": "capture_round_completed", "elapsed_ms": 80113, "round": 56, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 80114}
+{"kind": "capture.started", "elapsed_ms": 80162}
+{"kind": "capture.stopped", "elapsed_ms": 81213}
+{"kind": "capture_round_completed", "elapsed_ms": 81213, "round": 57, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 81213}
+{"kind": "capture.started", "elapsed_ms": 81262}
+{"kind": "capture.stopped", "elapsed_ms": 82300}
+{"kind": "capture_round_completed", "elapsed_ms": 82300, "round": 58, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 82300}
+{"kind": "capture.started", "elapsed_ms": 82586}
+{"kind": "capture.stopped", "elapsed_ms": 83643}
+{"kind": "capture_round_completed", "elapsed_ms": 83643, "round": 59, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 83643}
+{"kind": "capture.started", "elapsed_ms": 83696}
+{"kind": "capture.stopped", "elapsed_ms": 84744}
+{"kind": "capture_round_completed", "elapsed_ms": 84744, "round": 60, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 84744}
+{"kind": "capture.started", "elapsed_ms": 84797}
+{"kind": "capture.stopped", "elapsed_ms": 85829}
+{"kind": "capture_round_completed", "elapsed_ms": 85829, "round": 61, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 85829}
+{"kind": "capture.started", "elapsed_ms": 85890}
+{"kind": "capture.stopped", "elapsed_ms": 86926}
+{"kind": "capture_round_completed", "elapsed_ms": 86927, "round": 62, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 86927}
+{"kind": "capture.started", "elapsed_ms": 86982}
+{"kind": "capture.stopped", "elapsed_ms": 88021}
+{"kind": "capture_round_completed", "elapsed_ms": 88021, "round": 63, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 88021}
+{"kind": "capture.started", "elapsed_ms": 88069}
+{"kind": "capture.stopped", "elapsed_ms": 89101}
+{"kind": "capture_round_completed", "elapsed_ms": 89101, "round": 64, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 89101}
+{"kind": "capture.started", "elapsed_ms": 89400}
+{"kind": "capture.stopped", "elapsed_ms": 90448}
+{"kind": "capture_round_completed", "elapsed_ms": 90448, "round": 65, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 90448}
+{"kind": "capture.started", "elapsed_ms": 90496}
+{"kind": "capture.stopped", "elapsed_ms": 91544}
+{"kind": "capture_round_completed", "elapsed_ms": 91545, "round": 66, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 91545}
+{"kind": "capture.started", "elapsed_ms": 91604}
+{"kind": "capture.stopped", "elapsed_ms": 92639}
+{"kind": "capture_round_completed", "elapsed_ms": 92639, "round": 67, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 92640}
+{"kind": "capture.started", "elapsed_ms": 92942}
+{"kind": "capture.stopped", "elapsed_ms": 93977}
+{"kind": "capture_round_completed", "elapsed_ms": 93978, "round": 68, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 93978}
+{"kind": "capture.started", "elapsed_ms": 94533}
+{"kind": "capture.stopped", "elapsed_ms": 95588}
+{"kind": "capture_round_completed", "elapsed_ms": 95588, "round": 69, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 95589}
+{"kind": "capture.started", "elapsed_ms": 95657}
+{"kind": "capture.stopped", "elapsed_ms": 96694}
+{"kind": "capture_round_completed", "elapsed_ms": 96694, "round": 70, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 96695}
+{"kind": "capture.started", "elapsed_ms": 96742}
+{"kind": "capture.stopped", "elapsed_ms": 97787}
+{"kind": "capture_round_completed", "elapsed_ms": 97788, "round": 71, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 97788}
+{"kind": "capture.started", "elapsed_ms": 97840}
+{"kind": "capture.stopped", "elapsed_ms": 98894}
+{"kind": "capture_round_completed", "elapsed_ms": 98894, "round": 72, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 98895}
+{"kind": "capture.started", "elapsed_ms": 98941}
+{"kind": "capture.stopped", "elapsed_ms": 99986}
+{"kind": "capture_round_completed", "elapsed_ms": 99986, "round": 73, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 99987}
+{"kind": "capture.started", "elapsed_ms": 100044}
+{"kind": "capture.stopped", "elapsed_ms": 101079}
+{"kind": "capture_round_completed", "elapsed_ms": 101079, "round": 74, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 101080}
+{"kind": "capture.started", "elapsed_ms": 101133}
+{"kind": "capture.stopped", "elapsed_ms": 102166}
+{"kind": "capture_round_completed", "elapsed_ms": 102166, "round": 75, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 102167}
+{"kind": "capture.started", "elapsed_ms": 102221}
+{"kind": "capture.stopped", "elapsed_ms": 103259}
+{"kind": "capture_round_completed", "elapsed_ms": 103259, "round": 76, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 103259}
+{"kind": "capture.started", "elapsed_ms": 103315}
+{"kind": "capture.stopped", "elapsed_ms": 104347}
+{"kind": "capture_round_completed", "elapsed_ms": 104347, "round": 77, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 104348}
+{"kind": "capture.started", "elapsed_ms": 104405}
+{"kind": "capture.stopped", "elapsed_ms": 105443}
+{"kind": "capture_round_completed", "elapsed_ms": 105443, "round": 78, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 105444}
+{"kind": "capture.started", "elapsed_ms": 105491}
+{"kind": "capture.stopped", "elapsed_ms": 106537}
+{"kind": "capture_round_completed", "elapsed_ms": 106537, "round": 79, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 106537}
+{"kind": "capture.started", "elapsed_ms": 106589}
+{"kind": "capture.stopped", "elapsed_ms": 107636}
+{"kind": "capture_round_completed", "elapsed_ms": 107636, "round": 80, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 107636}
+{"kind": "capture.started", "elapsed_ms": 107687}
+{"kind": "capture.stopped", "elapsed_ms": 108720}
+{"kind": "capture_round_completed", "elapsed_ms": 108720, "round": 81, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 108720}
+{"kind": "capture.started", "elapsed_ms": 109041}
+{"kind": "capture.stopped", "elapsed_ms": 110103}
+{"kind": "capture_round_completed", "elapsed_ms": 110103, "round": 82, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 110103}
+{"kind": "capture.started", "elapsed_ms": 110153}
+{"kind": "capture.stopped", "elapsed_ms": 111197}
+{"kind": "capture_round_completed", "elapsed_ms": 111198, "round": 83, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 111198}
+{"kind": "capture.started", "elapsed_ms": 111252}
+{"kind": "capture.stopped", "elapsed_ms": 112303}
+{"kind": "capture_round_completed", "elapsed_ms": 112303, "round": 84, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 112303}
+{"kind": "capture.started", "elapsed_ms": 112355}
+{"kind": "capture.stopped", "elapsed_ms": 113407}
+{"kind": "capture_round_completed", "elapsed_ms": 113407, "round": 85, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 113407}
+{"kind": "capture.started", "elapsed_ms": 113462}
+{"kind": "capture.stopped", "elapsed_ms": 114498}
+{"kind": "capture_round_completed", "elapsed_ms": 114499, "round": 86, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 114499}
+{"kind": "capture.started", "elapsed_ms": 114555}
+{"kind": "capture.stopped", "elapsed_ms": 115595}
+{"kind": "capture_round_completed", "elapsed_ms": 115596, "round": 87, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 115596}
+{"kind": "capture.started", "elapsed_ms": 115646}
+{"kind": "capture.stopped", "elapsed_ms": 118115}
+{"kind": "capture_round_completed", "elapsed_ms": 118115, "round": 88, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 118115}
+{"kind": "capture.started", "elapsed_ms": 118172}
+{"kind": "capture.stopped", "elapsed_ms": 119203}
+{"kind": "capture_round_completed", "elapsed_ms": 119203, "round": 89, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 119203}
+{"kind": "capture.started", "elapsed_ms": 119500}
+{"kind": "capture.stopped", "elapsed_ms": 120547}
+{"kind": "capture_round_completed", "elapsed_ms": 120548, "round": 90, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 120548}
+{"kind": "capture.started", "elapsed_ms": 120598}
+{"kind": "capture.stopped", "elapsed_ms": 121650}
+{"kind": "capture_round_completed", "elapsed_ms": 121651, "round": 91, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 121651}
+{"kind": "capture.started", "elapsed_ms": 121701}
+{"kind": "capture.stopped", "elapsed_ms": 122746}
+{"kind": "capture_round_completed", "elapsed_ms": 122746, "round": 92, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 122746}
+{"kind": "capture.started", "elapsed_ms": 122800}
+{"kind": "capture.stopped", "elapsed_ms": 123855}
+{"kind": "capture_round_completed", "elapsed_ms": 123855, "round": 93, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 123855}
+{"kind": "capture.started", "elapsed_ms": 123906}
+{"kind": "capture.stopped", "elapsed_ms": 124941}
+{"kind": "capture_round_completed", "elapsed_ms": 124941, "round": 94, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 124942}
+{"kind": "capture.started", "elapsed_ms": 125211}
+{"kind": "capture.stopped", "elapsed_ms": 126250}
+{"kind": "capture_round_completed", "elapsed_ms": 126251, "round": 95, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 126251}
+{"kind": "capture.started", "elapsed_ms": 126311}
+{"kind": "capture.stopped", "elapsed_ms": 127356}
+{"kind": "capture_round_completed", "elapsed_ms": 127356, "round": 96, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 127356}
+{"kind": "capture.started", "elapsed_ms": 127407}
+{"kind": "capture.stopped", "elapsed_ms": 128461}
+{"kind": "capture_round_completed", "elapsed_ms": 128461, "round": 97, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 128461}
+{"kind": "capture.started", "elapsed_ms": 128514}
+{"kind": "capture.stopped", "elapsed_ms": 129551}
+{"kind": "capture_round_completed", "elapsed_ms": 129551, "round": 98, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 129551}
+{"kind": "capture.started", "elapsed_ms": 129961}
+{"kind": "capture.stopped", "elapsed_ms": 131029}
+{"kind": "capture_round_completed", "elapsed_ms": 131029, "round": 99, "samples": 16000}
+{"kind": "listening_ui_requested", "elapsed_ms": 131029}
+{"kind": "capture.started", "elapsed_ms": 131087}
+{"kind": "capture.stopped", "elapsed_ms": 132124}
+{"kind": "capture_round_completed", "elapsed_ms": 132124, "round": 100, "samples": 16000}
+{"kind": "physical_audio_finished", "elapsed_ms": 133337, "microphone_samples": 1600000, "speaker_samples": 16037}
+{"kind": "cancelled_response_replaced_without_capture", "elapsed_ms": 134816}
+{"kind": "disconnected", "elapsed_ms": 227869}
+{"kind": "identified", "elapsed_ms": 229832}
+{"kind": "connected", "elapsed_ms": 233324}
+{"kind": "lease_renewed_with_fresh_grant", "elapsed_ms": 233324}
+{"kind": "disconnected", "elapsed_ms": 233324}

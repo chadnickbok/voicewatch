@@ -1,0 +1,7 @@
+PASS: 300621 checks
+PASS: reference-fixture dispatcher fragmentation, interleaving, lifecycle, bounds and 10000 group retirements; storage=7344
+PASS: owned TX copying, partial writes/FIN, control reserve, fairness, deadlines, cancellation and retirement; 4x128 pool=2016
+PASS: engine discovery/query/pub-sub, serving caps, owned frames, early media/END, cancellation, roles and deadlines; core=23480 media=204608 tx=68064
+catalog/flate tests passed; catalog arena=95256, inflate=53408, deflate=168096
+PASS: service catalog negotiation, range-bound leases, cancel/reconnect ownership, TX bounds and native errors; core=29496 media=580608
+PASS: threaded endpoint DNS timeout/stale completion, owned configuration, close/reconnect, authorization expiry, UTC rollback and joined destruction

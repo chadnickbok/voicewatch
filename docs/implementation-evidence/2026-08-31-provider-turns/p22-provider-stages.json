@@ -1,0 +1,12 @@
+[
+  {
+    "characters": 6,
+    "kind": "stt.final"
+  },
+  {
+    "kind": "llm.first_response"
+  },
+  {
+    "kind": "tts.first_audio"
+  }
+]

@@ -11,7 +11,9 @@ The MoQ migration now has an explicit `serve --transport moq --moq-config ...`
 mode connecting the existing conversation callbacks to authenticated WSS and
 the native Rust worker over private IPC. It is a development mode: authenticated
 full-shell Ultra startup, audio and response replacement now pass a private
-hardware bench; live provider-turn and release acceptance remain open.
+hardware bench. A host-initiated physical microphone/STT/tool/TTS turn and fresh
+session reconnect also pass; physical PTT interaction and release acceptance
+remain open.
 WebRTC remains the default and deployed mode. See the
 [MoQ product session contract](../../../docs/moq-product-session.md) for private
 configuration, tests and limitations. `aiortc` is an optional `webrtc` extra; install with
@@ -42,6 +44,12 @@ Optional capacity overrides are:
 - `DOODAD_MAX_COMPLETION_TOKENS` (default `4096`)
 - `DOODAD_MAX_RESPONSE_TEXT_BYTES` (default `262144`)
 - `DOODAD_DOWNLINK_MAX_SPOOL_SECONDS` (default `600`)
+
+`DOODAD_STT_NOISE_REDUCTION` selects `off`, `near_field`, or `far_field`.
+MoQ explicit push-to-talk defaults to `off`: the Ultra acoustic fixture was
+misrecognized with `near_field` but recognized correctly without provider noise
+filtering. The existing WebRTC path retains `near_field`. This does not change
+the sample rate, microphone authorization or validated capture-end requirement.
 
 The watch still receives only a 160-character display projection. Capacity
 violations are explicit service errors and telemetry events; ordinary long

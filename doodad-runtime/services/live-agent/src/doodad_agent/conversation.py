@@ -438,11 +438,19 @@ class LiveConversation:
                 user_turn_stop_timeout=3.0,
             ),
         )
+        # The Ultra acoustic fixture is intelligible without provider filtering,
+        # but near_field removes enough speech to make its PTT turn fail. Keep
+        # the established WebRTC profile; make filtering explicit for MoQ.
+        noise_reduction = os.getenv(
+            "DOODAD_STT_NOISE_REDUCTION", "off" if self.explicit_capture else "near_field"
+        )
+        if noise_reduction not in {"off", "near_field", "far_field"}:
+            raise ValueError("DOODAD_STT_NOISE_REDUCTION must be off, near_field or far_field")
         stt = OpenAIRealtimeSTTService(
             api_key=os.environ["OPENAI_API_KEY"],
             settings=OpenAIRealtimeSTTService.Settings(
                 model=os.getenv("OPENAI_STT_MODEL", "gpt-realtime-whisper"),
-                noise_reduction="near_field",
+                noise_reduction=None if noise_reduction == "off" else noise_reduction,
             ),
             turn_detection=False,
         )

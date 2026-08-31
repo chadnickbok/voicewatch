@@ -1,0 +1,50 @@
+{
+  "scope": "Publisher catch-up checkpoint; source hashes captured before the Voicewatch checkpoint commit. Earlier provider-turn evidence describes its historical source state.",
+  "voicewatch_base": "a7a4283307cd8d3783219e9cf8b61d4ed4c514ae",
+  "moq_esp32_base": "c3320a7c11aec65d6c8d359235474cca45a3ad4e",
+  "moq_esp32_revision": "127eda5a70bd228fa4efd85eb887de1149ac7a2a",
+  "firmware_sha256": "9126220122365874058091c140e33d6c1a5954dabe125b8c1b89c5166155e308",
+  "source_sha256": {
+    "docs/moq-implementation-progress.md": "b7c7c1bb75a5a016099de9f525cf2f433fc4a7a2295502e4d0388b66ce0a4518",
+    "docs/moq-product-session.md": "3bcb6798c5e83d94c66bc21363fee56c357bfd02a89b24580ff2db817eacd7be",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "c56aeb84f8e6c7db8d5776c86e23626156b4dde280e051d6cccdeddeb7b9d448",
+    "doodad-runtime/services/live-agent/README.md": "37da4a07e5105a4e8d08580fd543c60a7c76e2a663969d065e51c07934a1c2e2",
+    "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "0198695f977aa08dde2cdd5fb725280e40b389a1e8ca226ed5760bdc22e9c1c0",
+    "doodad-runtime/services/live-agent/tests/test_moq_acoustic_analysis.py": "6d59ac881d7fd4820642b4639c38e14ad84169e1707a46abb08dc7ac8de1cdfc",
+    "doodad-runtime/services/live-agent/tests/test_ptt_boundaries.py": "8ed776076f3f1c22c38846650caf9ac2703b1ae832b8ac0e18fa55b9968080d0",
+    "doodad-runtime/services/live-agent/tools/moq_acoustic_analysis.py": "3f2d4b9e2bd52c6c311af42dab8544d1e08a0791ef22e5fd3c6ba60d1c46a51e",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "7379d8b41359c02e750f13afe727748dd47b63a4917120b7a202e4c2216f6354",
+    "libs/moq-esp32/components/esp_moq/include/esp_moq/engine.h": "a6ebdb42583a59b078422c6b48f68e17bad8ce3750e2f6b2128dd7c87525776f",
+    "libs/moq-esp32/components/esp_moq/include/esp_moq/service.h": "10cacf2099e3b71a56e6f4df1a2508dbce1d11da3b2dd2e2140b8e54d04d83c0",
+    "libs/moq-esp32/components/esp_moq/src/engine.c": "d2780fbd96dcd7083b8d5773988f0fc9dedf35de181039369a4a698a6e70a220",
+    "libs/moq-esp32/components/esp_moq/src/service.c": "a0303c946af075779c486d46a44829c5b6665ecba9b9e0bd461f28b7e57e2fe0",
+    "libs/moq-esp32/docs/endpoint-engine.md": "dcc472b9dec927955670851308cb0ea1196d99ecee8ac08072722d96f63c5206",
+    "libs/moq-esp32/docs/owned-service.md": "8b98884ffeddd2c993eb12d690dc5185822676166d8909bd9429759ed74f1dbf",
+    "libs/moq-esp32/tests/host/test_engine.c": "c31d9fe78cd2182cbbb5a6a15b3895f09c10dfe8368b9f6b9bc0c51591cd7ed7"
+  },
+  "evidence_sha256": {
+    "README.md": "d10d53a9444d552d2530071dcb025c8bf1192394d53c81ea5906c0780e8623b1",
+    "audio12-hundred-capture-counters.json": "eaf9b01fdfc8c933458cf13063d58cc5c6adbb91eb398ae87ce9aa56e95cda1b",
+    "audio12-hundred-events.jsonl": "dc502fc9bc7bcf6098fbd455353a93fe31cb21093c135b15bf6f7d1fecab9bcd",
+    "audio12-hundred-native.log": "58fc78541476f137634b8c17d75876d27a018b13d035d202daad28e58ea5166a",
+    "audio12-hundred-publisher-counters.json": "8289d8917b3460123cbad635d2bf2d9ed9b9812fa61bff16c4c3a7ce6126672b",
+    "hardware-results.json": "e1f4551e2bb3d354903bc37e77120565748efc07f510421abc6bd8d6dd8d6067",
+    "host-tests.log": "79f01c02dc78659dabfa363aec66455d990d2e2eb9eaf98841b2fb2feefca9b7",
+    "linux-host-tests.log": "98a26268498665107686871892291bea2b33ee92428e8d55843eb698be1cf7cb",
+    "p28-capture-counters.json": "3cd893e0bc9e9c7162f99a5035a1f973a0bf5f04cc5d4111392eb604a683c9a5",
+    "p28-events.jsonl": "3b8b23bf283730009921a4fe8b7b8f732e900026205ca0df989a08a55e1a2775",
+    "p28-native.log": "663aa331b4d83611d7e2c1b24b3c2ca678fa3bc8d60cf5cf207573261d20838f",
+    "p28-publisher-counters.json": "905b27daa00cdd4a45f37459238d9d7a2fceea5d0121921cd5699f998621dc18",
+    "p29-capture-counters.json": "065058b6fa8e4de8fbd19d73c2cdfd4443f07150ccee3fb247838d651bd31c71",
+    "p29-events.jsonl": "44feadee62de83403896150677ff7e9f4abe8321521858d326db4ae32c4cd4bd",
+    "p29-native.log": "e17fb6a06a6d620540d9087910966fd022904e5d70c970fcd20636174c5e02c2",
+    "p29-publisher-counters.json": "ce24fe3c10a474f480bb708fa5b7054c95dcf0dcf8e0e5170ee5ac20c66e674e",
+    "regression-before.txt": "bfe636030d0a6305f6d75963c3f10b6e6cc448ca3ae256a4d0f29a32347f624a",
+    "sanitizer-environment.json": "1cd275d8ee8b297432bed5ec06371f747987c94d5fd0515f518de9750236ac5e"
+  },
+  "run_profiles": {
+    "p28": "flash17 diagnostics only; previous four-group poll limit; three complete provider turns passed",
+    "p29": "flash18 diagnostics and bounded batch fix; three complete provider turns passed",
+    "audio12-hundred": "flash18; 100 one-second captures, then playback/replacement and lease reconnect; not 100 complete echo cycles"
+  }
+}
