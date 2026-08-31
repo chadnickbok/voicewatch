@@ -5,19 +5,52 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: candidate validated; subscription-update follow-up unfinished
+## Latest checkpoint: submitted FIN no longer blocks fresh audio admission
 
-The isolated candidate below passed its recorded 849 unit tests and 145 native
-cases. Subsequent real-QUIC fixtures exposed two additional defects: advancing
-the requested floor can leave obsolete holes in the drain state, and a quiet
-subscription does not wake when its delivery cap changes. A supplemental WIP
-patch preserves the floor correction and regression tests separately from the
-validated candidate. The wakeup regression is still failing; the wakeup fix and
-complete post-fix validation remain outstanding. These new fixtures do not close
-the integration gate. See the library's
-[follow-up notes](../libs/moq-esp32/tests/interop/reference-candidate/README.md#unfinished-subscription-update-follow-up).
+The adapter now lets fully submitted FIN streams use the existing retirement
+reserve. They retain their IDs and ACK-owned bytes until backend closure; merely
+queued FIN remains active. A regression fails before this change and passes after
+it, including total-capacity enforcement and the reserved peer reply slots.
+Pool sizes, QUIC heap cap and the 200 ms media/loss budgets are unchanged.
 
-## Validated checkpoint: isolated terminal receive candidate
+Host and actual-adapter tests, 18 native interop/security cases and the full Ultra
+build pass. Flash36 is installed through the app0-only runner and reaches the
+shell heartbeat. Fresh sanitizer checks remain unverified: Docker cannot start
+even an empty container, and macOS ASan stalls in initialization before `main`.
+
+The new impaired baseline p75 fails with two word errors. Updated firmware p76
+completes two impaired provider turns with zero word errors, but its third loses
+the critical phrase and fails. This is not impaired-speech acceptance. Clean p77
+passes three provider turns with zero word errors and no capture loss/concealment.
+Permanent service enrollment is advanced to revision 114; no firmware restoration
+or production-host update occurs. See [the admission and speech evidence](implementation-evidence/2026-08-31-fin-retirement-admission/README.md).
+
+The full impairment/speech, sanitizer, unchanged-reference, security/allocation,
+physical shell/app, latency and release gates remain open.
+
+## Previous checkpoint: subscription updates and real-QUIC lifecycle corrected
+
+The candidate now fixes both follow-up defects: successfully forwarded floor
+changes withdraw obsolete holes and cancel lower active readers, while quiet
+subscription aggregation watches preference changes as well as departure. START
+and END retain their original meaning, and later latency changes cannot extend
+the fixed FIN drain deadline. These changes supersede the separate WIP patch.
+
+A fresh preparation from the maintained patch passes 853 reference unit tests
+and all 172 integration cases: 18 ordinary native cases, 100 engine exchanges with
+four concurrent peers, 27 delayed-reader runs, and 27 real-QUIC lifecycle runs.
+The lifecycle fixtures exercise late FIN, active DROP, known/unknown resets,
+floor changes including active-reader cancellation, cap changes, fixed FIN
+deadlines, and cancellation/replacement. Every case also completes an unrelated
+track on the same connection. See [the new evidence](implementation-evidence/2026-08-31-terminal-subscription-updates/README.md).
+
+The unchanged reference still loses the delayed tail; candidate success does not
+close that gate. Broader impairment, source replacement, backward seeks, subscriber
+combinations, and fault churn remain unverified. No upstream submission, pin change,
+host rollout or device access occurred. All remaining allocation/security, speech,
+physical shell/app, latency and release-soak requirements in the full plan remain.
+
+## Previous validated checkpoint: isolated terminal receive candidate
 
 A maintained opt-in patch now corrects the reference receiver's premature END/FIN
 completion. It retains subscription ownership until group readers settle and the

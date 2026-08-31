@@ -1,0 +1,49 @@
+{
+  "root_base_revision": "54b56c559950058822f3881633d71ba491505ea7",
+  "library_base_revision": "64c98db81eff857aa0509fbe3eb497630ec490b7",
+  "dirty_worktree": true,
+  "reference_patch": {
+    "base_revision": "eb5776e21eeaecba8e844be53c821895c178bcaf",
+    "patch": "terminal-drain.patch",
+    "patch_sha256": "14d48121c8039da548d82086122d0e80e3e2cc0734a46b87cee2dce45f521239",
+    "candidate_only": true,
+    "compatibility_pin_changed": false,
+    "files_sha256": {
+      "rs/moq-net/src/lite/mod.rs": "a8ecf5e5ac201d02744443529045b4390492cd4c6319eba0aab7bc067a6b2c51",
+      "rs/moq-net/src/lite/subscriber.rs": "7bea521146ea58ad3e54b6aca514f0fe10f93443bb1b63e74f56cfbcee3772ad",
+      "rs/moq-net/src/model/track.rs": "8c9744a83003c2847f526e49f59a69257d4fe2d71713a002237859b6b06f23f8",
+      "rs/moq-net/src/lite/receive_drain.rs": "8701503c0e7c7cee03a5dee059835f480ee77d68b79a990c9283b24562f00a37"
+    },
+    "local_path_crates": [
+      "moq-net",
+      "kio"
+    ]
+  },
+  "library_files_sha256": {
+    "tests/interop/prepare_reference_candidate.py": "39db424645ddd5bafcef8e28ddf7df2bb0afc54f34d348014437c540bf7e9764",
+    "tests/interop/validate_reference_candidate.py": "a0240eff6b9fdcb549ee291a43f134f2402f68b2fa8e4062cd08ed5372841577",
+    "tests/interop/reference-candidate/manifest.json": "cf8f29e1e8fd95e2a7742a105c08024ab7e3b9492eb32cf505011683bc82ced3",
+    "tests/interop/reference-candidate/terminal-drain.patch": "14d48121c8039da548d82086122d0e80e3e2cc0734a46b87cee2dce45f521239",
+    "tests/interop/peer/src/bin/terminal_faults.rs": "12c988e531df2e6f073d4a4721c464c97dbd260dee3a3593f092f8f81797f4fc",
+    "tests/interop/peer/Cargo.toml": "f1024f556d717bf9dc4e786b1b4c3128dfdd58c3757bc0f71b8f51f1fc0f6fcc",
+    "tests/interop/peer/Cargo.lock": "2851bf7eb0f2be44eb8dc70a5159578ebe5fcd699f886630f54c32fbf8915507",
+    "tests/interop/run.py": "aca3ad006b05810a2ec57fd52531f03eefe1f4d1e905a9bfae6f5ac044da3d04",
+    "tests/interop/reproduce_terminal.py": "17be6ede3b1a7a974743253979d2397d6c36c9d200c0b39fee4dfba32b06035e",
+    "compatibility/moq-dev.lock.json": "b269c0f189cab611b4aefefda8878ef77a2d861b26cb9391be04de7762927b40"
+  },
+  "isolated_peer_lock_sha256": "4f3451b1126b632852a2f78add6b9637753c90bc32f0205a5184c86710edd7bd",
+  "original_peer_sha256": "6218b8552125f58848a25681d113c2e16769c23524c6a892a190e51a85814812",
+  "logs_sha256": {
+    "unit_tests": "26f34630d67e35b8fc8fedf7221fed59a33f99073c3871f8086f45ab1e61b20e",
+    "preparation": "e8d23b5a527d1e70aefa9a44733b6b5909384554173d9e6d7b1ac2c30773da89",
+    "peer_build": "4913161c2435ea781c23809816e021efbd211f952af9e87daeaf2e7d70d125b9",
+    "matrix": "7728c786f21bfffa00a1cb60dc4515ec10d54ed9b0e9b8f89fd082dde868cae1",
+    "concurrent": "26e32536e48dc6cbc42b1c885faf7d6b8330e5c5d29b3bdee11964253a316ab7",
+    "delayed": "aeb0099fb09e66ed8e025bd90cbf36b5ec40473f95b4350abda92c28a59be1b3",
+    "lifecycle": "211cd1d21f8151c65c25650687071833d6ed46c277c1115f12eda0492048134f",
+    "baseline": "325da35ec8d977663cfce72e56fd201932bd7e9037d841fe8f3cdd85955a2321"
+  },
+  "candidate_peer_sha256": "b3b56c4d035210d14e2e09ff2f425ce7a25449f3786465833691a463ac4b6b8e",
+  "lifecycle_peer_sha256": "6a2391e8141faabf3f0703fbe679e8438710f7904d6b0b9a6e60b48ee863f2b2",
+  "client_sha256": "4b70444b5468457aea6386585d5dc8f30779b25f41a82af9ec701ddf284ac5f0"
+}

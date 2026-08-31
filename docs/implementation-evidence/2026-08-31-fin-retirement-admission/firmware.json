@@ -1,0 +1,9 @@
+{
+  "image_sha256": "ef656b468a63094684302d5e88b3a03d3f5e2f5a3f67b3b677213728410d31a2",
+  "changed_offset": 65536,
+  "changed_span": 3432448,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "[host] uptime heartbeat; free heap:"
+}

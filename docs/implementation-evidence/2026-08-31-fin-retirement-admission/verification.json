@@ -1,0 +1,34 @@
+{
+  "adapter_regression_failed_before": true,
+  "adapter_tests_pass": true,
+  "host_tests_pass": true,
+  "native_matrix_pass": true,
+  "native_cases": 18,
+  "firmware_build_pass": true,
+  "app0_flash_and_heartbeat_pass": true,
+  "impaired_speech_pass": false,
+  "clean_provider_turns": 3,
+  "clean_speech_pass": true,
+  "linux_sanitizers": "not_run_container_startup_stalled_even_for_bin_true",
+  "macos_sanitizers": "not_run_ASan_initializer_stalled_before_main",
+  "sanitizer_processes_stopped": true,
+  "firmware_restoration_required": false,
+  "permanent_enrollment_revision": 114,
+  "logs_sha256": {
+    "adapter_before": "280a242b24d3bb1cb65ec5cb350f1332c55bc3aad72fb60352a9bcd660e8aec1",
+    "adapter_after": "451c87bdf643f4d6f32cea9da179f182b0100c67bf0a6e53f15441afa3523fd0",
+    "host": "80d779eac133d1ee81bfdf5327e221e39dc362244d67da5ab045a396a8c0dffa",
+    "firmware_build": "6f1bc13087f310699d451d3b755ff65549008d11ac6ece731994073e326f683a",
+    "native_build": "8b5958783a7748fc764aa15fb91d7284c72071b561ff84c132c6a7ab8195a852",
+    "native_matrix": "f0623eeb41b7159cdf8608a928590cd8870b1a77c39d1735eadd55e3819659aa",
+    "macos_sanitizer": "42f01c3eebd5fbe7abdf5594e8056c3498c7958edeab7ef928218ad64af4e704",
+    "macos_sanitizer_sample": "2be47a276fd27499c1dc8d092bd68fd3f5a4fb3ad8a9778159f6ff7e151d3c0e",
+    "linux_sanitizer_startup": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  },
+  "permanent_session_ready_observed": true,
+  "permanent_ready_monotonic_ms": 5551102.176,
+  "persistent_service_pids": {
+    "moq": 45731,
+    "legacy": 2759
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "root_base_revision": "54b56c559950058822f3881633d71ba491505ea7",
+  "library_base_revision": "64c98db81eff857aa0509fbe3eb497630ec490b7",
+  "dirty_worktree": true,
+  "library_files_sha256": {
+    "components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "4c7afd1a241d4f846858f8866e83503b3b4b757f08b2c1eba668e6ca9c11061a",
+    "tests/adapter/test_adapter.c": "ab8b24b640edf78ae86a5454dda917b3e39dfb88aae4bdca2392a7aca35d071b",
+    "docs/transport-backend.md": "632c05685575c60b6fc598d34bac3289f9b63ab0371797c1eed7bb25db958709"
+  },
+  "root_files_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "b4c6582a0f5fd11da18b047339b7e4e669e8a5c6bf46a3bc787b9a4a7994ce9d",
+    "doodad-runtime/services/live-agent/tools/moq_speech_quality.py": "2266ba66621af92f37e682a974507beeab3ee5dd0cd5811c18c39fb9fdf32ac5",
+    "doodad-runtime/services/live-agent/tools/moq_udp_impairment.py": "19e432cda8ba9be5bbc6525cec86f89420275058b240231a64d7e07b31363043"
+  },
+  "native_client_sha256": "4455f56bb2c540da758f4bab5e486f77fa4df9b55e98fdb6e2aa2e0c4c70622c",
+  "native_reference_peer_sha256": "6218b8552125f58848a25681d113c2e16769c23524c6a892a190e51a85814812",
+  "bench_endpoint_sha256": "a30b4fb3c38958e4dc89d9152c2ad49ae601146faca7b4930f60b43ca7c6b7e1",
+  "firmware_sha256": "ef656b468a63094684302d5e88b3a03d3f5e2f5a3f67b3b677213728410d31a2",
+  "elf_sha256": "fae05a41583d8cbc9f0e12ef000caf5855ee9eaed9d55a7894d7c526be26b594",
+  "firmware_bytes": 3428432,
+  "reference_candidate_deployed": false
+}

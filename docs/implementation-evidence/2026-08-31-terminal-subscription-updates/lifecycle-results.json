@@ -1,0 +1,371 @@
+[
+  {
+    "iteration": 0,
+    "case": "late_fin",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "late_fin",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "drop_active",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "drop_active",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "reset_known",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "reset_known",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "reset_unknown",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "reset_unknown",
+      "details": {
+        "control_closed_ms": 251,
+        "successful_terminal": false
+      },
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "advance_floor",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "advance_floor",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "advance_active",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "advance_active",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "cap_park",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "cap_park",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "fin_deadline",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "fin_deadline",
+      "details": {
+        "control_closed_ms": 251,
+        "successful_terminal": false
+      },
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 0,
+    "case": "cancel_replacement",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "cancel_replacement",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "late_fin",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "late_fin",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "drop_active",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "drop_active",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "reset_known",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "reset_known",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "reset_unknown",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "reset_unknown",
+      "details": {
+        "control_closed_ms": 252,
+        "successful_terminal": false
+      },
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "advance_floor",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "advance_floor",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "advance_active",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "advance_active",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "cap_park",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "cap_park",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "fin_deadline",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "fin_deadline",
+      "details": {
+        "control_closed_ms": 252,
+        "successful_terminal": false
+      },
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 1,
+    "case": "cancel_replacement",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "cancel_replacement",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "late_fin",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "late_fin",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "drop_active",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "drop_active",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "reset_known",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "reset_known",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "reset_unknown",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "reset_unknown",
+      "details": {
+        "control_closed_ms": 253,
+        "successful_terminal": false
+      },
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "advance_floor",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "advance_floor",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "advance_active",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "advance_active",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "cap_park",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "cap_park",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "fin_deadline",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "fin_deadline",
+      "details": {
+        "control_closed_ms": 251,
+        "successful_terminal": false
+      },
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  },
+  {
+    "iteration": 2,
+    "case": "cancel_replacement",
+    "exit_code": 0,
+    "case_pass": true,
+    "result": {
+      "case": "cancel_replacement",
+      "details": {},
+      "pass": true,
+      "unrelated_track_pass": true
+    },
+    "stderr": ""
+  }
+]

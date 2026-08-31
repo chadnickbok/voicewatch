@@ -1,0 +1,28 @@
+{
+  "advance_floor": {
+    "result": {
+      "case": "advance_floor",
+      "elapsed_ms": 3017,
+      "error": "Ok(Err(waiting for subscription drain\n\nCaused by:\n    deadline has elapsed))",
+      "pass": false
+    },
+    "log_sha256": "ef2c26b84e906a8f06e7ae429322ce9efea2f85e3e6d55d7915e54b9d4cdda05",
+    "candidate_patch_sha256": "a0edd285c206dcee1ee92be3bce97253660b465bec40797d9eb9ed429ecc57e9"
+  },
+  "cap_park": {
+    "result": {
+      "case": "cap_park",
+      "elapsed_ms": 3650,
+      "error": "Ok(Err(waiting for wire SUBSCRIBE_UPDATE\n\nCaused by:\n    deadline has elapsed))",
+      "pass": false
+    },
+    "log_sha256": "04d38296687dc13118752630e9506e5badd6b411f1a2a5297f9445e600de7bab",
+    "candidate_patch_sha256": "a0edd285c206dcee1ee92be3bce97253660b465bec40797d9eb9ed429ecc57e9"
+  },
+  "contributing_subscription_update_wakes_quiet_aggregate": {
+    "pass_before_fix": false,
+    "error": "preference update failed to wake the parked aggregate",
+    "log_sha256": "595438da775d3e4e3992160977cb3c25fc970f15a11aa112a447911291e872c5",
+    "source": "library commit 64c98db: terminal-drain.patch plus subscription-update-wip.patch"
+  }
+}
