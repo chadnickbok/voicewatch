@@ -10,6 +10,7 @@ import json
 import signal
 import socket
 import ssl
+import struct
 import tempfile
 from datetime import datetime, timedelta, timezone
 from ipaddress import ip_address
@@ -206,8 +207,8 @@ async def test_native_authorized_session(mode):
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize('cancel_before_bound', [False, True])
-async def test_product_session_over_real_native_boundary(cancel_before_bound):
+@pytest.mark.parametrize('cancel_before_bound,output_only', [(False,False), (True,False), (False,True)])
+async def test_product_session_over_real_native_boundary(cancel_before_bound,output_only):
     """Real product adapter, synthetic application PCM, emulated watch receipts.
 
     Unlike the framing fixture above, no test callback writes native IPC. This
@@ -286,13 +287,29 @@ async def test_product_session_over_real_native_boundary(cancel_before_bound):
                 assert welcome['type'] == 'welcome'
                 await send('peer.ready', {})
                 child = await probe(dict(address=f'127.0.0.1:{port}', roots=str(roots), setup_path=grant['setup_path'],
-                                          publish=grant['publish'], subscribe=grant['subscribe'], mode='audio'), directory)
+                                          publish=grant['publish'], subscribe=grant['subscribe'],
+                                          mode='output_only' if output_only else 'audio'), directory)
                 await asyncio.wait_for(ready.wait(), 5)
-                await send('listen.requested', {})
-                start = await ws.receive_json(timeout=3)
-                assert start['type'] == 'capture.start'
-                await send('capture.started', {**IDENTITY, 'first_group': '0', 'start_id': start['payload']['start_id']})
-                await send('capture.stopped', {**IDENTITY, 'first_group': '0', 'end_group': '3', 'samples': '537'})
+                if output_only:
+                    session = transport.sessions[DEVICE]
+                    authorization = asyncio.create_task(session.authorize_response('text'))
+                    request = await ws.receive_json(timeout=3)
+                    assert request['type'] == 'context.request'
+                    await send('context.ready',dict(context_request_id=request['payload']['context_request_id'],
+                        kind='text',context_id='71',request_id='0',owner_token='0'))
+                    await authorization
+                    assert session._capture is None
+                    respond(session,b''.join(struct.pack('<h',(n*13%80-40)*300) for n in range(537)))
+                    async def wait_output():
+                        await session.resume_after_downlink()
+                        played.set()
+                    waits.append(asyncio.create_task(wait_output()))
+                else:
+                    await send('listen.requested', {})
+                    start = await ws.receive_json(timeout=3)
+                    assert start['type'] == 'capture.start'
+                    await send('capture.started', {**IDENTITY, 'first_group': '0', 'start_id': start['payload']['start_id']})
+                    await send('capture.stopped', {**IDENTITY, 'first_group': '0', 'end_group': '3', 'samples': '537'})
                 while not played.is_set():
                     document = await ws.receive_json(timeout=5)
                     payload = document['payload']
@@ -322,7 +339,9 @@ async def test_product_session_over_real_native_boundary(cancel_before_bound):
                 stdout, stderr = await asyncio.wait_for(child.communicate(), 8)
                 assert child.returncode == 0, stderr.decode()
                 assert json.loads(stdout)['reference_pcm_match']
-                assert events.count('capture.stopped') == 1
+                assert events.count('capture.stopped') == (0 if output_only else 1)
+                if output_only:
+                    assert not captured and json.loads(stdout)['input_samples']==0
                 assert not transport.bridge.unexpected_failures and not transport.bootstrap.unexpected_failures
                 await ws.close()
         finally:

@@ -317,6 +317,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             owner.audio, owner.stop_capture, owner.begin, owner.end, owner.wait, owner.action,
             publish_state, history=history,
             explicit_capture=getattr(session, 'explicit_capture_completion', False),
+            authorize_response=owner.authorize_response if getattr(session, 'explicit_capture_completion', False) else None,
         )
         await runtime.conversation.start()
 

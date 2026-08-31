@@ -1154,6 +1154,7 @@ bool capture_begin(Identity identity,std::uint32_t duration_ms) {
     stop_capture(false); start_capture(identity,duration_ms); return true;
 }
 bool capture_finish() { stop_capture(); return true; }
+bool response_context_begin(Identity) { return false; }
 void cancel() { stop_capture(false); stop_and_reset_playback("cancelled"); }
 bool receive_begin(const Response&) { return false; }
 bool receive_end(std::uint64_t,std::uint64_t,std::uint64_t) { return false; }

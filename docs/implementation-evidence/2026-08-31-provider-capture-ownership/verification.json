@@ -1,0 +1,31 @@
+{
+  "python": {
+    "passed": 261,
+    "warnings": 4,
+    "command": ".venv/bin/python -m pytest -q -o addopts="
+  },
+  "native": {
+    "passed": 5,
+    "command": ".venv/bin/python -m pytest tests/moq_native_integration.py -q -o addopts="
+  },
+  "physical": {
+    "successful_runs": 6,
+    "failed_runs": 1,
+    "completed_provider_turns": 18,
+    "fresh_session_reconnects": 6,
+    "firmware_written": false,
+    "restoration_required": false,
+    "mac_output_volume_after": 0,
+    "mac_output_muted_after": true
+  },
+  "privacy": {
+    "ambient_pcm_persisted": false,
+    "raw_logs_copied": false,
+    "transcripts_in_public_evidence": false
+  },
+  "limits": [
+    "host-driven capture, not physical button PTT",
+    "p37 failed the mandatory fresh-read stage",
+    "remaining implementation-plan gates remain open"
+  ]
+}

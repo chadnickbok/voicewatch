@@ -36,7 +36,7 @@ struct CopiedSession {
     char host[254]{}, roots[8193]{}, path[3073]{};
     char local[257]{}, remote[257]{};
 };
-enum class Operation { connect, start, finish, receive, receive_end };
+enum class Operation { connect, start, finish, receive, receive_end, context };
 struct Command {
     Operation operation{};
     std::uint64_t revision = 0;
@@ -563,6 +563,14 @@ void audio_task(void*) {
                 case Operation::finish:
                     if (o.start_pending) { o.start_pending=false; o.identity=o.start_command.identity; emit(o,EventKind::capture_failed,0,true); o.identity={}; }
                     finish_capture(o); break;
+                case Operation::context:
+                    if (command.identity.capture_id<=o.capture_floor || o.capturing || o.finishing || o.receive || o.publish) {
+                        fail(o,ESP_MOQ_ERR_INVALID_STATE); break;
+                    }
+                    o.identity=command.identity;
+                    o.capture_floor=command.identity.capture_id;
+                    emit(o,EventKind::response_context_ready);
+                    break;
                 case Operation::receive:
                     o.pending_response=command.response; o.receive_pending=true; o.receive_deadline=now_us()+500000;
                     break;
@@ -677,6 +685,12 @@ bool capture_begin(Identity identity,std::uint32_t duration_ms) {
 }
 bool capture_finish() {
     Command command{}; command.operation=Operation::finish;
+    return enqueue(command);
+}
+bool response_context_begin(Identity identity) {
+    if (!g_ready.load() || !identity.capture_id) return false;
+    cancel();
+    Command command{}; command.operation=Operation::context; command.identity=identity;
     return enqueue(command);
 }
 void cancel() { if (g_mutex) { Lock lock; invalidate_locked(); } }

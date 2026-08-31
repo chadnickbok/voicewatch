@@ -58,6 +58,11 @@ from .controller import ForegroundController
 from .builder import AppBuilder
 from .metrics import LatencyTrace
 from .capture_stt import CaptureRealtimeSTTService, CaptureTurn, frame_turn
+from .session import ACTION_CURRENT
+from .capture_pipeline import (
+    CaptureAggregatorPair, CaptureResponsesLLMService, CaptureElevenLabsTTSService,
+    OWNED_FRAMES, live, provider_turn,
+)
 
 
 AudioSink = Callable[[bytes, int], int]
@@ -85,6 +90,9 @@ questions and completions. The current selected entity is resolved by determinis
 code. Use get_task_status whenever the user asks what an agent or background task is
 doing; do not rely on conversational memory for task state. Research reports and
 presentation-delivery requests are durable general background work, not app builds.
+For current watch or workout state, invoke the relevant read tool on each request;
+previous results may be stale. An interrupted read can safely be repeated, but an
+interrupted mutation may already have completed: check state before repeating it.
 Do not expose IDs unless the user asks."""
 
 
@@ -181,10 +189,10 @@ class FocusRouter(FrameProcessor):
                 # the foreground model infer again; that can accidentally
                 # invoke an unrelated tool. Consume the transcript and send a
                 # deterministic confirmation straight to TTS instead.
-                await self.push_frame(
-                    TTSSpeakFrame(f"Got it—{routed.answer} selected for that build."),
-                    direction,
-                )
+                speech = TTSSpeakFrame(f"Got it—{routed.answer} selected for that build.")
+                if frame_turn(frame) is not None:
+                    frame_turn(frame).stamp(speech)
+                await self.push_frame(speech, direction)
                 return
         await self.push_frame(frame, direction)
 
@@ -196,20 +204,28 @@ class AssistantTextTap(FrameProcessor):
         self,
         on_reset: AsyncCallback,
         on_text: Callable[[str], Awaitable[None]],
+        *, require_capture: bool = False,
     ) -> None:
         super().__init__()
         self.on_reset = on_reset
         self.on_text = on_text
+        self.require_capture = require_capture
 
     async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
         await super().process_frame(frame, direction)
+        if self.require_capture and isinstance(frame, OWNED_FRAMES) and not live(frame_turn(frame)):
+            return
         if isinstance(frame, LLMFullResponseStartFrame):
             await self.on_reset()
         elif isinstance(frame, LLMTextFrame):
             await self.on_text(frame.text)
         elif isinstance(frame, TTSSpeakFrame):
             await self.on_reset()
+            if self.require_capture and not live(frame_turn(frame)):
+                return
             await self.on_text(frame.text)
+        if self.require_capture and isinstance(frame, OWNED_FRAMES) and not live(frame_turn(frame)):
+            return
         await self.push_frame(frame, direction)
 
 
@@ -232,6 +248,7 @@ class ConversationSink(FrameProcessor):
         on_tts_started: AsyncCallback,
         on_playout_drain: AsyncCallback,
         on_tts_stopped: AsyncCallback,
+        *, require_capture: bool = False,
     ) -> None:
         super().__init__()
         self.audio_sink = audio_sink
@@ -249,6 +266,11 @@ class ConversationSink(FrameProcessor):
         self._retired = False
         self._tts_active = False
         self._tts_context: str | None = None
+        self.require_capture = require_capture
+        self._tts_turn: CaptureTurn | None = None
+
+    def _current(self, turn) -> bool:
+        return not self._retired and (not self.require_capture or live(turn))
 
     def retire(self) -> None:
         """Synchronous fence, before queued provider cancellation can run."""
@@ -263,6 +285,9 @@ class ConversationSink(FrameProcessor):
         self._bot_speaking = True
         downstream = BotStartedSpeakingFrame()
         upstream = BotStartedSpeakingFrame()
+        if self._tts_turn is not None:
+            self._tts_turn.stamp(downstream)
+            self._tts_turn.stamp(upstream)
         upstream.broadcast_sibling_id = downstream.id
         downstream.broadcast_sibling_id = upstream.id
         await self.push_frame(downstream)
@@ -274,6 +299,9 @@ class ConversationSink(FrameProcessor):
         self._bot_speaking = False
         downstream = BotStoppedSpeakingFrame()
         upstream = BotStoppedSpeakingFrame()
+        if self._tts_turn is not None:
+            self._tts_turn.stamp(downstream)
+            self._tts_turn.stamp(upstream)
         upstream.broadcast_sibling_id = downstream.id
         downstream.broadcast_sibling_id = upstream.id
         await self.push_frame(downstream)
@@ -281,6 +309,16 @@ class ConversationSink(FrameProcessor):
 
     async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
         await super().process_frame(frame, direction)
+        turn = frame_turn(frame)
+        if isinstance(frame, OWNED_FRAMES) and not self._current(turn):
+            return
+        token = provider_turn.set(turn)
+        try:
+            await self._process_owned_frame(frame, direction, turn)
+        finally:
+            provider_turn.reset(token)
+
+    async def _process_owned_frame(self, frame, direction, turn):
         if self._retired and isinstance(frame, (TTSStartedFrame, TTSAudioRawFrame, TTSTextFrame,
                                                 TTSStoppedFrame, LLMFullResponseStartFrame,
                                                 UserStartedSpeakingFrame, UserStoppedSpeakingFrame)):
@@ -308,6 +346,7 @@ class ConversationSink(FrameProcessor):
             self._first_tts_audio = True
             self._tts_active = True
             self._tts_context = frame.context_id
+            self._tts_turn = turn
             await self.on_tts_started()
         elif isinstance(frame, TTSAudioRawFrame):
             if not self._tts_active or frame.context_id != self._tts_context:
@@ -316,6 +355,8 @@ class ConversationSink(FrameProcessor):
                 self.trace.mark("tts.first_audio")
                 self._first_tts_audio = False
                 await self._broadcast_bot_started()
+            if not self._current(turn):
+                return
             self.audio_sink(frame.audio, frame.sample_rate)
         elif isinstance(frame, TTSTextFrame):
             if not self._tts_active or frame.context_id != self._tts_context:
@@ -328,7 +369,7 @@ class ConversationSink(FrameProcessor):
             self.trace.mark("tts.stopped")
             generation = self._utterance_generation
             await self.on_playout_drain()
-            if self._utterance_interrupted or generation != self._utterance_generation:
+            if not self._current(turn) or self._utterance_interrupted or generation != self._utterance_generation:
                 if generation == self._utterance_generation:
                     self._pending_tts_text.clear()
                 return
@@ -336,10 +377,17 @@ class ConversationSink(FrameProcessor):
             pending_text = self._pending_tts_text
             self._pending_tts_text = []
             for text_frame, text_direction in pending_text:
+                if not self._current(turn):
+                    return
                 await self.push_frame(text_frame, text_direction)
+            if not self._current(turn):
+                return
             await self.push_frame(frame, direction)
             await self._broadcast_bot_stopped()
-            await self.on_tts_stopped()
+            if self._current(turn):
+                await self.on_tts_stopped()
+            return
+        if isinstance(frame, OWNED_FRAMES) and not self._current(turn):
             return
         await self.push_frame(frame, direction)
 
@@ -361,6 +409,7 @@ class LiveConversation:
         action_invoker: ActionInvoker,
         state_sink: StateSink,
         *, history: list | None = None, explicit_capture: bool = False,
+        authorize_response: Callable[[str], Awaitable[Any]] | None = None,
     ) -> None:
         self.controller = controller
         self.builder = builder
@@ -395,6 +444,8 @@ class LiveConversation:
         self.explicit_capture = explicit_capture
         self._capture_open = False
         self._capture_turn: CaptureTurn | None = None
+        self._authorize_response = authorize_response
+        self._attention_retry_at = 0.0
 
     async def start(self) -> None:
         missing = [
@@ -422,7 +473,8 @@ class LiveConversation:
                 ),
             )
         )
-        aggregators = LLMContextAggregatorPair(
+        aggregator_type = CaptureAggregatorPair if self.explicit_capture else LLMContextAggregatorPair
+        aggregators = aggregator_type(
             context,
             user_params=LLMUserAggregatorParams(
                 user_turn_stop_timeout=3.0,
@@ -448,7 +500,8 @@ class LiveConversation:
         )
         if self.explicit_capture:
             vad = PipelineProbe(self.trace, "capture_boundary")
-        llm = OpenAIResponsesLLMService(
+        llm_type = CaptureResponsesLLMService if self.explicit_capture else OpenAIResponsesLLMService
+        llm = llm_type(
             api_key=os.environ["OPENAI_API_KEY"],
             settings=OpenAIResponsesLLMService.Settings(
                 model=os.getenv("OPENAI_FOREGROUND_MODEL", "gpt-5.6-luna"),
@@ -459,7 +512,8 @@ class LiveConversation:
                 reasoning=OpenAIResponsesReasoningConfig(effort="none"),
             ),
         )
-        tts = ElevenLabsTTSService(
+        tts_type = CaptureElevenLabsTTSService if self.explicit_capture else ElevenLabsTTSService
+        tts = tts_type(
             api_key=os.environ["ELEVENLABS_API_KEY"],
             settings=ElevenLabsTTSService.Settings(
                 voice=os.environ["ELEVENLABS_DEFAULT_VOICE_ID"],
@@ -476,6 +530,7 @@ class LiveConversation:
         assistant_text = AssistantTextTap(
             self._clear_assistant_text,
             self._append_assistant_text,
+            require_capture=self.explicit_capture,
         )
         sink = ConversationSink(
             self.audio_sink,
@@ -485,6 +540,7 @@ class LiveConversation:
             self._begin_speaking,
             self._drain_downlink,
             self._at_natural_pause,
+            require_capture=self.explicit_capture,
         )
         self._sink = sink
         pipeline = Pipeline(
@@ -569,7 +625,12 @@ class LiveConversation:
         bounded = " ".join(text.split())[:500]
         if not bounded or self.worker is None or self._retired:
             return
-        await self.begin_listening()
+        if self.explicit_capture:
+            turn = await self._begin_response_turn('text')
+            if turn is None:
+                return
+        else:
+            await self.begin_listening()
         frame = TranscriptionFrame(
             text=bounded,
             user_id="watch-text",
@@ -578,9 +639,52 @@ class LiveConversation:
             finalized=False,
         )
         if self.explicit_capture:
-            self._capture_turn = CaptureTurn()
-            self._capture_turn.stamp(frame)
+            turn.stamp(frame)
         await self.worker.queue_frame(frame)
+
+    async def _begin_response_turn(self, kind: str) -> CaptureTurn | None:
+        """Obtain watch output authorization without opening microphone input."""
+        if self._retired or self.worker is None or self._authorize_response is None:
+            return None
+        if kind == 'background' and (self._capture_open or self.voice_phase not in {'idle', 'ready'}):
+            return None
+        self._invalidate_capture()
+        turn = CaptureTurn()
+        self._capture_turn = turn
+        await self.worker.queue_frame(InterruptionFrame())
+        if turn is not self._capture_turn or not turn.live:
+            return None
+        try:
+            await self._authorize_response(kind)
+        except (ConnectionError, TimeoutError):
+            if turn is self._capture_turn:
+                self._invalidate_capture()
+                await self._set_voice_phase('ready')
+            self.trace.mark('response.context_unavailable', source=kind)
+            return None
+        if turn is not self._capture_turn or not turn.live or self._retired:
+            return None
+        self._cancel_transcript_watchdog()
+        self.user_text = ''
+        self.assistant_text = ''
+        self._current_turn_has_final = False
+        await self._set_voice_phase('thinking')
+        if turn is not self._capture_turn or not turn.live:
+            return None
+        return turn
+
+    async def _deliver_idle_attention(self) -> None:
+        turn = await self._begin_response_turn('background')
+        if turn is None:
+            return
+        # Do not consume/focus a durable notification until watch authorization
+        # succeeds; a busy guest or a cancelled context leaves it pending.
+        action = self.attention.natural_pause(int(time.time() * 1000))
+        if action is None:
+            await self._set_voice_phase('ready')
+            return
+        self.trace.mark('attention.spoken', kind_detail=action.kind, job_id=action.job_id)
+        await self.worker.queue_frame(turn.stamp(TTSSpeakFrame(action.text)))
 
     async def begin_listening(self) -> None:
         if self.explicit_capture:
@@ -670,8 +774,14 @@ class LiveConversation:
             self._response_journal_full = True
 
     async def _begin_speaking(self) -> None:
+        if not self._provider_current():
+            return
         await self.stop_capture()
+        if not self._provider_current():
+            return
         await self.begin_downlink()
+        if not self._provider_current():
+            return
         await self._set_voice_phase("speaking")
 
     def _cancel_transcript_watchdog(self) -> None:
@@ -727,10 +837,14 @@ class LiveConversation:
         # for playout (MoQ requires the matching watch receipt). There is no fixed
         # response-length timeout here; interruption clears the generation and
         # releases this wait.
-        await self.end_downlink()
-        await self.wait_for_playback()
+        if self._provider_current():
+            await self.end_downlink()
+        if self._provider_current():
+            await self.wait_for_playback()
 
     async def _at_natural_pause(self) -> None:
+        if not self._provider_current():
+            return
         if self.voice_phase != "speaking":
             self.trace.mark(
                 "downlink.stale_stop", voice_phase=self.voice_phase
@@ -741,7 +855,10 @@ class LiveConversation:
             self.trace.mark(
                 "attention.spoken", kind_detail=action.kind, job_id=action.job_id
             )
-            await self.worker.queue_frame(TTSSpeakFrame(action.text))
+            frame = TTSSpeakFrame(action.text)
+            if self.explicit_capture:
+                provider_turn.get().stamp(frame)
+            await self.worker.queue_frame(frame)
         else:
             await self._set_voice_phase("ready")
 
@@ -767,6 +884,13 @@ class LiveConversation:
                 self.attention.background_snapshot(),
                 self._display_state(),
             )
+            if (self.explicit_capture and self.voice_phase in {'idle', 'ready'}
+                    and not self._capture_open and time.monotonic() >= self._attention_retry_at):
+                snapshot = self.attention.background_snapshot()
+                if not snapshot.get('focused_question') and (
+                        snapshot.get('completion_pending') or self.attention.jobs.open_questions()):
+                    self._attention_retry_at = time.monotonic() + 1.0
+                    await self._deliver_idle_attention()
             await asyncio.sleep(0.1)
 
     async def _set_voice_phase(self, phase: str) -> None:
@@ -790,12 +914,53 @@ class LiveConversation:
             self._display_state(),
         )
 
+    def _provider_current(self) -> bool:
+        if getattr(self, '_retired', False):
+            return False
+        if not getattr(self, 'explicit_capture', False):
+            return True
+        turn = provider_turn.get()
+        return live(turn) and turn is self._capture_turn
+
+    def _require_provider_current(self) -> None:
+        if not self._provider_current():
+            raise ConnectionError('provider capture retired')
+
+    async def _invoke_action(self, name, arguments, request_id):
+        self._require_provider_current()
+        turn = provider_turn.get()
+        def current():
+            return not self._retired and (not self.explicit_capture or (
+                live(turn) and turn is self._capture_turn))
+        token = ACTION_CURRENT.set(current)
+        try:
+            result = await self.action_invoker(name, arguments, request_id)
+        finally:
+            ACTION_CURRENT.reset(token)
+        self._require_provider_current()
+        return result
+
     def _current_tool(self, handler):
         @functools.wraps(handler)
         async def guarded(params):
-            if self._retired:
-                raise ConnectionError('provider session retired')
-            return await handler(params)
+            self._require_provider_current()
+            if not self.explicit_capture:
+                return await handler(params)
+            turn = provider_turn.get()
+            original_callback = params.result_callback
+            async def result_callback(*args, **kwargs):
+                if not live(turn) or turn is not self._capture_turn or self._retired:
+                    raise ConnectionError('provider capture retired')
+                token = provider_turn.set(turn)
+                try:
+                    await original_callback(*args, **kwargs)
+                finally:
+                    provider_turn.reset(token)
+                if not live(turn) or turn is not self._capture_turn or self._retired:
+                    raise ConnectionError('provider capture retired')
+            owned_params = copy.copy(params)
+            owned_params.result_callback = result_callback
+            return await handler(owned_params)
         return guarded
 
     def _tools(self) -> list[FunctionSchema]:
@@ -803,7 +968,7 @@ class LiveConversation:
         async def record(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="record_missed_set")
             state = self.controller.kernel.snapshot()
-            result = await self.action_invoker(
+            result = await self._invoke_action(
                 "record_missed_set",
                 {
                     "workout_id": state["active_workout_id"],
@@ -818,7 +983,7 @@ class LiveConversation:
         @self._current_tool
         async def next_set(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="get_next_set")
-            result = await self.action_invoker(
+            result = await self._invoke_action(
                 "get_next_set", {}, params.tool_call_id
             )
             await params.result_callback(result)
@@ -828,7 +993,7 @@ class LiveConversation:
         async def food(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="log_food")
             arguments = params.arguments
-            result = await self.action_invoker(
+            result = await self._invoke_action(
                 "log_food",
                 {
                     "description": str(arguments["description"]),

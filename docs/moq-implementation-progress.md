@@ -5,7 +5,54 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: STT capture ownership and cancellation
+## Latest checkpoint: output-only response contexts (hardware validation pending)
+
+Text and idle background speech now request a watch-issued response context
+before entering the output pipeline. The control protocol correlates requests,
+ready/busy receipts and cancellation. The native endpoint authorizes playback
+without starting a capture reader; the firmware audio owner acknowledges the
+context without activating the microphone. These contexts share the watch's
+monotonic identity namespace with captures. Native IPC retains the legacy
+`capture_id` field for media correlation; an output-only context does not create
+a microphone capture or synthetic input audio.
+
+The current checkpoint passes 267 Python tests (four warnings), six native
+integration cases and sixteen Rust tests. The native output-only case checks
+537 output samples against the reference codec and zero input samples. The
+ESP-IDF firmware build passes. This response-context firmware has not been
+flashed or validated on the Ultra; conversation-level text/background tests and
+physical output-only acceptance remain unfinished. WebRTC remains the default,
+and the full replacement goal remains open. No firmware restoration is required.
+
+## Previous checkpoint: model, tool and TTS capture ownership
+
+The previously staged provider adapters are now integrated into the MoQ path.
+Capture ownership follows aggregated model context, tool runners/results, TTS
+contexts, audio delivery and played assistant history. Cancelled work is checked
+again across asynchronous waits; the MoQ writer also rejects an action that was
+cancelled while queued. Already-issued actions may have completed, and accepted
+durable jobs survive foreground cancellation.
+
+Synthetic reproductions exposed both a stale tool invocation and late TTS audio
+write. A separate TTS receive race could overwrite replacement word alignment;
+alignment now belongs to each TTS context. The full suite has 261 passing Python
+tests and five passing native integration cases.
+
+Six physical provider runs pass, covering eighteen complete fresh tool/speech
+turns and six new-session reconnects. They include delayed real tool callbacks
+and delayed real TTS start/audio released after cancellation during replacement
+captures. The final TTS run also verifies one played assistant-history message
+per fresh turn. One intermediate repeat failed because the model omitted a new
+watch-state read; the failure remains recorded, and the freshness instruction
+was corrected before subsequent passing runs. See
+[provider capture evidence](implementation-evidence/2026-08-31-provider-capture-ownership/README.md).
+
+No firmware was flashed. WebRTC remains the default. Text/background response
+authorization, controlled-loss recovery, long responses/lease renewal, allocation
+limits, broader security, deployment, physical full-shell controls and endurance
+remain acceptance work; these results do not close those gates.
+
+## Previous checkpoint: STT capture ownership and cancellation
 
 A reproduced cancellation bug allowed a delayed STT final to reach routing
 after its capture was cancelled and a new capture had started. The MoQ STT
@@ -21,7 +68,7 @@ The STT resampler now has per-capture history, flushes the final samples before
 commit, and never clears buffered samples merely because scheduling pauses.
 
 Three complete provider turns pass on the Ultra. Three further physical runs hold
-a real STT final in memory, cancels that capture, and releases the old event
+a real STT final in memory, cancel that capture, and release the old event
 during a new capture. Each rejects the stale final and completes three fresh
 tool/TTS/playback turns plus a new-session reconnect. No transcript is injected
 or saved, and no firmware is flashed. The checkpoint has 234 passing Python

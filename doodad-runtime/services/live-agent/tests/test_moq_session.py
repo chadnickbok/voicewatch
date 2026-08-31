@@ -9,7 +9,7 @@ from doodad_agent.metrics import LatencyTrace
 from doodad_agent.moq_auth import GrantRegistry, bootstrap_proof
 from doodad_agent.moq_ipc import Packet
 from doodad_agent.moq_session import MoqSession, MoqSessionError
-from doodad_agent.session import DownlinkUtteranceBinding
+from doodad_agent.session import ACTION_CURRENT, DownlinkUtteranceBinding
 
 DEVICE = 'watch-ultra-session-test'
 KEY = bytes(range(32))
@@ -256,6 +256,119 @@ async def test_action_result_and_disconnect_preserve_shared_futures(harness):
     await h.session.close()
     with pytest.raises(ConnectionError):
         await pending
+
+
+@pytest.mark.asyncio
+async def test_cancelled_action_waiting_for_writer_never_reaches_watch(harness):
+    h = harness
+    entered, release = asyncio.Event(), asyncio.Event()
+    original_send = h.ws.send_str
+    async def held_send(raw):
+        if json.loads(raw)['type'] == 'test.writer_gate':
+            entered.set()
+            await release.wait()
+        await original_send(raw)
+    h.ws.send_str = held_send
+    await h.session.send('test.writer_gate', {})
+    await asyncio.wait_for(entered.wait(), 1)
+    operation = {'live': True}
+    token = ACTION_CURRENT.set(lambda: operation['live'])
+    try:
+        pending = asyncio.create_task(h.session.invoke_action('display.text', {}, 'cancelled-queued-action'))
+    finally:
+        ACTION_CURRENT.reset(token)
+    async with asyncio.timeout(1):
+        while not h.session._out.qsize(): await asyncio.sleep(0)
+    operation['live'] = False
+    release.set()
+    with pytest.raises(ConnectionError): await asyncio.wait_for(pending, 1)
+    assert not any(item['type'] == 'action.invoke' for item in h.ws.sent._queue)
+    assert not h.session._pending_actions
+    assert h.registry.valid(h.session.session_id, h.session.owner)
+
+
+async def response_context(h, source='text', number='81'):
+    task = asyncio.create_task(h.session.authorize_response(source))
+    request = await h.next_control('context.request')
+    receipt = dict(context_request_id=request['context_request_id'], kind=source,
+                   context_id=number, request_id='0', owner_token='0')
+    await h.watch('context.ready', receipt)
+    context = await task
+    await h.next_ipc('context.begin')
+    return context, receipt
+
+
+@pytest.mark.asyncio
+async def test_output_only_context_authorizes_playback_without_any_capture(harness):
+    h = harness
+    context, receipt = await response_context(h)
+    assert h.session._capture is None and context.ready.is_set()
+    assert not any(kind in ('audio','capture.started','capture.stopped') for kind, _ in h.events)
+    h.session.begin_downlink()
+    begin = await h.next_ipc('playback.begin')
+    assert begin[1]['capture_id'] == '81'
+    assert not any(kind.startswith('capture.') for kind, _, _ in h.peer.sent._queue)
+    # A duplicate acknowledgement must not cancel the live context.
+    await h.watch('context.ready', receipt)
+    assert h.session._response_context is context
+    assert not any(item['type']=='context.cancel' for item in h.ws.sent._queue)
+
+
+@pytest.mark.asyncio
+async def test_cancelled_context_request_rejects_late_ack_without_native_input(harness):
+    h = harness
+    task = asyncio.create_task(h.session.authorize_response('text'))
+    request = await h.next_control('context.request')
+    await h.watch('listen.cancelled')
+    with pytest.raises(ConnectionError): await task
+    await h.watch('context.ready',dict(context_request_id=request['context_request_id'],kind='text',
+                                    context_id='81',request_id='0',owner_token='0'))
+    assert h.session._response_context is None and h.session._capture is None
+    assert not any(kind in ('context.begin','capture.begin') for kind, _, _ in h.peer.sent._queue)
+
+
+@pytest.mark.asyncio
+async def test_watch_busy_keeps_microphone_off_and_context_unset(harness):
+    h = harness
+    task = asyncio.create_task(h.session.authorize_response('background'))
+    request = await h.next_control('context.request')
+    await h.watch('context.rejected',dict(context_request_id=request['context_request_id'],reason='busy'))
+    with pytest.raises(ConnectionError): await task
+    assert h.session._response_context is None and h.session._capture is None
+    assert h.registry.valid(h.session.session_id,h.session.owner)
+
+
+@pytest.mark.asyncio
+async def test_output_context_cannot_be_used_to_inject_microphone_samples(harness):
+    h = harness
+    context, _ = await response_context(h)
+    with pytest.raises(MoqSessionError):
+        await h.native('capture.pcm',context.identity.fields(),b'\0\0'*160)
+    assert not any(kind=='audio' for kind, _ in h.events)
+
+
+@pytest.mark.asyncio
+async def test_new_capture_retires_output_context_and_stale_cancel_is_scoped(harness):
+    h = harness
+    context, receipt = await response_context(h)
+    await h.watch('capture.started',{**ID,'capture_id':'82','first_group':'0'})
+    await h.next_ipc('cancel')
+    await h.next_ipc('capture.begin')
+    assert h.session._response_context is None and h.session._capture.identity.capture_id=='82'
+    await h.watch('context.ready',receipt)
+    assert h.session._capture.identity.capture_id=='82'
+
+
+@pytest.mark.asyncio
+async def test_context_caller_cancellation_retires_grant_even_after_receipt(harness):
+    h = harness
+    task = asyncio.create_task(h.session.authorize_response('text'))
+    request = await h.next_control('context.request')
+    await h.watch('context.ready',dict(context_request_id=request['context_request_id'],kind='text',
+                                    context_id='81',request_id='0',owner_token='0'))
+    task.cancel()
+    with pytest.raises(asyncio.CancelledError): await task
+    assert h.session._response_context is None and h.session._pending_context is None
 
 
 @pytest.mark.asyncio

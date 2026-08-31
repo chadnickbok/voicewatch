@@ -13,6 +13,7 @@ import traceback
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 from typing import Any
+from collections.abc import Callable
 
 from aiohttp import WSMsgType
 
@@ -20,7 +21,7 @@ from .audio import PcmSpool
 from .moq_auth import GrantRegistry
 from .moq_bridge import BridgePeer
 from .moq_ipc import Packet, _unique_object
-from .session import ControlSession
+from .session import ACTION_CURRENT, ControlSession
 
 _INTENT: ContextVar[tuple[object, int] | None] = ContextVar('moq_application_intent', default=None)
 
@@ -76,8 +77,20 @@ class Capture:
 
 
 @dataclass(repr=False)
+class ResponseContext:
+    identity: Identity
+    request_id: int
+    kind: str
+    ready: asyncio.Event = field(default_factory=asyncio.Event)
+
+
+class ResponseContextBusy(ConnectionError):
+    pass
+
+
+@dataclass(repr=False)
 class Response:
-    capture: Capture
+    context: Capture | ResponseContext
     number: int
     generation: int
     first: int | None = None
@@ -94,7 +107,7 @@ class Response:
     task: asyncio.Task | None = None
 
     def fields(self) -> dict[str, str]:
-        return {**self.capture.identity.fields(), 'response_id': str(self.number)}
+        return {**self.context.identity.fields(), 'response_id': str(self.number)}
 
 
 @dataclass(repr=False)
@@ -105,6 +118,7 @@ class Outbound:
     pcm: bytes = b''
     response: Response | None = None
     sent: asyncio.Future | None = None
+    is_current: Callable[[], bool] | None = None
 
 
 class MoqSession(ControlSession):
@@ -127,6 +141,9 @@ class MoqSession(ControlSession):
         self._start_deadline = 0.0
         self._intent = 0
         self._capture: Capture | None = None
+        self._response_context: ResponseContext | None = None
+        self._highest_context_request = 0
+        self._pending_context: tuple[int, str, asyncio.Future] | None = None
         self._response: Response | None = None
         self._out: asyncio.Queue[Outbound] = asyncio.Queue(32)
         self._app: asyncio.Queue[tuple[str, Any, Capture | None, int | None]] = asyncio.Queue(64)
@@ -208,7 +225,10 @@ class MoqSession(ControlSession):
     async def send(self, message_type: str, payload: dict | None = None) -> None:
         if not self._current_intent():
             return
-        self._queue(Outbound('wss', message_type, dict(payload or {})))
+        guard = ACTION_CURRENT.get() if message_type == 'action.invoke' else None
+        if guard is not None and not guard():
+            raise ConnectionError('action capture retired')
+        self._queue(Outbound('wss', message_type, dict(payload or {}), is_current=guard))
 
     def _current_intent(self) -> bool:
         intent = _INTENT.get()
@@ -227,6 +247,11 @@ class MoqSession(ControlSession):
             item = await self._out.get()
             try:
                 self._check()
+                if item.is_current is not None and not item.is_current():
+                    future = self._pending_actions.get(item.payload.get('request_id'))
+                    if future is not None and not future.done():
+                        future.set_exception(ConnectionError('action capture retired'))
+                    continue
                 if item.response is not None and (item.response is not self._response or item.response.cancelled):
                     continue
                 async with asyncio.timeout(2):
@@ -253,7 +278,7 @@ class MoqSession(ControlSession):
 
     def _event(self, kind: str, payload: Any, capture: Capture | None = None) -> None:
         try:
-            self._app.put_nowait((kind, payload, capture, self._intent if kind.startswith('listen.') else None))
+            self._app.put_nowait((kind, payload, capture, self._intent if kind.startswith('listen.') or kind=='conversation.text' else None))
         except asyncio.QueueFull:
             self._fail()
             raise MoqSessionError() from None
@@ -270,7 +295,7 @@ class MoqSession(ControlSession):
             # It never blocks native framing, liveness or the bounded writer.
             token = _INTENT.set((self, intent) if intent is not None else None)
             try:
-                async with asyncio.timeout(15 if kind == 'identified' else 2):
+                async with asyncio.timeout(15 if kind == 'identified' else 5 if kind == 'conversation.text' else 2):
                     if kind == 'identified':
                         await self.on_identified(self, self.device_id, payload)
                         self._identified = True
@@ -327,7 +352,16 @@ class MoqSession(ControlSession):
             return
         if not self.connected.is_set():
             raise MoqSessionError()
-        if kind == 'capture.started':
+        if kind in {'context.ready', 'context.rejected'}:
+            self._context_receipt(kind, payload)
+        elif kind == 'conversation.text':
+            text = payload.get('text')
+            if set(payload) != {'text'} or not isinstance(text, str) or not 1 <= len(text) <= 500 or '\0' in text:
+                raise MoqSessionError()
+            self._intent += 1
+            self._retire_capture()
+            self._event(kind, payload)
+        elif kind == 'capture.started':
             identity = Identity.parse(payload)
             first = decimal(payload.get('first_group'), maximum=2**62 - 1600)
             start_id = decimal(payload.get('start_id', '0'))
@@ -414,16 +448,17 @@ class MoqSession(ControlSession):
         else:
             identity = Identity.parse(header)
             capture = self._capture
-            if capture is None or identity != capture.identity:
+            context = capture or self._response_context
+            if context is None or identity != context.identity:
                 return
             if kind == 'capture.pcm':
-                if (capture.validated.is_set() or not pcm or len(pcm) > 640 or len(pcm) % 2
+                if (capture is None or capture.validated.is_set() or not pcm or len(pcm) > 640 or len(pcm) % 2
                         or capture.received + len(pcm) // 2 > (capture.samples if capture.samples is not None else 31 * 16000)):
                     raise MoqSessionError()
                 capture.received += len(pcm) // 2
                 self._event('audio', pcm, capture)
             elif kind == 'capture.ended':
-                if (capture.validated.is_set() or capture.end is None
+                if (capture is None or capture.validated.is_set() or capture.end is None
                         or decimal(header['first_group']) != capture.first
                         or decimal(header['end_group']) != capture.end
                         or decimal(header['samples']) != capture.samples
@@ -455,7 +490,7 @@ class MoqSession(ControlSession):
     def _matching_response(self, payload: dict) -> Response | None:
         identity, number = Identity.parse(payload), decimal(payload.get('response_id'))
         response = self._response
-        if (response is None or response.cancelled or response.capture.identity != identity
+        if (response is None or response.cancelled or response.context.identity != identity
                 or response.number != number):
             return None
         return response
@@ -514,13 +549,86 @@ class MoqSession(ControlSession):
             self._pending_stop = True
             await self.send('capture.stop', {'start_id': str(self._pending_start)})
 
+    async def authorize_response(self, kind: str) -> ResponseContext:
+        self._check()
+        if kind not in {'text', 'background'} or not self.connected.is_set() or not self._current_intent():
+            raise MoqSessionError()
+        if self._pending_context is not None:
+            raise ResponseContextBusy('response context pending')
+        if kind == 'background' and ((self._capture is not None and not self._capture.validated.is_set())
+                                    or (self._response is not None and not self._response.done.is_set())):
+            raise ResponseContextBusy('voice operation active')
+        self._retire_capture()
+        self._highest_context_request += 1
+        request = self._highest_context_request
+        future = asyncio.get_running_loop().create_future()
+        self._pending_context = (request, kind, future)
+        accepted = False
+        try:
+            await self.send('context.request', {'context_request_id':str(request), 'kind':kind})
+            context = await asyncio.wait_for(asyncio.shield(future), 3)
+            if context is not self._response_context or not self._current_intent():
+                raise ConnectionError('response context retired')
+            accepted = True
+            return context
+        finally:
+            if self._pending_context is not None and self._pending_context[0] == request:
+                self._pending_context = None
+                if not future.done():
+                    future.cancel()
+                if not accepted and not self._closed and not self._fault.is_set():
+                    self._queue(Outbound('wss','context.cancel',{'context_request_id':str(request)}))
+                    if self._response_context is not None and self._response_context.request_id == request:
+                        context, self._response_context = self._response_context, None
+                        self._ipc('cancel', context.identity.fields())
+
+    def _context_receipt(self, kind, payload):
+        request = decimal(payload.get('context_request_id'))
+        expected = {'context_request_id','reason'} if kind == 'context.rejected' else {
+            'context_request_id','context_id','request_id','owner_token','kind'}
+        if not request or set(payload) != expected:
+            raise MoqSessionError()
+        pending = self._pending_context
+        if pending is None or request != pending[0]:
+            current = self._response_context
+            if kind == 'context.ready' and current is not None and current.request_id == request:
+                if (payload['context_id'] != current.identity.capture_id or payload['kind'] != current.kind
+                        or payload['request_id'] != current.identity.request_id or payload['owner_token'] != current.identity.owner_token):
+                    raise MoqSessionError()
+                return
+            if request > self._highest_context_request:
+                raise MoqSessionError()
+            if kind == 'context.ready':
+                self._queue(Outbound('wss','context.cancel',{'context_request_id':str(request)}))
+            return
+        if pending[2].done():
+            raise MoqSessionError()
+        if kind == 'context.rejected':
+            if payload['reason'] != 'busy':
+                raise MoqSessionError()
+            pending[2].set_exception(ResponseContextBusy('watch voice operation active'))
+            return
+        number = decimal(payload['context_id'])
+        # The watch grants neutral host speech; a caller cannot claim a guest.
+        if (number <= self._highest_capture or payload['kind'] != pending[1]
+                or decimal(payload['request_id']) or decimal(payload['owner_token'])):
+            raise MoqSessionError()
+        identity = Identity(str(number), '0', '0')
+        context = ResponseContext(identity, request, pending[1])
+        context.ready.set()
+        self._response_context = context
+        self._highest_capture = number
+        self._ipc('context.begin', identity.fields())
+        pending[2].set_result(context)
+
     def begin_downlink(self) -> None:
         self._check()
-        if self._capture is None or (self._response is not None and not self._response.done.is_set()):
+        context = self._capture or self._response_context
+        if context is None or (self._response is not None and not self._response.done.is_set()):
             raise MoqSessionError()
         self.downlink.begin_utterance()
         self._highest_response += 1
-        response = Response(self._capture, self._highest_response, self.downlink.generation)
+        response = Response(context, self._highest_response, self.downlink.generation)
         self._response = response
         response.task = self._spawn(self._pump(response))
 
@@ -549,7 +657,8 @@ class MoqSession(ControlSession):
 
     async def _pump(self, response: Response) -> None:
         try:
-            await asyncio.wait_for(response.capture.validated.wait(), 33)
+            ready = response.context.validated if isinstance(response.context,Capture) else response.context.ready
+            await asyncio.wait_for(ready.wait(), 33)
             await self._ipc('playback.begin', response.fields(), response=response, receipt=True)
             await asyncio.wait_for(response.prepared.wait(), 5)
             await asyncio.wait_for(response.bound.wait(), 5)
@@ -593,6 +702,15 @@ class MoqSession(ControlSession):
 
     def _retire_capture(self) -> None:
         self.clear_downlink()
+        pending, self._pending_context = self._pending_context, None
+        if pending is not None:
+            self._queue(Outbound('wss','context.cancel',{'context_request_id':str(pending[0])}))
+            if not pending[2].done():
+                pending[2].set_exception(ConnectionError('response context retired'))
+        context, self._response_context = self._response_context, None
+        if context is not None:
+            self._ipc('cancel', context.identity.fields())
+            self._queue(Outbound('wss','context.cancel',{'context_request_id':str(context.request_id)}))
         if self._pending_start:
             self._retired_start = self._pending_start
             self._queue(Outbound('wss', 'capture.cancel', {'start_id': str(self._pending_start)}))
@@ -623,6 +741,10 @@ class MoqSession(ControlSession):
         self._fail()
         self.clear_downlink()
         self._fail_pending_actions()
+        if self._pending_context is not None and not self._pending_context[2].done():
+            self._pending_context[2].set_exception(ConnectionError('response context session closed'))
+        self._pending_context = None
+        self._response_context = None
         tasks = self._tasks - {asyncio.current_task()}
         for task in tasks:
             task.cancel()

@@ -115,8 +115,18 @@ Internal capture identities accompany queued PCM, boundaries and transcripts.
 Cancellation invalidates them before waiting for device stop, and routing
 rechecks them after asynchronous callbacks. The VHQ STT resampler resets at each
 capture start and flushes its exact remaining duration before a valid commit;
-cancelled history cannot bleed into the next capture. This is STT ownership,
-not proof of cancellation safety for already-started model/tool/TTS work.
+cancelled history cannot bleed into the next capture.
+
+The MoQ provider pipeline now preserves this identity through user aggregation,
+model requests and history frames, tool runners/results, and registered TTS
+contexts. The writer rechecks action ownership immediately before sending a
+queued command. An action already issued may have completed; cancellation does
+not undo accepted durable work. New watch-state requests require fresh reads.
+TTS partial-word alignment is stored per context and checked after audio waits;
+retired output cannot recreate an audio context or commit unheard text to history.
+The sink rechecks ownership across capture-stop and playback-drain waits. These
+boundaries have synthetic tests and physical delayed-tool/TTS fault runs; they
+do not replace the broader loss, long-response and full-shell acceptance gates.
 
 Cancellation retires pending start IDs, capture ownership, queued old PCM and
 response generation. A delayed start receipt is cancelled without opening a

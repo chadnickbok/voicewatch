@@ -55,8 +55,16 @@ MoQ additionally correlates STT results with acknowledged provider item IDs and
 the originating capture. Cancelled captures cannot feed delayed transcripts to
 the next turn. `tools/moq_provider_bench.py --cancel-first-stt` exercises this by
 delaying one real provider final in memory, cancelling, and releasing it during
-the replacement capture. It never injects or saves a transcript. Cancellation
-after model/tool work starts remains a separate acceptance gate.
+the replacement capture. It never injects or saves a transcript.
+
+MoQ also preserves capture ownership through model context, tool callbacks and
+TTS contexts. The control writer rejects cancelled queued actions, and the sink
+checks ownership again after device waits before delivering audio or committing
+played history. TTS word alignment is isolated per context. The provider bench
+adds mutually exclusive `--cancel-first-tool` and `--cancel-first-tts` cases that
+hold real provider output and release it after cancellation during a replacement
+capture. Successful fresh turns require tool completion, speaker receipts and a
+new played assistant-history message. No firmware restoration is required.
 
 The watch still receives only a 160-character display projection. Capacity
 violations are explicit service errors and telemetry events; ordinary long

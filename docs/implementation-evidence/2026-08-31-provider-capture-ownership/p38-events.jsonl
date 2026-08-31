@@ -1,0 +1,72 @@
+{"kind": "enrolled", "elapsed_ms": 751}
+{"kind": "identified", "elapsed_ms": 2823}
+{"kind": "connected", "elapsed_ms": 6316}
+{"kind": "listen.requested", "elapsed_ms": 10340}
+{"kind": "capture.started", "elapsed_ms": 10376}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 10818}
+{"kind": "microphone_level", "elapsed_ms": 10959, "samples": 8000, "rms": 328.75, "peak": 6735, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 11558, "samples": 8000, "rms": 947.08, "peak": 3416, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12001, "samples": 8000, "rms": 765.85, "peak": 2796, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12461, "samples": 8000, "rms": 415.2, "peak": 1698, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12941, "samples": 8000, "rms": 322.52, "peak": 2027, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13439, "samples": 8000, "rms": 40.45, "peak": 199, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13934, "samples": 8000, "rms": 37.85, "peak": 168, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 14060}
+{"kind": "capture.stopped", "elapsed_ms": 14114}
+{"kind": "stt_commit_sent", "elapsed_ms": 14176}
+{"kind": "stt_completion_received", "elapsed_ms": 14517, "characters": 33}
+{"kind": "real_tts_audio_deliberately_delayed", "elapsed_ms": 17749}
+{"kind": "listen.cancelled", "elapsed_ms": 17751}
+{"kind": "provider_capture_cancelled_after_tts", "elapsed_ms": 17751, "microphone_samples": 59360}
+{"kind": "listen.requested", "elapsed_ms": 17751}
+{"kind": "capture.started", "elapsed_ms": 17800}
+{"kind": "cancelled_tts_frames_rejected_during_new_capture", "elapsed_ms": 17901}
+{"kind": "microphone_level", "elapsed_ms": 18138, "samples": 8000, "rms": 336.56, "peak": 7308, "clipped": 0}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 18373}
+{"kind": "microphone_level", "elapsed_ms": 18640, "samples": 8000, "rms": 46.4, "peak": 204, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 19241, "samples": 8000, "rms": 1043.46, "peak": 3450, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 19699, "samples": 8000, "rms": 688.89, "peak": 2452, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 20206, "samples": 8000, "rms": 361.37, "peak": 1468, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 20648, "samples": 8000, "rms": 274.71, "peak": 2155, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 21165, "samples": 8000, "rms": 38.98, "peak": 157, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 21187}
+{"kind": "capture.stopped", "elapsed_ms": 21258}
+{"kind": "stt_commit_sent", "elapsed_ms": 21323}
+{"kind": "stt_completion_received", "elapsed_ms": 21751, "characters": 33}
+{"kind": "provider_turn_completed", "elapsed_ms": 27343, "round": 1, "microphone_samples": 54400, "stt_characters": 33, "response_id": 1, "speaker_samples": 39939, "fixture_recognized": true, "read_tool_completed": true, "spoken_history_messages_added": 1}
+{"kind": "listen.requested", "elapsed_ms": 27343}
+{"kind": "capture.started", "elapsed_ms": 27389}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 27858}
+{"kind": "microphone_level", "elapsed_ms": 27868, "samples": 8000, "rms": 318.32, "peak": 7255, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 28353, "samples": 8000, "rms": 750.28, "peak": 3369, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 28874, "samples": 8000, "rms": 916.39, "peak": 3312, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 29367, "samples": 8000, "rms": 424.77, "peak": 2549, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 29946, "samples": 8000, "rms": 413.2, "peak": 2186, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 30363, "samples": 8000, "rms": 57.12, "peak": 260, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 30809, "samples": 8000, "rms": 44.81, "peak": 168, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 31158}
+{"kind": "capture.stopped", "elapsed_ms": 31212}
+{"kind": "stt_commit_sent", "elapsed_ms": 31282}
+{"kind": "stt_completion_received", "elapsed_ms": 31616, "characters": 33}
+{"kind": "provider_turn_completed", "elapsed_ms": 37132, "round": 2, "microphone_samples": 60640, "stt_characters": 33, "response_id": 2, "speaker_samples": 39939, "fixture_recognized": true, "read_tool_completed": true, "spoken_history_messages_added": 1}
+{"kind": "listen.requested", "elapsed_ms": 37133}
+{"kind": "capture.started", "elapsed_ms": 37179}
+{"kind": "microphone_level", "elapsed_ms": 37354, "samples": 8000, "rms": 348.71, "peak": 7304, "clipped": 0}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 37627}
+{"kind": "microphone_level", "elapsed_ms": 37839, "samples": 8000, "rms": 40.12, "peak": 158, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 38417, "samples": 8000, "rms": 1017.18, "peak": 3437, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 38842, "samples": 8000, "rms": 702.98, "peak": 2413, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 39357, "samples": 8000, "rms": 399.85, "peak": 1570, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 39841, "samples": 8000, "rms": 284.5, "peak": 2134, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 40312, "samples": 8000, "rms": 38.89, "peak": 154, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 40839, "samples": 8000, "rms": 37.01, "peak": 138, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 40882}
+{"kind": "capture.stopped", "elapsed_ms": 40940}
+{"kind": "stt_commit_sent", "elapsed_ms": 41000}
+{"kind": "stt_completion_received", "elapsed_ms": 41277, "characters": 33}
+{"kind": "provider_turn_completed", "elapsed_ms": 47070, "round": 3, "microphone_samples": 59520, "stt_characters": 33, "response_id": 3, "speaker_samples": 39939, "fixture_recognized": true, "read_tool_completed": true, "spoken_history_messages_added": 1}
+{"kind": "disconnected", "elapsed_ms": 47071}
+{"kind": "identified", "elapsed_ms": 51225}
+{"kind": "connected", "elapsed_ms": 52582}
+{"kind": "passed", "elapsed_ms": 55584}
+{"kind": "disconnected", "elapsed_ms": 55838}

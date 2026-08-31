@@ -19,6 +19,7 @@ using SignalSink = bool (*)(Signal, const char*, std::size_t);
 enum class EventKind {
     ready, disconnected, capture_started, capture_stopped, capture_failed,
     playback_bound, playback_started, playback_finished, error,
+    response_context_ready,
 };
 
 struct Event {
@@ -67,6 +68,10 @@ void disconnect();
 bool signal(Signal kind, const char* bytes, std::size_t size);
 bool capture_begin(Identity identity, std::uint32_t duration_ms);
 bool capture_finish();
+// Authorize an output-only turn. Never publishes audio or starts the microphone.
+// The identity is issued by the watch control owner, using the same monotonic
+// namespace as captured turns; readiness is reported asynchronously.
+bool response_context_begin(Identity identity);
 // Cancels both media directions, including DMA handoffs; never starts capture.
 void cancel();
 // Only an explicitly authenticated response binding may enable MoQ playback.

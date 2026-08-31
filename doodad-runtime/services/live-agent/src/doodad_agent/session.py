@@ -1,6 +1,8 @@
 """Product-facing media/session contracts shared across transports."""
 from __future__ import annotations
 
+from contextvars import ContextVar
+
 import asyncio
 import hashlib
 import json
@@ -9,6 +11,11 @@ from collections.abc import Awaitable, Callable
 
 from aiohttp import web
 from .metrics import LatencyTrace
+
+
+# A queued transport write must recheck the originating operation, rather than
+# inheriting whichever ContextVars happen to belong to its long-lived writer.
+ACTION_CURRENT: ContextVar[Callable[[], bool] | None] = ContextVar('action_current', default=None)
 
 
 class DownlinkSession(Protocol):

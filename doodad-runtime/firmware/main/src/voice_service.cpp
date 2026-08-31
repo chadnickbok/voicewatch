@@ -116,6 +116,8 @@ std::uint64_t g_server_sequence=0, g_active_start=0, g_highest_start=0, g_captur
 std::uint64_t g_highest_response=0, g_response_samples=0, g_next_connect=0;
 media::Response g_response{};
 bool g_welcomed=false, g_response_ending=false, g_capture_complete=false;
+std::uint64_t g_context_request=0, g_highest_context_request=0;
+bool g_context_ready=false, g_context_background=false, g_turn_retired=true, g_response_complete=true;
 unsigned g_connect_failures=0;
 std::atomic<std::uint32_t> g_denied_revision{0};
 std::uint32_t g_connect_revision=0;
@@ -989,6 +991,7 @@ void handle_command(Command& command) {
             // Local guest requests do not inherit a previous host start ID.
             g_active_start=0;
             g_capture_complete=false; g_response={};
+            g_context_request=0; g_context_ready=false; g_turn_retired=false; g_response_complete=true;
 #endif
             const auto capture_id = next_capture_id();
             if (!capture_id) break;
@@ -1047,6 +1050,7 @@ void handle_command(Command& command) {
             media::cancel();
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
             g_response={};
+            g_turn_retired=true; g_context_ready=false; g_context_request=0;
 #endif
             send_simple("listen.cancelled");
             break;
@@ -1057,6 +1061,9 @@ void handle_command(Command& command) {
                 // transcript or lifecycle event is then still attributable
                 // to the outgoing guest and cannot become owner-neutral.
                 media::cancel();
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+                g_turn_retired=true; g_context_ready=false; g_context_request=0;
+#endif
             }
             break;
     }
@@ -1096,7 +1103,7 @@ bool identity(const cJSON* p,media::Identity& id) {
         secure::decimal(field(p,"request_id"),id.request_id) && secure::decimal(field(p,"owner_token"),id.owner_token);
 }
 bool owns(const media::Identity& id) {
-    return id.capture_id==g_active_capture_id && id.request_id==g_active_request && id.owner_token==g_active_owner_token &&
+    return !g_turn_retired && id.capture_id==g_active_capture_id && id.request_id==g_active_request && id.owner_token==g_active_owner_token &&
         (!id.owner_token || id.owner_token==current_guest_owner_snapshot());
 }
 // Runs only on the control owner, after the complete authenticated envelope is
@@ -1110,6 +1117,35 @@ bool secure_command(const char* kind,const cJSON* payload) {
         return true;
     }
     if (!g_welcomed) return false;
+    if (std::strcmp(kind,"context.request")==0) {
+        std::uint64_t request=0;
+        const auto* source=field(payload,"kind");
+        if (cJSON_GetArraySize(payload)!=2 || !secure::decimal(field(payload,"context_request_id"),request,false) ||
+            !cJSON_IsString(source) || (std::strcmp(source->valuestring,"text") && std::strcmp(source->valuestring,"background"))) return false;
+        if (request<=g_highest_context_request) return true;
+        g_highest_context_request=request;
+        if (!media::ready() || media::recording() || (!g_turn_retired &&
+            ((g_active_capture_id && !g_capture_complete && !g_context_ready) ||
+             (g_response.response_id && !g_response_complete)))) {
+            auto* root=cJSON_CreateObject(); add_envelope(root,"context.rejected");
+            auto* result=cJSON_AddObjectToObject(root,"payload");
+            add_decimal_u64(result,"context_request_id",request);
+            cJSON_AddStringToObject(result,"reason","busy"); send_json(root); return true;
+        }
+        const auto context=next_capture_id(); if (!context) return false;
+        g_active_capture_id=context; g_active_request=0; g_active_owner_token=0; g_active_start=0;
+        g_context_request=request; g_context_background=std::strcmp(source->valuestring,"background")==0;
+        g_context_ready=false; g_capture_complete=false; g_turn_retired=false; g_response={}; g_response_complete=true;
+        return media::response_context_begin({context,0,0});
+    }
+    if (std::strcmp(kind,"context.cancel")==0) {
+        std::uint64_t request=0;
+        if (cJSON_GetArraySize(payload)!=1 || !secure::decimal(field(payload,"context_request_id"),request,false)) return false;
+        if (request==g_context_request) {
+            media::cancel(); g_turn_retired=true; g_context_ready=false; g_context_request=0; g_response={};
+        }
+        return true;
+    }
     if (std::strcmp(kind,"capture.start")==0) {
         std::uint64_t start=0,duration=0,owner=0;
         if (!secure::decimal(field(payload,"start_id"),start,false) ||
@@ -1120,6 +1156,7 @@ bool secure_command(const char* kind,const cJSON* payload) {
             if (!cJSON_IsString(target) || std::strcmp(target->valuestring,"current_guest")!=0 || !(owner=current_guest_owner_snapshot())) return false;
         }
         g_highest_start=start; g_active_start=start; g_capture_complete=false; g_response={};
+        g_context_request=0; g_context_ready=false; g_turn_retired=false; g_response_complete=true;
         const auto capture=next_capture_id(); if (!capture) return false;
         g_active_capture_id=capture; g_active_owner_token=owner; g_active_request=owner?capture:0;
         if (!media::capture_begin({capture,g_active_request,owner},duration)) {
@@ -1135,7 +1172,7 @@ bool secure_command(const char* kind,const cJSON* payload) {
             media::Identity id{}; if (!identity(payload,id)) return false;
             if (!owns(id)) return true;
         } else if (!start) return false; // An unbound stop cannot target a guest.
-        if (std::strcmp(kind,"capture.cancel")==0) { media::cancel(); g_response={}; g_capture_complete=false; }
+        if (std::strcmp(kind,"capture.cancel")==0) { media::cancel(); g_response={}; g_capture_complete=false; g_turn_retired=true; }
         else if (!g_capture_complete && !media::capture_finish()) return false;
         return true;
     }
@@ -1145,18 +1182,19 @@ bool secure_command(const char* kind,const cJSON* payload) {
         if (!owns(id)) return true;
         if (std::strcmp(kind,"playback.begin")==0) {
             std::uint64_t first=0;
-            if (!secure::decimal(field(payload,"first_group"),first) || first>=(1ULL<<62) || !g_capture_complete) return false;
+            if (!secure::decimal(field(payload,"first_group"),first) || first>=(1ULL<<62) || (!g_capture_complete && !g_context_ready)) return false;
             if (response<=g_highest_response) return true;
             media::Response binding{}; binding.session=g_control_generation.load(); binding.response_id=response;
             binding.identity=id; binding.first_group=first;
             if (!media::receive_begin(binding)) return false;
             g_highest_response=response; g_response=binding; g_response_ending=false; g_response_samples=0;
+            g_response_complete=false;
             return true;
         }
         if (response!=g_response.response_id) return true;
         if (std::strcmp(kind,"playback.cancel")==0) {
             if (!media::receive_cancel(g_control_generation.load(),response)) return false;
-            g_response={}; return true;
+            g_response={}; g_response_complete=true; return true;
         }
         if (std::strcmp(kind,"playback.end")==0) {
             std::uint64_t first=0,end=0,samples=0;
@@ -1193,7 +1231,7 @@ void parse_message(const char* bytes, std::size_t size) {
     }
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
     if (std::strcmp(type->valuestring,"welcome")==0 || std::strncmp(type->valuestring,"capture.",8)==0 ||
-        std::strncmp(type->valuestring,"playback.",9)==0) {
+        std::strncmp(type->valuestring,"playback.",9)==0 || std::strncmp(type->valuestring,"context.",8)==0) {
         if (!secure_command(type->valuestring,payload)) retire_control();
         cJSON_Delete(root); return;
     }
@@ -1465,6 +1503,7 @@ void connect_websocket() {
     if (g_control_generation.load()==UINT64_MAX) { secure::wipe(g_grant,sizeof(*g_grant)); return; }
     ++g_control_generation; g_sequence=0; g_server_sequence=0; g_welcomed=false;
     g_active_capture_id=0; g_active_start=0; g_highest_start=0; g_highest_response=0;
+    g_context_request=g_highest_context_request=0; g_context_ready=false; g_turn_retired=true; g_response_complete=true;
     g_capture_complete=false; g_response={}; g_ws_received=0; g_ws_frame_received=0; g_ws_fragmented=false;
     esp_websocket_client_config_t configuration{};
     configuration.uri=g_grant->websocket_url; configuration.cert_pem=g_grant->roots;
@@ -1505,6 +1544,7 @@ void close_control() {
     }
     g_transport_reset_requested=false;
     g_response={}; g_capture_complete=false; g_welcomed=false; g_capture_correlations={};
+    g_context_ready=false; g_context_request=0; g_turn_retired=true;
     if (g_grant) secure::wipe(g_grant,sizeof(*g_grant));
     display_publish_agent_state(0,0,false,false,false,0,"","");
 }
@@ -1526,6 +1566,21 @@ void poll_media() {
 #endif
         }
         switch(event.kind) {
+        case media::EventKind::response_context_ready:
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            if (g_context_request && owns(event.identity)) {
+                g_context_ready=true;
+                auto* root=cJSON_CreateObject(); add_envelope(root,"context.ready");
+                auto* payload=cJSON_AddObjectToObject(root,"payload");
+                add_decimal_u64(payload,"context_request_id",g_context_request);
+                add_decimal_u64(payload,"context_id",event.identity.capture_id);
+                add_decimal_u64(payload,"request_id",event.identity.request_id);
+                add_decimal_u64(payload,"owner_token",event.identity.owner_token);
+                cJSON_AddStringToObject(payload,"kind",g_context_background?"background":"text");
+                send_json(root);
+            }
+#endif
+            break;
         case media::EventKind::ready:
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
             g_connect_failures=0; g_ready_deadline=0;
@@ -1541,6 +1596,9 @@ void poll_media() {
             publish(VoiceEventKind::stopped, "Processing",event.elapsed_ms);
             send_capture_status("capture.stopped",event.elapsed_ms); display_publish_voice_level(0); break;
         case media::EventKind::capture_failed:
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            g_turn_retired=true;
+#endif
             publish(VoiceEventKind::error, "Audio capture failed"); send_simple("capture.failed"); break;
         case media::EventKind::disconnected:
         case media::EventKind::error:
@@ -1558,6 +1616,7 @@ void poll_media() {
                 (!g_response_ending || event.samples!=g_response_samples || event.end_group!=g_response.end_group)) {
                 retire_control(); break;
             }
+            if (event.kind==media::EventKind::playback_finished) g_response_complete=true;
 #endif
             auto* root=cJSON_CreateObject();
             const char* type=event.kind==media::EventKind::playback_bound ? "playback.bound" :

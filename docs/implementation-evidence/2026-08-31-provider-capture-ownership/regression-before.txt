@@ -1,0 +1,5 @@
+Voicewatch a1a28d3, synthetic cancelled capture followed by replacement:
+baseline_stale_tool_executions=1
+baseline_stale_audio_writes=1
+Pinned Pipecat 1.7.0 ElevenLabs receive dispatcher, cancellation during audio append:
+baseline_alignment_overwrote_replacement=True

@@ -9,6 +9,7 @@ private file by the caller. Requires provider keys in the environment.
 """
 import argparse
 import asyncio
+import copy
 import json
 import os
 import re
@@ -25,6 +26,8 @@ from moq_ultra_bench import ROOT, ENROLL, ENDPOINT, pki, port, stop, write
 async def run(args):
     from doodad_agent import conversation as conversation_module, main, transport_moq
     from doodad_agent.conversation import LiveConversation
+    from doodad_agent.capture_stt import frame_turn
+    from pipecat.frames.frames import TTSStartedFrame, TTSAudioRawFrame
 
     output = args.output.resolve()
     output.mkdir(mode=0o700, parents=True, exist_ok=False)
@@ -46,6 +49,14 @@ async def run(args):
     held_stt_final = None
     hold_next_final = args.cancel_first_stt
     stt_final_held = asyncio.Event()
+    held_tool_result = None
+    hold_next_tool = args.cancel_first_tool
+    tool_result_held = asyncio.Event()
+    held_tts_frames = []
+    held_tts_turn = None
+    hold_next_tts = args.cancel_first_tts
+    tts_audio_held = asyncio.Event()
+    conversations = []
     children, streams = [], []
     server_task = None
     ready = asyncio.Queue()
@@ -53,6 +64,8 @@ async def run(args):
     server_started = asyncio.get_running_loop().create_future()
     real_transport, real_tools = transport_moq.MoqTransportServer, LiveConversation._tools
     real_stt = conversation_module.CaptureRealtimeSTTService
+    real_tts = conversation_module.CaptureElevenLabsTTSService
+    real_current_tool = LiveConversation._current_tool
     result.update(stt_samples_submitted=0, stt_commits=0, stt_completed_events=0,
                   stt_completed_characters=0, stt_error_count=0, fixture_recognized=False)
 
@@ -117,6 +130,45 @@ async def run(args):
             mark('stt_provider_error')
             await super()._handle_error(event)
 
+    def observed_current_tool(conversation, handler):
+        async def observed_handler(params):
+            original = params.result_callback
+            async def deliver(*values, **kwargs):
+                nonlocal held_tool_result, hold_next_tool
+                if hold_next_tool:
+                    hold_next_tool = False
+                    held_tool_result = (original, values, kwargs)
+                    tool_result_held.set()
+                    mark('real_tool_result_deliberately_delayed')
+                    return
+                await original(*values, **kwargs)
+            delayed = copy.copy(params)
+            delayed.result_callback = deliver
+            await handler(delayed)
+        return real_current_tool(conversation, observed_handler)
+
+    class ObservedTTS(real_tts):
+        async def push_frame(self, frame, direction=conversation_module.FrameDirection.DOWNSTREAM):
+            nonlocal held_tts_turn, hold_next_tts
+            turn = frame_turn(frame) or self._capture_contexts.get(getattr(frame, 'context_id', None)) or self._origin.get()
+            if hold_next_tts and isinstance(frame, TTSStartedFrame):
+                hold_next_tts = False
+                held_tts_turn = turn
+                if turn is None: raise RuntimeError('unbound physical TTS start')
+                turn.stamp(frame)
+                held_tts_frames.append((self, frame, direction))
+                return
+            if held_tts_turn is not None and turn is held_tts_turn:
+                if isinstance(frame, TTSAudioRawFrame) and not tts_audio_held.is_set():
+                    # Retain exactly one real provider audio frame, never mic PCM.
+                    if len(frame.audio) > 1_048_576: raise RuntimeError('TTS fault frame bound')
+                    turn.stamp(frame)
+                    held_tts_frames.append((self, frame, direction))
+                    tts_audio_held.set()
+                    mark('real_tts_audio_deliberately_delayed')
+                return
+            await super().push_frame(frame, direction)
+
     class ObservedTransport(real_transport):
         def __init__(self, trace, on_audio, on_event, *more, **kwargs):
             async def audio(device_id, pcm):
@@ -158,8 +210,18 @@ async def run(args):
 
     transport_moq.MoqTransportServer = ObservedTransport
     conversation_module.CaptureRealtimeSTTService = ObservedSTT
-    LiveConversation._tools = lambda self: [tool for tool in real_tools(self)
-                                            if tool.name in {'get_next_set', 'get_task_status'}]
+    conversation_module.CaptureElevenLabsTTSService = ObservedTTS
+    LiveConversation._current_tool = observed_current_tool
+    def observed_tools(conversation):
+        conversations.append(conversation)
+        return [tool for tool in real_tools(conversation)
+                if tool.name in {'get_next_set', 'get_task_status'}]
+    LiveConversation._tools = observed_tools
+
+    def spoken_history_count():
+        context = conversations[-1]._context if conversations else None
+        return sum(isinstance(message, dict) and message.get('role') == 'assistant'
+                   and bool(message.get('content')) for message in context.get_messages()) if context else 0
 
     async def child(*command, logfile):
         stream = (output/logfile).open('wb'); streams.append(stream)
@@ -228,13 +290,14 @@ async def run(args):
                     raise RuntimeError('fixture PCM format')
                 if source.getnframes() > 31 * 16000: raise RuntimeError('fixture PCM bound')
                 fixture_pcm = source.readframes(source.getnframes())
-        async def provider_turn(round_number, *, cancel_at_stt=False):
-            nonlocal saved_output, held_stt_final
+        async def provider_turn(round_number, *, cancel_at_stt=False, cancel_at_tool=False, cancel_at_tts=False):
+            nonlocal saved_output, held_stt_final, held_tool_result
             captured.clear()
             sample_base = result['microphone_samples']
             event_base = result['stt_completed_events']
             character_base = result['stt_completed_characters']
             previous_response = session._response.number if session._response else 0
+            history_base = spoken_history_count()
             trace_base = len((output/'trace.jsonl').read_text().splitlines())
             result['fixture_recognized'] = False
             result['fixture_keyword_matches'] = {}
@@ -249,6 +312,29 @@ async def run(args):
                     raise RuntimeError('cancelled STT final crossed capture boundary')
                 result['delayed_stt_final_rejected'] = True
                 mark('cancelled_stt_final_rejected_during_new_capture')
+            if held_tool_result is not None and not cancel_at_tool:
+                callback, values, kwargs = held_tool_result
+                held_tool_result = None
+                try:
+                    await callback(*values, **kwargs)
+                except ConnectionError:
+                    result['delayed_tool_result_rejected'] = True
+                    mark('cancelled_tool_result_rejected_during_new_capture')
+                else:
+                    raise RuntimeError('cancelled tool result crossed capture boundary')
+                finally:
+                    values = ()
+                    kwargs.clear()
+            if held_tts_frames and not cancel_at_tts:
+                for observed, frame, direction in held_tts_frames:
+                    await real_tts.push_frame(observed, frame, direction)
+                held_tts_frames.clear()
+                await asyncio.sleep(.1)
+                trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()[trace_base:]]
+                if any(item['kind'] in {'tts.started', 'tts.first_audio', 'downlink.first_audio'} for item in trace):
+                    raise RuntimeError('cancelled TTS frames crossed capture boundary')
+                result['delayed_tts_frames_rejected'] = True
+                mark('cancelled_tts_frames_rejected_during_new_capture')
             volume = int(await audio_setting('output volume of (get volume settings)'))
             muted = await audio_setting('output muted of (get volume settings)')
             if not 0 <= volume <= 100 or muted not in {'true', 'false'}:
@@ -275,13 +361,28 @@ async def run(args):
                 result['cancelled_capture_samples'] = result['microphone_samples'] - sample_base
                 mark('provider_capture_cancelled_before_stt_delivery', microphone_samples=result['cancelled_capture_samples'])
                 return
+            if cancel_at_tool or cancel_at_tts:
+                held = tool_result_held if cancel_at_tool else tts_audio_held
+                await asyncio.wait_for(held.wait(), 45)
+                await server.on_event(device['device_id'], 'listen.cancelled', {})
+                trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()[trace_base:]]
+                if any(item['kind'] in {'tts.first_audio', 'downlink.first_audio'} for item in trace):
+                    raise RuntimeError('faulted turn escaped held provider output')
+                if spoken_history_count() != history_base:
+                    raise RuntimeError('unplayed faulted speech entered assistant history')
+                result['cancelled_capture_samples'] = result['microphone_samples'] - sample_base
+                mark('provider_capture_cancelled_after_tool' if cancel_at_tool else 'provider_capture_cancelled_after_tts',
+                     microphone_samples=result['cancelled_capture_samples'])
+                return
             async with asyncio.timeout(90):
                 while True:
                     if session._closed: raise RuntimeError('session closed during provider turn')
                     if result['stt_completed_events'] > event_base and result['stt_completed_characters'] == character_base:
                         raise RuntimeError('spoken fixture produced an empty final transcript')
                     response = session._response
-                    if response is not None and response.number > previous_response and response.finished.is_set() and response.done.is_set():
+                    if (response is not None and response.number > previous_response
+                            and response.finished.is_set() and response.done.is_set()
+                            and spoken_history_count() > history_base):
                         result['speaker_samples'] = response.samples
                         result['response_id'] = response.number
                         break
@@ -298,14 +399,23 @@ async def run(args):
                         stt_characters=result['stt_completed_characters']-character_base,
                         response_id=result['response_id'], speaker_samples=result['speaker_samples'],
                         fixture_recognized=result['fixture_recognized'], read_tool_completed=result['read_tool_completed'])
+            turn['spoken_history_messages_added'] = spoken_history_count() - history_base
             result['turns'].append(turn)
             mark('provider_turn_completed', **turn)
         if args.cancel_first_stt:
             await provider_turn(0, cancel_at_stt=True)
+        if args.cancel_first_tool:
+            await provider_turn(0, cancel_at_tool=True)
+        if args.cancel_first_tts:
+            await provider_turn(0, cancel_at_tts=True)
         for round_number in range(1, args.capture_rounds + 1):
             await provider_turn(round_number)
         if args.cancel_first_stt and not result.get('delayed_stt_final_rejected'):
             raise RuntimeError('missing STT cancellation evidence')
+        if args.cancel_first_tool and not result.get('delayed_tool_result_rejected'):
+            raise RuntimeError('missing tool cancellation evidence')
+        if args.cancel_first_tts and not result.get('delayed_tts_frames_rejected'):
+            raise RuntimeError('missing TTS cancellation evidence')
         old_id = session.session_id
         await session.close(code=4000, message=b'provider bench replacement')
         replacement = await asyncio.wait_for(ready.get(), 25)
@@ -348,8 +458,12 @@ async def run(args):
             if held_stt_final is not None:
                 held_stt_final[1].clear()
                 held_stt_final = None
+            held_tool_result = None
+            held_tts_frames.clear()
         transport_moq.MoqTransportServer, LiveConversation._tools = real_transport, real_tools
+        LiveConversation._current_tool = real_current_tool
         conversation_module.CaptureRealtimeSTTService = real_stt
+        conversation_module.CaptureElevenLabsTTSService = real_tts
         result['microphone_rms'] = round((microphone_square_sum/max(1, result['microphone_samples']))**0.5, 2)
         result['elapsed_ms'] = round((time.monotonic()-start)*1000)
         write(output/'result.json', result)
@@ -370,8 +484,13 @@ def main():
                         help='Bench-only provider noise reduction experiment; does not change production defaults')
     parser.add_argument('--capture-rounds', type=int, default=1,
                         help='Repeat 1..3 complete provider turns in the same authenticated session')
-    parser.add_argument('--cancel-first-stt', action='store_true',
+    faults = parser.add_mutually_exclusive_group()
+    faults.add_argument('--cancel-first-stt', action='store_true',
                         help='First cancel a physical capture with a delayed real STT final; release that event during the next capture')
+    faults.add_argument('--cancel-first-tool', action='store_true',
+                        help='Hold a real read-tool result; cancel and release its callback during the next capture')
+    faults.add_argument('--cancel-first-tts', action='store_true',
+                        help='Hold real TTS start/audio frames; cancel and release them during the next capture')
     args = parser.parse_args()
     if not 1 <= args.capture_rounds <= 3:
         parser.error('capture-rounds must be 1..3')

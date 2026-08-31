@@ -48,3 +48,11 @@ class ProviderSession:
         if not self.live():
             raise ConnectionError('provider session retired')
         return result
+
+    async def authorize_response(self, kind):
+        if not self.live():
+            raise ConnectionError('provider session retired')
+        context = await self.session.authorize_response(kind)
+        if not self.live():
+            raise ConnectionError('provider session retired')
+        return context
