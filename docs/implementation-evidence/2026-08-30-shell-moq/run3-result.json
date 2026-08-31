@@ -1,0 +1,9 @@
+{
+  "image_sha256": "66b0157a605875c861660b563e2495747547113daa8fe77170295d9706f33ed5",
+  "changed_offset": 65536,
+  "changed_span": 3407872,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "SHELL_MOQ_FINAL pass=1"
+}

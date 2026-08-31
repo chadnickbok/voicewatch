@@ -1,0 +1,127 @@
+{
+  "media_exchange_pass": true,
+  "checks": {
+    "firmware_terminal_pass": true,
+    "app0_only": true,
+    "no_crash_or_failure": true,
+    "reference_peer_pass": true,
+    "one_capture_with_exact_tail": true,
+    "one_owned_drained_response": true,
+    "codec_tolerance": true,
+    "wamr_running": true,
+    "shell_display_active": true
+  },
+  "pcm_comparison": {
+    "bit_exact": false,
+    "different_samples": 38,
+    "max_abs_lsb": 1,
+    "rms_lsb": 0.04448782605013046
+  },
+  "samples_each_direction": 19200,
+  "image_sha256": "66b0157a605875c861660b563e2495747547113daa8fe77170295d9706f33ed5",
+  "events": [
+    {
+      "at_ms": 13772,
+      "kind": 0,
+      "session": 1,
+      "capture": 0,
+      "response": 0,
+      "samples": 0,
+      "first": 0,
+      "end": 0,
+      "cancelled": 0,
+      "error": 0
+    },
+    {
+      "at_ms": 13783,
+      "kind": 2,
+      "session": 1,
+      "capture": 71,
+      "response": 0,
+      "samples": 0,
+      "first": 0,
+      "end": 0,
+      "cancelled": 0,
+      "error": 0
+    },
+    {
+      "at_ms": 15010,
+      "kind": 3,
+      "session": 1,
+      "capture": 71,
+      "response": 0,
+      "samples": 19200,
+      "first": 0,
+      "end": 62,
+      "cancelled": 0,
+      "error": 0
+    },
+    {
+      "at_ms": 15012,
+      "kind": 5,
+      "session": 1,
+      "capture": 71,
+      "response": 1,
+      "samples": 0,
+      "first": 0,
+      "end": 61,
+      "cancelled": 0,
+      "error": 0
+    },
+    {
+      "at_ms": 15201,
+      "kind": 6,
+      "session": 1,
+      "capture": 71,
+      "response": 1,
+      "samples": 0,
+      "first": 0,
+      "end": 61,
+      "cancelled": 0,
+      "error": 0
+    },
+    {
+      "at_ms": 16422,
+      "kind": 7,
+      "session": 1,
+      "capture": 71,
+      "response": 1,
+      "samples": 19200,
+      "first": 0,
+      "end": 61,
+      "cancelled": 0,
+      "error": 0
+    },
+    {
+      "at_ms": 16767,
+      "kind": 1,
+      "session": 1,
+      "capture": 0,
+      "response": 0,
+      "samples": 0,
+      "first": 0,
+      "end": 0,
+      "cancelled": 0,
+      "error": 0
+    }
+  ],
+  "memory": {
+    "minimum_internal": 86528,
+    "minimum_largest_block": 52224,
+    "proposed_minimum_internal": 98304,
+    "proposed_largest_block": 32768,
+    "diagnostic_meets_proposed_floor": false
+  },
+  "ui": {
+    "max_observed_render_us": 290598,
+    "max_observed_flush_us": 8404
+  },
+  "scope": "Private reference echo through the full running shell. Public voice control/authentication, actual PTT/Voice Orb, optical/acoustic quality and final acceptance remain unverified.",
+  "source_sha256": {
+    "device/serial.log": "e733cdb8a05f91d63d2da97061b06a9839fc4e199b5d01d3b2d0bc4962eb9b45",
+    "peer/response.pcm": "f479e5acc652fc11f13e387224daf81379ac3aeedfccb4a2c303ef259f16f341",
+    "peer/microphone.pcm": "0a3f2520b561e1e960d6eebf8ee3b0cfff908859b2f9f3ffcbb7998b84f2d5da",
+    "peer.log": "9e2d1241e014ee5fe013b1e7572048daac820201662b4ade04716281b0b8d725",
+    "device/result.json": "d47c92d62d25a571966d960db27d6325c7ff56ea25a9281796048eb51afb1819"
+  }
+}

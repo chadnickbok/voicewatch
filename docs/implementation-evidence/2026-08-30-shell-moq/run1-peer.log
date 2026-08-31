@@ -1,0 +1,1 @@
+PASS: physical microphone decoded/re-encoded through reference audio; input_samples=19200 response_samples=19200 paced_ms=20

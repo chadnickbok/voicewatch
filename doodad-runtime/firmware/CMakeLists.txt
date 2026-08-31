@@ -8,6 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(EXTRA_COMPONENT_DIRS
     "${CMAKE_CURRENT_LIST_DIR}/../components/m3e_lvgl"
+    "${CMAKE_CURRENT_LIST_DIR}/../../libs/moq-esp32/components"
     "${CMAKE_CURRENT_LIST_DIR}/../../libs/moq-esp32/boards/twatch_ultra/components"
 )
 

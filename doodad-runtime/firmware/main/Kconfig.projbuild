@@ -42,13 +42,30 @@ endmenu
 menu "Doodad voice uplink"
 
 config DOODAD_VOICE_UPLINK
-    bool "Enable the WebRTC microphone uplink"
+    bool "Enable voice control and media"
     default n
     help
         Connects to a local doodad-voice signaling service over WebSocket and
         sends mono audio through an Espressif PeerConnection.
 
 if DOODAD_VOICE_UPLINK
+
+choice DOODAD_VOICE_TRANSPORT
+    prompt "Voice media transport"
+    default DOODAD_VOICE_TRANSPORT_MOQ if DOODAD_BOARD_TWATCH_ULTRA
+    default DOODAD_VOICE_TRANSPORT_WEBRTC
+
+config DOODAD_VOICE_TRANSPORT_WEBRTC
+    bool "Legacy WebRTC"
+
+config DOODAD_VOICE_TRANSPORT_MOQ
+    bool "Native MoQ/Hang (development)"
+    depends on DOODAD_BOARD_TWATCH_ULTRA
+    help
+        Uses a dedicated bounded audio owner and authenticated session grants.
+        A connected control WebSocket alone does not authorize a MoQ session.
+
+endchoice
 
 choice DOODAD_VOICE_CODEC
     prompt "WebRTC voice codec"
@@ -62,6 +79,7 @@ config DOODAD_VOICE_CODEC_OPUS
 
 config DOODAD_VOICE_CODEC_PCMU
     bool "PCMU 8 kHz fallback"
+    depends on DOODAD_VOICE_TRANSPORT_WEBRTC
 
 endchoice
 

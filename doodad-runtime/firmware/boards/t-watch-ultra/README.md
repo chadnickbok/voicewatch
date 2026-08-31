@@ -7,8 +7,9 @@ there; the older T-Watch S3 driver is not used.
 
 The full native shell and WAMR recovery app now boot on the connected Ultra.
 The first offline image passed a one-minute heartbeat with package storage
-mounted without formatting. This target is still in bring-up: MoQ is not yet
-connected to `voice_service`, and its initial profile disables legacy WebRTC.
+mounted without formatting. The internal media seam now has a MoQ audio owner
+and a private full-shell reference-echo diagnostic. Production authenticated
+control/host integration is still missing; the initial profile keeps voice disabled.
 Microphone capture never starts at boot. No voice-replacement acceptance claim
 is implied by a successful shell build or heartbeat.
 
@@ -52,3 +53,6 @@ brightness/wake-touch suppression is implemented, but physical touch mapping,
 colors, wake behavior, tactile effects and explicit PTT still need observation.
 The MoQ audio owner must use `board_ultra.hpp`'s borrowed board handle and the
 timestamped/fenced BSP methods; it must not open a second I2C/I2S owner.
+
+Media ownership, diagnostic scope and remaining integration work are documented
+in the workspace root at `docs/moq-shell-media-seam.md`.

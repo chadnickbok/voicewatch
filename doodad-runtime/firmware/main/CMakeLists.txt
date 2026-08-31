@@ -9,6 +9,12 @@ else()
     set(DOODAD_BOARD_REQUIREMENTS m5unified)
 endif()
 
+if(CONFIG_DOODAD_VOICE_TRANSPORT_MOQ)
+    set(DOODAD_MEDIA_SOURCE "src/voice_media_moq.cpp")
+else()
+    set(DOODAD_MEDIA_SOURCE "src/voice_media_webrtc.cpp")
+endif()
+
 idf_component_register(
     SRCS
         "src/app_runner.cpp"
@@ -21,6 +27,7 @@ idf_component_register(
         "src/main.cpp"
         "src/network_service.cpp"
         "src/voice_service.cpp"
+        "${DOODAD_MEDIA_SOURCE}"
         "src/weather_provider.cpp"
         "../../ui/doodad_lvgl_ui.c"
     INCLUDE_DIRS
@@ -31,7 +38,6 @@ idf_component_register(
         esp_event
         esp_audio_codec
         esp_http_client
-        esp_peer
         esp_partition
         esp_driver_sdspi
         esp_netif
@@ -54,6 +60,23 @@ idf_component_register(
     EMBED_FILES
         "embedded/hello.wasm"
 )
+
+# Components are discovered before Kconfig. Link the selected implementation's
+# dependencies after registration, when the selected transport is known.
+if(CONFIG_DOODAD_VOICE_TRANSPORT_MOQ)
+    idf_component_optional_requires(PRIVATE esp_moq_endpoint esp_moq_audio)
+else()
+    idf_component_optional_requires(PRIVATE espressif__esp_peer)
+endif()
+
+if(DOODAD_MOQ_DIAGNOSTIC_CONFIG_DIR)
+    if(NOT CONFIG_DOODAD_VOICE_TRANSPORT_MOQ)
+        message(FATAL_ERROR "The explicit MoQ diagnostic requires the Ultra MoQ transport")
+    endif()
+    target_sources(${COMPONENT_LIB} PRIVATE "src/voice_moq_diagnostic.cpp")
+    target_include_directories(${COMPONENT_LIB} PRIVATE "${DOODAD_MOQ_DIAGNOSTIC_CONFIG_DIR}")
+    target_compile_definitions(${COMPONENT_LIB} PRIVATE DOODAD_MOQ_DIAGNOSTIC=1)
+endif()
 
 option(
     DOODAD_SHOW_APP_AT_BOOT

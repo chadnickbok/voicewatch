@@ -17,3 +17,5 @@ dependencies:
     version: "==1.7.0"
   espressif/mdns:
     version: "==1.9.1"
+  wolfssl/wolfssl:
+    version: "==5.8.2~1"

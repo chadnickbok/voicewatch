@@ -1,0 +1,11 @@
+{
+  "image_sha256": "b34e09348a5878d9bb1297675684753f0b4f72f026011524ca79c3f4fa00fa31",
+  "image_bytes": 3017328,
+  "webrtc_symbols": {
+    "esp_peer_open": true,
+    "esp_peer_send_audio": true
+  },
+  "moq_linked": false,
+  "board": "cores3",
+  "flashed": false
+}

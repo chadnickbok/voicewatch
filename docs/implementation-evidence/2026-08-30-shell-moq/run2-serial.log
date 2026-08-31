@@ -1,0 +1,5 @@
+I (2899) doodad: [display] LVGL draw buffers caps=0x404 (32800 bytes each)
+I (4906) doodad: [display] fps=1.0 frames=2 flushes=15 pixels=207275 avg_render_us=87059 max_render_us=116129 avg_flush_us=8565 max_flush_us=53072 touch_presses=0 objects=8 internal_free=224327 internal_min=192000 internal_largest=151552 psram_free=7992092 psram_min=7990156 psram_largest=7864320 total_frames=2 total_flushes=15 total_pixels=207275 total_avg_render_us=87059 total_max_render_us=116129 total_avg_flush_us=8565 total_max_flush_us=53072 transfer=synchronous
+I (6170) doodad: [host] WAMR ready (interpreter, stack=16384, heap=16384)
+E (6171) shell-moq-test: FAIL: connect rejected
+I (6203) doodad: [host] app started; instance remains resident

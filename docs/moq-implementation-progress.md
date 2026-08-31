@@ -41,7 +41,7 @@ once at the end of the completed soak. Its replacement no longer requires a
 backup/full-flash baseline comparison and validates live board/security/layout
 metadata before app0 writes. Eight offline runner checks pass; the replacement
 runner has now flashed and tested the operational endpoint on hardware. The
-passing combined physical audio/MoQ echo image is preserved as a checkpoint. The latest installed firmware is the full-shell baseline described below.
+passing combined physical audio/MoQ echo image is preserved as a checkpoint. The latest installed firmware is the full-shell MoQ diagnostic described below.
 
 ## Physical Ultra audio and MoQ echo checkpoint
 
@@ -99,14 +99,62 @@ size changed. The Wi-Fi baseline has 220,123 bytes free internal RAM, minimum
 Opus and WSS. Maximum observed flush was 6,417 us; initial rendering reached
 187,893 us. Those are baseline observations, not final UI latency acceptance.
 
-The installed shell image SHA-256 is
+The historical Wi-Fi baseline shell image SHA-256 is
 `469861f8d4cf5e827592dd4ec773e5398c084d3fe57599214c3ed39bd23b7371`.
-It leaves microphone/speaker off and legacy WebRTC disabled. MoQ audio and
-production control/host are not yet connected to this shell. Network recovery
+That baseline kept microphone/speaker off and legacy WebRTC disabled. The
+subsequent checkpoint below connects the MoQ audio owner; production
+control/host are still missing. Network recovery
 never erases NVS automatically. The Ultra table matches inspected live metadata;
 only app0 was written. Build/flash/monitor scripts now accept `t-watch-ultra`,
 with app-only flashing and a heartbeat check. See the
 [full-shell baseline evidence](implementation-evidence/2026-08-30-ultra-shell/README.md).
+
+## MoQ audio integrated into the full shell
+
+The internal media seam now selects WebRTC or MoQ at build time while the shared
+service retains control, capture/request/guest correlation, actions, NVS and
+package behavior. The Ultra implementation owns its own 64 KiB PSRAM audio task
+and the library endpoint, using the existing board's timestamped/fenced audio
+API. It does not open a second board. Native cancellation invalidates media
+before waiting for the control queue; playback completion follows DMA drain.
+
+The latest physical diagnostic passes 19,200 microphone samples through the
+pinned reference decoder/re-encoder and plays all 19,200 response samples with
+zero microphone drops and zero concealed, late or pressure-discarded player
+frames. Independent PCM verification found 38 one-LSB differences (RMS 0.04449),
+within the established tolerance. WAMR, native Home, Wi-Fi and existing storage
+remain active, followed by a one-minute quiet interval and joined endpoint
+cleanup. This exercises the internal media API, not public Voice Orb/PTT control.
+
+The first run passed audio but exposed a 510 ms flush and only 95,040 bytes
+minimum internal free RAM. The second failed before capture due to codec startup
+ordering. The third fixed startup and TLS/UI core contention but still reached
+only 86,528 bytes internal free. With the task-only endpoint/configuration and
+optional service arena in PSRAM, the fourth run reaches 114,792 bytes minimum
+internal free, minimum largest block 81,920 and maximum flush 8,031 us. Worker
+stacks and DMA remain internal. Initial rendering still reached 291,299 us;
+WSS/bootstrap and active voice UI stress are absent, so final UI/resource gates
+remain open. The readiness interval was 4,476 ms, not a passing connection-latency
+result. Free stacks were 43,532 audio / 7,248 network / 2,888 DNS bytes.
+
+The latest installed image is
+`e78688cae157f1187591f9835a941ef1c438d90d0aafa918fac11c86543cb56c`.
+It is an explicitly selected USB-provisioned public-token diagnostic. Production
+MoQ currently fails closed instead of using anonymous legacy mDNS/WebSocket
+control. The default Ultra profile still disables voice. No restored firmware,
+NVS/package erase or certificate-validation bypass was required.
+
+The MoQ ELF contains no peer open/send symbols. A separate CoreS3 WebRTC image
+still builds with those symbols and no MoQ endpoint; it was not flashed. All 18
+native interoperability/security cases, core/audio regressions, 97 existing
+live-agent tests, five storage checks and five artifact-verifier tests pass.
+The live-agent suite retains four warnings; no new host adapter is implied.
+See [full evidence and failed runs](implementation-evidence/2026-08-30-shell-moq/README.md)
+and [media ownership details](moq-shell-media-seam.md).
+
+Authenticated bootstrap, credential/time/reconnect policy, the Rust/Python host
+bridge and public response bindings are next. Real voice turns, interruption,
+PTT, full UI/package parity and all sustained/impairment gates remain incomplete.
 
 ## Capture and network checkpoint (historical)
 

@@ -1,0 +1,5 @@
+./test_player
+PASS: 9 pinned Rust Producer/Consumer cases, exact lengths and worst PCM RMS 0.000 LSB
+PASS: real Opus sample-exact trim, reordered groups/tail, PLC bound, pauses, pressure, stall and cancellation; arena=21976
+./test_capture
+PASS: 12 queried-reference VOIP capture fixtures, fragmented PCM, retry identity, tail grouping, discontinuity and cancel; arena=3384

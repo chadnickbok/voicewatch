@@ -1,0 +1,6 @@
+{
+  "esp_peer_open": false,
+  "esp_peer_send_audio": false,
+  "esp_moq_endpoint_connect": true,
+  "esp_moq_audio_capture_write": true
+}
