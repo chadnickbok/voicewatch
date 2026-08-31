@@ -29,6 +29,8 @@ doodad-runtime/firmware/sdkconfig.cores3
 doodad-runtime/firmware/sdkconfig.cores3.old
 doodad-runtime/firmware/sdkconfig.t-watch-s3
 doodad-runtime/firmware/sdkconfig.t-watch-s3.old
+doodad-runtime/firmware/sdkconfig.t-watch-ultra
+doodad-runtime/firmware/sdkconfig.t-watch-ultra.old
 
 # Native simulator
 doodad-runtime/tools/native-host/build/

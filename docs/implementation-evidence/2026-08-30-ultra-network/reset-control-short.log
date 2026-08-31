@@ -1,0 +1,46 @@
+I (3694) moq-ultra-net: probe=transport groups=500 payload=80 cadence_us=20000 quad_psram=8388608
+I (3694) moq-ultra-net: phase=boot sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=317439 internal_min=285408 internal_largest=221184 psram_free=8386192 stack_free=10652
+I (3695) moq-crypto-kat: AES128-GCM encrypt bytes=0 inplace=0 result=1 pass=1
+I (3696) moq-crypto-kat: AES128-GCM decrypt bytes=0 result=1 pass=1
+I (3696) moq-crypto-kat: AES128-GCM rejects changed tag bytes=0 pass=1
+I (3697) moq-crypto-kat: AES128-GCM encrypt bytes=0 inplace=1 result=1 pass=1
+I (3697) moq-crypto-kat: AES128-GCM decrypt bytes=0 result=1 pass=1
+I (3698) moq-crypto-kat: AES128-GCM rejects changed tag bytes=0 pass=1
+I (3698) moq-crypto-kat: AES128-GCM encrypt bytes=16 inplace=0 result=1 pass=1
+I (3698) moq-crypto-kat: AES128-GCM decrypt bytes=16 result=1 pass=1
+I (3699) moq-crypto-kat: AES128-GCM rejects changed tag bytes=16 pass=1
+I (3699) moq-crypto-kat: AES128-GCM encrypt bytes=16 inplace=1 result=1 pass=1
+I (3700) moq-crypto-kat: AES128-GCM decrypt bytes=16 result=1 pass=1
+I (3700) moq-crypto-kat: AES128-GCM rejects changed tag bytes=16 pass=1
+I (3701) moq-crypto-kat: AES128-GCM encrypt bytes=80 inplace=0 result=1 pass=1
+I (3701) moq-crypto-kat: AES128-GCM decrypt bytes=80 result=1 pass=1
+I (3702) moq-crypto-kat: AES128-GCM rejects changed tag bytes=80 pass=1
+I (3703) moq-crypto-kat: AES128-GCM encrypt bytes=80 inplace=1 result=1 pass=1
+I (3703) moq-crypto-kat: AES128-GCM decrypt bytes=80 result=1 pass=1
+I (3704) moq-crypto-kat: AES128-GCM rejects changed tag bytes=80 pass=1
+I (3707) moq-crypto-kat: AES128-GCM encrypt bytes=1160 inplace=0 result=1 pass=1
+I (3711) moq-crypto-kat: AES128-GCM decrypt bytes=1160 result=1 pass=1
+I (3714) moq-crypto-kat: AES128-GCM rejects changed tag bytes=1160 pass=1
+I (3717) moq-crypto-kat: AES128-GCM encrypt bytes=1160 inplace=1 result=1 pass=1
+I (3721) moq-crypto-kat: AES128-GCM decrypt bytes=1160 result=1 pass=1
+I (3724) moq-crypto-kat: AES128-GCM rejects changed tag bytes=1160 pass=1
+I (3724) moq-crypto-kat: direct AES-GCM pass=1
+I (3725) moq-crypto-kat: AES-ECB header protection pass=1
+I (3725) moq-crypto-kat: HKDF-SHA256 pass=1
+I (3726) moq-crypto-kat: CRYPTO_KAT_FINAL pass=1
+I (5355) moq-ultra-net: phase=wifi sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=267535 internal_min=232996 internal_largest=192512 psram_free=8386076 stack_free=10076
+I (5357) moq-ultra-net: phase=before_start sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=255371 internal_min=223320 internal_largest=180224 psram_free=8357912 stack_free=10076
+I (8754) moq-ultra-net: QUIC verified setup=1 handshake_us=3396416
+I (8754) moq-ultra-net: phase=quic_connected sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=204759 internal_min=149028 internal_largest=108544 psram_free=8357912 stack_free=3788
+I (8815) moq-ultra-net: RESULT phase=setup pass=1 result=0 sent=0 received=0 replies=0 elapsed_us=3457204
+I (8815) moq-ultra-net: phase=before_destroy sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=214371 internal_min=149028 internal_largest=110592 psram_free=8357912 stack_free=3788
+I (8817) moq-ultra-net: phase=after_destroy sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=267303 internal_min=149028 internal_largest=143360 psram_free=8386076 stack_free=3788
+I (9319) moq-ultra-net: phase=before_start sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=255011 internal_min=149028 internal_largest=143360 psram_free=8357844 stack_free=3788
+I (12744) moq-ultra-net: QUIC verified setup=0 handshake_us=3425879
+I (12745) moq-ultra-net: phase=quic_connected sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=204807 internal_min=147928 internal_largest=110592 psram_free=8357844 stack_free=3788
+I (19321) moq-ultra-net: phase=streaming sent=329 received=325 replies=1 control=1 reset_tx=0 reset_rx=0 internal_free=214207 internal_min=147928 internal_largest=129024 psram_free=8357844 stack_free=3788
+I (22852) moq-ultra-net: RESULT phase=raw_soak pass=1 result=0 sent=500 received=500 replies=3 elapsed_us=13532979
+I (22852) moq-ultra-net: phase=before_destroy sent=500 received=500 replies=3 control=2 reset_tx=1 reset_rx=1 internal_free=213963 internal_min=147928 internal_largest=129024 psram_free=8357844 stack_free=3788
+I (22854) moq-ultra-net: phase=after_destroy sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=267079 internal_min=147928 internal_largest=143360 psram_free=8386076 stack_free=3788
+I (22855) moq-ultra-net: ULTRA_TRANSPORT_FINAL pass=1
+W (22855) moq-ultra-net: Synthetic stream workload only: no microphone/audio/full-shell readiness claim

@@ -1,0 +1,46 @@
+{
+  "date": "2026-08-30",
+  "library_base": "f827391b839ef60d4d197bf0bc5fa135a0fa594e",
+  "changes_uncommitted": true,
+  "source_sha256": {
+    "components/esp_moq/src/client.c": "e26608fb3b461c237e470cd492f8a505ace4bfb2c2510f8a5d283f3680b65fbd",
+    "components/esp_moq/src/lite05_control.c": "025c378c0490816bf4b2fb40913d12fcbd75321b4615810e495178f9c76af597",
+    "components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "41b6538cf297ad474242b2d1195bb9a67a929be189546026d92eba62c9c298c2",
+    "components/esp_moq_transport_ngtcp2/CMakeLists.txt": "903e5abe99bdd856e84f50255b2f51dcd0843022a793898e210ac2e3404c7992",
+    "tools/moq_reference_oracle/fixtures.json": "b9b022c5bde710c60520ddff75d87b58d031063c1c451edb0313f24ca515cfdd",
+    "tools/moq_reference_oracle/provenance.json": "4d1862fa9a1f3a4040c46c25c76709ee803455ba46aa33e32d05b0522cba62e6",
+    "tools/moq_reference_oracle/Cargo.lock": "9621558ee056631a440efcb4bf1dde18b79abde2e9a987e04886b207f96d20fa",
+    "tests/interop/peer/Cargo.lock": "b5405b1767fb1d944575ca1187c5449c63b05b7446b29db7bc99a2755ec38073",
+    "tests/interop/build.py": "4ead2f8b6c9e1e9e7af8607a4da44d8c6da83c8f1b17cdd41b030c2ca6846ba0",
+    "tests/interop/run.py": "39f4271ebe13ca7a61b359d83371c0635054eac13bc2b24097392292d7468669",
+    "tests/interop/client.c": "caaee07efd8407126975fc746a2c48e58c06d99983b2971dc0bd9c7def6bd350",
+    "tests/interop/peer/src/main.rs": "b9ce849b4ed00410995ce31c7c0d13712e435c5f407d2468e4999047c77d8195"
+  },
+  "active_esp32_artifacts": {
+    "esp_moq_relay_handshake.elf": {
+      "bytes": 14538656,
+      "sha256": "477297f096654c18122a17868c3e0aa810c8460ba104152d103021b02fa09d6d"
+    },
+    "esp_moq_relay_handshake.bin": {
+      "bytes": 1373808,
+      "sha256": "27789cf18afdee9b46bcfc910ae5fc7ac931923596431564ced653041f6c1cef"
+    },
+    "esp_moq_relay_handshake.map": {
+      "bytes": 11505152,
+      "sha256": "47493f37a624dfd1c7e0f7639aa8e6083d091a94c3e58031216bacae8a0c059c"
+    }
+  },
+  "native_macos_matrix_cases": 36,
+  "native_linux_asan_ubsan_matrix_cases": 12,
+  "streams_per_positive_connection_each_direction": 10000,
+  "peer_bidi_replies_per_positive_connection": 65,
+  "core_assertions": 300621,
+  "reference_seeded_mutations": 31806,
+  "real_moq_interop": "SETUP/path only with unmodified pinned moq-net server",
+  "operational_pubsub_audio": false,
+  "on_device_handshake": false,
+  "full_shell_moq": false,
+  "github_ci_executed": false,
+  "on_device_memory_probe": true,
+  "original_full_flash_restored_and_verified": true
+}

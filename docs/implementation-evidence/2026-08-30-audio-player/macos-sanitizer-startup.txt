@@ -1,0 +1,11 @@
+Sampled during startup before main; stopped with SIGTERM. This is not a passing sanitizer run. Linux ASan/UBSan passed.
+            814 dyld4::APIs::runAllInitializersForMain()  (in dyld) + 100  [0x1830d0870]
+                                    814 __asan::AsanInitFromRtl()  (in libclang_rt.asan_osx_dynamic.dylib) + 40  [0x1014b6ce0]
+                                        814 __asan::AsanInitInternal()  (in libclang_rt.asan_osx_dynamic.dylib) + 52  [0x1014b6d20]
+                                          814 __asan::AsanInitInternal() (.cold.1)  (in libclang_rt.asan_osx_dynamic.dylib) + 260  [0x1014f6764]
+                                            814 __asan::InitializeShadowMemory()  (in libclang_rt.asan_osx_dynamic.dylib) + 112  [0x1014b770c]
+                                                    814 dyld_shared_cache_iterate_text_swift  (in Dyld) + 28  [0x2446b98c8]
+                                                              814 __asan::AsanInitFromRtl()  (in libclang_rt.asan_osx_dynamic.dylib) + 40  [0x1014b6ce0]
+                                                                  806 __sanitizer::StaticSpinMutex::LockSlow()  (in libclang_rt.asan_osx_dynamic.dylib) + 64  [0x1014c89c8]
+                                                                  8 __sanitizer::StaticSpinMutex::LockSlow()  (in libclang_rt.asan_osx_dynamic.dylib) + 36,64  [0x1014c89ac,0x1014c89c8]
+        __sanitizer::StaticSpinMutex::LockSlow()  (in libclang_rt.asan_osx_dynamic.dylib)        8

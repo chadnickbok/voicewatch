@@ -1,0 +1,4 @@
+E (6522) ESP_OPUS_DEC: Invalid parameter, handle(<address>), in_frame(<address>), in_frame_buf(<address>), out_frame(<address>), out_frame_buf(<address>) on esp_opus_dec_decode
+I (6522) moq-ultra-audio: plc=0
+I (6522) moq-ultra-audio: cases_passed=27 decode_calls=82 decode_max_us=2602 decode_total_us=97639
+I (6522) moq-ultra-audio: ULTRA_AUDIO_FINAL pass=0 scope=codec_player_no_i2s_no_network

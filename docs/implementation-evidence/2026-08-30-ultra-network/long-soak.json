@@ -1,0 +1,21 @@
+{
+  "image_sha256": "a4c9ed27d564bfe976486acace7f88e0620f0d54cd66980015e9aa2b2dfca094",
+  "changed_offset": 65536,
+  "changed_span": 1347584,
+  "test_pass": true,
+  "restored_full_flash": true,
+  "target_elapsed_us": 1803668299,
+  "peer_elapsed_ms": 1800022,
+  "streams_each_direction": 90000,
+  "resets_each_direction": 180,
+  "peer_bidi_replies": 182,
+  "persistent_control_roundtrips": 181,
+  "min_internal_heap_bytes": 149024,
+  "stack_watermark_bytes": 3788,
+  "internal_heap_after_destroy_bytes": 267123,
+  "psram_after_destroy_bytes": 8386076,
+  "restoration_required": false,
+  "restoration_note": "Historical runner restored once; future tests leave new firmware installed.",
+  "scope": "Synthetic raw QUIC plus verified TLS/ALPN and pinned SETUP; no audio or shell; predates extended-close metadata and operational engine.",
+  "elf_sha256": "ccc34ff3bedac39c182fb7ef734f41e7aa576253e12b65b14611745f196f82f6"
+}

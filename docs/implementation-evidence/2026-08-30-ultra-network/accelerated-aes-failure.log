@@ -1,0 +1,23 @@
+I (3694) moq-ultra-net: probe=transport groups=500 payload=80 cadence_us=20000 quad_psram=8388608
+I (3694) moq-ultra-net: phase=boot sent=0 received=0 replies=0 internal_free=317423 internal_min=285392 internal_largest=221184 psram_free=8386192 stack_free=10652
+I (3695) moq-crypto-kat: AES128-GCM encrypt bytes=0 inplace=0 result=1 pass=1
+I (3696) moq-crypto-kat: AES128-GCM decrypt bytes=0 result=1 pass=1
+I (3696) moq-crypto-kat: AES128-GCM encrypt bytes=0 inplace=1 result=1 pass=1
+I (3697) moq-crypto-kat: AES128-GCM decrypt bytes=0 result=1 pass=1
+I (3697) moq-crypto-kat: AES128-GCM encrypt bytes=16 inplace=0 result=1 pass=0
+I (3698) moq-crypto-kat: AES128-GCM decrypt bytes=16 result=1 pass=0
+I (3698) moq-crypto-kat: AES128-GCM encrypt bytes=16 inplace=1 result=1 pass=0
+I (3699) moq-crypto-kat: AES128-GCM decrypt bytes=16 result=1 pass=0
+I (3700) moq-crypto-kat: AES128-GCM encrypt bytes=80 inplace=0 result=1 pass=0
+I (3700) moq-crypto-kat: AES128-GCM decrypt bytes=80 result=1 pass=0
+I (3701) moq-crypto-kat: AES128-GCM encrypt bytes=80 inplace=1 result=1 pass=0
+I (3702) moq-crypto-kat: AES128-GCM decrypt bytes=80 result=1 pass=0
+I (3705) moq-crypto-kat: AES128-GCM encrypt bytes=1160 inplace=0 result=1 pass=0
+I (3709) moq-crypto-kat: AES128-GCM decrypt bytes=1160 result=1 pass=0
+I (3712) moq-crypto-kat: AES128-GCM encrypt bytes=1160 inplace=1 result=1 pass=0
+I (3716) moq-crypto-kat: AES128-GCM decrypt bytes=1160 result=1 pass=0
+I (3716) moq-crypto-kat: direct AES-GCM pass=0
+I (3717) moq-crypto-kat: AES-ECB header protection pass=0
+I (3717) moq-crypto-kat: HKDF-SHA256 pass=1
+I (3718) moq-crypto-kat: CRYPTO_KAT_FINAL pass=0
+E (3718) moq-ultra-net: FAIL: crypto known-answer test

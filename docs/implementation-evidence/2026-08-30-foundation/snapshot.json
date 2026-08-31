@@ -1,0 +1,50 @@
+{
+  "library_base": "f827391b839ef60d4d197bf0bc5fa135a0fa594e",
+  "status": "uncommitted implementation snapshot; not a release candidate",
+  "ngtcp2_commit": "f9e9ff01ad2c8116bc09de4f644b0028a61486a6",
+  "esp_idf": "v5.5.5",
+  "build_profile": "ESP32-S3 handshake with public dummy credentials; no hardware run",
+  "artifacts": {
+    "esp_moq_relay_handshake.elf": {
+      "bytes": 14524160,
+      "sha256": "919738402d26ae4c47915e8ac1fbccec580e013e19c98803a7053a40673de992"
+    },
+    "esp_moq_relay_handshake.bin": {
+      "bytes": 1369296,
+      "sha256": "2313f70f878bd1056e58ddf56d45105ab0511e5ab7659ad39b45793035834260"
+    },
+    "esp_moq_relay_handshake.map": {
+      "bytes": 11494117,
+      "sha256": "48d60d6b6c0ec207ce7874a6d223ab55b081c436b7e995c56a402c3bdcb1f86f"
+    }
+  },
+  "source_files": {
+    ".github/workflows/esp-idf-build.yml": "a47b2e135b3aaf70114989f9ebe27f1e21106e77795392f949071931c4f50a7f",
+    ".github/workflows/host-tests.yml": "b61fd6fb28aae9b83de6975563b31f31e101756ba90e2f7be7aed67613b10b70",
+    ".gitignore": "a7c28fe8d159d2904a650bd4f85f983f1112c74aabdde7abba309b2aa9104d07",
+    "README.md": "c902f211d66de89cd23309643ce232d1569db20ce59828fe7f36cc7afcd0bf10",
+    "components/esp_moq/src/client.c": "e26608fb3b461c237e470cd492f8a505ace4bfb2c2510f8a5d283f3680b65fbd",
+    "components/esp_moq/src/lite05_control.c": "c0072ef06d5551d75d4aa742d28802f872003a92055b721f7a5a366b83047cd2",
+    "components/esp_moq_transport_ngtcp2/CMakeLists.txt": "0799f51fed2cedb9100cb62bffe64d51e0ee5427a2b952111101435e13deca65",
+    "components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "6974786a5675ed167a65f9dcd90bcc220d0c078f96ff82d54cd544556df7205d",
+    "components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "aee7a3152f3974f5390bc83a50f4fb11308f27c71f7e7184df69ba3c6f08b226",
+    "docs/transport-backend.md": "547a1ac4be2b1b2f6f01e41d88c3add9d1c1b3bc6c308cc6c910ac4d0a56af2e",
+    "examples/esp32s3_relay_handshake/partitions.csv": "6cddd4579111cab12215422c983646636380548863398d2eb62160f43fe287af",
+    "examples/esp32s3_relay_handshake/sdkconfig.ci.defaults": "e8d4f00e0fbeb63c0ac8d540123dff3b38924f3588ba1d04f9e3ef1dcec38fde",
+    "examples/esp32s3_relay_handshake/sdkconfig.defaults": "00f7612494ad7ba06632782e01bc12b1d6e8a6210c4382fbf36ba20d22279471",
+    "tests/adapter/Makefile": "37a0b7f6d7614d9896d6c8b70bedb5dd203d72fc629274e38976fa328b4b1312",
+    "tests/adapter/README.md": "a40d74a09bb9b08e8e5ea8b357190321b35de7eea4d3703a7514b53f79d0edff",
+    "tests/adapter/crypto_unreachable.c": "79e9e9584b780948df1c849dedfe518bc2c4c6e9aebe3f58c9b8144c160806a4",
+    "tests/adapter/stubs/esp_random.h": "aa9ff1b907fc45f96cb0aadeb0146c6d753863247c8d9aea13a907f88327fe08",
+    "tests/adapter/stubs/esp_timer.h": "82a7c14acf5d1cdcbea1b23bab880c69562da88013adc34ff5f2ae2115fb08d1",
+    "tests/adapter/stubs/lwip/netdb.h": "d75f241dc28e74f5c1869bb00f2eb23a72dc013a50420e74a157b191a2ecda00",
+    "tests/adapter/stubs/lwip/sockets.h": "c418e3341c4e0c40ae893dd6573d2119bc819750d16af3a5608ab656e26e5531",
+    "tests/adapter/stubs/wolfssl/options.h": "0276f847a744e99d4a9a1066df2a058a74bb9e916770eb2cd32b48e0db31bc9f",
+    "tests/adapter/stubs/wolfssl/quic.h": "46b4d4a2e405f76e6483a9a27569f18b522fa4a7602c099e2acf58bbc41f5d96",
+    "tests/adapter/stubs/wolfssl/ssl.h": "072c6279c46ee539a5c16dec472d228e21620b260ab3a7c4b8f0748d01ec8ec1",
+    "tests/adapter/test_adapter.c": "eeb6bb3eb79442fc51f68833cf53ffd807b19b0772339bfc71ab3916141dfb3f",
+    "tests/host/Makefile": "d01ccd898f76fa22293a316c300f83253fd3b9f15dde75b23be4da9d9539b39c",
+    "tests/host/test_wire.c": "719a3d8a83c609d89b5ce7ed14302b1ed53bdf4fdb7083d3cb4ce9c3cb302ef4",
+    "tools/verify_active_handshake.py": "4fda8450da62c567c1bff9ba2d64fe92bff7f0786e08875346a3085a5d8ba27a"
+  }
+}

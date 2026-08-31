@@ -10,6 +10,9 @@ config DOODAD_BOARD_CORES3
 config DOODAD_BOARD_TWATCH_S3
     bool "LilyGO T-Watch S3"
 
+config DOODAD_BOARD_TWATCH_ULTRA
+    bool "LilyGO T-Watch Ultra (410x502, quad PSRAM)"
+
 endchoice
 
 endmenu

@@ -2234,6 +2234,11 @@ void websocket_event(
 }
 
 bool discover_url(char* destination, std::size_t capacity) {
+#if !CONFIG_DOODAD_VOICE_UPLINK
+    (void)destination;
+    (void)capacity;
+    return false;
+#else
 #if defined(CONFIG_DOODAD_VOICE_SIGNALING_URL)
     if (CONFIG_DOODAD_VOICE_SIGNALING_URL[0] != 0) {
         std::snprintf(destination, capacity, "%s", CONFIG_DOODAD_VOICE_SIGNALING_URL);
@@ -2272,6 +2277,7 @@ bool discover_url(char* destination, std::size_t capacity) {
     mdns_free();
     g_mdns_initialized = false;
     return true;
+#endif
 }
 
 void connect_websocket() {

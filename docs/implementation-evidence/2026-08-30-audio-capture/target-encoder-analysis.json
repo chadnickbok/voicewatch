@@ -1,0 +1,117 @@
+{
+  "host_decoder": "libopus 1.6.1",
+  "timing_verified": true,
+  "queried_reference_lookahead_samples": 104,
+  "configured_pre_skip_48k": 312,
+  "cases": [
+    {
+      "case": 0,
+      "pattern": "silence",
+      "source_samples": 216,
+      "decoded_samples": 320,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 1.0
+    },
+    {
+      "case": 1,
+      "pattern": "silence",
+      "source_samples": 537,
+      "decoded_samples": 960,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 1.0
+    },
+    {
+      "case": 2,
+      "pattern": "silence",
+      "source_samples": 1600,
+      "decoded_samples": 1920,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 1.0
+    },
+    {
+      "case": 3,
+      "pattern": "impulse",
+      "source_samples": 216,
+      "decoded_samples": 320,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.81359589676557
+    },
+    {
+      "case": 4,
+      "pattern": "impulse",
+      "source_samples": 537,
+      "decoded_samples": 960,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.7004505280663877
+    },
+    {
+      "case": 5,
+      "pattern": "impulse",
+      "source_samples": 1600,
+      "decoded_samples": 1920,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.5490851971765055,
+      "target_source_peak_samples": 104,
+      "reference_source_peak_samples": 104,
+      "target_source_correlation": 0.955905618681084,
+      "reference_source_correlation": 0.7965670338770051
+    },
+    {
+      "case": 6,
+      "pattern": "tone",
+      "source_samples": 216,
+      "decoded_samples": 320,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.9687712840777468
+    },
+    {
+      "case": 7,
+      "pattern": "tone",
+      "source_samples": 537,
+      "decoded_samples": 960,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.9770684633971649
+    },
+    {
+      "case": 8,
+      "pattern": "tone",
+      "source_samples": 1600,
+      "decoded_samples": 1920,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.9867661155919498,
+      "target_source_peak_samples": 104,
+      "reference_source_peak_samples": 104,
+      "target_source_correlation": 0.9878007924130925,
+      "reference_source_correlation": 0.9808515664374928
+    },
+    {
+      "case": 9,
+      "pattern": "noise",
+      "source_samples": 216,
+      "decoded_samples": 320,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.8896345364121393
+    },
+    {
+      "case": 10,
+      "pattern": "noise",
+      "source_samples": 537,
+      "decoded_samples": 960,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.674984878972331
+    },
+    {
+      "case": 11,
+      "pattern": "noise",
+      "source_samples": 1600,
+      "decoded_samples": 1920,
+      "reference_alignment_samples": 0,
+      "reference_correlation": 0.6153396394708442,
+      "target_source_peak_samples": 104,
+      "reference_source_peak_samples": 104,
+      "target_source_correlation": 0.9167446418895233,
+      "reference_source_correlation": 0.8295482576877246
+    }
+  ],
+  "scope": "Independent decoding and latency diagnostics, not a speech-quality acceptance test"
+}

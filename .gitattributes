@@ -1,2 +1,6 @@
-*.rgb565le binary
-*.rgb888 binary
+# Captured evidence is hash-bound; do not normalize its bytes on checkout.
+docs/implementation-evidence/** -text
+docs/review-evidence/** -text
+# Preserve trailing spaces emitted by the original build/serial tools.
+docs/implementation-evidence/**/*.log whitespace=-blank-at-eol
+docs/review-evidence/**/*.txt whitespace=-blank-at-eol

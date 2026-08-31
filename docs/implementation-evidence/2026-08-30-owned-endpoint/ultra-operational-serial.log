@@ -1,0 +1,8 @@
+I (3707) moq-ultra-net: probe=transport groups=8 payload=80 cadence_us=20000 quad_psram=8388608
+I (3707) moq-ultra-net: phase=boot sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=316647 internal_min=284616 internal_largest=221184 psram_free=8386192 stack_free=10644
+I (4881) moq-ultra-net: phase=wifi sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=266739 internal_min=232204 internal_largest=192512 psram_free=8386076 stack_free=10068
+I (8807) moq-endpoint: RESULT pass=1 result=0 state=3 failure=0 alert=0 sent=8 received=8 catalogs=1 elapsed_ms=3884
+I (8807) moq-endpoint: MEM internal_free=172383 internal_min=107440 psram_free=7776796 net_stack=7392 dns_stack=2868 rx_high=7 tx_high=1
+I (8835) moq-endpoint: DESTROY result=0 internal_free=266511 psram_free=8386076
+I (8835) moq-ultra-net: ULTRA_TRANSPORT_FINAL pass=1
+W (8835) moq-ultra-net: Synthetic stream workload only: no microphone/audio/full-shell readiness claim

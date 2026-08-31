@@ -1,0 +1,88 @@
+I (3553) moq-ultra-audio: phase=before internal=323683 minimum=291652 psram=8386192 stack_free=63896
+I (3553) moq-ultra-audio: phase=opened internal=323667 minimum=291636 psram=8346424 stack_free=63240
+I (3623) moq-ultra-audio: case=0 expected=1 samples=1 rms_lsb=0.000 drained=1
+I (3703) moq-ultra-audio: case=1 expected=104 samples=104 rms_lsb=0.000 drained=1
+I (3783) moq-ultra-audio: case=2 expected=216 samples=216 rms_lsb=0.000 drained=1
+I (3873) moq-ultra-audio: case=3 expected=319 samples=319 rms_lsb=0.000 drained=1
+I (3963) moq-ultra-audio: case=4 expected=320 samples=320 rms_lsb=0.000 drained=1
+I (4053) moq-ultra-audio: case=5 expected=321 samples=321 rms_lsb=0.000 drained=1
+I (4153) moq-ultra-audio: case=6 expected=537 samples=537 rms_lsb=0.000 drained=1
+I (4323) moq-ultra-audio: case=7 expected=1600 samples=1600 rms_lsb=0.000 drained=1
+I (4553) moq-ultra-audio: case=8 expected=2483 samples=2483 rms_lsb=0.000 drained=1
+I (4623) moq-ultra-audio: case=0 expected=1 samples=1 rms_lsb=0.000 drained=1
+I (4703) moq-ultra-audio: case=1 expected=104 samples=104 rms_lsb=0.000 drained=1
+I (4783) moq-ultra-audio: case=2 expected=216 samples=216 rms_lsb=0.000 drained=1
+I (4873) moq-ultra-audio: case=3 expected=319 samples=319 rms_lsb=0.000 drained=1
+I (4963) moq-ultra-audio: case=4 expected=320 samples=320 rms_lsb=0.000 drained=1
+I (5053) moq-ultra-audio: case=5 expected=321 samples=321 rms_lsb=0.000 drained=1
+I (5153) moq-ultra-audio: case=6 expected=537 samples=537 rms_lsb=0.000 drained=1
+I (5323) moq-ultra-audio: case=7 expected=1600 samples=1600 rms_lsb=0.000 drained=1
+I (5553) moq-ultra-audio: case=8 expected=2483 samples=2483 rms_lsb=0.000 drained=1
+I (5623) moq-ultra-audio: case=0 expected=1 samples=1 rms_lsb=0.000 drained=1
+I (5703) moq-ultra-audio: case=1 expected=104 samples=104 rms_lsb=0.000 drained=1
+I (5783) moq-ultra-audio: case=2 expected=216 samples=216 rms_lsb=0.000 drained=1
+I (5873) moq-ultra-audio: case=3 expected=319 samples=319 rms_lsb=0.000 drained=1
+I (5963) moq-ultra-audio: case=4 expected=320 samples=320 rms_lsb=0.000 drained=1
+I (6053) moq-ultra-audio: case=5 expected=321 samples=321 rms_lsb=0.000 drained=1
+I (6153) moq-ultra-audio: case=6 expected=537 samples=537 rms_lsb=0.000 drained=1
+I (6323) moq-ultra-audio: case=7 expected=1600 samples=1600 rms_lsb=0.000 drained=1
+I (6553) moq-ultra-audio: case=8 expected=2483 samples=2483 rms_lsb=0.000 drained=1
+I (6553) moq-ultra-audio: plc=1
+I (6553) moq-ultra-audio: encoder_info result=0 rate=16000 channels=1 bitrate=24000 description_bytes=0 head_result=4 pre_skip=0
+I (6563) moq-ultra-audio: encpkt case=0 packet=0 hex=480be4c1222361f0
+I (6563) moq-ultra-audio: encoder_alignment case=0 correlation=1.000000 best_lag=0
+I (6573) moq-ultra-audio: encpkt case=1 packet=0 hex=480be4c1222361f0
+I (6583) moq-ultra-audio: encpkt case=1 packet=1 hex=4807c975f38058
+I (6593) moq-ultra-audio: encpkt case=1 packet=2 hex=4807c979c12458
+I (6603) moq-ultra-audio: encoder_alignment case=1 correlation=1.000000 best_lag=0
+I (6613) moq-ultra-audio: encpkt case=2 packet=0 hex=480be4c1222361f0
+I (6623) moq-ultra-audio: encpkt case=2 packet=1 hex=4807c975f38058
+I (6623) moq-ultra-audio: encpkt case=2 packet=2 hex=4807c979c12458
+I (6633) moq-ultra-audio: encpkt case=2 packet=3 hex=4807c97d8ec858
+I (6643) moq-ultra-audio: encpkt case=2 packet=4 hex=4807c97225db8a
+I (6643) moq-ultra-audio: encpkt case=2 packet=5 hex=4807c975f38058
+I (6673) moq-ultra-audio: encoder_alignment case=2 correlation=1.000000 best_lag=0
+I (6683) moq-ultra-audio: encpkt case=3 packet=0 hex=488507069f6855254094840a38edaf95e5c1c6896dcc03517ab783b45bc0
+I (6683) moq-ultra-audio: encoder_alignment case=3 correlation=0.813596 best_lag=0
+I (6693) moq-ultra-audio: encpkt case=4 packet=0 hex=48850704862eaa4bc12084af058af6b81051410b7c
+I (6703) moq-ultra-audio: encpkt case=4 packet=1 hex=4883a2061daedeab5e90d5c45d9e4260
+I (6703) moq-ultra-audio: encpkt case=4 packet=2 hex=48850c400c5d8f16e0d584
+I (6723) moq-ultra-audio: encoder_alignment case=4 correlation=0.700451 best_lag=0
+I (6733) moq-ultra-audio: encpkt case=5 packet=0 hex=48850704862eaa4bc12084af058af6b81051410b7c
+I (6733) moq-ultra-audio: encpkt case=5 packet=1 hex=483dfa803d1d8dbb7b417908f559d7f4
+I (6743) moq-ultra-audio: encpkt case=5 packet=2 hex=482e7b00bf8d32a3
+I (6753) moq-ultra-audio: encpkt case=5 packet=3 hex=480a1f5b047416a0
+I (6753) moq-ultra-audio: encpkt case=5 packet=4 hex=4807c97225db8a
+I (6763) moq-ultra-audio: encpkt case=5 packet=5 hex=48850704862eb8c5244a7c94abbafeca9c22dc89c8
+I (6783) moq-ultra-audio: encoder_alignment case=5 correlation=0.549085 best_lag=0
+I (6793) moq-ultra-audio: encpkt case=6 packet=0 hex=4884e4d4771aa30e2e7848d21778a0e81dedc5311ebbaa22d05454af8c8dfaa7b83838318390c6a54fca53655018bba8907b6411ed1ad20892bfea5c8c
+I (6803) moq-ultra-audio: encoder_alignment case=6 correlation=0.968771 best_lag=0
+I (6813) moq-ultra-audio: encpkt case=7 packet=0 hex=4884e4e3a0550819d8212f8b72888825ea4459df6f638207d6910d09f2171712f7b5111399bdc1e9c32d1c5873e9618c33b8b819daf12da4e9cd3e68
+I (6823) moq-ultra-audio: encpkt case=7 packet=1 hex=48ba3e6e8c6c9a34f2e0d38201338c0b4c43d2b6446bd489a141855001c69c55776da04e6536b99ff50830108ac132be4d62ad5a3768200822e9e2819393cf12be49108a40
+I (6833) moq-ultra-audio: encpkt case=7 packet=2 hex=48066fc00048f6ff29c342
+I (6843) moq-ultra-audio: encoder_alignment case=7 correlation=0.977068 best_lag=0
+I (6853) moq-ultra-audio: encpkt case=8 packet=0 hex=4884e4e3a0550819d8212f8b72888825ea4459df6f638207d6910d09f2171712f7b5111399bdc1e9c32d1c5873e9618c33b8b819daf12da4e9cd3e68
+I (6863) moq-ultra-audio: encpkt case=8 packet=1 hex=48ba222d58b7b907212dc0995effa6de20aee5a9e9fe249731064351f2fcf8d9474e3f8e7f1dbcdc4f4cb0ec41a0d8698312b64e740f2a45327fb3d0
+I (6873) moq-ultra-audio: encpkt case=8 packet=2 hex=48b7d0375544e54b360027e8276ed39509b49292e04fb97516187e186b4881f3548f09f2ae9b05bdc901927d9d273a4b1437ec7146
+I (6883) moq-ultra-audio: encpkt case=8 packet=3 hex=48b7d0375544e54b360027e827f0269caf87d8c4dee1f0960d0a116c9d2e94285fe839a77dd8efc18970e597b4da818ad8549b62d595df43
+I (6893) moq-ultra-audio: encpkt case=8 packet=4 hex=48b7d0375544e54b360027e826bb9afedb267c968997aed66a06f9688c7e0a600b21a3635cb9ff704ea026dd258bab5882e22a9cb273879580
+I (6893) moq-ultra-audio: encpkt case=8 packet=5 hex=48bc12a0001d23b4ae5fa8952404f9bcebc7da6404d14d919fe9a79e12dce981378ad559c1957227f8be38d1ca
+I (6923) moq-ultra-audio: encoder_alignment case=8 correlation=0.986766 best_lag=0
+I (6933) moq-ultra-audio: encpkt case=9 packet=0 hex=48852bbee27239e17e05bca36557f7f1195f722e0e18585f6528a59fff7e82bf6c54d3fd88861544001e1902c3fea98ee44bdc353b2c7bcdb03f622a63b8bff0d598d7bc38d2383bfd56675b52b0
+I (6933) moq-ultra-audio: encoder_alignment case=9 correlation=0.889635 best_lag=0
+I (6943) moq-ultra-audio: encpkt case=10 packet=0 hex=48852bbfc38fbbdeac186caaf458334c2dffe054c6f2739de08b31cf43b830a267d76cdfef7dbfd91c3e8c528c1d16539a8ad968d7a6c191f8d33d1a4b16ce3a7fccaad58fd034ce27a1927cf60f08
+I (6953) moq-ultra-audio: encpkt case=10 packet=1 hex=48981d10c5f175ecb1a55aa586cda78225ce2cd0bc8741e0c2d4fc11204950cb6ba719bd97e019595ec13a7c1b3f5700e23dd82b47ea897238af286cf470bd2dd67679d28aca1a416155b00c07ee59ea14165ae82bf95f3f10
+I (6963) moq-ultra-audio: encpkt case=10 packet=2 hex=4885a0c007b417a57751c60eb520
+I (6973) moq-ultra-audio: encoder_alignment case=10 correlation=0.674985 best_lag=0
+I (6983) moq-ultra-audio: encpkt case=11 packet=0 hex=48852bbfc38fbbdeac186caaf458334c2dffe054c6f2739de08b31cf43b830a267d76cdfef7dbfd91c3e8c528c1d16539a8ad968d7a6c191f8d33d1a4b16ce3a7fccaad58fd034ce27a1927cf60f08
+I (6993) moq-ultra-audio: encpkt case=11 packet=1 hex=48981d10c5f175ecb1a55aa586cee587d6d31864c1e692c2364d63ccfa18e5568f0c9b7fc0077b6194b3fbdfcb54777c3737a37aef7eca675efea2803f691d348442c236cf1dd7d3a590b414cd444a3b1f634baee9dc612999408d57b8
+I (7003) moq-ultra-audio: encpkt case=11 packet=2 hex=48981d00c765323762da9a55849452044a510978e8d1f9fdf6169d97f59a543597b17860e1d5f352948411609ede6fe7ce091a14acbfafbda6864b831cdb4c62d2321cc6a16fb06abae00d88038f15e0732642e3e212ee28def4e2
+I (7013) moq-ultra-audio: encpkt case=11 packet=3 hex=48981cf877cc93037705db8dd592bff7921dba203cc700fea7b0c6c28db9f1c61696b853cfe86349482507fa26b3e952a6e331516cfd84d64a44fc153eba755aaa2833ad972db4e80c593fa731df7bb13e1e9a0519c7db37c1770cb8
+I (7023) moq-ultra-audio: encpkt case=11 packet=4 hex=48981d100f68cdd6fca87c5c298c8d44600a088eb86239d25087cfcbd85e09784e31d60448e36f5743bda9bcf1fce702c38782d1ca8c2ac99a69151ab118fff91f1f27e8ee0be35a7f31faf8c89d75a2ed95e38d614be4c039cf2e8cadcc
+I (7023) moq-ultra-audio: encpkt case=11 packet=5 hex=4885da5cc8eab765bffd5c354263b106ad45fd1eb6a6e96d22f94112e256839c6fb41b9c0e08d40b96
+I (7053) moq-ultra-audio: encoder_alignment case=11 correlation=0.615340 best_lag=0
+I (7053) moq-ultra-audio: encoder_stack_free=38984
+I (7053) moq-ultra-audio: encoder_timing_collected=1 zero_lag_all=1 packets=40 different_bitstreams=29 lookahead_16k=104 max_us=6845 total_us=212949
+I (7053) moq-ultra-audio: phase=after_close internal=323463 minimum=291356 psram=8386192 stack_free=38984
+I (7053) moq-ultra-audio: cases_passed=27 decode_calls=82 decode_max_us=2617 decode_total_us=99335
+I (7053) moq-ultra-audio: ULTRA_AUDIO_FINAL pass=1 scope=codec_player_no_i2s_no_network

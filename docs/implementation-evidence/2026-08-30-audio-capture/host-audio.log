@@ -1,0 +1,17 @@
+cc -I../../components/esp_moq/include -I../../components/esp_moq_audio/include -I/opt/homebrew/Cellar/opus/1.6.1/include/opus -std=c11 -O2 -g -Wall -Wextra -Werror -Wconversion -Wshadow -Wstrict-prototypes -pedantic ../../components/esp_moq_audio/src/capture.c ../../components/esp_moq/src/opus.c test_capture.c -L/opt/homebrew/Cellar/opus/1.6.1/lib -lopus -lm -o test_capture
+./test_player
+PASS: 9 pinned Rust Producer/Consumer cases, exact lengths and worst PCM RMS 0.000 LSB
+PASS: real Opus sample-exact trim, reordered groups/tail, PLC bound, pauses, pressure, stall and cancellation; arena=21976
+./test_capture
+PASS: 12 queried-reference VOIP capture fixtures, fragmented PCM, retry identity, tail grouping, discontinuity and cancel; arena=3384
+cargo run --locked --manifest-path ../interop/peer/Cargo.toml --bin audio_fixture > fixtures.json.tmp
+   Compiling esp-moq-quic-stress-peer v0.1.0 (/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/tests/interop/peer)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.90s
+     Running `/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/tests/interop/peer/target/debug/audio_fixture`
+cmp fixtures.json.tmp fixtures.json
+rm fixtures.json.tmp
+cargo run --locked --manifest-path ../interop/peer/Cargo.toml --bin encoder_fixture > encoder_fixtures.json.tmp
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
+     Running `/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/tests/interop/peer/target/debug/encoder_fixture`
+cmp encoder_fixtures.json.tmp encoder_fixtures.json
+rm encoder_fixtures.json.tmp

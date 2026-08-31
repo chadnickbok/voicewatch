@@ -85,8 +85,8 @@ bool network_service_init() {
     auto status = nvs_flash_init();
     if (status == ESP_ERR_NVS_NO_FREE_PAGES ||
         status == ESP_ERR_NVS_NEW_VERSION_FOUND) {
-        if (nvs_flash_erase() != ESP_OK) return false;
-        status = nvs_flash_init();
+        ESP_LOGE(kTag, "NVS needs explicit recovery; preserving device/user data");
+        return false;
     }
     if (status != ESP_OK) return false;
     status = esp_netif_init();

@@ -32,7 +32,11 @@ namespace {
 
 constexpr char kTag[] = "package-service";
 constexpr char kMountPoint[] = "/packages";
+#if CONFIG_DOODAD_BOARD_TWATCH_ULTRA
+constexpr char kPartition[] = "ffat"; // Inspected Ultra layout; never repartition as bring-up cleanup.
+#else
 constexpr char kPartition[] = "packages";
+#endif
 constexpr std::size_t kOfferQueueDepth = kMaximumInstalledApps;
 constexpr std::size_t kLaunchQueueDepth = 4;
 constexpr std::size_t kInstallerStackBytes = 12 * 1024;

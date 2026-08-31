@@ -1,0 +1,6 @@
+[1/9] Building C object esp-idf/esp_moq_audio/CMakeFiles/__idf_esp_moq_audio.dir/src/decoder_esp.c.obj
+Bootloader binary size 0x5170 bytes. 0x2e90 bytes (36%) free.
+[4/9] Linking C static library esp-idf/esp_moq_audio/libesp_moq_audio.a
+[7/9] Linking CXX executable esp_moq_ultra_audio.elf
+esp_moq_ultra_audio.bin binary size 0x52b60 bytes. Smallest app partition is 0x200000 bytes. 0x1ad4a0 bytes (84%) free.
+Project build complete. To flash, run:

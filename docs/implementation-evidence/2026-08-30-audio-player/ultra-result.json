@@ -1,0 +1,9 @@
+{
+  "image_sha256": "97b687cb098e0d39bd3639bd9f3426bded38248337746ab29e716ee084983f84",
+  "changed_offset": 65536,
+  "changed_span": 339968,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "ULTRA_AUDIO_FINAL pass=1"
+}

@@ -1,0 +1,61 @@
+{
+  "physical_probe_passed": true,
+  "flash_bytes": 16777216,
+  "psram_bytes": 8388608,
+  "psram_bus": "quad",
+  "psram_pattern_bytes": 4194304,
+  "psram_pattern_passes": 2,
+  "psram_pattern_elapsed_us": 927903,
+  "core_size_bytes": 8704,
+  "metrics": [
+    {
+      "phase": "boot",
+      "internal_free": 376547,
+      "internal_min": 344516,
+      "internal_largest": 278528,
+      "psram_free": 8386192,
+      "psram_largest": 8257536
+    },
+    {
+      "phase": "after_psram",
+      "internal_free": 376547,
+      "internal_min": 344516,
+      "internal_largest": 278528,
+      "psram_free": 8386192,
+      "psram_largest": 8257536
+    },
+    {
+      "phase": "tls_context_only",
+      "internal_free": 373575,
+      "internal_min": 341544,
+      "internal_largest": 278528,
+      "psram_free": 8386192,
+      "psram_largest": 8257536
+    },
+    {
+      "phase": "after_tls_free",
+      "internal_free": 376547,
+      "internal_min": 341544,
+      "internal_largest": 278528,
+      "psram_free": 8386192,
+      "psram_largest": 8257536
+    }
+  ],
+  "probe_image_sha256": "40b7fb83774514759dce8b6e54912db28ba9b4ab31af715a216d603e6594dc1f",
+  "temporary_app_write": {
+    "offset": 65536,
+    "sector_aligned_span": 393216
+  },
+  "full_16mib_digest_verified_before_and_after": true,
+  "original_firmware_restored": true,
+  "final_state": "ROM download mode, original flash contents restored",
+  "original_backup": "Private, outside repository; may contain device credentials/user data",
+  "unverified": [
+    "network/TLS handshake",
+    "stream turnover",
+    "microphone/speaker",
+    "full BSP/display/touch",
+    "full VoiceWatch shell"
+  ],
+  "reset_notes": "USB hard reset stayed in ROM download; successful run cleared the esptool-defined force-download latch, used the supported watchdog reset, and reattached with ESP-IDF monitor RTS/DTR ordering. Prior unobserved attempts were also restored and digest-verified."
+}

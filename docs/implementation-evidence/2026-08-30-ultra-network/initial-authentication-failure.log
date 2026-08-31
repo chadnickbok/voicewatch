@@ -1,0 +1,11 @@
+I (3694) moq-ultra-net: probe=transport groups=500 payload=80 cadence_us=20000 quad_psram=8388608
+I (3694) moq-ultra-net: phase=boot sent=0 received=0 replies=0 internal_free=317423 internal_min=285392 internal_largest=221184 psram_free=8386192 stack_free=10652
+I (5631) moq-ultra-net: phase=wifi sent=0 received=0 replies=0 internal_free=267447 internal_min=232980 internal_largest=192512 psram_free=8386076 stack_free=10076
+I (5633) moq-ultra-net: phase=before_start sent=0 received=0 replies=0 internal_free=255283 internal_min=223232 internal_largest=180224 psram_free=8357912 stack_free=10076
+I (15636) moq-ultra-net: phase=streaming sent=0 received=0 replies=0 internal_free=215723 internal_min=174952 internal_largest=143360 psram_free=8357912 stack_free=3788
+I (20643) moq-ultra-net: closed reason=12 quic=10 alert=0
+I (20644) moq-ultra-net: RESULT phase=setup pass=0 result=12 sent=0 received=0 replies=0 elapsed_us=15010629
+I (20644) moq-ultra-net: phase=before_destroy sent=0 received=0 replies=0 internal_free=215723 internal_min=174952 internal_largest=143360 psram_free=8357912 stack_free=3788
+I (20646) moq-ultra-net: phase=after_destroy sent=0 received=0 replies=0 internal_free=267287 internal_min=174952 internal_largest=143360 psram_free=8386076 stack_free=3788
+I (21146) moq-ultra-net: ULTRA_TRANSPORT_FINAL pass=0
+W (21146) moq-ultra-net: Synthetic stream workload only: no microphone/audio/full-shell readiness claim

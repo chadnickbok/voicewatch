@@ -9,12 +9,12 @@ PORT=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --board) BOARD="${2:?--board requires cores3 or t-watch-s3}"; shift 2 ;;
+        --board) BOARD="${2:?--board requires cores3, t-watch-s3, or t-watch-ultra}"; shift 2 ;;
         --port) PORT="${2:?--port requires a serial device}"; shift 2 ;;
-        *) echo "Usage: $0 --board cores3|t-watch-s3 --port DEVICE" >&2; exit 2 ;;
+        *) echo "Usage: $0 --board cores3|t-watch-s3|t-watch-ultra --port DEVICE" >&2; exit 2 ;;
     esac
 done
-[[ "${BOARD}" == "cores3" || "${BOARD}" == "t-watch-s3" ]] || {
+[[ "${BOARD}" == "cores3" || "${BOARD}" == "t-watch-s3" || "${BOARD}" == "t-watch-ultra" ]] || {
     echo "Unknown board: ${BOARD}" >&2; exit 2;
 }
 if [[ -z "${PORT}" || ! -e "${PORT}" ]]; then

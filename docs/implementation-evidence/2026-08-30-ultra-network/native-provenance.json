@@ -1,0 +1,18 @@
+{
+  "wolfssl_repository": "https://github.com/wolfSSL/wolfssl",
+  "wolfssl_commit": "decea12e223869c8f8f3ab5a53dc90b69f436eb2",
+  "wolfssl_version": "5.8.2",
+  "ngtcp2_commit": "f9e9ff01ad2c8116bc09de4f644b0028a61486a6",
+  "profile": "Native CMake QUIC/TLS, fixed 255-byte ticket nonce, IP SAN, no session cache or server; not the ESP-IDF configuration",
+  "moq_reference_commit": "eb5776e21eeaecba8e844be53c821895c178bcaf",
+  "cflags": [
+    "-DHAVE_AES_ECB",
+    "-DWOLFSSL_IP_ALT_NAME",
+    "-DTLS13_TICKET_NONCE_STATIC_SZ=255",
+    "-DNO_SESSION_CACHE",
+    "-DNO_WOLFSSL_SERVER"
+  ],
+  "platform": "macOS-26.6.2-arm64-arm-64bit-Mach-O",
+  "client_sha256": "ef9dec658968ece5f64c596e26982a064655c124119c659eeb278f17755ff79b",
+  "peer_lock_sha256": "b5405b1767fb1d944575ca1187c5449c63b05b7446b29db7bc99a2755ec38073"
+}

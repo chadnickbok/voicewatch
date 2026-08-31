@@ -32,9 +32,9 @@ while [[ $# -gt 0 ]]; do
             shift 2
             ;;
         --board)
-            BOARD="${2:?--board requires cores3, t-watch-s3, or all}"
+            BOARD="${2:?--board requires cores3, t-watch-s3, t-watch-ultra, or all}"
             case "${BOARD}" in
-                cores3|t-watch-s3|all) ;;
+                cores3|t-watch-s3|t-watch-ultra|all) ;;
                 *)
                     echo "Unknown board: ${BOARD}" >&2
                     exit 2
@@ -44,7 +44,7 @@ while [[ $# -gt 0 ]]; do
             ;;
         *)
             echo \
-                "Usage: $0 [--board cores3|t-watch-s3|all]" \
+                "Usage: $0 [--board cores3|t-watch-s3|t-watch-ultra|all]" \
                 "[--app APP_SLUG] [--show-app]" \
                 "[--catalog-story color-bars]" >&2
             exit 2
@@ -62,6 +62,7 @@ if [[ "${BOARD}" == "all" ]]; then
     fi
     "$0" --board cores3 "${forwarded[@]}"
     "$0" --board t-watch-s3 "${forwarded[@]}"
+    "$0" --board t-watch-ultra "${forwarded[@]}"
     exit 0
 fi
 
@@ -129,9 +130,16 @@ migrate_fatfs_lfn() {
 
 migrate_fatfs_lfn
 SDKCONFIG_READY=true
+VOICE_SETTING='CONFIG_DOODAD_VOICE_UPLINK=y'
+APP_SLOT_BYTES=$((3 * 1024 * 1024))
 if [[ "${BOARD}" == "cores3" ]]; then
     BOARD_SETTING='CONFIG_DOODAD_BOARD_CORES3=y'
     PSRAM_SETTING='CONFIG_SPIRAM_MODE_QUAD=y'
+elif [[ "${BOARD}" == "t-watch-ultra" ]]; then
+    BOARD_SETTING='CONFIG_DOODAD_BOARD_TWATCH_ULTRA=y'
+    PSRAM_SETTING='CONFIG_SPIRAM_MODE_QUAD=y'
+    VOICE_SETTING='# CONFIG_DOODAD_VOICE_UPLINK is not set'
+    APP_SLOT_BYTES=$((4 * 1024 * 1024))
 else
     BOARD_SETTING='CONFIG_DOODAD_BOARD_TWATCH_S3=y'
     PSRAM_SETTING='CONFIG_SPIRAM_MODE_OCT=y'
@@ -149,7 +157,7 @@ for setting in \
     'CONFIG_FATFS_LFN_HEAP=y' \
     'CONFIG_FATFS_MAX_LFN=255' \
     'CONFIG_SPIRAM_ALLOW_BSS_SEG_EXTERNAL_MEMORY=y' \
-    'CONFIG_DOODAD_VOICE_UPLINK=y' \
+    "${VOICE_SETTING}" \
     'CONFIG_ESPTOOLPY_FLASHSIZE_16MB=y' \
     "${BOARD_SETTING}" \
     "${PSRAM_SETTING}"; do
@@ -289,8 +297,8 @@ fi
 ARTIFACT="${BUILD_DIR}/doodad_runtime.bin"
 [[ -s "${ARTIFACT}" ]] || { echo "Missing firmware artifact: ${ARTIFACT}" >&2; exit 1; }
 ARTIFACT_SIZE="$(stat -f '%z' "${ARTIFACT}")"
-if [[ "${ARTIFACT_SIZE}" -ge $((3 * 1024 * 1024)) ]]; then
-    echo "${BOARD} artifact exceeds the 3 MiB OTA partition: ${ARTIFACT_SIZE}" >&2
+if [[ "${ARTIFACT_SIZE}" -gt "${APP_SLOT_BYTES}" ]]; then
+    echo "${BOARD} artifact exceeds its ${APP_SLOT_BYTES}-byte OTA partition: ${ARTIFACT_SIZE}" >&2
     exit 1
 fi
 echo "${BOARD} artifact: ${ARTIFACT} (${ARTIFACT_SIZE} bytes)"

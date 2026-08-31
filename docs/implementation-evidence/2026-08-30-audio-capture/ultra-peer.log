@@ -1,0 +1,1 @@
+PASS: C capture reset/body/two-packet terminal group; reference Consumer 537 exact PCM samples [216,320,1]; reference response 537 samples; upload pre-skip=312

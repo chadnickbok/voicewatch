@@ -1,0 +1,9 @@
+{
+  "image_sha256": "01fff69ff5fc442fe8d65bb9bca78e6d74bc2cead957ae8efee5dcd4507fbd01",
+  "changed_offset": 65536,
+  "changed_span": 278528,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "ULTRA_UI_READY pass=1"
+}

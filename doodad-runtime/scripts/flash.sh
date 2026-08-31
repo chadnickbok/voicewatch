@@ -12,15 +12,15 @@ while [[ $# -gt 0 ]]; do
     case "$1" in
         --port) PORT="${2:?--port requires a serial device}"; shift 2 ;;
         --board)
-            BOARD="${2:?--board requires cores3 or t-watch-s3}"
-            [[ "${BOARD}" == "cores3" || "${BOARD}" == "t-watch-s3" ]] || {
+            BOARD="${2:?--board requires cores3, t-watch-s3, or t-watch-ultra}"
+            [[ "${BOARD}" == "cores3" || "${BOARD}" == "t-watch-s3" || "${BOARD}" == "t-watch-ultra" ]] || {
                 echo "Unknown board: ${BOARD}" >&2; exit 2;
             }
             shift 2
             ;;
         --no-monitor) OPEN_MONITOR=0; shift ;;
         *)
-            echo "Usage: $0 --board cores3|t-watch-s3 [--port DEVICE] [--no-monitor]" >&2
+            echo "Usage: $0 --board cores3|t-watch-s3|t-watch-ultra [--port DEVICE] [--no-monitor]" >&2
             exit 2
             ;;
     esac
@@ -51,7 +51,19 @@ fi
 
 # shellcheck disable=SC1091
 source "${SCRIPT_DIR}/env.sh"
-idf.py -C "${PROJECT_DIR}/firmware" -B "${BUILD_DIR}" -p "${PORT}" flash
+if [[ "${BOARD}" == "t-watch-ultra" ]]; then
+    # Ultra bring-up preserves the inspected data/OTA layout. The runner checks
+    # live security/layout, writes app0 only, then verifies a shell heartbeat.
+    # No default-firmware backup or restoration is required.
+    output_dir="$(mktemp -d "${TMPDIR:-/tmp}/voicewatch-ultra-flash.XXXXXX")"
+    python "${PROJECT_DIR}/../libs/moq-esp32/tools/run_ultra_transport.py" \
+        --image "${BUILD_DIR}/doodad_runtime.bin" --port "${PORT}" \
+        --output-dir "${output_dir}" --timeout 150 \
+        --success-marker '[host] uptime heartbeat; free heap:'
+    echo "Private Ultra flash/heartbeat evidence: ${output_dir}"
+else
+    idf.py -C "${PROJECT_DIR}/firmware" -B "${BUILD_DIR}" -p "${PORT}" flash
+fi
 if [[ "${OPEN_MONITOR}" -eq 1 ]]; then
     idf.py -C "${PROJECT_DIR}/firmware" -B "${BUILD_DIR}" -p "${PORT}" monitor
 fi

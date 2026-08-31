@@ -1,0 +1,41 @@
+{
+  "hardware_firmware_note": "The physical images include software AES (runs 3/4) and extended reset/control workload (run 4), but predate the later stream_closed_ex API addition.",
+  "short_elf_sha256": "084cac0a5269dbceaf9c5da60070ebe6af21f5579f237fe102f650123a6bc7fe",
+  "long_status": "Running; no 30-minute pass claimed at this checkpoint.",
+  "crypto_vectors_sha256": "3f148b311ab0e921e34e1b4b1e61b5093871008d7581940a90e78377c403ed61",
+  "dispatcher_storage_bytes_host": 7344,
+  "private_artifacts_excluded": [
+    "Wi-Fi header",
+    "credential-bearing firmware and ELF",
+    "full flash backup",
+    "raw serial and build logs"
+  ],
+  "public_dummy_elf_sha256": "485eaa26c687f59a4c7902af339b39fdba1035f9785c5204959e36064abe8d45",
+  "native_matrix": "native-matrix.log",
+  "native_provenance": "native-provenance.json",
+  "tx_metadata_bytes_host": 1248,
+  "tx_test_pool_bytes_host": 1760,
+  "static_analysis": "clang --analyze: no diagnostics for dispatch.c/transmit.c",
+  "long_progress_snapshot": {
+    "complete": false,
+    "peer_received_at_least": 36000,
+    "target_received_at_least": 36000,
+    "resets_each_direction_at_least": 72
+  },
+  "current_worktree_sha256": {
+    "components/esp_moq/src/dispatch.c": "bb74379b4f23649755ed80a0bd973394fdd03d88878cac257facdca97c564f42",
+    "components/esp_moq/src/transmit.c": "f9e28dc456ac4055457f9d21cde68c0ece7934e4d4a4a71d3382a264090d4b78",
+    "components/esp_moq/include/esp_moq/dispatch.h": "2a0b27695571b691a6a56b874b7220fea239474a8d33ea5435bf502479ba8a70",
+    "components/esp_moq/include/esp_moq/transmit.h": "e0802d5aa3132760ce872e0ca9db1f2ec6aec7cb9cdaa6a673702e4590a00b15",
+    "components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "e0f2019b8ea6107dbd51eff09d9f50b6dd591762ff494216b0d31dab237ee23d",
+    "components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "d9dcad4037da9280abe6556135a332453900b02059a4fd0440b8c25387c08496",
+    "components/esp_moq_transport_ngtcp2/CMakeLists.txt": "445f9113c85230d19ecfb24a56a3b3921f4993df94baa398d159e9062c435976",
+    "examples/twatch_ultra_transport/main/main.c": "f13fd3afe68734d003b0d32dced931e6689a2b943160422276d27fcca1243772",
+    "examples/twatch_ultra_transport/main/crypto_selftest.c": "0e544888fbdb0e1c3109e672c496b45a0c9bd59564c542c326c9c97c43eb3957",
+    "examples/twatch_ultra_transport/main/crypto_vectors.h": "3f148b311ab0e921e34e1b4b1e61b5093871008d7581940a90e78377c403ed61",
+    "tests/host/test_dispatch.c": "42d458d57f804e2928bce627b62380d242cf797f93a5a8ccdb93ad60ef42f825",
+    "tests/host/test_transmit.c": "bd6168fa9b8eb517f284572280c154a4c436f684f11e7310ee6e7aff636d7cd7",
+    "tests/adapter/test_adapter.c": "ea1738b2827c23d44d261334373b88c3f86ab917f103bd72071e1722de89dc6c",
+    "tests/interop/peer/src/hardware.rs": "78d93bc7023e64719ae9b2bcc02efd498aca93597235719698c2272aed173d02"
+  }
+}

@@ -1,0 +1,270 @@
+-- Found WOLFSSL_ROOT = /private/tmp/moq-wolfssl-5.8.2
+-- C Compiler ID: AppleClang
+-- Looking for WOLFSSL_EXPERIMENTAL
+-- Looking for WOLFSSL_EXPERIMENTAL - not found
+-- Generating user options header...
+-- Static Libs: wolfcrypt/src/hmac.c;wolfcrypt/src/hash.c;wolfcrypt/src/cpuid.c;wolfcrypt/src/kdf.c;wolfcrypt/src/random.c;wolfcrypt/src/sha256.c;wolfcrypt/src/rsa.c;wolfcrypt/src/sp_int.c;wolfcrypt/src/aes.c;wolfcrypt/src/sha.c;wolfcrypt/src/sha512.c;wolfcrypt/src/sha3.c;wolfcrypt/src/logging.c;wolfcrypt/src/wc_port.c;wolfcrypt/src/error.c;wolfcrypt/src/wc_encrypt.c;wolfcrypt/src/signature.c;wolfcrypt/src/wolfmath.c;wolfcrypt/src/memory.c;wolfcrypt/src/dh.c;wolfcrypt/src/asn.c;wolfcrypt/src/coding.c;wolfcrypt/src/poly1305.c;wolfcrypt/src/md5.c;wolfcrypt/src/pwdbased.c;wolfcrypt/src/pkcs12.c;wolfcrypt/src/chacha.c;wolfcrypt/src/chacha20_poly1305.c;wolfcrypt/src/integer.c;wolfcrypt/src/ecc.c;wolfcrypt/src/curve25519.c;wolfcrypt/src/fe_operations.c;src/internal.c;src/wolfio.c;src/keys.c;src/ssl.c;src/ocsp.c;src/tls.c;src/tls13.c;src/quic.c;src/quic.c
+-- WOLFSSL_INCLUDE_DIRS is blank. No additional directories will be added.
+Building on Apple
+-- Configuring done (0.1s)
+-- Generating done (0.0s)
+-- Build files have been written to: /private/tmp/moq-native-repro/wolfssl
+[100%] Built target wolfssl
+-- Install configuration: "Debug"
+-- Installing: /private/tmp/moq-native-repro/prefix/lib/libwolfssl.a
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl
+-- Installing: /private/tmp/moq-native-repro/prefix/include/wolfssl/options.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/version.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/callbacks.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/certs_test.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/test.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfio.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/sniffer.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/kdf.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/signature.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/md2.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/fe_operations.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/wc_encrypt.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ext_xmss.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/wc_mlkem.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ascon.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/asn.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sha.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/chacha.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/cpuid.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/settings.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/rc2.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/des3.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/types.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/dh.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/misc.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/mpi_class.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/poly1305.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sha3.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/falcon.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/siphash.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/md5.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/wc_xmss.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/arc4.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/wolfmath.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sha256.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/mlkem.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sm2.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/coding.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ge_448.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/logging.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/error-crypt.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/pkcs12.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/wolfevent.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sha512.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/pkcs7.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/srp.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/camellia.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/hpke.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/md4.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/mem_track.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/hmac.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/fips_test.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/aes.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/blake2.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/wc_port.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/asn_public.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/compress.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/libwolfssl_sources.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sm3.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/pwdbased.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sphincs.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/chacha20_poly1305.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ext_lms.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/memory.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ed25519.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ed448.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/wc_lms.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ecc.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/dilithium.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/eccsi.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/rsa.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/liboqs
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/liboqs/liboqs.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/autosar
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/autosar/Csm.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/autosar/StandardTypes.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/autosar/Crypto.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/autosar/CryIf.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/maxim
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/maxim/max3266x-cryptocb.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/maxim/max3266x.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/maxim/maxq10xx.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/tropicsquare
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/tropicsquare/tropic01.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/rpi_pico
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/rpi_pico/pico.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/aria
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/aria/aria-crypt.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/aria/aria-cryptocb.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/psa
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/psa/psa.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/riscv
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/port/riscv/riscv-64-asm.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/xmss.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ripemd.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/curve448.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/curve25519.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/visibility.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/tfm.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/dsa.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/integer.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/blake2-impl.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ge_operations.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/cmac.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/ext_mlkem.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/hash.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/blake2-int.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sp_int.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sm4.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/libwolfssl_sources_asm.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/random.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/cryptocb.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/oid_sum.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/lms.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/fe_448.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/mpi_superclass.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/wolfcrypt/sakke.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/ssl.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/crl.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/ocsp.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/sniffer_error.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/kdf.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/pem.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ossl_typ.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/err.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/bn.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/cms.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/engine.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/x509.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ui.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/sha.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/asn1.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/opensslconf.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/bio.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/dh.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/x509v3.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ssl23.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/conf.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/sha3.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/md5.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/x509_vfy.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/txt_db.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/safestack.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ecdsa.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/objects.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/pkcs12.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/fips_rand.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/crypto.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ec25519.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/opensslv.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/pkcs7.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/obj_mac.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/compat_types.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/buffer.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ssl.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/srp.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/camellia.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/evp.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/md4.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/hmac.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/aes.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/rc4.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ec448.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/stack.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/des.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ocsp.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ec.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ecdh.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/rand.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ed25519.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ed448.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/modes.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/rsa.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/ripemd.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/tls1.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/dsa.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/asn1t.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/cmac.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/openssl/lhash.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/error-ssl.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/wolfssl/quic.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/echoserver.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/sctp-server.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/sctp-client-dtls.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/sctp-client.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/sctp-server-dtls.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/echoclient.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/server.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/tls_bench.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/example/client.c
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/README.txt
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/wolfssl/taoCert.txt
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/wolfssl/wolfssl-targets.cmake
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/wolfssl/wolfssl-targets-debug.cmake
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/pkgconfig/wolfssl.pc
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/wolfssl/wolfssl-config.cmake
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/wolfssl/wolfssl-config-version.cmake
+-- summary of build options:
+
+    Package version: 1.25.0
+    Library version: 27:0:11
+    Install prefix:  /private/tmp/moq-native-repro/prefix
+    Target system:   Darwin
+    Compiler:
+      Build type:     Debug
+      C compiler:     /usr/bin/cc
+      CFLAGS:         -g -DHAVE_AES_ECB -DWOLFSSL_IP_ALT_NAME -DTLS13_TICKET_NONCE_STATIC_SZ=255 -DNO_SESSION_CACHE -DNO_WOLFSSL_SERVER
+      C++ compiler:   
+      CXXFLAGS:        
+      WARNCFLAGS:       -Wextra -Wall -Wconversion -Winline -Wmissing-declarations -Wmissing-prototypes -Wnested-externs -Wpointer-arith -Wshadow -Wundef -Wwrite-strings -Waddress -Wattributes -Wcast-align -Wdeclaration-after-statement -Wdiv-by-zero -Wempty-body -Wendif-labels -Wfloat-equal -Wformat-nonliteral -Wformat-security -Wmissing-field-initializers -Wmissing-noreturn -Wno-format-nonliteral -Wredundant-decls -Wsign-conversion -Wstrict-prototypes -Wunreachable-code -Wunused-macros -Wunused-parameter -Wvla -Wshorten-64-to-32 -Wlanguage-extension-token -Wpragmas -Wunreachable-code-break -Wheader-guard -Wsometimes-uninitialized -Wmissing-variable-declarations
+      WARNCXXFLAGS:   
+    Library:
+      Shared:         OFF
+      Static:         ON
+    Test:
+      Build Test:     OFF
+    Libs:
+      OpenSSL:        FALSE (LIBS='')
+      Libev:           (LIBS='')
+      Libnghttp3:      (LIBS='')
+      GnuTLS:         FALSE (LIBS='')
+      BoringSSL:      FALSE (LIBS='')
+      Picotls:        FALSE (LIBS='')
+      wolfSSL:        TRUE (LIBS='/private/tmp/moq-native-repro/prefix/lib/libwolfssl.a')
+      Jemalloc:        (LIBS='')
+      Libbrotlienc:    (LIBS='')
+      Libbrotlidec:    (LIBS='')
+
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: /private/tmp/moq-native-repro/ngtcp2
+[  2%] Building C object crypto/wolfssl/CMakeFiles/ngtcp2_crypto_wolfssl_static.dir/wolfssl.c.o
+[ 96%] Built target ngtcp2_static
+[ 98%] Linking C static library libngtcp2_crypto_wolfssl.a
+[100%] Built target ngtcp2_crypto_wolfssl_static
+-- Install configuration: "Debug"
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/share/doc/ngtcp2/README.rst
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/ngtcp2/ngtcp2.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/ngtcp2/version.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/ngtcp2/ngtcp2Config.cmake
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/ngtcp2/ngtcp2ConfigVersion.cmake
+-- Installing: /private/tmp/moq-native-repro/prefix/lib/libngtcp2.a
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/ngtcp2/ngtcp2Targets.cmake
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/cmake/ngtcp2/ngtcp2Targets-debug.cmake
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/pkgconfig/libngtcp2.pc
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/ngtcp2/ngtcp2_crypto.h
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/include/ngtcp2/ngtcp2_crypto_wolfssl.h
+-- Installing: /private/tmp/moq-native-repro/prefix/lib/libngtcp2_crypto_wolfssl.a
+-- Up-to-date: /private/tmp/moq-native-repro/prefix/lib/pkgconfig/libngtcp2_crypto_wolfssl.pc
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.18s
+Run: python3 tests/interop/run.py --client /private/tmp/moq-native-repro/client

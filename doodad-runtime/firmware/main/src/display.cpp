@@ -31,12 +31,20 @@
 #include "m3e/theme/resolved_theme.hpp"
 #include "package_service.hpp"
 #include "voice_service.hpp"
+#include "sdkconfig.h"
 
 namespace {
 
 constexpr char kTag[] = "doodad";
+#if CONFIG_DOODAD_BOARD_TWATCH_ULTRA
+constexpr std::int32_t kDisplayWidth = 410;
+constexpr std::int32_t kDisplayHeight = 502;
+#else
+constexpr std::int32_t kDisplayWidth = DOODAD_SURFACE_WIDTH;
+constexpr std::int32_t kDisplayHeight = DOODAD_SURFACE_HEIGHT;
+#endif
 constexpr std::int32_t kDrawRows = 40;
-constexpr std::size_t kDrawBufferPixels = DOODAD_SURFACE_WIDTH * kDrawRows;
+constexpr std::size_t kDrawBufferPixels = kDisplayWidth * kDrawRows;
 constexpr std::size_t kDrawBufferBytes = kDrawBufferPixels * sizeof(std::uint16_t);
 constexpr std::uint16_t kPhysicalBackground = 0x0841;
 constexpr std::int64_t kTelemetryIntervalMicroseconds = 2 * 1000 * 1000;
@@ -1554,8 +1562,8 @@ bool display_init() {
         return false;
     }
     const bool supported_size =
-        doodad::board::display_width() >= DOODAD_SURFACE_WIDTH
-        && doodad::board::display_height() >= DOODAD_SURFACE_HEIGHT;
+        doodad::board::display_width() >= kDisplayWidth
+        && doodad::board::display_height() >= kDisplayHeight;
     if (!supported_size) {
         ESP_LOGE(
             kTag,
@@ -1566,14 +1574,14 @@ bool display_init() {
         return false;
     }
 
-    // The portable app surface is always 240x240. CoreS3's extra horizontal
-    // pixels are host-owned gutters, never additional app layout space.
+    // Ultra renders the existing portrait system shell at its native 410x502.
+    // Legacy boards keep their 240x240 viewport and CoreS3 gutters.
     doodad::board::display_fill(kPhysicalBackground);
 
     lv_init();
     lv_tick_set_cb(tick_milliseconds);
     g_lvgl_display =
-        lv_display_create(DOODAD_SURFACE_WIDTH, DOODAD_SURFACE_HEIGHT);
+        lv_display_create(kDisplayWidth, kDisplayHeight);
     if (g_lvgl_display == nullptr) {
         ESP_LOGE(kTag, "[host] LVGL display creation failed");
         return false;

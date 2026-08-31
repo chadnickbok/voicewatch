@@ -1,0 +1,3 @@
+REPRODUCED: receive peer bidirectional stream 1, then respond -> INVALID_STATE, accepted=0
+REPRODUCED: 4 pump ticks retry blocked stream 2; writable stream 6 attempted zero times
+exit_status=0

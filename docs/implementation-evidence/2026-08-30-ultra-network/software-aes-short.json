@@ -1,0 +1,7 @@
+{
+  "image_sha256": "493475a19b9856743b7913ab3d8dcb80f9288a5380a41d417b4049d8e5acd83c",
+  "changed_offset": 65536,
+  "changed_span": 1347584,
+  "test_pass": true,
+  "restored_full_flash": true
+}

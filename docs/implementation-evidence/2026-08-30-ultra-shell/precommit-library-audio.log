@@ -1,0 +1,6 @@
+cc -I../../components/esp_moq/include -I../../components/esp_moq_audio/include -I/opt/homebrew/Cellar/opus/1.6.1/include/opus -std=c11 -O2 -g -Wall -Wextra -Werror -Wconversion -Wshadow -Wstrict-prototypes -pedantic ../../components/esp_moq_audio/src/player.c ../../components/esp_moq/src/opus.c test_player.c -L/opt/homebrew/Cellar/opus/1.6.1/lib -lopus -lm -o test_player
+./test_player
+PASS: 9 pinned Rust Producer/Consumer cases, exact lengths and worst PCM RMS 0.000 LSB
+PASS: real Opus sample-exact trim, reordered groups/tail, PLC bound, pauses, pressure, stall and cancellation; arena=21976
+./test_capture
+PASS: 12 queried-reference VOIP capture fixtures, fragmented PCM, retry identity, tail grouping, discontinuity and cancel; arena=3384

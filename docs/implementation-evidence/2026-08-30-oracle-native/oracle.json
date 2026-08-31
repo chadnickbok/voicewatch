@@ -1,0 +1,11 @@
+{
+  "reference_cases": 74,
+  "rust_to_c": 62,
+  "c_to_rust": 56,
+  "invalid_c_cases": 9,
+  "truncated_c_inputs": 585,
+  "compressed_group_frames": 3,
+  "incremental_fragmentation_cases": 68,
+  "embedded_catalog_implemented": false,
+  "real_quic_interop": false
+}

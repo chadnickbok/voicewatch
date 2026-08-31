@@ -1,0 +1,24 @@
+{
+  "base_revision": "f827391b839ef60d4d197bf0bc5fa135a0fa594e",
+  "reference_revision": "eb5776e21eeaecba8e844be53c821895c178bcaf",
+  "native_matrix_cases": 13,
+  "native_engine_repeats": 9,
+  "host_arena_bytes": {
+    "core": 23408,
+    "media": 203328,
+    "tx": 67808
+  },
+  "clang_diagnostics": 0,
+  "ultra_engine_executed": false,
+  "github_ci_executed": false,
+  "hashes": {
+    "libs/moq-esp32/components/esp_moq/src/engine.c": "655089b0c94b503cb6d3f14ebcea987b73afa6910a3e84d732b2afd8c4d8b626",
+    "libs/moq-esp32/components/esp_moq/include/esp_moq/engine.h": "d0b8f34559c489ed5c94189262a48aa1052c87b9cbb6a6285b3a399a80bf79e6",
+    "libs/moq-esp32/tests/host/test_engine.c": "9be45696cadc0a18b0b750cf08122214b39d16d21141f0e982e45bdceccd0ce3",
+    "libs/moq-esp32/tests/interop/engine_client.c": "1ce86809ced0294d94960651b2153844d3933459807fb4c4e06212e4dd4ec78d",
+    "libs/moq-esp32/tests/interop/peer/src/engine.rs": "6215670943c4a52212cab758ab862a7efe1de67a8b18822e79de77267ca9634e",
+    "libs/moq-esp32/tests/interop/peer/Cargo.lock": "b5405b1767fb1d944575ca1187c5449c63b05b7446b29db7bc99a2755ec38073",
+    "/tmp/moq-native-repro/client": "7f01016070ca6e3ad6f0057f9cd96a5e93a815110b1758cd9f523d116afe99fe",
+    "/tmp/moq-ultra-ci-build/esp-idf/esp_moq/CMakeFiles/__idf_esp_moq.dir/src/engine.c.obj": "a4228425951b513cfe82cd20a8383bb848062a39523ac870bfcd79ef9dc05a38"
+  }
+}

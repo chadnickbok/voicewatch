@@ -1,0 +1,9 @@
+# Full portrait shell bring-up. Voice transport cutover is a subsequent gate;
+# this board profile must not silently start the legacy WebRTC transport.
+# CONFIG_DOODAD_BOARD_CORES3 is not set
+# CONFIG_DOODAD_BOARD_TWATCH_S3 is not set
+CONFIG_DOODAD_BOARD_TWATCH_ULTRA=y
+# CONFIG_SPIRAM_MODE_OCT is not set
+CONFIG_SPIRAM_MODE_QUAD=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="boards/t-watch-ultra/partitions.csv"
+# CONFIG_DOODAD_VOICE_UPLINK is not set

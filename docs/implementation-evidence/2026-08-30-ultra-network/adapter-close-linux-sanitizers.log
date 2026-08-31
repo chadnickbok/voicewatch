@@ -1,0 +1,7 @@
+rm -f test_adapter test_adapter_sanitize
+cc -Istubs -I../../components/esp_moq/include -I../../components/esp_moq_transport_ngtcp2/include -I../../third_party/ngtcp2/lib/includes -I../../third_party/ngtcp2/crypto/includes -std=c11 -O1 -g -Wall -Wextra -Werror -ffunction-sections -fdata-sections -Wno-unused-parameter -D_POSIX_C_SOURCE=200809L test_adapter.c -Wl,--gc-sections -o test_adapter
+./test_adapter
+PASS: actual adapter deferred callbacks, replies, 200000 stream lifetimes, capacity, fairness, ACK ownership, datagrams and queue bounds
+cc -Istubs -I../../components/esp_moq/include -I../../components/esp_moq_transport_ngtcp2/include -I../../third_party/ngtcp2/lib/includes -I../../third_party/ngtcp2/crypto/includes -std=c11 -O1 -g -Wall -Wextra -Werror -ffunction-sections -fdata-sections -Wno-unused-parameter -D_POSIX_C_SOURCE=200809L -fno-omit-frame-pointer -fsanitize=address,undefined test_adapter.c -Wl,--gc-sections -fsanitize=address,undefined -o test_adapter_sanitize
+./test_adapter_sanitize
+PASS: actual adapter deferred callbacks, replies, 200000 stream lifetimes, capacity, fairness, ACK ownership, datagrams and queue bounds

@@ -1,0 +1,3 @@
+I (3610) ultra-ui: touch chip=9220 resolution=410x502 check=caca
+I (7899) ultra-ui-probe: RESULT result=0 touch_chip=9220 haptic_chip=7 battery=100 flushes=502 pixels=205820 max_flush_us=143 touch_presses=0 button_presses=0 power_presses=0 poll_errors=0 mic_running=0 speaker_running=0 internal_free=344603
+I (7900) ultra-ui-probe: ULTRA_UI_READY pass=1

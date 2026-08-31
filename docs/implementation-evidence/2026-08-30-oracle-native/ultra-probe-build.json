@@ -1,0 +1,20 @@
+{
+  "artifacts": {
+    "esp_moq_ultra_probe.elf": {
+      "sha256": "6a8ad8ecfa456b33630cfd0be3de79489461d417755b4af95ee82be7e71fbc1f",
+      "bytes": 8513376
+    },
+    "esp_moq_ultra_probe.bin": {
+      "sha256": "40b7fb83774514759dce8b6e54912db28ba9b4ab31af715a216d603e6594dc1f",
+      "bytes": 389776
+    },
+    "sdkconfig-final": {
+      "sha256": "e49d442529d0587ca1ecb60dee720f6c26769068e14c82b5d13d5bc336d0cbe9",
+      "bytes": 77301
+    }
+  },
+  "quad_psram": true,
+  "psram_mhz": 80,
+  "stack_bytes": 12288,
+  "hardware_execution": "passed, then original full flash restored and digest verified"
+}

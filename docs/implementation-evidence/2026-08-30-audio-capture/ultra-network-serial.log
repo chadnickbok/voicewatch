@@ -1,0 +1,5 @@
+I (4907) moq-network-audio: BEFORE internal_free=266739 psram_free=8386076
+I (9319) moq-network-audio: RESULT pass=1 result=0 input=537 output=537 sent=3 received=3 publish_end=1 receive_end=1 elapsed_ms=4362
+I (9320) moq-network-audio: MEM internal_free=171075 internal_min=106164 psram_free=7643172 audio_stack=41624 net_stack=7404 dns_stack=2876 rx_high=2 tx_high=2
+I (9397) moq-network-audio: AFTER internal_free=266439 psram_free=8386076
+I (9397) moq-ultra-net: ULTRA_TRANSPORT_FINAL pass=1

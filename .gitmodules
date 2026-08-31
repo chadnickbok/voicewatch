@@ -1,0 +1,3 @@
+[submodule "libs/moq-esp32"]
+	path = libs/moq-esp32
+	url = https://github.com/chadnickbok/moq-esp32.git

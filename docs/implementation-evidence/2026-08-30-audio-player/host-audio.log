@@ -1,0 +1,8 @@
+./test_player
+PASS: 9 pinned Rust Producer/Consumer cases, exact lengths and worst PCM RMS 0.000 LSB
+PASS: real Opus sample-exact trim, reordered groups/tail, PLC bound, pauses, pressure, stall and cancellation; arena=21976
+cargo run --locked --manifest-path ../interop/peer/Cargo.toml --bin audio_fixture > fixtures.json.tmp
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.13s
+     Running `/Users/nickchadwick/Documents/voicewatch/libs/moq-esp32/tests/interop/peer/target/debug/audio_fixture`
+cmp fixtures.json.tmp fixtures.json
+rm fixtures.json.tmp

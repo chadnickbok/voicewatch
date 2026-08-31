@@ -1,0 +1,11 @@
+I (3747) moq-ultra-net: phase=boot sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=313623 internal_min=281592 internal_largest=217088 psram_free=8386192 stack_free=10644
+I (4916) moq-ultra-net: phase=wifi sent=0 received=0 replies=0 control=0 reset_tx=0 reset_rx=0 internal_free=263715 internal_min=229180 internal_largest=188416 psram_free=8386076 stack_free=10068
+I (5128) moq-ultra-io: tone_start_sample=3200
+I (5549) moq-ultra-io: tone_stop_sample=9920
+I (5732) moq-ultra-io: cancel_queued_sample=12800
+I (5749) moq-ultra-io: cancel_fence_us=633 restart_silence_sample=13120
+I (6129) moq-ultra-io: RESULT pass=1 result=0 pmic_id=4a recorded=19200 submitted=6400 tx_completed=6400 tx_cancelled=320 mic_dropped=0 drained=1 fault=0
+I (6421) moq-ultra-echo: ULTRA_IO_FINAL pass=1
+I (12864) moq-ultra-echo: RESULT pass=1 result=0 captured=19200 decoded=19200 sent=61 received=61 mic_dropped=0 speaker_completed=32000 elapsed_ms=6397
+I (12865) moq-ultra-echo: MEM internal_free=163055 internal_min=97900 psram_free=7601072 audio_stack=41160 net_stack=7400 dns_stack=2868
+I (13234) moq-ultra-net: ULTRA_TRANSPORT_FINAL pass=1

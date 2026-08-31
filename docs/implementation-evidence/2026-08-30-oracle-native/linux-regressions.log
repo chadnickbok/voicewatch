@@ -1,0 +1,18 @@
+make: Entering directory '/tmp/moq/tests/host'
+cc -I../../components/esp_moq/include -std=c11 -O2 -g -Wall -Wextra -Werror -Wconversion -Wshadow -Wstrict-prototypes -pedantic ../../components/esp_moq/src/client.c ../../components/esp_moq/src/codec.c ../../components/esp_moq/src/error.c ../../components/esp_moq/src/hang.c ../../components/esp_moq/src/lite05.c ../../components/esp_moq/src/lite05_control.c ../../components/esp_moq/src/receive.c ../../components/esp_moq/src/session.c ../../components/esp_moq/src/transport.c test_wire.c -o test_wire
+./test_wire
+PASS: 300621 checks
+cc -I../../components/esp_moq/include -std=c11 -O2 -g -Wall -Wextra -Werror -Wconversion -Wshadow -Wstrict-prototypes -pedantic -O1 -fno-omit-frame-pointer -fsanitize=address,undefined ../../components/esp_moq/src/client.c ../../components/esp_moq/src/codec.c ../../components/esp_moq/src/error.c ../../components/esp_moq/src/hang.c ../../components/esp_moq/src/lite05.c ../../components/esp_moq/src/lite05_control.c ../../components/esp_moq/src/receive.c ../../components/esp_moq/src/session.c ../../components/esp_moq/src/transport.c test_wire.c -o test_wire_sanitize
+./test_wire_sanitize
+PASS: 300621 checks
+cc -I../../components/esp_moq/include -std=c11 -O2 -g -Wall -Wextra -Werror -Wconversion -Wshadow -Wstrict-prototypes -pedantic -O1 -fno-omit-frame-pointer -fsanitize=address,undefined -DESP_MOQ_STANDALONE_FUZZ ../../components/esp_moq/src/client.c ../../components/esp_moq/src/codec.c ../../components/esp_moq/src/error.c ../../components/esp_moq/src/hang.c ../../components/esp_moq/src/lite05.c ../../components/esp_moq/src/lite05_control.c ../../components/esp_moq/src/receive.c ../../components/esp_moq/src/session.c ../../components/esp_moq/src/transport.c fuzz_wire.c -o fuzz_wire
+make: Leaving directory '/tmp/moq/tests/host'
+PASS: 31806 bounded corpus/mutation inputs through wire and incremental parsers
+make: Entering directory '/tmp/moq/tests/adapter'
+cc -Istubs -I../../components/esp_moq/include -I../../components/esp_moq_transport_ngtcp2/include -I../../third_party/ngtcp2/lib/includes -I../../third_party/ngtcp2/crypto/includes -std=c11 -O1 -g -Wall -Wextra -Werror -ffunction-sections -fdata-sections -Wno-unused-parameter -D_POSIX_C_SOURCE=200809L test_adapter.c -Wl,--gc-sections -o test_adapter
+./test_adapter
+PASS: actual adapter deferred callbacks, replies, 200000 stream lifetimes, capacity, fairness, ACK ownership, datagrams and queue bounds
+cc -Istubs -I../../components/esp_moq/include -I../../components/esp_moq_transport_ngtcp2/include -I../../third_party/ngtcp2/lib/includes -I../../third_party/ngtcp2/crypto/includes -std=c11 -O1 -g -Wall -Wextra -Werror -ffunction-sections -fdata-sections -Wno-unused-parameter -D_POSIX_C_SOURCE=200809L -fno-omit-frame-pointer -fsanitize=address,undefined test_adapter.c -Wl,--gc-sections -fsanitize=address,undefined -o test_adapter_sanitize
+./test_adapter_sanitize
+PASS: actual adapter deferred callbacks, replies, 200000 stream lifetimes, capacity, fairness, ACK ownership, datagrams and queue bounds
+make: Leaving directory '/tmp/moq/tests/adapter'

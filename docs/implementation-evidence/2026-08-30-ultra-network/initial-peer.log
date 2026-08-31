@@ -1,0 +1,2 @@
+WAIT: explicit LAN test endpoint prepared; count=500
+Error: detected an error with protocol compliance that was not covered by more specific error codes: authentication failed

@@ -1,0 +1,9 @@
+{
+  "image_sha256": "1058c73d4709b40f7c9df84c1f297d688817c7688c07196ae97414700fdac129",
+  "changed_offset": 65536,
+  "changed_span": 1617920,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "ULTRA_TRANSPORT_FINAL pass=1"
+}

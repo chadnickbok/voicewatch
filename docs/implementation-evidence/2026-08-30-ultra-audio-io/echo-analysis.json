@@ -1,0 +1,37 @@
+{
+  "pass": true,
+  "checks": {
+    "firmware_pass": true,
+    "response_within_codec_tolerance": true,
+    "microphone_tone_1000": true,
+    "microphone_tone_2000": true,
+    "first_tone_frequency": true,
+    "second_tone_frequency": true
+  },
+  "sample_rate": 16000,
+  "samples_each_direction": 19200,
+  "microphone_windows": {
+    "baseline": {
+      "rms_lsb": 4.983330611586492,
+      "amplitude_1000": 0.09829750031275898,
+      "amplitude_2000": 0.07908910904258938
+    },
+    "tone_1000": {
+      "rms_lsb": 1803.747506022076,
+      "amplitude_1000": 2545.5733627671975,
+      "amplitude_2000": 3.566963801079008
+    },
+    "tone_2000": {
+      "rms_lsb": 269.4149461673561,
+      "amplitude_1000": 0.8360688687199239,
+      "amplitude_2000": 378.40079653145636
+    }
+  },
+  "pcm_comparison": {
+    "bit_exact": false,
+    "different_samples": 43,
+    "max_abs_lsb": 1,
+    "rms_lsb": 0.04732423621500228
+  },
+  "scope": "Live physical PDM capture -> Opus/MoQ -> reference decode/re-encode -> Ultra decoder PCM conformance and I2S DMA drain. Calibration-tone diagnostic, not PTT/speech/full-shell acceptance."
+}

@@ -1,0 +1,5 @@
+WAIT: explicit LAN test endpoint prepared; count=500
+PASS: physical peer SETUP/path accepted by pinned MoQ implementation
+PROGRESS received=500 elapsed_ms=9904
+PASS: received abandoned streams=1
+PASS: physical raw QUIC streams_each_direction=500 resets_each_direction=1 peer_bidi_replies=3 long_control_roundtrips=2 elapsed_ms=10031

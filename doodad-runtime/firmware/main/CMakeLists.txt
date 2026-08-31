@@ -1,4 +1,7 @@
-if(CONFIG_DOODAD_BOARD_TWATCH_S3)
+if(CONFIG_DOODAD_BOARD_TWATCH_ULTRA)
+    set(DOODAD_BOARD_SOURCE "src/board_twatch_ultra.cpp")
+    set(DOODAD_BOARD_REQUIREMENTS twatch_ultra twatch_ultra_ui)
+elseif(CONFIG_DOODAD_BOARD_TWATCH_S3)
     set(DOODAD_BOARD_SOURCE "src/board_twatch_s3.cpp")
     set(DOODAD_BOARD_REQUIREMENTS esp_lcd)
 else()
@@ -38,7 +41,12 @@ idf_component_register(
         json
         lvgl
         m3e_lvgl
-        ${DOODAD_BOARD_REQUIREMENTS}
+        # IDF discovers requirements before Kconfig board choices are available.
+        # Keep this list unconditional; only the selected board source links.
+        esp_lcd
+        m5unified
+        twatch_ultra
+        twatch_ultra_ui
         mbedtls
         mdns
         nvs_flash

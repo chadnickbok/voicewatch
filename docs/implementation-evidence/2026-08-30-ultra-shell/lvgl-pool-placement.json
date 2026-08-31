@@ -1,0 +1,7 @@
+{
+  "section": ".ext_ram.bss",
+  "address": "0x3c2542e8",
+  "size": 131072,
+  "object": "lv_mem_core_builtin.c.obj",
+  "source": "linker map and independently inspected nm symbol work_mem_int"
+}

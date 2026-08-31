@@ -1,0 +1,4 @@
+Bootloader binary size 0x5160 bytes. 0x2ea0 bytes (36%) free.
+esp_moq_relay_handshake.bin binary size 0x14e4d0 bytes. Smallest app partition is 0x200000 bytes. 0xb1b30 bytes (35%) free.
+Project build complete. To flash, run:
+Active handshake symbols verified: esp_moq_ngtcp2_start, esp_moq_ngtcp2_poll, esp_moq_client_transport_connected, wolfSSL_connect.

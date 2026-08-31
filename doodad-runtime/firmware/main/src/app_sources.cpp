@@ -9,6 +9,7 @@
 #include "esp_vfs_fat.h"
 #include "package_service.hpp"
 #include "sdmmc_cmd.h"
+#include "sdkconfig.h"
 
 namespace {
 
@@ -16,7 +17,11 @@ constexpr char kTag[] = "doodad";
 constexpr char kMountPoint[] = "/sdcard";
 constexpr char kAppPath[] = "/sdcard/doodad/hello.wasm";
 constexpr char kOnboardMountPoint[] = "/packages";
+#if CONFIG_DOODAD_BOARD_TWATCH_ULTRA
+constexpr char kOnboardPartition[] = "ffat";
+#else
 constexpr char kOnboardPartition[] = "packages";
+#endif
 constexpr char kOnboardAppPath[] = "/packages/active.wasm";
 constexpr std::size_t kMaximumModuleBytes = 256 * 1024;
 

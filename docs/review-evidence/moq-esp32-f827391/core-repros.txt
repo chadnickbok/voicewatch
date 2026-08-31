@@ -1,0 +1,3 @@
+REPRODUCED: rejected duplicate client_start discards queued SETUP, session remains NEGOTIATING
+REPRODUCED: has_start_group=true, start_group=UINT64_MAX encodes successfully as absent
+sizeof client=8744 track_rx=4144 subscribe_rx=4152 group_rx=144 session=336
