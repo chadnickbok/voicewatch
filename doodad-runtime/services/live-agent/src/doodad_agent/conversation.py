@@ -21,6 +21,7 @@ from pipecat.frames.frames import (
     InputAudioRawFrame,
     InterruptionFrame,
     InterimTranscriptionFrame,
+    LLMAssistantPushAggregationFrame,
     LLMFullResponseStartFrame,
     LLMTextFrame,
     StartFrame,
@@ -171,7 +172,7 @@ class FocusRouter(FrameProcessor):
             if not self.is_current() or not self.transcript_current(frame):
                 return
         elif isinstance(frame, TranscriptionFrame):
-            self.trace.mark("stt.final", characters=len(frame.text))
+            self.trace.mark('input.text' if frame.user_id == 'watch-text' else 'stt.final', characters=len(frame.text))
             await self.on_transcript(frame.text, True)
             if not self.is_current() or not self.transcript_current(frame):
                 return
@@ -358,9 +359,12 @@ class ConversationSink(FrameProcessor):
             if not self._current(turn):
                 return
             self.audio_sink(frame.audio, frame.sample_rate)
-        elif isinstance(frame, TTSTextFrame):
-            if not self._tts_active or frame.context_id != self._tts_context:
+        elif isinstance(frame, (TTSTextFrame, LLMAssistantPushAggregationFrame)):
+            if not self._tts_active or (isinstance(frame, TTSTextFrame) and frame.context_id != self._tts_context):
                 return
+            # Standalone TTSSpeakFrame output emits its history-flush marker
+            # before TTSStoppedFrame. Keep it behind the words and the speaker
+            # receipt, and discard both on interruption.
             self._pending_tts_text.append((frame, direction))
             return
         elif isinstance(frame, TTSStoppedFrame):
@@ -368,8 +372,8 @@ class ConversationSink(FrameProcessor):
                 return
             self.trace.mark("tts.stopped")
             generation = self._utterance_generation
-            await self.on_playout_drain()
-            if not self._current(turn) or self._utterance_interrupted or generation != self._utterance_generation:
+            played = await self.on_playout_drain()
+            if played is False or not self._current(turn) or self._utterance_interrupted or generation != self._utterance_generation:
                 if generation == self._utterance_generation:
                     self._pending_tts_text.clear()
                 return
@@ -446,6 +450,7 @@ class LiveConversation:
         self._capture_turn: CaptureTurn | None = None
         self._authorize_response = authorize_response
         self._attention_retry_at = 0.0
+        self._pending_attention = None
 
     async def start(self) -> None:
         missing = [
@@ -589,6 +594,7 @@ class LiveConversation:
 
     def _invalidate_capture(self) -> None:
         self._capture_open = False
+        self._pending_attention = None
         if self._capture_turn is not None:
             self._capture_turn.live = False
 
@@ -679,11 +685,12 @@ class LiveConversation:
             return
         # Do not consume/focus a durable notification until watch authorization
         # succeeds; a busy guest or a cancelled context leaves it pending.
-        action = self.attention.natural_pause(int(time.time() * 1000))
+        action = self.attention.natural_pause(int(time.time() * 1000), defer_delivery=True)
         if action is None:
             await self._set_voice_phase('ready')
             return
-        self.trace.mark('attention.spoken', kind_detail=action.kind, job_id=action.job_id)
+        self._pending_attention = (turn, action)
+        self.trace.mark('attention.queued', kind_detail=action.kind, job_id=action.job_id)
         await self.worker.queue_frame(turn.stamp(TTSSpeakFrame(action.text)))
 
     async def begin_listening(self) -> None:
@@ -832,15 +839,22 @@ class LiveConversation:
             except TimeoutError:
                 self.trace.mark("pipeline.cleanup_timeout")
 
-    async def _drain_downlink(self) -> None:
+    async def _drain_downlink(self) -> bool:
         # Flush the stateful resampler, then let the selected transport wait
         # for playout (MoQ requires the matching watch receipt). There is no fixed
         # response-length timeout here; interruption clears the generation and
         # releases this wait.
         if self._provider_current():
             await self.end_downlink()
+        played = False
         if self._provider_current():
-            await self.wait_for_playback()
+            played = await self.wait_for_playback()
+        pending = getattr(self, '_pending_attention', None)
+        if played is not False and self._provider_current() and pending is not None and pending[0] is provider_turn.get():
+            self._pending_attention = None
+            if self.attention.acknowledge(pending[1], int(time.time() * 1000)):
+                self.trace.mark('attention.spoken', kind_detail=pending[1].kind, job_id=pending[1].job_id)
+        return played is not False and self._provider_current()
 
     async def _at_natural_pause(self) -> None:
         if not self._provider_current():
@@ -850,14 +864,16 @@ class LiveConversation:
                 "downlink.stale_stop", voice_phase=self.voice_phase
             )
             return
-        action = self.attention.natural_pause(int(time.time() * 1000))
+        action = self.attention.natural_pause(int(time.time() * 1000), **(
+            {'defer_delivery': True} if getattr(self, 'explicit_capture', False) else {}))
         if action is not None and self.worker is not None:
-            self.trace.mark(
-                "attention.spoken", kind_detail=action.kind, job_id=action.job_id
-            )
+            self.trace.mark('attention.queued' if self.explicit_capture else 'attention.spoken',
+                            kind_detail=action.kind, job_id=action.job_id)
             frame = TTSSpeakFrame(action.text)
             if self.explicit_capture:
-                provider_turn.get().stamp(frame)
+                turn = provider_turn.get()
+                self._pending_attention = (turn, action)
+                turn.stamp(frame)
             await self.worker.queue_frame(frame)
         else:
             await self._set_voice_phase("ready")

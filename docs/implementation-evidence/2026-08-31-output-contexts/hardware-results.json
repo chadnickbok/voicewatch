@@ -1,0 +1,192 @@
+{
+  "p41": {
+    "pass_": false,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 0,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds_requested": 3,
+    "turns": [],
+    "output_only_turns": [],
+    "capture_started_events": 0,
+    "stt_samples_submitted": 0,
+    "stt_commits": 0,
+    "stt_completed_events": 0,
+    "stt_completed_characters": 0,
+    "stt_error_count": 0,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 15173
+  },
+  "p42": {
+    "pass_": false,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 0,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds_requested": 3,
+    "turns": [],
+    "output_only_turns": [
+      {
+        "source": "text",
+        "context_id": 1,
+        "response_id": 1,
+        "speaker_samples": 43570,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "capture_started_events": 0,
+    "stt_samples_submitted": 0,
+    "stt_commits": 0,
+    "stt_completed_events": 0,
+    "stt_completed_characters": 0,
+    "stt_error_count": 0,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 110699
+  },
+  "p43": {
+    "pass_": true,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 181920,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds_requested": 3,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 60800,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 52042,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 60000,
+        "stt_characters": 33,
+        "response_id": 4,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 3,
+        "microphone_samples": 61120,
+        "stt_characters": 33,
+        "response_id": 5,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "output_only_turns": [
+      {
+        "source": "text",
+        "context_id": 3,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "source": "background",
+        "context_id": 4,
+        "response_id": 2,
+        "speaker_samples": 21784,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "capture_started_events": 3,
+    "stt_samples_submitted": 181920,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_completed_characters": 99,
+    "stt_error_count": 0,
+    "fixture_audio_restored": true,
+    "provider_pipeline_reconnected": true,
+    "final_voice_phase": "ready",
+    "spoken_history_messages": 5,
+    "pending_announcements": 0,
+    "elapsed_ms": 62601
+  },
+  "p44": {
+    "pass_": true,
+    "provider_calls": true,
+    "control_source": "host-test-driver",
+    "microphone_samples": 182080,
+    "firmware_written": false,
+    "restoration_required": false,
+    "capture_rounds_requested": 3,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 60480,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 39939,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 60640,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 3,
+        "microphone_samples": 60960,
+        "stt_characters": 33,
+        "response_id": 4,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "output_only_turns": [
+      {
+        "source": "background",
+        "context_id": 9,
+        "response_id": 1,
+        "speaker_samples": 21784,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "capture_started_events": 3,
+    "stt_samples_submitted": 182080,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_completed_characters": 99,
+    "stt_error_count": 0,
+    "fixture_audio_restored": true,
+    "provider_pipeline_reconnected": true,
+    "final_voice_phase": "ready",
+    "spoken_history_messages": 4,
+    "pending_announcements": 0,
+    "delayed_background_tts_released_after_cancel": true,
+    "elapsed_ms": 56768
+  }
+}

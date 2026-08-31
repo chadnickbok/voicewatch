@@ -23,7 +23,7 @@ class DownlinkSession(Protocol):
     def enqueue_downlink(self, pcm: bytes, sample_rate: int) -> int: ...
     def end_downlink(self) -> int: ...
     def clear_downlink(self) -> None: ...
-    async def resume_after_downlink(self) -> None: ...
+    async def resume_after_downlink(self) -> bool | None: ...
 
 
 class DownlinkUtteranceBinding:
@@ -93,16 +93,18 @@ class DownlinkUtteranceBinding:
         if session is not None:
             session.clear_downlink()
 
-    async def wait_for_playback(self, current_session: Callable[[], DownlinkSession | None]) -> None:
+    async def wait_for_playback(self, current_session: Callable[[], DownlinkSession | None]) -> bool:
         """An old drain may finish after a new utterance has bound this object."""
         session, revision = self._session, self._revision
         if session is None:
-            return
+            return False
         if session is not current_session():
             self.cancel()
-            return
+            return False
         try:
-            await session.resume_after_downlink()
+            played = await session.resume_after_downlink()
+            return (played is not False and revision == self._revision
+                    and session is current_session() and self._finalized)
         finally:
             if revision == self._revision:
                 self.release(current_session())

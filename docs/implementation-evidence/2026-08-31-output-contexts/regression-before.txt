@@ -1,0 +1,3 @@
+Two standalone-speech regression cases failed before the sink fix.
+The history-flush frame reached the assistant aggregator before held spoken words and before the playback receipt.
+Both cases pass after the fix: successful playback releases words then flush; cancellation releases neither.

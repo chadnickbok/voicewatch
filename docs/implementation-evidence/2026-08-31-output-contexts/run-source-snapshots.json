@@ -1,0 +1,49 @@
+{
+  "p42": {
+    "root_base": "dfde572813e0757ee3f5318d92e666756910fd23",
+    "library": "1769b7083c2770dffb8689d5f706c52713cf1303",
+    "sha256": {
+      "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "5843cd73ed32fa9111f44af31cefd0fa046adf84ae550ef8933f6636f9d627e5",
+      "doodad-runtime/services/live-agent/src/doodad_agent/attention.py": "b8923dfb5772d112875e848ec0a2a07dfff05cdbd5aa287ec27bc41959026cb9",
+      "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "b9638c004cdd23dd71f2f20f2b14670cd6ad185fbda1b1f501d65bb4d9905aa6",
+      "doodad-runtime/services/live-agent/src/doodad_agent/provider_session.py": "dab189101d8ad136f01486ac6a53956519c64952741930502ff8f847f17a2c38",
+      "doodad-runtime/services/live-agent/src/doodad_agent/capture_pipeline.py": "1f899a719fab080e46d71f91b312a55be6c1605f90abd14865a56f553de836b9",
+      "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "95553c9ed6cdb45aa213b16573540f2272d25cdbd0909bdfc91b35dc2472ce91",
+      "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "d775419d2d154781fe103c1f7b0ff9f1ebe2b2f396e42c0c30ea0a6e44832863",
+      "doodad-runtime/firmware/main/src/voice_service.cpp": "0aa77d562f7902e62c64d7d1435c8ed304be95d61fbadb1a58197fd46cc1bd4f",
+      "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "4afc04e492d2021bea3b2ddab07fbaef591b14a21f5522e76227476efbeba659"
+    }
+  },
+  "p43": {
+    "root_base": "dfde572813e0757ee3f5318d92e666756910fd23",
+    "library": "1769b7083c2770dffb8689d5f706c52713cf1303",
+    "sha256": {
+      "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "4f7a465cb98f8a7726d94d6c80fdeae0ec05e0a02b77fa1e87bf90cfcdb01cbf",
+      "doodad-runtime/services/live-agent/src/doodad_agent/attention.py": "6b8153dca2c8145d4dd24d4ba89836df01c18aa60740282f33ba8deb8e4ccf5b",
+      "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "f427d2425c93fcb75aea1ff7d64bc4cc76f8d9460db955ba0412123868cce36c",
+      "doodad-runtime/services/live-agent/src/doodad_agent/provider_session.py": "f8a3688da0702eaa1862b31c2b853bfad669bb157fec8465c9d688da0539d4e8",
+      "doodad-runtime/services/live-agent/src/doodad_agent/session.py": "0a07cf4bb1b4be719ad73e5b952b15251bc2ca00ec5a75631b6443058a1269fc",
+      "doodad-runtime/services/live-agent/src/doodad_agent/capture_pipeline.py": "1f899a719fab080e46d71f91b312a55be6c1605f90abd14865a56f553de836b9",
+      "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "95553c9ed6cdb45aa213b16573540f2272d25cdbd0909bdfc91b35dc2472ce91",
+      "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "7d9976406db9b7b571fac7e22eab863d23952b99fe09c211a584c8128e661d3e",
+      "doodad-runtime/firmware/main/src/voice_service.cpp": "0aa77d562f7902e62c64d7d1435c8ed304be95d61fbadb1a58197fd46cc1bd4f",
+      "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "4afc04e492d2021bea3b2ddab07fbaef591b14a21f5522e76227476efbeba659"
+    }
+  },
+  "p44": {
+    "root_base": "dfde572813e0757ee3f5318d92e666756910fd23",
+    "library": "1769b7083c2770dffb8689d5f706c52713cf1303",
+    "sha256": {
+      "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "4f7a465cb98f8a7726d94d6c80fdeae0ec05e0a02b77fa1e87bf90cfcdb01cbf",
+      "doodad-runtime/services/live-agent/src/doodad_agent/attention.py": "6b8153dca2c8145d4dd24d4ba89836df01c18aa60740282f33ba8deb8e4ccf5b",
+      "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "f427d2425c93fcb75aea1ff7d64bc4cc76f8d9460db955ba0412123868cce36c",
+      "doodad-runtime/services/live-agent/src/doodad_agent/provider_session.py": "f8a3688da0702eaa1862b31c2b853bfad669bb157fec8465c9d688da0539d4e8",
+      "doodad-runtime/services/live-agent/src/doodad_agent/session.py": "0a07cf4bb1b4be719ad73e5b952b15251bc2ca00ec5a75631b6443058a1269fc",
+      "doodad-runtime/services/live-agent/src/doodad_agent/capture_pipeline.py": "1f899a719fab080e46d71f91b312a55be6c1605f90abd14865a56f553de836b9",
+      "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "95553c9ed6cdb45aa213b16573540f2272d25cdbd0909bdfc91b35dc2472ce91",
+      "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "0458b7f4b009c9702d09df1824fb435b93a69c4dfd8465fde46886b2ed88b453",
+      "doodad-runtime/firmware/main/src/voice_service.cpp": "0aa77d562f7902e62c64d7d1435c8ed304be95d61fbadb1a58197fd46cc1bd4f",
+      "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "4afc04e492d2021bea3b2ddab07fbaef591b14a21f5522e76227476efbeba659"
+    }
+  }
+}

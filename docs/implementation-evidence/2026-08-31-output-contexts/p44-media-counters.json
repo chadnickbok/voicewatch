@@ -1,0 +1,70 @@
+[
+  {
+    "samples": 21784,
+    "concealed": 0,
+    "late": 0,
+    "pressure": 0,
+    "audio_stack": 43100,
+    "network_stack": 7204,
+    "dns_stack": 2924,
+    "kind": "playout",
+    "uptime_ms": 432153
+  },
+  {
+    "samples": 60480,
+    "discarded": 0,
+    "resets": 1,
+    "dropped_chunks": 0,
+    "kind": "capture",
+    "uptime_ms": 437120
+  },
+  {
+    "samples": 39939,
+    "concealed": 3,
+    "late": 3,
+    "pressure": 0,
+    "audio_stack": 43100,
+    "network_stack": 7204,
+    "dns_stack": 2924,
+    "kind": "playout",
+    "uptime_ms": 443241
+  },
+  {
+    "samples": 60640,
+    "discarded": 0,
+    "resets": 1,
+    "dropped_chunks": 0,
+    "kind": "capture",
+    "uptime_ms": 447116
+  },
+  {
+    "samples": 43570,
+    "concealed": 0,
+    "late": 0,
+    "pressure": 0,
+    "audio_stack": 43100,
+    "network_stack": 7204,
+    "dns_stack": 2924,
+    "kind": "playout",
+    "uptime_ms": 453691
+  },
+  {
+    "samples": 60960,
+    "discarded": 0,
+    "resets": 1,
+    "dropped_chunks": 0,
+    "kind": "capture",
+    "uptime_ms": 457646
+  },
+  {
+    "samples": 43570,
+    "concealed": 0,
+    "late": 0,
+    "pressure": 0,
+    "audio_stack": 43100,
+    "network_stack": 7204,
+    "dns_stack": 2924,
+    "kind": "playout",
+    "uptime_ms": 463851
+  }
+]

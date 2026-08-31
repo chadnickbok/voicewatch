@@ -15,6 +15,7 @@ class AttentionAction:
     text: str
     job_id: str
     question_id: str | None = None
+    event_id: str | None = None
 
 
 class AttentionBroker:
@@ -44,18 +45,17 @@ class AttentionBroker:
                 (now_ms, self.device_id, event.event_id),
             )
 
-    def natural_pause(self, now_ms: int) -> AttentionAction | None:
+    def natural_pause(self, now_ms: int, *, defer_delivery: bool = False) -> AttentionAction | None:
         focused = self.jobs.focused()
         if focused is not None:
             return None
         questions = self.jobs.open_questions()
         if questions:
             focused = questions[0]
-            if focused["status"] == "open":
-                self.jobs.focus(focused["job_id"], focused["question_id"])
             event = self._question_event(focused["job_id"], focused["question_id"])
-            self._deliver(event.event_id, "haptic", now_ms)
-            return AttentionAction("question", focused["prompt"], focused["job_id"], focused["question_id"])
+            action = AttentionAction("question", focused["prompt"], focused["job_id"],
+                                     focused["question_id"], event.event_id)
+            return action if defer_delivery or self.acknowledge(action, now_ms) else None
 
         row = self.store.fetch_one(
             """
@@ -67,8 +67,40 @@ class AttentionBroker:
         )
         if row is None:
             return None
-        self._deliver(row["event_id"], "spoken", now_ms)
-        return AttentionAction("announcement", row["summary"], row["job_id"])
+        action = AttentionAction("announcement", row["summary"], row["job_id"], event_id=row["event_id"])
+        return action if defer_delivery or self.acknowledge(action, now_ms) else None
+
+    def acknowledge(self, action: AttentionAction, now_ms: int) -> bool:
+        """Commit a spoken delivery only after its owning response has played.
+
+        Selection alone has no durable side effect. Cancellation or process loss
+        leaves the event pending for a later session. Scope checks also prevent
+        one device's receipt from acknowledging another device's job.
+        """
+        event = self.store.fetch_one(
+            "SELECT kind,payload_json FROM job_events WHERE event_id=? AND job_id=? AND device_id=?",
+            (action.event_id, action.job_id, self.device_id),
+        )
+        if event is None:
+            return False
+        if action.kind == 'question':
+            if event['kind'] != 'needs_input' or self.jobs.focused() is not None:
+                return False
+            pending = next((q for q in self.jobs.open_questions()
+                            if q['job_id'] == action.job_id and q['question_id'] == action.question_id), None)
+            if pending is None or self._question_event(action.job_id, action.question_id).event_id != action.event_id:
+                return False
+            self.jobs.focus(action.job_id, action.question_id)
+            self._deliver(action.event_id, 'haptic', now_ms)
+            return True
+        if action.kind != 'announcement' or event['kind'] not in {'completed', 'ready_for_review'}:
+            return False
+        with self.store.transaction() as connection:
+            return connection.execute(
+                "UPDATE attention_deliveries SET state='delivered',delivered_at_ms=? "
+                "WHERE device_id=? AND event_id=? AND channel='spoken' AND state='pending'",
+                (now_ms, self.device_id, action.event_id),
+            ).rowcount == 1
 
     def answer_focused(self, answer: object, utterance_id: str, now_ms: int) -> bool:
         focused = self.jobs.focused()

@@ -1,0 +1,17 @@
+{
+  "root_base": "dfde572813e0757ee3f5318d92e666756910fd23",
+  "library": "1769b7083c2770dffb8689d5f706c52713cf1303",
+  "sha256": {
+    "doodad-runtime/services/live-agent/README.md": "69cafb1c4cf5736f994fdea9caa35fd56cb5c899f3604e6e8ee4fa84e3db9f72",
+    "doodad-runtime/services/live-agent/src/doodad_agent/attention.py": "6b8153dca2c8145d4dd24d4ba89836df01c18aa60740282f33ba8deb8e4ccf5b",
+    "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "4f7a465cb98f8a7726d94d6c80fdeae0ec05e0a02b77fa1e87bf90cfcdb01cbf",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "f427d2425c93fcb75aea1ff7d64bc4cc76f8d9460db955ba0412123868cce36c",
+    "doodad-runtime/services/live-agent/src/doodad_agent/provider_session.py": "f8a3688da0702eaa1862b31c2b853bfad669bb157fec8465c9d688da0539d4e8",
+    "doodad-runtime/services/live-agent/src/doodad_agent/session.py": "0a07cf4bb1b4be719ad73e5b952b15251bc2ca00ec5a75631b6443058a1269fc",
+    "doodad-runtime/services/live-agent/tests/test_capture_pipeline.py": "8509e28a032c6d15255122d996f6846341026842e83cde850f8924239aea9e6a",
+    "doodad-runtime/services/live-agent/tests/test_provider_session.py": "7f35c6017c5247007f867a045f8fcd2d78ec9d907bdd1f2f78b91ad040409a0f",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "302fc9538bf6a03309b77de0b446b7d04641ed5e1d3d944df1c0c02df410cef9",
+    "doodad-runtime/services/live-agent/tests/test_response_context.py": "c567caae5aa324762ad6fa575b0612952036d66429b0978de3202aa86c977d0f",
+    "doodad-runtime/services/live-agent/tests/test_moq_session.py": "eefff493db8abb08d171f634817e3ec27ad26631d80d0284e58a660344e787b8"
+  }
+}

@@ -37,9 +37,11 @@ class ProviderSession:
         if self.live():
             self.downlink.end(self.session)
 
-    async def wait(self) -> None:
+    async def wait(self) -> bool:
         if self.live():
-            await self.downlink.wait_for_playback(self.current_session)
+            played = await self.downlink.wait_for_playback(self.current_session)
+            return played and self.live()
+        return False
 
     async def action(self, capability, arguments, idempotency_key):
         if not self.live():

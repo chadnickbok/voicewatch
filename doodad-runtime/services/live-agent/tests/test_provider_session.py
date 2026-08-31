@@ -66,6 +66,18 @@ async def test_old_action_result_and_drain_cannot_finish_new_session():
     assert new.calls == ['begin', 'audio']
 
 
+@pytest.mark.asyncio
+async def test_cancelled_transport_drain_is_not_reported_as_played():
+    session = Session()
+    async def cancelled(): return False
+    session.resume_after_downlink = cancelled
+    owner = ProviderSession(session, lambda: session)
+    assert await owner.wait() is False
+    await owner.begin()
+    await owner.end()
+    assert await owner.wait() is False
+
+
 async def nothing(): pass
 
 

@@ -3,7 +3,8 @@
 
 Runs the actual serve/conversation path with an isolated database and temporary
 PKI. The Mac speaks a fixed test phrase near the watch. Only read-only model
-tools are exposed; no jobs, email, personal app delivery or data mutation. No
+tools are exposed; no external jobs, email or personal app delivery. The optional
+background case creates only a completed test job in the isolated database. No
 ambient PCM is retained. All raw process/provider logs must be redirected to a
 private file by the caller. Requires provider keys in the environment.
 """
@@ -30,6 +31,8 @@ async def run(args):
     from pipecat.frames.frames import TTSStartedFrame, TTSAudioRawFrame
 
     output = args.output.resolve()
+    if len(os.fsencode(output/'media.sock')) > 100:
+        raise ValueError('bench output directory exceeds the Unix socket path limit')
     output.mkdir(mode=0o700, parents=True, exist_ok=False)
     os.umask(0o077)
     # Never inherit personal signing/deployment or job storage into the bench.
@@ -38,7 +41,8 @@ async def run(args):
     os.environ['DOODAD_CODEX_WORKSPACE_ROOT'] = str(output/'jobs')
     result = dict(pass_=False, provider_calls=True, control_source='host-test-driver',
                   microphone_samples=0, firmware_written=False, restoration_required=False,
-                  capture_rounds_requested=args.capture_rounds, turns=[])
+                  capture_rounds_requested=args.capture_rounds, turns=[], output_only_turns=[],
+                  capture_started_events=0)
     start = time.monotonic()
     microphone_square_sum = 0
     level_samples = level_square_sum = level_peak = level_clipped = 0
@@ -54,11 +58,12 @@ async def run(args):
     tool_result_held = asyncio.Event()
     held_tts_frames = []
     held_tts_turn = None
-    hold_next_tts = args.cancel_first_tts
+    hold_next_tts = args.cancel_first_tts or args.cancel_first_background
     tts_audio_held = asyncio.Event()
     conversations = []
     children, streams = [], []
     server_task = None
+    impairment = None
     ready = asyncio.Queue()
     captured = asyncio.Event()
     server_started = asyncio.get_running_loop().create_future()
@@ -201,7 +206,9 @@ async def run(args):
                             'capture.failed', 'listen.requested', 'listen.finished', 'listen.cancelled'):
                     mark(kind)
                 if kind == 'connected': ready.put_nowait(self.sessions[device_id])
-                if kind == 'capture.started': captured.set()
+                if kind == 'capture.started':
+                    result['capture_started_events'] += 1
+                    captured.set()
             super().__init__(trace, audio, event, *more, **kwargs)
 
         async def start(self):
@@ -258,15 +265,27 @@ async def run(args):
         _, roots = pki(output, args.host)
         key = secrets.token_bytes(32)
         control, clock, media = port(socket.SOCK_STREAM), port(socket.SOCK_STREAM), port(socket.SOCK_DGRAM)
+        backend_media = media
+        if args.loss_percent or args.added_rtt_ms:
+            from moq_udp_impairment import UdpImpairment
+            backend_media = port(socket.SOCK_DGRAM)
+            while backend_media == media: backend_media = port(socket.SOCK_DGRAM)
+            impairment = UdpImpairment(args.loss_percent, args.added_rtt_ms, args.loss_seed)
+            await impairment.start(('0.0.0.0', media), ('127.0.0.1', backend_media))
         write(output/'devices.json', {device['device_id']: key.hex()})
         write(output/'host.json', dict(certificate=str(output/'server.pem'), private_key=str(output/'server.key'),
             device_keys=str(output/'devices.json'), ipc_socket=str(output/'media.sock'),
             public_host=args.host, media_port=media, time_port=clock))
-        write(output/'endpoint.json', dict(listen=f'0.0.0.0:{media}', certificate=str(output/'server.pem'),
+        write(output/'endpoint.json', dict(listen=f'0.0.0.0:{backend_media}', certificate=str(output/'server.pem'),
             private_key=str(output/'server.key'), ipc_socket=str(output/'media.sock')))
         arguments = main.parse_arguments(['serve', '--transport', 'moq', '--moq-config', str(output/'host.json'),
             '--port', str(control), '--database', str(output/'bench.sqlite3'), '--trace', str(output/'trace.jsonl')])
         server_task = asyncio.create_task(main.serve(arguments))
+        done, _ = await asyncio.wait({server_task, server_started}, timeout=15,
+                                     return_when=asyncio.FIRST_COMPLETED)
+        if server_task in done:
+            await server_task  # Preserve an actual startup failure instead of a misleading timeout.
+            raise RuntimeError('provider service exited before readiness')
         server = await asyncio.wait_for(server_started, 15)
         native = await child(ENDPOINT, '--config', output/'endpoint.json', logfile='native.log')
         write(output/'profile.json', dict(v=1, revision=device['revision']+1, device_id=device['device_id'],
@@ -278,6 +297,76 @@ async def run(args):
         session = await asyncio.wait_for(ready.get(), 45)
         # Provider start frames and STT session configuration are asynchronous.
         await asyncio.sleep(3)
+        async def output_only_turn(kind):
+            before = {key: result[key] for key in (
+                'microphone_samples', 'stt_samples_submitted', 'stt_commits',
+                'stt_completed_events', 'capture_started_events')}
+            history_base = spoken_history_count()
+            previous_response = session._response.number if session._response else 0
+            trace_base = len((output/'trace.jsonl').read_text().splitlines())
+            if kind == 'text':
+                await server.on_event(device['device_id'], 'conversation.text',
+                                      {'text': 'Please read my next exercise set.'})
+            else:
+                # Exercise real job/attention persistence and the production
+                # idle loop, without launching a worker or inventing TTS audio.
+                jobs = conversations[-1].attention.jobs
+                now = int(time.time() * 1000)
+                job = jobs.create('bench_notification', {'test': True}, now)
+                jobs.append(job, 'completed', 'The test task is complete.', {}, 'bench', now+1)
+                if args.cancel_first_background:
+                    await asyncio.wait_for(tts_audio_held.wait(), 30)
+                    cancelled_context = session._response_context
+                    await server.on_event(device['device_id'], 'listen.cancelled', {})
+                    if conversations[-1].attention.background_snapshot()['completion_pending'] != 1:
+                        raise RuntimeError('cancelled background announcement was consumed')
+                    if spoken_history_count() != history_base or result['microphone_samples'] != before['microphone_samples']:
+                        raise RuntimeError('cancelled background speech changed history or activated microphone')
+                    mark('background_cancelled_before_audio', announcement_pending=True)
+                    # The unmodified idle loop must request a fresh watch-owned
+                    # context and retry the pending event. Release the held real
+                    # provider frames while that replacement is active.
+                    async with asyncio.timeout(10):
+                        while (session._response_context is None or session._response_context is cancelled_context
+                               or conversations[-1]._capture_turn is held_tts_turn):
+                            await asyncio.sleep(.02)
+                    for observed, frame, direction in held_tts_frames:
+                        await real_tts.push_frame(observed, frame, direction)
+                    held_tts_frames.clear()
+                    result['delayed_background_tts_released_after_cancel'] = True
+                    mark('background_stale_tts_released_in_new_context')
+            async with asyncio.timeout(90):
+                while True:
+                    if session._closed: raise RuntimeError('session closed during output-only turn')
+                    response = session._response
+                    if (response is not None and response.number > previous_response
+                            and response.finished.is_set() and response.done.is_set()
+                            and spoken_history_count() == history_base + 1
+                            and conversations[-1].voice_phase == 'ready'):
+                        break
+                    await asyncio.sleep(.1)
+            if session._capture is not None or any(result[key] != value for key, value in before.items()):
+                raise RuntimeError('output-only response activated microphone or STT')
+            context = session._response_context
+            if context is None or context.kind != kind or response.context is not context or response.samples <= 0:
+                raise RuntimeError('missing output-only speaker/context evidence')
+            trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()[trace_base:]]
+            if not any(item['kind'] == 'tts.first_audio' for item in trace):
+                raise RuntimeError('missing real output-only TTS')
+            if kind == 'text' and not any(item['kind'] == 'tool.end' and item.get('tool') == 'get_next_set' for item in trace):
+                raise RuntimeError('text response omitted required fresh read')
+            if kind == 'background' and conversations[-1].attention.background_snapshot()['completion_pending']:
+                raise RuntimeError('completed announcement remained pending')
+            turn = dict(source=kind, context_id=int(context.identity.capture_id),
+                        response_id=response.number, speaker_samples=response.samples,
+                        microphone_samples=0, stt_commits=0, capture_started_events=0,
+                        spoken_history_messages_added=1)
+            result['output_only_turns'].append(turn)
+            mark('output_only_turn_completed', **turn)
+        if args.text_first:
+            await output_only_turn('text')
+        if args.background_first:
+            await output_only_turn('background')
         phrase = 'Please read my next exercise set.'
         speech = await child('/usr/bin/say', '-o', output/'input.aiff', phrase, logfile='speech.log')
         if await asyncio.wait_for(speech.wait(), 15): raise RuntimeError('speech fixture failed')
@@ -431,6 +520,19 @@ async def run(args):
         mark('failed', error_type=type(error).__name__)
         raise
     finally:
+        if conversations:
+            result['final_voice_phase'] = conversations[-1].voice_phase
+            result['spoken_history_messages'] = spoken_history_count()
+            result['pending_announcements'] = conversations[-1].attention.background_snapshot()['completion_pending']
+        if 'session' in locals():
+            response = session._response
+            result['final_playback'] = dict(
+                capture_identity_present=session._capture is not None,
+                response_present=response is not None,
+                response_done=bool(response and response.done.is_set()),
+                response_finished=bool(response and response.finished.is_set()),
+                response_cancelled=bool(response and response.cancelled),
+            )
         try:
             await restore_output()
         except Exception:
@@ -444,6 +546,12 @@ async def run(args):
             except TimeoutError:
                 result['shutdown_timeout'] = True
         for process in reversed(children): await stop(process)
+        if impairment is not None:
+            impairment.close()
+            result['impairment'] = impairment.snapshot()
+            if any(v['pressure'] for v in impairment.stats.values()):
+                result['pass_'] = False
+                mark('impairment_fixture_pressure')
         for stream in streams: stream.close()
         try:
             if args.acoustic_analysis and acoustic_pcm and fixture_pcm:
@@ -484,6 +592,15 @@ def main():
                         help='Bench-only provider noise reduction experiment; does not change production defaults')
     parser.add_argument('--capture-rounds', type=int, default=1,
                         help='Repeat 1..3 complete provider turns in the same authenticated session')
+    parser.add_argument('--loss-percent', type=int, choices=(0, 1, 3, 5), default=0,
+                        help='Seeded QUIC packet loss in each direction; WSS remains intact')
+    parser.add_argument('--added-rtt-ms', type=int, choices=(0, 30, 60, 120), default=0,
+                        help='Add half this delay to each UDP direction')
+    parser.add_argument('--loss-seed', type=int, default=44)
+    parser.add_argument('--text-first', action='store_true',
+                        help='Require a real text/tool/TTS turn with no capture before microphone tests')
+    parser.add_argument('--background-first', action='store_true',
+                        help='Require an idle completion announcement from an isolated test job before microphone tests')
     faults = parser.add_mutually_exclusive_group()
     faults.add_argument('--cancel-first-stt', action='store_true',
                         help='First cancel a physical capture with a delayed real STT final; release that event during the next capture')
@@ -491,7 +608,15 @@ def main():
                         help='Hold a real read-tool result; cancel and release its callback during the next capture')
     faults.add_argument('--cancel-first-tts', action='store_true',
                         help='Hold real TTS start/audio frames; cancel and release them during the next capture')
+    faults.add_argument('--cancel-first-background', action='store_true',
+                        help='With background-first, cancel held real TTS and require the idle loop to retry the pending announcement')
     args = parser.parse_args()
+    if args.cancel_first_background and not args.background_first:
+        parser.error('cancel-first-background requires background-first')
+    if args.cancel_first_background and args.text_first:
+        parser.error('cancel-first-background must run before any text/provider turn')
+    if (args.text_first or args.background_first) and (args.cancel_first_stt or args.cancel_first_tool or args.cancel_first_tts):
+        parser.error('output-only cases cannot be combined with capture-provider faults')
     if not 1 <= args.capture_rounds <= 3:
         parser.error('capture-rounds must be 1..3')
     if args.fixture_volume is not None and not 1 <= args.fixture_volume <= 100:

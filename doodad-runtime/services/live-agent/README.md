@@ -66,6 +66,14 @@ hold real provider output and release it after cancellation during a replacement
 capture. Successful fresh turns require tool completion, speaker receipts and a
 new played assistant-history message. No firmware restoration is required.
 
+Text and idle background speech obtain a watch-issued output context without
+microphone capture or an STT commit. `--text-first --background-first` exercises
+both before the provider bench's microphone turns. `--background-first
+--cancel-first-background` holds real TTS output, cancels it, and requires the
+production idle loop to retry the still-pending test announcement. Only the
+isolated bench database receives that test job; no external worker is launched.
+History and durable attention delivery wait for matching speaker completion.
+
 The watch still receives only a 160-character display projection. Capacity
 violations are explicit service errors and telemetry events; ordinary long
 responses are never silently truncated.

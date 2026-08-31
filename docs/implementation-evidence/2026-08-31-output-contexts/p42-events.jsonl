@@ -1,0 +1,6 @@
+{"kind": "enrolled", "elapsed_ms": 757}
+{"kind": "identified", "elapsed_ms": 2876}
+{"kind": "connected", "elapsed_ms": 6427}
+{"kind": "output_only_turn_completed", "elapsed_ms": 16338, "source": "text", "context_id": 1, "response_id": 1, "speaker_samples": 43570, "microphone_samples": 0, "stt_commits": 0, "capture_started_events": 0, "spoken_history_messages_added": 1}
+{"kind": "failed", "elapsed_ms": 106341, "error_type": "TimeoutError"}
+{"kind": "disconnected", "elapsed_ms": 106594}

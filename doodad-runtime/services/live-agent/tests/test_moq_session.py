@@ -214,7 +214,7 @@ async def test_cancel_held_pcm_and_ignore_stale_reply_without_harming_replacemen
     await asyncio.wait_for(entered.wait(), 1)
     h.session.clear_downlink()
     await h.next_ipc('playback.cancel')
-    await h.session.resume_after_downlink()
+    assert await h.session.resume_after_downlink() is False
     h.session.downlink._pacer.wait = original
     h.session.begin_downlink()
     h.session.enqueue_downlink(b'\x05\x00'*217, 16000)
@@ -467,3 +467,22 @@ async def test_ptt_cancel_overtaking_application_callback_cannot_rearm_microphon
     await asyncio.wait_for(cancelled.wait(), 1)
     assert h.session._pending_start == 0
     assert 'capture.start' not in [message['type'] for message in list(h.ws.sent._queue)]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('invalid', [None, 'concealed_samples', 'plc_samples', 'lost_groups', 'late_groups', 'partial'])
+async def test_capture_recovery_counters_are_bounded_before_stt_commit(harness, invalid):
+    h = harness
+    await h.watch('capture.started', {**ID, 'first_group': '0'})
+    await h.watch('capture.stopped', {**ID, 'first_group': '0', 'end_group': '3', 'samples': '320'})
+    await h.native('capture.pcm', ID, b'\0\0' * 320)
+    counters = dict(concealed_samples='320', plc_samples='320', lost_groups='1', late_groups='0')
+    if invalid == 'partial': counters.pop('late_groups')
+    elif invalid: counters[invalid] = '999999'
+    fields = {**ID, 'first_group': '0', 'end_group': '3', 'samples': '320', **counters}
+    if invalid:
+        with pytest.raises(MoqSessionError): await h.native('capture.ended', fields)
+        assert not h.session._capture.validated.is_set()
+    else:
+        await h.native('capture.ended', fields)
+        assert h.session._capture.validated.is_set()

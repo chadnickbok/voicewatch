@@ -5,7 +5,61 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: output-only response contexts (hardware validation pending)
+## Latest checkpoint: bounded host capture loss recovery
+
+The native capture worker now bounds reordering and incomplete-group waits to
+200 ms, advances Opus by exactly one 20 ms packet for declared loss, ignores late
+abandoned groups, and uses the authenticated end boundary to recover a bounded
+lost tail. Malformed complete groups and excessive gaps still fail. Recovery
+counters are validated by the Python adapter before STT commit. A seeded,
+single-watch UDP impairment fixture exercises encrypted media without changing
+the authenticated control path.
+
+This checkpoint passes 293 Python tests (four warnings), six native integration
+cases, 21 Rust tests, the native build and Clippy with warnings denied. Physical
+run p45 exposed a closed-schema mismatch for the new counters, which was fixed.
+The corrected loss-free p46 run passes text/background output, three voice turns
+and reconnect without changing firmware.
+
+The first impaired run, p47 (1% loss, 30 ms added RTT), does **not** pass. Host
+capture recovery conceals one missing 320-sample packet and ignores its late
+arrival; two complete voice turns succeed. The third response produces 47,201
+host samples but only 46,881 watch playback samples, so completion is correctly
+rejected. The suspected initial playback-timeline loss remains unconfirmed and
+unfixed. The full loss/RTT/speech-quality matrix remains open; this commit is a
+work-in-progress checkpoint. Raw provider/serial logs and credentials stay
+private, and ambient microphone PCM is not persisted. No firmware restoration
+is required.
+
+## Previous checkpoint: physical output-only speech and durable delivery
+
+The new output-context firmware is installed on the Ultra (app0 only) and boots
+the shell. Text speech and idle background announcements pass before any
+microphone capture. A second run holds real background TTS, cancels it, and
+releases the stale frames during a fresh watch context. The announcement stays
+pending, the production idle loop retries it, and only the retry reaches played
+history. Both runs then complete three microphone/tool/speech turns and a
+fresh-session reconnect without rearming the microphone.
+
+This exposed and fixed standalone TTS history ordering: the history-flush marker
+must wait behind held words and the speaker receipt. MoQ durable announcements
+and question focus now wait for acknowledged playback too. Cancelled transport
+drains report unsuccessful playout. Tests cover these boundaries and pending
+notifications across restart. Delivery remains at least once across a crash
+between audible playback and the database acknowledgement.
+
+The checkpoint passes 284 Python tests and six native integration cases. The two
+successful physical runs deliver nine responses, including three output-only
+responses, with 364,000 microphone samples and 346,136 played samples; firmware
+and host totals agree. A startup path-length failure and the earlier history
+failure remain recorded in the [output-context evidence](implementation-evidence/2026-08-31-output-contexts/README.md).
+
+The new firmware remains installed; no restoration is required. WebRTC remains
+the configured default. Controlled-loss recovery, continuous long responses and
+lease renewal, allocation limits, broader security, deployment, physical full-shell
+controls/apps/sleep-wake, latency and endurance remain open acceptance gates.
+
+## Previous checkpoint: output-only response contexts (before hardware validation)
 
 Text and idle background speech now request a watch-issued response context
 before entering the output pipeline. The control protocol correlates requests,

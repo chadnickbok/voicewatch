@@ -10,7 +10,7 @@ from pipecat.frames.frames import (
     FunctionCallResultFrame, InterruptionFrame, LLMContextFrame,
     LLMFullResponseStartFrame, LLMTextFrame, TTSStartedFrame, TTSAudioRawFrame,
     TTSStoppedFrame, TTSTextFrame, TranscriptionFrame,
-    LLMMessagesAppendFrame,
+    LLMMessagesAppendFrame, LLMAssistantPushAggregationFrame,
 )
 from pipecat.processors.aggregators.llm_context import LLMContext
 from pipecat.processors.frame_processor import FrameDirection, FrameProcessor
@@ -215,6 +215,29 @@ async def test_cancel_during_playout_drain_discards_unheard_history_and_pause():
     release.set(); await task
     assert not any(isinstance(f, TTSTextFrame) for f, _ in frames)
     assert not pauses and not sink._pending_tts_text
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('cancel', [False, True])
+async def test_standalone_speech_history_flush_waits_for_played_words(cancel):
+    sink, _, frames, _ = sink_harness()
+    entered, release = asyncio.Event(), asyncio.Event()
+    async def drain(): entered.set(); await release.wait()
+    sink.on_playout_drain = drain
+    turn = CaptureTurn()
+    start, audio, text, stop = tts_frames(turn)
+    flush = turn.stamp(LLMAssistantPushAggregationFrame())
+    # The pinned TTS service emits the flush BEFORE TTSStoppedFrame. Words are
+    # still held by our transport sink until the watch's playout receipt.
+    for frame in (start, audio, text, flush): await sink.process_frame(frame, D)
+    assert not any(isinstance(f, LLMAssistantPushAggregationFrame) for f, _ in frames)
+    task = asyncio.create_task(sink.process_frame(stop, D))
+    await asyncio.wait_for(entered.wait(), 1)
+    if cancel: turn.live = False
+    release.set()
+    await task
+    history_frames = [f for f, _ in frames if isinstance(f, (TTSTextFrame, LLMAssistantPushAggregationFrame))]
+    assert history_frames == ([] if cancel else [text, flush])
 
 
 @pytest.mark.asyncio

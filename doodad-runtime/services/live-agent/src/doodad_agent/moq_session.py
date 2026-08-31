@@ -426,6 +426,9 @@ class MoqSession(ControlSession):
         header, pcm = packet.header, packet.pcm
         kind = header['type']
         extras = set(header) - {'v', 'type', 'seq', 'session_id', 'pcm_bytes'}
+        recovery_fields = {'concealed_samples', 'plc_samples', 'lost_groups', 'late_groups'}
+        if kind == 'capture.ended' and recovery_fields <= extras:
+            extras -= recovery_fields
         schemas = {
             'ping': set(), 'pong': set(), 'media.ready': set(),
             'cancelled': {'capture_id', 'request_id', 'owner_token'},
@@ -464,6 +467,13 @@ class MoqSession(ControlSession):
                         or decimal(header['samples']) != capture.samples
                         or capture.received != capture.samples):
                     raise MoqSessionError()
+                concealed = decimal(header.get('concealed_samples', '0'), maximum=capture.samples)
+                plc = decimal(header.get('plc_samples', '0'), maximum=concealed)
+                lost = decimal(header.get('lost_groups', '0'), maximum=capture.end-capture.first)
+                late = decimal(header.get('late_groups', '0'), maximum=3200)
+                self.trace.mark('moq.capture_recovery', samples=capture.samples,
+                                concealed_samples=concealed, plc_samples=plc,
+                                lost_groups=lost, late_groups=late)
                 capture.validated.set()
                 self._event('capture.stopped', capture.stopped_payload, capture)
             else:
@@ -677,13 +687,15 @@ class MoqSession(ControlSession):
         finally:
             response.done.set()
 
-    async def resume_after_downlink(self) -> None:
+    async def resume_after_downlink(self) -> bool:
         response = self._response
         if response is not None:
             await response.done.wait()
             self._check()
             if not response.cancelled and not response.finished.is_set():
                 raise MoqSessionError()
+            return not response.cancelled and response.finished.is_set() and self._response is response
+        return False
 
     def clear_downlink(self) -> None:
         if not self._current_intent() and not self._closed:

@@ -136,8 +136,24 @@ retain native/Python deadlines and a 31-second sample cap.
 
 ### Response binding and speaker completion
 
+Text and idle background speech use output-only authorization. Host
+`context.request` contains a nonzero monotonic decimal `context_request_id` and
+`kind` (`text` or `background`). After its audio owner accepts the context, the
+watch returns `context.ready` with that request/kind, a watch-issued `context_id`,
+and neutral `request_id:"0"`/`owner_token:"0"`. An active microphone or unfinished
+response yields `context.rejected` with `reason:"busy"`. Requests time out after
+three seconds. `context.cancel` names only its request; a late receipt cannot
+cancel a newer context or capture.
+
+Context IDs share the monotonic watch identity namespace with capture IDs.
+Native IPC `context.begin` maps the ID to its legacy `capture_id` correlation
+field, but starts no capture reader, decoder, microphone, synthetic PCM or STT
+commit. Text waits for authorization before entering the model pipeline. Idle
+background output uses the same path and retries pending attention when busy.
+
 The shared begin/enqueue/end API preserves the exact-tail PCM spool. Native
-response startup waits for capture validation. Native `playback.prepared`
+response startup waits for capture validation or an acknowledged output-only
+context. Native `playback.prepared`
 supplies the response ID and first group. WSS `playback.begin` carries
 capture/request/owner/response IDs and that group; no PCM reaches the encoder
 before matching watch `playback.bound`.
@@ -151,6 +167,13 @@ accepted only after the end command was sent. Firmware must emit it after
 decoder/DMA completion, not merely after receiving media.
 
 Spool drain and native encoding never satisfy the application playback wait.
+Cancelled/replaced waits return an unsuccessful result rather than successful
+playout. Standalone TTS history-flush frames wait behind their words and the
+speaker receipt, preventing premature empty-history commits. MoQ background
+announcements remain durably pending, and questions remain unfocused, until the
+owning response plays. Cancellation or process loss before acknowledgement
+permits retry; this is at-least-once delivery, not proof against repetition if
+the process dies after audible playback but before the database acknowledgement.
 Binding, encoded tail and watch receipt have bounded waits. Cancellation drops
 pending output without flushing, sends `playback.cancel` to both channels and
 releases the old wait. Native playback cancellation preserves the completed
