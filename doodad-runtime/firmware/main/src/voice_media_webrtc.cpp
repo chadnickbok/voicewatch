@@ -1157,6 +1157,7 @@ bool capture_finish() { stop_capture(); return true; }
 void cancel() { stop_capture(false); stop_and_reset_playback("cancelled"); }
 bool receive_begin(const Response&) { return false; }
 bool receive_end(std::uint64_t,std::uint64_t,std::uint64_t) { return false; }
+bool receive_cancel(std::uint64_t,std::uint64_t) { return false; }
 void tick() {
     if (g_event_overflow.exchange(false)) { disconnect(); emit(EventKind::error); }
     if (g_playback_reset_requested.load(std::memory_order_acquire)) {

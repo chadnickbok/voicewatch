@@ -1,0 +1,28 @@
+{
+  "root_base_commit": "b98e72d3e070a611304ee86fe7f2533c956b41f0",
+  "library_base_commit": "18c2e33f5863ed14b00d5a6332caf3602eec4bbf",
+  "sources": {
+    "doodad-runtime/firmware/boards/t-watch-ultra/sdkconfig.defaults": "eb65a367db6cf9ac884fd777c5926e90fcb8ac56bee1cc3aa1c21057d54779d5",
+    "doodad-runtime/firmware/main/include/voice_media_transport.hpp": "89b80a15e3a3166519b4cca9dd14041b34000c1b192f94782ee139f8eda6d28d",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "12441b25f2174e2b6eae6f186f14819a2bdb073e8c2b9e3831631dee57eae5fe",
+    "doodad-runtime/firmware/main/src/voice_media_webrtc.cpp": "336565721a4f011f03da0487e0e73fa0f2f784b85e0c44ffe5ff69c7a86b6e9d",
+    "doodad-runtime/firmware/main/src/voice_moq_bootstrap.cpp": "e17a08f9503f23ae4777d4df76cf5770862a06088b5ca0407aade962972cca76",
+    "doodad-runtime/firmware/main/src/voice_service.cpp": "b1907d6c9feb801593d5dbbc449733c30c2075a4bef0fa49df8f8015bb5f1a2d",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_auth.py": "6410df217f4f1bc175c71a03a2f38a4c299b5f99e83c3151cde73816ae5b87b9",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_bootstrap.py": "e9adf8378fa0bff05aa3720104cf6b69a96551ed0b21c3cea556d9baff968db8",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_bridge.py": "f91e1a26d53432f81699c017535e357017825063d01757532e9fbacca759c7e6",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_config.py": "07cd4c9d92be999adf3ae3f0fe0bf9de5d925332ff7cbd281e453e06aed0cbb8",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_ipc.py": "937b75750944d60b86a409b26615b6a7ccaf25347da623f75afda013f19f049d",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "fee2fc7f25a967c10f09e264cf14a5e2da160e3c1b5976886ed59228f940ce8a",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_time.py": "abb157b36af750554d6bfcde57d97d0a5c8ca0c9fcdd086abedc3b548b006de8",
+    "doodad-runtime/services/live-agent/src/doodad_agent/transport_moq.py": "1691b613745ed0fd6d0085e5c5d69d3032ae0db68527096a3f9103c82a014a3e",
+    "doodad-runtime/services/live-agent/tests/moq_native_integration.py": "7456a91aaab346f234b6ab152f26c1a042e2bf0f609c068fbfe6db41b4506ac6",
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "597412d9228d56921bec8f2229045891bfaad54692a3223e3a8d246bbe89c963",
+    "doodad-runtime/tools/moq_enroll.py": "b971db8daea11105e35395a2f335ecd72cafc880197c8be7e9175c4368371065",
+    "libs/moq-esp32/server/voice_agent/examples/native_probe.rs": "f9ca875781583945b2578a572bd2af456195bb9cca43fa778b05b73ca5acb1ee"
+  },
+  "firmware_sha256": "5937c36ebd6e206d213a9e0ddedbef376cc385d682be4f70cd93d8009d2de7c4",
+  "firmware_bytes": 3427776,
+  "native_endpoint_sha256": "fc49d86ba797386c0e7ff265801cef714d664e9567ee9c90ce74e22c8ceda627",
+  "native_probe_sha256": "867dd3baa852408f081e71556b70da06102f4cc9e6cba97e44170c01fe619167"
+}

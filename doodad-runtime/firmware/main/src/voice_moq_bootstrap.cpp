@@ -1,14 +1,18 @@
 #include "voice_moq_bootstrap.hpp"
 #include "board.hpp"
 #include "network_service.hpp"
+#include "driver/usb_serial_jtag.h"
+#include "driver/usb_serial_jtag_vfs.h"
 #include "esp_heap_caps.h"
 #include "esp_http_client.h"
+#include "esp_log.h"
 #include "esp_random.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "mbedtls/md.h"
+#include "mbedtls/x509_crt.h"
 #include "nvs.h"
 #include "sdkconfig.h"
 #include <atomic>
@@ -18,11 +22,17 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#if !CONFIG_MBEDTLS_HAVE_TIME_DATE
+#error "Authenticated MoQ bootstrap requires mbedTLS certificate expiry checks"
+#endif
+
 namespace doodad::moq_control {
 namespace {
 constexpr char kNamespace[]="moq_enroll";
+constexpr char kTag[]="moq_bootstrap";
 Profile* saved=nullptr;
 SemaphoreHandle_t mutex=nullptr;
+bool initialized=false;
 std::atomic<std::uint32_t> revision{0};
 std::atomic<std::uint64_t> clock_mono{0}, clock_utc{0}, clock_until{0};
 bool rejected=false;
@@ -67,10 +77,18 @@ cJSON* post(const Profile& p,bool secure,const char* path,const char* body) {
             esp_http_client_set_post_field(client,body,std::strlen(body))==ESP_OK &&
             esp_http_client_perform(client)==ESP_OK && esp_http_client_get_status_code(client)==200 &&
             !reply->overflow && mono_ms()-started<=5000) parsed=json(reply->text,reply->size,2048);
-        int tls_flags=0;
-        esp_http_client_get_and_clear_last_tls_error(client,nullptr,&tls_flags);
+        int tls_flags=0,tls_code=0;
+        esp_http_client_get_and_clear_last_tls_error(client,&tls_code,&tls_flags);
         const int status=esp_http_client_get_status_code(client);
-        if (secure && (tls_flags || status==401 || status==403)) rejected=true;
+        // With KEEP_PEER_CERTIFICATE disabled, IDF cannot recover verify flags
+        // after the handshake. The X.509 failure code still identifies a
+        // terminal certificate rejection; do not retry it indefinitely.
+        const bool certificate=tls_flags || tls_code==MBEDTLS_ERR_X509_CERT_VERIFY_FAILED ||
+            tls_code==-MBEDTLS_ERR_X509_CERT_VERIFY_FAILED;
+        if (secure && (certificate || status==401 || status==403)) {
+            rejected=true;
+            ESP_LOGW(kTag,"%s rejected",certificate?"certificate":"authorization");
+        }
         esp_http_client_cleanup(client);
     }
     wipe(reply,sizeof(*reply)); heap_caps_free(reply); return parsed;
@@ -80,6 +98,14 @@ bool install(const char* bytes,std::size_t size) {
     auto* candidate=static_cast<Profile*>(heap_caps_calloc(1,sizeof(Profile),MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT));
     bool ok=root && candidate && profile(root,doodad::board::identity().device_id,*candidate);
     free_json(root);
+    if (ok) {
+        mbedtls_x509_crt roots;
+        mbedtls_x509_crt_init(&roots);
+        ok=mbedtls_x509_crt_parse(&roots,reinterpret_cast<const unsigned char*>(candidate->roots),
+                                  std::strlen(candidate->roots)+1)==0;
+        for (const auto* root=&roots;ok && root;root=root->next) ok=mbedtls_x509_crt_get_ca_istrue(root);
+        mbedtls_x509_crt_free(&roots);
+    }
     if (ok && xSemaphoreTake(mutex,pdMS_TO_TICKS(1000))==pdTRUE) {
         ok=candidate->revision>revision.load();
         nvs_handle_t handle{};
@@ -99,13 +125,10 @@ bool install(const char* bytes,std::size_t size) {
     if (candidate) { wipe(candidate,sizeof(*candidate)); heap_caps_free(candidate); }
     return ok;
 }
-void usb_enrollment(void*) {
+void usb_enrollment(void* argument) {
     // Physical USB console only, no remote provisioning listener and no echo.
     // This task has an internal stack because NVS writes disable flash cache.
-    auto* line=static_cast<char*>(heap_caps_calloc(1,8193,MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT));
-    if (!line) { vTaskDelete(nullptr); return; }
-    const auto flags=fcntl(STDIN_FILENO,F_GETFL,0);
-    if (flags<0 || fcntl(STDIN_FILENO,F_SETFL,flags|O_NONBLOCK)<0) { heap_caps_free(line); vTaskDelete(nullptr); return; }
+    auto* line=static_cast<char*>(argument);
     std::size_t used=0; bool overflow=false; std::uint64_t started=0;
     while (true) {
         char input[64]{}; const auto count=read(STDIN_FILENO,input,sizeof(input));
@@ -131,13 +154,34 @@ void usb_enrollment(void*) {
 }
 }
 bool init() {
-    if (saved) return mutex!=nullptr;
+    if (initialized) return true;
 #if !CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG
     return false; // Never route enrollment through a network/UART console.
 #else
     saved=static_cast<Profile*>(heap_caps_calloc(1,sizeof(Profile),MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT));
     mutex=xSemaphoreCreateMutex();
-    if (!saved || !mutex) return false;
+    auto* line=heap_caps_calloc(1,8193,MALLOC_CAP_SPIRAM|MALLOC_CAP_8BIT);
+    // IDF's nonblocking VFS reports availability from the installed driver's
+    // ring; without that driver it reports zero even when the hardware FIFO
+    // contains bytes. Install it before enabling nonblocking console reads.
+    if (!usb_serial_jtag_is_driver_installed()) {
+        usb_serial_jtag_driver_config_t config{}; config.tx_buffer_size=256; config.rx_buffer_size=512;
+        if (usb_serial_jtag_driver_install(&config)!=ESP_OK) {
+            heap_caps_free(line); heap_caps_free(saved); saved=nullptr;
+            if (mutex) vSemaphoreDelete(mutex);
+            mutex=nullptr; return false;
+        }
+    }
+    usb_serial_jtag_vfs_use_driver();
+    const auto flags=fcntl(STDIN_FILENO,F_GETFL,0);
+    auto cleanup=[&] {
+        if (saved) { wipe(saved,sizeof(*saved)); heap_caps_free(saved); saved=nullptr; }
+        if (mutex) { vSemaphoreDelete(mutex); mutex=nullptr; }
+        heap_caps_free(line); revision.store(0);
+    };
+    if (!saved || !mutex || !line || flags<0 || fcntl(STDIN_FILENO,F_SETFL,flags|O_NONBLOCK)<0) {
+        cleanup(); return false;
+    }
     nvs_handle_t handle{};
     if (nvs_open(kNamespace,NVS_READONLY,&handle)==ESP_OK) {
         std::size_t size=sizeof(*saved);
@@ -146,7 +190,12 @@ bool init() {
         nvs_close(handle);
     }
     revision.store(saved->revision);
-    return xTaskCreatePinnedToCore(usb_enrollment,"moq_enroll",6144,nullptr,3,nullptr,0)==pdPASS;
+    if (xTaskCreatePinnedToCore(usb_enrollment,"moq_enroll",6144,line,3,nullptr,0)!=pdPASS) {
+        cleanup(); return false;
+    }
+    initialized=true;
+    ESP_LOGI(kTag,"USB enrollment ready; profile %s",revision.load()?"present":"absent");
+    return true;
 #endif
 }
 std::uint32_t profile_revision() { return revision.load(); }
@@ -179,6 +228,7 @@ bool acquire(Grant& out) {
         if (settimeofday(&time,nullptr)==0) {
             clock_mono.store(mono_ms()); clock_utc.store(utc); clock_until.store(began+600000);
             ok=true;
+            ESP_LOGI(kTag,"authenticated time accepted");
         }
     }
     free_json(reply); reply=nullptr;
@@ -199,6 +249,7 @@ bool acquire(Grant& out) {
     free_json(reply); wipe(body,sizeof(body)); wipe(proof,sizeof(proof)); wipe(nonce,sizeof(nonce));
     wipe(p,sizeof(*p)); heap_caps_free(p);
     if (!ok) wipe(&out,sizeof(out));
+    ESP_LOGI(kTag,"bootstrap %s",ok?"accepted":"failed");
     return ok;
 }
 }

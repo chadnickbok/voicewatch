@@ -9,8 +9,9 @@ WebSocket TTS.
 
 The MoQ migration now has an explicit `serve --transport moq --moq-config ...`
 mode connecting the existing conversation callbacks to authenticated WSS and
-the native Rust worker over private IPC. It is a development mode: physical
-firmware control/bootstrap and live provider-turn acceptance remain open.
+the native Rust worker over private IPC. It is a development mode: authenticated
+full-shell Ultra startup, audio and response replacement now pass a private
+hardware bench; live provider-turn and release acceptance remain open.
 WebRTC remains the default and deployed mode. See the
 [MoQ product session contract](../../../docs/moq-product-session.md) for private
 configuration, tests and limitations. `aiortc` is an optional `webrtc` extra; install with

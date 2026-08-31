@@ -34,6 +34,7 @@ from .personal_bundle import (
 )
 from .storage import Store
 from .session import DownlinkUtteranceBinding
+from .provider_session import ProviderSession
 from .host_network import local_ipv4
 
 
@@ -186,6 +187,8 @@ async def serve(arguments: argparse.Namespace) -> None:
             self.last_agent_state: dict[str, Any] | None = None
             self.last_app_publish_at = 0.0
             self.conversation: LiveConversation | None = None
+            self.provider_session: ProviderSession | None = None
+            self.conversation_lock = asyncio.Lock()
 
     runtimes: dict[str, DeviceRuntime] = {}
     legacy_relinked = False
@@ -239,42 +242,36 @@ async def serve(arguments: argparse.Namespace) -> None:
         controller = ForegroundController(kernel, builder, attention)
         runtime = DeviceRuntime(device_id, controller, builder, attention)
         runtimes[device_id] = runtime
+        await start_conversation(runtime)
+        return runtime
+
+    async def start_conversation(runtime: DeviceRuntime) -> None:
+        async with runtime.conversation_lock:
+            await replace_conversation(runtime)
+
+    async def replace_conversation(runtime: DeviceRuntime) -> None:
+        device_id = runtime.device_id
+        session = current_session(device_id)
+        if runtime.provider_session is not None and runtime.provider_session.session is session:
+            return
+        history = []
+        if runtime.provider_session is not None:
+            runtime.provider_session.retire()
+        if runtime.conversation is not None:
+            await runtime.conversation.close(close_builder=False)
+            history = runtime.conversation.history()
+        owner = ProviderSession(session, lambda: current_session(device_id))
+        runtime.provider_session = owner
+        runtime.downlink = owner.downlink
         device_trace = DeviceLatencyTrace(trace, device_id)
-
-        def audio_sink(pcm: bytes, sample_rate: int) -> int:
-            return runtime.downlink.enqueue(
-                current_session(device_id), pcm, sample_rate
-            )
-
-        async def stop_capture() -> None:
-            session = current_session(device_id)
-            if session is not None:
-                await session.stop_capture()
-
-        async def begin_downlink() -> None:
-            runtime.downlink.begin(current_session(device_id))
-
-        async def end_downlink() -> None:
-            runtime.downlink.end(current_session(device_id))
-
-        async def wait_for_playback() -> None:
-            await runtime.downlink.wait_for_playback(lambda: current_session(device_id))
-
-        async def invoke_action(
-            capability: str, action_arguments: dict[str, Any], idempotency_key: str
-        ) -> dict[str, Any]:
-            session = current_session(device_id)
-            if session is None:
-                raise ConnectionError(f"{device_id} is not connected")
-            return await session.invoke_action(
-                capability, action_arguments, idempotency_key
-            )
 
         async def publish_state(
             voice_phase: str,
             background: dict[str, object],
             display: dict[str, str],
         ) -> None:
+            if not owner.live():
+                return
             document = {
                 "schema_version": 1,
                 "device_id": device_id,
@@ -294,7 +291,7 @@ async def serve(arguments: argparse.Namespace) -> None:
                 },
             }
             changed = document != runtime.last_agent_state
-            session = current_session(device_id)
+            session = owner.session
             if changed:
                 runtime.last_agent_state = document
             if changed and session is not None:
@@ -303,12 +300,11 @@ async def serve(arguments: argparse.Namespace) -> None:
                 await publish_ready_apps(runtime, force=changed)
 
         runtime.conversation = LiveConversation(
-            controller, builder, attention, device_trace, audio_sink, stop_capture,
-            begin_downlink, end_downlink, wait_for_playback, invoke_action,
-            publish_state,
+            runtime.controller, runtime.builder, runtime.attention, device_trace,
+            owner.audio, owner.stop_capture, owner.begin, owner.end, owner.wait, owner.action,
+            publish_state, history=history,
         )
         await runtime.conversation.start()
-        return runtime
 
     async def on_audio(device_id: str, pcm: bytes) -> None:
         runtime = runtimes.get(device_id)
@@ -325,6 +321,8 @@ async def serve(arguments: argparse.Namespace) -> None:
         runtime = runtimes.get(device_id)
         if runtime is None:
             runtime = await create_runtime(device_id)
+        elif kind == 'identified':
+            await start_conversation(runtime)
         conversation = runtime.conversation
         session = current_session(device_id)
         if kind == "connected" and session is not None:
@@ -366,6 +364,8 @@ async def serve(arguments: argparse.Namespace) -> None:
             await complete_capture_to_conversation(conversation, session, kind)
         elif kind == "disconnected":
             runtime.downlink.cancel()
+            if runtime.provider_session is not None:
+                runtime.provider_session.retire()
             if conversation is not None:
                 conversation.disconnected()
         elif kind == "watch.state":

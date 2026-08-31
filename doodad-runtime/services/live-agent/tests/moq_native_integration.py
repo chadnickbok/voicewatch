@@ -23,7 +23,7 @@ from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.x509.oid import ExtendedKeyUsageOID, NameOID
 
-from doodad_agent.moq_auth import GrantRegistry, bootstrap_proof
+from doodad_agent.moq_auth import AuthorizationError, GrantRegistry, bootstrap_proof
 from doodad_agent.moq_bootstrap import MoqBootstrap
 from doodad_agent.moq_bridge import MoqBridgeServer
 from doodad_agent.metrics import LatencyTrace
@@ -94,6 +94,15 @@ async def test_native_authorized_session(mode):
     with tempfile.TemporaryDirectory(prefix='vw-native-', dir='/tmp') as temporary:
         directory = Path(temporary)
         registry = GrantRegistry({DEVICE: KEY})
+        denied = []
+        attach_media = registry.attach_media
+        def audited_attach(token, owner):
+            try:
+                return attach_media(token, owner)
+            except AuthorizationError:
+                denied.append(True)  # No token material retained in evidence.
+                raise
+        registry.attach_media = audited_attach
         controls, attached, packets = [], [], []
         ready, encoded, closed = asyncio.Event(), asyncio.Event(), asyncio.Event()
         capture = bytearray()
@@ -181,8 +190,9 @@ async def test_native_authorized_session(mode):
                     child = await probe(configuration, directory)
                     stdout, stderr = await asyncio.wait_for(child.communicate(), 6)
                     assert child.returncode == 0 and json.loads(stdout)['rejected'], stderr.decode()
+                    assert len(denied) == 1 and len(attached) == 1 and len(capture) == 1074
                 elif mode == 'bad_token':
-                    assert result['rejected'] and not attached and not packets
+                    assert result['rejected'] and len(denied) == 1 and not attached and not packets
                 else:
                     assert result['closed'] and not capture
                     assert not registry.valid(controls[0][0], controls[0][1])

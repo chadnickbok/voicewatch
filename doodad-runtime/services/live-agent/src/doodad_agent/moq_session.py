@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import traceback
 from contextvars import ContextVar
 from dataclasses import dataclass, field
 from typing import Any
@@ -150,7 +151,12 @@ class MoqSession(ControlSession):
                     self._fail()
             except asyncio.CancelledError:
                 raise
-            except Exception:
+            except Exception as error:
+                # Only code locations and type names: no exception text,
+                # peer documents, credentials, transcript or audio payloads.
+                self.trace.mark('moq.session_fault', error_type=type(error).__name__,
+                    locations=[dict(function=item.name, line=item.lineno)
+                               for item in traceback.extract_tb(error.__traceback__)[-4:]])
                 self._fail()
         task = asyncio.create_task(guarded())
         self._tasks.add(task)

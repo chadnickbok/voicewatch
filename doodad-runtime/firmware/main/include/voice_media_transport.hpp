@@ -73,6 +73,9 @@ void cancel();
 bool receive_begin(const Response& response);
 bool receive_end(std::uint64_t session, std::uint64_t response_id,
                  std::uint64_t end_group);
+// Retire only the named response, retaining its completed capture context for
+// a later response. A stale cancellation cannot touch a replacement.
+bool receive_cancel(std::uint64_t session, std::uint64_t response_id);
 // Called by the control owner. MoQ performs audio/network work on other tasks.
 void tick();
 bool poll(Event& event);

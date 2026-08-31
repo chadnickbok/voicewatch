@@ -41,7 +41,7 @@ once at the end of the completed soak. Its replacement no longer requires a
 backup/full-flash baseline comparison and validates live board/security/layout
 metadata before app0 writes. Eight offline runner checks pass; the replacement
 runner has now flashed and tested the operational endpoint on hardware. The
-passing combined physical audio/MoQ echo image is preserved as a checkpoint. The latest installed firmware is the full-shell MoQ diagnostic described below.
+passing combined physical audio/MoQ echo image is preserved as a checkpoint. The latest installed firmware is the authenticated full-shell MoQ image described below.
 
 ## Physical Ultra audio and MoQ echo checkpoint
 
@@ -221,7 +221,7 @@ memory/loss hardening and full-shell release gates remain open. No service was
 deployed, actual credentials read or firmware changed. See
 [configuration and the firmware-facing contract](moq-product-session.md).
 
-## Authenticated firmware bootstrap checkpoint
+## Authenticated firmware bootstrap checkpoint (build-only, historical)
 
 The Ultra firmware now implements physical USB enrollment into its own NVS
 namespace, nonce-bound authenticated time, verified HTTPS bootstrap and WSS
@@ -242,6 +242,60 @@ reconnection and full control/audio behavior still require hardware validation.
 The installed diagnostic image is unchanged. Provider turns, deployment,
 credential lifecycle, native memory/loss hardening and the full release matrix
 remain open. Firmware restoration is not required for future tests.
+
+## Authenticated full-shell hardware checkpoint
+
+The connected Ultra now runs the authenticated full-shell image. USB enrollment,
+nonce-bound time, certificate-verified HTTPS/WSS and native MoQ readiness pass
+against the real Python product adapter and Rust endpoint. No static enrollment
+key is compiled into the image. Certificate date checks are enabled and enforced
+by a build guard. Expired, not-yet-valid, wrong-hostname and untrusted certificates
+were rejected on hardware after time-proof issuance, without an authenticated
+session or microphone capture.
+
+The final audio run received 19,200 microphone samples and completed a
+16,037-sample tone with zero reported concealment, late frames or pressure drops.
+It then cancelled an active response and completed a replacement on the same
+captured turn. Scoped cancellation now preserves that completed context while
+fencing old media/DMA work; general cancellation still invalidates it. Forced
+reconnect took 6,521 ms, and lease expiry led to a third fresh session without
+recording. These are individual measurements, not p95/soak acceptance.
+
+Both Ultra and legacy CoreS3 builds pass. The default Python suite has 191
+passing tests, the explicit C++ parser lane 26, and Rust seven. Five native
+integration cases passed ten consecutive runs after fixing their rejection
+probe's close race and adding an independent issuer-denial assertion. See
+[hardware evidence, failures and hashes](implementation-evidence/2026-08-30-ultra-authenticated-session/README.md)
+and [enrollment/run instructions](moq-ultra-enrollment.md).
+
+The bench hosts are stopped; the watch retains the new firmware and private test
+profile and waits for a reachable host. The deployed service is unchanged.
+Provider turns/generation isolation, text/background responses, proactive renewal
+and continuous long speech, full app/UI behavior, native allocation/loss hardening,
+connection latency, deployment and release soaks remain open. No restoration is
+required, and this checkpoint does not declare the full replacement complete.
+
+## Provider-session checkpoint — 2026-08-31 (in progress)
+
+Provider callbacks now bind to their originating watch session. Reconnect retires
+the old pipeline and creates a replacement while preserving conversation history
+and durable job state. Retired callbacks cannot send audio/actions to the new
+session. The sink also rejects mismatched TTS contexts, and an old playout drain
+cannot clear a replacement's pending text. Five regression tests cover these
+ownership paths; the default Python suite now passes 196 tests with four warnings.
+This does not yet establish complete generation isolation within one session.
+
+The new `moq_provider_bench.py` runs the real service/provider path with temporary
+credentials, an isolated database, read-only tools and host-initiated capture on
+the physical Ultra. Two attempts authenticated and received microphone PCM, but
+both disconnected before final transcription or playback. Fixed-category native
+diagnostics identified `capture gap/range` in the second attempt. The media
+ordering/loss path remains unresolved; no successful end-to-end provider turn is
+claimed. Private provider logs, enrollment profiles and audio stay outside Git.
+
+The installed firmware and deployed service are unchanged by these attempts.
+Physical-button acceptance, the remaining release gates above and a successful
+STT/model/tool/TTS turn remain outstanding. Firmware restoration is not required.
 
 ## Capture and network checkpoint (historical)
 

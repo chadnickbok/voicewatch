@@ -2,12 +2,17 @@
 
 The live-agent service now has an explicit MoQ adapter connected to the existing
 conversation callbacks. This is a development mode, not the accepted replacement
-release. No provider turn, deployed service restart or firmware flash was performed.
-The installed Ultra still runs the earlier media diagnostic.
+release. No successful end-to-end provider turn or deployed service restart has
+been completed. Live-provider attempts currently fail during capture with
+`capture gap/range`; see the [current progress](moq-implementation-progress.md).
+The installed
+Ultra now runs the authenticated full-shell firmware; a private local host bench
+has verified startup, audio, response replacement and reconnection.
 
 The subsequent firmware checkpoint implements USB enrollment, authenticated time,
-HTTPS bootstrap and session-bound WSS control. The full Ultra image builds, but
-this new path has not yet been flashed or verified on hardware.
+HTTPS bootstrap and session-bound WSS control. It has been flashed and tested on
+the Ultra; see [hardware evidence](implementation-evidence/2026-08-30-ultra-authenticated-session/README.md)
+and [enrollment/run instructions](moq-ultra-enrollment.md) for the exact scope.
 
 ## Service selection
 
@@ -148,10 +153,10 @@ Audio and watch receipts are synthetic, not proof of physical speaker completion
 
 Required next work:
 
-- Hardware validation of the newly implemented authenticated bootstrap, USB
-  enrollment, trusted time, session/sequence validation and capture/playback
-  bindings, including actual DMA completion. The installed diagnostic firmware does not
-  yet provide these WSS fields/handlers and is incompatible with this host mode.
+- Expanded physical lifecycle/security coverage of the implemented bootstrap,
+  enrollment, control and capture/playback bindings. Basic full-shell startup,
+  exact-tail speaker completion, response replacement, certificate rejection and
+  fresh-grant reconnection now pass the private hardware bench.
 - Provider-turn ownership across reconnection, rapid PTT, owner/app changes,
   background speech and long responses. Native tests do not prove STT/model/tool/
   TTS generation isolation or response history correctness.

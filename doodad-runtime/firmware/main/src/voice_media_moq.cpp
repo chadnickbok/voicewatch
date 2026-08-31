@@ -54,6 +54,8 @@ esp_moq_endpoint_t* g_endpoint = nullptr;
 esp_moq_service_t* g_service = nullptr;
 std::uint64_t g_publish = 0, g_receive = 0, g_revision = 1;
 std::uint64_t g_last_session = 0;
+Response g_latest_response{}, g_preserve_capture{};
+std::uint64_t g_preserve_revision=0;
 bool g_disconnect = false;
 std::atomic<bool> g_ready{false}, g_recording{false}, g_overflow{false}, g_initialization_failed{false};
 class Lock {
@@ -85,6 +87,9 @@ struct Owner {
     bool playing = false, receiving_end = false, speaker = false, pending = false;
     bool closing = false, failed = false;
     bool start_pending = false;
+    bool receive_pending = false;
+    Response pending_response{};
+    std::uint64_t receive_deadline=0;
     Command start_command{};
     std::uint64_t start_deadline = 0;
     esp_moq_audio_chunk_t chunk{};
@@ -126,6 +131,7 @@ void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
     if (xQueueSend(g_events,&event,0)!=pdTRUE) g_overflow.store(true);
 }
 void invalidate_locked() {
+    g_latest_response={};
     if (g_revision!=UINT64_MAX) ++g_revision;
     else { g_disconnect=true; g_ready.store(false); }
     if (g_service) {
@@ -157,7 +163,7 @@ void cancel_audio(Owner& o) {
     if (o.capture) esp_moq_audio_capture_cancel(o.capture);
     if (o.player) esp_moq_audio_player_cancel(o.player);
     o.capturing=o.encoding=o.finishing=o.have_microphone=o.start_pending=false;
-    o.playing=o.speaker=o.pending=o.receiving_end=false;
+    o.playing=o.speaker=o.pending=o.receiving_end=o.receive_pending=false;
     g_recording.store(false);
     if (had_capture) emit(o,EventKind::capture_failed,result,true);
     if (had_response) emit(o,EventKind::playback_finished,result,true);
@@ -248,14 +254,14 @@ void finish_capture(Owner& o) {
     // A just-copied chunk belongs to this capture and must precede its tail.
     o.finishing=true; o.finish_deadline=now_us()+2000000;
 }
-void begin_response(Owner& o,const Response& response) {
+bool begin_response(Owner& o,const Response& response) {
     if (!o.service || response.session!=o.session || !response.response_id ||
         response.response_id<=o.response_floor || o.receive || o.capturing || o.finishing ||
         response.identity.capture_id!=o.identity.capture_id ||
         response.identity.request_id!=o.identity.request_id ||
         response.identity.owner_token!=o.identity.owner_token) {
         // Reject stale or ambiguous ownership without interrupting its replacement.
-        ESP_LOGW(kTag,"response binding rejected"); return;
+        ESP_LOGW(kTag,"response binding rejected"); return true;
     }
     esp_moq_media_binding_t binding{}; binding.connection=o.connection;
     binding.voice=wire_identity(response.identity); binding.first_group=response.first_group;
@@ -263,15 +269,17 @@ void begin_response(Owner& o,const Response& response) {
     int result=ESP_MOQ_OK;
     {
         Lock lock;
-        if (o.revision!=g_revision) return;
+        if (o.revision!=g_revision) return true;
         result=esp_moq_service_receive_begin(o.service,&binding,&o.receive);
         if (!result) g_receive=o.receive;
     }
-    if (result) { ESP_LOGW(kTag,"response unavailable result=%d",result); return; }
+    if (result==ESP_MOQ_ERR_WOULD_BLOCK) return false;
+    if (result) { fail(o,result); return true; }
     o.response=response; o.response_floor=response.response_id; o.samples=0;
-    if (o.next_speaker_owner==UINT64_MAX) { fail(o,ESP_MOQ_ERR_VALUE_TOO_LARGE); return; }
+    if (o.next_speaker_owner==UINT64_MAX) { fail(o,ESP_MOQ_ERR_VALUE_TOO_LARGE); return true; }
     o.speaker_owner=o.next_speaker_owner++;
     emit(o,EventKind::playback_bound);
+    return true;
 }
 
 void poll_service(Owner& o) {
@@ -470,9 +478,18 @@ void audio_task(void*) {
         }
     }
     while (true) {
-        std::uint64_t revision; bool disconnecting;
-        { Lock lock; revision=g_revision; disconnecting=g_disconnect; }
-        if (o.revision!=revision) { cancel_audio(o); o.revision=revision; }
+        std::uint64_t revision; bool disconnecting; Response preserve{};
+        { Lock lock; revision=g_revision; disconnecting=g_disconnect;
+          if (g_preserve_revision==revision) preserve=g_preserve_capture; }
+        if (o.revision!=revision) {
+            const bool retain=!disconnecting && !o.capturing && !o.finishing && !o.start_pending &&
+                preserve.session==o.session && preserve.identity.capture_id &&
+                preserve.identity.capture_id==o.identity.capture_id &&
+                preserve.identity.request_id==o.identity.request_id && preserve.identity.owner_token==o.identity.owner_token;
+            cancel_audio(o);
+            if (retain) o.identity=preserve.identity;
+            o.revision=revision;
+        }
         if (disconnecting) close_start(o);
         close_step(o);
         // Poll old terminal events before reusing the service's one operation
@@ -499,7 +516,9 @@ void audio_task(void*) {
                 case Operation::finish:
                     if (o.start_pending) { o.start_pending=false; o.identity=o.start_command.identity; emit(o,EventKind::capture_failed,0,true); o.identity={}; }
                     finish_capture(o); break;
-                case Operation::receive: begin_response(o,command.response); break;
+                case Operation::receive:
+                    o.pending_response=command.response; o.receive_pending=true; o.receive_deadline=now_us()+500000;
+                    break;
                 case Operation::receive_end:
                     if (o.receive && command.response.session==o.session &&
                         command.response.response_id==o.response.response_id) {
@@ -515,6 +534,10 @@ void audio_task(void*) {
         if (o.start_pending) {
             if (now_us()>o.start_deadline) { o.start_pending=false; emit(o,EventKind::capture_failed,ESP_MOQ_ERR_WOULD_BLOCK); }
             else if (start_capture(o,o.start_command)) o.start_pending=false;
+        }
+        if (o.receive_pending) {
+            if (now_us()>o.receive_deadline) { o.receive_pending=false; fail(o,ESP_MOQ_ERR_WOULD_BLOCK); }
+            else if (begin_response(o,o.pending_response)) o.receive_pending=false;
         }
         if (o.endpoint && !o.closing && !o.failed) {
             esp_moq_endpoint_status_t status{}; esp_moq_endpoint_status(o.endpoint,&status);
@@ -606,7 +629,20 @@ bool receive_begin(const Response& response) {
     if (!g_ready.load() || !response.response_id || !response.identity.capture_id ||
         (response.has_end && response.end_group<response.first_group)) return false;
     Command command{}; command.operation=Operation::receive; command.response=response;
-    return enqueue(command);
+    Lock lock;
+    if (g_revision==UINT64_MAX || response.session!=g_last_session) return false;
+    command.revision=g_revision;
+    if (xQueueSend(g_commands,&command,0)!=pdTRUE) return false;
+    g_latest_response=response; return true;
+}
+bool receive_cancel(std::uint64_t session,std::uint64_t response_id) {
+    if (!g_mutex) return false;
+    Lock lock;
+    if (!response_id || session!=g_latest_response.session || response_id!=g_latest_response.response_id) return false;
+    const auto preserve=g_latest_response;
+    invalidate_locked(); // Immediate service/DMA fence also invalidates queued old bindings.
+    g_preserve_capture=preserve; g_preserve_revision=g_revision;
+    return true;
 }
 bool receive_end(std::uint64_t session,std::uint64_t response_id,std::uint64_t end_group) {
     Command command{}; command.operation=Operation::receive_end;

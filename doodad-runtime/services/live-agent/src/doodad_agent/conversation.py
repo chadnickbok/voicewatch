@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+import copy
+import functools
 import os
 import time
 import uuid
@@ -133,14 +135,18 @@ class FocusRouter(FrameProcessor):
         controller: ForegroundController,
         trace: LatencyTrace,
         on_transcript: TranscriptCallback,
+        is_current: Callable[[], bool] = lambda: True,
     ) -> None:
         super().__init__()
         self.controller = controller
         self.trace = trace
         self.on_transcript = on_transcript
+        self.is_current = is_current
 
     async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
         await super().process_frame(frame, direction)
+        if isinstance(frame, (InterimTranscriptionFrame, TranscriptionFrame)) and not self.is_current():
+            return
         # OpenAIRealtimeSTTService emits this concrete frame only for the
         # completed transcription event, but Pipecat 1.7.0 leaves the generic
         # `finalized` dataclass field at its False default. The frame type is
@@ -150,6 +156,8 @@ class FocusRouter(FrameProcessor):
         elif isinstance(frame, TranscriptionFrame):
             self.trace.mark("stt.final", characters=len(frame.text))
             await self.on_transcript(frame.text, True)
+            if not self.is_current():
+                return
             utterance_id = f"utt_{uuid.uuid4().hex}"
             routed = self.controller.route_focused(frame.text, utterance_id)
             if routed.handled:
@@ -229,6 +237,16 @@ class ConversationSink(FrameProcessor):
         self._utterance_generation = 0
         self._utterance_interrupted = False
         self._pending_tts_text: list[tuple[TTSTextFrame, FrameDirection]] = []
+        self._retired = False
+        self._tts_active = False
+        self._tts_context: str | None = None
+
+    def retire(self) -> None:
+        """Synchronous fence, before queued provider cancellation can run."""
+        self._retired = True
+        self._utterance_generation += 1
+        self._tts_active = False
+        self._pending_tts_text.clear()
 
     async def _broadcast_bot_started(self) -> None:
         if self._bot_speaking:
@@ -254,8 +272,13 @@ class ConversationSink(FrameProcessor):
 
     async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
         await super().process_frame(frame, direction)
+        if self._retired and isinstance(frame, (TTSStartedFrame, TTSAudioRawFrame, TTSTextFrame,
+                                                TTSStoppedFrame, LLMFullResponseStartFrame,
+                                                UserStartedSpeakingFrame, UserStoppedSpeakingFrame)):
+            return
         if isinstance(frame, InterruptionFrame):
             self._utterance_interrupted = True
+            self._tts_active = False
             self._pending_tts_text.clear()
             await self.push_frame(frame, direction)
             await self._broadcast_bot_stopped()
@@ -274,23 +297,33 @@ class ConversationSink(FrameProcessor):
             self._utterance_interrupted = False
             self._pending_tts_text.clear()
             self._first_tts_audio = True
+            self._tts_active = True
+            self._tts_context = frame.context_id
             await self.on_tts_started()
         elif isinstance(frame, TTSAudioRawFrame):
+            if not self._tts_active or frame.context_id != self._tts_context:
+                return
             if self._first_tts_audio:
                 self.trace.mark("tts.first_audio")
                 self._first_tts_audio = False
                 await self._broadcast_bot_started()
             self.audio_sink(frame.audio, frame.sample_rate)
         elif isinstance(frame, TTSTextFrame):
+            if not self._tts_active or frame.context_id != self._tts_context:
+                return
             self._pending_tts_text.append((frame, direction))
             return
         elif isinstance(frame, TTSStoppedFrame):
+            if not self._tts_active or frame.context_id != self._tts_context:
+                return
             self.trace.mark("tts.stopped")
             generation = self._utterance_generation
             await self.on_playout_drain()
             if self._utterance_interrupted or generation != self._utterance_generation:
-                self._pending_tts_text.clear()
+                if generation == self._utterance_generation:
+                    self._pending_tts_text.clear()
                 return
+            self._tts_active = False
             pending_text = self._pending_tts_text
             self._pending_tts_text = []
             for text_frame, text_direction in pending_text:
@@ -318,6 +351,7 @@ class LiveConversation:
         wait_for_playback: AsyncCallback,
         action_invoker: ActionInvoker,
         state_sink: StateSink,
+        *, history: list | None = None,
     ) -> None:
         self.controller = controller
         self.builder = builder
@@ -344,6 +378,11 @@ class LiveConversation:
             "DOODAD_MAX_RESPONSE_TEXT_BYTES", 262_144
         )
         self._response_journal_full = False
+        self._retired = False
+        self._sink: ConversationSink | None = None
+        self._context: LLMContext | None = None
+        self._history = copy.deepcopy(history or [])
+        self._retirement_task: asyncio.Task | None = None
 
     async def start(self) -> None:
         missing = [
@@ -354,7 +393,8 @@ class LiveConversation:
             raise RuntimeError("missing provider configuration: " + ", ".join(missing))
 
         tools = self._tools()
-        context = LLMContext(messages=[], tools=tools)
+        context = LLMContext(messages=self._history, tools=tools)
+        self._context = context
         vad = VADProcessor(
             vad_analyzer=TracedSileroVADAnalyzer(
                 self.trace,
@@ -406,7 +446,7 @@ class LiveConversation:
         )
 
         router = FocusRouter(
-            self.controller, self.trace, self._on_transcript,
+            self.controller, self.trace, self._on_transcript, lambda: not self._retired,
         )
         assistant_text = AssistantTextTap(
             self._clear_assistant_text,
@@ -421,6 +461,7 @@ class LiveConversation:
             self._drain_downlink,
             self._at_natural_pause,
         )
+        self._sink = sink
         pipeline = Pipeline(
             [
                 PipelineProbe(self.trace, "ingress", count_audio=True),
@@ -457,7 +498,7 @@ class LiveConversation:
         await self._set_voice_phase("idle")
 
     async def feed_audio(self, pcm: bytes) -> None:
-        if self.worker is not None:
+        if self.worker is not None and not self._retired:
             await self.worker.queue_frame(InputAudioRawFrame(pcm, 16_000, 1))
 
     async def submit_text(self, text: str) -> None:
@@ -498,6 +539,14 @@ class LiveConversation:
     def disconnected(self) -> None:
         self._cancel_transcript_watchdog()
         self.voice_phase = "idle"
+        self._retired = True
+        if self._sink is not None:
+            self._sink.retire()
+        if self._retirement_task is None:
+            self._retirement_task = asyncio.create_task(self._stop_pipeline())
+
+    def history(self) -> list:
+        return copy.deepcopy(self._context.get_messages() if self._context else self._history)
 
     async def _begin_user_turn(self) -> None:
         self._current_turn_has_final = False
@@ -572,23 +621,29 @@ class LiveConversation:
         if self.worker is not None:
             await self.worker.queue_frame(InterruptionFrame())
 
-    async def close(self) -> None:
+    async def close(self, *, close_builder: bool = True) -> None:
+        self.disconnected()
         self._cancel_transcript_watchdog()
         if self._control_task is not None:
             self._control_task.cancel()
             await asyncio.gather(self._control_task, return_exceptions=True)
-        self.builder.close()
+        if close_builder:
+            self.builder.close()
+        if self._retirement_task is not None:
+            await self._retirement_task
+
+    async def _stop_pipeline(self) -> None:
         if self.worker is not None:
-            await self.worker.queue_frame(EndFrame())
+            await self.worker.cancel(reason='watch provider session retired')
         if self._runner_task is not None:
             try:
-                await asyncio.wait_for(self._runner_task, 10)
+                await asyncio.wait_for(self._runner_task, 4)
             except TimeoutError:
                 self._runner_task.cancel()
                 await asyncio.gather(self._runner_task, return_exceptions=True)
         if self._runner is not None:
             try:
-                await asyncio.wait_for(self._runner.cleanup(), 5)
+                await asyncio.wait_for(self._runner.cleanup(), 2)
             except TimeoutError:
                 self.trace.mark("pipeline.cleanup_timeout")
 
@@ -652,13 +707,24 @@ class LiveConversation:
         }
 
     async def _publish_state(self) -> None:
+        if getattr(self, '_retired', False):
+            return
         await self.state_sink(
             self.voice_phase,
             self.attention.background_snapshot(),
             self._display_state(),
         )
 
+    def _current_tool(self, handler):
+        @functools.wraps(handler)
+        async def guarded(params):
+            if self._retired:
+                raise ConnectionError('provider session retired')
+            return await handler(params)
+        return guarded
+
     def _tools(self) -> list[FunctionSchema]:
+        @self._current_tool
         async def record(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="record_missed_set")
             state = self.controller.kernel.snapshot()
@@ -674,6 +740,7 @@ class LiveConversation:
             await params.result_callback(result)
             self.trace.mark("tool.end", tool="record_missed_set")
 
+        @self._current_tool
         async def next_set(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="get_next_set")
             result = await self.action_invoker(
@@ -682,6 +749,7 @@ class LiveConversation:
             await params.result_callback(result)
             self.trace.mark("tool.end", tool="get_next_set")
 
+        @self._current_tool
         async def food(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="log_food")
             arguments = params.arguments
@@ -697,12 +765,14 @@ class LiveConversation:
             await params.result_callback(result)
             self.trace.mark("tool.end", tool="log_food")
 
+        @self._current_tool
         async def build(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="start_app_build")
             result = self.controller.start_app_build(str(params.arguments["brief"]))
             await params.result_callback(result)
             self.trace.mark("tool.end", tool="start_app_build", job_id=result["job_id"])
 
+        @self._current_tool
         async def background_work(params: FunctionCallParams) -> None:
             arguments = params.arguments
             kind = str(arguments["kind"])
@@ -720,6 +790,7 @@ class LiveConversation:
                 "tool.end", tool="start_background_work", job_id=result["job_id"]
             )
 
+        @self._current_tool
         async def task_status(params: FunctionCallParams) -> None:
             self.trace.mark("tool.start", tool="get_task_status")
             result = self.controller.task_status(

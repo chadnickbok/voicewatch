@@ -6,4 +6,6 @@ CONFIG_DOODAD_BOARD_TWATCH_ULTRA=y
 # CONFIG_SPIRAM_MODE_OCT is not set
 CONFIG_SPIRAM_MODE_QUAD=y
 CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="boards/t-watch-ultra/partitions.csv"
+# Authenticated bootstrap sets UTC before HTTPS/WSS; always check validity dates.
+CONFIG_MBEDTLS_HAVE_TIME_DATE=y
 # CONFIG_DOODAD_VOICE_UPLINK is not set

@@ -2,9 +2,10 @@
 
 Status: implemented Python boundary, native Rust endpoint and explicit MoQ
 product adapter, 2026-08-30. Default `serve` still selects WebRTC; the new
-`--transport moq --moq-config ...` mode is a development checkpoint. No enrolled
-device, running service or firmware was changed. Firmware bootstrap/control,
-live provider turns and release gates remain open. The sections below record
+`--transport moq --moq-config ...` mode is a development checkpoint. A subsequent
+[hardware checkpoint](implementation-evidence/2026-08-30-ultra-authenticated-session/README.md)
+enrolls and runs the full Ultra shell against this boundary. Live provider turns,
+deployment and release gates remain open. The sections below record
 earlier checkpoints; see [the current product session contract](moq-product-session.md)
 for the adapter and its limits.
 

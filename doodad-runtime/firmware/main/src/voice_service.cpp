@@ -117,7 +117,8 @@ std::uint64_t g_highest_response=0, g_response_samples=0, g_next_connect=0;
 media::Response g_response{};
 bool g_welcomed=false, g_response_ending=false, g_capture_complete=false;
 unsigned g_connect_failures=0;
-std::uint32_t g_denied_revision=0;
+std::atomic<std::uint32_t> g_denied_revision{0};
+std::uint32_t g_connect_revision=0;
 std::uint64_t g_ready_deadline=0;
 std::size_t g_ws_received=0, g_ws_frame_received=0;
 bool g_ws_fragmented=false;
@@ -1150,7 +1151,10 @@ bool secure_command(const char* kind,const cJSON* payload) {
             return true;
         }
         if (response!=g_response.response_id) return true;
-        if (std::strcmp(kind,"playback.cancel")==0) { media::cancel(); g_response={}; return true; }
+        if (std::strcmp(kind,"playback.cancel")==0) {
+            if (!media::receive_cancel(g_control_generation.load(),response)) return false;
+            g_response={}; return true;
+        }
         if (std::strcmp(kind,"playback.end")==0) {
             std::uint64_t first=0,end=0,samples=0;
             if (g_response_ending || !secure::decimal(field(payload,"first_group"),first) || first!=g_response.first_group ||
@@ -1328,12 +1332,26 @@ void websocket_event(
         g_websocket_connected = false;
         g_transport_reset_requested.store(true, std::memory_order_release);
         display_publish_agent_state(0, 0, false, false, false, 0, "", "");
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+    } else if (event_id == WEBSOCKET_EVENT_ERROR) {
+        const auto* event=static_cast<esp_websocket_event_data_t*>(event_data);
+        if (event && (event->error_handle.esp_tls_cert_verify_flags ||
+            event->error_handle.esp_tls_stack_err==0x2700 || event->error_handle.esp_tls_stack_err==-0x2700 ||
+            event->error_handle.esp_ws_handshake_status_code==401 ||
+            event->error_handle.esp_ws_handshake_status_code==403)) {
+            g_denied_revision=g_grant->profile_revision;
+            publish(VoiceEventKind::error,"Secure voice enrollment rejected");
+        }
+        retire_control();
+#endif
     } else if (event_id == WEBSOCKET_EVENT_DATA) {
         const auto* event = static_cast<esp_websocket_event_data_t*>(event_data);
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
         // SDK events may split one frame across buffers and one message across
         // continuation frames. Never parse stale bytes or a partial message.
-        if (!event || (event->op_code!=0 && event->op_code!=1)) return;
+        if (!event) { retire_control(); return; }
+        if (event->op_code==8 || event->op_code==9 || event->op_code==10) return;
+        if (event->op_code!=0 && event->op_code!=1) { retire_control(); return; }
         if (event->payload_offset==0) {
             if (event->op_code==1) {
                 if (g_ws_fragmented) { retire_control(); return; }
@@ -1345,7 +1363,10 @@ void websocket_event(
             static_cast<std::size_t>(event->payload_offset)!=g_ws_frame_received ||
             event->data_len>event->payload_len-event->payload_offset ||
             g_ws_received+event->data_len>kMaximumSignalBytes) { retire_control(); return; }
-        std::memcpy(g_websocket_payload+g_ws_received,event->data_ptr,event->data_len);
+        if (event->data_len) {
+            if (!event->data_ptr) { retire_control(); return; }
+            std::memcpy(g_websocket_payload+g_ws_received,event->data_ptr,event->data_len);
+        }
         g_ws_received+=event->data_len; g_ws_frame_received+=event->data_len;
         if (g_ws_frame_received==static_cast<std::size_t>(event->payload_len)) {
             g_ws_fragmented=!event->fin;
@@ -1425,6 +1446,10 @@ bool discover_url(char* destination, std::size_t capacity) {
 void connect_websocket() {
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
     const auto now=static_cast<std::uint64_t>(esp_timer_get_time()/1000);
+    const auto revision=secure::profile_revision();
+    if (revision!=g_connect_revision) {
+        g_connect_revision=revision; g_next_connect=0; g_connect_failures=0;
+    }
     if (!g_grant || now<g_next_connect || !secure::profile_revision() || g_denied_revision==secure::profile_revision()) return;
     g_next_connect=now+std::min(30000U,1000U<<std::min(g_connect_failures++,5U))+(esp_random()%501);
     if (!secure::acquire(*g_grant)) {
@@ -1562,7 +1587,11 @@ void voice_task(void*) {
             if (g_websocket) close_control();
             g_next_connect=0;
 #endif
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            network_service_connect(5000);
+#else
             network_service_connect();
+#endif
         }
         const auto now = now_ms();
 #if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
@@ -1571,7 +1600,11 @@ void voice_task(void*) {
         if (g_transport_reset_requested.exchange(false)) close_control();
 #endif
         if (network_service_connected() && g_websocket == nullptr &&
+#if CONFIG_DOODAD_VOICE_TRANSPORT_MOQ
+            now - last_discovery >= 250) { // Bootstrap owns bounded backoff; no mDNS wait.
+#else
             now - last_discovery >= 3'000) {
+#endif
             last_discovery = now;
             connect_websocket();
         }
