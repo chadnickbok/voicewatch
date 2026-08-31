@@ -1,0 +1,51 @@
+{
+  "media_prune": {
+    "before_regression_pass": false,
+    "normal_host_pass": true,
+    "normal_adapter_pass": true,
+    "linux_normal_and_asan_ubsan_adapter_host_pass": true,
+    "firmware_build_pass": true
+  },
+  "pacing_batch": {
+    "before_regression_pass": false,
+    "normal_host_pass": true,
+    "normal_adapter_pass": true,
+    "linux_normal_and_asan_ubsan_adapter_host_pass": true,
+    "firmware_build_pass": true
+  },
+  "log_sha256": {
+    "media-prune": {
+      "before": "42cac73b19528ffeda024b5b3cb40e850f8a03247d5b8d045a322f1f567b7371",
+      "host": "a8cee78f6a1198e8c1fbd8bc7f3561988d6746102f2b8ea96507bcc6b4f5adf0",
+      "adapter": "ee606d50bbfc21dfbd0234cd0b9d0378dc08f566f9d4998fa16c227c68de7f23",
+      "sanitizer": "df623eb0b08639c3ee23d27f8be0b7fa59b976c39f5798feb1109ca80f16e833",
+      "build": "17c8c7b32a07e72b0720543f59d4851adb00f4bf098ba112f7619e0834df298c"
+    },
+    "pacing-batch": {
+      "before": "f28e70ee0dc1d19a024590b28f917d1809716c0aed51fdd2c4e249a952614461",
+      "host": "018089874828153119f3d4ef2c10215b242ca1be22a151210d1add6bffc574c5",
+      "adapter": "4c2f3b382cf9f4eb96c15d76f614e4c43ab777b075c8deef66753e9945e91309",
+      "sanitizer": "df623eb0b08639c3ee23d27f8be0b7fa59b976c39f5798feb1109ca80f16e833",
+      "build": "bcd6197cdcc507cac3fb4604538ee0caf982cda634d1b9e2ba37c4860daafd77"
+    }
+  },
+  "limits": {
+    "packet_cap": 16,
+    "payload_blocks": 64,
+    "payload_block_bytes": 256,
+    "extra_payload_storage": 0,
+    "audio_live_ms": 200,
+    "capture_loss_budget_ms": 200,
+    "decoder_changed_this_checkpoint": false
+  },
+  "scope": {
+    "full_replacement_accepted": false,
+    "remote_ci_verified": false,
+    "firmware_restoration_required": false
+  },
+  "mac_audio_after_p74": {
+    "output_volume": 0,
+    "input_volume": 42,
+    "output_muted": true
+  }
+}

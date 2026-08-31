@@ -22,6 +22,7 @@ import time
 import wave
 
 from moq_ultra_bench import ROOT, ENROLL, ENDPOINT, pki, port, stop, write
+from moq_speech_quality import FIXTURE_PHRASE, all_pass as speech_quality_pass, score as score_speech
 
 
 async def run(args):
@@ -74,7 +75,8 @@ async def run(args):
     real_tts = conversation_module.CaptureElevenLabsTTSService
     real_current_tool = LiveConversation._current_tool
     result.update(stt_samples_submitted=0, stt_commits=0, stt_completed_events=0,
-                  stt_completed_characters=0, stt_error_count=0, fixture_recognized=False)
+                  stt_completed_characters=0, stt_error_count=0, fixture_recognized=False,
+                  fixture_quality=[], fixture_quality_pass=False)
 
     def mark(kind, **values):
         event = dict(kind=kind, elapsed_ms=round((time.monotonic()-start)*1000), **values)
@@ -129,6 +131,11 @@ async def run(args):
             result['fixture_keyword_matches'] = {word: bool(re.search(r'\b'+word+r'\b',
                 event.get('transcript', ''), re.IGNORECASE))
                 for word in ('please', 'read', 'my', 'next', 'exercise', 'set')}
+            quality = score_speech(event.get('transcript', ''),
+                                  impaired=bool(args.loss_percent or args.added_rtt_ms or args.capture_outage_ms))
+            result['fixture_quality'].append(quality)
+            result['fixture_quality_pass'] = speech_quality_pass(result['fixture_quality'])
+            mark('fixture_quality', **quality)
             mark('stt_completion_received', characters=len(event.get('transcript', '')))
             await super()._handle_transcription_completed(event)
 
@@ -374,7 +381,7 @@ async def run(args):
             await output_only_turn('text')
         if args.background_first:
             await output_only_turn('background')
-        phrase = 'Please read my next exercise set.'
+        phrase = FIXTURE_PHRASE
         speech = await child('/usr/bin/say', '-o', output/'input.aiff', phrase, logfile='speech.log')
         if await asyncio.wait_for(speech.wait(), 15): raise RuntimeError('speech fixture failed')
         if args.acoustic_analysis:
@@ -398,6 +405,8 @@ async def run(args):
             trace_base = len((output/'trace.jsonl').read_text().splitlines())
             result['fixture_recognized'] = False
             result['fixture_keyword_matches'] = {}
+            result['fixture_quality'] = []
+            result['fixture_quality_pass'] = False
             await server.on_event(device['device_id'], 'listen.requested', {})
             await asyncio.wait_for(captured.wait(), 5)
             if held_stt_final is not None and not cancel_at_stt:
@@ -491,12 +500,13 @@ async def run(args):
             result['read_tool_completed'] = any(item['kind']=='tool.end' and item.get('tool')=='get_next_set' for item in trace)
             if (result['microphone_samples'] <= sample_base or
                 result['stt_completed_events'] <= event_base or
-                not all(result[key] for key in ('stt_final', 'fixture_recognized', 'tts_audio', 'read_tool_completed', 'speaker_samples'))):
+                not all(result[key] for key in ('stt_final', 'fixture_quality_pass', 'tts_audio', 'read_tool_completed', 'speaker_samples'))):
                 raise RuntimeError('provider turn did not satisfy all required stages')
             turn = dict(round=round_number, microphone_samples=result['microphone_samples']-sample_base,
                         stt_characters=result['stt_completed_characters']-character_base,
                         response_id=result['response_id'], speaker_samples=result['speaker_samples'],
-                        fixture_recognized=result['fixture_recognized'], read_tool_completed=result['read_tool_completed'])
+                        fixture_recognized=result['fixture_recognized'], read_tool_completed=result['read_tool_completed'],
+                        fixture_quality=result['fixture_quality'], fixture_quality_pass=result['fixture_quality_pass'])
             turn['spoken_history_messages_added'] = spoken_history_count() - history_base
             result['turns'].append(turn)
             mark('provider_turn_completed', **turn)

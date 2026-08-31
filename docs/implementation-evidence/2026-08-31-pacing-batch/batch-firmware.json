@@ -1,0 +1,8 @@
+{
+  "image_sha256": "aa5b856c516c27fd502c6fe41c82a698fd73b14140f95fdec0ecf0b221c921d1",
+  "changed_offset": 65536,
+  "changed_span": 3428352,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false
+}

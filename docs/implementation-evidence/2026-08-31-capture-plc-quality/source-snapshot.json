@@ -1,0 +1,23 @@
+{
+  "voicewatch_base": "13fe8a3ad39a54e512c2eaa92086acbfbf3454a9",
+  "moq_base": "0f7171094dd5737ed5feaf3bb079e019db4c8bbd",
+  "files": {
+    "libs/moq-esp32/server/voice_agent/Cargo.toml": "9246f93c5b7b0c54952b529408c1e47df01d574d9d010f81a79d06af8b0a0c60",
+    "libs/moq-esp32/server/voice_agent/Cargo.lock": "f8e1620bb136d6cda56d90f3b64bc989b7b517ae618715e9d9522a6568a537dc",
+    "libs/moq-esp32/server/voice_agent/build.rs": "5fdd73ee4ab7e75ce3ba0688e122951516bed3e9669af752c3246674240ae8dc",
+    "libs/moq-esp32/server/voice_agent/.cargo/config.toml": "8a1501985637c7f9ec66d294590c15d439e3ca158b31a2844a2fe8b2ac27e768",
+    "libs/moq-esp32/server/voice_agent/src/opus.rs": "9dd3dca08df9bde7941fa328aef5d75f84d3a05c165b14d22a60d9cdf9d13f9d",
+    "libs/moq-esp32/server/voice_agent/tests/capture_signal.rs": "29d1819f9346a97d9b487d2511f2ec7d5eb2569e1749b0c9fe20745195b21fbf",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "b4c6582a0f5fd11da18b047339b7e4e669e8a5c6bf46a3bc787b9a4a7994ce9d",
+    "doodad-runtime/services/live-agent/tools/moq_speech_quality.py": "2266ba66621af92f37e682a974507beeab3ee5dd0cd5811c18c39fb9fdf32ac5",
+    "doodad-runtime/services/live-agent/tests/test_moq_speech_quality.py": "eda0684439e80d111442db516fcb0960f759c3226d7636169d0adc9726c64715",
+    "libs/moq-esp32/.github/workflows/host-tests.yml": "94aeffdfd1e66028f0ebeeda293cf937e35bbc75b769ec034ed6721fdf597acd",
+    "libs/moq-esp32/server/voice_agent/README.md": "b29ec0a4b863a86fab690a3288676de0adf66246aea0e06aaf8804d2ea2a86f6",
+    "libs/moq-esp32/server/voice_agent/licenses/audiopus_sys-LICENSE.md": "a6c8bb45880edc99bb13feb04d69fb2f0f73b565dfe209affa60414d2aa4c1a7",
+    "libs/moq-esp32/server/voice_agent/licenses/libopus-COPYING": "8338ce8d922bb4416ce3dd1e5680173332435e3f0755007ac7801ccd674fe682"
+  },
+  "firmware_sha256": "26fa1f7377b7479e1f779befaf7aa51f013c0a50ea29f53fcc2c990677df8484",
+  "native_endpoint_sha256": "3aed4f9f1cc87451fe1a889fe85d269b627ec9b273a760bbf15d723a6a8e59cb",
+  "firmware_written": false,
+  "restoration_required": false
+}

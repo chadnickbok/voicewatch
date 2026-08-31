@@ -1,0 +1,397 @@
+{
+  "p72": {
+    "pass_": false,
+    "elapsed_ms": 32152,
+    "microphone_samples": 75152,
+    "microphone_peak": 7539,
+    "microphone_rms": 495.37,
+    "capture_loss_failures": 2,
+    "stt_commits": 1,
+    "stt_completed_events": 1,
+    "fixture_quality": [],
+    "fixture_quality_pass": false,
+    "fixture_audio_restored": true,
+    "capture_recovery_ms": 788,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "spoken_history_messages": 1,
+    "failure_type": "RuntimeError",
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 60320,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ],
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 557,
+          "dropped": 55,
+          "forwarded": 502,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 506,
+          "dropped": 26,
+          "forwarded": 480,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 13,
+      "closed": true,
+      "timing": {
+        "uplink": {
+          "max_forward_lateness_us": 4051,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        },
+        "downlink": {
+          "max_forward_lateness_us": 2030,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        }
+      },
+      "event_loop_max_lag_us": 48036,
+      "outage_dropped": {
+        "uplink": 25,
+        "downlink": 0
+      }
+    },
+    "capture_recovery": [
+      {
+        "samples": 60320,
+        "concealed": 8584,
+        "plc": 8584,
+        "lost_groups": 27,
+        "late_groups": 3
+      }
+    ],
+    "playout": [
+      {
+        "samples": 41149,
+        "concealed": 10,
+        "late": 10,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 4,
+        "credit": 433,
+        "blocks": 0,
+        "stopped": 5
+      },
+      {
+        "local": 68,
+        "credit": 433,
+        "blocks": 0,
+        "stopped": 5
+      },
+      {
+        "local": 87,
+        "credit": 433,
+        "blocks": 0,
+        "stopped": 5
+      }
+    ],
+    "result_sha256": "286dfccf7d738e03550a11053866f149db4dcd1fed8f29c62da8f28e088908c9"
+  },
+  "p73": {
+    "pass_": false,
+    "microphone_samples": 64856,
+    "turns": [],
+    "capture_loss_failures": 1,
+    "microphone_peak": 7311,
+    "stt_commits": 1,
+    "stt_completed_events": 1,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 2,
+        "word_error_rate": 0.33333,
+        "max_word_errors": 1,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": false
+      }
+    ],
+    "fixture_quality_pass": false,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "capture_recovery_ms": 695,
+    "fixture_audio_restored": true,
+    "failure_type": "RuntimeError",
+    "spoken_history_messages": 1,
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 509,
+          "dropped": 53,
+          "forwarded": 456,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 483,
+          "dropped": 25,
+          "forwarded": 458,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 11,
+      "closed": true,
+      "timing": {
+        "uplink": {
+          "max_forward_lateness_us": 2029,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        },
+        "downlink": {
+          "max_forward_lateness_us": 5552,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        }
+      },
+      "event_loop_max_lag_us": 49056,
+      "outage_dropped": {
+        "uplink": 26,
+        "downlink": 0
+      }
+    },
+    "microphone_rms": 419.98,
+    "elapsed_ms": 29494,
+    "capture_recovery": [
+      {
+        "samples": 60480,
+        "concealed": 10560,
+        "plc": 10560,
+        "lost_groups": 33,
+        "late_groups": 1
+      }
+    ],
+    "playout": [
+      {
+        "samples": 48411,
+        "concealed": 8,
+        "late": 18,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 2,
+        "credit": 369,
+        "blocks": 0,
+        "stopped": 4
+      },
+      {
+        "local": 79,
+        "credit": 369,
+        "blocks": 0,
+        "stopped": 16
+      }
+    ],
+    "result_sha256": "8ad86462506b01d7e88a6a11e2aa88aa98334d004a54a99ec15887adaf1eea0c"
+  },
+  "p74": {
+    "pass_": true,
+    "elapsed_ms": 53563,
+    "capture_rounds_requested": 3,
+    "microphone_samples": 173600,
+    "microphone_peak": 7395,
+    "microphone_rms": 511.33,
+    "capture_loss_failures": 0,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 0,
+        "word_error_rate": 0.0,
+        "max_word_errors": 0,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": true
+      }
+    ],
+    "fixture_quality_pass": true,
+    "fixture_audio_restored": true,
+    "spoken_history_messages": 3,
+    "provider_pipeline_reconnected": true,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 52160,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ],
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 60960,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 38728,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ],
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 3,
+        "microphone_samples": 60480,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ],
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 52160,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60960,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60480,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 43570,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 38728,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      },
+      {
+        "samples": 42360,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "result_sha256": "5e5cb0f909502c5df5b80fe38e097075f51ca9879859e6f005166aca8b972271",
+    "induced_impairment": false
+  }
+}

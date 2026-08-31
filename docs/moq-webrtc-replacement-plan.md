@@ -302,6 +302,16 @@ These thresholds are proposed acceptance targets, not measurements. Freeze their
 
 At the impaired-network cells, reliability means bounded degradation and successful recovery, not an impossible promise of zero audible loss. Set a reference speech-quality threshold from measured baseline fixtures before accepting the audio candidate; packet counts alone are not an audio-quality metric. Under no induced impairment, no unexplained media loss, missing response tail, or underflow is acceptable after warmup.
 
+Speech-fixture policy v1 is now frozen from the measured six-word baseline:
+“Please read my next exercise set.” requires zero word errors without induced
+impairment, or at most one word error with impairment while retaining the
+contiguous ordered target “next exercise set.” Every admitted current-turn
+completion must pass, alongside the existing fresh watch-state read, full
+playback and lifecycle gates. See the [policy and before/after evidence](implementation-evidence/2026-08-31-capture-plc-quality/README.md).
+This narrow fixture score does not establish general intelligibility, close
+the full impairment matrix, or waive unexplained protocol loss. Later changes
+to the policy require a recorded engineering decision before rerunning acceptance.
+
 Measure both incremental library resources and the complete firmware peak. Replace the contradictory 80/96 KiB design targets with one documented budget after feasibility. Use bounded allocator hooks/slabs where the selected backends support them; otherwise instrument actual behavior and resolve any inability to enforce the intended limit before claiming a resource-bounded release.
 
 Store sanitized serial logs, metrics, fixture hashes, packet captures when appropriate, waveform results, and screen captures with firmware/library/reference SHAs. Declare which tests used a synthetic peer, a local relay, the actual deployment relay, and physical hardware.

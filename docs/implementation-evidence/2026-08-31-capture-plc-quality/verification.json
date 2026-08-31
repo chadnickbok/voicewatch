@@ -1,0 +1,57 @@
+{
+  "rust_tests": {
+    "passed": 27,
+    "failed": 0
+  },
+  "python_tests": {
+    "passed": 320,
+    "failed": 0,
+    "warnings": 4
+  },
+  "native_integration": {
+    "passed": 6,
+    "failed": 0
+  },
+  "clippy_pass": true,
+  "native_build_pass": true,
+  "signal_regression": {
+    "original_backend_pass": false,
+    "c_backend_pass": true,
+    "clean_peak": 1009,
+    "old_impaired_peak": 32766,
+    "corrected_impaired_peak": 1081,
+    "plc_samples": 7040
+  },
+  "build_policy": {
+    "missing_config": {
+      "exit_code": 101,
+      "expected_acceptance": false
+    },
+    "bundled": {
+      "exit_code": 0,
+      "expected_acceptance": true
+    },
+    "external_library": {
+      "exit_code": 101,
+      "expected_acceptance": false
+    }
+  },
+  "log_sha256": {
+    "signal_before": "5efe905ff90453f51185f649e323c85d029b40347d7b55a66da9d17e2f424056",
+    "signal_c_decoder": "edba4158a2b9f6de0eddfa32f5064b749f26ccec70cab92e639ca5648b89d1c0",
+    "rust_tests": "52c3fecf5656ad9110a5d28fc639e5568599343afdb7cd09272e443f3c4e3287",
+    "clippy": "5fea0100389bd54a279d4658a2f65fc382281ad93a83e83faffeb3a65265abad",
+    "native_build": "4f27ac380b22e1d975eee20ce727fa8cbc09061177f6253af0777fd4de7b7506",
+    "python_tests": "ad75296ff40be42bcd4e47baa85c54abf56d4c9d205e84cefd66c382928fc4a9",
+    "native_integration": "5a989528b6d98e8efc8944dda62e68226f396d443df67e66e70778ef94e79c73",
+    "build_policy": "70498c3d1de753c8edf5b0f894cb2328c73ef5af273b1ca4c27b4666537d0df6"
+  },
+  "scope": {
+    "watch_firmware_changed": false,
+    "watch_firmware_rebuilt": false,
+    "c_adapter_host_sanitizers_rerun": false,
+    "new_c_decoder_sanitized": false,
+    "remote_ci_verified": false,
+    "full_replacement_accepted": false
+  }
+}

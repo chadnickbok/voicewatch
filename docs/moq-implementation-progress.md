@@ -5,7 +5,52 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: stream reset isolation and recovery scheduling
+## Latest checkpoint: media admission and QUIC pacing
+
+Two scheduling regressions are fixed: obsolete media is retired before fresh
+TX admission, and ngtcp2's pacing timer advances once per bounded packet batch
+instead of after each packet. Tests reproduce both old failures and cover
+blocked reset/control work, byte and packet limits, retained datagrams and
+exactly-once retirement. Host and adapter tests, Linux ASan/UBSan and firmware
+builds pass; the existing storage and media/loss deadlines are unchanged.
+
+The resulting flash34 firmware is installed on the Ultra. p74 passes three
+complete provider turns without induced impairment: zero word errors, no
+capture or playback loss/concealment, fresh watch reads and idle reconnect.
+However, p72 and p73 still fail at 5% loss plus 120 ms added RTT and an 800 ms
+uplink blackout. p72 passes one turn then exceeds the next capture's loss
+budget; p73 completes playback but exceeds the speech-error gate. No impaired
+speech improvement is claimed. Full replacement acceptance remains open; see
+the [scheduling and hardware evidence](implementation-evidence/2026-08-31-pacing-batch/README.md).
+
+## Previous checkpoint: capture PLC amplification and a measured speech gate
+
+A no-loss control separates capture quality from the earlier impaired run's
+full-scale PCM. p67 recognizes the fixture but times out during the model
+response. The provider bench now applies a fixed six-word edit-distance gate:
+zero word errors without induced impairment; at most one under impairment,
+while preserving the ordered phrase “next exercise set.” p68 passes three full
+provider turns with zero word errors and no concealment. This replaces the old
+single-keyword acceptance check without altering provider input or responses.
+
+A synthetic test of the actual native decoder reproduces excessive amplification
+after packet loss: clean peak 1,009 versus impaired peak 32,766. Switching the
+capture wrapper from the reference's transpiled decoder to a pinned, statically
+built C libopus decoder fixes that regression (impaired peak 1,081), retaining
+exact 20 ms PLC and the existing loss limits. The reference encoder, media wire
+and watch firmware are unchanged. Source/dependency hashes and license notices
+are recorded, and native tests, Clippy and the endpoint build pass.
+
+p70 physically confirms normal signal levels under 5% loss, 120 ms added RTT
+and an 800 ms uplink blackout, but still fails speech acceptance: WER 0.5 and
+14.6% concealed capture PCM. p71 passes three complete clean provider turns
+with zero word errors, exact speaker receipts, fresh watch reads and idle
+reconnect. Its first empty reset group is lost without PCM loss; that protocol
+loss is still recorded. The decoder defect is fixed; impaired speech, transport
+pressure and the full replacement gates remain open. See the
+[PLC and speech-quality evidence](implementation-evidence/2026-08-31-capture-plc-quality/README.md).
+
+## Previous checkpoint: stream reset isolation and recovery scheduling
 
 t65 reproduces the disconnect with zero local control deadlines and zero control
 TX expiries. Inspection finds that `esp_moq_service_retire` emitted a global
