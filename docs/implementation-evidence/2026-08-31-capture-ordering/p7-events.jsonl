@@ -1,0 +1,8 @@
+{"kind": "enrolled", "elapsed_ms": 846}
+{"kind": "identified", "elapsed_ms": 2750}
+{"kind": "connected", "elapsed_ms": 6090}
+{"kind": "capture.started", "elapsed_ms": 10248}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 10249}
+{"kind": "capture.stopped", "elapsed_ms": 13460}
+{"kind": "failed", "elapsed_ms": 103389, "error_type": "TimeoutError"}
+{"kind": "disconnected", "elapsed_ms": 103645}

@@ -7,14 +7,21 @@ shell. This checkpoint does not satisfy the library-candidate or product gates.
 
 ## Latest checkpoint: capture ordering and publisher throughput
 
-Native capture now handles bounded group reordering, and the C publisher sends
-bounded catch-up batches after delayed network polls. All seven C host test
-programs and thirteen Rust tests pass; the new Ultra application builds. The
-publisher fix still needs flashing and hardware validation. The currently
-installed optimized image predates that fix and still fails capture with the
-listening UI active. Three-second capture without that UI, exact-tail playback,
-response replacement and lease-expiry reconnection passed; a complete real
-provider voice turn has not passed. See the
+Native capture handles bounded group reordering, and the C publisher sends
+bounded catch-up batches after delayed network polls. The physical listening
+shell now passes three-second capture and a separate run of 20 consecutive
+one-second captures (320,000 samples), followed by exact-tail playback,
+cancellation/replacement and lease-expiry reconnection. An owner-revision race
+that could erase pending starts and an invalid touch-report palm interpretation
+have also been corrected. All seven C host programs, thirteen Rust tests, the
+new touch decoder test and 199 Python tests pass; the Ultra application builds.
+
+MoQ STT now commits on validated PTT completion instead of local VAD pauses.
+The physical path still returns empty transcripts and sometimes retires near
+capture completion; a synthetic-only probe confirms the same STT service can
+transcribe the fixture. Acoustic capture quality and terminal diagnostics are
+the immediate next work. A complete real provider voice turn, full lifecycle
+isolation, production deployment and all release gates remain unproven. See the
 [checkpoint evidence](implementation-evidence/2026-08-31-capture-ordering/README.md).
 Older sections below retain their historical measurements and image identities.
 

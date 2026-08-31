@@ -1,0 +1,11 @@
+{"kind": "enrolled", "elapsed_ms": 878}
+{"kind": "identified", "elapsed_ms": 2705}
+{"kind": "connected", "elapsed_ms": 6055}
+{"kind": "listen.requested", "elapsed_ms": 10162}
+{"kind": "capture.started", "elapsed_ms": 10201}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 10647}
+{"kind": "listen.finished", "elapsed_ms": 13961}
+{"kind": "capture.stopped", "elapsed_ms": 14028}
+{"kind": "listen.cancelled", "elapsed_ms": 16348}
+{"kind": "failed", "elapsed_ms": 103962, "error_type": "TimeoutError"}
+{"kind": "disconnected", "elapsed_ms": 104215}

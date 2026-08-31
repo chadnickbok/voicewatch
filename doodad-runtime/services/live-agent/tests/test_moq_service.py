@@ -75,22 +75,26 @@ def test_config_fails_closed_without_printing_private_data(tmp_path, fault):
 
 @pytest.mark.asyncio
 @pytest.mark.parametrize('moq', [False, True])
-async def test_ptt_release_padding_waits_for_the_selected_transport_completion(moq):
+async def test_ptt_commit_waits_for_validated_moq_audio_and_preserves_legacy_padding(moq):
     class Session:
         explicit_capture_completion = moq
     class Conversation:
-        def __init__(self): self.pcm = bytearray()
+        def __init__(self): self.pcm = bytearray(); self.committed = None
         async def feed_audio(self, pcm): self.pcm.extend(pcm)
+        async def capture_completed(self): self.committed = bytes(self.pcm)
     conversation = Conversation()
     session = Session()
     await complete_capture_to_conversation(conversation, session, 'listen.finished')
     assert len(conversation.pcm) == (0 if moq else 8000)
+    assert conversation.committed is None
     await conversation.feed_audio(b'\x05\x00' * 217)
     await complete_capture_to_conversation(conversation, session, 'capture.stopped')
     if moq:
-        assert conversation.pcm == b'\x05\x00' * 217 + b'\0'*8000
+        assert conversation.pcm == b'\x05\x00' * 217
+        assert conversation.committed == bytes(conversation.pcm)
     else:
         assert conversation.pcm == b'\0'*8000 + b'\x05\x00' * 217
+        assert conversation.committed is None
 
 
 @pytest.mark.asyncio

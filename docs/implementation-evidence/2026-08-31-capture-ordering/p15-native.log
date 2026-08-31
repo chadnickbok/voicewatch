@@ -1,0 +1,5 @@
+MoQ endpoint listening; credentials and addresses suppressed
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ transport counters: rx=300 tx=228 lost=0 rtt_us=23385 cwnd=12000

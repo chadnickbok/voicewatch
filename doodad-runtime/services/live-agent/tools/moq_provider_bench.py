@@ -14,13 +14,14 @@ import os
 from pathlib import Path
 import secrets
 import socket
+import struct
 import time
 
 from moq_ultra_bench import ROOT, ENROLL, ENDPOINT, pki, port, stop, write
 
 
 async def run(args):
-    from doodad_agent import main, transport_moq
+    from doodad_agent import conversation as conversation_module, main, transport_moq
     from doodad_agent.conversation import LiveConversation
 
     output = args.output.resolve()
@@ -33,22 +34,61 @@ async def run(args):
     result = dict(pass_=False, provider_calls=True, control_source='host-test-driver',
                   microphone_samples=0, firmware_written=False, restoration_required=False)
     start = time.monotonic()
+    microphone_square_sum = 0
+    level_samples = level_square_sum = level_peak = level_clipped = 0
+    result['microphone_peak'] = 0
+    saved_output = None
     children, streams = [], []
     server_task = None
     ready = asyncio.Queue()
     captured = asyncio.Event()
     server_started = asyncio.get_running_loop().create_future()
     real_transport, real_tools = transport_moq.MoqTransportServer, LiveConversation._tools
+    real_stt = conversation_module.OpenAIRealtimeSTTService
+    result.update(stt_samples_submitted=0, stt_commits=0, stt_completed_events=0, stt_error_count=0)
 
     def mark(kind, **values):
         event = dict(kind=kind, elapsed_ms=round((time.monotonic()-start)*1000), **values)
         with (output/'events.jsonl').open('a') as stream:
             stream.write(json.dumps(event)+'\n')
 
+    class ObservedSTT(real_stt):
+        async def _send_audio(self, audio):
+            await super()._send_audio(audio)
+            result['stt_samples_submitted'] += len(audio)//2
+
+        async def _commit_audio_buffer(self):
+            await super()._commit_audio_buffer()
+            result['stt_commits'] += 1
+            mark('stt_commit_sent')
+
+        async def _handle_transcription_completed(self, event):
+            result['stt_completed_events'] += 1
+            mark('stt_completion_received', characters=len(event.get('transcript', '')))
+            await super()._handle_transcription_completed(event)
+
+        async def _handle_error(self, event):
+            result['stt_error_count'] += 1
+            mark('stt_provider_error')
+            await super()._handle_error(event)
+
     class ObservedTransport(real_transport):
         def __init__(self, trace, on_audio, on_event, *more, **kwargs):
             async def audio(device_id, pcm):
+                nonlocal microphone_square_sum, level_samples, level_square_sum, level_peak, level_clipped
                 result['microphone_samples'] += len(pcm)//2
+                for (sample,) in struct.iter_unpack('<h', pcm):
+                    microphone_square_sum += sample*sample
+                    result['microphone_peak'] = max(result['microphone_peak'], abs(sample))
+                    level_samples += 1
+                    level_square_sum += sample*sample
+                    level_peak = max(level_peak, abs(sample))
+                    level_clipped += abs(sample) >= 32767
+                    if level_samples == 8000:
+                        mark('microphone_level', samples=level_samples,
+                             rms=round((level_square_sum/level_samples)**0.5, 2),
+                             peak=level_peak, clipped=level_clipped)
+                        level_samples = level_square_sum = level_peak = level_clipped = 0
                 await on_audio(device_id, pcm)
             async def event(device_id, kind, payload):
                 try:
@@ -56,7 +96,8 @@ async def run(args):
                 except Exception as error:
                     mark('callback_failed', error_type=type(error).__name__)
                     raise
-                if kind in ('identified', 'connected', 'disconnected', 'capture.started', 'capture.stopped'):
+                if kind in ('identified', 'connected', 'disconnected', 'capture.started', 'capture.stopped',
+                            'capture.failed', 'listen.requested', 'listen.finished', 'listen.cancelled'):
                     mark(kind)
                 if kind == 'connected': ready.put_nowait(self.sessions[device_id])
                 if kind == 'capture.started': captured.set()
@@ -67,6 +108,7 @@ async def run(args):
             server_started.set_result(self)
 
     transport_moq.MoqTransportServer = ObservedTransport
+    conversation_module.OpenAIRealtimeSTTService = ObservedSTT
     LiveConversation._tools = lambda self: [tool for tool in real_tools(self)
                                             if tool.name in {'get_next_set', 'get_task_status'}]
 
@@ -81,6 +123,23 @@ async def run(args):
                               '--output', output/filename, *extra, logfile='usb-'+command+'.log')
         if await asyncio.wait_for(process.wait(), 15):
             raise RuntimeError('USB command failed')
+
+    async def audio_setting(script):
+        process = await asyncio.create_subprocess_exec('/usr/bin/osascript', '-e', script,
+            stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.DEVNULL)
+        children.append(process)
+        stdout, _ = await asyncio.wait_for(process.communicate(), 5)
+        if process.returncode:
+            raise RuntimeError('fixture audio setting failed')
+        return stdout.decode('ascii').strip()
+
+    async def restore_output():
+        nonlocal saved_output
+        if saved_output is not None:
+            volume, muted = saved_output
+            await audio_setting(f'set volume output volume {volume} output muted {str(muted).lower()}')
+            saved_output = None
+            result['fixture_audio_restored'] = True
 
     try:
         await usb('info', 'device.json')
@@ -114,9 +173,21 @@ async def run(args):
         captured.clear()
         await server.on_event(device['device_id'], 'listen.requested', {})
         await asyncio.wait_for(captured.wait(), 5)
+        volume = int(await audio_setting('output volume of (get volume settings)'))
+        muted = await audio_setting('output muted of (get volume settings)')
+        if not 0 <= volume <= 100 or muted not in {'true', 'false'}:
+            raise RuntimeError('invalid fixture audio setting')
+        if args.fixture_volume is not None:
+            saved_output = (volume, muted == 'true')
+            result['fixture_audio_restored'] = False
+            await audio_setting(f'set volume output volume {args.fixture_volume} output muted false')
+            result['fixture_volume'] = args.fixture_volume
+        elif muted == 'true' or volume == 0:
+            raise RuntimeError('fixture output is muted; choose --fixture-volume')
         mark('speaking_fixture_to_watch')
         player = await child('/usr/bin/afplay', output/'input.aiff', logfile='afplay.log')
         if await asyncio.wait_for(player.wait(), 20): raise RuntimeError('fixture playback failed')
+        await restore_output()
         await asyncio.sleep(.5)
         await server.on_event(device['device_id'], 'listen.finished', {})
         async with asyncio.timeout(90):
@@ -150,6 +221,12 @@ async def run(args):
         mark('failed', error_type=type(error).__name__)
         raise
     finally:
+        try:
+            await restore_output()
+        except Exception:
+            result['fixture_audio_restored'] = False
+            result['pass_'] = False
+            mark('fixture_audio_restore_failed')
         if server_task is not None:
             server_task.cancel()
             try:
@@ -159,6 +236,8 @@ async def run(args):
         for process in reversed(children): await stop(process)
         for stream in streams: stream.close()
         transport_moq.MoqTransportServer, LiveConversation._tools = real_transport, real_tools
+        conversation_module.OpenAIRealtimeSTTService = real_stt
+        result['microphone_rms'] = round((microphone_square_sum/max(1, result['microphone_samples']))**0.5, 2)
         result['elapsed_ms'] = round((time.monotonic()-start)*1000)
         write(output/'result.json', result)
 
@@ -169,7 +248,10 @@ def main():
     parser.add_argument('--port', required=True)
     parser.add_argument('--host', required=True)
     parser.add_argument('--idf-python', type=Path, required=True)
+    parser.add_argument('--fixture-volume', type=int, help='Temporarily set Mac output volume for the spoken fixture, then restore it')
     args = parser.parse_args()
+    if args.fixture_volume is not None and not 1 <= args.fixture_volume <= 100:
+        parser.error('fixture-volume must be 1..100')
     try:
         asyncio.run(run(args))
     except Exception as error:

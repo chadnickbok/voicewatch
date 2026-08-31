@@ -113,11 +113,14 @@ def control_plane(database: Path, now_ms: int | None = None) -> tuple[
 
 
 async def complete_capture_to_conversation(conversation, session, event: str) -> None:
-    """Keep the STT end padding after validated MoQ PCM, preserving legacy timing."""
+    """Commit explicit PTT only after validated MoQ PCM; retain legacy VAD padding."""
     completed_event = 'capture.stopped' if getattr(session, 'explicit_capture_completion', False) else 'listen.finished'
     if conversation is not None and event == completed_event:
-        for _ in range(25):
-            await conversation.feed_audio(b'\0\0' * 160)
+        if getattr(session, 'explicit_capture_completion', False):
+            await conversation.capture_completed()
+        else:
+            for _ in range(25):
+                await conversation.feed_audio(b'\0\0' * 160)
 
 
 async def serve(arguments: argparse.Namespace) -> None:
@@ -303,6 +306,7 @@ async def serve(arguments: argparse.Namespace) -> None:
             runtime.controller, runtime.builder, runtime.attention, device_trace,
             owner.audio, owner.stop_capture, owner.begin, owner.end, owner.wait, owner.action,
             publish_state, history=history,
+            explicit_capture=getattr(session, 'explicit_capture_completion', False),
         )
         await runtime.conversation.start()
 
@@ -356,12 +360,18 @@ async def serve(arguments: argparse.Namespace) -> None:
                 await conversation.submit_text(text)
         elif kind == "capture.started":
             runtime.downlink.cancel()
+            if conversation is not None:
+                await conversation.capture_started()
         elif kind == "capture.stopped":
             trace.mark(
                 "capture.stopped", device_id=device_id,
                 reason=payload.get("reason", "unknown"),
             )
             await complete_capture_to_conversation(conversation, session, kind)
+        elif kind == "capture.failed":
+            runtime.downlink.cancel()
+            if conversation is not None:
+                await conversation.cancel()
         elif kind == "disconnected":
             runtime.downlink.cancel()
             if runtime.provider_session is not None:

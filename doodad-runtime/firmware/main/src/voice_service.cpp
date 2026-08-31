@@ -127,7 +127,10 @@ bool secure_live() {
     return g_grant && g_grant->session[0] && now<g_grant->until_ms && now<g_grant->trusted_until_ms &&
         g_grant->profile_revision==secure::profile_revision() && secure::clock_valid();
 }
-void retire_control() {
+void retire_control(std::uint32_t site=__builtin_LINE()) {
+    // Fixed numeric source location only; never log the rejected document,
+    // authorization headers, server URI or any provider/user text.
+    if (!g_transport_reset_requested.load()) ESP_LOGW(kTag,"MoQ control retired site=%u",static_cast<unsigned>(site));
     media::cancel(); g_websocket_connected=false;
     g_transport_reset_requested.store(true,std::memory_order_release);
 }

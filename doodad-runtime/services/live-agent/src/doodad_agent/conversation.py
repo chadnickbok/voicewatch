@@ -32,6 +32,8 @@ from pipecat.frames.frames import (
     TTSTextFrame,
     UserStartedSpeakingFrame,
     UserStoppedSpeakingFrame,
+    VADUserStartedSpeakingFrame,
+    VADUserStoppedSpeakingFrame,
 )
 from pipecat.pipeline.pipeline import Pipeline
 from pipecat.pipeline.worker import PipelineParams, PipelineWorker
@@ -126,6 +128,24 @@ class PipelineProbe(FrameProcessor):
             self.frames += 1
             if self.frames % 100 == 0:
                 self.trace.mark("pipeline.audio_frames", frames=self.frames)
+        await self.push_frame(frame, direction)
+
+
+class CaptureBoundaryProcessor(FrameProcessor):
+    """Clear abandoned STT input before an explicitly authorized capture.
+
+    Start/audio/end are SystemFrames, so the pinned processor queues preserve
+    their order. No silence detector can commit a partial PTT recording.
+    """
+
+    def __init__(self, clear_audio: AsyncCallback) -> None:
+        super().__init__()
+        self.clear_audio = clear_audio
+
+    async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
+        await super().process_frame(frame, direction)
+        if direction == FrameDirection.DOWNSTREAM and isinstance(frame, VADUserStartedSpeakingFrame):
+            await self.clear_audio()
         await self.push_frame(frame, direction)
 
 
@@ -351,7 +371,7 @@ class LiveConversation:
         wait_for_playback: AsyncCallback,
         action_invoker: ActionInvoker,
         state_sink: StateSink,
-        *, history: list | None = None,
+        *, history: list | None = None, explicit_capture: bool = False,
     ) -> None:
         self.controller = controller
         self.builder = builder
@@ -383,6 +403,8 @@ class LiveConversation:
         self._context: LLMContext | None = None
         self._history = copy.deepcopy(history or [])
         self._retirement_task: asyncio.Task | None = None
+        self.explicit_capture = explicit_capture
+        self._capture_open = False
 
     async def start(self) -> None:
         missing = [
@@ -395,7 +417,7 @@ class LiveConversation:
         tools = self._tools()
         context = LLMContext(messages=self._history, tools=tools)
         self._context = context
-        vad = VADProcessor(
+        vad = None if self.explicit_capture else VADProcessor(
             vad_analyzer=TracedSileroVADAnalyzer(
                 self.trace,
                 sample_rate=16_000,
@@ -424,6 +446,8 @@ class LiveConversation:
             ),
             turn_detection=False,
         )
+        if self.explicit_capture:
+            vad = CaptureBoundaryProcessor(stt._clear_audio_buffer)
         llm = OpenAIResponsesLLMService(
             api_key=os.environ["OPENAI_API_KEY"],
             settings=OpenAIResponsesLLMService.Settings(
@@ -498,8 +522,20 @@ class LiveConversation:
         await self._set_voice_phase("idle")
 
     async def feed_audio(self, pcm: bytes) -> None:
+        if self.explicit_capture and not self._capture_open:
+            return
         if self.worker is not None and not self._retired:
             await self.worker.queue_frame(InputAudioRawFrame(pcm, 16_000, 1))
+
+    async def capture_started(self) -> None:
+        if self.explicit_capture and not self._retired and self.worker is not None and not self._capture_open:
+            self._capture_open = True
+            await self.worker.queue_frame(VADUserStartedSpeakingFrame(start_secs=0.0))
+
+    async def capture_completed(self) -> None:
+        if self.explicit_capture and self._capture_open and not self._retired and self.worker is not None:
+            self._capture_open = False
+            await self.worker.queue_frame(VADUserStoppedSpeakingFrame(stop_secs=0.0))
 
     async def submit_text(self, text: str) -> None:
         """Inject one final user turn after capture, bypassing only the microphone/STT."""
@@ -529,6 +565,7 @@ class LiveConversation:
         await self._set_voice_phase("ready")
 
     async def cancel(self) -> None:
+        self._capture_open = False
         self._cancel_transcript_watchdog()
         if self.worker is not None:
             await self.worker.queue_frame(InterruptionFrame())
@@ -537,6 +574,7 @@ class LiveConversation:
         await self._set_voice_phase("ready")
 
     def disconnected(self) -> None:
+        self._capture_open = False
         self._cancel_transcript_watchdog()
         self.voice_phase = "idle"
         self._retired = True

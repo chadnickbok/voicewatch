@@ -1,0 +1,40 @@
+{
+  "date": "2026-08-31",
+  "scope": "Pre-commit source snapshot for this checkpoint; dirty flags describe the snapshot time. Earlier runs use the individual firmware image hashes in hardware-results.json.",
+  "repositories": {
+    "voicewatch": {
+      "base_commit": "2eafbcac3bb8d244587a98bf7839f908f08e6763",
+      "dirty": true,
+      "source_sha256": {
+        "docs/moq-implementation-progress.md": "a7da83d5ced70c7521d2c4a3cf6b6e3925b4239daa4ffb4718d739fc5f1eef40",
+        "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "1e459864072743c4bbd4a88b5fa32704acf41a5625a6c3fd8bad10a86dcbfc11",
+        "doodad-runtime/firmware/main/src/voice_service.cpp": "98f06ad998cc0524de7abe5ea8e5b61770359d08ceb56ae605ec21793a289272",
+        "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "c5e5e184e50d9ac04dff52a6cc3f728f5979ff27720a00ec9694df27f2a8c3b6",
+        "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "2f306df78d7ca10a8e746404816fe9a56946fc2def99aabc8abebd8a6cf9be8a",
+        "doodad-runtime/services/live-agent/src/doodad_agent/transport_moq.py": "422b9d1af92b4a79a876a14996a2ac8412a6f91d5ae9544de9d6ed51987fdccf",
+        "doodad-runtime/services/live-agent/tests/test_moq_service.py": "73eeaa09b3699bfea0d71a84d1872a15093303659af9d4b11814ce5a66b96924",
+        "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "205535ad7c3af8cb6e3e215e4c6266329d141093af8b1264449cc63c665c4acb",
+        "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "0050f6c1050575878e4780c87fdbf8b11e9482dd9eb36e8ddd3aabb9f0f31242",
+        "doodad-runtime/services/live-agent/tests/test_ptt_boundaries.py": "184d1714a532b6caef9420a55a84bf7896f14fe6edf15fdb2e719e43ce5b96af"
+      }
+    },
+    "moq-esp32": {
+      "base_commit": "76980608f40129e105882d99c4d498e40fe9ee4f",
+      "dirty": true,
+      "source_sha256": {
+        ".github/workflows/host-tests.yml": "36793f3884874054b2ce274c8c985a573414a3879fc5cd6b19c2fba270f2cf0e",
+        "boards/twatch_ultra/components/twatch_ultra_ui/include/twatch_ultra_ui.h": "34dd3e4b7bde88b83d1ca26dd314a2ed5072b8b292b49b71d0ae87d5b9435a28",
+        "boards/twatch_ultra/components/twatch_ultra_ui/twatch_ultra_ui.c": "296d42ec5a25b42e314b1ceb225d1075c6ec8b110bbe3da48d070b4024c8e56f",
+        "boards/twatch_ultra/hardware.lock.json": "d6740d207fedf1f27aafdd074903e6d052db2e0cc45d43c8d4c906dbc5caea1f",
+        "server/voice_agent/src/main.rs": "b9708f2c8c935acc1f799e7c836dd2fcfb093c0f4a4ef3310ef1ce6ea0c907f0",
+        "boards/twatch_ultra/components/twatch_ultra_ui/touch_report.h": "58a3542b495f27c67f491e35c9d8f93462934633a1040672f48b5d00ba900061",
+        "tests/ultra_ui/Makefile": "8f17cf837151caeba0116be96fa9e305dfca9226f1cdbf2f23847b32b7a7d0f0",
+        "tests/ultra_ui/test_touch_report.c": "a6955717f97a4a30870801273bc267b3d16de27b5f384eccc51a69a4ae25b097"
+      }
+    }
+  },
+  "firmware": {
+    "image_sha256": "6754bc2ebbd7c39e81016eb48fbdfb569684e7abdf984694bbed4fa92cf74171",
+    "optimization": "performance (-O2), private test configuration; board default unchanged"
+  }
+}

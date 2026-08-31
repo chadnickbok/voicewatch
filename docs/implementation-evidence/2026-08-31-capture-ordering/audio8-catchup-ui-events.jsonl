@@ -1,0 +1,14 @@
+{"kind": "enrolled", "elapsed_ms": 736}
+{"kind": "identified", "elapsed_ms": 2671}
+{"kind": "connected", "elapsed_ms": 6018}
+{"kind": "idle_ready_without_capture", "elapsed_ms": 7018}
+{"kind": "disconnected", "elapsed_ms": 7019}
+{"kind": "identified", "elapsed_ms": 8876}
+{"kind": "connected", "elapsed_ms": 12239}
+{"kind": "fresh_grant_reconnect", "elapsed_ms": 12239, "duration_ms": 5220}
+{"kind": "listening_ui_requested", "elapsed_ms": 12239}
+{"kind": "disconnected", "elapsed_ms": 15279}
+{"kind": "identified", "elapsed_ms": 17235}
+{"kind": "connected", "elapsed_ms": 20598}
+{"kind": "failed", "elapsed_ms": 25240, "failure_type": "TimeoutError"}
+{"kind": "disconnected", "elapsed_ms": 25241}

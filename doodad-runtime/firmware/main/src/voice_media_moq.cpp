@@ -509,8 +509,17 @@ void audio_task(void*) {
             Command command{};
             // Bounded work per audio tick; stale queued starts cannot restart a
             // microphone after cancel/disconnect, even when the queue was full.
-            for (unsigned i=0;i<4 && xQueueReceive(g_commands,&command,0)==pdTRUE;++i) {
-                { Lock lock; revision=g_revision; }
+            for (unsigned i=0;i<4;++i) {
+                {
+                    Lock lock;
+                    // A producer can invalidate the owner after the cleanup
+                    // above and queue a replacement start. Leave that command
+                    // queued until this owner has applied the new revision;
+                    // otherwise next tick's cancel_audio erases start_pending.
+                    // The check and dequeue share the producers' mutex.
+                    if (o.revision!=g_revision || xQueueReceive(g_commands,&command,0)!=pdTRUE) break;
+                    revision=g_revision;
+                }
                 if (command.revision!=revision) { wipe_free(command.config); continue; }
                 switch (command.operation) {
                 case Operation::connect:

@@ -3,8 +3,9 @@
 
 Requires the new firmware already installed. Default: no microphone/audio;
 test real enrollment, WSS/QUIC readiness, forced reconnect and lease renewal.
---audio additionally authorizes 1.2 seconds of microphone capture, discards PCM
-after counting it, then plays a synthetic tone and checks the DMA receipt.
+--audio additionally captures microphone PCM (1.2 seconds by default), discards
+it after counting, then plays a synthetic tone and checks the DMA receipt.
+--capture-rounds repeats completed captures within one authenticated session.
 No provider runs, deployed service changes, flash writes or restoration.
 """
 import argparse
@@ -97,7 +98,8 @@ async def run(args):
     os.umask(0o077)
     result = dict(pass_=False, audio_requested=args.audio, microphone_samples=0, ready_sessions=0,
                   firmware_written=False, restoration_required=False,
-                  voice_ui=args.voice_ui, capture_ms=args.capture_ms if args.audio else 0)
+                  voice_ui=args.voice_ui, capture_ms=args.capture_ms if args.audio else 0,
+                  capture_rounds=args.capture_rounds if args.audio else 0, captures_completed=0)
     if args.certificate_fault:
         result['certificate_fault'] = args.certificate_fault
     began = time.monotonic()
@@ -128,7 +130,9 @@ async def run(args):
             private_key=str(directory/'server.key'), device_keys=str(directory/'devices.json'),
             ipc_socket=str(directory/'media.sock'), public_host=args.host,
             media_port=media_port, time_port=time_port))
-        registry = GrantRegistry({device['device_id']: key}, lease_seconds=45)
+        lease_seconds = max(45, math.ceil((args.capture_ms/1000+1)*args.capture_rounds+20)) if args.audio else 45
+        result['lease_seconds'] = lease_seconds
+        registry = GrantRegistry({device['device_id']: key}, lease_seconds=lease_seconds)
         result['time_proofs_issued'] = 0
         issue_time = registry.time_proof
         def observed_time(device_id, nonce):
@@ -137,6 +141,7 @@ async def run(args):
             return proof
         registry.time_proof = observed_time
         ready, captured = asyncio.Queue(), asyncio.Event()
+        capture_sample_base = 0
         async def on_audio(_, pcm):
             result['microphone_samples'] += len(pcm)//2
             if not args.audio:
@@ -146,7 +151,7 @@ async def run(args):
                 result['ready_sessions'] += 1
                 ready.put_nowait(server.sessions[device['device_id']])
             if kind == 'capture.stopped':
-                if int(payload['samples']) != result['microphone_samples']:
+                if int(payload['samples']) != result['microphone_samples']-capture_sample_base:
                     raise RuntimeError('capture sample count mismatch')
                 captured.set()
             # No transcripts, personal app state, IDs or audio in public output.
@@ -167,7 +172,7 @@ async def run(args):
             host=args.host, control_port=control_port, time_port=time_port, roots_pem=roots, key_hex=key.hex()))
         await usb('install', 'enrollment.json', '--profile', directory/'profile.json')
         monitor = await asyncio.create_subprocess_exec(str(args.idf_python), str(ENROLL), 'monitor',
-            '--port', args.port, '--output', str(directory/'serial.log'), '--seconds', '160',
+            '--port', args.port, '--output', str(directory/'serial.log'), '--seconds', str(lease_seconds+120),
             stdout=asyncio.subprocess.DEVNULL, stderr=asyncio.subprocess.DEVNULL)
         processes.append(monitor)
         mark('enrolled')
@@ -205,16 +210,23 @@ async def run(args):
         result['forced_reconnect_ms'] = round((time.monotonic()-at)*1000)
         mark('fresh_grant_reconnect', duration_ms=result['forced_reconnect_ms'])
         if args.audio:
-            if args.voice_ui:
-                await second.send('agent.state', dict(schema_version=1, device_id=device['device_id'],
-                    voice_phase='listening', display=dict(transcript='', response=''),
-                    background=dict(running_count=0, focused_question=False, review_ready=False,
-                        completion_pending=False, status_changed=False, install_state=0, tasks=[])))
-                mark('listening_ui_requested')
-            await second.start_capture(args.capture_ms)
-            await asyncio.wait_for(captured.wait(), args.capture_ms/1000+10)
-            if not result['microphone_samples']:
-                raise RuntimeError('empty microphone capture')
+            for capture_round in range(args.capture_rounds):
+                capture_sample_base = result['microphone_samples']
+                captured.clear()
+                if args.voice_ui:
+                    await second.send('agent.state', dict(schema_version=1, device_id=device['device_id'],
+                        voice_phase='listening', display=dict(transcript='', response=''),
+                        background=dict(running_count=0, focused_question=False, review_ready=False,
+                            completion_pending=False, status_changed=False, install_state=0, tasks=[])))
+                    mark('listening_ui_requested')
+                await second.start_capture(args.capture_ms)
+                await asyncio.wait_for(captured.wait(), args.capture_ms/1000+10)
+                samples = result['microphone_samples']-capture_sample_base
+                # The board delivers 10 ms chunks; requested duration rounds up.
+                if samples != ((max(1000, args.capture_ms)+9)//10)*160:
+                    raise RuntimeError('incomplete microphone capture')
+                result['captures_completed'] += 1
+                mark('capture_round_completed', round=capture_round+1, samples=samples)
             # Deliberately non-frame-aligned tail, generated PCM only.
             samples = 16037
             tone = b''.join(struct.pack('<h', round(1800*math.sin(2*math.pi*440*n/16000))) for n in range(samples))
@@ -235,7 +247,7 @@ async def run(args):
                 raise RuntimeError('cancelled response reported successful completion')
             result['response_replacement_pass'] = True
             mark('cancelled_response_replaced_without_capture')
-        third = await asyncio.wait_for(ready.get(), 60)
+        third = await asyncio.wait_for(ready.get(), lease_seconds+15)
         if third.session_id in {first.session_id, second.session_id}:
             raise RuntimeError('lease renewal reused grant')
         mark('lease_renewed_with_fresh_grant')
@@ -268,12 +280,16 @@ def main():
     parser.add_argument('--audio', action='store_true')
     parser.add_argument('--voice-ui', action='store_true', help='Show the real listening shell during capture')
     parser.add_argument('--capture-ms', type=int, default=1200)
+    parser.add_argument('--capture-rounds', type=int, default=1)
     parser.add_argument('--certificate-fault', choices=('expired', 'not_yet_valid', 'hostname', 'untrusted'))
     args = parser.parse_args()
     if args.audio and args.certificate_fault:
         parser.error('certificate rejection tests never capture audio')
     if not 100 <= args.capture_ms <= 30000 or (args.voice_ui and not args.audio):
         parser.error('capture-ms must be 100..30000; voice-ui requires audio')
+    if (not 1 <= args.capture_rounds <= 100 or (args.capture_rounds != 1 and not args.audio)
+            or (args.capture_ms/1000+1)*args.capture_rounds+20 > 300):
+        parser.error('capture-rounds requires audio, must be 1..100, and must fit a 300 second lease')
     ip_address(args.host)
     try:
         asyncio.run(run(args))

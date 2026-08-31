@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import ssl
+import traceback
 from pathlib import Path
 
 from .moq_auth import GrantRegistry
@@ -76,7 +77,15 @@ class MoqTransportServer:
         session = self._pending.get(peer.session_id)
         if session is None:
             raise MoqSessionError()
-        await session.native(peer, packet)
+        try:
+            await session.native(peer, packet)
+        except Exception as error:
+            # Match the session worker's safe diagnostics. IPC callback errors
+            # otherwise retire through the bridge without a useful category.
+            self.trace.mark('moq.native_packet_fault', error_type=type(error).__name__,
+                locations=[dict(function=item.name, line=item.lineno)
+                           for item in traceback.extract_tb(error.__traceback__)[-4:]])
+            raise
 
     async def _lost(self, peer: BridgePeer) -> None:
         session = self._pending.get(peer.session_id)
