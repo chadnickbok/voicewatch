@@ -1,0 +1,6 @@
+{
+  "case_pass": false,
+  "delay_ms": 200,
+  "uni_index": 4,
+  "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=4 delay_ms=200\ndelayed UNI reader dropped before read index=4\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, true, true, true, true, true, false, true]\n"
+}

@@ -1,0 +1,23 @@
+{
+  "candidate_pass": true,
+  "unchanged_pin_conformance": false,
+  "matrix_exit_code": 0,
+  "concurrent_passed": 100,
+  "concurrent_total": 100,
+  "max_concurrent": 4,
+  "tokio_workers_per_peer": 2,
+  "delayed_passed": 27,
+  "delayed_total": 27,
+  "binaries_unchanged": true,
+  "client_sha256": "4b70444b5468457aea6386585d5dc8f30779b25f41a82af9ec701ddf284ac5f0",
+  "peer_sha256": "2be69f17411ec37271ad9c3322855bfa6b2679648892280ee5f770b4016b493a",
+  "reference_unit_tests_passed": 849,
+  "matrix_cases_passed": 18,
+  "baseline_reproducer_pass": false,
+  "source_copies_match_manifest": true,
+  "isolated_lock_equivalent_except_local_moq_net_and_kio": true,
+  "deployed_host_changed": false,
+  "device_accessed": false,
+  "firmware_changed": false,
+  "production_default_changed": false
+}

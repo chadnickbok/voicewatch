@@ -5,7 +5,43 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: terminal loss localized to reference reader scheduling
+## Latest checkpoint: candidate validated; subscription-update follow-up unfinished
+
+The isolated candidate below passed its recorded 849 unit tests and 145 native
+cases. Subsequent real-QUIC fixtures exposed two additional defects: advancing
+the requested floor can leave obsolete holes in the drain state, and a quiet
+subscription does not wake when its delivery cap changes. A supplemental WIP
+patch preserves the floor correction and regression tests separately from the
+validated candidate. The wakeup regression is still failing; the wakeup fix and
+complete post-fix validation remain outstanding. These new fixtures do not close
+the integration gate. See the library's
+[follow-up notes](../libs/moq-esp32/tests/interop/reference-candidate/README.md#unfinished-subscription-update-follow-up).
+
+## Validated checkpoint: isolated terminal receive candidate
+
+A maintained opt-in patch now corrects the reference receiver's premature END/FIN
+completion. It retains subscription ownership until group readers settle and the
+promised range resolves, with bounded interval/reader tracking, explicit DROP,
+cancellation cleanup and a fixed drain deadline after FIN. END alone can still
+park a capped subscription. Ordered and arrival readers preserve the real final
+boundary when trailing groups were explicitly dropped. Cancelled datagrams are
+rejected before model mutation.
+
+A fresh copy prepared from the patch passes all 18 ordinary native cases, 100
+engine exchanges with four concurrent peers, and 27 delayed-reader cases. The
+reference unit suite passes 849 tests, including 100,000-group bounded bookkeeping,
+exhaustion, timeout, cancellation, dropped-tail and establishment regressions.
+The unchanged pinned peer still fails the same delayed-reader test. These results
+validate the isolated candidate, not unmodified-reference conformance.
+
+Preparation and validation tools preserve the baseline lock and source. No upstream
+PR, pin change, production host rollout or device action is performed. Broader
+real-transport DROP/reset, impairment, source-change and subscription-update tests
+remain necessary before adoption; datagram loss handling remains conservative.
+All physical, speech, TLS/native allocation, latency and release gates remain
+open. See [the candidate evidence](implementation-evidence/2026-08-31-terminal-drain-candidate/README.md).
+
+## Previous checkpoint: terminal loss localized to reference reader scheduling
 
 A fresh 100 serial engine exchanges pass, but a 40-connection concurrent loopback
 run reproduces terminal loss while the sender reports all 11 groups retired with

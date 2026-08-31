@@ -1,0 +1,49 @@
+{
+  "root_revision": "5d0304d79992cd15098c2eb5ed58d6f4ce58cbb1",
+  "library_revision": "ea9ffbec9dbe9876873070f09da9ef88ae0f82fc",
+  "reference_patch": {
+    "base_revision": "eb5776e21eeaecba8e844be53c821895c178bcaf",
+    "patch": "terminal-drain.patch",
+    "patch_sha256": "a0edd285c206dcee1ee92be3bce97253660b465bec40797d9eb9ed429ecc57e9",
+    "candidate_only": true,
+    "compatibility_pin_changed": false,
+    "files_sha256": {
+      "rs/moq-net/src/lite/mod.rs": "a8ecf5e5ac201d02744443529045b4390492cd4c6319eba0aab7bc067a6b2c51",
+      "rs/moq-net/src/lite/subscriber.rs": "bd14e584feccd7e18f67e9f9d761f99a2812b99e4346e8e811885ab122319412",
+      "rs/moq-net/src/model/track.rs": "326e71670540d93c2520e1506db275e82c405817b41ea2a42c7db8ab3a7ef74d",
+      "rs/moq-net/src/lite/receive_drain.rs": "92b858cdd3c8a44d5ed7a0cf4e1bd6aff91b76f741e289963f57acf86e4b857f"
+    },
+    "local_path_crates": [
+      "moq-net",
+      "kio"
+    ]
+  },
+  "library_files_sha256": {
+    "tests/interop/prepare_reference_candidate.py": "39db424645ddd5bafcef8e28ddf7df2bb0afc54f34d348014437c540bf7e9764",
+    "tests/interop/validate_reference_candidate.py": "e31e29ecbb9e04cc868aa49b748e37f4f5d095fabda81b30f83d6970517794f6",
+    "tests/interop/reference-candidate/manifest.json": "bfa4190f9c747823ecdf00cc5bb4d012e5b2d8e80e71f7fb063f47def580618c",
+    "tests/interop/reference-candidate/terminal-drain.patch": "a0edd285c206dcee1ee92be3bce97253660b465bec40797d9eb9ed429ecc57e9",
+    "tests/interop/reproduce_terminal.py": "17be6ede3b1a7a974743253979d2397d6c36c9d200c0b39fee4dfba32b06035e",
+    "tests/interop/run.py": "aca3ad006b05810a2ec57fd52531f03eefe1f4d1e905a9bfae6f5ac044da3d04",
+    "tests/interop/peer/Cargo.toml": "f1024f556d717bf9dc4e786b1b4c3128dfdd58c3757bc0f71b8f51f1fc0f6fcc",
+    "tests/interop/peer/Cargo.lock": "2851bf7eb0f2be44eb8dc70a5159578ebe5fcd699f886630f54c32fbf8915507",
+    "tests/interop/peer/src/engine.rs": "d7fbc363c05871dbe8f27ee1a4b3c0f9fe6d1370c51834cdd95494087d0336bc",
+    "tests/interop/peer/src/delayed_session.rs": "d1ca8bf739050c0e7b882b75d01c4d387aa53ff1c1b41559a25894dad0310076",
+    "tests/interop/engine_client.c": "b817cc8939f10dc6912e17a44f83502bc1071a2782a873f7c0e1fceb698e45d3"
+  },
+  "original_peer_sha256": "6218b8552125f58848a25681d113c2e16769c23524c6a892a190e51a85814812",
+  "candidate_peer_sha256": "2be69f17411ec37271ad9c3322855bfa6b2679648892280ee5f770b4016b493a",
+  "client_sha256": "4b70444b5468457aea6386585d5dc8f30779b25f41a82af9ec701ddf284ac5f0",
+  "isolated_candidate_peer_lock_sha256": "4f3451b1126b632852a2f78add6b9637753c90bc32f0205a5184c86710edd7bd",
+  "logs_sha256": {
+    "candidate_unit_tests": "96475b496e05736fb49f7a0aaeac82adaf1e69613093f3c4c032ccb82f2ad8ed",
+    "candidate_prepare": "2cdd59e82e71243b2690f9e1ba07990dbf243f60f2682e07a5db159933727434",
+    "prepared_candidate_build": "bc6e166bfc2422a64fc6844929c77777edc66dc4e1dee61e55d3eedca0e2f8fd",
+    "matrix": "a6fd8cc17bb6608b22cff8b7318d006039aa8475cce77b6c5f1b23f6a66443f4",
+    "concurrent": "f6a9cb9706b1043cb548867939b03a8929f250e713031f815d1dbb078b4b1880",
+    "delayed": "c0e94e94ecc442c74ff9b622ea93f64013255a0e0b834224cacc8b2d0d27d4c2",
+    "baseline_reproducer": "325da35ec8d977663cfce72e56fd201932bd7e9037d841fe8f3cdd85955a2321",
+    "ordered_reader_regression_before_fix": "d5306588739b5b8c04b607257ca5af05625a71e70cdd5eebb9673fa2790df70b",
+    "cancelled_datagram_regression_before_fix": "d21ca33fe846cc94880f1a4a90744c5d65ff2d4e68ad59670b74fa7be43efa35"
+  }
+}
