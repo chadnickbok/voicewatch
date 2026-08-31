@@ -1,0 +1,59 @@
+{
+  "terminal_interoperability_accepted": false,
+  "first": {
+    "planned_repetitions": 20,
+    "passed": 15,
+    "failed_iteration": 15,
+    "process_exit_code": 1,
+    "reference_groups_received": [
+      5,
+      6,
+      7,
+      8
+    ],
+    "reference_frames": 3,
+    "reference_ack": false,
+    "sender_retirement_state_at_failure": "not recorded",
+    "log_sha256": "e6d52c2ae8fc3d0b45e8376e5905f96650fbb8ac6e8a09a47eca9f3145ad0723"
+  },
+  "diagnostic": {
+    "repetitions": 30,
+    "passed": 30,
+    "process_exit_code": 0,
+    "log_sha256": "9135c449dd04ab7e4839a7795283bea8eef43c1ab2adb5258ad6587c39119e17",
+    "client_sha256": "4b70444b5468457aea6386585d5dc8f30779b25f41a82af9ec701ddf284ac5f0",
+    "sender_totals": [
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0",
+      "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0"
+    ]
+  },
+  "next_investigation": "Reference ingestion/completion scheduling versus sender group retirement and END/FIN; no failure threshold was relaxed."
+}

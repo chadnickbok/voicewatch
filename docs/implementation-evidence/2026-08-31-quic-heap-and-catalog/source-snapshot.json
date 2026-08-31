@@ -1,0 +1,52 @@
+{
+  "root_base": "211224e0a266c31116f4ced4736a02f40a080344",
+  "library_base": "d1c5e797314572b18bf35bc5d55a089b1f9e0571",
+  "uncommitted_checkpoint": true,
+  "files": {
+    "docs/moq-implementation-progress.md": "eae3ce36201a4b4c934033b4a462c2bd7ebfa8cae6361a644068727e5d6283fd",
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "ea6fe192298e3b5ea02eceec5b4d031b0f1f6043eb7838485768edb3cae81d52",
+    "libs/moq-esp32/components/esp_moq/include/esp_moq/service.h": "47b62982b962b36fb87968e980966608aca6564dd5f8be356d8d754b0badebe0",
+    "libs/moq-esp32/components/esp_moq/src/engine.c": "10ab02d56c17f20e8ddfad4bb7877e5d7ab1e158de224c221eda6669c27830d8",
+    "libs/moq-esp32/components/esp_moq/src/service.c": "1bed8c36bdc50911993c55aae3928d06bd06dd564f811eadcb78ceae431de650",
+    "libs/moq-esp32/docs/transport-backend.md": "1fc409314630a208c491014b4d7fa6e1e59f2d4538decdb2aabd4a069050ff3e",
+    "libs/moq-esp32/tests/host/test_engine.c": "295463e14ec962ecc08500ea45ae324a9d2baab7350fc3581c388d97cb101bf7",
+    "libs/moq-esp32/tests/host/test_service.c": "e0e731558b134ebaa68211e0036abe22109ee5e865b916508339bf7c9483a179",
+    "libs/moq-esp32/tests/interop/README.md": "9f7c76d88617f4c6da8b904066b04c4c20b286d29428fe9c31b4b2d5382a01d6",
+    "libs/moq-esp32/tests/interop/engine_client.c": "b817cc8939f10dc6912e17a44f83502bc1071a2782a873f7c0e1fceb698e45d3",
+    "libs/moq-esp32/tests/interop/peer/src/engine.rs": "a63a05f0f6a3c6200303343ac1c37d693c62629ffe232314da876fd5e4d1bb60",
+    "libs/moq-esp32/tests/interop/service_client.c": "eecaa8e0ceac5b3032d51b83ffe9d263f070d5b2ea4a35eec2b8cefbbe0277ad",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/ngtcp2_memory.h": "ce93c65734106bc936334a081361de81677ceddde8eb67491533ec4d3803af08",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "109cb8a9cfd80eda0ee63b132148c8fd17a3add6b90176857da50e6903a916c5",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "e4d268312029392fee7734094bfd17e3643190a3c9a9b9d9d0aaefb6ebc109f4",
+    "libs/moq-esp32/components/esp_moq_endpoint/src/endpoint.c": "26338768d31bd3320692bf6062e27e7c3d342ef4734dabb0c539231be6e4b362",
+    "libs/moq-esp32/components/esp_moq_endpoint/include/esp_moq/endpoint.h": "cfd79350d0e5474ce5856aaf1448086da50db22f54b234bd3890fc425a586c45",
+    "libs/moq-esp32/tests/interop/heap_client.c": "5d92d7d6b623ac813d573da3bf6e4e76454b2007cf77582038413d99e50929d4",
+    "libs/moq-esp32/tests/interop/build.py": "babdd33b3869bb94905a61b8042008862fd11026c6f8d63adb00731ad196367d",
+    "libs/moq-esp32/tests/interop/run.py": "aca3ad006b05810a2ec57fd52531f03eefe1f4d1e905a9bfae6f5ac044da3d04",
+    "libs/moq-esp32/tests/interop/peer/Cargo.lock": "8387f2439e19d246bbc354fbc5c4c704c517c11bcdb88bcc834fa11ddbf1bbe9",
+    "libs/moq-esp32/tests/adapter/test_adapter.c": "dc2ebc5823eee64cbd98d979ffa974c27d3f4affe93771d24c0e75720de5bd76",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "3470fba37b4da80fa0be3253f56de4f95d0d40f97393e3cdff49f0e6b9965da3"
+  },
+  "firmware": {
+    "label": "flash35",
+    "bytes": 3428416,
+    "sha256": "a686b4ab18b6d0e6cf8f89784357b57fd7f1ac1dda06e9ea2267b7c9d4829b02",
+    "elf_sha256": "52315354face8f423e77796485a01994598c74734be0a92e23412997a422336d",
+    "idf_version": "5.5.5"
+  },
+  "native": {
+    "reference_commit": "eb5776e21eeaecba8e844be53c821895c178bcaf",
+    "dependency_pins": {
+      "wolfssl_repository": "https://github.com/wolfSSL/wolfssl",
+      "wolfssl_commit": "decea12e223869c8f8f3ab5a53dc90b69f436eb2",
+      "wolfssl_version": "5.8.2",
+      "ngtcp2_commit": "f9e9ff01ad2c8116bc09de4f644b0028a61486a6",
+      "profile": "Native CMake QUIC/TLS, fixed 255-byte ticket nonce, IP SAN, no session cache or server; not the ESP-IDF configuration"
+    },
+    "matrix_engine_client_source_sha256": "ab02a54ef9c85dbd8edf789939c51c59aa55f42527bfa8f88ecca6ad5e051951",
+    "matrix_client_binary_sha256": null,
+    "matrix_binary_binding_note": "The original binary hash was not retained before adding sender diagnostics; runtime/peer sources are unchanged between the 54-case run and diagnostic rebuild.",
+    "diagnostic_client_sha256": "4b70444b5468457aea6386585d5dc8f30779b25f41a82af9ec701ddf284ac5f0",
+    "peer_sha256": "e3a712364c9ea9f9ec8009859b4f1129c4dba255ed930b4c069f1dc6952e4b30"
+  }
+}

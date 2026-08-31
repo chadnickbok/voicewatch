@@ -1,0 +1,1383 @@
+{
+  "cases": [
+    {
+      "iteration": 0,
+      "mode": "valid",
+      "host": "localhost",
+      "elapsed_seconds": 2.567,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32644,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 55,
+          "frees": 30,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "valid",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 3.197,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32516,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 51,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "valid",
+      "host": "::1",
+      "elapsed_seconds": 3.169,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32516,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 51,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "moq-audio",
+      "host": "localhost",
+      "elapsed_seconds": 0.991,
+      "client": {
+        "pass": true,
+        "sent": 3,
+        "received": 3,
+        "input_samples": 537,
+        "output_samples": 537,
+        "publish_end": true,
+        "receive_end": true,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 0,
+      "mode": "unknown-ca",
+      "host": "localhost",
+      "elapsed_seconds": 0.066,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "wrong-host",
+      "host": "localhost",
+      "elapsed_seconds": 0.049,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "wrong-host",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.045,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "wrong-host",
+      "host": "::1",
+      "elapsed_seconds": 0.044,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "expired",
+      "host": "localhost",
+      "elapsed_seconds": 0.045,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "alpn",
+      "host": "localhost",
+      "elapsed_seconds": 0.025,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 26940,
+          "peak": 26980,
+          "limit": 131072,
+          "blocks": 19,
+          "allocations": 21,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "moq-setup",
+      "host": "localhost",
+      "elapsed_seconds": 0.258,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": true,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27852,
+          "peak": 36076,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 54,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "moq-engine",
+      "host": "localhost",
+      "elapsed_seconds": 0.636,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "groups": 9,
+        "track_infos": 4,
+        "peer_ack": true,
+        "audio_end": true,
+        "ack_end": true,
+        "result": 0,
+        "catalog_plain_frames": 3,
+        "catalog_compressed_frames": 3
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 0,
+      "mode": "moq-service",
+      "host": "localhost",
+      "elapsed_seconds": 0.97,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 0,
+      "mode": "moq-service-plain",
+      "host": "localhost",
+      "elapsed_seconds": 0.959,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 0,
+      "mode": "moq-endpoint",
+      "host": "localhost",
+      "elapsed_seconds": 0.996,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 0,
+      "mode": "moq-endpoint-plain",
+      "host": "localhost",
+      "elapsed_seconds": 1.0,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 0,
+      "mode": "numeric-dns",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.05,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 30188,
+          "peak": 30188,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 30,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 0,
+      "mode": "numeric-dns",
+      "host": "::1",
+      "elapsed_seconds": 0.05,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 30188,
+          "peak": 30188,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 30,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "valid",
+      "host": "localhost",
+      "elapsed_seconds": 2.48,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32644,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 55,
+          "frees": 30,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "valid",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 2.451,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32644,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 55,
+          "frees": 30,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "valid",
+      "host": "::1",
+      "elapsed_seconds": 2.45,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32644,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 55,
+          "frees": 30,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "moq-audio",
+      "host": "localhost",
+      "elapsed_seconds": 0.975,
+      "client": {
+        "pass": true,
+        "sent": 3,
+        "received": 3,
+        "input_samples": 537,
+        "output_samples": 537,
+        "publish_end": true,
+        "receive_end": true,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 1,
+      "mode": "unknown-ca",
+      "host": "localhost",
+      "elapsed_seconds": 0.043,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "wrong-host",
+      "host": "localhost",
+      "elapsed_seconds": 0.047,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "wrong-host",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.045,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "wrong-host",
+      "host": "::1",
+      "elapsed_seconds": 0.045,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "expired",
+      "host": "localhost",
+      "elapsed_seconds": 0.046,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "alpn",
+      "host": "localhost",
+      "elapsed_seconds": 0.026,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 26940,
+          "peak": 26980,
+          "limit": 131072,
+          "blocks": 19,
+          "allocations": 21,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "moq-setup",
+      "host": "localhost",
+      "elapsed_seconds": 0.302,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": true,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27852,
+          "peak": 36076,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 54,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "moq-engine",
+      "host": "localhost",
+      "elapsed_seconds": 0.593,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "groups": 9,
+        "track_infos": 4,
+        "peer_ack": true,
+        "audio_end": true,
+        "ack_end": true,
+        "result": 0,
+        "catalog_plain_frames": 3,
+        "catalog_compressed_frames": 3
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 1,
+      "mode": "moq-service",
+      "host": "localhost",
+      "elapsed_seconds": 0.933,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 1,
+      "mode": "moq-service-plain",
+      "host": "localhost",
+      "elapsed_seconds": 0.944,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 1,
+      "mode": "moq-endpoint",
+      "host": "localhost",
+      "elapsed_seconds": 0.983,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 1,
+      "mode": "moq-endpoint-plain",
+      "host": "localhost",
+      "elapsed_seconds": 1.007,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 1,
+      "mode": "numeric-dns",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.055,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 30188,
+          "peak": 30188,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 30,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 1,
+      "mode": "numeric-dns",
+      "host": "::1",
+      "elapsed_seconds": 0.049,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 30188,
+          "peak": 30188,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 30,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "valid",
+      "host": "localhost",
+      "elapsed_seconds": 3.168,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32644,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 55,
+          "frees": 30,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "valid",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 3.17,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32644,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 55,
+          "frees": 30,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "valid",
+      "host": "::1",
+      "elapsed_seconds": 3.029,
+      "client": {
+        "discarded_datagrams": 1,
+        "pass": true,
+        "sent": 10000,
+        "received": 10000,
+        "peer_bidi_replies": 65,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 28396,
+          "peak": 32516,
+          "limit": 131072,
+          "blocks": 25,
+          "allocations": 51,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "moq-audio",
+      "host": "localhost",
+      "elapsed_seconds": 0.931,
+      "client": {
+        "pass": true,
+        "sent": 3,
+        "received": 3,
+        "input_samples": 537,
+        "output_samples": 537,
+        "publish_end": true,
+        "receive_end": true,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 2,
+      "mode": "unknown-ca",
+      "host": "localhost",
+      "elapsed_seconds": 0.049,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "wrong-host",
+      "host": "localhost",
+      "elapsed_seconds": 0.046,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "wrong-host",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.045,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "wrong-host",
+      "host": "::1",
+      "elapsed_seconds": 0.044,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "expired",
+      "host": "localhost",
+      "elapsed_seconds": 0.045,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27748,
+          "peak": 27748,
+          "limit": 131072,
+          "blocks": 22,
+          "allocations": 24,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "alpn",
+      "host": "localhost",
+      "elapsed_seconds": 0.026,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 26940,
+          "peak": 26980,
+          "limit": 131072,
+          "blocks": 19,
+          "allocations": 21,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "moq-setup",
+      "host": "localhost",
+      "elapsed_seconds": 0.303,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": true,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": true,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 27852,
+          "peak": 36076,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 54,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "moq-engine",
+      "host": "localhost",
+      "elapsed_seconds": 0.567,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "groups": 9,
+        "track_infos": 4,
+        "peer_ack": true,
+        "audio_end": true,
+        "ack_end": true,
+        "result": 0,
+        "catalog_plain_frames": 3,
+        "catalog_compressed_frames": 3
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 2,
+      "mode": "moq-service",
+      "host": "localhost",
+      "elapsed_seconds": 0.972,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 2,
+      "mode": "moq-service-plain",
+      "host": "localhost",
+      "elapsed_seconds": 0.99,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 2,
+      "mode": "moq-endpoint",
+      "host": "localhost",
+      "elapsed_seconds": 0.966,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 0,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 2,
+      "mode": "moq-endpoint-plain",
+      "host": "localhost",
+      "elapsed_seconds": 1.027,
+      "client": {
+        "pass": true,
+        "connected": true,
+        "sent": 8,
+        "received": 8,
+        "publish_end": true,
+        "receive_end": true,
+        "plain_fallbacks": 1,
+        "mapped_cancels": 0,
+        "rx_leased": 0,
+        "result": 0
+      },
+      "case_pass": true,
+      "heap": []
+    },
+    {
+      "iteration": 2,
+      "mode": "numeric-dns",
+      "host": "127.0.0.1",
+      "elapsed_seconds": 0.061,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 30188,
+          "peak": 30188,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 30,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "mode": "numeric-dns",
+      "host": "::1",
+      "elapsed_seconds": 0.05,
+      "client": {
+        "discarded_datagrams": 0,
+        "pass": false,
+        "sent": 0,
+        "received": 0,
+        "peer_bidi_replies": 0,
+        "connected": false,
+        "result": 12
+      },
+      "case_pass": true,
+      "heap": [
+        {
+          "live": 30188,
+          "peak": 30188,
+          "limit": 131072,
+          "blocks": 28,
+          "allocations": 30,
+          "frees": 2,
+          "denied": 0,
+          "failures": 0
+        }
+      ]
+    }
+  ],
+  "constructor": {
+    "heap_self_test": true,
+    "constructor_allocations": 7,
+    "constructor_peak": 19556,
+    "budget_trials": 77,
+    "live_after_delete": 0
+  },
+  "runner_exit_code": 0
+}

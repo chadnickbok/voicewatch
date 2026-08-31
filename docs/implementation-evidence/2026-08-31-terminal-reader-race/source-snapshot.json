@@ -1,0 +1,31 @@
+{
+  "root_base": "211224e0a266c31116f4ced4736a02f40a080344",
+  "library_base": "d1c5e797314572b18bf35bc5d55a089b1f9e0571",
+  "uncommitted_checkpoint": true,
+  "files": {
+    "libs/moq-esp32/tests/interop/peer/src/delayed_session.rs": "d1ca8bf739050c0e7b882b75d01c4d387aa53ff1c1b41559a25894dad0310076",
+    "libs/moq-esp32/tests/interop/peer/src/engine.rs": "d7fbc363c05871dbe8f27ee1a4b3c0f9fe6d1370c51834cdd95494087d0336bc",
+    "libs/moq-esp32/tests/interop/peer/src/main.rs": "81ce7eff3190b1622757d3617c7693845533733a587c66b6321a0d3265c3e443",
+    "libs/moq-esp32/tests/interop/peer/Cargo.toml": "f1024f556d717bf9dc4e786b1b4c3128dfdd58c3757bc0f71b8f51f1fc0f6fcc",
+    "libs/moq-esp32/tests/interop/peer/Cargo.lock": "2851bf7eb0f2be44eb8dc70a5159578ebe5fcd699f886630f54c32fbf8915507",
+    "libs/moq-esp32/tests/interop/reproduce_terminal.py": "17be6ede3b1a7a974743253979d2397d6c36c9d200c0b39fee4dfba32b06035e",
+    "libs/moq-esp32/tests/interop/run.py": "aca3ad006b05810a2ec57fd52531f03eefe1f4d1e905a9bfae6f5ac044da3d04",
+    "libs/moq-esp32/tests/interop/engine_client.c": "b817cc8939f10dc6912e17a44f83502bc1071a2782a873f7c0e1fceb698e45d3",
+    "libs/moq-esp32/components/esp_moq/src/engine.c": "10ab02d56c17f20e8ddfad4bb7877e5d7ab1e158de224c221eda6669c27830d8",
+    "libs/moq-esp32/tests/interop/README.md": "dbf5f190f1ed098602d7b7774b1da5fd65d49faa754d1d538de0db3f4505b77e",
+    "docs/moq-implementation-progress.md": "20cfe4ad7f1dc6c6786666caf3954e6db5c4a2af033a1d8cb3e80952418f3f6a"
+  },
+  "final_client_sha256": "4b70444b5468457aea6386585d5dc8f30779b25f41a82af9ec701ddf284ac5f0",
+  "final_peer_sha256": "6218b8552125f58848a25681d113c2e16769c23524c6a892a190e51a85814812",
+  "reference_sources_unmodified": true,
+  "reference_sources": {
+    "rs/moq-net/src/lite/subscriber.rs": "c2fdbb66484b14faf1b3fcd9e6773996006ca57628e27df4d24675e1d54c84fe",
+    "rs/moq-net/src/model/track.rs": "7834bae189a741a4f68ddf64ad7b4f372f171aeeda178d9babdd97c44fd51c93",
+    "rs/moq-net/src/model/resume.rs": "60302c379b90ed15228e07bc37d4befe66ef9a6133513e3903defc30b6a385fa",
+    "rs/moq-net/src/util.rs": "521d1fc7bb211a7e672aa9b77548a0d0823e0bd669f83916e17da6d1be8c9a4b"
+  },
+  "direct_dependency_changes": [
+    "bytes and web-transport-trait were already in Cargo.lock; no versions/revisions changed"
+  ],
+  "binding_note": "The 100 serial and 40 concurrent cases precede the diagnostic wrapper. The 9-case sweep used its first revision; the final maintained reproducer and normal matrix use the hashed peer. Sender/runtime code is identical across these cases."
+}

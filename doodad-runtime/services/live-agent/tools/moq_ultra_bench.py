@@ -12,6 +12,8 @@ repeated microphone-to-speaker transitions without providers or storing PCM.
 of providers. WSS remains intact; a seeded proxy is closed with the bench.
 --max-playout-pressure optionally fails on packet queue overflow. This is a
 transport regression gate, not a calibrated speech-quality measurement.
+--max-quic-heap-bytes requires numeric allocator snapshots within that budget,
+with zero denials/system failures; it does not measure TLS or total device heap.
 --capture-outage-ms injects one uplink blackout during an extra capture and
 requires a loss-budget abort, then successful capture on the same session.
 No provider runs, deployed service changes, flash writes or restoration.
@@ -327,9 +329,18 @@ async def run(args):
             result['impairment']=impairment.snapshot()
             if any(item['pressure'] for item in impairment.stats.values()):
                 result['pass_']=False
+        serial_path=directory/'serial.log'
+        raw=serial_path.read_text(errors='replace') if serial_path.exists() else ''
+        heap_fields=('live','peak','limit','blocks','allocations','frees','denied','failures')
+        result['quic_heap']=[dict(zip(heap_fields,map(int,values))) for values in re.findall(
+            r'QUIC heap live=(\d+) peak=(\d+) limit=(\d+) blocks=(\d+) allocations=(\d+) frees=(\d+) denied=(\d+) failures=(\d+)',raw)]
+        if args.max_quic_heap_bytes is not None:
+            result['max_quic_heap_bytes']=args.max_quic_heap_bytes
+            result['quic_heap_budget_gate']=bool(result['quic_heap']) and all(
+                0<h['limit']<=args.max_quic_heap_bytes and h['live']<=h['peak']<=h['limit']
+                and not h['denied'] and not h['failures'] for h in result['quic_heap'])
+            result['pass_']=result['pass_'] and result['quic_heap_budget_gate']
         if args.audio:
-            serial_path=directory/'serial.log'
-            raw=serial_path.read_text(errors='replace') if serial_path.exists() else ''
             result['playout']=[dict(samples=int(samples),concealed=int(concealed),late=int(late),
                 pressure=int(pressure),silence=int(silence) if silence else None)
                 for samples,concealed,late,pressure,silence in re.findall(
@@ -364,6 +375,8 @@ def main():
     parser.add_argument('--loss-seed',type=int,default=44)
     parser.add_argument('--max-playout-pressure',type=int,
                         help='Require all completed tones to have pressure no greater than this count')
+    parser.add_argument('--max-quic-heap-bytes',type=int,
+                        help='Require allocator snapshots, this maximum budget, and zero allocation failures')
     parser.add_argument('--certificate-fault', choices=('expired', 'not_yet_valid', 'hostname', 'untrusted'))
     args = parser.parse_args()
     if args.audio and args.certificate_fault:
@@ -374,6 +387,8 @@ def main():
         parser.error('capture-outage-ms requires audio and a duration from 1 to 2000')
     if args.max_playout_pressure is not None and (not args.audio or args.max_playout_pressure<0):
         parser.error('max-playout-pressure requires audio and a nonnegative limit')
+    if args.max_quic_heap_bytes is not None and not 1<=args.max_quic_heap_bytes<=1024*1024:
+        parser.error('max-quic-heap-bytes must be 1..1048576')
     if not 100 <= args.capture_ms <= 30000 or (args.voice_ui and not args.audio):
         parser.error('capture-ms must be 100..30000; voice-ui requires audio')
     if (not 1 <= args.capture_rounds <= 100 or (args.capture_rounds != 1 and not args.audio)

@@ -5,36 +5,77 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: bounded QUIC allocation (integration validation incomplete)
+## Latest checkpoint: terminal loss localized to reference reader scheduling
 
-The watch adapter now gives ngtcp2 a per-connection allocation budget, defaulting
-to 128 KiB, with no unlimited fallback. Accounting includes aligned headers and
-both allocations during realloc growth; shrinking retains its charged capacity.
-Endpoint snapshots and firmware diagnostics expose live/peak bytes, allocation
-counts, budget denials and system allocation failures. This budget does not cover
-wolfSSL/crypto-provider allocations, socket buffers, fixed adapter pools or the
-native Rust host; those remaining memory gates are still open.
+A fresh 100 serial engine exchanges pass, but a 40-connection concurrent loopback
+run reproduces terminal loss while the sender reports all 11 groups retired with
+no expiry, failure, cancellation or cache drop. The reference returns only groups
+3–8. The missing sender diagnostics from the previous failure are now captured.
 
-Adapter and seven host test suites pass, including Linux ASan/UBSan runs. A test
-using the real pinned ngtcp2 constructor sweeps all seven allocation failure
-points and 77 insufficient budgets, checking complete cleanup. Native QUIC
-turnover passes 10,000 streams in each direction and 65 bidirectional replies
-for hostname, IPv4 and IPv6, with no budget denials. The Ultra firmware builds,
-but this allocator has not yet been flashed or measured on the watch.
+A maintained diagnostic delays one accepted reference UNI reader by 200 ms,
+without delaying QUIC ACKs or changing bytes. Eight of nine selected-reader cases
+fail. The final reproduction drops a not-yet-read stream and misses audio group
+7 even though the sender has retired every group. The reference marks the model
+complete and tears down subscription ownership before all its group readers run.
 
-The latest interoperability matrix remains **failed** at `moq-service-plain`:
-all eight media groups complete in each direction, but the expected plain-catalog
-fallback counter stays zero. Later matrix cases were not reached. An earlier
-group-order failure also reproduced with the committed pre-allocator adapter;
-the reference test receiver now uses `recv_group()` to validate every arrival
-instead of `next_group()`, which discards late groups. It still requires every
-expected group exactly once with its correct payload and timestamp. Engine and
-normal service cases pass after that correction; the plain fallback failure
-remains to be investigated. This is a work-in-progress checkpoint, not acceptance
-of the memory cap or the complete interoperability matrix.
+Normal tests keep the raw pinned reference transport; the scheduling wrapper is
+explicit diagnostic code only. Its missing-group result exits nonzero and is not
+accepted as a passing negative test. A receiver-side drain/ownership correction
+is still required; arbitrary sender delays and relaxed checks are not introduced.
+No reference revision, watch firmware, enrollment or deployed host is changed.
+See [the diagnostic evidence](implementation-evidence/2026-08-31-terminal-reader-race/README.md).
 
-The installed watch remains on flash34 and the supervised local MoQ service is
-unchanged. No firmware restoration is required for subsequent tests.
+## Previous checkpoint: bounded QUIC heap, catalog fallback and remaining tail race
+
+The 128 KiB per-connection ngtcp2 allocation cap is now running in the complete
+Ultra firmware (flash35). Startup and five clean microphone/tone round trips
+sample a 30,344-byte peak; three round trips with 5% UDP loss and 120 ms added RTT
+sample 34,216 bytes. No budget denial or platform allocation failure is observed.
+Both audio runs pass cancellation/replacement, forced reconnect, fresh-grant
+renewal, exact capture/playout sample counts and zero playback queue overflow.
+Microphone PCM is counted/discarded. The impaired run uses synthetic tones and
+has late/concealed packets; it does not close the impaired-speech quality gate.
+
+The plain-catalog matrix failure was a stale test expectation: a recoverable
+stream reset no longer emits a global service error. Tests now require exactly
+one actual compressed-to-plain retry (zero for normal catalogs), using a service
+counter. A new regression also exposed reuse of the compressed decoder after
+switching tracks; fallback now resets its snapshot state. Raw and mapped errors,
+an existing compressed snapshot, and a subsequent plain-track failure are tested.
+
+A separate intermittent engine failure exposed END overtaking older media
+under newest-group priority. The pinned receiver can report completion when it
+sees END and the highest group, even while earlier groups are in flight. The C
+publisher now delays END until all outstanding groups retire or are abandoned
+with DROP. Media scheduling/deadlines remain unchanged. A regression test holds
+an older group after the newest retires and requires END to remain withheld.
+The reference source is unmodified and all exact group/payload checks remain.
+However, an additional engine repeat fails after 15 passes: the reference reports
+only groups 5–8 before completion. Delaying END does not fully resolve the race;
+the terminal-delivery interoperability gate remains open. Transport retirement
+alone cannot be treated as proof of application consumption. Added sender
+retirement diagnostics pass 30 subsequent repeats; that does not erase the failure.
+
+All 54 cases in three complete native interoperability runs pass, but the later
+repeat failure prevents a claim of stable terminal interoperability. The actual
+adapter and seven host suites pass normally and under Linux ASan/UBSan, including
+real ngtcp2 constructor failure sweeps. The latter prove allocator cleanup,
+not TLS/network failure injection. The firmware build and app0-only flash pass;
+NVS, bootloader, OTA metadata and package/user storage are not written.
+
+Complete device telemetry samples show minimum internal free heap of 101,052
+bytes and a minimum largest internal block of 62,464 bytes across these runs.
+These short samples do not establish all workload/soak headroom. The ngtcp2 cap
+excludes TLS/crypto-provider allocation, system allocator metadata, sockets,
+fixed adapter pools and the native Rust host. Those allocation gates, impaired
+speech, the full impairment matrix, physical buttons/touch/apps, long responses,
+latency and release soaks remain open. WebRTC remains the configured default.
+
+The watch is re-enrolled at revision 110 to the persistent supervised MoQ host,
+reconnects without capture, and retains flash35. Both host service processes are
+unchanged. Firmware restoration is not required. Source/build hashes, test
+scope and numeric evidence are in
+[the checkpoint evidence](implementation-evidence/2026-08-31-quic-heap-and-catalog/README.md).
 
 ## Previous checkpoint: paired host supervision and local deployment
 

@@ -1,0 +1,477 @@
+{
+  "clean": {
+    "bench_result": {
+      "pass_": true,
+      "audio_requested": true,
+      "microphone_samples": 96000,
+      "ready_sessions": 3,
+      "firmware_written": false,
+      "restoration_required": false,
+      "voice_ui": true,
+      "capture_ms": 1200,
+      "capture_rounds": 5,
+      "captures_completed": 5,
+      "reply_each_capture": true,
+      "round_trips_completed": 5,
+      "lease_seconds": 45,
+      "time_proofs_issued": 3,
+      "forced_reconnect_ms": 5342,
+      "speaker_samples": 16037,
+      "response_replacement_pass": true,
+      "playout": [
+        {
+          "samples": 16037,
+          "concealed": 0,
+          "late": 0,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 0,
+          "late": 0,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 0,
+          "late": 0,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 0,
+          "late": 0,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 0,
+          "late": 0,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 0,
+          "late": 0,
+          "pressure": 0,
+          "silence": 0
+        }
+      ],
+      "max_playout_pressure": 0,
+      "playout_pressure_gate": true,
+      "elapsed_ms": 60214
+    },
+    "serial": {
+      "log_sha256": "78880bbcd7f24459477bb9f5271bf7b2857611e458db960d152462ee2fc0a869",
+      "quic_heap_samples": [
+        {
+          "live": 24308,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 29,
+          "allocations": 55,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24308,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 29,
+          "allocations": 55,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24092,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 26,
+          "allocations": 58,
+          "frees": 32,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24092,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 26,
+          "allocations": 58,
+          "frees": 32,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24092,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 26,
+          "allocations": 58,
+          "frees": 32,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24092,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 26,
+          "allocations": 58,
+          "frees": 32,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24092,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 26,
+          "allocations": 58,
+          "frees": 32,
+          "denied": 0,
+          "failures": 0
+        }
+      ],
+      "quic_heap_peak": 30344,
+      "heap_budget_gate": true,
+      "complete_memory_samples": 26,
+      "memory_minima": {
+        "internal_free": 136007,
+        "internal_min": 101052,
+        "internal_largest": 62464,
+        "psram_free": 7011580,
+        "psram_min": 7003816,
+        "psram_largest": 6946816
+      },
+      "firmware_fault_marker_present": false
+    },
+    "native_log_sha256": "a2e9965a304d4cd134316d205b9c4a857cc340f7a250d49ed4e259d6677b0780",
+    "result_sha256": "158ab03d3c4bd153fdbf4971150358d2ab1a362fe9648139fccb039ac7b09aca",
+    "harness_sha256": "3fa1cdcabf45c6db7c278314fe5623e275aa98a8b2cabaedf9a072ff2e51e244"
+  },
+  "impaired": {
+    "bench_result": {
+      "pass_": true,
+      "audio_requested": true,
+      "microphone_samples": 57600,
+      "ready_sessions": 3,
+      "firmware_written": false,
+      "restoration_required": false,
+      "voice_ui": true,
+      "capture_ms": 1200,
+      "capture_rounds": 3,
+      "captures_completed": 3,
+      "reply_each_capture": true,
+      "round_trips_completed": 3,
+      "lease_seconds": 45,
+      "time_proofs_issued": 3,
+      "forced_reconnect_ms": 6093,
+      "speaker_samples": 16037,
+      "response_replacement_pass": true,
+      "impairment": {
+        "loss_percent": 5,
+        "added_rtt_ms": 120,
+        "seed": 44,
+        "directions": {
+          "uplink": {
+            "received": 564,
+            "dropped": 45,
+            "forwarded": 519,
+            "pressure": 0
+          },
+          "downlink": {
+            "received": 663,
+            "dropped": 36,
+            "forwarded": 627,
+            "pressure": 0
+          }
+        },
+        "pending": 0,
+        "pending_high_water": 11,
+        "closed": true,
+        "timing": {
+          "uplink": {
+            "max_forward_lateness_us": 2057,
+            "late_over_20ms": 0,
+            "late_over_100ms": 0
+          },
+          "downlink": {
+            "max_forward_lateness_us": 2243,
+            "late_over_20ms": 0,
+            "late_over_100ms": 0
+          }
+        },
+        "event_loop_max_lag_us": 4551,
+        "outage_dropped": {
+          "uplink": 0,
+          "downlink": 0
+        }
+      },
+      "quic_heap": [
+        {
+          "live": 25364,
+          "peak": 27512,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 55,
+          "frees": 22,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24404,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 59,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 33136,
+          "peak": 33664,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 74,
+          "frees": 41,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 33160,
+          "peak": 33664,
+          "limit": 131072,
+          "blocks": 34,
+          "allocations": 82,
+          "frees": 48,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 33136,
+          "peak": 34216,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 101,
+          "frees": 68,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24308,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 29,
+          "allocations": 55,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ],
+      "max_quic_heap_bytes": 131072,
+      "quic_heap_budget_gate": true,
+      "playout": [
+        {
+          "samples": 16037,
+          "concealed": 2,
+          "late": 12,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 1,
+          "late": 1,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 3,
+          "late": 3,
+          "pressure": 0,
+          "silence": 0
+        },
+        {
+          "samples": 16037,
+          "concealed": 1,
+          "late": 1,
+          "pressure": 0,
+          "silence": 0
+        }
+      ],
+      "max_playout_pressure": 0,
+      "playout_pressure_gate": true,
+      "elapsed_ms": 63944
+    },
+    "serial": {
+      "log_sha256": "788d8663dcc5adc9e8076dfb55ae40c636f5530f149695924cfb6d3148fc52d6",
+      "quic_heap_samples": [
+        {
+          "live": 25364,
+          "peak": 27512,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 55,
+          "frees": 22,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24404,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 59,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 33136,
+          "peak": 33664,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 74,
+          "frees": 41,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 33160,
+          "peak": 33664,
+          "limit": 131072,
+          "blocks": 34,
+          "allocations": 82,
+          "frees": 48,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 33136,
+          "peak": 34216,
+          "limit": 131072,
+          "blocks": 33,
+          "allocations": 101,
+          "frees": 68,
+          "denied": 0,
+          "failures": 0
+        },
+        {
+          "live": 24308,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 29,
+          "allocations": 55,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ],
+      "quic_heap_peak": 34216,
+      "heap_budget_gate": true,
+      "complete_memory_samples": 30,
+      "memory_minima": {
+        "internal_free": 137115,
+        "internal_min": 101052,
+        "internal_largest": 64512,
+        "psram_free": 7003108,
+        "psram_min": 6997104,
+        "psram_largest": 6946816
+      },
+      "firmware_fault_marker_present": false
+    },
+    "native_log_sha256": "85bb6446c8e398a29d5bc21e4de1e23225f76c1eb76f8afa507c95ab7c809484",
+    "result_sha256": "ff88ef0c2e843326d77e239be9be2701001f457c4c35dca6bddb5396b57228b5",
+    "harness_sha256": "ea6fe192298e3b5ea02eceec5b4d031b0f1f6043eb7838485768edb3cae81d52"
+  },
+  "flash": {
+    "image_sha256": "a686b4ab18b6d0e6cf8f89784357b57fd7f1ac1dda06e9ea2267b7c9d4829b02",
+    "changed_offset": 65536,
+    "changed_span": 3432448,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "QUIC heap live=",
+    "serial": {
+      "log_sha256": "bac280067e3e54f3418b39ac71a96ce0e6aa828ec2381469fe35d1231bac9cc2",
+      "quic_heap_samples": [
+        {
+          "live": 24308,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 29,
+          "allocations": 55,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ],
+      "quic_heap_peak": 30344,
+      "heap_budget_gate": true,
+      "complete_memory_samples": 2,
+      "memory_minima": {
+        "internal_free": 135967,
+        "internal_min": 101116,
+        "internal_largest": 64512,
+        "psram_free": 7015988,
+        "psram_min": 7014844,
+        "psram_largest": 6946816
+      },
+      "firmware_fault_marker_present": false
+    }
+  },
+  "persistent_enrollment": {
+    "installed": true,
+    "revision": 110,
+    "serial": {
+      "log_sha256": "c9179b831715a878ce8ff059ac879bfe1c149f3066d3cb8102d32a5dcce1c59c",
+      "quic_heap_samples": [
+        {
+          "live": 24308,
+          "peak": 30344,
+          "limit": 131072,
+          "blocks": 29,
+          "allocations": 55,
+          "frees": 26,
+          "denied": 0,
+          "failures": 0
+        }
+      ],
+      "quic_heap_peak": 30344,
+      "heap_budget_gate": true,
+      "complete_memory_samples": 12,
+      "memory_minima": {
+        "internal_free": 133995,
+        "internal_min": 99084,
+        "internal_largest": 61440,
+        "psram_free": 7013956,
+        "psram_min": 6997104,
+        "psram_largest": 6946816
+      },
+      "firmware_fault_marker_present": false
+    },
+    "legacy_pid_before": 2759,
+    "legacy_pid_after": 2759,
+    "moq_supervisor_pid_before": 45731,
+    "moq_supervisor_pid_after": 45731,
+    "services_redeployed": false,
+    "firmware_restoration_required": false
+  },
+  "preflight_failure": {
+    "socket_path_bytes": 104,
+    "exception_type": "ValueError",
+    "enrollment_installed": false,
+    "capture_samples": 0,
+    "result_sha256": "3295ab516327d12fc59a124e60f66294d756b819cd5cbf9f9750a31d73815db3"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "normal_host_suites_passed": 7,
+  "normal_actual_adapter_pass": true,
+  "linux_asan_ubsan_actual_adapter_and_host_pass": true,
+  "sanitized_real_ngtcp2_constructor": {
+    "heap_self_test": true,
+    "constructor_allocations": 7,
+    "constructor_peak": 19668,
+    "budget_trials": 77,
+    "live_after_delete": 0
+  },
+  "sanitized_constructor_exercises_tls": false,
+  "sanitized_constructor_exercises_network": false,
+  "sanitizer_image": "sha256:afde5f5f7ea4d7ad6b6b53d051b9c8baae9062bb43421ba54eaf5d1194860895",
+  "sanitizer_source_archive_sha256": "b00e2766cf8835e790fb340e5fb5aa216bf422e8dd43cf8c98494bc9819ab98c",
+  "native_cases_passed": 54,
+  "native_repetitions": 3,
+  "full_firmware_build_pass": true,
+  "firmware_flashes": 1,
+  "physical_audio_round_trips": 8,
+  "runtime_regressions_reproduced_before_fix": [
+    "catalog_fallback_after_snapshot decoder state",
+    "publisher END emitted before older media retirement"
+  ],
+  "logs_sha256": {
+    "voicewatch-catalog-fallback-regression": "ed50bd2e21e3e9b51b49df6a25ab177415880aacf7c8afabf64352f2179af26f",
+    "voicewatch-terminal-order-regression": "6c2278173bd8a671872f1ba7910c9a7b5e6fc39243fd6a19b4e354394ad49536",
+    "voicewatch-heap-tail-host": "5ad0d7245f1e543547b983fc3ba566c9353b41ecb2096f5a8cefe68554bace08",
+    "voicewatch-catalog-fallback-adapter": "073b44c8d9f90b0790edb054e12f41232df43d059b4dc58e4e41416c79512fc2",
+    "voicewatch-heap-tail-sanitizer": "8f6f013895b51a08dd7756a84251353835c3fffe43ff4d88fe710e042cf2aaeb",
+    "voicewatch-heap-tail-native-build": "ba18d3e1a6dae5f636af8b55010cd3f79948a02b6bf4bdcb8fdf247b14ee810b",
+    "voicewatch-heap-tail-native-matrix": "79cbcf334f14ee4b3ccf4a17de6cbb9f005d53db043ba8fdba11959d1572f778",
+    "voicewatch-heap-tail-firmware-build": "525f58c112aeea7bff1a4157f5c0aa03224b28ea63e4e9d6fb0955749d6cbbe1",
+    "voicewatch-heap-tail-engine-repeat": "e6d52c2ae8fc3d0b45e8376e5905f96650fbb8ac6e8a09a47eca9f3145ad0723",
+    "voicewatch-tail-diagnostic-repeat": "9135c449dd04ab7e4839a7795283bea8eef43c1ab2adb5258ad6587c39119e17",
+    "voicewatch-tail-diagnostic-build": "7ebfbce0c44ccb2edf82300e5b44097112ab5bd1a441db0afc454ba7da0dc4a1"
+  },
+  "scope": {
+    "whole_device_allocation_cap": false,
+    "tls_allocation_cap": false,
+    "native_host_allocation_cap": false,
+    "full_loss_rtt_matrix": false,
+    "impaired_speech_accepted": false,
+    "physical_button_touch_apps_accepted": false,
+    "eight_hour_soak": false,
+    "remote_ci_verified": false,
+    "webrtc_default_changed": false
+  },
+  "stable_terminal_interoperability": false,
+  "additional_engine_repeats": {
+    "passed_before_failure": 15,
+    "failed": 1,
+    "subsequent_diagnostic_passes": 30
+  }
+}

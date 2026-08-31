@@ -1,0 +1,436 @@
+{
+  "reference_commit": "eb5776e21eeaecba8e844be53c821895c178bcaf",
+  "terminal_gate_pass": false,
+  "serial": {
+    "cases": 100,
+    "passed": 100,
+    "exit_code": 0
+  },
+  "concurrent": {
+    "cases": 40,
+    "passed": 39,
+    "failed": 1,
+    "max_parallel": 4,
+    "tokio_workers_per_peer": 2,
+    "failures": [
+      {
+        "iteration": 9,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: Error: client terminal/tail mismatch: groups=6 frames=5 seen=[false, false, false, true, true, true, true, true, true]\n"
+      }
+    ]
+  },
+  "scheduling_sweep": {
+    "cases": 9,
+    "passed": 1,
+    "failed": 8,
+    "delay_ms": 200,
+    "rows": [
+      {
+        "delay_at": 3,
+        "case_pass": true,
+        "mode": "moq-engine",
+        "host": "localhost",
+        "elapsed_seconds": 0.655,
+        "client": {
+          "pass": true,
+          "connected": true,
+          "sent": 8,
+          "received": 8,
+          "groups": 9,
+          "track_infos": 4,
+          "peer_ack": true,
+          "audio_end": true,
+          "ack_end": true,
+          "result": 0,
+          "catalog_plain_frames": 3,
+          "catalog_compressed_frames": 3
+        },
+        "diagnostics": "engine tx submitted=12 retired=12 expired=0 failed=0 cancelled=0 cache_drop=0"
+      },
+      {
+        "delay_at": 4,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=4 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, true, true, true, true, true, false, true]\n"
+      },
+      {
+        "delay_at": 5,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': False, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=5 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, true, true, true, true, false, true, true]\n"
+      },
+      {
+        "delay_at": 6,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': False, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=6 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, true, true, true, false, true, true, true]\n"
+      },
+      {
+        "delay_at": 7,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=7 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, true, true, false, true, true, true, true]\n"
+      },
+      {
+        "delay_at": 8,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=8 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, true, false, true, true, true, true, true]\n"
+      },
+      {
+        "delay_at": 9,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=9 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, false, true, true, true, true, true, true]\n"
+      },
+      {
+        "delay_at": 10,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=10 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, false, true, true, true, true, true, true, true]\n"
+      },
+      {
+        "delay_at": 11,
+        "case_pass": false,
+        "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=11 delay_ms=200\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[false, true, true, true, true, true, true, true, true]\n"
+      }
+    ]
+  },
+  "maintained_reproducer": {
+    "exit_code": 1,
+    "result": {
+      "case_pass": false,
+      "delay_ms": 200,
+      "uni_index": 4,
+      "error": "moq-engine/localhost: ({'pass': False, 'connected': True, 'sent': 8, 'received': 8, 'groups': 9, 'track_infos': 4, 'peer_ack': False, 'audio_end': True, 'ack_end': False, 'result': 12, 'catalog_plain_frames': 3, 'catalog_compressed_frames': 3}, 'engine closed reason=12 quic=0 tls_alert=0\\nengine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0\\n'); peer: delayed UNI reader index=4 delay_ms=200\ndelayed UNI reader dropped before read index=4\nError: client terminal/tail mismatch: groups=8 frames=7 seen=[true, true, true, true, true, true, true, false, true]\n"
+    },
+    "missing_group": 7,
+    "delayed_reader_dropped_before_read": true
+  },
+  "normal_matrix": {
+    "exit_code": 0,
+    "cases": 18,
+    "rows": [
+      {
+        "heap_self_test": true,
+        "constructor_allocations": 7,
+        "constructor_peak": 19556,
+        "budget_trials": 77,
+        "live_after_delete": 0
+      },
+      {
+        "iteration": 0,
+        "mode": "valid",
+        "host": "localhost",
+        "elapsed_seconds": 3.126,
+        "client": {
+          "discarded_datagrams": 1,
+          "pass": true,
+          "sent": 10000,
+          "received": 10000,
+          "peer_bidi_replies": 65,
+          "connected": true,
+          "result": 0
+        },
+        "diagnostics": "QUIC heap live=28396 peak=32644 limit=131072 blocks=25 allocations=55 frees=30 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "valid",
+        "host": "127.0.0.1",
+        "elapsed_seconds": 2.988,
+        "client": {
+          "discarded_datagrams": 1,
+          "pass": true,
+          "sent": 10000,
+          "received": 10000,
+          "peer_bidi_replies": 65,
+          "connected": true,
+          "result": 0
+        },
+        "diagnostics": "QUIC heap live=28396 peak=32516 limit=131072 blocks=25 allocations=51 frees=26 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "valid",
+        "host": "::1",
+        "elapsed_seconds": 3.207,
+        "client": {
+          "discarded_datagrams": 1,
+          "pass": true,
+          "sent": 10000,
+          "received": 10000,
+          "peer_bidi_replies": 65,
+          "connected": true,
+          "result": 0
+        },
+        "diagnostics": "QUIC heap live=28396 peak=32644 limit=131072 blocks=25 allocations=55 frees=30 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "moq-audio",
+        "host": "localhost",
+        "elapsed_seconds": 0.991,
+        "client": {
+          "pass": true,
+          "sent": 3,
+          "received": 3,
+          "input_samples": 537,
+          "output_samples": 537,
+          "publish_end": true,
+          "receive_end": true,
+          "rx_leased": 0,
+          "result": 0
+        },
+        "diagnostics": ""
+      },
+      {
+        "iteration": 0,
+        "mode": "unknown-ca",
+        "host": "localhost",
+        "elapsed_seconds": 0.067,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=27748 peak=27748 limit=131072 blocks=22 allocations=24 frees=2 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "wrong-host",
+        "host": "localhost",
+        "elapsed_seconds": 0.048,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=27748 peak=27748 limit=131072 blocks=22 allocations=24 frees=2 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "wrong-host",
+        "host": "127.0.0.1",
+        "elapsed_seconds": 0.043,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=27748 peak=27748 limit=131072 blocks=22 allocations=24 frees=2 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "wrong-host",
+        "host": "::1",
+        "elapsed_seconds": 0.044,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=27748 peak=27748 limit=131072 blocks=22 allocations=24 frees=2 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "expired",
+        "host": "localhost",
+        "elapsed_seconds": 0.044,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=0 tls_alert=45\nQUIC heap live=27748 peak=27748 limit=131072 blocks=22 allocations=24 frees=2 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "alpn",
+        "host": "localhost",
+        "elapsed_seconds": 0.025,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=376 tls_alert=120\nQUIC heap live=26940 peak=26980 limit=131072 blocks=19 allocations=21 frees=2 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "moq-setup",
+        "host": "localhost",
+        "elapsed_seconds": 0.259,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": true,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": true,
+          "result": 0
+        },
+        "diagnostics": "QUIC heap live=27852 peak=36076 limit=131072 blocks=28 allocations=54 frees=26 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "moq-engine",
+        "host": "localhost",
+        "elapsed_seconds": 0.623,
+        "client": {
+          "pass": true,
+          "connected": true,
+          "sent": 8,
+          "received": 8,
+          "groups": 9,
+          "track_infos": 4,
+          "peer_ack": true,
+          "audio_end": true,
+          "ack_end": true,
+          "result": 0,
+          "catalog_plain_frames": 3,
+          "catalog_compressed_frames": 3
+        },
+        "diagnostics": "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "moq-service",
+        "host": "localhost",
+        "elapsed_seconds": 0.997,
+        "client": {
+          "pass": true,
+          "connected": true,
+          "sent": 8,
+          "received": 8,
+          "publish_end": true,
+          "receive_end": true,
+          "plain_fallbacks": 0,
+          "mapped_cancels": 0,
+          "rx_leased": 0,
+          "result": 0
+        },
+        "diagnostics": ""
+      },
+      {
+        "iteration": 0,
+        "mode": "moq-service-plain",
+        "host": "localhost",
+        "elapsed_seconds": 1.008,
+        "client": {
+          "pass": true,
+          "connected": true,
+          "sent": 8,
+          "received": 8,
+          "publish_end": true,
+          "receive_end": true,
+          "plain_fallbacks": 1,
+          "mapped_cancels": 0,
+          "rx_leased": 0,
+          "result": 0
+        },
+        "diagnostics": ""
+      },
+      {
+        "iteration": 0,
+        "mode": "moq-endpoint",
+        "host": "localhost",
+        "elapsed_seconds": 0.957,
+        "client": {
+          "pass": true,
+          "connected": true,
+          "sent": 8,
+          "received": 8,
+          "publish_end": true,
+          "receive_end": true,
+          "plain_fallbacks": 0,
+          "mapped_cancels": 0,
+          "rx_leased": 0,
+          "result": 0
+        },
+        "diagnostics": ""
+      },
+      {
+        "iteration": 0,
+        "mode": "moq-endpoint-plain",
+        "host": "localhost",
+        "elapsed_seconds": 1.015,
+        "client": {
+          "pass": true,
+          "connected": true,
+          "sent": 8,
+          "received": 8,
+          "publish_end": true,
+          "receive_end": true,
+          "plain_fallbacks": 1,
+          "mapped_cancels": 0,
+          "rx_leased": 0,
+          "result": 0
+        },
+        "diagnostics": ""
+      },
+      {
+        "iteration": 0,
+        "mode": "numeric-dns",
+        "host": "127.0.0.1",
+        "elapsed_seconds": 0.073,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=1 tls_alert=42\nQUIC heap live=30188 peak=30188 limit=131072 blocks=28 allocations=30 frees=2 denied=0 failures=0"
+      },
+      {
+        "iteration": 0,
+        "mode": "numeric-dns",
+        "host": "::1",
+        "elapsed_seconds": 0.048,
+        "client": {
+          "discarded_datagrams": 0,
+          "pass": false,
+          "sent": 0,
+          "received": 0,
+          "peer_bidi_replies": 0,
+          "connected": false,
+          "result": 12
+        },
+        "diagnostics": "closed reason=12 quic=1 tls_alert=42\nQUIC heap live=30188 peak=30188 limit=131072 blocks=28 allocations=30 frees=2 denied=0 failures=0"
+      }
+    ]
+  },
+  "no_runtime_fix_claimed": true,
+  "firmware_flashed": false,
+  "enrollment_changed": false,
+  "host_redeployed": false,
+  "logs_sha256": {
+    "voicewatch-tail-repro-current": "b330c16bc66e158dcd9fec54879cf3eb5f6cddb98f9dc4f47e5e76eb8d46cc51",
+    "voicewatch-tail-parallel-repro": "17ea9a3999f6fa13ae0c2764d0b65daf9ae2c2cd52f28b72f6b2a3a6f39aa94f",
+    "voicewatch-tail-delayed-repro": "46561fa325f2a2ce2be64b0f2dbb4540122fee9f23d3c408e6f1428a9d1940ae",
+    "voicewatch-tail-reproducer-final": "325da35ec8d977663cfce72e56fd201932bd7e9037d841fe8f3cdd85955a2321",
+    "voicewatch-tail-delayed-peer-build": "b302c9baf31190dd4517a0e2866df3937999293b9ff62373949f3971db639199",
+    "voicewatch-tail-diagnostic-matrix": "57502ff48aab85b933370d11ff1cbb0264cb9b768e445f22036a60c441b6f5d6"
+  }
+}
