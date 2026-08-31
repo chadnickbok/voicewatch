@@ -126,6 +126,8 @@ void log_publisher_stats(Owner& o) {
         static_cast<unsigned long long>(s.submitted_groups),static_cast<unsigned long long>(s.retired_groups),
         static_cast<unsigned long long>(s.last_drop_first),static_cast<unsigned long long>(s.last_drop_end),
         static_cast<unsigned long long>(s.last_drop_code));
+    ESP_LOGI(kTag,"control timeouts deadline=%llu transmit=%llu",
+        static_cast<unsigned long long>(s.control_deadlines),static_cast<unsigned long long>(s.control_tx_expired));
 }
 void emit(Owner& o, EventKind kind, int error=0, bool cancelled=false) {
     Event event{}; event.kind=kind; event.session=o.session;
@@ -391,7 +393,11 @@ void poll_service(Owner& o) {
         if (e.type==ESP_MOQ_SERVICE_RECEIVE_END && e.media==o.receive && (e.cancelled || e.result))
             result=e.result ? e.result : ESP_MOQ_ERR_INVALID_STATE;
         if (e.type==ESP_MOQ_SERVICE_ERROR && !e.cancelled) result=e.result;
-        if (result && result!=ESP_MOQ_ERR_NOT_FOUND) { fail(o,result); return; }
+        if (result && result!=ESP_MOQ_ERR_NOT_FOUND) {
+            ESP_LOGE(kTag,"service event failure type=%u result=%d code=%llu",
+                static_cast<unsigned>(e.type),result,static_cast<unsigned long long>(e.error_code));
+            fail(o,result); return;
+        }
     }
     esp_moq_service_stats_t stats{}; esp_moq_service_stats(o.service,&stats);
     const bool usable=stats.ready && stats.catalog_ready;

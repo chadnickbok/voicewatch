@@ -5,7 +5,32 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: capture failure isolation and stopped-stream recovery
+## Latest checkpoint: idle capture demand and catalog timeout diagnostics
+
+The native actor now polls its idle audio subscription before reporting media
+readiness, then maintains that demand without decoding or forwarding microphone
+PCM. A regression against the pinned scoped origin reproduces the old missing
+idle demand. Active and idle subscriptions now request the same 200 ms recovery
+budget; this transmission-budget change remains experimental and has not passed
+hardware acceptance. Decoder concealment and storage bounds are unchanged.
+
+Follow-up provider and native benches with 5% loss, 120 ms added RTT and an
+800 ms uplink blackout fail. t64 identifies a watch catalog subscription ending
+with timeout code 3, which the media service escalates into a session failure.
+The source of that timeout remains unresolved. New engine counters distinguish
+local control deadlines from queued control-transmission expiry; bounded native
+close diagnostics exclude arbitrary peer/backend text.
+
+Flash28 builds, writes only app0 and boots the full shell. It contains the new
+timeout counters, but no subsequent impairment run has exercised those counters
+at this checkpoint. Current verification passes 26 Rust tests and Clippy with
+warnings denied, plus all seven normal C host suites. Earlier native integration
+and firmware-parser checks pass 32 cases; sanitizers have not been rerun for the
+new counter changes. See the
+[idle-demand checkpoint](implementation-evidence/2026-08-31-idle-capture-demand/README.md).
+The full replacement gates remain open and WebRTC remains the configured default.
+
+## Previous checkpoint: capture failure isolation and stopped-stream recovery
 
 Native capture loss beyond the unchanged 200 ms concealment budget now aborts
 only that turn. Identity-bound failure receipts cancel queued PCM, STT and reply
