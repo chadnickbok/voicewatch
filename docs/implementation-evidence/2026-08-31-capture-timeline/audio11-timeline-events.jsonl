@@ -1,0 +1,55 @@
+{"kind": "enrolled", "elapsed_ms": 729}
+{"kind": "identified", "elapsed_ms": 2788}
+{"kind": "connected", "elapsed_ms": 6136}
+{"kind": "idle_ready_without_capture", "elapsed_ms": 7137}
+{"kind": "disconnected", "elapsed_ms": 7137}
+{"kind": "identified", "elapsed_ms": 9027}
+{"kind": "connected", "elapsed_ms": 12387}
+{"kind": "fresh_grant_reconnect", "elapsed_ms": 12387, "duration_ms": 5250}
+{"kind": "listening_ui_requested", "elapsed_ms": 12387}
+{"kind": "capture.started", "elapsed_ms": 12430}
+{"kind": "capture.stopped", "elapsed_ms": 15480}
+{"kind": "capture_round_completed", "elapsed_ms": 15480, "round": 1, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 15480}
+{"kind": "capture.started", "elapsed_ms": 15538}
+{"kind": "capture.stopped", "elapsed_ms": 18592}
+{"kind": "capture_round_completed", "elapsed_ms": 18592, "round": 2, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 18593}
+{"kind": "capture.started", "elapsed_ms": 18652}
+{"kind": "capture.stopped", "elapsed_ms": 21702}
+{"kind": "capture_round_completed", "elapsed_ms": 21702, "round": 3, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 21702}
+{"kind": "capture.started", "elapsed_ms": 21760}
+{"kind": "capture.stopped", "elapsed_ms": 24808}
+{"kind": "capture_round_completed", "elapsed_ms": 24808, "round": 4, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 24809}
+{"kind": "capture.started", "elapsed_ms": 24860}
+{"kind": "capture.stopped", "elapsed_ms": 27918}
+{"kind": "capture_round_completed", "elapsed_ms": 27919, "round": 5, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 27919}
+{"kind": "capture.started", "elapsed_ms": 27970}
+{"kind": "capture.stopped", "elapsed_ms": 31020}
+{"kind": "capture_round_completed", "elapsed_ms": 31020, "round": 6, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 31020}
+{"kind": "capture.started", "elapsed_ms": 31079}
+{"kind": "capture.stopped", "elapsed_ms": 34130}
+{"kind": "capture_round_completed", "elapsed_ms": 34131, "round": 7, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 34131}
+{"kind": "capture.started", "elapsed_ms": 34190}
+{"kind": "capture.stopped", "elapsed_ms": 37236}
+{"kind": "capture_round_completed", "elapsed_ms": 37237, "round": 8, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 37237}
+{"kind": "capture.started", "elapsed_ms": 37300}
+{"kind": "capture.stopped", "elapsed_ms": 40378}
+{"kind": "capture_round_completed", "elapsed_ms": 40378, "round": 9, "samples": 48000}
+{"kind": "listening_ui_requested", "elapsed_ms": 40378}
+{"kind": "capture.started", "elapsed_ms": 40432}
+{"kind": "capture.stopped", "elapsed_ms": 43480}
+{"kind": "capture_round_completed", "elapsed_ms": 43480, "round": 10, "samples": 48000}
+{"kind": "physical_audio_finished", "elapsed_ms": 44686, "microphone_samples": 480000, "speaker_samples": 16037}
+{"kind": "cancelled_response_replaced_without_capture", "elapsed_ms": 46145}
+{"kind": "disconnected", "elapsed_ms": 67676}
+{"kind": "identified", "elapsed_ms": 69609}
+{"kind": "connected", "elapsed_ms": 73016}
+{"kind": "lease_renewed_with_fresh_grant", "elapsed_ms": 73016}
+{"kind": "disconnected", "elapsed_ms": 73017}

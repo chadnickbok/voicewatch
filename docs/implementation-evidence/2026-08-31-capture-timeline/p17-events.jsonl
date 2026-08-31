@@ -1,0 +1,14 @@
+{"kind": "enrolled", "elapsed_ms": 761}
+{"kind": "identified", "elapsed_ms": 2756}
+{"kind": "connected", "elapsed_ms": 6128}
+{"kind": "listen.requested", "elapsed_ms": 10218}
+{"kind": "capture.started", "elapsed_ms": 10263}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 10706}
+{"kind": "microphone_level", "elapsed_ms": 10816, "samples": 8000, "rms": 2172.33, "peak": 32767, "clipped": 1}
+{"kind": "microphone_level", "elapsed_ms": 11345, "samples": 8000, "rms": 111.62, "peak": 427, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 11843, "samples": 8000, "rms": 97.05, "peak": 606, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12772, "samples": 8000, "rms": 156.38, "peak": 648, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13718, "samples": 8000, "rms": 179.95, "peak": 606, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 13999}
+{"kind": "disconnected", "elapsed_ms": 14069}
+{"kind": "failed", "elapsed_ms": 14100, "error_type": "RuntimeError"}

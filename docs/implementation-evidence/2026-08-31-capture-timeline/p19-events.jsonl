@@ -1,0 +1,19 @@
+{"kind": "enrolled", "elapsed_ms": 751}
+{"kind": "identified", "elapsed_ms": 2880}
+{"kind": "connected", "elapsed_ms": 6259}
+{"kind": "listen.requested", "elapsed_ms": 10309}
+{"kind": "capture.started", "elapsed_ms": 10351}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 10787}
+{"kind": "microphone_level", "elapsed_ms": 10927, "samples": 8000, "rms": 2192.43, "peak": 32767, "clipped": 1}
+{"kind": "microphone_level", "elapsed_ms": 11415, "samples": 8000, "rms": 114.03, "peak": 462, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 11917, "samples": 8000, "rms": 86.2, "peak": 329, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12415, "samples": 8000, "rms": 44.64, "peak": 203, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12909, "samples": 8000, "rms": 33.52, "peak": 221, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13421, "samples": 8000, "rms": 4.66, "peak": 21, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13898, "samples": 8000, "rms": 4.34, "peak": 18, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 14092}
+{"kind": "capture.stopped", "elapsed_ms": 14171}
+{"kind": "stt_commit_sent", "elapsed_ms": 14172}
+{"kind": "stt_completion_received", "elapsed_ms": 14753, "characters": 0}
+{"kind": "failed", "elapsed_ms": 104094, "error_type": "TimeoutError"}
+{"kind": "disconnected", "elapsed_ms": 104351}

@@ -1,0 +1,18 @@
+MoQ endpoint listening; credentials and addresses suppressed
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ failure stage: session driver
+MoQ protocol failure: code=4
+MoQ transport counters: rx=21 tx=29 lost=0 rtt_us=427922 cwnd=12000
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: authorization expired
+MoQ failure stage: session lease
+MoQ transport counters: rx=2195 tx=1644 lost=1 rtt_us=11895 cwnd=8400
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ failure stage: session driver
+MoQ protocol failure: code=4
+MoQ transport counters: rx=21 tx=28 lost=0 rtt_us=428263 cwnd=12000

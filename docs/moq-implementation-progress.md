@@ -5,7 +5,33 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: capture ordering and publisher throughput
+## Latest checkpoint: audio catch-up and discontinuity timelines
+
+The real-provider terminal failure is now identified: resetting Opus discarded
+lookahead, while the watch reported accepted-input samples as received PCM.
+The audio owner also processed at most one 10 ms microphone chunk per RTOS tick,
+preventing recovery after an encoding/network delay. It now drains up to four
+chunks per cycle; a spoken capture transfers 60,320 samples with no microphone
+drops and a validated STT commit. The transcript is still empty.
+
+Capture completion now reports a separate timeline count. The native decoder
+preserves bounded gaps across codec resets with silence and rejects excessive
+or regressing timestamps. Ten consecutive three-second captures pass with the
+listening shell active (480,000 samples, no drops), followed by exact playback,
+cancellation/replacement and lease reconnection. Missing-group PLC remains open.
+The previously omitted WebRTC 8x microphone gain has also been restored in the
+MoQ input path. With priority 6 for the audio owner and the first 20 ms silenced
+for microphone wake-up, the latest provider run captures 60,000 samples without
+drops or clipping and plays 20,573 synthesized samples. Its six-character STT
+result does not recognize the exercise fixture and does not invoke the required
+tool, so provider-turn acceptance still fails. Speech recognition is the next
+physical gate; the host-driven fixture has not proven conversational readiness.
+
+Sixteen Rust tests, the C audio/host/adapter/touch suites, 199 Python tests and
+five native integration cases pass. This does not complete the provider turn
+or release gates. See the [capture timeline evidence](implementation-evidence/2026-08-31-capture-timeline/README.md).
+
+## Previous checkpoint: capture ordering and publisher throughput
 
 Native capture handles bounded group reordering, and the C publisher sends
 bounded catch-up batches after delayed network polls. The physical listening

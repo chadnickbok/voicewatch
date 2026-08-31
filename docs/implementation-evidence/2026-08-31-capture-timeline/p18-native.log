@@ -1,0 +1,7 @@
+MoQ endpoint listening; credentials and addresses suppressed
+MoQ handshake started
+MoQ handshake completed
+MoQ capture final mismatch: decoded=46192 expected=50560 terminal=true groups=202
+MoQ session retired: capture final count/tail
+MoQ failure stage: session actor
+MoQ transport counters: rx=282 tx=214 lost=0 rtt_us=21956 cwnd=12000

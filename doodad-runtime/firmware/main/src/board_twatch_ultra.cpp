@@ -103,6 +103,9 @@ bool microphone_record(std::int16_t* samples,std::size_t count,std::uint32_t rat
         g_microphone_generation=chunk.generation; g_next_sample=chunk.sample_index+160;
         std::memcpy(samples+copied,chunk.pcm,sizeof(chunk.pcm)); copied+=160;
     }
+    if(copied==count && g_audio.microphone_gain>1)
+        for(std::size_t i=0;i<count;++i)
+            samples[i]=static_cast<std::int16_t>(std::clamp(static_cast<int>(samples[i])*g_audio.microphone_gain,-32768,32767));
     g_recording=false; return copied==count;
 }
 void microphone_end() { if(g_board) twatch_ultra_microphone_stop(g_board); g_recording=false; }

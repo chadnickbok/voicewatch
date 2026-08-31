@@ -11,6 +11,7 @@ import argparse
 import asyncio
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import socket
@@ -45,7 +46,8 @@ async def run(args):
     server_started = asyncio.get_running_loop().create_future()
     real_transport, real_tools = transport_moq.MoqTransportServer, LiveConversation._tools
     real_stt = conversation_module.OpenAIRealtimeSTTService
-    result.update(stt_samples_submitted=0, stt_commits=0, stt_completed_events=0, stt_error_count=0)
+    result.update(stt_samples_submitted=0, stt_commits=0, stt_completed_events=0,
+                  stt_completed_characters=0, stt_error_count=0, fixture_recognized=False)
 
     def mark(kind, **values):
         event = dict(kind=kind, elapsed_ms=round((time.monotonic()-start)*1000), **values)
@@ -64,6 +66,9 @@ async def run(args):
 
         async def _handle_transcription_completed(self, event):
             result['stt_completed_events'] += 1
+            result['stt_completed_characters'] += len(event.get('transcript', ''))
+            result['fixture_recognized'] |= bool(re.search(r'\b(exercise|workout|set)\b',
+                event.get('transcript', ''), re.IGNORECASE))
             mark('stt_completion_received', characters=len(event.get('transcript', '')))
             await super()._handle_transcription_completed(event)
 
@@ -193,6 +198,8 @@ async def run(args):
         async with asyncio.timeout(90):
             while True:
                 if session._closed: raise RuntimeError('session closed during provider turn')
+                if result['stt_completed_events'] and not result['stt_completed_characters']:
+                    raise RuntimeError('spoken fixture produced an empty final transcript')
                 response = session._response
                 if response is not None and response.finished.is_set() and response.done.is_set():
                     result['speaker_samples'] = response.samples
@@ -203,7 +210,7 @@ async def run(args):
         result['stt_final'] = any(item['kind']=='stt.final' for item in trace)
         result['tts_audio'] = any(item['kind']=='tts.first_audio' for item in trace)
         result['read_tool_completed'] = any(item['kind']=='tool.end' and item.get('tool')=='get_next_set' for item in trace)
-        if not all(result[key] for key in ('stt_final', 'tts_audio', 'read_tool_completed', 'microphone_samples', 'speaker_samples')):
+        if not all(result[key] for key in ('stt_final', 'fixture_recognized', 'tts_audio', 'read_tool_completed', 'microphone_samples', 'speaker_samples')):
             raise RuntimeError('provider turn did not satisfy all required stages')
         mark('provider_turn_completed', speaker_samples=result['speaker_samples'])
         old_id = session.session_id

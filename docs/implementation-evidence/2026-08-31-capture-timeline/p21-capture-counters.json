@@ -1,0 +1,8 @@
+[
+  {
+    "accepted_samples": 60000,
+    "discarded_buffered_samples": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  }
+]

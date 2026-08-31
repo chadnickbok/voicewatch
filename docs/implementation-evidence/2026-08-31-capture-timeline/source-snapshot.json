@@ -1,0 +1,35 @@
+{
+  "scope": "Pre-commit source snapshot; individual hardware runs are bound to their image hashes in hardware-results.json.",
+  "repositories": {
+    "voicewatch": {
+      "base_commit": "196e5e88348afeadadde678cc29201fa9c30339b",
+      "dirty": true,
+      "source_sha256": {
+        "docs/moq-implementation-progress.md": "b0eb91f1cb1fdd304bb510aa50d92db85518c628292f61ec459c7527b30ca933",
+        "doodad-runtime/firmware/main/src/board_twatch_ultra.cpp": "636b45cc96c59425cad45f469ea29218346228b4431fcb8b2efaaec35cb343fa",
+        "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "57a4fd6c51c2ada1dfe2bacc56283fe5379830bb3e2d4e88a8c5e510e51dac90",
+        "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "08037d37b3c78dde4892344123d0e4e38b937e1d897dc62461464ee98028b0f5"
+      }
+    },
+    "moq-esp32": {
+      "base_commit": "1bc321f61caf5663456c0e41c10852202f6c534a",
+      "dirty": true,
+      "source_sha256": {
+        "components/esp_moq_audio/README.md": "1518220632cfab6971f134c80cb9067fcd8e517791a6b8ab54e200e3f448ee4b",
+        "components/esp_moq_audio/include/esp_moq/capture.h": "af711840a75fd33707eae14f1746419c05db0bc14797f5c64bc2072479cdb09f",
+        "components/esp_moq_audio/src/capture.c": "557e26e89b580b16eee93ffa76f6afd2d2b514ddd21c51b80a4cecab111a47ac",
+        "server/voice_agent/README.md": "dc43f7ca00974ff3fdb7e4ef51ba02729ca4e60ea35c1a054e2de6d0acc657eb",
+        "server/voice_agent/src/capture_tests.rs": "4e27cbd8d4e530b7b14043d5123b53c3051ee96de45187d639d16364a6dc6c2e",
+        "server/voice_agent/src/main.rs": "145ac94f47d06fc1a6a7fc6b9d2f3da74d963d8bfd4f08189bd63409efcde200",
+        "server/voice_agent/src/media.rs": "6958edc6d1746f498a002df457c8f035a93f5c58e9fdfd5c8997c6f70b482944",
+        "server/voice_agent/src/server.rs": "6424834178f184cc865edfb8483e61fc7c560e5764ff52c6cf6cbe1f82806c3c",
+        "server/voice_agent/tests/audio.rs": "10b91bb31bf780c4a6449b6a188b35c25fca0bf1bd646f3d51ed8464dbb33744",
+        "tests/audio/test_capture.c": "c20895ee01504a98f66d5b2668c77df0e9f17c0da846f6ffa859a72b0fa1f715"
+      }
+    }
+  },
+  "firmware": {
+    "image_sha256": "c5f0f22d89e55f3a21fd8e8aaea1d8b8f02a224d6c940f3efd9291b09f2c04ff",
+    "optimization": "performance (-O2), private test configuration; board default unchanged"
+  }
+}

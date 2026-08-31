@@ -28,6 +28,8 @@ constexpr char kTag[] = "voice-moq";
 constexpr unsigned kQueueDepth = 16;
 constexpr unsigned kGain = CONFIG_DOODAD_SPEAKER_VOLUME;
 constexpr auto kRam = MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT;
+constexpr int kMicrophoneGain = 8; // Preserve the existing VoiceWatch voice input profile.
+constexpr std::uint64_t kMicrophoneWarmupSamples = 320; // T3902 wake-up: up to 20 ms.
 
 struct CopiedSession {
     Session value{};
@@ -213,7 +215,8 @@ void open_session(Owner& o, CopiedSession& copied) {
     config.origin=o.session; config.handshake_timeout_ms=15000;
     // app_main owns LVGL on CPU0 at priority 1. A runnable priority-5 TLS
     // worker there can starve an individual flush for hundreds of ms. CPU1
-    // shares time with the bounded priority-5 audio owner instead.
+    // runs below the bounded priority-6 audio owner instead, so TLS work cannot
+    // consume the microphone's 40 ms queue headroom while PCM is ready.
     config.pin_workers=true; config.worker_core=1;
     // All callers run with caches enabled. Retain scarce internal SRAM for
     // worker stacks, Wi-Fi and board DMA, not the task-only ~29 KiB arena.
@@ -327,7 +330,12 @@ void poll_service(Owner& o) {
             event.elapsed_ms=(now_us()-o.started_us)/1000;
             event.dropped_frames=o.dropped_frames; event.encoded_bytes=o.encoded_bytes;
             esp_moq_audio_capture_stats_t stats{}; esp_moq_audio_capture_stats(o.capture,&stats);
-            event.samples=stats.accepted_samples; event.encoded_frames=stats.encoded_packets;
+            ESP_LOGI(kTag,"capture samples=%llu discarded=%llu resets=%llu dropped_chunks=%llu",
+                static_cast<unsigned long long>(stats.accepted_samples),
+                static_cast<unsigned long long>(stats.discarded_buffered_samples),
+                static_cast<unsigned long long>(stats.discontinuities),
+                static_cast<unsigned long long>(o.dropped_frames));
+            event.samples=stats.timeline_samples; event.encoded_frames=stats.encoded_packets;
             if (xQueueSend(g_events,&event,0)!=pdTRUE) g_overflow.store(true);
             o.publish=0; o.finishing=false;
             { Lock lock; g_publish=0; }
@@ -377,7 +385,15 @@ void capture_step(Owner& o) {
     }
     if (o.capturing && !o.have_microphone) {
         const auto result=twatch_ultra_microphone_read(o.board,&o.microphone);
-        if (result==ESP_OK) o.have_microphone=true;
+        if (result==ESP_OK) {
+            o.have_microphone=true;
+            // Apply once when acquiring a new chunk, never on a backpressure
+            // retry of held PCM. The board's raw capture API does not apply the
+            // gain used by the previous WebRTC board microphone_record path.
+            for (auto& sample:o.microphone.pcm)
+                sample=o.microphone.sample_index<kMicrophoneWarmupSamples ? 0 :
+                    static_cast<std::int16_t>(std::clamp(static_cast<int>(sample)*kMicrophoneGain,-32768,32767));
+        }
         else if (result!=ESP_ERR_NOT_FOUND) { fail(o,result); return; }
     }
     if (o.have_microphone) {
@@ -560,7 +576,15 @@ void audio_task(void*) {
         if (o.endpoint && !o.closing && !o.failed) {
             esp_moq_endpoint_status_t status{}; esp_moq_endpoint_status(o.endpoint,&status);
             if (status.state==ESP_MOQ_ENDPOINT_CLOSED) fail(o,status.result ? status.result : ESP_MOQ_ERR_TRANSPORT);
-            else { poll_service(o); if (!o.failed) capture_step(o); if (!o.failed) playback_step(o); }
+            else {
+                poll_service(o);
+                // Each DMA chunk is 10 ms, also one RTOS tick. Reading only one
+                // per tick cannot catch up after Opus/network work misses a tick.
+                // Drain at most the four board slots before yielding; command
+                // handling and playback still get a turn in every owner cycle.
+                for (unsigned i=0;i<4 && !o.failed && o.publish;++i) capture_step(o);
+                if (!o.failed) playback_step(o);
+            }
         }
         if (g_overflow.exchange(false)) fail(o,ESP_MOQ_ERR_TOO_MANY);
         vTaskDelay(1);
@@ -605,7 +629,7 @@ bool init(SignalSink) {
     o.capture_arena=heap_caps_aligned_alloc(16,esp_moq_audio_capture_size(),kRam);
     o.player_arena=heap_caps_aligned_alloc(16,esp_moq_audio_player_size(),kRam);
     if (!g_mutex || !g_commands || !g_events || !o.capture_arena || !o.player_arena) return cleanup();
-    if (xTaskCreatePinnedToCoreWithCaps(audio_task,"voice_moq_audio",65536,nullptr,5,&g_task,1,kRam)!=pdPASS) return cleanup();
+    if (xTaskCreatePinnedToCoreWithCaps(audio_task,"voice_moq_audio",65536,nullptr,6,&g_task,1,kRam)!=pdPASS) return cleanup();
     return true;
 }
 bool connect(const Session& session) {

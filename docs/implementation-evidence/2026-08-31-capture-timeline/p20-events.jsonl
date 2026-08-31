@@ -1,0 +1,19 @@
+{"kind": "enrolled", "elapsed_ms": 860}
+{"kind": "identified", "elapsed_ms": 2797}
+{"kind": "connected", "elapsed_ms": 6139}
+{"kind": "listen.requested", "elapsed_ms": 10185}
+{"kind": "capture.started", "elapsed_ms": 10225}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 10667}
+{"kind": "microphone_level", "elapsed_ms": 10785, "samples": 8000, "rms": 2042.51, "peak": 32767, "clipped": 1}
+{"kind": "microphone_level", "elapsed_ms": 11310, "samples": 8000, "rms": 920.83, "peak": 5251, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 11826, "samples": 8000, "rms": 885.95, "peak": 5616, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12301, "samples": 8000, "rms": 624.01, "peak": 5724, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12813, "samples": 8000, "rms": 483.55, "peak": 5028, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13272, "samples": 8000, "rms": 42.28, "peak": 159, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13777, "samples": 8000, "rms": 41.69, "peak": 146, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 13924}
+{"kind": "capture.stopped", "elapsed_ms": 13993}
+{"kind": "stt_commit_sent", "elapsed_ms": 13994}
+{"kind": "stt_completion_received", "elapsed_ms": 14628, "characters": 6}
+{"kind": "failed", "elapsed_ms": 18998, "error_type": "RuntimeError"}
+{"kind": "disconnected", "elapsed_ms": 19251}
