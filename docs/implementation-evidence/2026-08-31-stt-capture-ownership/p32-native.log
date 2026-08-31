@@ -1,0 +1,13 @@
+MoQ endpoint listening; credentials and addresses suppressed
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ failure stage: session driver
+MoQ protocol failure: code=4
+MoQ transport counters: rx=1349 tx=1336 lost=4 rtt_us=9552 cwnd=4116
+MoQ handshake started
+MoQ handshake completed
+MoQ session retired: other session failure
+MoQ failure stage: session driver
+MoQ protocol failure: code=4
+MoQ transport counters: rx=22 tx=29 lost=0 rtt_us=443374 cwnd=12000

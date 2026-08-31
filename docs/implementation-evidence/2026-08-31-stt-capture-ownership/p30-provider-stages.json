@@ -1,0 +1,35 @@
+[
+  {
+    "kind": "stt.final",
+    "characters": 33
+  },
+  {
+    "kind": "tool.end",
+    "tool": "get_next_set"
+  },
+  {
+    "kind": "tts.first_audio"
+  },
+  {
+    "kind": "stt.final",
+    "characters": 33
+  },
+  {
+    "kind": "tool.end",
+    "tool": "get_next_set"
+  },
+  {
+    "kind": "tts.first_audio"
+  },
+  {
+    "kind": "stt.final",
+    "characters": 33
+  },
+  {
+    "kind": "tool.end",
+    "tool": "get_next_set"
+  },
+  {
+    "kind": "tts.first_audio"
+  }
+]

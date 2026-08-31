@@ -44,6 +44,8 @@ async def test_submit_text_bypasses_microphone_and_queues_one_final_turn() -> No
 
     conversation = object.__new__(LiveConversation)
     conversation.worker = Worker()
+    conversation.explicit_capture = False
+    conversation._retired = False
     conversation.voice_phase = "ready"
     conversation.attention = StubAttention()
     conversation.state_sink = state_sink
@@ -168,6 +170,7 @@ async def test_push_to_talk_turn_stays_off_until_explicit_activation() -> None:
 
     conversation = object.__new__(LiveConversation)
     conversation.voice_phase = "idle"
+    conversation.explicit_capture = False
     conversation.attention = StubAttention()
     conversation.state_sink = state_sink
     conversation.stop_capture = stop_capture

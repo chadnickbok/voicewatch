@@ -57,6 +57,7 @@ from .attention import AttentionBroker
 from .controller import ForegroundController
 from .builder import AppBuilder
 from .metrics import LatencyTrace
+from .capture_stt import CaptureRealtimeSTTService, CaptureTurn, frame_turn
 
 
 AudioSink = Callable[[bytes, int], int]
@@ -131,24 +132,6 @@ class PipelineProbe(FrameProcessor):
         await self.push_frame(frame, direction)
 
 
-class CaptureBoundaryProcessor(FrameProcessor):
-    """Clear abandoned STT input before an explicitly authorized capture.
-
-    Start/audio/end are SystemFrames, so the pinned processor queues preserve
-    their order. No silence detector can commit a partial PTT recording.
-    """
-
-    def __init__(self, clear_audio: AsyncCallback) -> None:
-        super().__init__()
-        self.clear_audio = clear_audio
-
-    async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
-        await super().process_frame(frame, direction)
-        if direction == FrameDirection.DOWNSTREAM and isinstance(frame, VADUserStartedSpeakingFrame):
-            await self.clear_audio()
-        await self.push_frame(frame, direction)
-
-
 class FocusRouter(FrameProcessor):
     def __init__(
         self,
@@ -156,16 +139,20 @@ class FocusRouter(FrameProcessor):
         trace: LatencyTrace,
         on_transcript: TranscriptCallback,
         is_current: Callable[[], bool] = lambda: True,
+        transcript_current: Callable[[Any], bool] = lambda _: True,
     ) -> None:
         super().__init__()
         self.controller = controller
         self.trace = trace
         self.on_transcript = on_transcript
         self.is_current = is_current
+        self.transcript_current = transcript_current
 
     async def process_frame(self, frame: Any, direction: FrameDirection) -> None:
         await super().process_frame(frame, direction)
-        if isinstance(frame, (InterimTranscriptionFrame, TranscriptionFrame)) and not self.is_current():
+        if isinstance(frame, (InterimTranscriptionFrame, TranscriptionFrame)) and (
+            not self.is_current() or not self.transcript_current(frame)
+        ):
             return
         # OpenAIRealtimeSTTService emits this concrete frame only for the
         # completed transcription event, but Pipecat 1.7.0 leaves the generic
@@ -173,10 +160,12 @@ class FocusRouter(FrameProcessor):
         # therefore the authoritative finality signal for this pinned stack.
         if isinstance(frame, InterimTranscriptionFrame):
             await self.on_transcript(frame.text, False)
+            if not self.is_current() or not self.transcript_current(frame):
+                return
         elif isinstance(frame, TranscriptionFrame):
             self.trace.mark("stt.final", characters=len(frame.text))
             await self.on_transcript(frame.text, True)
-            if not self.is_current():
+            if not self.is_current() or not self.transcript_current(frame):
                 return
             utterance_id = f"utt_{uuid.uuid4().hex}"
             routed = self.controller.route_focused(frame.text, utterance_id)
@@ -405,6 +394,7 @@ class LiveConversation:
         self._retirement_task: asyncio.Task | None = None
         self.explicit_capture = explicit_capture
         self._capture_open = False
+        self._capture_turn: CaptureTurn | None = None
 
     async def start(self) -> None:
         missing = [
@@ -446,16 +436,18 @@ class LiveConversation:
         )
         if noise_reduction not in {"off", "near_field", "far_field"}:
             raise ValueError("DOODAD_STT_NOISE_REDUCTION must be off, near_field or far_field")
-        stt = OpenAIRealtimeSTTService(
+        stt_type = CaptureRealtimeSTTService if self.explicit_capture else OpenAIRealtimeSTTService
+        stt = stt_type(
             api_key=os.environ["OPENAI_API_KEY"],
             settings=OpenAIRealtimeSTTService.Settings(
                 model=os.getenv("OPENAI_STT_MODEL", "gpt-realtime-whisper"),
                 noise_reduction=None if noise_reduction == "off" else noise_reduction,
             ),
             turn_detection=False,
+            **({"on_capture_failure": self._stt_capture_failed} if self.explicit_capture else {}),
         )
         if self.explicit_capture:
-            vad = CaptureBoundaryProcessor(stt._clear_audio_buffer)
+            vad = PipelineProbe(self.trace, "capture_boundary")
         llm = OpenAIResponsesLLMService(
             api_key=os.environ["OPENAI_API_KEY"],
             settings=OpenAIResponsesLLMService.Settings(
@@ -479,6 +471,7 @@ class LiveConversation:
 
         router = FocusRouter(
             self.controller, self.trace, self._on_transcript, lambda: not self._retired,
+            self._transcript_current,
         )
         assistant_text = AssistantTextTap(
             self._clear_assistant_text,
@@ -533,36 +526,65 @@ class LiveConversation:
         if self.explicit_capture and not self._capture_open:
             return
         if self.worker is not None and not self._retired:
-            await self.worker.queue_frame(InputAudioRawFrame(pcm, 16_000, 1))
+            frame = InputAudioRawFrame(pcm, 16_000, 1)
+            if self.explicit_capture:
+                self._capture_turn.stamp(frame)
+            await self.worker.queue_frame(frame)
+
+    def _invalidate_capture(self) -> None:
+        self._capture_open = False
+        if self._capture_turn is not None:
+            self._capture_turn.live = False
+
+    def _transcript_current(self, frame) -> bool:
+        if self._retired:
+            return False
+        if not self.explicit_capture:
+            return True
+        turn = frame_turn(frame)
+        return turn is not None and turn is self._capture_turn and turn.live
+
+    async def _stt_capture_failed(self, turn: CaptureTurn) -> None:
+        if not self._retired and turn is self._capture_turn:
+            self.trace.mark("stt.capture_failed")
+            await self.cancel()
+            if turn is self._capture_turn:
+                await self.stop_capture()
 
     async def capture_started(self) -> None:
         if self.explicit_capture and not self._retired and self.worker is not None and not self._capture_open:
+            self._invalidate_capture()
+            self._capture_turn = CaptureTurn()
             self._capture_open = True
-            await self.worker.queue_frame(VADUserStartedSpeakingFrame(start_secs=0.0))
+            await self.worker.queue_frame(self._capture_turn.stamp(VADUserStartedSpeakingFrame(start_secs=0.0)))
 
     async def capture_completed(self) -> None:
         if self.explicit_capture and self._capture_open and not self._retired and self.worker is not None:
             self._capture_open = False
-            await self.worker.queue_frame(VADUserStoppedSpeakingFrame(stop_secs=0.0))
+            await self.worker.queue_frame(self._capture_turn.stamp(VADUserStoppedSpeakingFrame(stop_secs=0.0)))
 
     async def submit_text(self, text: str) -> None:
         """Inject one final user turn after capture, bypassing only the microphone/STT."""
 
         bounded = " ".join(text.split())[:500]
-        if not bounded or self.worker is None:
+        if not bounded or self.worker is None or self._retired:
             return
         await self.begin_listening()
-        await self.worker.queue_frame(
-            TranscriptionFrame(
-                text=bounded,
-                user_id="watch-text",
-                timestamp="",
-                language="en",
-                finalized=False,
-            )
+        frame = TranscriptionFrame(
+            text=bounded,
+            user_id="watch-text",
+            timestamp="",
+            language="en",
+            finalized=False,
         )
+        if self.explicit_capture:
+            self._capture_turn = CaptureTurn()
+            self._capture_turn.stamp(frame)
+        await self.worker.queue_frame(frame)
 
     async def begin_listening(self) -> None:
+        if self.explicit_capture:
+            await self.interrupt()
         self._cancel_transcript_watchdog()
         self.user_text = ""
         self.assistant_text = ""
@@ -573,7 +595,7 @@ class LiveConversation:
         await self._set_voice_phase("ready")
 
     async def cancel(self) -> None:
-        self._capture_open = False
+        self._invalidate_capture()
         self._cancel_transcript_watchdog()
         if self.worker is not None:
             await self.worker.queue_frame(InterruptionFrame())
@@ -582,7 +604,7 @@ class LiveConversation:
         await self._set_voice_phase("ready")
 
     def disconnected(self) -> None:
-        self._capture_open = False
+        self._invalidate_capture()
         self._cancel_transcript_watchdog()
         self.voice_phase = "idle"
         self._retired = True
@@ -608,11 +630,16 @@ class LiveConversation:
             )
 
     async def _on_transcript(self, text: str, final: bool) -> None:
+        # FocusRouter validated the originating frame immediately before this
+        # callback. Keep that identity across the asynchronous stop receipt.
+        turn = getattr(self, "_capture_turn", None)
         self.user_text = text[:160]
         if final:
             self._current_turn_has_final = True
             self._cancel_transcript_watchdog()
             await self.stop_capture()
+            if turn is not None and (turn is not self._capture_turn or not turn.live):
+                return
             await self._set_voice_phase("thinking")
         elif self.voice_phase == "listening":
             await self._publish_state()
@@ -664,6 +691,8 @@ class LiveConversation:
                 self._transcript_watchdog_task = None
 
     async def interrupt(self) -> None:
+        if self.explicit_capture:
+            self._invalidate_capture()
         if self.worker is not None:
             await self.worker.queue_frame(InterruptionFrame())
 

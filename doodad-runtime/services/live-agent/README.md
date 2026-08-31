@@ -51,6 +51,13 @@ misrecognized with `near_field` but recognized correctly without provider noise
 filtering. The existing WebRTC path retains `near_field`. This does not change
 the sample rate, microphone authorization or validated capture-end requirement.
 
+MoQ additionally correlates STT results with acknowledged provider item IDs and
+the originating capture. Cancelled captures cannot feed delayed transcripts to
+the next turn. `tools/moq_provider_bench.py --cancel-first-stt` exercises this by
+delaying one real provider final in memory, cancelling, and releasing it during
+the replacement capture. It never injects or saves a transcript. Cancellation
+after model/tool work starts remains a separate acceptance gate.
+
 The watch still receives only a 160-character display projection. Capacity
 violations are explicit service errors and telemetry events; ordinary long
 responses are never silently truncated.

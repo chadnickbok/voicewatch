@@ -1,0 +1,71 @@
+{"kind": "enrolled", "elapsed_ms": 703}
+{"kind": "identified", "elapsed_ms": 2630}
+{"kind": "connected", "elapsed_ms": 6113}
+{"kind": "listen.requested", "elapsed_ms": 9974}
+{"kind": "capture.started", "elapsed_ms": 10010}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 10346}
+{"kind": "microphone_level", "elapsed_ms": 10559, "samples": 8000, "rms": 309.49, "peak": 6865, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 11112, "samples": 8000, "rms": 1029.08, "peak": 3532, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 11629, "samples": 8000, "rms": 695.02, "peak": 2521, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12170, "samples": 8000, "rms": 359.77, "peak": 1455, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 12575, "samples": 8000, "rms": 262.32, "peak": 2081, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13066, "samples": 8000, "rms": 40.04, "peak": 161, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 13572, "samples": 8000, "rms": 38.06, "peak": 139, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 13650}
+{"kind": "capture.stopped", "elapsed_ms": 13703}
+{"kind": "stt_commit_sent", "elapsed_ms": 13771}
+{"kind": "stt_final_deliberately_delayed", "elapsed_ms": 14307}
+{"kind": "listen.cancelled", "elapsed_ms": 14308}
+{"kind": "provider_capture_cancelled_before_stt_delivery", "elapsed_ms": 14308, "microphone_samples": 58560}
+{"kind": "listen.requested", "elapsed_ms": 14308}
+{"kind": "capture.started", "elapsed_ms": 14354}
+{"kind": "cancelled_stt_final_rejected_during_new_capture", "elapsed_ms": 14354}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 14812}
+{"kind": "microphone_level", "elapsed_ms": 14820, "samples": 8000, "rms": 321.19, "peak": 7082, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 15342, "samples": 8000, "rms": 683.61, "peak": 3490, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 15861, "samples": 8000, "rms": 939.49, "peak": 3508, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 16323, "samples": 8000, "rms": 473.52, "peak": 2327, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 16760, "samples": 8000, "rms": 409.84, "peak": 2025, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 17252, "samples": 8000, "rms": 67.39, "peak": 412, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 17740, "samples": 8000, "rms": 36.33, "peak": 141, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 18129}
+{"kind": "capture.stopped", "elapsed_ms": 18191}
+{"kind": "stt_commit_sent", "elapsed_ms": 18253}
+{"kind": "stt_completion_received", "elapsed_ms": 18578, "characters": 33}
+{"kind": "provider_turn_completed", "elapsed_ms": 24732, "round": 1, "microphone_samples": 60640, "stt_characters": 33, "response_id": 1, "speaker_samples": 37518, "fixture_recognized": true, "read_tool_completed": true}
+{"kind": "listen.requested", "elapsed_ms": 24733}
+{"kind": "capture.started", "elapsed_ms": 24776}
+{"kind": "microphone_level", "elapsed_ms": 24877, "samples": 8000, "rms": 329.57, "peak": 7082, "clipped": 0}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 25241}
+{"kind": "microphone_level", "elapsed_ms": 25421, "samples": 8000, "rms": 48.83, "peak": 197, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 25938, "samples": 8000, "rms": 976.66, "peak": 3537, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 26397, "samples": 8000, "rms": 757.07, "peak": 2608, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 26946, "samples": 8000, "rms": 426.84, "peak": 1983, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 27392, "samples": 8000, "rms": 302.3, "peak": 2046, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 27910, "samples": 8000, "rms": 41.05, "peak": 155, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 28378, "samples": 8000, "rms": 38.09, "peak": 129, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 28549}
+{"kind": "capture.stopped", "elapsed_ms": 28606}
+{"kind": "stt_commit_sent", "elapsed_ms": 28670}
+{"kind": "stt_completion_received", "elapsed_ms": 29107, "characters": 33}
+{"kind": "provider_turn_completed", "elapsed_ms": 34632, "round": 2, "microphone_samples": 60640, "stt_characters": 33, "response_id": 2, "speaker_samples": 39939, "fixture_recognized": true, "read_tool_completed": true}
+{"kind": "listen.requested", "elapsed_ms": 34632}
+{"kind": "capture.started", "elapsed_ms": 34677}
+{"kind": "microphone_level", "elapsed_ms": 35036, "samples": 8000, "rms": 324.53, "peak": 7224, "clipped": 0}
+{"kind": "speaking_fixture_to_watch", "elapsed_ms": 35127}
+{"kind": "microphone_level", "elapsed_ms": 35503, "samples": 8000, "rms": 274.68, "peak": 1856, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 36116, "samples": 8000, "rms": 1086.04, "peak": 3526, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 36580, "samples": 8000, "rms": 572.07, "peak": 2270, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 37006, "samples": 8000, "rms": 412.87, "peak": 1961, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 37499, "samples": 8000, "rms": 137.85, "peak": 823, "clipped": 0}
+{"kind": "microphone_level", "elapsed_ms": 37978, "samples": 8000, "rms": 38.03, "peak": 151, "clipped": 0}
+{"kind": "listen.finished", "elapsed_ms": 38393}
+{"kind": "capture.stopped", "elapsed_ms": 38461}
+{"kind": "stt_commit_sent", "elapsed_ms": 38536}
+{"kind": "stt_completion_received", "elapsed_ms": 39082, "characters": 33}
+{"kind": "provider_turn_completed", "elapsed_ms": 45073, "round": 3, "microphone_samples": 59840, "stt_characters": 33, "response_id": 3, "speaker_samples": 43570, "fixture_recognized": true, "read_tool_completed": true}
+{"kind": "disconnected", "elapsed_ms": 45074}
+{"kind": "identified", "elapsed_ms": 49214}
+{"kind": "connected", "elapsed_ms": 50598}
+{"kind": "passed", "elapsed_ms": 53601}
+{"kind": "disconnected", "elapsed_ms": 53854}

@@ -1,0 +1,2 @@
+At Voicewatch bed685a, an old synthetic STT final routed after cancel and new capture: routed_count=1.
+The current regression rejects that frame before focus routing and admits the replacement capture only.

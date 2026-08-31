@@ -1,0 +1,46 @@
+[
+  {
+    "cache_drop": 0,
+    "expired": 0,
+    "failed": 0,
+    "cancelled": 0,
+    "submitted": 186,
+    "retired": 181,
+    "last_first": 0,
+    "last_end": 0,
+    "last_code": 0
+  },
+  {
+    "cache_drop": 0,
+    "expired": 0,
+    "failed": 0,
+    "cancelled": 0,
+    "submitted": 377,
+    "retired": 375,
+    "last_first": 0,
+    "last_end": 0,
+    "last_code": 0
+  },
+  {
+    "cache_drop": 0,
+    "expired": 0,
+    "failed": 0,
+    "cancelled": 0,
+    "submitted": 568,
+    "retired": 566,
+    "last_first": 0,
+    "last_end": 0,
+    "last_code": 0
+  },
+  {
+    "cache_drop": 0,
+    "expired": 0,
+    "failed": 0,
+    "cancelled": 0,
+    "submitted": 757,
+    "retired": 754,
+    "last_first": 0,
+    "last_end": 0,
+    "last_code": 0
+  }
+]

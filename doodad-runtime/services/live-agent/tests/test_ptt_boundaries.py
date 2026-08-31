@@ -7,7 +7,7 @@ from pipecat.frames.frames import (
 )
 from pipecat.processors.frame_processor import FrameDirection, FrameProcessorQueue
 
-from doodad_agent.conversation import CaptureBoundaryProcessor, LiveConversation
+from doodad_agent.conversation import LiveConversation
 from doodad_agent import conversation as conversation_module
 from doodad_agent.metrics import LatencyTrace
 
@@ -62,20 +62,6 @@ async def test_cancel_does_not_commit_abandoned_audio_and_late_end_cannot_reopen
 
 
 @pytest.mark.asyncio
-async def test_new_capture_clears_abandoned_provider_buffer_before_its_first_audio():
-    events = []
-    async def clear(): events.append('clear')
-    processor = CaptureBoundaryProcessor(clear)
-    async def push(frame, direction): events.append(type(frame).__name__)
-    processor.push_frame = push
-    for frame in [VADUserStartedSpeakingFrame(), InputAudioRawFrame(b'\1\0'*160,16000,1),
-                  VADUserStoppedSpeakingFrame(), VADUserStartedSpeakingFrame()]:
-        await processor.process_frame(frame, FrameDirection.DOWNSTREAM)
-    assert events == ['clear','VADUserStartedSpeakingFrame','InputAudioRawFrame',
-        'VADUserStoppedSpeakingFrame','clear','VADUserStartedSpeakingFrame']
-
-
-@pytest.mark.asyncio
 @pytest.mark.parametrize('explicit,override,expected', [
     (True, None, None), (False, None, 'near_field'),
     (True, 'far_field', 'far_field'), (False, 'off', None),
@@ -96,6 +82,7 @@ async def test_stt_profile_preserves_webrtc_and_allows_explicit_moq_filter(monke
             observed['server_vad'] = kwargs['turn_detection']
             raise ReachedSTT()
     monkeypatch.setattr(conversation_module, 'OpenAIRealtimeSTTService', InspectSTT)
+    monkeypatch.setattr(conversation_module, 'CaptureRealtimeSTTService', InspectSTT)
     monkeypatch.setattr(conversation_module, 'TracedSileroVADAnalyzer', lambda *a, **kw: None)
     monkeypatch.setattr(conversation_module, 'VADProcessor', lambda **kw: None)
     c = conversation([])

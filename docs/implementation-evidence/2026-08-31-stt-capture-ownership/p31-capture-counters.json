@@ -1,0 +1,26 @@
+[
+  {
+    "samples": 60800,
+    "discarded": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  },
+  {
+    "samples": 60000,
+    "discarded": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  },
+  {
+    "samples": 59520,
+    "discarded": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  },
+  {
+    "samples": 60800,
+    "discarded": 0,
+    "resets": 1,
+    "dropped_chunks": 0
+  }
+]

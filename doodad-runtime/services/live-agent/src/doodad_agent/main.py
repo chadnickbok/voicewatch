@@ -123,6 +123,16 @@ async def complete_capture_to_conversation(conversation, session, event: str) ->
                 await conversation.feed_audio(b'\0\0' * 160)
 
 
+async def cancel_capture_to_conversation(conversation, session) -> None:
+    """Fence MoQ provider work before awaiting the device's stop operation."""
+    explicit = getattr(session, 'explicit_capture_completion', False)
+    if explicit and conversation is not None:
+        await conversation.cancel()
+    await session.stop_capture()
+    if not explicit and conversation is not None:
+        await conversation.cancel()
+
+
 async def serve(arguments: argparse.Namespace) -> None:
     moq_config = None
     if arguments.transport == 'moq':
@@ -347,10 +357,8 @@ async def serve(arguments: argparse.Namespace) -> None:
             await session.stop_capture()
             await complete_capture_to_conversation(conversation, session, kind)
         elif kind == "listen.cancelled" and session is not None:
-            await session.stop_capture()
             runtime.downlink.cancel()
-            if conversation is not None:
-                await conversation.cancel()
+            await cancel_capture_to_conversation(conversation, session)
         elif kind == "conversation.text" and conversation is not None:
             text = payload.get("text")
             if isinstance(text, str):

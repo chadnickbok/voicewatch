@@ -43,13 +43,16 @@ async def run(args):
     saved_output = None
     acoustic_pcm = bytearray()
     fixture_pcm = b''
+    held_stt_final = None
+    hold_next_final = args.cancel_first_stt
+    stt_final_held = asyncio.Event()
     children, streams = [], []
     server_task = None
     ready = asyncio.Queue()
     captured = asyncio.Event()
     server_started = asyncio.get_running_loop().create_future()
     real_transport, real_tools = transport_moq.MoqTransportServer, LiveConversation._tools
-    real_stt = conversation_module.OpenAIRealtimeSTTService
+    real_stt = conversation_module.CaptureRealtimeSTTService
     result.update(stt_samples_submitted=0, stt_commits=0, stt_completed_events=0,
                   stt_completed_characters=0, stt_error_count=0, fixture_recognized=False)
 
@@ -85,6 +88,20 @@ async def run(args):
             mark('stt_commit_sent')
 
         async def _handle_transcription_completed(self, event):
+            nonlocal held_stt_final, hold_next_final
+            if hold_next_final and self._event_capture(event) is not None:
+                # Delay one real provider event in memory, without injecting a
+                # transcript or persisting its content. Release it only after
+                # cancellation and a replacement capture have been observed.
+                hold_next_final = False
+                held_stt_final = (self, event)
+                stt_final_held.set()
+                mark('stt_final_deliberately_delayed')
+                return
+            if self._event_capture(event) is None:
+                result['stt_rejected_completions'] = result.get('stt_rejected_completions', 0) + 1
+                await super()._handle_transcription_completed(event)
+                return
             result['stt_completed_events'] += 1
             result['stt_completed_characters'] += len(event.get('transcript', ''))
             result['fixture_recognized'] |= bool(re.search(r'\b(exercise|workout|set)\b',
@@ -140,7 +157,7 @@ async def run(args):
             server_started.set_result(self)
 
     transport_moq.MoqTransportServer = ObservedTransport
-    conversation_module.OpenAIRealtimeSTTService = ObservedSTT
+    conversation_module.CaptureRealtimeSTTService = ObservedSTT
     LiveConversation._tools = lambda self: [tool for tool in real_tools(self)
                                             if tool.name in {'get_next_set', 'get_task_status'}]
 
@@ -211,8 +228,8 @@ async def run(args):
                     raise RuntimeError('fixture PCM format')
                 if source.getnframes() > 31 * 16000: raise RuntimeError('fixture PCM bound')
                 fixture_pcm = source.readframes(source.getnframes())
-        async def provider_turn(round_number):
-            nonlocal saved_output
+        async def provider_turn(round_number, *, cancel_at_stt=False):
+            nonlocal saved_output, held_stt_final
             captured.clear()
             sample_base = result['microphone_samples']
             event_base = result['stt_completed_events']
@@ -223,6 +240,15 @@ async def run(args):
             result['fixture_keyword_matches'] = {}
             await server.on_event(device['device_id'], 'listen.requested', {})
             await asyncio.wait_for(captured.wait(), 5)
+            if held_stt_final is not None and not cancel_at_stt:
+                observed, event = held_stt_final
+                held_stt_final = None
+                await observed._handle_transcription_completed(event)
+                event.clear()
+                if result['stt_completed_events'] != event_base or result.get('stt_rejected_completions') != 1:
+                    raise RuntimeError('cancelled STT final crossed capture boundary')
+                result['delayed_stt_final_rejected'] = True
+                mark('cancelled_stt_final_rejected_during_new_capture')
             volume = int(await audio_setting('output volume of (get volume settings)'))
             muted = await audio_setting('output muted of (get volume settings)')
             if not 0 <= volume <= 100 or muted not in {'true', 'false'}:
@@ -240,6 +266,15 @@ async def run(args):
             await restore_output()
             await asyncio.sleep(.5)
             await server.on_event(device['device_id'], 'listen.finished', {})
+            if cancel_at_stt:
+                await asyncio.wait_for(stt_final_held.wait(), 30)
+                await server.on_event(device['device_id'], 'listen.cancelled', {})
+                trace = [json.loads(line) for line in (output/'trace.jsonl').read_text().splitlines()[trace_base:]]
+                if any(item['kind'] in {'stt.final', 'tool.start', 'tool.end', 'tts.first_audio'} for item in trace):
+                    raise RuntimeError('cancelled provider turn reached a downstream stage')
+                result['cancelled_capture_samples'] = result['microphone_samples'] - sample_base
+                mark('provider_capture_cancelled_before_stt_delivery', microphone_samples=result['cancelled_capture_samples'])
+                return
             async with asyncio.timeout(90):
                 while True:
                     if session._closed: raise RuntimeError('session closed during provider turn')
@@ -265,8 +300,12 @@ async def run(args):
                         fixture_recognized=result['fixture_recognized'], read_tool_completed=result['read_tool_completed'])
             result['turns'].append(turn)
             mark('provider_turn_completed', **turn)
+        if args.cancel_first_stt:
+            await provider_turn(0, cancel_at_stt=True)
         for round_number in range(1, args.capture_rounds + 1):
             await provider_turn(round_number)
+        if args.cancel_first_stt and not result.get('delayed_stt_final_rejected'):
+            raise RuntimeError('missing STT cancellation evidence')
         old_id = session.session_id
         await session.close(code=4000, message=b'provider bench replacement')
         replacement = await asyncio.wait_for(ready.get(), 25)
@@ -306,8 +345,11 @@ async def run(args):
         finally:
             acoustic_pcm[:] = b'\0' * len(acoustic_pcm)
             acoustic_pcm.clear()
+            if held_stt_final is not None:
+                held_stt_final[1].clear()
+                held_stt_final = None
         transport_moq.MoqTransportServer, LiveConversation._tools = real_transport, real_tools
-        conversation_module.OpenAIRealtimeSTTService = real_stt
+        conversation_module.CaptureRealtimeSTTService = real_stt
         result['microphone_rms'] = round((microphone_square_sum/max(1, result['microphone_samples']))**0.5, 2)
         result['elapsed_ms'] = round((time.monotonic()-start)*1000)
         write(output/'result.json', result)
@@ -328,6 +370,8 @@ def main():
                         help='Bench-only provider noise reduction experiment; does not change production defaults')
     parser.add_argument('--capture-rounds', type=int, default=1,
                         help='Repeat 1..3 complete provider turns in the same authenticated session')
+    parser.add_argument('--cancel-first-stt', action='store_true',
+                        help='First cancel a physical capture with a delayed real STT final; release that event during the next capture')
     args = parser.parse_args()
     if not 1 <= args.capture_rounds <= 3:
         parser.error('capture-rounds must be 1..3')

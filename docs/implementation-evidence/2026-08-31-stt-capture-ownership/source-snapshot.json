@@ -1,0 +1,56 @@
+{
+  "scope": "Uncommitted STT capture ownership checkpoint; all source hashes describe final code, tested by p33. Earlier runs are distinguished below.",
+  "voicewatch_base": "bed685ab3f1889d056ede8285e49171d1a62e0cb",
+  "moq_esp32_revision": "127eda5a70bd228fa4efd85eb887de1149ac7a2a",
+  "firmware_sha256": "9126220122365874058091c140e33d6c1a5954dabe125b8c1b89c5166155e308",
+  "source_sha256": {
+    "docs/moq-implementation-progress.md": "fb7f60c2f0148e350c8c7e4f1de272bb0072cece043e0e26b0aea9402a4c58aa",
+    "docs/moq-product-session.md": "ce4fee046e11a4c8d6361fe8073f155fa5222cfe3dd95f95791c057a7efd0b66",
+    "doodad-runtime/services/live-agent/README.md": "aed944da132fd61f4da263dde46dac6f37d8230c7850859dc34b459976f5c8aa",
+    "doodad-runtime/services/live-agent/pyproject.toml": "730c203c9524b8578329da969388330bddaca7f0e85e16679fa83d605b2f1479",
+    "doodad-runtime/services/live-agent/src/doodad_agent/capture_stt.py": "cba68eeb8f9245881c06940b3739165f9309a8c28e508d9440cebfe24cd2a10e",
+    "doodad-runtime/services/live-agent/src/doodad_agent/conversation.py": "98449c71c1da991926cac58b43125ece3c68e2b5907998f30c786e5f24ad738e",
+    "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "13676d0d23860ab26aa02a6fa973594eda06ee1dd2bfaa4640e93e451898a91a",
+    "doodad-runtime/services/live-agent/tests/test_capture_stt.py": "c9d6ff70cbb75482eda376c60b0fe4f1be92f67da74c1b043f236e0e6d4f637a",
+    "doodad-runtime/services/live-agent/tests/test_conversation.py": "7d656e8eb84e2e7844a6b9255bd48d31749116e2bd264375ea321644d3a9b082",
+    "doodad-runtime/services/live-agent/tests/test_ptt_boundaries.py": "374f8c0a53c7e9c2b4bc783e9fcc6c32cf365da635b1b5bca322e74603f046f3",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "63a5ac94841b3e02b4ae29c3b19812088fc8fc696cedf631726abec2c4f39c86"
+  },
+  "evidence_sha256": {
+    "README.md": "f96a53d71a72ba6ed74116cc641f4706372f39622a4cdd73b179a990e9eaaf85",
+    "hardware-results.json": "3ae5e101cb39ec09839491f27490585daf9e8335b8e165aab4f1b78372915ce6",
+    "p30-capture-counters.json": "7eae6cdf148f73ad225226d00e459d01752d16a89f82f63bffb628383a69d1c5",
+    "p30-events.jsonl": "a164f185dac3eda13c93656b3c9112821995c3d916c02bb461336ebcbb079761",
+    "p30-native.log": "365b0c92d851cc5e56a33800a13c143966759e09a9f6311ae0c8f42d3fa32c96",
+    "p30-provider-stages.json": "96d8a9aa4912e364c15cdae198b782ec09547334e32ab392cdb81c1ed4e4bde3",
+    "p30-publisher-counters.json": "e85e479ea7a66dbb9f9e9edeee1621ae2f181c4917a87f9525ed8cb56c4b495d",
+    "p31-capture-counters.json": "3d4f66818a5be75dcf73c7c59dd096c719be8abfd4654c70dac10d9e512d36e9",
+    "p31-events.jsonl": "50691d487e1cce7258973a40bf13c34a9e4c1c6d58f4e69b6f06d7f6666a5c6a",
+    "p31-native.log": "e3f152960613b8e108dbc76e69fc90e451141f192532eda861cbce6efb758946",
+    "p31-provider-stages.json": "96d8a9aa4912e364c15cdae198b782ec09547334e32ab392cdb81c1ed4e4bde3",
+    "p31-publisher-counters.json": "1133ba7cfc93c8eddc08c1a6c3688c463de445e419e943b02b7a6884b17ec6e9",
+    "p32-capture-counters.json": "484c05f38749cfe67e4b961762a7d1dde839e1a18532590b41ed2eb4b3d0b4bf",
+    "p32-events.jsonl": "92decf052b061b718cc766630147cdcde26c7c1b268cca689b488e4de9ec2753",
+    "p32-native.log": "3516dc38e46b642117c14cc96b45d6ebb48e248d459a9479249c49360e3a008d",
+    "p32-provider-stages.json": "96d8a9aa4912e364c15cdae198b782ec09547334e32ab392cdb81c1ed4e4bde3",
+    "p32-publisher-counters.json": "45bf0272edfa655faef10b92fe7cbd78d75848293fc1ff15ade2b724cd65ee6d",
+    "p33-capture-counters.json": "9440389f087d1600b5e20b56627d1b24057a053585862b0a8189309fe467529e",
+    "p33-events.jsonl": "ffdcb9d703d0b08ca81bfeec97e32c8cc8d1129c1e1725000960a842a14710bb",
+    "p33-native.log": "acf23ffc7c3567c6fdde7f7f46c9a0929fefa9a63ece799739695a403f9cbbbe",
+    "p33-provider-stages.json": "96d8a9aa4912e364c15cdae198b782ec09547334e32ab392cdb81c1ed4e4bde3",
+    "p33-publisher-counters.json": "681f4f26354ccfde8ab44aaa744f3e825f7b00c7b01f49b2c4249db80d620963",
+    "regression-before.txt": "186b47d3b7b57c107fe120e5735930dc047cd574c4f6c47fcb2f4cd1b52eca26",
+    "verification.json": "afa639f5c3f637408291b2e4d0ef4505cf63180a81964ce23454f0309d0d3bfb"
+  },
+  "run_profiles": {
+    "p30": "Initial provider item/capture binding and isolated resampler; three normal turns",
+    "p31": "Delayed real STT final cancelled and released during new capture; final-callback guard",
+    "p32": "Cancellation moved ahead of device-stop wait; socket cleanup captures originating socket",
+    "p33": "Final code includes both final and interim callback rechecks; cancelled STT plus three fresh turns"
+  },
+  "dependencies": {
+    "pipecat-ai": "1.7.0",
+    "openai": "2.52.0",
+    "soxr": "1.0.0"
+  }
+}

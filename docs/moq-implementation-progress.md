@@ -5,7 +5,34 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: bounded publisher catch-up and repeated capture
+## Latest checkpoint: STT capture ownership and cancellation
+
+A reproduced cancellation bug allowed a delayed STT final to reach routing
+after its capture was cancelled and a new capture had started. The MoQ STT
+adapter now binds provider item IDs from commit acknowledgements to the
+originating capture, preserves that identity on queued transcript frames, and
+checks it again after asynchronous callbacks. Cancellation invalidates the
+capture before waiting for device stop. WebRTC retains its existing STT path.
+
+Only one commit can await acknowledgement; a missing or inconsistent receipt
+retires the STT socket before another commit can be associated with it. Normal
+turns retain the existing provider connections, model pipeline and history.
+The STT resampler now has per-capture history, flushes the final samples before
+commit, and never clears buffered samples merely because scheduling pauses.
+
+Three complete provider turns pass on the Ultra. Three further physical runs hold
+a real STT final in memory, cancels that capture, and releases the old event
+during a new capture. Each rejects the stale final and completes three fresh
+tool/TTS/playback turns plus a new-session reconnect. No transcript is injected
+or saved, and no firmware is flashed. The checkpoint has 234 passing Python
+tests; see [STT capture evidence](implementation-evidence/2026-08-31-stt-capture-ownership/README.md).
+
+This establishes the tested STT cancellation boundary, not complete provider
+generation isolation. Cancellation after model/tool work has already started,
+TTS generation ownership, text/background response contexts, transport loss
+recovery and the remaining release gates still require work.
+
+## Previous checkpoint: bounded publisher catch-up and repeated capture
 
 Publisher diagnostics now distinguish cache-drop ranges, enqueued TX expiry,
 failure/cancellation and backend submission/retirement. A deterministic test

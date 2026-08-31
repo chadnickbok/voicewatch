@@ -102,6 +102,22 @@ silence-padding/VAD behavior. MoQ defaults to no provider noise filter because
 `near_field` suppresses the Ultra acoustic fixture; the explicit
 `DOODAD_STT_NOISE_REDUCTION` option selects `off`, `near_field` or `far_field`.
 
+The explicit-capture STT adapter binds the provider's acknowledged `item_id` to
+that capture before admitting interim/final transcripts. One pending commit and
+one current item keep correlation state bounded; the prior-item chain detects
+inconsistent acknowledgements. Unacknowledged or retired items cannot acquire
+the identity of a replacement capture. A five-second configuration/commit wait
+or failed write retires the socket and affected capture. A new provider socket
+does not replay the old capture. Normal turns keep the existing STT/model/TTS
+connections and conversation history.
+
+Internal capture identities accompany queued PCM, boundaries and transcripts.
+Cancellation invalidates them before waiting for device stop, and routing
+rechecks them after asynchronous callbacks. The VHQ STT resampler resets at each
+capture start and flushes its exact remaining duration before a valid commit;
+cancelled history cannot bleed into the next capture. This is STT ownership,
+not proof of cancellation safety for already-started model/tool/TTS work.
+
 Cancellation retires pending start IDs, capture ownership, queued old PCM and
 response generation. A delayed start receipt is cancelled without opening a
 decoder. Intent epochs prevent a suspended, cancelled listen callback from

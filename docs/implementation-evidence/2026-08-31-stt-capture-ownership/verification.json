@@ -1,0 +1,27 @@
+{
+  "python": {
+    "command": ".venv/bin/python -m pytest -q -o addopts=",
+    "exit_code": 0,
+    "passed": 234,
+    "existing_warnings": 4
+  },
+  "native": {
+    "command": ".venv/bin/python -m pytest tests/moq_native_integration.py -q -o addopts=",
+    "exit_code": 0,
+    "passed": 5
+  },
+  "physical": {
+    "normal_three_turn_runs": 1,
+    "cancelled_stt_then_three_turn_runs": 3,
+    "cancelled_finals_rejected": 3,
+    "completed_fresh_provider_turns": 12,
+    "fresh_session_reconnects": 4,
+    "firmware_written": false,
+    "restoration_required": false
+  },
+  "privacy": {
+    "ambient_pcm_persisted": false,
+    "transcripts_in_public_evidence": false,
+    "raw_logs_copied": false
+  }
+}
