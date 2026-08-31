@@ -1,0 +1,1206 @@
+{
+  "p78": {
+    "pass_": false,
+    "microphone_samples": 4376,
+    "microphone_peak": 6181,
+    "microphone_rms": 370.51,
+    "capture_loss_failures": 0,
+    "stt_commits": 0,
+    "stt_completed_events": 0,
+    "fixture_quality_pass": false,
+    "failure_type": "TimeoutError",
+    "elapsed_ms": 19349,
+    "fixture_quality": [],
+    "turns": [],
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 183,
+          "dropped": 40,
+          "forwarded": 143,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 123,
+          "dropped": 5,
+          "forwarded": 118,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 14,
+      "closed": true,
+      "timing": {
+        "uplink": {
+          "max_forward_lateness_us": 2048,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        },
+        "downlink": {
+          "max_forward_lateness_us": 2034,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        }
+      },
+      "event_loop_max_lag_us": 65699,
+      "outage_dropped": {
+        "uplink": 34,
+        "downlink": 0
+      }
+    },
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 1,
+        "retired": 1,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 154,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 40,
+        "retired": 14,
+        "last_first": 166,
+        "last_end": 167,
+        "last_code": 3
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 1288,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24860,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 32,
+        "allocations": 58,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 44960,
+        "peak": 45584,
+        "limit": 131072,
+        "blocks": 42,
+        "allocations": 91,
+        "frees": 49,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [],
+    "capture_service": [
+      {
+        "encoded": 179,
+        "accepted": 179,
+        "sent": 178,
+        "stale": 0,
+        "queued": 1,
+        "high": 3,
+        "mic_drops": 0,
+        "poll_gap_ms": 59
+      }
+    ],
+    "capture_recovery": [],
+    "capture_gaps": [
+      {
+        "next": 0,
+        "available": 1,
+        "oldest_ms": 200,
+        "buffered": 10,
+        "samples": 0
+      },
+      {
+        "next": 13,
+        "available": 14,
+        "oldest_ms": 201,
+        "buffered": 1,
+        "samples": 3736
+      }
+    ],
+    "capture_loss_limit": [],
+    "capture_reorder_pressure": [],
+    "capture_idle_session_failure": true,
+    "firmware": "flash37",
+    "bench_endpoint": "before_idle_fix",
+    "logs_sha256": {
+      "result.json": "4c7dd3570c10957028bae6f62229fcbd8e66214984d86ba7f47efb73b0b3e670",
+      "events.jsonl": "22d43eb3493f5efe6f650fb067580ddd3dc10661aa76b540540824a5bad3eecd",
+      "native.log": "1d1cba665b470cea5172a96f0902203e2f850d4e3a2c9f95e309b7e52bdfd510",
+      "serial.log": "9c7e4b01f62572ac908e796e7213c0d654a343c46e8b2a7ce34a36185baa4e0f"
+    }
+  },
+  "p79": {
+    "pass_": true,
+    "microphone_samples": 159360,
+    "microphone_peak": 7275,
+    "microphone_rms": 521.82,
+    "capture_loss_failures": 0,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "fixture_quality_pass": true,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 50583,
+    "provider_pipeline_reconnected": true,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 0,
+        "word_error_rate": 0.0,
+        "max_word_errors": 0,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": true
+      }
+    ],
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 50240,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 38728,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "microphone_samples": 50400,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "microphone_samples": 58720,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      }
+    ],
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 0,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 160,
+        "retired": 157,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 319,
+        "retired": 315,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 504,
+        "retired": 501,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 0,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 56,
+        "frees": 30,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 27660,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 27,
+        "allocations": 60,
+        "frees": 33,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 27660,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 27,
+        "allocations": 60,
+        "frees": 33,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 38728,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42876,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      },
+      {
+        "samples": 41149,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42876,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      },
+      {
+        "samples": 42360,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42876,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      }
+    ],
+    "capture_service": [],
+    "capture_recovery": [
+      {
+        "samples": 50240,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 50400,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 58720,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "capture_gaps": [],
+    "capture_loss_limit": [],
+    "capture_reorder_pressure": [],
+    "capture_idle_session_failure": false,
+    "firmware": "flash37",
+    "bench_endpoint": "before_idle_fix",
+    "logs_sha256": {
+      "result.json": "096e58ebabd25f3361e85a6018a76dbbbf72b395f87cb2fc9d9923b41bd57e0a",
+      "events.jsonl": "5fdfff455fc3a0c48fe25f362f4feae2af5e483b0289f289928bfa97490e9d7a",
+      "native.log": "b9d5124eeabd38a6fc419752bd7a5fa97df69541192d27b06387003282ffde20",
+      "serial.log": "bb6c3f8d9134631ce8ce4cb73820357f9b70cd1644a7aaaea5c829a09b687158"
+    }
+  },
+  "p80": {
+    "pass_": false,
+    "microphone_samples": 144912,
+    "microphone_peak": 7556,
+    "microphone_rms": 545.45,
+    "capture_loss_failures": 2,
+    "stt_commits": 2,
+    "stt_completed_events": 2,
+    "fixture_quality_pass": false,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "capture_recovery_ms": 908,
+    "fixture_audio_restored": true,
+    "failure_type": "RuntimeError",
+    "elapsed_ms": 38779,
+    "fixture_quality": [],
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 58880,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "microphone_samples": 58720,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 39939,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      }
+    ],
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 972,
+          "dropped": 89,
+          "forwarded": 883,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 932,
+          "dropped": 41,
+          "forwarded": 891,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 12,
+      "closed": true,
+      "timing": {
+        "uplink": {
+          "max_forward_lateness_us": 8217,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        },
+        "downlink": {
+          "max_forward_lateness_us": 10745,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        }
+      },
+      "event_loop_max_lag_us": 69730,
+      "outage_dropped": {
+        "uplink": 32,
+        "downlink": 0
+      }
+    },
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 1,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 50,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 37,
+        "retired": 12,
+        "last_first": 60,
+        "last_end": 61,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 5,
+        "expired": 66,
+        "failed": 0,
+        "cancelled": 10,
+        "submitted": 222,
+        "retired": 169,
+        "last_first": 245,
+        "last_end": 246,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 5,
+        "expired": 100,
+        "failed": 0,
+        "cancelled": 10,
+        "submitted": 408,
+        "retired": 322,
+        "last_first": 436,
+        "last_end": 437,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 16,
+        "expired": 120,
+        "failed": 0,
+        "cancelled": 10,
+        "submitted": 496,
+        "retired": 394,
+        "last_first": 523,
+        "last_end": 534,
+        "last_code": 31
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 363,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 363,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 364,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 367,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 45040,
+        "peak": 45040,
+        "limit": 131072,
+        "blocks": 56,
+        "allocations": 88,
+        "frees": 32,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 44976,
+        "peak": 45888,
+        "limit": 131072,
+        "blocks": 41,
+        "allocations": 107,
+        "frees": 66,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 46832,
+        "peak": 46832,
+        "limit": 131072,
+        "blocks": 44,
+        "allocations": 123,
+        "frees": 79,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 47008,
+        "peak": 48064,
+        "limit": 131072,
+        "blocks": 43,
+        "allocations": 142,
+        "frees": 99,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 41149,
+        "concealed": 8,
+        "late": 8,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42876,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      },
+      {
+        "samples": 39939,
+        "concealed": 6,
+        "late": 7,
+        "pressure": 0,
+        "silence": 1,
+        "audio_stack": 42876,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      }
+    ],
+    "capture_service": [
+      {
+        "encoded": 76,
+        "accepted": 76,
+        "sent": 71,
+        "stale": 0,
+        "queued": 5,
+        "high": 5,
+        "mic_drops": 0,
+        "poll_gap_ms": 62
+      },
+      {
+        "encoded": 103,
+        "accepted": 548,
+        "sent": 533,
+        "stale": 13,
+        "queued": 2,
+        "high": 8,
+        "mic_drops": 0,
+        "poll_gap_ms": 203
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 58880,
+        "concealed": 744,
+        "plc": 744,
+        "lost_groups": 3,
+        "late_groups": 2
+      },
+      {
+        "samples": 58720,
+        "concealed": 1600,
+        "plc": 1600,
+        "lost_groups": 5,
+        "late_groups": 1
+      }
+    ],
+    "capture_gaps": [
+      {
+        "next": 0,
+        "available": 1,
+        "oldest_ms": 201,
+        "buffered": 9,
+        "samples": 0
+      },
+      {
+        "next": 10,
+        "available": 11,
+        "oldest_ms": 202,
+        "buffered": 2,
+        "samples": 2776
+      },
+      {
+        "next": 89,
+        "available": 90,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 3416
+      },
+      {
+        "next": 149,
+        "available": 150,
+        "oldest_ms": 203,
+        "buffered": 6,
+        "samples": 22616
+      },
+      {
+        "next": 282,
+        "available": 283,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 5656
+      },
+      {
+        "next": 333,
+        "available": 334,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 21976
+      },
+      {
+        "next": 351,
+        "available": 352,
+        "oldest_ms": 201,
+        "buffered": 12,
+        "samples": 27736
+      },
+      {
+        "next": 372,
+        "available": 373,
+        "oldest_ms": 202,
+        "buffered": 7,
+        "samples": 34456
+      },
+      {
+        "next": 391,
+        "available": 392,
+        "oldest_ms": 203,
+        "buffered": 12,
+        "samples": 40536
+      },
+      {
+        "next": 475,
+        "available": 476,
+        "oldest_ms": 200,
+        "buffered": 11,
+        "samples": 8216
+      },
+      {
+        "next": 511,
+        "available": 513,
+        "oldest_ms": 203,
+        "buffered": 7,
+        "samples": 19736
+      },
+      {
+        "next": 516,
+        "available": 519,
+        "oldest_ms": 202,
+        "buffered": 4,
+        "samples": 21336
+      },
+      {
+        "next": 523,
+        "available": 534,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 23576
+      }
+    ],
+    "capture_loss_limit": [
+      {
+        "pending": 11,
+        "added": 11,
+        "samples": 23576
+      }
+    ],
+    "capture_reorder_pressure": [
+      {
+        "next": 13,
+        "available": 71,
+        "latest": 71,
+        "buffered": 1
+      }
+    ],
+    "capture_idle_session_failure": false,
+    "firmware": "flash37",
+    "bench_endpoint": "after_idle_fix",
+    "logs_sha256": {
+      "result.json": "6cbf80749971c913499a838844c63e68af3a37b370071244f2ac18faf4313d6f",
+      "events.jsonl": "ef51391f48e450be3bb759ff0bee860a8acf1b9bb6b69248d8faa941b252f595",
+      "native.log": "9c06b3b9aeb40ea9c9e94b8ee47fe0db84b8ca6aedd3030059a764ca9d7b6c55",
+      "serial.log": "12a3fe48e9702dfa061d22d984c09958fd405c60954acffd80cee236acce4746"
+    }
+  },
+  "p81": {
+    "pass_": true,
+    "microphone_samples": 175040,
+    "microphone_peak": 7940,
+    "microphone_rms": 501.68,
+    "capture_loss_failures": 0,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "fixture_quality_pass": true,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 53388,
+    "provider_pipeline_reconnected": true,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 0,
+        "word_error_rate": 0.0,
+        "max_word_errors": 0,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": true
+      }
+    ],
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 58080,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "microphone_samples": 58400,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "microphone_samples": 58560,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      }
+    ],
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 0,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 183,
+        "retired": 180,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 367,
+        "retired": 363,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 552,
+        "retired": 549,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 1,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 56,
+        "frees": 30,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 58,
+        "frees": 32,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 58,
+        "frees": 32,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 42360,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42876,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      },
+      {
+        "samples": 42360,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42876,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      },
+      {
+        "samples": 42360,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42796,
+        "network_stack": 7028,
+        "dns_stack": 2924
+      }
+    ],
+    "capture_service": [],
+    "capture_recovery": [
+      {
+        "samples": 58080,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 1,
+        "late_groups": 0
+      },
+      {
+        "samples": 58400,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 58560,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "capture_gaps": [
+      {
+        "next": 0,
+        "available": 1,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 0
+      }
+    ],
+    "capture_loss_limit": [],
+    "capture_reorder_pressure": [],
+    "capture_idle_session_failure": false,
+    "firmware": "flash37",
+    "bench_endpoint": "after_idle_fix",
+    "logs_sha256": {
+      "result.json": "5f6bcf68c369a0c99efc977eef45445e3cecf0dc4d5c51c185e19559b10e86c1",
+      "events.jsonl": "1efeea67e3ea1bccb691d11646f8c90c72b63bb4e57d110b9fc88638306f4aed",
+      "native.log": "a20bd9c105ff1789f5ccbff2fdd757751a17bea26eb0e4ed0942a6e7ad554e69",
+      "serial.log": "1da178b2287d940dd165f6eec7de6ed2c4c5aa84fa7c726d90cb24f445dde896"
+    }
+  }
+}

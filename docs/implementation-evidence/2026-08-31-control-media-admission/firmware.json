@@ -1,0 +1,11 @@
+{
+  "image_sha256": "e10d61e4fb15a416a8dadcdd23b420e637a5def368b4e03f40048fb21555cf74",
+  "changed_offset": 65536,
+  "changed_span": 3432448,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "[host] uptime heartbeat; free heap:",
+  "image_bytes": 3428400,
+  "board_identity_matches": true
+}

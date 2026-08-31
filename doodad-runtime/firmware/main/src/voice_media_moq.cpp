@@ -134,6 +134,12 @@ void log_publisher_stats(Owner& o) {
             static_cast<unsigned long long>(endpoint.open_local_blocked),
             static_cast<unsigned long long>(endpoint.open_credit_blocked),
             static_cast<unsigned long long>(endpoint.write_blocks_blocked),endpoint.blocked_stopped_high);
+        ESP_LOGI(kTag,"owner timing at_ms=%llu gap_us=%llu service_us=%llu transport_us=%llu other_us=%llu wait_us=%llu rx_us=%llu tx_us=%llu dispatch_us=%llu",
+            static_cast<unsigned long long>(endpoint.slowest_at_ms),static_cast<unsigned long long>(endpoint.slowest_gap_us),
+            static_cast<unsigned long long>(endpoint.slowest_service_us),static_cast<unsigned long long>(endpoint.slowest_transport_us),
+            static_cast<unsigned long long>(endpoint.slowest_other_us),static_cast<unsigned long long>(endpoint.slowest_wait_us),
+            static_cast<unsigned long long>(endpoint.slowest_rx_us),static_cast<unsigned long long>(endpoint.slowest_tx_us),
+            static_cast<unsigned long long>(endpoint.slowest_dispatch_us));
         ESP_LOGI(kTag,"QUIC heap live=%u peak=%u limit=%u blocks=%u allocations=%llu frees=%llu denied=%llu failures=%llu",
             static_cast<unsigned>(endpoint.quic_heap_live),static_cast<unsigned>(endpoint.quic_heap_peak),
             static_cast<unsigned>(endpoint.quic_heap_limit),static_cast<unsigned>(endpoint.quic_heap_blocks),

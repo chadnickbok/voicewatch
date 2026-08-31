@@ -1,0 +1,33 @@
+{
+  "root_base_revision": "99e9580e595318d3e1cbf4c0651c2c6592f498c0",
+  "library_base_revision": "0997a6768b23982d9ee344e3cc56ee38c6856786",
+  "dirty_worktree": true,
+  "library_files_sha256": {
+    "components/esp_moq/src/service.c": "461fd293ffa6d30c6a2f700498c8a5c050e02ab7b85b69f7b8035e453f472b74",
+    "components/esp_moq/include/esp_moq/service.h": "ca6d250f9fb29444b7a96a978959286d51a8afaa1a538b9d5899433ab1ae9466",
+    "components/esp_moq_endpoint/src/endpoint.c": "465430e40396a2534de0a59228fdd70148b5b343b967571b1313d54dd5ec6270",
+    "components/esp_moq_endpoint/include/esp_moq/endpoint.h": "438696ac447912940f44548db925fc729a643fb2dea491f4da92cb436436b09c",
+    "components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "32fcc903cba52fdaa5cb284698478be5808f7813bde1142807cef064be4970bf",
+    "components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "0b108a9fe6eb83d62131a12afd8dbcef809a5bf317f4473449b922ad6d6b689f",
+    "tests/host/test_service.c": "f4688aa42f8d44d91f5ffb9cc311949b184413387d3a52723f3456d179e331e1",
+    "tests/adapter/test_adapter.c": "ab8b24b640edf78ae86a5454dda917b3e39dfb88aae4bdca2392a7aca35d071b",
+    "tests/interop/service_client.c": "999c482e1674812869fcb2a339a57db284cccc6118af85967221b73001890385",
+    "docs/owned-service.md": "e43b89a87d487cec48ecd636b84fa745e1c776565e7e1d346e674357857cd514",
+    "docs/transport-backend.md": "c7c72136d47d30fb1aab2a017f5f8ec2334fc3d19710379eebb7841c0a743631"
+  },
+  "root_files_sha256": {
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "9165486d9bd635019c804dd4488944d8f4b55b055a499d0b1e16872b20b18b80",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "b4c6582a0f5fd11da18b047339b7e4e669e8a5c6bf46a3bc787b9a4a7994ce9d",
+    "doodad-runtime/services/live-agent/tools/moq_speech_quality.py": "2266ba66621af92f37e682a974507beeab3ee5dd0cd5811c18c39fb9fdf32ac5",
+    "doodad-runtime/services/live-agent/tools/moq_udp_impairment.py": "19e432cda8ba9be5bbc6525cec86f89420275058b240231a64d7e07b31363043"
+  },
+  "native_timing_client_sha256": "e445b1040c5a8533b53718986dd76289a9478ce2c0d005cd1177cb1d23b2009f",
+  "native_final_client_sha256": "b4bdac75dbf8030e5ee16fc792c55f364c5365607362967dd29c336fc35f3b38",
+  "native_reference_peer_sha256": "6218b8552125f58848a25681d113c2e16769c23524c6a892a190e51a85814812",
+  "bench_endpoint_sha256": "f65044d7d013e97590f082393f82f142ccbec6b60fa41e99ff13303bc284257c",
+  "firmware_sha256": "c32c54d20029ea75d4ba1d016b268dbcd844cdfccf5663ba502c382e4d27b78f",
+  "elf_sha256": "f532c7b21271146cb80e35aa333392ec0ad822f03fa34ac0db3a2a422dbaa304",
+  "firmware_bytes": 3429680,
+  "five_ms_limit_enabled": false,
+  "rejected_experiment_patch_sha256": "e65d13381eb254378bda2b6ce58db93e2c42541af45df55b9a3b66833807ee52"
+}

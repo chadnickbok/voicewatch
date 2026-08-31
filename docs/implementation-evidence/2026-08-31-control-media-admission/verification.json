@@ -1,0 +1,39 @@
+{
+  "engine_regression_failed_before": true,
+  "host_tests_pass": true,
+  "adapter_tests_pass": true,
+  "engine_ubsan_pass": true,
+  "engine_ubsan_zlib_instrumented": false,
+  "full_asan_ubsan_refreshed": false,
+  "native_cases": 18,
+  "native_matrix_pass": true,
+  "firmware_build_pass": true,
+  "app0_flash_and_heartbeat_pass": true,
+  "capture_idle_actor_regression_failed_before": true,
+  "native_host_tests_passed": 28,
+  "impaired_speech_pass": false,
+  "clean_before_host_fix_pass": true,
+  "clean_after_host_fix_pass": true,
+  "permanent_enrollment_revision": 119,
+  "permanent_session_ready_observed": true,
+  "permanent_ready_monotonic_ms": 6656229.785,
+  "persistent_service_pids": {
+    "moq": 45731,
+    "legacy": 2759
+  },
+  "production_host_updated": false,
+  "firmware_restoration_required": false,
+  "logs_sha256": {
+    "control-admission-before": "7d49c2057fca306627117f0ce18d8c1f90005634576aa1b971966c443f355829",
+    "control-admission-host": "80d779eac133d1ee81bfdf5327e221e39dc362244d67da5ab045a396a8c0dffa",
+    "control-admission-boundaries": "77a3e60bc5e35cd818de5712b3adcb304157e9063ef15b1d954a4d1ca067043b",
+    "control-admission-adapter": "073b44c8d9f90b0790edb054e12f41232df43d059b4dc58e4e41416c79512fc2",
+    "control-admission-ubsan": "850fa8b88b90303d23dd3eca8a2f93ca7292f8bdb034e5f7c19d045a0149c2b3",
+    "control-admission-native-build": "a44394bbfb8bd001801e950935fe9d619a0d3175af6c935ad2561ed96ba0c15c",
+    "control-admission-native-matrix": "044dddc3e523ca701b3942f131825478d277e3953cfbbd2f913526cae46e41a0",
+    "control-admission-firmware-build": "fe8a4b464aaa12ae7154c7698958031a140fbced728bb003d492470aac2372b7",
+    "capture-idle-before": "dc580b9152fa111bdec4b3976a929020e431959ac0275d5430996164fbbc6c8a",
+    "capture-idle-tests": "3a9474da500f3eb11a9d1db7bfa65bc953751dadd80415492ce34f2790f3ae9b",
+    "capture-idle-build": "59639588a6f1826f129cbcd121edc07279dab94786f5fa5bde6b3439b2e845cc"
+  }
+}

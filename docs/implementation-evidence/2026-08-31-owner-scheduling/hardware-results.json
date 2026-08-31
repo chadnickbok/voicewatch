@@ -1,0 +1,2385 @@
+{
+  "p82": {
+    "pass_": true,
+    "microphone_samples": 185656,
+    "microphone_peak": 7355,
+    "microphone_rms": 481.31,
+    "capture_loss_failures": 1,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "fixture_quality_pass": true,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "capture_recovery_ms": 836,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 58079,
+    "provider_pipeline_reconnected": true,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 0,
+        "word_error_rate": 0.0,
+        "max_word_errors": 1,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": true
+      }
+    ],
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 58720,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "microphone_samples": 58240,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "microphone_samples": 64960,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      }
+    ],
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 1345,
+          "dropped": 116,
+          "forwarded": 1229,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1296,
+          "dropped": 56,
+          "forwarded": 1240,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 11,
+      "closed": true,
+      "timing": {
+        "uplink": {
+          "max_forward_lateness_us": 3179,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        },
+        "downlink": {
+          "max_forward_lateness_us": 10806,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        }
+      },
+      "event_loop_max_lag_us": 63527,
+      "outage_dropped": {
+        "uplink": 36,
+        "downlink": 0
+      }
+    },
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 1,
+        "retired": 1,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 48,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 40,
+        "retired": 14,
+        "last_first": 60,
+        "last_end": 61,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 5,
+        "expired": 72,
+        "failed": 0,
+        "cancelled": 11,
+        "submitted": 225,
+        "retired": 165,
+        "last_first": 248,
+        "last_end": 249,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 5,
+        "expired": 86,
+        "failed": 0,
+        "cancelled": 11,
+        "submitted": 409,
+        "retired": 336,
+        "last_first": 430,
+        "last_end": 431,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 5,
+        "expired": 104,
+        "failed": 0,
+        "cancelled": 11,
+        "submitted": 614,
+        "retired": 521,
+        "last_first": 612,
+        "last_end": 613,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 1,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 346,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 1,
+        "credit": 346,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 1,
+        "credit": 347,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 1,
+        "credit": 348,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "owner_timing": [
+      {
+        "at_ms": 102170,
+        "gap_us": 17194,
+        "service_us": 368,
+        "transport_us": 15995,
+        "other_us": 831,
+        "wait_us": 592,
+        "rx_us": 11538,
+        "tx_us": 3439,
+        "dispatch_us": 16
+      },
+      {
+        "at_ms": 106941,
+        "gap_us": 59913,
+        "service_us": 13808,
+        "transport_us": 45738,
+        "other_us": 367,
+        "wait_us": 1194,
+        "rx_us": 21245,
+        "tx_us": 22796,
+        "dispatch_us": 29
+      },
+      {
+        "at_ms": 109752,
+        "gap_us": 134973,
+        "service_us": 5013,
+        "transport_us": 118869,
+        "other_us": 11091,
+        "wait_us": 858,
+        "rx_us": 39610,
+        "tx_us": 77941,
+        "dispatch_us": 39
+      },
+      {
+        "at_ms": 120832,
+        "gap_us": 154917,
+        "service_us": 14373,
+        "transport_us": 140195,
+        "other_us": 349,
+        "wait_us": 546,
+        "rx_us": 42407,
+        "tx_us": 96487,
+        "dispatch_us": 40
+      },
+      {
+        "at_ms": 132096,
+        "gap_us": 156928,
+        "service_us": 14969,
+        "transport_us": 141262,
+        "other_us": 697,
+        "wait_us": 824,
+        "rx_us": 39735,
+        "tx_us": 100164,
+        "dispatch_us": 39
+      },
+      {
+        "at_ms": 148227,
+        "gap_us": 21518,
+        "service_us": 206,
+        "transport_us": 20716,
+        "other_us": 596,
+        "wait_us": 11120,
+        "rx_us": 6053,
+        "tx_us": 3200,
+        "dispatch_us": 24
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 25364,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 33,
+        "allocations": 59,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 44960,
+        "peak": 45592,
+        "limit": 131072,
+        "blocks": 42,
+        "allocations": 92,
+        "frees": 50,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 45008,
+        "peak": 45616,
+        "limit": 131072,
+        "blocks": 42,
+        "allocations": 104,
+        "frees": 62,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 46496,
+        "peak": 46944,
+        "limit": 131072,
+        "blocks": 45,
+        "allocations": 124,
+        "frees": 79,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 47120,
+        "peak": 47648,
+        "limit": 131072,
+        "blocks": 45,
+        "allocations": 148,
+        "frees": 103,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 28936,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 56,
+        "frees": 30,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 41149,
+        "concealed": 5,
+        "late": 5,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42748,
+        "network_stack": 6772,
+        "dns_stack": 2924
+      },
+      {
+        "samples": 41149,
+        "concealed": 3,
+        "late": 4,
+        "pressure": 0,
+        "silence": 1,
+        "audio_stack": 42732,
+        "network_stack": 6772,
+        "dns_stack": 2924
+      },
+      {
+        "samples": 41149,
+        "concealed": 4,
+        "late": 4,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42732,
+        "network_stack": 6772,
+        "dns_stack": 2924
+      }
+    ],
+    "capture_service": [
+      {
+        "encoded": 76,
+        "accepted": 76,
+        "sent": 71,
+        "stale": 0,
+        "queued": 5,
+        "high": 5,
+        "mic_drops": 0,
+        "poll_gap_ms": 59
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 58720,
+        "concealed": 2560,
+        "plc": 2560,
+        "lost_groups": 8,
+        "late_groups": 3
+      },
+      {
+        "samples": 58240,
+        "concealed": 960,
+        "plc": 960,
+        "lost_groups": 3,
+        "late_groups": 1
+      },
+      {
+        "samples": 64960,
+        "concealed": 1920,
+        "plc": 1920,
+        "lost_groups": 6,
+        "late_groups": 1
+      }
+    ],
+    "capture_gaps": [
+      {
+        "next": 153,
+        "available": 154,
+        "oldest_ms": 202,
+        "buffered": 8,
+        "samples": 23896
+      },
+      {
+        "next": 159,
+        "available": 160,
+        "oldest_ms": 201,
+        "buffered": 9,
+        "samples": 25816
+      },
+      {
+        "next": 203,
+        "available": 204,
+        "oldest_ms": 201,
+        "buffered": 6,
+        "samples": 39896
+      },
+      {
+        "next": 206,
+        "available": 207,
+        "oldest_ms": 201,
+        "buffered": 13,
+        "samples": 40856
+      },
+      {
+        "next": 234,
+        "available": 235,
+        "oldest_ms": 203,
+        "buffered": 6,
+        "samples": 49816
+      },
+      {
+        "next": 244,
+        "available": 245,
+        "oldest_ms": 201,
+        "buffered": 6,
+        "samples": 53016
+      },
+      {
+        "next": 248,
+        "available": 249,
+        "oldest_ms": 200,
+        "buffered": 8,
+        "samples": 54296
+      },
+      {
+        "next": 254,
+        "available": 255,
+        "oldest_ms": 201,
+        "buffered": 7,
+        "samples": 56216
+      },
+      {
+        "next": 327,
+        "available": 328,
+        "oldest_ms": 201,
+        "buffered": 11,
+        "samples": 20376
+      },
+      {
+        "next": 346,
+        "available": 347,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 26456
+      },
+      {
+        "next": 430,
+        "available": 431,
+        "oldest_ms": 202,
+        "buffered": 9,
+        "samples": 53336
+      },
+      {
+        "next": 463,
+        "available": 464,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 5016
+      },
+      {
+        "next": 487,
+        "available": 488,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 12696
+      },
+      {
+        "next": 497,
+        "available": 498,
+        "oldest_ms": 203,
+        "buffered": 6,
+        "samples": 15896
+      },
+      {
+        "next": 543,
+        "available": 544,
+        "oldest_ms": 202,
+        "buffered": 8,
+        "samples": 30616
+      },
+      {
+        "next": 597,
+        "available": 598,
+        "oldest_ms": 203,
+        "buffered": 8,
+        "samples": 47896
+      },
+      {
+        "next": 638,
+        "available": 639,
+        "oldest_ms": 202,
+        "buffered": 12,
+        "samples": 61016
+      }
+    ],
+    "capture_loss_limit": [],
+    "firmware": "flash38",
+    "five_ms_experiment": false,
+    "logs_sha256": {
+      "result.json": "90f1757705eb9fe6a261b468303658ea4e6b5c511f39bec1c2be92b7de231173",
+      "events.jsonl": "52b5ac6865ef18d5d532928d861983db1a6bef38de483c26c103fafac3d2d6d7",
+      "native.log": "53ab0ff1b46ba8cfbba1d62797c537efd26ac9fcdbf1a5266ba0d8b1e5d7c072",
+      "serial.log": "44fd2a0f81119eb7348a8d2b9b8c4755916fbbaf2b1e459041686249134021ab"
+    }
+  },
+  "p83": {
+    "pass_": false,
+    "microphone_samples": 62616,
+    "microphone_peak": 7214,
+    "microphone_rms": 357.51,
+    "capture_loss_failures": 1,
+    "stt_commits": 1,
+    "stt_completed_events": 1,
+    "fixture_quality_pass": false,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "capture_recovery_ms": 767,
+    "fixture_audio_restored": true,
+    "failure_type": "RuntimeError",
+    "elapsed_ms": 25623,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 1,
+        "word_errors": 5,
+        "word_error_rate": 0.83333,
+        "max_word_errors": 1,
+        "critical_phrase_matched": false,
+        "bounds_exceeded": false,
+        "pass_": false
+      }
+    ],
+    "turns": [],
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 397,
+          "dropped": 58,
+          "forwarded": 339,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 342,
+          "dropped": 17,
+          "forwarded": 325,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 11,
+      "closed": true,
+      "timing": {
+        "uplink": {
+          "max_forward_lateness_us": 8049,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        },
+        "downlink": {
+          "max_forward_lateness_us": 2113,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        }
+      },
+      "event_loop_max_lag_us": 59124,
+      "outage_dropped": {
+        "uplink": 38,
+        "downlink": 0
+      }
+    },
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 0,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 55,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 42,
+        "retired": 11,
+        "last_first": 63,
+        "last_end": 64,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 0,
+        "expired": 214,
+        "failed": 0,
+        "cancelled": 11,
+        "submitted": 199,
+        "retired": 25,
+        "last_first": 248,
+        "last_end": 249,
+        "last_code": 3
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 376,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 647,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "owner_timing": [
+      {
+        "at_ms": 77276,
+        "gap_us": 14329,
+        "service_us": 5981,
+        "transport_us": 8040,
+        "other_us": 308,
+        "wait_us": 472,
+        "rx_us": 2630,
+        "tx_us": 4638,
+        "dispatch_us": 19
+      },
+      {
+        "at_ms": 83277,
+        "gap_us": 55088,
+        "service_us": 14084,
+        "transport_us": 40614,
+        "other_us": 390,
+        "wait_us": 1084,
+        "rx_us": 6737,
+        "tx_us": 32237,
+        "dispatch_us": 34
+      },
+      {
+        "at_ms": 84646,
+        "gap_us": 74808,
+        "service_us": 3157,
+        "transport_us": 71282,
+        "other_us": 369,
+        "wait_us": 904,
+        "rx_us": 19550,
+        "tx_us": 38573,
+        "dispatch_us": 32
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24836,
+        "peak": 27512,
+        "limit": 131072,
+        "blocks": 31,
+        "allocations": 51,
+        "frees": 20,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 46928,
+        "peak": 47992,
+        "limit": 131072,
+        "blocks": 41,
+        "allocations": 84,
+        "frees": 43,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 56748,
+        "peak": 57276,
+        "limit": 131072,
+        "blocks": 45,
+        "allocations": 92,
+        "frees": 47,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 20573,
+        "concealed": 4,
+        "late": 4,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42652,
+        "network_stack": 6964,
+        "dns_stack": 2924
+      }
+    ],
+    "capture_service": [
+      {
+        "encoded": 76,
+        "accepted": 75,
+        "sent": 75,
+        "stale": 0,
+        "queued": 0,
+        "high": 3,
+        "mic_drops": 0,
+        "poll_gap_ms": 55
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 58560,
+        "concealed": 22080,
+        "plc": 22080,
+        "lost_groups": 70,
+        "late_groups": 0
+      }
+    ],
+    "capture_gaps": [
+      {
+        "next": 11,
+        "available": 13,
+        "oldest_ms": 203,
+        "buffered": 1,
+        "samples": 3096
+      },
+      {
+        "next": 76,
+        "available": 77,
+        "oldest_ms": 202,
+        "buffered": 6,
+        "samples": 0
+      },
+      {
+        "next": 81,
+        "available": 84,
+        "oldest_ms": 201,
+        "buffered": 9,
+        "samples": 1176
+      },
+      {
+        "next": 86,
+        "available": 87,
+        "oldest_ms": 201,
+        "buffered": 9,
+        "samples": 2776
+      },
+      {
+        "next": 94,
+        "available": 95,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 5336
+      },
+      {
+        "next": 98,
+        "available": 99,
+        "oldest_ms": 201,
+        "buffered": 7,
+        "samples": 6616
+      },
+      {
+        "next": 105,
+        "available": 106,
+        "oldest_ms": 200,
+        "buffered": 8,
+        "samples": 8856
+      },
+      {
+        "next": 113,
+        "available": 114,
+        "oldest_ms": 202,
+        "buffered": 7,
+        "samples": 11416
+      },
+      {
+        "next": 120,
+        "available": 124,
+        "oldest_ms": 202,
+        "buffered": 5,
+        "samples": 13656
+      },
+      {
+        "next": 127,
+        "available": 131,
+        "oldest_ms": 201,
+        "buffered": 6,
+        "samples": 15896
+      },
+      {
+        "next": 136,
+        "available": 141,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 18776
+      },
+      {
+        "next": 148,
+        "available": 151,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 22616
+      },
+      {
+        "next": 157,
+        "available": 160,
+        "oldest_ms": 203,
+        "buffered": 5,
+        "samples": 25496
+      },
+      {
+        "next": 163,
+        "available": 166,
+        "oldest_ms": 202,
+        "buffered": 5,
+        "samples": 27416
+      },
+      {
+        "next": 168,
+        "available": 173,
+        "oldest_ms": 202,
+        "buffered": 7,
+        "samples": 29016
+      },
+      {
+        "next": 176,
+        "available": 177,
+        "oldest_ms": 202,
+        "buffered": 5,
+        "samples": 31576
+      },
+      {
+        "next": 179,
+        "available": 182,
+        "oldest_ms": 201,
+        "buffered": 6,
+        "samples": 32536
+      },
+      {
+        "next": 185,
+        "available": 188,
+        "oldest_ms": 202,
+        "buffered": 7,
+        "samples": 34456
+      },
+      {
+        "next": 191,
+        "available": 193,
+        "oldest_ms": 203,
+        "buffered": 8,
+        "samples": 36376
+      },
+      {
+        "next": 197,
+        "available": 198,
+        "oldest_ms": 202,
+        "buffered": 7,
+        "samples": 38296
+      },
+      {
+        "next": 201,
+        "available": 203,
+        "oldest_ms": 201,
+        "buffered": 7,
+        "samples": 39576
+      },
+      {
+        "next": 205,
+        "available": 206,
+        "oldest_ms": 200,
+        "buffered": 7,
+        "samples": 40856
+      },
+      {
+        "next": 208,
+        "available": 210,
+        "oldest_ms": 200,
+        "buffered": 7,
+        "samples": 41816
+      },
+      {
+        "next": 215,
+        "available": 216,
+        "oldest_ms": 203,
+        "buffered": 6,
+        "samples": 44056
+      },
+      {
+        "next": 221,
+        "available": 222,
+        "oldest_ms": 201,
+        "buffered": 4,
+        "samples": 45976
+      },
+      {
+        "next": 223,
+        "available": 227,
+        "oldest_ms": 202,
+        "buffered": 6,
+        "samples": 46616
+      },
+      {
+        "next": 228,
+        "available": 229,
+        "oldest_ms": 202,
+        "buffered": 6,
+        "samples": 48216
+      },
+      {
+        "next": 234,
+        "available": 236,
+        "oldest_ms": 202,
+        "buffered": 6,
+        "samples": 50136
+      },
+      {
+        "next": 239,
+        "available": 240,
+        "oldest_ms": 202,
+        "buffered": 4,
+        "samples": 51736
+      },
+      {
+        "next": 243,
+        "available": 251,
+        "oldest_ms": 200,
+        "buffered": 7,
+        "samples": 53016
+      },
+      {
+        "next": 252,
+        "available": 253,
+        "oldest_ms": 202,
+        "buffered": 8,
+        "samples": 55896
+      }
+    ],
+    "capture_loss_limit": [],
+    "firmware": "flash39",
+    "five_ms_experiment": true,
+    "logs_sha256": {
+      "result.json": "f99340bb98d1d8bbc512fc5c9898662e2880f7464a9b97fce36b88f2f28cf006",
+      "events.jsonl": "dace1780ca252f5a280f3fd7a5edca20434edcb3a9926da665601ccc98f97b71",
+      "native.log": "dfd847ac836082e48a7484a7be1dbbb382f3daba9ca703dd3e401f4329673880",
+      "serial.log": "f37aa8790b08d24154901a9ed7bb577085560757fb8af020f61007acb1f831bc"
+    }
+  },
+  "p84": {
+    "pass_": false,
+    "microphone_samples": 123520,
+    "microphone_peak": 7089,
+    "microphone_rms": 464.5,
+    "capture_loss_failures": 0,
+    "stt_commits": 2,
+    "stt_completed_events": 2,
+    "fixture_quality_pass": false,
+    "fixture_audio_restored": true,
+    "failure_type": "RuntimeError",
+    "elapsed_ms": 31938,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 1,
+        "word_error_rate": 0.16667,
+        "max_word_errors": 0,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": false
+      }
+    ],
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 65120,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      }
+    ],
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 0,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 29,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 206,
+        "retired": 170,
+        "last_first": 112,
+        "last_end": 113,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 0,
+        "expired": 54,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 389,
+        "retired": 330,
+        "last_first": 324,
+        "last_end": 325,
+        "last_code": 3
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 22,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 48,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "owner_timing": [
+      {
+        "at_ms": 128375,
+        "gap_us": 17494,
+        "service_us": 1255,
+        "transport_us": 15938,
+        "other_us": 301,
+        "wait_us": 513,
+        "rx_us": 6275,
+        "tx_us": 8680,
+        "dispatch_us": 26
+      },
+      {
+        "at_ms": 133258,
+        "gap_us": 73363,
+        "service_us": 13061,
+        "transport_us": 59928,
+        "other_us": 374,
+        "wait_us": 563,
+        "rx_us": 18943,
+        "tx_us": 39453,
+        "dispatch_us": 34
+      },
+      {
+        "at_ms": 133258,
+        "gap_us": 73363,
+        "service_us": 13061,
+        "transport_us": 59928,
+        "other_us": 374,
+        "wait_us": 563,
+        "rx_us": 18943,
+        "tx_us": 39453,
+        "dispatch_us": 34
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24276,
+        "peak": 27512,
+        "limit": 131072,
+        "blocks": 28,
+        "allocations": 48,
+        "frees": 20,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 29740,
+        "peak": 29740,
+        "limit": 131072,
+        "blocks": 28,
+        "allocations": 55,
+        "frees": 27,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 31148,
+        "peak": 31148,
+        "limit": 131072,
+        "blocks": 30,
+        "allocations": 60,
+        "frees": 30,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 41149,
+        "concealed": 3,
+        "late": 8,
+        "pressure": 0,
+        "silence": 5,
+        "audio_stack": 42652,
+        "network_stack": 6660,
+        "dns_stack": 2924
+      }
+    ],
+    "capture_service": [],
+    "capture_recovery": [
+      {
+        "samples": 65120,
+        "concealed": 3200,
+        "plc": 3200,
+        "lost_groups": 10,
+        "late_groups": 0
+      },
+      {
+        "samples": 58400,
+        "concealed": 6080,
+        "plc": 6080,
+        "lost_groups": 19,
+        "late_groups": 1
+      }
+    ],
+    "capture_gaps": [
+      {
+        "next": 70,
+        "available": 71,
+        "oldest_ms": 200,
+        "buffered": 10,
+        "samples": 21976
+      },
+      {
+        "next": 81,
+        "available": 82,
+        "oldest_ms": 200,
+        "buffered": 7,
+        "samples": 25496
+      },
+      {
+        "next": 90,
+        "available": 91,
+        "oldest_ms": 201,
+        "buffered": 6,
+        "samples": 28376
+      },
+      {
+        "next": 92,
+        "available": 97,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 29016
+      },
+      {
+        "next": 107,
+        "available": 108,
+        "oldest_ms": 200,
+        "buffered": 9,
+        "samples": 33816
+      },
+      {
+        "next": 111,
+        "available": 112,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 35096
+      },
+      {
+        "next": 237,
+        "available": 238,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 9816
+      },
+      {
+        "next": 249,
+        "available": 251,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 13656
+      },
+      {
+        "next": 252,
+        "available": 253,
+        "oldest_ms": 202,
+        "buffered": 8,
+        "samples": 14616
+      },
+      {
+        "next": 254,
+        "available": 255,
+        "oldest_ms": 203,
+        "buffered": 7,
+        "samples": 15256
+      },
+      {
+        "next": 266,
+        "available": 267,
+        "oldest_ms": 201,
+        "buffered": 4,
+        "samples": 19096
+      },
+      {
+        "next": 271,
+        "available": 277,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 20696
+      },
+      {
+        "next": 282,
+        "available": 283,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 24216
+      },
+      {
+        "next": 285,
+        "available": 286,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 25176
+      },
+      {
+        "next": 288,
+        "available": 289,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 26136
+      },
+      {
+        "next": 297,
+        "available": 298,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 29016
+      },
+      {
+        "next": 300,
+        "available": 301,
+        "oldest_ms": 200,
+        "buffered": 9,
+        "samples": 29976
+      },
+      {
+        "next": 309,
+        "available": 310,
+        "oldest_ms": 203,
+        "buffered": 9,
+        "samples": 32856
+      },
+      {
+        "next": 311,
+        "available": 312,
+        "oldest_ms": 201,
+        "buffered": 11,
+        "samples": 33496
+      }
+    ],
+    "capture_loss_limit": [],
+    "firmware": "flash39",
+    "five_ms_experiment": true,
+    "logs_sha256": {
+      "result.json": "4b6fbcb23e5b436a2bdcd36e8f6d5a5929cadc93754b91467a771597b8ecfeae",
+      "events.jsonl": "cfc93cb5d9ebcc394255fb69826192f6e154960b979dbe2f7816b4a170bf67eb",
+      "native.log": "d6fc893046f95012bcba6b060c7de9bb3adac7fd30c4f5a192ca6d81ea9ecc51",
+      "serial.log": "f6482a1960378387b41a91709cd4052902a78bd0083a8f425222c4d815f99255"
+    }
+  },
+  "p85": {
+    "pass_": true,
+    "microphone_samples": 179896,
+    "microphone_peak": 7428,
+    "microphone_rms": 477.85,
+    "capture_loss_failures": 1,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "fixture_quality_pass": true,
+    "capture_loss_aborted_without_commit": true,
+    "capture_outage_ms": 800,
+    "capture_recovery_ms": 655,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 57711,
+    "provider_pipeline_reconnected": true,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 0,
+        "word_error_rate": 0.0,
+        "max_word_errors": 1,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": true
+      }
+    ],
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 58400,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "microphone_samples": 58880,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "microphone_samples": 58240,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 1,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      }
+    ],
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 1316,
+          "dropped": 113,
+          "forwarded": 1203,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1273,
+          "dropped": 56,
+          "forwarded": 1217,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 12,
+      "closed": true,
+      "timing": {
+        "uplink": {
+          "max_forward_lateness_us": 10742,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        },
+        "downlink": {
+          "max_forward_lateness_us": 11173,
+          "late_over_20ms": 0,
+          "late_over_100ms": 0
+        }
+      },
+      "event_loop_max_lag_us": 64905,
+      "outage_dropped": {
+        "uplink": 34,
+        "downlink": 0
+      }
+    },
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 1,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 48,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 37,
+        "retired": 13,
+        "last_first": 60,
+        "last_end": 61,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 4,
+        "expired": 57,
+        "failed": 0,
+        "cancelled": 11,
+        "submitted": 221,
+        "retired": 180,
+        "last_first": 246,
+        "last_end": 247,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 4,
+        "expired": 75,
+        "failed": 0,
+        "cancelled": 11,
+        "submitted": 407,
+        "retired": 347,
+        "last_first": 430,
+        "last_end": 431,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 6,
+        "expired": 102,
+        "failed": 0,
+        "cancelled": 11,
+        "submitted": 586,
+        "retired": 497,
+        "last_first": 609,
+        "last_end": 610,
+        "last_code": 3
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 1,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 371,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 1,
+        "credit": 372,
+        "blocks": 0,
+        "stopped": 14
+      },
+      {
+        "local": 1,
+        "credit": 373,
+        "blocks": 0,
+        "stopped": 14
+      },
+      {
+        "local": 1,
+        "credit": 378,
+        "blocks": 0,
+        "stopped": 14
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "owner_timing": [
+      {
+        "at_ms": 79325,
+        "gap_us": 17122,
+        "service_us": 308,
+        "transport_us": 16464,
+        "other_us": 350,
+        "wait_us": 9370,
+        "rx_us": 4289,
+        "tx_us": 2598,
+        "dispatch_us": 14
+      },
+      {
+        "at_ms": 84303,
+        "gap_us": 60100,
+        "service_us": 2437,
+        "transport_us": 57054,
+        "other_us": 609,
+        "wait_us": 8851,
+        "rx_us": 23120,
+        "tx_us": 24235,
+        "dispatch_us": 20
+      },
+      {
+        "at_ms": 86616,
+        "gap_us": 139451,
+        "service_us": 4635,
+        "transport_us": 134196,
+        "other_us": 620,
+        "wait_us": 899,
+        "rx_us": 40196,
+        "tx_us": 92282,
+        "dispatch_us": 34
+      },
+      {
+        "at_ms": 98420,
+        "gap_us": 142594,
+        "service_us": 3699,
+        "transport_us": 138530,
+        "other_us": 365,
+        "wait_us": 938,
+        "rx_us": 53979,
+        "tx_us": 82708,
+        "dispatch_us": 24
+      },
+      {
+        "at_ms": 109931,
+        "gap_us": 159513,
+        "service_us": 12325,
+        "transport_us": 146504,
+        "other_us": 684,
+        "wait_us": 836,
+        "rx_us": 74504,
+        "tx_us": 69867,
+        "dispatch_us": 37
+      },
+      {
+        "at_ms": 124140,
+        "gap_us": 19333,
+        "service_us": 6263,
+        "transport_us": 12730,
+        "other_us": 340,
+        "wait_us": 475,
+        "rx_us": 5362,
+        "tx_us": 6590,
+        "dispatch_us": 25
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 45624,
+        "peak": 45624,
+        "limit": 131072,
+        "blocks": 58,
+        "allocations": 92,
+        "frees": 34,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 45908,
+        "peak": 46472,
+        "limit": 131072,
+        "blocks": 44,
+        "allocations": 107,
+        "frees": 63,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 46912,
+        "peak": 47360,
+        "limit": 131072,
+        "blocks": 45,
+        "allocations": 128,
+        "frees": 83,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 47536,
+        "peak": 48416,
+        "limit": 131072,
+        "blocks": 45,
+        "allocations": 162,
+        "frees": 117,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24404,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 33,
+        "allocations": 59,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 42360,
+        "concealed": 7,
+        "late": 7,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42652,
+        "network_stack": 6972,
+        "dns_stack": 2916
+      },
+      {
+        "samples": 42360,
+        "concealed": 6,
+        "late": 6,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42652,
+        "network_stack": 6972,
+        "dns_stack": 2916
+      },
+      {
+        "samples": 43570,
+        "concealed": 5,
+        "late": 5,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42652,
+        "network_stack": 6972,
+        "dns_stack": 2916
+      }
+    ],
+    "capture_service": [
+      {
+        "encoded": 76,
+        "accepted": 75,
+        "sent": 71,
+        "stale": 0,
+        "queued": 4,
+        "high": 4,
+        "mic_drops": 0,
+        "poll_gap_ms": 60
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 58400,
+        "concealed": 1600,
+        "plc": 1600,
+        "lost_groups": 5,
+        "late_groups": 2
+      },
+      {
+        "samples": 58880,
+        "concealed": 2240,
+        "plc": 2240,
+        "lost_groups": 7,
+        "late_groups": 1
+      },
+      {
+        "samples": 58240,
+        "concealed": 4160,
+        "plc": 4160,
+        "lost_groups": 13,
+        "late_groups": 6
+      }
+    ],
+    "capture_gaps": [
+      {
+        "next": 0,
+        "available": 1,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 0
+      },
+      {
+        "next": 11,
+        "available": 12,
+        "oldest_ms": 203,
+        "buffered": 2,
+        "samples": 3096
+      },
+      {
+        "next": 13,
+        "available": 14,
+        "oldest_ms": 201,
+        "buffered": 1,
+        "samples": 3736
+      },
+      {
+        "next": 82,
+        "available": 83,
+        "oldest_ms": 202,
+        "buffered": 9,
+        "samples": 1496
+      },
+      {
+        "next": 147,
+        "available": 148,
+        "oldest_ms": 201,
+        "buffered": 9,
+        "samples": 22296
+      },
+      {
+        "next": 153,
+        "available": 154,
+        "oldest_ms": 200,
+        "buffered": 10,
+        "samples": 24216
+      },
+      {
+        "next": 207,
+        "available": 208,
+        "oldest_ms": 203,
+        "buffered": 8,
+        "samples": 41496
+      },
+      {
+        "next": 218,
+        "available": 219,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 45016
+      },
+      {
+        "next": 286,
+        "available": 287,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 7896
+      },
+      {
+        "next": 309,
+        "available": 310,
+        "oldest_ms": 202,
+        "buffered": 11,
+        "samples": 15256
+      },
+      {
+        "next": 322,
+        "available": 323,
+        "oldest_ms": 201,
+        "buffered": 9,
+        "samples": 19416
+      },
+      {
+        "next": 329,
+        "available": 330,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 21656
+      },
+      {
+        "next": 347,
+        "available": 348,
+        "oldest_ms": 201,
+        "buffered": 9,
+        "samples": 27416
+      },
+      {
+        "next": 386,
+        "available": 387,
+        "oldest_ms": 200,
+        "buffered": 15,
+        "samples": 39896
+      },
+      {
+        "next": 430,
+        "available": 431,
+        "oldest_ms": 201,
+        "buffered": 10,
+        "samples": 53976
+      },
+      {
+        "next": 448,
+        "available": 449,
+        "oldest_ms": 202,
+        "buffered": 9,
+        "samples": 216
+      },
+      {
+        "next": 463,
+        "available": 464,
+        "oldest_ms": 202,
+        "buffered": 8,
+        "samples": 5016
+      },
+      {
+        "next": 490,
+        "available": 491,
+        "oldest_ms": 202,
+        "buffered": 6,
+        "samples": 13656
+      },
+      {
+        "next": 506,
+        "available": 508,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 18776
+      },
+      {
+        "next": 532,
+        "available": 533,
+        "oldest_ms": 203,
+        "buffered": 8,
+        "samples": 27096
+      },
+      {
+        "next": 536,
+        "available": 537,
+        "oldest_ms": 202,
+        "buffered": 10,
+        "samples": 28376
+      },
+      {
+        "next": 554,
+        "available": 555,
+        "oldest_ms": 200,
+        "buffered": 10,
+        "samples": 34136
+      },
+      {
+        "next": 560,
+        "available": 561,
+        "oldest_ms": 203,
+        "buffered": 11,
+        "samples": 36056
+      },
+      {
+        "next": 566,
+        "available": 567,
+        "oldest_ms": 205,
+        "buffered": 6,
+        "samples": 37976
+      },
+      {
+        "next": 594,
+        "available": 595,
+        "oldest_ms": 201,
+        "buffered": 8,
+        "samples": 46936
+      },
+      {
+        "next": 601,
+        "available": 602,
+        "oldest_ms": 202,
+        "buffered": 7,
+        "samples": 49176
+      },
+      {
+        "next": 609,
+        "available": 610,
+        "oldest_ms": 202,
+        "buffered": 11,
+        "samples": 51736
+      }
+    ],
+    "capture_loss_limit": [],
+    "firmware": "flash40",
+    "five_ms_experiment": false,
+    "logs_sha256": {
+      "result.json": "cd8a5c1de8ad63442bb92c150ec157cdd8f95200013f085a8d971d65c10da373",
+      "events.jsonl": "8455c80ca9c33b2d667907ab263c5685f97cb32d954bedc9ac442116bd4cab6a",
+      "native.log": "d0c491fa4d9832745f06354dc0b2c81d430b16bdecc4b17e9794471b352346ca",
+      "serial.log": "692ceefa06f60c04be45b1545b9f35a8e9c392bf00352473f5fd0262a3bb2249"
+    }
+  },
+  "p86": {
+    "pass_": true,
+    "microphone_samples": 174720,
+    "microphone_peak": 7428,
+    "microphone_rms": 500.13,
+    "capture_loss_failures": 0,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "fixture_quality_pass": true,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 51850,
+    "provider_pipeline_reconnected": true,
+    "fixture_quality": [
+      {
+        "policy_version": 1,
+        "reference_words": 6,
+        "hypothesis_words": 6,
+        "word_errors": 0,
+        "word_error_rate": 0.0,
+        "max_word_errors": 0,
+        "critical_phrase_matched": true,
+        "bounds_exceeded": false,
+        "pass_": true
+      }
+    ],
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 57600,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 2,
+        "microphone_samples": 58560,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      },
+      {
+        "round": 3,
+        "microphone_samples": 58560,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 44780,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "fixture_quality_pass": true,
+        "spoken_history_messages_added": 1,
+        "fixture_quality": [
+          {
+            "policy_version": 1,
+            "reference_words": 6,
+            "hypothesis_words": 6,
+            "word_errors": 0,
+            "word_error_rate": 0.0,
+            "max_word_errors": 0,
+            "critical_phrase_matched": true,
+            "bounds_exceeded": false,
+            "pass_": true
+          }
+        ]
+      }
+    ],
+    "publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 0,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 183,
+        "retired": 179,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 368,
+        "retired": 365,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 553,
+        "retired": 550,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 0,
+        "retired": 0,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "transport_pressure": [
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      },
+      {
+        "local": 0,
+        "credit": 0,
+        "blocks": 0,
+        "stopped": 0
+      }
+    ],
+    "owner_timing": [
+      {
+        "at_ms": 145515,
+        "gap_us": 28824,
+        "service_us": 6529,
+        "transport_us": 21936,
+        "other_us": 359,
+        "wait_us": 979,
+        "rx_us": 11271,
+        "tx_us": 9345,
+        "dispatch_us": 16
+      },
+      {
+        "at_ms": 150659,
+        "gap_us": 156681,
+        "service_us": 15597,
+        "transport_us": 140448,
+        "other_us": 636,
+        "wait_us": 640,
+        "rx_us": 48015,
+        "tx_us": 81774,
+        "dispatch_us": 32
+      },
+      {
+        "at_ms": 161244,
+        "gap_us": 161101,
+        "service_us": 16202,
+        "transport_us": 144494,
+        "other_us": 405,
+        "wait_us": 904,
+        "rx_us": 58596,
+        "tx_us": 84609,
+        "dispatch_us": 27
+      },
+      {
+        "at_ms": 161244,
+        "gap_us": 161101,
+        "service_us": 16202,
+        "transport_us": 144494,
+        "other_us": 405,
+        "wait_us": 904,
+        "rx_us": 58596,
+        "tx_us": 84609,
+        "dispatch_us": 27
+      },
+      {
+        "at_ms": 186069,
+        "gap_us": 25563,
+        "service_us": 6155,
+        "transport_us": 18967,
+        "other_us": 441,
+        "wait_us": 549,
+        "rx_us": 11691,
+        "tx_us": 6341,
+        "dispatch_us": 22
+      }
+    ],
+    "quic_heap": [
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 56,
+        "frees": 30,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 59,
+        "frees": 33,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24092,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 26,
+        "allocations": 61,
+        "frees": 35,
+        "denied": 0,
+        "failures": 0
+      },
+      {
+        "live": 24308,
+        "peak": 30344,
+        "limit": 131072,
+        "blocks": 29,
+        "allocations": 55,
+        "frees": 26,
+        "denied": 0,
+        "failures": 0
+      }
+    ],
+    "playout": [
+      {
+        "samples": 41149,
+        "concealed": 1,
+        "late": 1,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42652,
+        "network_stack": 6972,
+        "dns_stack": 2868
+      },
+      {
+        "samples": 41149,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42652,
+        "network_stack": 6972,
+        "dns_stack": 2868
+      },
+      {
+        "samples": 44780,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0,
+        "silence": 0,
+        "audio_stack": 42652,
+        "network_stack": 6972,
+        "dns_stack": 2868
+      }
+    ],
+    "capture_service": [],
+    "capture_recovery": [
+      {
+        "samples": 57600,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 58560,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 58560,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "capture_gaps": [],
+    "capture_loss_limit": [],
+    "firmware": "flash40",
+    "five_ms_experiment": false,
+    "logs_sha256": {
+      "result.json": "3e96b16d2f86818a763b8c2600751f5278d8528e1873d164f87469c4d5ecdc85",
+      "events.jsonl": "25cecd056b4a148132c0be2330f0b01a8470ea5dd178566fa4643d1af6957106",
+      "native.log": "6d854f6e335717069a9dee29dc677db121c125de893ce6150e839d5d1621e837",
+      "serial.log": "4581ee7a9933743845b3bc3a3ed0fb470acaafff44456901ffc33c78270e50e7"
+    }
+  }
+}

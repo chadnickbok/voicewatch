@@ -5,7 +5,61 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: submitted FIN no longer blocks fresh audio admission
+## Latest checkpoint: queue age uses current time; final impaired run passes
+
+The service previously stamped newly queued audio with its network owner's last
+tick. A deterministic 210 ms owner pause reproduces fresh Opus and terminal-tail
+packets being incorrectly discarded. Queue insertion and age checks now use a
+required monotonic clock callback, supplied by the endpoint. RX lease ages also
+advance without owner steps. The 200 ms age policy and queue capacities are unchanged.
+Host/adapter tests, service-only UBSan and 18 native interop/security cases pass.
+
+New wall-time phase snapshots show long loops inside backend TX/RX work, without
+proving whether execution or task preemption dominates. A five-millisecond packet
+budget reduced the recorded gaps but failed impaired and clean speech checks;
+it is removed and preserved as a rejected experiment, not adopted as a fix.
+
+Final flash40 retains only the queue-clock correction and diagnostics. p85 passes
+three complete turns with zero word errors under 5% loss, 120 ms added RTT and an
+800 ms outage, recovering in 655 ms. Clean p86 also passes three zero-error turns
+without lost/late capture groups or concealment. Maximum owner gaps still reach
+about 160 ms; these short runs do not close the complete impairment or scheduling
+gates. See [the clock, timing and experiment evidence](implementation-evidence/2026-08-31-owner-scheduling/README.md).
+
+Flash40 remains installed after an app0-only write and shell heartbeat. Permanent
+enrollment is revision 125; both persistent services retain their processes.
+No firmware restoration, production-host update, reference-pin change or default
+switch occurs. All broader protocol, security/allocation, physical shell/app,
+latency, long-response, soak, sanitizer, CI and release requirements remain open.
+
+## Previous checkpoint: DROP reports no longer stall contiguous media
+
+The engine now admits fresh contiguous media in the same poll as a DROP batch,
+and while that control write is blocked or partial, after START is fully submitted.
+It preserves owned control bytes, serving caps, required gap reports, cancellation
+and END/FIN ordering. A strengthened regression fails before the fix; host,
+actual-adapter, 18 native interop/security cases and engine-only UBSan checks pass.
+The full fresh sanitizer gate remains open. Pool sizes and deadline policies do not change.
+
+Flash37 is installed app0-only and passes the full-shell heartbeat. Physical p78
+exposes a host capture-idle timeout that incorrectly closes the whole session.
+That branch now aborts only the capture; no-audio and stalled-audio actor regressions
+fail before the correction and pass after it, while malformed media stays fatal.
+All 28 native host tests pass. The modified host is tested in private benches only.
+
+Clean p79 and p81 each pass three full provider turns with zero word errors.
+p81 loses one initial reset group without audio concealment. Impaired p80 recovers
+from the intentional outage and completes two turns, but its third exceeds the
+loss budget and aborts. Its eleven-group gap, 203 ms maximum network-owner poll gap
+and thirteen stale capture frames are the next investigation, not acceptance.
+
+Permanent service enrollment is revision 119, both persistent service processes
+remain running, and the new firmware remains installed. No firmware restoration
+or production-host update occurs. See [the admission and idle-recovery evidence](implementation-evidence/2026-08-31-control-media-admission/README.md).
+All remaining full-plan impairment, reference, security/allocation, physical shell,
+latency, soak, sanitizer and release gates remain open.
+
+## Previous checkpoint: submitted FIN no longer blocks fresh audio admission
 
 The adapter now lets fully submitted FIN streams use the existing retirement
 reserve. They retain their IDs and ACK-owned bytes until backend closure; merely

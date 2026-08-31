@@ -1,0 +1,28 @@
+{
+  "root_base_revision": "99e9580e595318d3e1cbf4c0651c2c6592f498c0",
+  "library_base_revision": "0997a6768b23982d9ee344e3cc56ee38c6856786",
+  "dirty_worktree": true,
+  "library_files_sha256": {
+    "components/esp_moq/src/engine.c": "2a2717a9a24197dda521c472fa3806abfcd05404ee61138d676b9e2558de9b74",
+    "tests/host/test_engine.c": "4c069086bd81800d3d8bf8f9fb698e5dec73cacc515e76436ba85cac69cc4d7d",
+    "docs/endpoint-engine.md": "f0bdc105f81aaf2f65afa58facbc783ed12884cc941bc9c7ccc47b168bd19d9f",
+    "server/voice_agent/src/server.rs": "1431719788d915ef34325b9d2825f3c62406936f15d56730ec4da00cc76fd614",
+    "server/voice_agent/src/capture_tests.rs": "54bca109ad2a8082e570d454898a924ccd28dd92506f55947869fe77c7659fb1",
+    "server/voice_agent/README.md": "49a1e06a351bf032a631cde012abd83ff23a7774307709feeabd8ce10225b96e",
+    "server/voice_agent/Cargo.lock": "f8e1620bb136d6cda56d90f3b64bc989b7b517ae618715e9d9522a6568a537dc"
+  },
+  "root_files_sha256": {
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "b4c6582a0f5fd11da18b047339b7e4e669e8a5c6bf46a3bc787b9a4a7994ce9d",
+    "doodad-runtime/services/live-agent/tools/moq_speech_quality.py": "2266ba66621af92f37e682a974507beeab3ee5dd0cd5811c18c39fb9fdf32ac5",
+    "doodad-runtime/services/live-agent/tools/moq_udp_impairment.py": "19e432cda8ba9be5bbc6525cec86f89420275058b240231a64d7e07b31363043"
+  },
+  "native_client_sha256": "d130db5a960f7f6ee37042eb1617bc7f27681f37e988f313c5bd0ad52d2e2c9d",
+  "native_reference_peer_sha256": "6218b8552125f58848a25681d113c2e16769c23524c6a892a190e51a85814812",
+  "old_bench_endpoint_sha256": "a30b4fb3c38958e4dc89d9152c2ad49ae601146faca7b4930f60b43ca7c6b7e1",
+  "bench_endpoint_sha256": "f65044d7d013e97590f082393f82f142ccbec6b60fa41e99ff13303bc284257c",
+  "firmware_sha256": "e10d61e4fb15a416a8dadcdd23b420e637a5def368b4e03f40048fb21555cf74",
+  "elf_sha256": "b0af697d6a474fff9ac16498d70dc7bd59e690ebfa6faf6299e6c6f5935b1fed",
+  "compatibility_pin_changed": false,
+  "reference_candidate_deployed": false,
+  "production_host_deployed": false
+}

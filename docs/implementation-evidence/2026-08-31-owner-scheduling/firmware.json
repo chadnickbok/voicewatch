@@ -1,0 +1,29 @@
+{
+  "flash38": {
+    "image_sha256": "b1824840573d8c1f7629b0e0388f2848ee05f5e1d14415b30769b524bc26111d",
+    "changed_offset": 65536,
+    "changed_span": 3432448,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] uptime heartbeat; free heap:"
+  },
+  "flash39": {
+    "image_sha256": "dba9f4c9baa5e255f2dd0bb9144ed506ae95c5543f0826c68ebc329be4ecb6c6",
+    "changed_offset": 65536,
+    "changed_span": 3432448,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] uptime heartbeat; free heap:"
+  },
+  "flash40": {
+    "image_sha256": "c32c54d20029ea75d4ba1d016b268dbcd844cdfccf5663ba502c382e4d27b78f",
+    "changed_offset": 65536,
+    "changed_span": 3432448,
+    "test_pass": true,
+    "firmware_written": true,
+    "restoration_required": false,
+    "success_marker": "[host] uptime heartbeat; free heap:"
+  }
+}

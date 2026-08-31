@@ -1,0 +1,114 @@
+--- a/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c
++++ b/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c
+@@ -30,6 +30,7 @@
+  * active send demand or releasing retransmission storage prematurely. */
+ #define ESP_MOQ_NGTCP2_TX_STREAMS 32U
+ #define ESP_MOQ_NGTCP2_PUMP_BUDGET 16U
++#define ESP_MOQ_NGTCP2_PUMP_TIME_US INT64_C(5000)
+ #define ESP_MOQ_NGTCP2_NO_INDEX UINT16_MAX
+ #define ESP_MOQ_NGTCP2_DEFERRED_RX_BYTES 4352U
+ #define ESP_MOQ_NGTCP2_RX_EVENTS 64U
+@@ -646,6 +647,7 @@
+ 
+ static esp_moq_result_t pump_output_batch(esp_moq_ngtcp2_t *adapter)
+ {
++    const int64_t began = esp_timer_get_time();
+     unsigned int packet_count = adapter->pending_packet_length ? 1U : 0U;
+     size_t packet_bytes = adapter->pending_packet_length;
+     const size_t quantum = ngtcp2_conn_get_send_quantum2(adapter->connection);
+@@ -662,6 +664,10 @@
+     }
+     for (attempt = 0; attempt < ESP_MOQ_NGTCP2_PUMP_BUDGET + ESP_MOQ_NGTCP2_TX_STREAMS &&
+             packet_count < ESP_MOQ_NGTCP2_PUMP_BUDGET; ++attempt) {
++        /* Crypto, socket work or preemption can make a small packet count
++         * expensive. Yield between operations, preserving queued/ACK-owned
++         * bytes. One operation may overrun; this is not a hard CPU deadline. */
++        if ((attempt || packet_count) && esp_timer_get_time()-began >= ESP_MOQ_NGTCP2_PUMP_TIME_US) break;
+         /* Reserve room for a full datagram: writev_stream requires the normal
+          * MTU-sized buffer even when the actual packet is smaller. Never
+          * exceed the backend's current byte quantum or our packet/CPU cap. */
+@@ -767,12 +773,14 @@
+ 
+ static esp_moq_result_t receive_packets(esp_moq_ngtcp2_t *adapter)
+ {
++    const int64_t began = esp_timer_get_time();
+     /* The extra byte detects oversize even on lwIP without MSG_TRUNC:
+      * a truncated datagram is still longer than our advertised maximum. */
+     uint8_t packet[ESP_MOQ_NGTCP2_PACKET_BYTES + 1U];
+     unsigned int packet_count;
+ 
+     for (packet_count = 0; packet_count < ESP_MOQ_NGTCP2_PUMP_BUDGET; ++packet_count) {
++        if (packet_count && esp_timer_get_time()-began >= ESP_MOQ_NGTCP2_PUMP_TIME_US) break;
+         ssize_t length = recv(adapter->socket_fd, packet, sizeof(packet), 0);
+         ngtcp2_pkt_info packet_info = {0};
+         int result;
+--- a/tests/adapter/test_adapter.c
++++ b/tests/adapter/test_adapter.c
+@@ -33,6 +33,7 @@
+ static bool pacing_enabled, pacing_closed;
+ static unsigned tx_time_updates;
+ static size_t send_quantum, fake_packet_bytes;
++static int64_t write_cost_us, read_cost_us;
+ 
+ static ssize_t test_recv(int fd, void *buffer, size_t length, int flags)
+ {
+@@ -91,6 +92,7 @@
+     assert(!in_read);
+     assert(writes < sizeof(attempted) / sizeof(attempted[0]));
+     attempted[writes++] = id;
++    fake_time += write_cost_us;
+     *written = -1;
+     if(pacing_enabled && pacing_closed) return 0;
+     if (id == blocked_id) return blocked_error;
+@@ -110,6 +112,7 @@
+ {
+     assert(len <= ESP_MOQ_NGTCP2_PACKET_BYTES);
+     ++reads;
++    fake_time += read_cost_us;
+     in_read = true;
+     assert(receive_stream_data_cb(c, 0, 1, 0, pkt, 1, active_adapter, NULL) == 0);
+     in_read = false;
+@@ -546,6 +549,35 @@
+     assert(dispatch_events(&a) == ESP_MOQ_OK);
+     assert(extended_closes == 3 && last_stream_close.receive_error_set &&
+         last_stream_close.receive_error == 24 && last_stream_close.transmit_error_set && last_stream_close.transmit_error == 0);
++}
++
++static void test_slow_packet_work_yields_without_losing_ownership(void)
++{
++    esp_moq_ngtcp2_t a; int fd[2]; size_t accepted; uint64_t id; uint8_t byte=42;
++    datagram_pair(fd); init_adapter(&a,fd[0]);
++    for(unsigned i=0;i<8;++i) {
++        assert(transport_open_uni(&a,&id)==ESP_MOQ_OK);
++        assert(transport_write(&a,id,&byte,1,&accepted)==ESP_MOQ_OK && accepted==1);
++        assert(transport_finish(&a,id)==ESP_MOQ_OK);
++    }
++    write_cost_us=3000;
++    assert(pump_output(&a)==ESP_MOQ_OK);
++    assert(writes==2 && sent==2 && opens==8);
++    // Yielding keeps unsent work and ACK-owned bytes. Each new pump progresses
++    // another bounded batch; none of these payloads have been acknowledged.
++    for(unsigned i=0;i<8;++i) {
++        tx_stream_t *s=find_tx_stream(&a,2+4*i);
++        assert(s && s->head!=ESP_MOQ_NGTCP2_NO_INDEX && a.tx_blocks[s->head].data[0]==42);
++    }
++    for(unsigned i=0;i<3;++i) assert(pump_output(&a)==ESP_MOQ_OK);
++    assert(writes==8 && sent==8);
++    for(unsigned i=0;i<8;++i) assert(find_tx_stream(&a,2+4*i)->fin_submitted);
++    write_cost_us=0;
++    read_cost_us=3000; pending_receives=8;
++    assert(receive_packets(&a)==ESP_MOQ_OK && reads==2 && pending_receives==6);
++    for(unsigned i=0;i<3;++i) assert(receive_packets(&a)==ESP_MOQ_OK);
++    assert(reads==8 && pending_receives==0 && delivered==8);
++    read_cost_us=0; close(fd[0]); close(fd[1]);
+ }
+ 
+ static void test_pacing_applies_after_bounded_batch(void)
+@@ -652,6 +684,7 @@
+     test_pressure_sources();
+     test_retiring_stream_reserve();
+     test_submitted_fin_uses_bounded_retirement_reserve();
++    test_slow_packet_work_yields_without_losing_ownership();
+     test_pacing_applies_after_bounded_batch();
+     test_pacing_quantum_packet_cap_and_pending_datagram();
+     test_heap_limit_alignment_overflow_and_realloc_ownership();

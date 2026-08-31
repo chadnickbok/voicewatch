@@ -1,0 +1,316 @@
+[
+  {
+    "heap_self_test": true,
+    "constructor_allocations": 7,
+    "constructor_peak": 19556,
+    "budget_trials": 77,
+    "live_after_delete": 0
+  },
+  {
+    "iteration": 0,
+    "mode": "valid",
+    "host": "localhost",
+    "elapsed_seconds": 3.166,
+    "client": {
+      "discarded_datagrams": 1,
+      "pass": true,
+      "sent": 10000,
+      "received": 10000,
+      "peer_bidi_replies": 65,
+      "connected": true,
+      "result": 0
+    },
+    "diagnostics": "QUIC heap live=28396 peak=32516 limit=131072 blocks=25 allocations=51 frees=26 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "valid",
+    "host": "127.0.0.1",
+    "elapsed_seconds": 3.151,
+    "client": {
+      "discarded_datagrams": 1,
+      "pass": true,
+      "sent": 10000,
+      "received": 10000,
+      "peer_bidi_replies": 65,
+      "connected": true,
+      "result": 0
+    },
+    "diagnostics": "QUIC heap live=28396 peak=32516 limit=131072 blocks=25 allocations=51 frees=26 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "valid",
+    "host": "::1",
+    "elapsed_seconds": 2.966,
+    "client": {
+      "discarded_datagrams": 1,
+      "pass": true,
+      "sent": 10000,
+      "received": 10000,
+      "peer_bidi_replies": 65,
+      "connected": true,
+      "result": 0
+    },
+    "diagnostics": "QUIC heap live=28396 peak=32516 limit=131072 blocks=25 allocations=51 frees=26 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "moq-audio",
+    "host": "localhost",
+    "elapsed_seconds": 1.012,
+    "client": {
+      "pass": true,
+      "sent": 3,
+      "received": 3,
+      "input_samples": 537,
+      "output_samples": 537,
+      "publish_end": true,
+      "receive_end": true,
+      "rx_leased": 0,
+      "result": 0
+    },
+    "diagnostics": ""
+  },
+  {
+    "iteration": 0,
+    "mode": "unknown-ca",
+    "host": "localhost",
+    "elapsed_seconds": 0.066,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=23588 peak=28324 limit=131072 blocks=15 allocations=25 frees=10 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "wrong-host",
+    "host": "localhost",
+    "elapsed_seconds": 0.049,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=23588 peak=28324 limit=131072 blocks=15 allocations=25 frees=10 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "wrong-host",
+    "host": "127.0.0.1",
+    "elapsed_seconds": 0.045,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=23588 peak=28324 limit=131072 blocks=15 allocations=25 frees=10 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "wrong-host",
+    "host": "::1",
+    "elapsed_seconds": 0.044,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=0 tls_alert=42\nQUIC heap live=23588 peak=28324 limit=131072 blocks=15 allocations=25 frees=10 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "expired",
+    "host": "localhost",
+    "elapsed_seconds": 0.044,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=0 tls_alert=45\nQUIC heap live=23588 peak=28324 limit=131072 blocks=15 allocations=25 frees=10 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "alpn",
+    "host": "localhost",
+    "elapsed_seconds": 0.025,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=376 tls_alert=120\nQUIC heap live=26940 peak=26980 limit=131072 blocks=19 allocations=21 frees=2 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "moq-setup",
+    "host": "localhost",
+    "elapsed_seconds": 0.259,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": true,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": true,
+      "result": 0
+    },
+    "diagnostics": "QUIC heap live=27804 peak=32516 limit=131072 blocks=27 allocations=47 frees=20 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "moq-engine",
+    "host": "localhost",
+    "elapsed_seconds": 0.602,
+    "client": {
+      "pass": true,
+      "connected": true,
+      "sent": 8,
+      "received": 8,
+      "groups": 9,
+      "track_infos": 4,
+      "peer_ack": true,
+      "audio_end": true,
+      "ack_end": true,
+      "result": 0,
+      "catalog_plain_frames": 3,
+      "catalog_compressed_frames": 3
+    },
+    "diagnostics": "engine tx submitted=11 retired=11 expired=0 failed=0 cancelled=0 cache_drop=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "moq-service",
+    "host": "localhost",
+    "elapsed_seconds": 0.989,
+    "client": {
+      "pass": true,
+      "connected": true,
+      "sent": 8,
+      "received": 8,
+      "publish_end": true,
+      "receive_end": true,
+      "plain_fallbacks": 0,
+      "mapped_cancels": 0,
+      "rx_leased": 0,
+      "result": 0
+    },
+    "diagnostics": ""
+  },
+  {
+    "iteration": 0,
+    "mode": "moq-service-plain",
+    "host": "localhost",
+    "elapsed_seconds": 0.976,
+    "client": {
+      "pass": true,
+      "connected": true,
+      "sent": 8,
+      "received": 8,
+      "publish_end": true,
+      "receive_end": true,
+      "plain_fallbacks": 1,
+      "mapped_cancels": 0,
+      "rx_leased": 0,
+      "result": 0
+    },
+    "diagnostics": ""
+  },
+  {
+    "iteration": 0,
+    "mode": "moq-endpoint",
+    "host": "localhost",
+    "elapsed_seconds": 0.991,
+    "client": {
+      "pass": true,
+      "connected": true,
+      "sent": 8,
+      "received": 8,
+      "publish_end": true,
+      "receive_end": true,
+      "plain_fallbacks": 0,
+      "mapped_cancels": 0,
+      "rx_leased": 0,
+      "result": 0
+    },
+    "diagnostics": ""
+  },
+  {
+    "iteration": 0,
+    "mode": "moq-endpoint-plain",
+    "host": "localhost",
+    "elapsed_seconds": 0.991,
+    "client": {
+      "pass": true,
+      "connected": true,
+      "sent": 8,
+      "received": 8,
+      "publish_end": true,
+      "receive_end": true,
+      "plain_fallbacks": 1,
+      "mapped_cancels": 0,
+      "rx_leased": 0,
+      "result": 0
+    },
+    "diagnostics": ""
+  },
+  {
+    "iteration": 0,
+    "mode": "numeric-dns",
+    "host": "127.0.0.1",
+    "elapsed_seconds": 0.072,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=1 tls_alert=42\nQUIC heap live=26028 peak=28324 limit=131072 blocks=21 allocations=31 frees=10 denied=0 failures=0"
+  },
+  {
+    "iteration": 0,
+    "mode": "numeric-dns",
+    "host": "::1",
+    "elapsed_seconds": 0.05,
+    "client": {
+      "discarded_datagrams": 0,
+      "pass": false,
+      "sent": 0,
+      "received": 0,
+      "peer_bidi_replies": 0,
+      "connected": false,
+      "result": 12
+    },
+    "diagnostics": "closed reason=12 quic=1 tls_alert=42\nQUIC heap live=26028 peak=28324 limit=131072 blocks=21 allocations=31 frees=10 denied=0 failures=0"
+  }
+]
