@@ -45,7 +45,7 @@ deploy_runtime() {
   install -m 600 "$WORKSPACE_DIR/openai.env" "$SUPPORT_DIR/openai.env"
   install -m 600 "$WORKSPACE_DIR/elevenlabs.env" "$SUPPORT_DIR/elevenlabs.env"
   "$REPO_DIR/services/live-agent/.venv/bin/uv" sync \
-    --directory "$DEPLOY_ROOT/services/live-agent" --locked
+    --directory "$DEPLOY_ROOT/services/live-agent" --extra webrtc --locked
 }
 
 write_plist() {

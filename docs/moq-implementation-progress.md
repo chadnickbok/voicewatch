@@ -156,6 +156,50 @@ Authenticated bootstrap, credential/time/reconnect policy, the Rust/Python host
 bridge and public response bindings are next. Real voice turns, interruption,
 PTT, full UI/package parity and all sustained/impairment gates remain incomplete.
 
+## Host audio, authentication and private IPC boundary
+
+The next host checkpoint extracts PCM spooling/resampling/pacing and shared
+control/action futures from aiortc. WebRTC is now an explicit optional extra,
+with lazy imports; the existing service installer retains it. Exact final PCM
+chunks and generation cancellation are available without RTP or its local
+playout-delay heuristic.
+
+Python now implements an HTTPS-only nonce/HMAC bootstrap, independent one-use
+control/media grants, identity-bound WSS activation, monotonic/UTC lease checks
+and per-device replacement. An owner-private bounded Unix IPC listener redeems
+media grants only after WSS is live, checks session/sequence on every packet,
+and revokes both channels on expiry, replay, malformed input or disconnection.
+The suite passes **142 tests**, including 45 new real TLS/WSS, real Unix-socket,
+security, capacity and exact-tail/cancellation cases. Four pre-existing product
+warnings remain. The first IPC test attempt exposed macOS path-length limits;
+tests now use short private paths and the server rejects oversized paths explicitly.
+
+This Python boundary checkpoint alone is not a running MoQ live-agent endpoint.
+The subsequent Rust checkpoint below adds the native media process. Application
+capture/response binding, watch bootstrap/trusted
+time, renewal/backoff, supervisor packaging and real voice-turn acceptance are
+still open. Normal `serve` remains legacy WebRTC. No actual enrollment file,
+provider key, deployed service or watch firmware changed in this host-only work.
+See [host boundary contracts](moq-host-boundary.md) and
+[verification evidence](implementation-evidence/2026-08-30-host-boundary/README.md).
+
+## Native Rust host checkpoint
+
+The library now includes a native `moq-lite-05` TLS/QUIC endpoint, private IPC
+authorization, separate scoped origins and standard Hang/Opus capture and response
+workers. Seven Rust tests pass; formatting and Clippy checks are clean. Repeated
+responses preserve increasing media timestamps and exact sample tails, including
+after cancellation. The separate native integration lane exercises real Python
+HTTPS/WSS/IPC and QUIC with synthetic bidirectional audio, invalid/replayed tokens
+and revocation teardown.
+
+This remains a development checkpoint: the integration control driver is a test
+fixture, normal `serve` still uses WebRTC, and production `MoqSession`, physical
+watch bootstrap/control binding, provider turns and deployment remain open.
+Upstream model/cache allocation limits also need hardening; an origin eviction
+budget is not a hard memory cap. No service or watch firmware was changed.
+See [the native checkpoint and limitations](moq-host-boundary.md#native-endpoint-checkpoint).
+
 ## Capture and network checkpoint (historical)
 
 

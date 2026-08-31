@@ -9,7 +9,6 @@ description = "Persistent Pipecat foreground agent and durable Doodad job manage
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "aiohttp==3.12.15",
-  "aiortc==1.15.0",
   "jsonschema==4.26.0",
   "nltk==3.10.0",
   "numpy==2.4.6",
@@ -20,6 +19,9 @@ dependencies = [
   "soxr==1.0.0",
   "zeroconf==0.147.0"
 ]
+
+[project.optional-dependencies]
+webrtc = ["aiortc==1.15.0"]
 
 [project.scripts]
 doodad-live-agent = "doodad_agent.main:cli"
@@ -33,6 +35,7 @@ addopts = "-q"
 
 [dependency-groups]
 dev = [
+  "aiortc==1.15.0",
   "pytest==8.4.2",
   "pytest-asyncio==1.1.0"
 ]

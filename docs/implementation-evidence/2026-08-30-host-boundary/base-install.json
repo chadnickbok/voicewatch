@@ -1,0 +1,8 @@
+{
+  "aiortc_in_base_install": false,
+  "av_in_base_install": false,
+  "neutral_modules_import": true,
+  "live_conversation_import": true,
+  "cli_import": true,
+  "note": "Verified in a separate uv sync --locked --no-dev environment. No provider or live conversation instance was started."
+}

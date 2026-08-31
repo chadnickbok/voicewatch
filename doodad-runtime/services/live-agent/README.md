@@ -7,6 +7,14 @@ cascade with local Silero VAD and Smart Turn, streaming OpenAI transcription,
 a persistent Responses WebSocket foreground model, and ElevenLabs Flash
 WebSocket TTS.
 
+The MoQ migration now has transport-neutral `audio.py`/`session.py`, an
+HTTPS/WSS grant issuer, and a bounded private Unix IPC listener. The Rust media
+worker and production MoQ session are not wired into `serve` yet. See the
+[host boundary contract](../../../docs/moq-host-boundary.md) for implemented
+behavior and remaining work. `aiortc` is an optional `webrtc` extra; install with
+`uv sync --extra webrtc` for the existing service. Development tests also include
+that dependency to preserve legacy coverage.
+
 The CoreS3 uses a shared microphone/speaker codec and an explicit push-to-talk
 lifecycle. Connecting the watch leaves the microphone off and the active app or
 watch face visible. Hold Button B to open the trusted Voice Orb and begin one

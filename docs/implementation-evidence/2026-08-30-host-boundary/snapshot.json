@@ -1,0 +1,30 @@
+{
+  "voicewatch_base": "6732a472177ae6a24871431af212139e42f27015",
+  "library_commit": "c631904d8abc6adc6badad651bc94a88431b5111",
+  "test_command": "doodad-runtime/scripts/test-live-agent.sh",
+  "passed": 142,
+  "new_boundary_tests": 45,
+  "warnings": 4,
+  "source_sha256": {
+    "doodad-runtime/scripts/live-agent-service.sh": "1ad74a643ad7bcd0bfb0bddad7edfa74a9b41c500833b900f532174e23d78f54",
+    "doodad-runtime/services/live-agent/README.md": "096d8fdf41b652b022755682d267ce532428f469d1b5126e094c8661f306337e",
+    "doodad-runtime/services/live-agent/pyproject.toml": "730c203c9524b8578329da969388330bddaca7f0e85e16679fa83d605b2f1479",
+    "doodad-runtime/services/live-agent/src/doodad_agent/audio.py": "96c88d2083f42f9b26a6a82768340ee104e434162955c6c3a4232f2528e74d3b",
+    "doodad-runtime/services/live-agent/src/doodad_agent/host_network.py": "a7cff11bb0c4c24c5c4f80fcf6ca98e1663addd08394dfca63f80f0873dfefd4",
+    "doodad-runtime/services/live-agent/src/doodad_agent/main.py": "11a0f37b9c4d98ce66727ed929f2b1f4c297a02c742cb732fa4d938750a8bc5b",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_auth.py": "d326f4c29454e5e8f92ef0124ee89b27fca802130104597335e27150dc262480",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_bootstrap.py": "62cc54478db1ba416897ad87e5d81d46d747a785e33dcfd5885c3014cc93d362",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_bridge.py": "f91e1a26d53432f81699c017535e357017825063d01757532e9fbacca759c7e6",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_ipc.py": "937b75750944d60b86a409b26615b6a7ccaf25347da623f75afda013f19f049d",
+    "doodad-runtime/services/live-agent/src/doodad_agent/session.py": "0ee628fbc8f057a1a128dbcf154c26c27d14c0d96c9ec7eabc7b82b2727ad435",
+    "doodad-runtime/services/live-agent/src/doodad_agent/transport.py": "4e140f5d548fea1261c0efd9c8d9b4b524a30507267d12bd03f9c0bcfc543674",
+    "doodad-runtime/services/live-agent/src/doodad_agent/transport_webrtc.py": "cbe7c6de61dabd4d31ee44dae490e396d655dd103809b4c3db5c571ffc0e9f8d",
+    "doodad-runtime/services/live-agent/tests/test_moq_host.py": "db27b4fc65bfd8fc68b7b8e7ea63822d0332f7d0bc847c868da6ff8d33ffbd58",
+    "doodad-runtime/services/live-agent/uv.lock": "cee4c3d923672a407aec281dd24adc0e2f6b8975c12fc3dce6b2eb08cbe888fc"
+  },
+  "test_log_sha256": "d51ed6886dd5e5702060225efb42ce05c87f8cffed635d20f77cf40576ced35f",
+  "scope": "Python host audio/authentication/IPC only; native Rust media endpoint and device bootstrap remain unimplemented",
+  "device_firmware_changed": false,
+  "production_service_changed": false,
+  "base_install_sha256": "e04c9770d45ace43f0bee9bf92179ebab7a5b33a65c566a9a140a4ac04571707"
+}

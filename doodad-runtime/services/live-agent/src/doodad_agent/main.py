@@ -33,7 +33,8 @@ from .personal_bundle import (
     PersonalTrustProfile,
 )
 from .storage import Store
-from .transport import DownlinkUtteranceBinding, WatchTransportServer, local_ipv4
+from .session import DownlinkUtteranceBinding
+from .host_network import local_ipv4
 
 
 DEFAULT_DATABASE = Path.home() / "Library/Application Support/Doodad/agent-control.sqlite3"
@@ -109,6 +110,8 @@ def control_plane(database: Path, now_ms: int | None = None) -> tuple[
 
 
 async def serve(arguments: argparse.Namespace) -> None:
+    from .transport_webrtc import WatchTransportServer
+
     personal_trust = personal_trust_from_environment()
     if os.getenv("DOODAD_AIORTC_DEBUG") == "1":
         logging.basicConfig(level=logging.WARNING)

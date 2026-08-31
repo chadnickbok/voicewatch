@@ -285,7 +285,6 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "aiohttp" },
-    { name = "aiortc" },
     { name = "jsonschema" },
     { name = "nltk" },
     { name = "numpy" },
@@ -297,8 +296,14 @@ dependencies = [
     { name = "zeroconf" },
 ]
 
+[package.optional-dependencies]
+webrtc = [
+    { name = "aiortc" },
+]
+
 [package.dev-dependencies]
 dev = [
+    { name = "aiortc" },
     { name = "pytest" },
     { name = "pytest-asyncio" },
 ]
@@ -306,7 +311,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "aiohttp", specifier = "==3.12.15" },
-    { name = "aiortc", specifier = "==1.15.0" },
+    { name = "aiortc", marker = "extra == 'webrtc'", specifier = "==1.15.0" },
     { name = "jsonschema", specifier = "==4.26.0" },
     { name = "nltk", specifier = "==3.10.0" },
     { name = "numpy", specifier = "==2.4.6" },
@@ -317,9 +322,11 @@ requires-dist = [
     { name = "soxr", specifier = "==1.0.0" },
     { name = "zeroconf", specifier = "==0.147.0" },
 ]
+provides-extras = ["webrtc"]
 
 [package.metadata.requires-dev]
 dev = [
+    { name = "aiortc", specifier = "==1.15.0" },
     { name = "pytest", specifier = "==8.4.2" },
     { name = "pytest-asyncio", specifier = "==1.1.0" },
 ]
