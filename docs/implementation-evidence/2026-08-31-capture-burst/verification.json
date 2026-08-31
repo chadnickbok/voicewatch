@@ -1,0 +1,47 @@
+{
+  "python": {
+    "passed": 299,
+    "warnings": 4
+  },
+  "native_integration": {
+    "passed": 6
+  },
+  "firmware_cpp_protocol": {
+    "passed": 26
+  },
+  "rust": {
+    "passed": 22,
+    "capture_worker_cases": 13,
+    "locked_build": true,
+    "clippy_warnings_denied": true
+  },
+  "adapter": {
+    "normal": true,
+    "linux_asan_ubsan": true
+  },
+  "host_c": {
+    "normal": true,
+    "linux_asan_ubsan": true
+  },
+  "firmware_build": true,
+  "physical_pass": [
+    "t54",
+    "t55"
+  ],
+  "physical_fail": [
+    "p51",
+    "p52",
+    "t53"
+  ],
+  "original_transport_failure_resolved": false,
+  "full_loss_matrix_pass": false,
+  "speech_quality_gate_pass": false,
+  "ambient_pcm_persisted": false,
+  "raw_logs_copied": false,
+  "credentials_copied": false,
+  "mac_audio_after": {
+    "output_volume": 0,
+    "muted": true
+  },
+  "firmware_restoration_required": false
+}

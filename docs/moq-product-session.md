@@ -154,9 +154,18 @@ background output uses the same path and retries pending attention when busy.
 The shared begin/enqueue/end API preserves the exact-tail PCM spool. Native
 response startup waits for capture validation or an acknowledged output-only
 context. Native `playback.prepared`
-supplies the response ID and first group. WSS `playback.begin` carries
-capture/request/owner/response IDs and that group; no PCM reaches the encoder
+supplies the response ID, first group and `pts_us`, the exact start timestamp of
+the encoder's response epoch. WSS `playback.begin` carries
+capture/request/owner/response IDs, that group and timestamp; no PCM reaches the encoder
 before matching watch `playback.bound`.
+
+The player binds time zero to this authenticated timestamp, not to the first
+packet that happens to arrive. Missing initial packets therefore retain their
+duration. The authenticated `playback.end` sample count reaches the audio owner
+and bounds missing-tail concealment to 200 ms. A Hang terminal marker must agree
+with that count. Playback waits for both the media boundary and the control
+boundary before draining; oversized loss fails. Host/native/firmware versions
+must be updated together for this required timestamp field.
 
 Watch receipts include those IDs, `first_group`, `samples`, boolean `cancelled`
 and integer `error`. Successful binding has zero samples, false cancellation and

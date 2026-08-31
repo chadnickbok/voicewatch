@@ -1,0 +1,18 @@
+{
+  "root_base": "dfde572813e0757ee3f5318d92e666756910fd23",
+  "library_base": "1769b7083c2770dffb8689d5f706c52713cf1303",
+  "native_sha256": "17b9345b5e3bbe0976771f42be27d6df5ed5875de32364e7384c2a678921e8ef",
+  "sha256": {
+    "libs/moq-esp32/server/voice_agent/Cargo.toml": "a1a4020ce44442acd7348445f8b5c0cbc771aa4798f73690127cc4561f9d0088",
+    "libs/moq-esp32/server/voice_agent/Cargo.lock": "2558ec41cd1a44bcad0405df7be645db6fa268303c66b644fde3e566915549f2",
+    "libs/moq-esp32/server/voice_agent/src/opus.rs": "1d116315e20ba92e85b2df5a30f4f71cb39bbea29f5aeabc54ce76ba2d6d1c06",
+    "libs/moq-esp32/server/voice_agent/src/media.rs": "9bee072006f500504eafc97870fd64562d7813cb8437bb7fa85b0ff2a24f9b06",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "35ebd18b0e3fa752b97ae8019a8c433a8b15684af58c2796fa38d720990bea92",
+    "libs/moq-esp32/server/voice_agent/src/ipc.rs": "b4a322acae980264db768bc06f6d4cdf05343774d6103fe037662892440dc488",
+    "libs/moq-esp32/server/voice_agent/src/main.rs": "dfb80e8ddf2f15bde05e7ad4c7c3cf6418805913f21cd3bf180ea04ab5515412",
+    "libs/moq-esp32/server/voice_agent/src/capture_tests.rs": "407b52ea910b7b30db570af3f073f06f7cb306484319998bcc65f7504d2425f4",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "a78bf21de8f73d458ddf1916a2e7539a00165f5825faaef63696067ade9a9393",
+    "doodad-runtime/services/live-agent/tools/moq_provider_bench.py": "fdbcee111acaabc129635e9f475f2162392b094365644524a230198d11b4a6dc",
+    "doodad-runtime/services/live-agent/tools/moq_udp_impairment.py": "fe76635ef94c293799b8aa112011f1445b08db79942ca14297fa8abda90ebeb4"
+  }
+}

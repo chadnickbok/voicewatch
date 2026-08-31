@@ -1,0 +1,885 @@
+[
+  {
+    "run": "p45",
+    "pass_": false,
+    "failure_type": "RuntimeError",
+    "firmware_written": false,
+    "restoration_required": false,
+    "microphone_samples": 60000,
+    "stt_samples_submitted": 60000,
+    "stt_commits": 0,
+    "stt_completed_events": 0,
+    "stt_error_count": 0,
+    "fixture_recognized": false,
+    "turns": [],
+    "output_only_turns": [
+      {
+        "source": "text",
+        "context_id": 13,
+        "response_id": 1,
+        "speaker_samples": 45991,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "source": "background",
+        "context_id": 14,
+        "response_id": 2,
+        "speaker_samples": 21784,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "spoken_history_messages": 2,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 27779,
+    "final_playback": {
+      "capture_identity_present": true,
+      "response_present": true,
+      "response_done": true,
+      "response_finished": true,
+      "response_cancelled": false
+    },
+    "watch_playout": [
+      {
+        "samples": 45991,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 21784,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      }
+    ],
+    "watch_publish_retirements": [],
+    "watch_media_failure_codes": [],
+    "watch_publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 190,
+        "retired": 187,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 60000,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "native_transport": [
+      {
+        "rx": 486,
+        "tx": 536,
+        "lost": 0,
+        "rtt_us": 23439,
+        "cwnd": 12000
+      }
+    ]
+  },
+  {
+    "run": "p46",
+    "pass_": true,
+    "firmware_written": false,
+    "restoration_required": false,
+    "microphone_samples": 182560,
+    "stt_samples_submitted": 182560,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_error_count": 0,
+    "fixture_recognized": true,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 60960,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 60640,
+        "stt_characters": 33,
+        "response_id": 4,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 3,
+        "microphone_samples": 60960,
+        "stt_characters": 33,
+        "response_id": 5,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "output_only_turns": [
+      {
+        "source": "text",
+        "context_id": 16,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "source": "background",
+        "context_id": 17,
+        "response_id": 2,
+        "speaker_samples": 21784,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "spoken_history_messages": 5,
+    "provider_pipeline_reconnected": true,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 61635,
+    "final_playback": {
+      "capture_identity_present": true,
+      "response_present": true,
+      "response_done": true,
+      "response_finished": true,
+      "response_cancelled": false
+    },
+    "watch_playout": [
+      {
+        "samples": 41149,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 21784,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 42360,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 41149,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 43570,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      }
+    ],
+    "watch_publish_retirements": [],
+    "watch_media_failure_codes": [],
+    "watch_publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 193,
+        "retired": 191,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 384,
+        "retired": 382,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 576,
+        "retired": 573,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 60960,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60640,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60960,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "native_transport": [
+      {
+        "rx": 1357,
+        "tx": 1502,
+        "lost": 5,
+        "rtt_us": 9759,
+        "cwnd": 4116
+      },
+      {
+        "rx": 21,
+        "tx": 29,
+        "lost": 0,
+        "rtt_us": 450194,
+        "cwnd": 12000
+      }
+    ],
+    "watch_host_sample_counts_match": true
+  },
+  {
+    "run": "p47",
+    "pass_": false,
+    "failure_type": "RuntimeError",
+    "firmware_written": false,
+    "restoration_required": false,
+    "microphone_samples": 180960,
+    "stt_samples_submitted": 180960,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_error_count": 0,
+    "fixture_recognized": true,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 59360,
+        "stt_characters": 33,
+        "response_id": 1,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 60960,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 42360,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "output_only_turns": [],
+    "spoken_history_messages": 2,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 45213,
+    "impairment": {
+      "loss_percent": 1,
+      "added_rtt_ms": 30,
+      "seed": 47,
+      "directions": {
+        "uplink": {
+          "received": 1334,
+          "dropped": 10,
+          "forwarded": 1324,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1216,
+          "dropped": 15,
+          "forwarded": 1201,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 6,
+      "closed": true
+    },
+    "final_playback": {
+      "capture_identity_present": true,
+      "response_present": true,
+      "response_done": true,
+      "response_finished": false,
+      "response_cancelled": true
+    },
+    "watch_playout": [
+      {
+        "samples": 41149,
+        "concealed_frames": 2,
+        "late_frames": 2,
+        "pressure": 0
+      },
+      {
+        "samples": 42360,
+        "concealed_frames": 2,
+        "late_frames": 2,
+        "pressure": 0
+      },
+      {
+        "samples": 46881,
+        "concealed_frames": 0,
+        "late_frames": 1,
+        "pressure": 0
+      }
+    ],
+    "watch_publish_retirements": [],
+    "watch_media_failure_codes": [],
+    "watch_publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 188,
+        "retired": 183,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 380,
+        "retired": 375,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 571,
+        "retired": 565,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 59360,
+        "concealed_samples": 320,
+        "plc_samples": 320,
+        "lost_groups": 1,
+        "late_groups": 1
+      },
+      {
+        "samples": 60960,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60640,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "native_transport": [
+      {
+        "rx": 1323,
+        "tx": 1216,
+        "lost": 15,
+        "rtt_us": 42116,
+        "cwnd": 2700
+      }
+    ]
+  },
+  {
+    "run": "p48",
+    "pass_": true,
+    "firmware_written": false,
+    "restoration_required": false,
+    "microphone_samples": 179680,
+    "stt_samples_submitted": 179680,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_error_count": 0,
+    "fixture_recognized": true,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 58560,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 60480,
+        "stt_characters": 33,
+        "response_id": 4,
+        "speaker_samples": 39939,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 3,
+        "microphone_samples": 60640,
+        "stt_characters": 33,
+        "response_id": 5,
+        "speaker_samples": 41149,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "output_only_turns": [
+      {
+        "source": "text",
+        "context_id": 1,
+        "response_id": 1,
+        "speaker_samples": 43570,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "source": "background",
+        "context_id": 2,
+        "response_id": 2,
+        "speaker_samples": 21784,
+        "microphone_samples": 0,
+        "stt_commits": 0,
+        "capture_started_events": 0,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "spoken_history_messages": 5,
+    "provider_pipeline_reconnected": true,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 63482,
+    "final_playback": {
+      "capture_identity_present": true,
+      "response_present": true,
+      "response_done": true,
+      "response_finished": true,
+      "response_cancelled": false
+    },
+    "watch_playout": [
+      {
+        "samples": 43570,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 21784,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 41149,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 39939,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 41149,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      }
+    ],
+    "watch_publish_retirements": [],
+    "watch_media_failure_codes": [],
+    "watch_publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 186,
+        "retired": 182,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 377,
+        "retired": 375,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 568,
+        "retired": 566,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 58560,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60480,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60640,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "native_transport": [
+      {
+        "rx": 1349,
+        "tx": 1480,
+        "lost": 0,
+        "rtt_us": 7802,
+        "cwnd": 12000
+      },
+      {
+        "rx": 21,
+        "tx": 29,
+        "lost": 0,
+        "rtt_us": 441963,
+        "cwnd": 12000
+      }
+    ],
+    "watch_host_sample_counts_match": true
+  },
+  {
+    "run": "p49",
+    "pass_": true,
+    "firmware_written": false,
+    "restoration_required": false,
+    "microphone_samples": 180960,
+    "stt_samples_submitted": 180960,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_error_count": 0,
+    "fixture_recognized": true,
+    "turns": [
+      {
+        "round": 1,
+        "microphone_samples": 60320,
+        "stt_characters": 34,
+        "response_id": 1,
+        "speaker_samples": 47201,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 2,
+        "microphone_samples": 59840,
+        "stt_characters": 33,
+        "response_id": 2,
+        "speaker_samples": 39939,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      },
+      {
+        "round": 3,
+        "microphone_samples": 60800,
+        "stt_characters": 33,
+        "response_id": 3,
+        "speaker_samples": 43570,
+        "fixture_recognized": true,
+        "read_tool_completed": true,
+        "spoken_history_messages_added": 1
+      }
+    ],
+    "output_only_turns": [],
+    "spoken_history_messages": 3,
+    "provider_pipeline_reconnected": true,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 54945,
+    "impairment": {
+      "loss_percent": 1,
+      "added_rtt_ms": 30,
+      "seed": 47,
+      "directions": {
+        "uplink": {
+          "received": 1347,
+          "dropped": 10,
+          "forwarded": 1337,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1257,
+          "dropped": 15,
+          "forwarded": 1242,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 6,
+      "closed": true
+    },
+    "final_playback": {
+      "capture_identity_present": true,
+      "response_present": true,
+      "response_done": true,
+      "response_finished": true,
+      "response_cancelled": false
+    },
+    "watch_playout": [
+      {
+        "samples": 47201,
+        "concealed_frames": 5,
+        "late_frames": 5,
+        "pressure": 0
+      },
+      {
+        "samples": 39939,
+        "concealed_frames": 1,
+        "late_frames": 1,
+        "pressure": 0
+      },
+      {
+        "samples": 43570,
+        "concealed_frames": 0,
+        "late_frames": 0,
+        "pressure": 0
+      }
+    ],
+    "watch_publish_retirements": [],
+    "watch_media_failure_codes": [],
+    "watch_publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 191,
+        "retired": 187,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 380,
+        "retired": 375,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      },
+      {
+        "cache_drop": 0,
+        "expired": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 572,
+        "retired": 566,
+        "last_first": 0,
+        "last_end": 0,
+        "last_code": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 60320,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 59840,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60800,
+        "concealed_samples": 0,
+        "plc_samples": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "native_transport": [
+      {
+        "rx": 1313,
+        "tx": 1227,
+        "lost": 16,
+        "rtt_us": 40375,
+        "cwnd": 2700
+      },
+      {
+        "rx": 21,
+        "tx": 30,
+        "lost": 0,
+        "rtt_us": 469037,
+        "cwnd": 12000
+      }
+    ],
+    "watch_host_sample_counts_match": true
+  },
+  {
+    "run": "p50",
+    "pass_": false,
+    "failure_type": "RuntimeError",
+    "firmware_written": false,
+    "restoration_required": false,
+    "microphone_samples": 48216,
+    "stt_samples_submitted": 48216,
+    "stt_commits": 0,
+    "stt_completed_events": 0,
+    "stt_error_count": 0,
+    "fixture_recognized": false,
+    "turns": [],
+    "output_only_turns": [],
+    "spoken_history_messages": 0,
+    "fixture_audio_restored": true,
+    "elapsed_ms": 18151,
+    "impairment": {
+      "loss_percent": 3,
+      "added_rtt_ms": 60,
+      "seed": 50,
+      "directions": {
+        "uplink": {
+          "received": 209,
+          "dropped": 10,
+          "forwarded": 199,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 171,
+          "dropped": 4,
+          "forwarded": 167,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 8,
+      "closed": true
+    },
+    "final_playback": {
+      "capture_identity_present": true,
+      "response_present": false,
+      "response_done": false,
+      "response_finished": false,
+      "response_cancelled": false
+    },
+    "watch_playout": [],
+    "watch_publish_retirements": [
+      {
+        "encoded": 159,
+        "accepted": 159,
+        "sent": 156,
+        "stale": 0,
+        "queued": 3,
+        "high": 7,
+        "microphone_drops": 0,
+        "poll_gap_ms": 145
+      }
+    ],
+    "watch_media_failure_codes": [
+      12
+    ],
+    "watch_publisher": [
+      {
+        "cache_drop": 0,
+        "expired": 1,
+        "failed": 0,
+        "cancelled": 0,
+        "submitted": 156,
+        "retired": 146,
+        "last_first": 47,
+        "last_end": 48,
+        "last_code": 3
+      }
+    ],
+    "capture_recovery": [],
+    "native_transport": [
+      {
+        "rx": 198,
+        "tx": 171,
+        "lost": 4,
+        "rtt_us": 96075,
+        "cwnd": 4116
+      }
+    ]
+  }
+]

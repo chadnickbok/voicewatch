@@ -1,0 +1,3 @@
+Dropped first 20 ms packet from a 1,607-sample response.
+Before: expected=1607 actual=1287; sample-count assertion failed.
+After: expected=1607 actual=1607; sample-count and direct Opus PLC reference checks pass.

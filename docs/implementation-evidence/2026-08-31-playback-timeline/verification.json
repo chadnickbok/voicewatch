@@ -1,0 +1,59 @@
+{
+  "python": {
+    "passed": 299,
+    "warnings": 4
+  },
+  "native_integration": {
+    "passed": 6
+  },
+  "firmware_cpp_protocol": {
+    "passed": 26
+  },
+  "rust": {
+    "passed": 21,
+    "locked_offline_build": true,
+    "clippy_warnings_denied": true
+  },
+  "audio_c": {
+    "normal": true,
+    "pinned_reference_cases": 9,
+    "encoder_cases": 12,
+    "loss_combinations": 12,
+    "lost_response_lengths": [
+      0,
+      1067,
+      2134,
+      3201
+    ],
+    "direct_opus_plc_pcm_exact": true,
+    "conflicting_boundary_rejected": true,
+    "asan_ubsan_linux": true
+  },
+  "firmware_build": true,
+  "physical": {
+    "current_firmware_successful_runs": [
+      "p48",
+      "p49"
+    ],
+    "current_firmware_failed_runs": [
+      "p50"
+    ],
+    "completed_voice_turns": 6,
+    "completed_output_only_turns": 2,
+    "fresh_session_reconnects": 2,
+    "microphone_samples": 360640,
+    "played_samples": 318301,
+    "full_loss_matrix_pass": false,
+    "speech_quality_gate_pass": false
+  },
+  "privacy": {
+    "ambient_pcm_persisted": false,
+    "raw_logs_copied": false,
+    "credentials_copied": false
+  },
+  "mac_audio_after": {
+    "output_volume": 0,
+    "muted": true
+  },
+  "firmware_restoration_required": false
+}

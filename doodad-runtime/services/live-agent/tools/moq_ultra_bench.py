@@ -6,6 +6,8 @@ test real enrollment, WSS/QUIC readiness, forced reconnect and lease renewal.
 --audio additionally captures microphone PCM (1.2 seconds by default), discards
 it after counting, then plays a synthetic tone and checks the DMA receipt.
 --capture-rounds repeats completed captures within one authenticated session.
+--loss-percent/--added-rtt-ms exercise encrypted UDP loss and delay independently
+of providers. WSS remains intact; a seeded proxy is closed with the bench.
 No provider runs, deployed service changes, flash writes or restoration.
 """
 import argparse
@@ -105,6 +107,7 @@ async def run(args):
     began = time.monotonic()
     processes, streams = [], []
     server = None
+    impairment = None
     def mark(kind, **fields):
         event = dict(kind=kind, elapsed_ms=round((time.monotonic()-began)*1000), **fields)
         print(json.dumps(event), flush=True)
@@ -125,6 +128,12 @@ async def run(args):
         key = secrets.token_bytes(32)
         context, roots = pki(directory, args.host, args.certificate_fault)
         control_port, time_port, media_port = port(socket.SOCK_STREAM), port(socket.SOCK_STREAM), port(socket.SOCK_DGRAM)
+        backend_port = media_port
+        if args.loss_percent or args.added_rtt_ms:
+            from moq_udp_impairment import UdpImpairment
+            backend_port = port(socket.SOCK_DGRAM)
+            impairment = UdpImpairment(args.loss_percent,args.added_rtt_ms,args.loss_seed)
+            await impairment.start(('0.0.0.0',media_port),('127.0.0.1',backend_port))
         write(directory/'devices.json', {device['device_id']: key.hex()})
         write(directory/'host.json', dict(certificate=str(directory/'server.pem'),
             private_key=str(directory/'server.key'), device_keys=str(directory/'devices.json'),
@@ -161,7 +170,7 @@ async def run(args):
             registry=registry, context=context, ipc_path=directory/'media.sock', media_host=args.host,
             media_port=media_port, time_port=time_port)
         await server.start()
-        write(directory/'endpoint.json', dict(listen=f'0.0.0.0:{media_port}',
+        write(directory/'endpoint.json', dict(listen=f'0.0.0.0:{backend_port}',
             certificate=str(directory/'server.pem'), private_key=str(directory/'server.key'),
             ipc_socket=str(directory/'media.sock')))
         native_log = (directory/'native.log').open('wb'); streams.append(native_log)
@@ -231,7 +240,8 @@ async def run(args):
             samples = 16037
             tone = b''.join(struct.pack('<h', round(1800*math.sin(2*math.pi*440*n/16000))) for n in range(samples))
             second.begin_downlink(); second.enqueue_downlink(tone, 16000); second.end_downlink()
-            await asyncio.wait_for(second.resume_after_downlink(), 12)
+            if not await asyncio.wait_for(second.resume_after_downlink(), 12):
+                raise RuntimeError('synthetic playback was cancelled or replaced')
             result['speaker_samples'] = samples
             mark('physical_audio_finished', microphone_samples=result['microphone_samples'], speaker_samples=samples)
             # Replace speech on the same completed capture. A response-only
@@ -242,7 +252,8 @@ async def run(args):
             await asyncio.sleep(.2)
             second.clear_downlink()
             second.begin_downlink(); second.enqueue_downlink(tone, 16000); second.end_downlink()
-            await asyncio.wait_for(second.resume_after_downlink(), 12)
+            if not await asyncio.wait_for(second.resume_after_downlink(), 12):
+                raise RuntimeError('replacement playback was cancelled or replaced')
             if not interrupted.cancelled or interrupted.finished.is_set():
                 raise RuntimeError('cancelled response reported successful completion')
             result['response_replacement_pass'] = True
@@ -267,6 +278,11 @@ async def run(args):
             await stop(process)
         for stream in streams:
             stream.close()
+        if impairment:
+            impairment.close()
+            result['impairment']=impairment.snapshot()
+            if any(item['pressure'] for item in impairment.stats.values()):
+                result['pass_']=False
         result['elapsed_ms'] = round((time.monotonic()-began)*1000)
         write(directory/'result.json', result)
 
@@ -281,6 +297,9 @@ def main():
     parser.add_argument('--voice-ui', action='store_true', help='Show the real listening shell during capture')
     parser.add_argument('--capture-ms', type=int, default=1200)
     parser.add_argument('--capture-rounds', type=int, default=1)
+    parser.add_argument('--loss-percent',type=int,choices=(0,1,3,5),default=0)
+    parser.add_argument('--added-rtt-ms',type=int,choices=(0,30,60,120),default=0)
+    parser.add_argument('--loss-seed',type=int,default=44)
     parser.add_argument('--certificate-fault', choices=('expired', 'not_yet_valid', 'hostname', 'untrusted'))
     args = parser.parse_args()
     if args.audio and args.certificate_fault:

@@ -5,7 +5,64 @@ Updated 2026-08-31. Objective remains the complete
 findings, operational protocol/audio, security, host service, and the full Ultra
 shell. This checkpoint does not satisfy the library-candidate or product gates.
 
-## Latest checkpoint: bounded host capture loss recovery
+## Latest checkpoint: capture burst recovery and transport diagnostics
+
+The host capture worker now handles a queued burst behind a missing group without
+prematurely rejecting the capture. A deterministic regression passes with exact
+12,807-sample output, one lost group and 320 PLC samples; the existing 32-handle
+storage and 200 ms per-gap concealment bounds remain. Flash21 records numeric
+adapter failure details so the original intermittent transport error can be
+attributed if it recurs. That error remains unresolved.
+
+With 3% loss and 60 ms added RTT, t54 passes 20 short captures and t55 passes three
+10-second captures, each followed by tone playback, cancellation/replacement,
+forced reconnect and lease-expiry reconnect. These are not complete PTT/echo
+cycle counts. Playback pressure remains nonzero, so exact sample counts do not
+satisfy the speech-quality gate. Provider runs p51 and p52 fail the required fresh
+watch-state read on the third turn; p52 also exposes high playback pressure at
+5% loss and 120 ms added RTT. Neither provider failure is waived.
+
+Verification passes 22 Rust tests, Clippy, 299 Python tests, six native integration
+and 26 firmware-parser cases, the firmware build, and normal plus Linux
+ASan/UBSan adapter/host tests. See the
+[capture-burst evidence](implementation-evidence/2026-08-31-capture-burst/README.md).
+The new firmware stays installed; restoration is not required. All remaining
+replacement acceptance gates remain open and WebRTC is still the default.
+
+## Previous checkpoint: authenticated watch playback timelines
+
+A deterministic real-Opus regression reproduces the 320-sample shortfall:
+dropping the first packet reduces a 1,607-sample response to 1,287 samples when
+playback anchors to the first arrival. The native endpoint now supplies the
+encoder epoch in authenticated `playback.begin`; the player preserves that start
+and conceals bounded missing audio. The audio owner also receives the exact end
+sample count, allowing at most 200 ms of lost-tail recovery and rejecting a
+conflicting Hang terminal marker. Host completion still requires the exact number
+of samples actually handed to the speaker and drained from DMA.
+
+The corrected app0 firmware (flash20) boots the full shell. Physical p48 passes
+text/background output, three voice turns and reconnect without induced loss.
+p49 passes three voice turns and reconnect with 1% loss and 30 ms added RTT,
+despite six concealed/late playback frames. Together these runs record 360,640
+microphone samples and 318,301 played samples, with exact host/watch totals.
+The seeded rerun is not a byte-for-byte replay of the earlier network schedule.
+
+p50 at 3% loss and 60 ms added RTT fails during the first capture, before STT
+commit. The watch logs a transport error (12), one expired publisher group and
+no microphone drops; the host then observes catalog withdrawal. The causal
+transport failure remains unresolved. The 5%/120 ms case is deferred until that
+failure is understood. These results do not satisfy the complete loss/RTT or
+speech-quality matrix, and WebRTC remains the configured default.
+
+Verification passes 299 Python tests (four existing warnings), six native
+integration cases, 26 firmware-parser cases, 21 Rust tests, Clippy, the ESP-IDF
+build, and normal plus Linux ASan/UBSan audio tests. Audio loss tests compare PCM
+against independent direct Opus PLC calls, in addition to exact sample counts.
+See the [playback-timeline evidence](implementation-evidence/2026-08-31-playback-timeline/README.md).
+The new firmware remains installed; restoration is not required. All other
+library/product acceptance gates remain open as recorded in the full plan.
+
+## Previous checkpoint: bounded host capture loss recovery
 
 The native capture worker now bounds reordering and incomplete-group waits to
 200 ms, advances Opus by exactly one 20 ms packet for declared loss, ignores late

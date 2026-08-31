@@ -169,6 +169,12 @@ void fail(Owner& o, int result) {
     if (o.failed) return;
     o.failed=true; g_ready.store(false);
     ESP_LOGE(kTag,"media failure result=%d",result); // Never a URI/token/PCM.
+    esp_moq_endpoint_status_t endpoint{}; esp_moq_endpoint_status(o.endpoint,&endpoint);
+    ESP_LOGE(kTag,"endpoint failure=%u result=%d transport=%llu alert=%u library=%d site=%u detail=%d stream=%llu",
+        static_cast<unsigned>(endpoint.failure),static_cast<int>(endpoint.result),
+        static_cast<unsigned long long>(endpoint.transport_error),static_cast<unsigned>(endpoint.tls_alert),
+        endpoint.transport_library_error,endpoint.transport_site,endpoint.transport_detail,
+        static_cast<unsigned long long>(endpoint.transport_stream));
     emit(o,EventKind::error,result);
     Lock lock;
     invalidate_locked(); g_disconnect=true;
@@ -315,6 +321,11 @@ void poll_service(Owner& o) {
         if (e.type==ESP_MOQ_SERVICE_CONNECTED) o.connection=e.connection;
         if (e.type==ESP_MOQ_SERVICE_MEDIA_READY && e.media==o.receive && !e.cancelled) {
             result=esp_moq_audio_player_begin(o.player,e.connection,e.media,&e.format);
+            if (!result && o.response.has_timeline) {
+                result=esp_moq_audio_player_timeline(o.player,o.response.pts_us);
+                if (!result && o.response.has_end)
+                    result=esp_moq_audio_player_end(o.player,o.response.samples,now_us());
+            }
             if (!result) o.playing=true;
         }
         if ((e.type==ESP_MOQ_SERVICE_FRAME || e.type==ESP_MOQ_SERVICE_AUDIO_END ||
@@ -577,7 +588,11 @@ void audio_task(void*) {
                 case Operation::receive_end:
                     if (o.receive && command.response.session==o.session &&
                         command.response.response_id==o.response.response_id) {
-                        const auto result=esp_moq_service_receive_end(o.service,o.receive,command.response.end_group);
+                        o.response.end_group=command.response.end_group;
+                        o.response.samples=command.response.samples; o.response.has_end=true;
+                        auto result=esp_moq_service_receive_end(o.service,o.receive,command.response.end_group);
+                        if (!result && o.playing && o.response.has_timeline)
+                            result=esp_moq_audio_player_end(o.player,command.response.samples,now_us());
                         if (result) fail(o,result);
                     }
                     break;
@@ -713,9 +728,10 @@ bool receive_cancel(std::uint64_t session,std::uint64_t response_id) {
     g_preserve_capture=preserve; g_preserve_revision=g_revision;
     return true;
 }
-bool receive_end(std::uint64_t session,std::uint64_t response_id,std::uint64_t end_group) {
+bool receive_end(std::uint64_t session,std::uint64_t response_id,std::uint64_t end_group,std::uint64_t samples) {
     Command command{}; command.operation=Operation::receive_end;
     command.response.session=session; command.response.response_id=response_id; command.response.end_group=end_group;
+    command.response.samples=samples;
     return enqueue(command);
 }
 void tick() {}

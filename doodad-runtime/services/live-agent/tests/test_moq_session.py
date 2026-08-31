@@ -99,7 +99,7 @@ class Harness:
 
     async def prepare(self, number='1', first='0'):
         await self.next_ipc('playback.begin')
-        await self.native('playback.prepared', {**ID, 'response_id': number, 'first_group': first})
+        await self.native('playback.prepared', {**ID, 'response_id': number, 'first_group': first, 'pts_us': '1234567'})
         return await self.next_control('playback.begin')
 
     async def bind(self, number='1', first='0'):
@@ -140,7 +140,8 @@ async def test_native_tail_precedes_stt_completion_and_bound_precedes_pcm(harnes
     for samples in (320, 217):
         await h.native('capture.pcm', ID, b'\x03\x00' * samples)
     await h.native('capture.ended', {**ID, 'first_group': '0', 'end_group': '3', 'samples': '537'})
-    await h.prepare()
+    begin = await h.prepare()
+    assert begin['pts_us'] == '1234567'
     assert 'playback.pcm' not in [item[0] for item in list(h.peer.sent._queue)]
     await h.bind()
     one = await h.next_ipc('playback.pcm')
@@ -486,3 +487,21 @@ async def test_capture_recovery_counters_are_bounded_before_stt_commit(harness, 
     else:
         await h.native('capture.ended', fields)
         assert h.session._capture.validated.is_set()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize('pts', [None, True, 0, '-1', '01', str(2**62)])
+async def test_playback_timeline_requires_canonical_bounded_native_timestamp(harness, pts):
+    h = harness
+    await h.capture()
+    h.session.begin_downlink()
+    h.session.enqueue_downlink(b'\x04\x00' * 537, 16000)
+    h.session.end_downlink()
+    await h.next_ipc('playback.begin')
+    fields = {**ID, 'response_id': '1', 'first_group': '0'}
+    if pts is not None:
+        fields['pts_us'] = pts
+    with pytest.raises(MoqSessionError):
+        await h.native('playback.prepared', fields)
+    assert not h.session._response.prepared.is_set()
+    assert 'playback.begin' not in [item['type'] for item in list(h.ws.sent._queue)]

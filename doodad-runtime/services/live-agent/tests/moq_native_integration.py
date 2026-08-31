@@ -130,6 +130,7 @@ async def test_native_authorized_session(mode):
                 await peer.send('playback.begin', {**IDENTITY, 'response_id': '1'})
             elif h['type'] == 'playback.prepared':
                 assert h['first_group'] == '0'
+                assert h['pts_us'] == '0'
                 # Test-only controlled binding: the reference probe subscribes
                 # to response audio before it sends any microphone samples.
                 await peer.send('playback.bound', {**IDENTITY, 'response_id': '1'})

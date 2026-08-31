@@ -1,0 +1,31 @@
+{
+  "root_base": "79476235fd6e27f8f55959258dd25971bf35b96e",
+  "library_base": "f5abf7ac737b1493e03f05bd08ef723b1cac8b53",
+  "sha256": {
+    "docs/moq-implementation-progress.md": "98901f3b6d2e02881ff76c13360281be23026400a1b12a574554e1f17ab01dbc",
+    "docs/moq-product-session.md": "959af4e31483e02c5a5633bd60ea493fca9d5748b1be28212081d2d96748e3be",
+    "doodad-runtime/firmware/main/include/voice_media_transport.hpp": "81d3295bcf329fc83acfaae2e5819d06766b839de7fc2db7aeade1b8e057392a",
+    "doodad-runtime/firmware/main/src/voice_media_moq.cpp": "ea48db613eeb265d85a0477eacaf62ca62e8f07603f5fafb91f4d0ae59432599",
+    "doodad-runtime/firmware/main/src/voice_media_webrtc.cpp": "c91d0ffef683f1a9678f3605750d4e2602f22ab03712b75ba0b36385fdd65ed9",
+    "doodad-runtime/firmware/main/src/voice_service.cpp": "c592fca3b0f325b4bbc39ffad12b32fcd2f2cb647a91f1d483ab284223a90f62",
+    "doodad-runtime/services/live-agent/src/doodad_agent/moq_session.py": "2faaa0e9d4fb9d532f8a7e2a0ce05f08a1b3d7dfe020d64f708e77104097698a",
+    "doodad-runtime/services/live-agent/tests/moq_native_integration.py": "0dffd8fea9aa22a61fccebf5d0bbeb8eeeed9c7b7cf1085f2e3d6cb2fb00b8e7",
+    "doodad-runtime/services/live-agent/tests/test_moq_session.py": "307ce13e3fbc382e39535d8d0e586f818b3dd425760f6c50dbde9eea4d2332c2",
+    "doodad-runtime/services/live-agent/tools/moq_ultra_bench.py": "440a33b5b5a03a95927dac106874e4b6ea9f4fcda15b6f4bcbf4ad7c38655c1c",
+    "libs/moq-esp32/components/esp_moq_audio/include/esp_moq/audio.h": "c95f179140d4290f9617ff37e8067c98a33a9fa621861572b7a09f02d3219a3a",
+    "libs/moq-esp32/components/esp_moq_audio/src/player.c": "34bd6c7102461dd7ff67a0c931fc4a8ce3b3fe507e8f8e2bbec4c35b5322fc29",
+    "libs/moq-esp32/components/esp_moq_endpoint/include/esp_moq/endpoint.h": "dd16082a19b2c74778a54f62f9ec003b6005b78dee009d07197a7cb0b9648170",
+    "libs/moq-esp32/components/esp_moq_endpoint/src/endpoint.c": "d6ea89f5a8921615c150a33a579cc7ca6e4c75c926814ea06121249ec9ad813a",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/include/esp_moq/ngtcp2_transport.h": "dab400b78d665d4523fabac460f025cb7af197ea67af76e2a434a60545ba5b7d",
+    "libs/moq-esp32/components/esp_moq_transport_ngtcp2/src/esp_moq_ngtcp2.c": "b91bf0fc3d0d4371ec870c5365676b1a0d2ddac35cc67594bde12809c8a04bde",
+    "libs/moq-esp32/server/voice_agent/README.md": "af0974d5b6d3c568a4b8fb3bf5e8cd1c3e2e6ef8c6eae14ccfb189c70ccc6e1e",
+    "libs/moq-esp32/server/voice_agent/src/capture_tests.rs": "5601c87e0810884fe2bb54ff9c0e41f84234c73ca4cfab8832da62e615e1229f",
+    "libs/moq-esp32/server/voice_agent/src/media.rs": "2a99f57c3b9bc6bf878a6fe0e411b18fb7874d290f45dbedceecb891b88272d5",
+    "libs/moq-esp32/server/voice_agent/src/server.rs": "eb992846650eec9cd6fc1f55a442ff226b7a95228851abfce5a05cb211c1df70",
+    "libs/moq-esp32/tests/adapter/test_adapter.c": "01b5e8b112535117063ae4ad1184d07ac98eb8d4f16f0cc8376e535b5adf3522",
+    "libs/moq-esp32/tests/audio/test_player.c": "f224a4c08f5a3cd9352e9f9d804b98eb33cac8edecc405f5673a01657323813e",
+    "libs/moq-esp32/tests/host/test_endpoint.c": "8f9b4f173433ba09956454d7c8ab71f8de4a0db9756b0863a3e3fdf1bc39f96a"
+  },
+  "firmware_sha256": "42d5eca7bd00800ba44d6fe21351279d00accc5c5d74cc4f0ba7ac8156dc2b4e",
+  "native_sha256": "290b1e3f1f62b3cb4cdd9d2bd0d3c3bda8aea71c32e5cedfba04f195bb8c6207"
+}

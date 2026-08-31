@@ -1181,11 +1181,12 @@ bool secure_command(const char* kind,const cJSON* payload) {
         if (!identity(payload,id) || !secure::decimal(field(payload,"response_id"),response,false)) return false;
         if (!owns(id)) return true;
         if (std::strcmp(kind,"playback.begin")==0) {
-            std::uint64_t first=0;
-            if (!secure::decimal(field(payload,"first_group"),first) || first>=(1ULL<<62) || (!g_capture_complete && !g_context_ready)) return false;
+            std::uint64_t first=0,pts=0;
+            if (!secure::decimal(field(payload,"first_group"),first) || first>=(1ULL<<62) ||
+                !secure::decimal(field(payload,"pts_us"),pts) || pts>=(1ULL<<62) || (!g_capture_complete && !g_context_ready)) return false;
             if (response<=g_highest_response) return true;
             media::Response binding{}; binding.session=g_control_generation.load(); binding.response_id=response;
-            binding.identity=id; binding.first_group=first;
+            binding.identity=id; binding.first_group=first; binding.pts_us=pts; binding.has_timeline=true;
             if (!media::receive_begin(binding)) return false;
             g_highest_response=response; g_response=binding; g_response_ending=false; g_response_samples=0;
             g_response_complete=false;
@@ -1201,7 +1202,7 @@ bool secure_command(const char* kind,const cJSON* payload) {
             if (g_response_ending || !secure::decimal(field(payload,"first_group"),first) || first!=g_response.first_group ||
                 !secure::decimal(field(payload,"end_group"),end) || end<=first || end-first>30002 ||
                 !secure::decimal(field(payload,"samples"),samples) || samples>600*16000) return false;
-            if (!media::receive_end(g_control_generation.load(),response,end)) return false;
+            if (!media::receive_end(g_control_generation.load(),response,end,samples)) return false;
             g_response.end_group=end; g_response.has_end=true; g_response_ending=true; g_response_samples=samples;
             return true;
         }

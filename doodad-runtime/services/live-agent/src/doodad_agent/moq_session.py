@@ -434,7 +434,7 @@ class MoqSession(ControlSession):
             'cancelled': {'capture_id', 'request_id', 'owner_token'},
             'capture.pcm': {'capture_id', 'request_id', 'owner_token'},
             'capture.ended': {'capture_id', 'request_id', 'owner_token', 'first_group', 'end_group', 'samples'},
-            'playback.prepared': {'capture_id', 'request_id', 'owner_token', 'response_id', 'first_group'},
+            'playback.prepared': {'capture_id', 'request_id', 'owner_token', 'response_id', 'first_group', 'pts_us'},
             'playback.encoded': {'capture_id', 'request_id', 'owner_token', 'response_id', 'first_group', 'end_group', 'samples'},
         }
         if kind not in schemas or extras != schemas[kind] or (pcm and kind != 'capture.pcm'):
@@ -484,9 +484,11 @@ class MoqSession(ControlSession):
                 if kind == 'playback.prepared':
                     if response.prepared.is_set():
                         raise MoqSessionError()
+                    pts = decimal(header['pts_us'], maximum=2**62 - 1)
                     response.first = first
                     response.prepared.set()
-                    self._queue(Outbound('wss', 'playback.begin', {**response.fields(), 'first_group': str(first)}, response=response))
+                    self._queue(Outbound('wss', 'playback.begin', {**response.fields(), 'first_group': str(first),
+                                                               'pts_us': str(pts)}, response=response))
                 else:
                     end = decimal(header['end_group'], maximum=first + 30002)
                     if (not response.end_queued or response.encoded.is_set() or first != response.first

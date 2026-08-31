@@ -1,0 +1,624 @@
+{
+  "p51": {
+    "pass_": false,
+    "microphone_samples": 181920,
+    "firmware_written": false,
+    "restoration_required": false,
+    "speaker_samples": 53253,
+    "impairment": {
+      "loss_percent": 3,
+      "added_rtt_ms": 60,
+      "seed": 50,
+      "directions": {
+        "uplink": {
+          "received": 1522,
+          "dropped": 44,
+          "forwarded": 1478,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1258,
+          "dropped": 36,
+          "forwarded": 1222,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 9,
+      "closed": true
+    },
+    "elapsed_ms": 45957,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_error_count": 0,
+    "fixture_recognized": true,
+    "fixture_audio_restored": true,
+    "read_tool_completed": false,
+    "capture_rounds_requested": 3,
+    "playout": [
+      {
+        "samples": 42360,
+        "concealed": 2,
+        "late": 2,
+        "pressure": 0
+      },
+      {
+        "samples": 41149,
+        "concealed": 4,
+        "late": 4,
+        "pressure": 0
+      },
+      {
+        "samples": 53253,
+        "concealed": 4,
+        "late": 4,
+        "pressure": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 60800,
+        "concealed": 1600,
+        "plc": 1600,
+        "lost_groups": 5,
+        "late_groups": 5
+      },
+      {
+        "samples": 60480,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 60640,
+        "concealed": 1280,
+        "plc": 1280,
+        "lost_groups": 4,
+        "late_groups": 4
+      }
+    ],
+    "reorder_pressure": [],
+    "endpoint_failures": [],
+    "native_capture_reorder_bound_reported": false
+  },
+  "p52": {
+    "pass_": false,
+    "microphone_samples": 173440,
+    "firmware_written": false,
+    "restoration_required": false,
+    "speaker_samples": 76249,
+    "impairment": {
+      "loss_percent": 5,
+      "added_rtt_ms": 120,
+      "seed": 52,
+      "directions": {
+        "uplink": {
+          "received": 1231,
+          "dropped": 74,
+          "forwarded": 1157,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1291,
+          "dropped": 56,
+          "forwarded": 1235,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 12,
+      "closed": true
+    },
+    "elapsed_ms": 47754,
+    "stt_commits": 3,
+    "stt_completed_events": 3,
+    "stt_error_count": 0,
+    "fixture_recognized": false,
+    "fixture_audio_restored": true,
+    "read_tool_completed": false,
+    "capture_rounds_requested": 3,
+    "playout": [
+      {
+        "samples": 41149,
+        "concealed": 8,
+        "late": 8,
+        "pressure": 0
+      },
+      {
+        "samples": 37518,
+        "concealed": 3,
+        "late": 0,
+        "pressure": 108
+      },
+      {
+        "samples": 76249,
+        "concealed": 5,
+        "late": 5,
+        "pressure": 0
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 59840,
+        "concealed": 3200,
+        "plc": 3200,
+        "lost_groups": 10,
+        "late_groups": 3
+      },
+      {
+        "samples": 60640,
+        "concealed": 9280,
+        "plc": 9280,
+        "lost_groups": 29,
+        "late_groups": 13
+      },
+      {
+        "samples": 52960,
+        "concealed": 9600,
+        "plc": 9600,
+        "lost_groups": 30,
+        "late_groups": 13
+      }
+    ],
+    "reorder_pressure": [],
+    "endpoint_failures": [],
+    "native_capture_reorder_bound_reported": false
+  },
+  "t53": {
+    "pass_": false,
+    "audio_requested": true,
+    "microphone_samples": 364800,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "voice_ui": false,
+    "capture_ms": 1200,
+    "capture_rounds": 20,
+    "captures_completed": 19,
+    "lease_seconds": 64,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 5783,
+    "impairment": {
+      "loss_percent": 3,
+      "added_rtt_ms": 60,
+      "seed": 50,
+      "directions": {
+        "uplink": {
+          "received": 1660,
+          "dropped": 46,
+          "forwarded": 1614,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1275,
+          "dropped": 36,
+          "forwarded": 1239,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 14,
+      "closed": true
+    },
+    "elapsed_ms": 51046,
+    "playout": [],
+    "capture_recovery": [
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 1176,
+        "plc": 1176,
+        "lost_groups": 5,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "reorder_pressure": [],
+    "endpoint_failures": [],
+    "native_capture_reorder_bound_reported": true
+  },
+  "t54": {
+    "pass_": true,
+    "audio_requested": true,
+    "microphone_samples": 384000,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "voice_ui": false,
+    "capture_ms": 1200,
+    "capture_rounds": 20,
+    "captures_completed": 20,
+    "lease_seconds": 64,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 5757,
+    "speaker_samples": 16037,
+    "response_replacement_pass": true,
+    "impairment": {
+      "loss_percent": 3,
+      "added_rtt_ms": 60,
+      "seed": 50,
+      "directions": {
+        "uplink": {
+          "received": 1907,
+          "dropped": 52,
+          "forwarded": 1855,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1499,
+          "dropped": 49,
+          "forwarded": 1450,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 10,
+      "closed": true
+    },
+    "elapsed_ms": 80095,
+    "playout": [
+      {
+        "samples": 16037,
+        "concealed": 0,
+        "late": 0,
+        "pressure": 0
+      },
+      {
+        "samples": 16037,
+        "concealed": 3,
+        "late": 0,
+        "pressure": 41
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 1816,
+        "plc": 1816,
+        "lost_groups": 7,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 19200,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "reorder_pressure": [],
+    "endpoint_failures": [],
+    "native_capture_reorder_bound_reported": false
+  },
+  "t55": {
+    "pass_": true,
+    "audio_requested": true,
+    "microphone_samples": 480000,
+    "ready_sessions": 3,
+    "firmware_written": false,
+    "restoration_required": false,
+    "voice_ui": false,
+    "capture_ms": 10000,
+    "capture_rounds": 3,
+    "captures_completed": 3,
+    "lease_seconds": 53,
+    "time_proofs_issued": 3,
+    "forced_reconnect_ms": 5805,
+    "speaker_samples": 16037,
+    "response_replacement_pass": true,
+    "impairment": {
+      "loss_percent": 3,
+      "added_rtt_ms": 60,
+      "seed": 50,
+      "directions": {
+        "uplink": {
+          "received": 2181,
+          "dropped": 61,
+          "forwarded": 2120,
+          "pressure": 0
+        },
+        "downlink": {
+          "received": 1630,
+          "dropped": 53,
+          "forwarded": 1577,
+          "pressure": 0
+        }
+      },
+      "pending": 0,
+      "pending_high_water": 7,
+      "closed": true
+    },
+    "elapsed_ms": 70365,
+    "playout": [
+      {
+        "samples": 16037,
+        "concealed": 1,
+        "late": 1,
+        "pressure": 0
+      },
+      {
+        "samples": 16037,
+        "concealed": 5,
+        "late": 0,
+        "pressure": 32
+      }
+    ],
+    "capture_recovery": [
+      {
+        "samples": 160000,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 160000,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      },
+      {
+        "samples": 160000,
+        "concealed": 0,
+        "plc": 0,
+        "lost_groups": 0,
+        "late_groups": 0
+      }
+    ],
+    "reorder_pressure": [],
+    "endpoint_failures": [],
+    "native_capture_reorder_bound_reported": false
+  }
+}

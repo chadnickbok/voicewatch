@@ -1,0 +1,9 @@
+{
+  "image_sha256": "42d5eca7bd00800ba44d6fe21351279d00accc5c5d74cc4f0ba7ac8156dc2b4e",
+  "changed_offset": 65536,
+  "changed_span": 3428352,
+  "test_pass": true,
+  "firmware_written": true,
+  "restoration_required": false,
+  "success_marker": "[host] steady state; free heap:"
+}

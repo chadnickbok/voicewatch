@@ -56,7 +56,8 @@ struct Response {
     std::uint64_t session = 0, response_id = 0;
     Identity identity{};
     std::uint64_t first_group = 0, end_group = 0;
-    bool has_end = false;
+    std::uint64_t pts_us = 0, samples = 0;
+    bool has_end = false, has_timeline = false;
 };
 
 bool init(SignalSink signaling);
@@ -77,7 +78,7 @@ void cancel();
 // Only an explicitly authenticated response binding may enable MoQ playback.
 bool receive_begin(const Response& response);
 bool receive_end(std::uint64_t session, std::uint64_t response_id,
-                 std::uint64_t end_group);
+                 std::uint64_t end_group, std::uint64_t samples);
 // Retire only the named response, retaining its completed capture context for
 // a later response. A stale cancellation cannot touch a replacement.
 bool receive_cancel(std::uint64_t session, std::uint64_t response_id);

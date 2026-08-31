@@ -1,0 +1,3 @@
+queued_burst_with_one_missing_group_keeps_bounded_recovery
+Before fix: FAILED (capture reorder bound); exit 101.
+After fix: PASS; exact 12,807 samples, one lost group, 320 PLC samples.

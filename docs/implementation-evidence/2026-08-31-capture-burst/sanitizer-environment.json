@@ -1,0 +1,18 @@
+{
+  "image": "sha256:afde5f5f7ea4d7ad6b6b53d051b9c8baae9062bb43421ba54eaf5d1194860895",
+  "compiler": "GCC 12.2.0",
+  "network": "none",
+  "host_mounts": false,
+  "cpus": 2,
+  "memory": "2g",
+  "pids_limit": 128,
+  "capabilities": "all dropped",
+  "no_new_privileges": true,
+  "source_archive_sha256": "4d51c4f811305e8a2d66d21b7148b8f328a3e499c53bab1b5b561b033489d0a3",
+  "commands": [
+    "make -C tests/adapter test sanitize",
+    "make -C tests/host test sanitize"
+  ],
+  "timeout_seconds_each": 120,
+  "exit_code": 0
+}
